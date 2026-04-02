@@ -45,17 +45,17 @@ namespace FIFE
         {
             for (auto& instance : instances) {
                 if (instance->isMultiCell()) {
-                    bool rotchange = (instance->getChangeInfo() & ICHANGE_ROTATION) == ICHANGE_ROTATION;
-                    bool locchange = (instance->getChangeInfo() & ICHANGE_LOC) == ICHANGE_LOC;
-                    bool celchange = (instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL;
-                    bool blochange = (instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK;
+                    bool const rotchange = (instance->getChangeInfo() & ICHANGE_ROTATION) == ICHANGE_ROTATION;
+                    bool const locchange = (instance->getChangeInfo() & ICHANGE_LOC) == ICHANGE_LOC;
+                    bool const celchange = (instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL;
+                    bool const blochange = (instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK;
 
                     if (!rotchange && !locchange && !celchange && !blochange) {
                         continue;
                     }
 
-                    int32_t oldrotation = instance->getOldRotation();
-                    int32_t newrotation = instance->getRotation();
+                    int32_t oldrotation       = instance->getOldRotation();
+                    int32_t const newrotation = instance->getRotation();
                     if (!rotchange) {
                         oldrotation = newrotation;
                     }
@@ -476,17 +476,17 @@ namespace FIFE
             return;
         }
         // get new size and check if it has changed
-        Rect newsize = calculateCurrentSize();
+        Rect const newsize = calculateCurrentSize();
         resize(newsize);
     }
 
     void CellCache::resize(const Rect& rec)
     {
         // check if size has changed
-        Rect newsize = rec;
+        Rect const newsize = rec;
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
-            uint32_t w = std::abs(newsize.w - newsize.x) + 1;
-            uint32_t h = std::abs(newsize.h - newsize.y) + 1;
+            uint32_t const w = std::abs(newsize.w - newsize.x) + 1;
+            uint32_t const h = std::abs(newsize.h - newsize.y) + 1;
 
             std::vector<std::vector<Cell*>> cells;
             cells.resize(w);
@@ -497,16 +497,16 @@ namespace FIFE
             for (uint32_t y = 0; y < h; ++y) {
                 for (uint32_t x = 0; x < w; ++x) {
                     // transfer cells
-                    ModelCoordinate mc(newsize.x + x, newsize.y + y);
-                    Cell* cell    = nullptr;
-                    int32_t old_x = mc.x - m_size.x;
-                    int32_t old_y = mc.y - m_size.y;
+                    ModelCoordinate const mc(newsize.x + x, newsize.y + y);
+                    Cell* cell          = nullptr;
+                    int32_t const old_x = mc.x - m_size.x;
+                    int32_t const old_y = mc.y - m_size.y;
                     // out of range in the old size, so we create a new cell
                     if (old_x < 0 || std::cmp_greater_equal(old_x, m_width) || old_y < 0 ||
                         std::cmp_greater_equal(old_y, m_height)) {
-                        int32_t coordId = x + (y * w);
-                        cell            = new Cell(coordId, mc, m_layer);
-                        cells[x][y]     = cell;
+                        int32_t const coordId = x + (y * w);
+                        cell                  = new Cell(coordId, mc, m_layer);
+                        cells[x][y]           = cell;
 
                         std::list<Instance*> cell_instances;
                         m_layer->getInstanceTree()->findInstances(mc, 0, 0, cell_instances);
@@ -516,8 +516,8 @@ namespace FIFE
                             std::list<Instance*> interact_instances;
                             for (; it != interacts.end(); ++it) {
                                 // convert coordinates
-                                ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
-                                ModelCoordinate inter_mc = (*it)->getCellGrid()->toLayerCoordinates(
+                                ExactModelCoordinate const emc(FIFE::intPt2doublePt(mc));
+                                ModelCoordinate const inter_mc = (*it)->getCellGrid()->toLayerCoordinates(
                                     m_layer->getCellGrid()->toMapCoordinates(emc));
                                 // check interact layer for instances
                                 (*it)->getInstanceTree()->findInstances(inter_mc, 0, 0, interact_instances);
@@ -537,7 +537,7 @@ namespace FIFE
                         cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
                         m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = nullptr;
                         cells[x][y]                                                         = cell;
-                        int32_t coordId                                                     = x + (y * w);
+                        int32_t const coordId                                               = x + (y * w);
                         cell->setCellId(coordId);
                         cell->resetNeighbors();
                     }
@@ -560,13 +560,13 @@ namespace FIFE
             m_width  = w;
             m_height = h;
 
-            bool zCheck = m_neighborZ != -1;
+            bool const zCheck = m_neighborZ != -1;
             // fill neighbors into cells
             it = m_cells.begin();
             for (; it != m_cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
-                    int32_t cellZ = (*cit)->getLayerCoordinates().z;
+                    int32_t const cellZ = (*cit)->getLayerCoordinates().z;
                     std::vector<ModelCoordinate> coordinates;
                     m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
                     for (auto& coordinate : coordinates) {
@@ -591,7 +591,7 @@ namespace FIFE
         const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
                 if (cell == nullptr) {
                     cell          = new Cell(convertCoordToInt(mc), mc, m_layer);
@@ -606,8 +606,8 @@ namespace FIFE
                     std::list<Instance*> interact_instances;
                     for (; it != interacts.end(); ++it) {
                         // convert coordinates
-                        ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
-                        ModelCoordinate inter_mc =
+                        ExactModelCoordinate const emc(FIFE::intPt2doublePt(mc));
+                        ModelCoordinate const inter_mc =
                             (*it)->getCellGrid()->toLayerCoordinates(m_layer->getCellGrid()->toMapCoordinates(emc));
                         // check interact layer for instances
                         (*it)->getInstanceTree()->findInstances(inter_mc, 0, 0, interact_instances);
@@ -630,7 +630,7 @@ namespace FIFE
             auto cit = (*it).begin();
             for (; cit != (*it).end(); ++cit) {
                 uint8_t accessible = 0;
-                bool selfblocker =
+                bool const selfblocker =
                     (*cit)->getCellType() == CTYPE_STATIC_BLOCKER || (*cit)->getCellType() == CTYPE_CELL_BLOCKER;
                 std::vector<ModelCoordinate> coordinates;
                 m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
@@ -698,7 +698,7 @@ namespace FIFE
 
     void CellCache::addCell(Cell* cell)
     {
-        ModelCoordinate mc                            = cell->getLayerCoordinates();
+        ModelCoordinate const mc                      = cell->getLayerCoordinates();
         m_cells[(mc.x - m_size.x)][(mc.y - m_size.y)] = cell;
     }
 
@@ -714,8 +714,8 @@ namespace FIFE
 
     Cell* CellCache::getCell(const ModelCoordinate& mc)
     {
-        int32_t x = mc.x - m_size.x;
-        int32_t y = mc.y - m_size.y;
+        int32_t const x = mc.x - m_size.x;
+        int32_t const y = mc.y - m_size.y;
 
         if (x < 0 || std::cmp_greater_equal(x, m_width) || y < 0 || std::cmp_greater_equal(y, m_height)) {
             return nullptr;
@@ -753,19 +753,19 @@ namespace FIFE
         interact->setInteract(true, m_layer->getId());
         m_layer->addInteractLayer(interact);
         interact->addChangeListener(m_cellListener);
-        Rect newsize = calculateCurrentSize();
+        Rect const newsize = calculateCurrentSize();
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
             resize();
         }
         // not optimal but needed if the grids have different geometry
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
                 if (cell != nullptr) {
                     // convert coordinates
-                    ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
-                    ModelCoordinate inter_mc =
+                    ExactModelCoordinate const emc(FIFE::intPt2doublePt(mc));
+                    ModelCoordinate const inter_mc =
                         interact->getCellGrid()->toLayerCoordinates(m_layer->getCellGrid()->toMapCoordinates(emc));
                     // check interact layer for instances
                     std::list<Instance*> interact_instances;
@@ -783,19 +783,19 @@ namespace FIFE
     {
         interact->setInteract(false, "");
         m_layer->removeInteractLayer(interact);
-        Rect newsize = calculateCurrentSize();
+        Rect const newsize = calculateCurrentSize();
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
             resize();
         }
         // not optimal but needed if the grids have different geometry
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
                 if (cell != nullptr) {
                     // convert coordinates
-                    ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
-                    ModelCoordinate inter_mc =
+                    ExactModelCoordinate const emc(FIFE::intPt2doublePt(mc));
+                    ModelCoordinate const inter_mc =
                         interact->getCellGrid()->toLayerCoordinates(m_layer->getCellGrid()->toMapCoordinates(emc));
                     // check interact layer for instances
                     std::list<Instance*> interact_instances;
@@ -846,27 +846,27 @@ namespace FIFE
         if (m_layer != location.getLayer()) {
             return false;
         }
-        int32_t x = location.getLayerCoordinates().x - m_size.x;
-        int32_t y = location.getLayerCoordinates().y - m_size.y;
+        int32_t const x = location.getLayerCoordinates().x - m_size.x;
+        int32_t const y = location.getLayerCoordinates().y - m_size.y;
 
         return x >= 0 && std::cmp_less(x, m_width) && y >= 0 && std::cmp_less(y, m_height);
     }
 
     int32_t CellCache::convertCoordToInt(const ModelCoordinate& coord) const
     {
-        ModelCoordinate newcoords(coord.x - m_size.x, coord.y - m_size.y);
+        ModelCoordinate const newcoords(coord.x - m_size.x, coord.y - m_size.y);
         return newcoords.x + (newcoords.y * m_width);
     }
 
     ModelCoordinate CellCache::convertIntToCoord(const int32_t cell) const
     {
-        ModelCoordinate coord((cell % m_width) + m_size.x, (cell / m_width) + m_size.y);
+        ModelCoordinate const coord((cell % m_width) + m_size.x, (cell / m_width) + m_size.y);
         return coord;
     }
 
     int32_t CellCache::getMaxIndex() const
     {
-        int32_t max_index = m_width * m_height;
+        int32_t const max_index = m_width * m_height;
         return max_index;
     }
 
@@ -883,7 +883,7 @@ namespace FIFE
     std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker)
     {
         std::vector<Cell*> cells;
-        std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
+        std::vector<ModelCoordinate> const coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
         for (auto& coord : coords) {
             Cell* c = getCell(coord);
             if (c != nullptr) {
@@ -904,7 +904,7 @@ namespace FIFE
         cells.reserve(rec.w * rec.h);
 
         ModelCoordinate current(rec.x, rec.y);
-        ModelCoordinate target(rec.x + rec.w, rec.y + rec.h);
+        ModelCoordinate const target(rec.x + rec.w, rec.y + rec.h);
         for (; current.y < target.y; ++current.y) {
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
@@ -923,7 +923,7 @@ namespace FIFE
         cells.reserve(rec.w * rec.h);
 
         ModelCoordinate current(rec.x, rec.y);
-        ModelCoordinate target(rec.x + rec.w, rec.y + rec.h);
+        ModelCoordinate const target(rec.x + rec.w, rec.y + rec.h);
         for (; current.y < target.y; ++current.y) {
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
@@ -940,18 +940,18 @@ namespace FIFE
     {
         std::vector<Cell*> cells;
         // radius power 2
-        uint16_t radiusp2 = (radius + 1) * radius;
+        uint16_t const radiusp2 = (radius + 1) * radius;
 
         ModelCoordinate current(center.x - radius, center.y - radius);
-        ModelCoordinate target(center.x + radius, center.y + radius);
+        ModelCoordinate const target(center.x + radius, center.y + radius);
         for (; current.y < center.y; current.y++) {
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
                 Cell* c = getCell(current);
                 if (c != nullptr) {
-                    uint16_t dx       = center.x - current.x;
-                    uint16_t dy       = center.y - current.y;
-                    uint16_t distance = (dx * dx) + (dy * dy);
+                    uint16_t const dx       = center.x - current.x;
+                    uint16_t const dy       = center.y - current.y;
+                    uint16_t const distance = (dx * dx) + (dy * dy);
                     if (distance <= radiusp2) {
                         cells.push_back(c);
 
@@ -1002,13 +1002,13 @@ namespace FIFE
         const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle)
     {
         std::vector<Cell*> cells;
-        ExactModelCoordinate exactCenter(center.x, center.y);
-        std::vector<Cell*> tmpCells = getCellsInCircle(center, radius);
-        int32_t s                   = (sangle + 360) % 360;
-        int32_t e                   = (eangle + 360) % 360;
-        bool greater                = s > e;
+        ExactModelCoordinate const exactCenter(center.x, center.y);
+        std::vector<Cell*> const tmpCells = getCellsInCircle(center, radius);
+        int32_t const s                   = (sangle + 360) % 360;
+        int32_t const e                   = (eangle + 360) % 360;
+        bool const greater                = s > e;
         for (auto& tmpCell : tmpCells) {
-            int32_t angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
+            int32_t const angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
                     cells.push_back(tmpCell);
@@ -1075,8 +1075,8 @@ namespace FIFE
     void CellCache::addCellToCost(const std::string& costId, Cell* cell)
     {
         if (existsCost(costId)) {
-            StringCellPair result = m_costsToCells.equal_range(costId);
-            auto it               = result.first;
+            StringCellPair const result = m_costsToCells.equal_range(costId);
+            auto it                     = result.first;
             for (; it != result.second; ++it) {
                 if ((*it).second == cell) {
                     return;
@@ -1108,8 +1108,8 @@ namespace FIFE
 
     void CellCache::removeCellFromCost(const std::string& costId, Cell* cell)
     {
-        StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it               = result.first;
+        StringCellPair const result = m_costsToCells.equal_range(costId);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 m_costsToCells.erase(it);
@@ -1129,8 +1129,8 @@ namespace FIFE
     std::vector<Cell*> CellCache::getCostCells(const std::string& costId)
     {
         std::vector<Cell*> cells;
-        StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it               = result.first;
+        StringCellPair const result = m_costsToCells.equal_range(costId);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             cells.push_back((*it).second);
         }
@@ -1151,8 +1151,8 @@ namespace FIFE
 
     bool CellCache::existsCostForCell(const std::string& costId, Cell* cell)
     {
-        StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it               = result.first;
+        StringCellPair const result = m_costsToCells.equal_range(costId);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 return true;
@@ -1235,7 +1235,7 @@ namespace FIFE
 
     void CellCache::setCostMultiplier(Cell* cell, double multi)
     {
-        std::pair<std::map<Cell*, double>::iterator, bool> insertiter =
+        std::pair<std::map<Cell*, double>::iterator, bool> const insertiter =
             m_costMultipliers.insert(std::pair<Cell*, double>(cell, multi));
         if (!insertiter.second) {
             double& old = insertiter.first->second;
@@ -1266,7 +1266,7 @@ namespace FIFE
 
     void CellCache::setSpeedMultiplier(Cell* cell, double multi)
     {
-        std::pair<std::map<Cell*, double>::iterator, bool> insertiter =
+        std::pair<std::map<Cell*, double>::iterator, bool> const insertiter =
             m_speedMultipliers.insert(std::pair<Cell*, double>(cell, multi));
         if (!insertiter.second) {
             double& old = insertiter.first->second;
@@ -1438,7 +1438,7 @@ namespace FIFE
 
     void CellCache::addNarrowCell(Cell* cell)
     {
-        std::pair<std::set<Cell*>::iterator, bool> insertiter = m_narrowCells.insert(cell);
+        std::pair<std::set<Cell*>::iterator, bool> const insertiter = m_narrowCells.insert(cell);
         if (insertiter.second) {
             cell->addChangeListener(m_cellZoneListener);
         }
@@ -1504,8 +1504,8 @@ namespace FIFE
 
     void CellCache::removeCellFromArea(const std::string& id, Cell* cell)
     {
-        StringCellPair result = m_cellAreas.equal_range(id);
-        auto it               = result.first;
+        StringCellPair const result = m_cellAreas.equal_range(id);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 m_cellAreas.erase(it);
@@ -1562,8 +1562,8 @@ namespace FIFE
     std::vector<Cell*> CellCache::getAreaCells(const std::string& id)
     {
         std::vector<Cell*> cells;
-        StringCellPair result = m_cellAreas.equal_range(id);
-        auto it               = result.first;
+        StringCellPair const result = m_cellAreas.equal_range(id);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             cells.push_back((*it).second);
         }
@@ -1572,8 +1572,8 @@ namespace FIFE
 
     bool CellCache::isCellInArea(const std::string& id, Cell* cell)
     {
-        StringCellPair result = m_cellAreas.equal_range(id);
-        auto it               = result.first;
+        StringCellPair const result = m_cellAreas.equal_range(id);
+        auto it                     = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 return true;

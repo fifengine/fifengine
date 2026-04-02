@@ -59,8 +59,8 @@ namespace FIFE
 
     bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target)
     {
-        int32_t x = target.x - curpos.x;
-        int32_t y = target.y - curpos.y;
+        int32_t const x = target.x - curpos.x;
+        int32_t const y = target.y - curpos.y;
 
         if (std::abs(x) <= 1 && std::abs(y) <= 1) {
             if (m_axial) {
@@ -100,20 +100,20 @@ namespace FIFE
     const std::string& HexGrid::getType() const
     {
         if (m_axial) {
-            static std::string type("hexagonal_axial");
+            static std::string const type("hexagonal_axial");
             return type;
         }
-        static std::string type("hexagonal");
+        static std::string const type("hexagonal");
         return type;
     }
 
     const std::string& HexGrid::getName() const
     {
         if (m_axial) {
-            static std::string hexGrid("Hex Grid (Axial)");
+            static std::string const hexGrid("Hex Grid (Axial)");
             return hexGrid;
         }
-        static std::string hexGrid("Hex Grid");
+        static std::string const hexGrid("Hex Grid");
         return hexGrid;
     }
 
@@ -124,9 +124,9 @@ namespace FIFE
         } else {
             // each uneven row has shifted coordinate of 0.5 horizontally
             // shift has to be gradual on vertical axis
-            double ay      = std::abs(y);
-            auto i_layer_y = static_cast<int32_t>(ay);
-            double offset  = ay - static_cast<double>(i_layer_y);
+            double const ay = std::abs(y);
+            auto i_layer_y  = static_cast<int32_t>(ay);
+            double offset   = ay - static_cast<double>(i_layer_y);
             if ((i_layer_y % 2) == 1) {
                 offset = 1 - offset;
             }
@@ -139,7 +139,7 @@ namespace FIFE
         ExactModelCoordinate tranformed_coords(layer_coords);
         tranformed_coords.x += getXZigzagOffset(layer_coords.y);
         tranformed_coords.y *= VERTICAL_MULTIP;
-        ExactModelCoordinate result = m_matrix * tranformed_coords;
+        ExactModelCoordinate const result = m_matrix * tranformed_coords;
         FL_DBG(_log, LMsg("layercoords ") << layer_coords << " converted to map: " << result);
         return result;
     }
@@ -178,7 +178,7 @@ namespace FIFE
         if ((static_cast<int32_t>(round(elc.y)) & 1) != 0) {
             elc.x -= 0.5;
         }
-        ExactModelCoordinate lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
+        ExactModelCoordinate const lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
 
         auto x = static_cast<int32_t>(lc.x);
         auto y = static_cast<int32_t>(lc.y);
@@ -320,19 +320,19 @@ namespace FIFE
     std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end)
     {
         std::vector<ModelCoordinate> coords;
-        int32_t doubleDeltaX = (2 * (end.x - start.x)) + std::abs(end.y % 2) - std::abs(start.y % 2);
-        int32_t deltaY       = end.y - start.y;
+        int32_t const doubleDeltaX = (2 * (end.x - start.x)) + std::abs(end.y % 2) - std::abs(start.y % 2);
+        int32_t const deltaY       = end.y - start.y;
 
         // int8_t signX = (deltaX >= 0) ? 1 : -1;
         // int8_t signY = (deltaY >= 0) ? 1 : -1;
-        int8_t signX = (start.x < end.x) ? 1 : -1;
-        int8_t signY = (start.y < end.y) ? 1 : -1;
+        int8_t signX       = (start.x < end.x) ? 1 : -1;
+        int8_t const signY = (start.y < end.y) ? 1 : -1;
         ModelCoordinate current(start);
         coords.push_back(current);
         int32_t err = 0;
         if (std::abs(deltaY) < std::abs(doubleDeltaX)) {
-            int32_t errX = 3 * std::abs(doubleDeltaX);
-            int32_t errY = 3 * std::abs(deltaY);
+            int32_t const errX = 3 * std::abs(doubleDeltaX);
+            int32_t const errY = 3 * std::abs(deltaY);
             while (current.x != end.x || current.y != end.y) {
                 err += errY;
                 if (err > std::abs(doubleDeltaX)) {
@@ -379,8 +379,8 @@ namespace FIFE
                 coords.push_back(current);
             }
         } else {
-            int32_t errX = std::abs(doubleDeltaX);
-            int32_t errY = std::abs(deltaY);
+            int32_t const errX = std::abs(doubleDeltaX);
+            int32_t const errY = std::abs(deltaY);
             while (current.x != end.x || current.y != end.y) {
                 err += errX;
                 if (err > 0) {

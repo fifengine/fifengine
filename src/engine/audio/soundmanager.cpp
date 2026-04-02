@@ -100,7 +100,7 @@ namespace FIFE
 
         // set listener position
         alListener3f(AL_POSITION, 0.0, 0.0, 0.0);
-        ALfloat vec1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+        ALfloat const vec1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
         alListenerfv(AL_ORIENTATION, &vec1[0]);
 
         // set volume
@@ -264,7 +264,7 @@ namespace FIFE
     void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation) const
     {
         if (isActive()) {
-            ALfloat vec[6] = {
+            ALfloat const vec[6] = {
                 static_cast<ALfloat>(orientation.x),
                 static_cast<ALfloat>(orientation.y),
                 static_cast<ALfloat>(orientation.z),
@@ -338,8 +338,8 @@ namespace FIFE
         if (m_state != SM_STATE_PLAY) {
             return;
         }
-        AudioSpaceCoordinate listenerPos = getListenerPosition();
-        auto maxDistance                 = static_cast<double>(m_maxDistance);
+        AudioSpaceCoordinate const listenerPos = getListenerPosition();
+        auto maxDistance                       = static_cast<double>(m_maxDistance);
 
         // first check emitters
         for (auto* emitter : m_emitterVec) {
@@ -348,9 +348,9 @@ namespace FIFE
             }
             emitter->setCheckDifference();
 
-            bool active = emitter->isActive();
-            bool clip   = static_cast<bool>(emitter->getSoundClip());
-            bool plays  = !emitter->isFinished();
+            bool const active = emitter->isActive();
+            bool const clip   = static_cast<bool>(emitter->getSoundClip());
+            bool const plays  = !emitter->isFinished();
             // remove active without clip or stopped
             if (!clip || !plays) {
                 if (active) {
@@ -362,11 +362,11 @@ namespace FIFE
 
             bool inRange = true;
             if (emitter->isPosition()) {
-                AudioSpaceCoordinate emitterPos = emitter->getPosition();
-                double rx                       = listenerPos.x - emitterPos.x;
-                double ry                       = listenerPos.y - emitterPos.y;
-                double rz                       = listenerPos.z - emitterPos.z;
-                inRange                         = maxDistance >= Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
+                AudioSpaceCoordinate const emitterPos = emitter->getPosition();
+                double const rx                       = listenerPos.x - emitterPos.x;
+                double const ry                       = listenerPos.y - emitterPos.y;
+                double const rz                       = listenerPos.z - emitterPos.z;
+                inRange                               = maxDistance >= Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
             }
             // remove active not in range
             if (!inRange) {
@@ -561,7 +561,7 @@ namespace FIFE
 
     void SoundManager::removeFromGroup(SoundEmitter* emitter)
     {
-        std::string group = emitter->getGroup();
+        std::string const group = emitter->getGroup();
         if (group.empty()) {
             return;
         }

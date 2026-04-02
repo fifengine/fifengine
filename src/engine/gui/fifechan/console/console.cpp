@@ -75,16 +75,16 @@ namespace FIFE
 
     void Console::reLayout()
     {
-        int32_t w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
-        int32_t h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
-        int32_t b        = 0;
-        int32_t input_h  = getFont()->getHeight();
-        int32_t bbar_h   = input_h;
-        int32_t button_w = 80;
+        int32_t const w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
+        int32_t const h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
+        int32_t const b        = 0;
+        int32_t const input_h  = getFont()->getHeight();
+        int32_t const bbar_h   = input_h;
+        int32_t const button_w = 80;
 
-        fcn::Color black(0x00, 0, 0, 0xff);
-        fcn::Color white(0xff, 0xff, 0xff, 0xff);
-        fcn::Color dark(50, 60, 50, 0xff);
+        fcn::Color const black(0x00, 0, 0, 0xff);
+        fcn::Color const white(0xff, 0xff, 0xff, 0xff);
+        fcn::Color const dark(50, 60, 50, 0xff);
 
         setSize(w, h);
         setPosition((RenderBackend::instance()->getScreenWidth() - w) / 2, -h);
@@ -146,7 +146,7 @@ namespace FIFE
     void Console::updateCaption()
     {
         std::string caption = "FIFE Console - FPS: ";
-        double fps          = 1e3 / TimeManager::instance()->getAverageFrameTime();
+        double const fps    = 1e3 / TimeManager::instance()->getAverageFrameTime();
         caption += std::to_string(fps);
         m_status->setCaption(caption);
     }
@@ -236,7 +236,7 @@ namespace FIFE
         // run the command
         try {
             if (m_consoleexec != nullptr) {
-                std::string resp = m_consoleexec->onConsoleCommand(cmd);
+                std::string const resp = m_consoleexec->onConsoleCommand(cmd);
                 println(resp);
             } else {
                 FL_WARN(_log, LMsg("ConsoleExecuter not bind, but command received: ") << cmd.c_str());
@@ -273,7 +273,7 @@ namespace FIFE
         }
 
         // Assure the new text is visible
-        fcn::Rectangle rect(0, m_output->getHeight(), 0, 0);
+        fcn::Rectangle const rect(0, m_output->getHeight(), 0, 0);
         m_outputscrollarea->showWidgetPart(m_output, rect);
     }
 

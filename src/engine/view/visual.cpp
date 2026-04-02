@@ -53,7 +53,8 @@ namespace FIFE
 
     void OverlayColors::changeColor(const Color& source, const Color& target)
     {
-        std::pair<std::map<Color, Color>::iterator, bool> inserter = m_colorMap.insert(std::make_pair(source, target));
+        std::pair<std::map<Color, Color>::iterator, bool> const inserter =
+            m_colorMap.insert(std::make_pair(source, target));
         if (!inserter.second) {
             Color& c = inserter.first->second;
             c.set(target.getR(), target.getG(), target.getB(), target.getAlpha());
@@ -100,7 +101,7 @@ namespace FIFE
     void ObjectVisual::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors)
     {
         m_map[angle % 360] = angle % 360;
-        std::pair<AngleColorOverlayMap::iterator, bool> inserter =
+        std::pair<AngleColorOverlayMap::iterator, bool> const inserter =
             m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));
         if (!inserter.second) {
             OverlayColors tmp = colors;
@@ -130,7 +131,7 @@ namespace FIFE
             return;
         }
         int32_t closestMatch = 0;
-        int32_t index        = getIndexByAngle(angle, m_map, closestMatch);
+        int32_t const index  = getIndexByAngle(angle, m_map, closestMatch);
         m_colorOverlayMap.erase(index);
         m_map.erase(index);
     }
@@ -270,7 +271,7 @@ namespace FIFE
     void ActionVisual::addColorOverlay(uint32_t angle, const OverlayColors& colors)
     {
         m_map[angle % 360] = angle % 360;
-        std::pair<AngleColorOverlayMap::iterator, bool> inserter =
+        std::pair<AngleColorOverlayMap::iterator, bool> const inserter =
             m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));
         if (!inserter.second) {
             OverlayColors tmp = colors;
@@ -291,7 +292,7 @@ namespace FIFE
             return nullptr;
         }
         int32_t closestMatch = 0;
-        int32_t index        = getIndexByAngle(angle, m_map, closestMatch);
+        int32_t const index  = getIndexByAngle(angle, m_map, closestMatch);
         if (!m_colorOverlayMap.contains(index)) {
             return nullptr;
         }
@@ -304,7 +305,7 @@ namespace FIFE
             return;
         }
         int32_t closestMatch = 0;
-        int32_t index        = getIndexByAngle(angle, m_map, closestMatch);
+        int32_t const index  = getIndexByAngle(angle, m_map, closestMatch);
         m_colorOverlayMap.erase(index);
     }
 
@@ -312,7 +313,7 @@ namespace FIFE
     {
         std::map<int32_t, OverlayColors>& orderMap = m_colorAnimationOverlayMap[angle % 360];
         m_map[angle % 360]                         = angle % 360;
-        std::pair<std::map<int32_t, OverlayColors>::iterator, bool> inserter =
+        std::pair<std::map<int32_t, OverlayColors>::iterator, bool> const inserter =
             orderMap.insert(std::make_pair(order, colors));
         if (!inserter.second) {
             OverlayColors tmp = colors;
@@ -372,14 +373,14 @@ namespace FIFE
 
     void ActionVisual::convertToOverlays(bool color)
     {
-        bool colorOverlay = color && !m_colorOverlayMap.empty();
-        auto it           = m_map.begin();
+        bool const colorOverlay = color && !m_colorOverlayMap.empty();
+        auto it                 = m_map.begin();
         for (; it != m_map.end(); ++it) {
             addAnimationOverlay(it->first, 0, getAnimationByAngle(it->first));
             if (colorOverlay) {
                 OverlayColors* oldC = getColorOverlay(it->first);
                 if (oldC != nullptr) {
-                    OverlayColors c = OverlayColors(*oldC);
+                    OverlayColors const c = OverlayColors(*oldC);
                     addColorOverlay(it->first, 0, c);
                 }
             }

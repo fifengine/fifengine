@@ -49,13 +49,13 @@ namespace FIFE
 
     bool ZipSource::fileExists(const std::string& file) const
     {
-        fs::path path(file);
+        fs::path const path(file);
         return (m_zipTree.getNode(path.string()) != nullptr);
     }
 
     RawData* ZipSource::open(const std::string& path) const
     {
-        fs::path filePath(path);
+        fs::path const filePath(path);
         const ZipNode* node = m_zipTree.getNode(filePath.string());
 
         assert(node != 0);
@@ -69,7 +69,7 @@ namespace FIFE
                 FL_DBG(
                     _log,
                     LMsg("trying to uncompress file ") << path << " (compressed with method " << entryData.comp << ")");
-                std::unique_ptr<uint8_t[]> compdata(new uint8_t[entryData.size_comp]);
+                std::unique_ptr<uint8_t[]> const compdata(new uint8_t[entryData.size_comp]);
                 m_zipfile->readInto(compdata.get(), entryData.size_comp);
 
                 z_stream zstream;
@@ -87,7 +87,7 @@ namespace FIFE
                     return nullptr;
                 }
 
-                int32_t err = inflate(&zstream, Z_FINISH);
+                int32_t const err = inflate(&zstream, Z_FINISH);
                 if (err != Z_STREAM_END) {
                     if (zstream.msg != nullptr) {
                         FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
@@ -124,22 +124,22 @@ namespace FIFE
 
     bool ZipSource::readFileToIndex()
     {
-        uint32_t header = m_zipfile->read32Little();
+        uint32_t const header = m_zipfile->read32Little();
         if (header == DE_HEADER ||
             header == CF_HEADER) { // decryption header or central directory header - we are finished
             return true;
         }
 
-        uint16_t vneeded  = m_zipfile->read16Little();
-        uint16_t gflags   = m_zipfile->read16Little();
-        uint16_t comp     = m_zipfile->read16Little();
-        uint16_t lmodtime = m_zipfile->read16Little();
-        uint16_t lmoddate = m_zipfile->read16Little();
-        uint32_t crc      = m_zipfile->read32Little();
-        uint32_t compsize = m_zipfile->read32Little();
-        uint32_t realsize = m_zipfile->read32Little();
-        uint16_t fnamelen = m_zipfile->read16Little();
-        uint16_t extralen = m_zipfile->read16Little();
+        uint16_t const vneeded  = m_zipfile->read16Little();
+        uint16_t const gflags   = m_zipfile->read16Little();
+        uint16_t const comp     = m_zipfile->read16Little();
+        uint16_t const lmodtime = m_zipfile->read16Little();
+        uint16_t const lmoddate = m_zipfile->read16Little();
+        uint32_t crc            = m_zipfile->read32Little();
+        uint32_t compsize       = m_zipfile->read32Little();
+        uint32_t realsize       = m_zipfile->read32Little();
+        uint16_t const fnamelen = m_zipfile->read16Little();
+        uint16_t const extralen = m_zipfile->read16Little();
 
         if (header != LF_HEADER) {
             FL_ERR(_log, LMsg("invalid local file header: ") << header);
@@ -151,10 +151,10 @@ namespace FIFE
             return true;
         }
 
-        fs::path filePath = fs::path(m_zipfile->readString(fnamelen));
+        fs::path const filePath = fs::path(m_zipfile->readString(fnamelen));
 
         m_zipfile->moveIndex(extralen);
-        uint32_t offset = m_zipfile->getCurrentIndex();
+        uint32_t const offset = m_zipfile->getCurrentIndex();
         FL_DBG(
             _log,
             LMsg("found file: ") << filePath.string() << " (" << compsize << "/" << realsize << ") on offset "
@@ -176,8 +176,8 @@ namespace FIFE
         data.offset    = offset;
         data.crc32     = crc;
 
-        std::string filename = filePath.string();
-        ZipNode* node        = m_zipTree.addNode(filename);
+        std::string const filename = filePath.string();
+        ZipNode* node              = m_zipTree.addNode(filename);
 
         if (node != nullptr) {
             // store the zip entry information in the node
@@ -191,7 +191,7 @@ namespace FIFE
     {
         std::set<std::string> result;
 
-        fs::path fixedPath(path);
+        fs::path const fixedPath(path);
 
         const ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
@@ -211,7 +211,7 @@ namespace FIFE
     {
         std::set<std::string> result;
 
-        fs::path fixedPath(path);
+        fs::path const fixedPath(path);
 
         const ZipNode* node = m_zipTree.getNode(fixedPath.string());
 

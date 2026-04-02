@@ -96,11 +96,11 @@ namespace FIFE
 
     int32_t getAngleBetween(const Location& loc1, const Location& loc2)
     {
-        ExactModelCoordinate c1 = loc1.getMapCoordinates();
-        ExactModelCoordinate c2 = loc2.getMapCoordinates();
+        ExactModelCoordinate const c1 = loc1.getMapCoordinates();
+        ExactModelCoordinate const c2 = loc2.getMapCoordinates();
 
-        double dy = (c2.y - c1.y);
-        double dx = (c2.x - c1.x);
+        double const dy = (c2.y - c1.y);
+        double const dx = (c2.x - c1.x);
         // add grid rotation to angle, to guarantee uniform angles (not grid based)
         int32_t angle = static_cast<int32_t>(
             round((Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())) + loc1.getLayer()->getCellGrid()->getRotation()));
@@ -116,7 +116,7 @@ namespace FIFE
         Location facing(loc);
         ExactModelCoordinate emc = facing.getMapCoordinates();
         // remove grid rotation from angle, to guarantee uniform angles (not grid based)
-        double tmpAngle = static_cast<double>(angle) - loc.getLayer()->getCellGrid()->getRotation();
+        double const tmpAngle = static_cast<double>(angle) - loc.getLayer()->getCellGrid()->getRotation();
         emc.x += Mathd::Cos(tmpAngle * (Mathd::pi() / 180.0));
         emc.y -= Mathd::Sin(tmpAngle * (Mathd::pi() / 180.0));
         facing.setMapCoordinates(emc);
@@ -126,8 +126,8 @@ namespace FIFE
 
     int32_t getAngleBetween(const ExactModelCoordinate& emc1, const ExactModelCoordinate& emc2)
     {
-        double dy = (emc2.y - emc1.y);
-        double dx = (emc2.x - emc1.x);
+        double const dy = (emc2.y - emc1.y);
+        double const dx = (emc2.x - emc1.x);
 
         int32_t angle = static_cast<int32_t>(round(Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())));
         if (angle < 0) {

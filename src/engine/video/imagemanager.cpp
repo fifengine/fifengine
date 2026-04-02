@@ -110,7 +110,7 @@ namespace FIFE
         }
 
         // was not found so create and load resource
-        ImagePtr ptr = create(name, loader);
+        ImagePtr const ptr = create(name, loader);
         ptr->load();
 
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
@@ -153,7 +153,7 @@ namespace FIFE
         assert(res);
         assert(!(exists(res->getHandle()) || exists(res->getName())));
 
-        ImagePtr resptr(res);
+        ImagePtr const resptr(res);
 
         std::pair<ImageHandleMapIterator, bool> returnValue;
         returnValue = m_imgHandleMap.insert(ImageHandleMapPair(res->getHandle(), resptr));
@@ -372,7 +372,7 @@ namespace FIFE
         // should always be equal
         assert(m_imgHandleMap.size() == m_imgNameMap.size());
 
-        size_t count = m_imgHandleMap.size();
+        size_t const count = m_imgHandleMap.size();
 
         m_imgHandleMap.clear();
         m_imgNameMap.clear();
@@ -395,7 +395,7 @@ namespace FIFE
             }
         }
 
-        for (ResourceHandle imgHandle : imgHandles) {
+        for (ResourceHandle const imgHandle : imgHandles) {
             remove(imgHandle);
         }
 
@@ -416,7 +416,7 @@ namespace FIFE
         }
 
         // not found so attempt to create and load the resource
-        ImagePtr ptr = load(name);
+        ImagePtr const ptr = load(name);
         return ptr;
     }
 

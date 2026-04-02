@@ -53,7 +53,7 @@ namespace FIFE
 
     bool CEGuiInputProcessor::processKeyInput(SDL_Event& event)
     {
-        bool consumed = false;
+        bool const consumed = false;
 
         switch (event.type) {
         case SDL_KEYDOWN:

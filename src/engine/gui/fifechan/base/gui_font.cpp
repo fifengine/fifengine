@@ -40,7 +40,7 @@ namespace FIFE
             return;
         }
 
-        int32_t yoffset = getRowSpacing() / 2;
+        int32_t const yoffset = getRowSpacing() / 2;
 
         const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
         FIFE::Rect rect;
@@ -55,7 +55,7 @@ namespace FIFE
 
         Image* image = nullptr;
         if (isDynamicColoring()) {
-            SDL_Color color = getColor();
+            SDL_Color const color = getColor();
             setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
             image = getAsImage(text);
             setColor(color.r, color.g, color.b, color.a);

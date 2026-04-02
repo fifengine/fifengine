@@ -33,14 +33,14 @@ namespace FIFE
 
         // Have to save the images x and y shift or it gets lost when it's
         // loaded again.
-        int32_t xShiftSave = img->getXShift();
-        int32_t yShiftSave = img->getYShift();
+        int32_t const xShiftSave = img->getXShift();
+        int32_t const yShiftSave = img->getYShift();
 
         if (!img->isSharedImage()) {
             const std::string& filename = img->getName();
             std::unique_ptr<RawData> data(vfs->open(filename));
-            size_t datalen = data->getDataLength();
-            std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
+            size_t const datalen = data->getDataLength();
+            std::unique_ptr<uint8_t[]> const darray(new uint8_t[datalen]);
             data->readInto(darray.get(), datalen);
             SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
@@ -56,10 +56,10 @@ namespace FIFE
                 img->setSurface(surface);
                 // in case of OpenGL we need a 32bit surface
             } else {
-                SDL_PixelFormat dst_format = rb->getPixelFormat();
-                SDL_PixelFormat src_format = *surface->format;
-                uint8_t dstbits            = dst_format.BitsPerPixel;
-                uint8_t srcbits            = src_format.BitsPerPixel;
+                SDL_PixelFormat dst_format       = rb->getPixelFormat();
+                SDL_PixelFormat const src_format = *surface->format;
+                uint8_t const dstbits            = dst_format.BitsPerPixel;
+                uint8_t const srcbits            = src_format.BitsPerPixel;
 
                 if (srcbits != 32 || dst_format.Rmask != src_format.Rmask || dst_format.Gmask != src_format.Gmask ||
                     dst_format.Bmask != src_format.Bmask || dst_format.Amask != src_format.Amask) {

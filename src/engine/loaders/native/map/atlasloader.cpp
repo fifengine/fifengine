@@ -89,8 +89,8 @@ namespace FIFE
 
     bool AtlasLoader::isLoadable(const std::string& filename)
     {
-        fs::path atlasPath(filename);
-        std::string atlasFilename = atlasPath.string();
+        fs::path const atlasPath(filename);
+        std::string const atlasFilename = atlasPath.string();
         XML::Document atlasFile;
 
         try {
@@ -131,9 +131,9 @@ namespace FIFE
 
     AtlasPtr AtlasLoader::load(const std::string& filename)
     {
-        fs::path atlasPath(filename);
+        fs::path const atlasPath(filename);
         fs::path atlasPathDirectory;
-        std::string atlasFilename = atlasPath.string();
+        std::string const atlasFilename = atlasPath.string();
 
         if (HasParentPath(atlasPath)) {
             // save the directory where the atlas file is located
@@ -183,9 +183,9 @@ namespace FIFE
 
     std::vector<AtlasPtr> AtlasLoader::loadMultiple(const std::string& filename)
     {
-        fs::path atlasPath(filename);
+        fs::path const atlasPath(filename);
         fs::path atlasPathDirectory;
-        std::string atlasFilename = atlasPath.string();
+        std::string const atlasFilename = atlasPath.string();
 
         if (HasParentPath(atlasPath)) {
             // save the directory where the atlas file is located
@@ -229,7 +229,7 @@ namespace FIFE
         if (XML::HasName(root, "assets")) {
             for (XML::Element* atlasElem = root->FirstChildElement("atlas"); atlasElem != nullptr;
                  atlasElem               = atlasElem->NextSiblingElement("atlas")) {
-                AtlasPtr atlas = loadAtlas(filename, atlasElem);
+                AtlasPtr const atlas = loadAtlas(filename, atlasElem);
                 if (atlas) {
                     atlasVector.push_back(atlas);
                 }
@@ -250,7 +250,7 @@ namespace FIFE
         if (atlasSource != nullptr) {
             const char* atlasId = XML::Attribute(atlasElem, "id");
 
-            fs::path atlasPath(filename);
+            fs::path const atlasPath(filename);
             fs::path atlasPathDirectory;
             if (HasParentPath(atlasPath)) {
                 // save the directory where the atlas file is located
@@ -258,7 +258,7 @@ namespace FIFE
             }
 
             // Atlas itself doesn't have appended id
-            fs::path atlasImagePath = atlasPathDirectory / atlasSource;
+            fs::path const atlasImagePath = atlasPathDirectory / atlasSource;
             atlas.reset(new Atlas(atlasImagePath.string()));
 
             // End-user could create the same atlas for the second time.
@@ -298,7 +298,7 @@ namespace FIFE
                         }
                         subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                        AtlasData atlasData = {.rect = region, .image = subImage};
+                        AtlasData const atlasData = {.rect = region, .image = subImage};
                         atlas->addImage(finalname, atlasData);
                     }
                 }
@@ -321,15 +321,15 @@ namespace FIFE
                 }
 
                 if (atlasWidth != 0 && atlasHeight != 0 && subimageWidth != 0 && subimageHeight != 0) {
-                    int x_rows = atlasWidth / subimageWidth;
-                    int y_rows = atlasHeight / subimageHeight;
+                    int const x_rows = atlasWidth / subimageWidth;
+                    int const y_rows = atlasHeight / subimageHeight;
                     Rect region(0, 0, subimageWidth, subimageHeight);
                     for (int y = 0; y < y_rows; ++y) {
                         region.y = y * subimageHeight;
                         for (int x = 0; x < x_rows; ++x) {
                             region.x = x * subimageWidth;
 
-                            std::string finalname = std::format("{}:{:04d}{}", atlasId, frame, extension);
+                            std::string const finalname = std::format("{}:{:04d}{}", atlasId, frame, extension);
 
                             ImagePtr subImage;
                             if (!m_imageManager->exists(finalname)) {
@@ -339,7 +339,7 @@ namespace FIFE
                             }
                             subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                            AtlasData atlasData = {.rect = region, .image = subImage};
+                            AtlasData const atlasData = {.rect = region, .image = subImage};
                             atlas->addImage(finalname, atlasData);
 
                             ++frame;

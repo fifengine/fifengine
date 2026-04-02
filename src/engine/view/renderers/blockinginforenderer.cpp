@@ -62,7 +62,7 @@ namespace FIFE
             return;
         }
 
-        Rect cv          = cam->getViewPort();
+        Rect const cv    = cam->getViewPort();
         CellCache* cache = layer->getCellCache();
         if (cache != nullptr) {
             const std::vector<std::vector<Cell*>>& cells = cache->getCells();
@@ -70,8 +70,8 @@ namespace FIFE
             for (; it != cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
-                    ExactModelCoordinate emc = FIFE::intPt2doublePt((*cit)->getLayerCoordinates());
-                    ScreenPoint sp           = cam->toScreenCoordinates(cg->toMapCoordinates(emc));
+                    ExactModelCoordinate const emc = FIFE::intPt2doublePt((*cit)->getLayerCoordinates());
+                    ScreenPoint const sp           = cam->toScreenCoordinates(cg->toMapCoordinates(emc));
                     // if it is not in cameras view continue
                     if (sp.x < cv.x || sp.x > cv.x + cv.w || sp.y < cv.y || sp.y > cv.y + cv.h) {
                         continue;
@@ -81,22 +81,22 @@ namespace FIFE
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
                         auto vit                  = vertices.begin();
                         const std::size_t halfind = vertices.size() / 2;
-                        ScreenPoint firstpt       = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                        ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                         Point pt1(firstpt.x, firstpt.y);
                         Point pt2;
                         ++vit;
                         for (; vit != vertices.end(); vit++) {
-                            ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
-                            pt2.x           = pts.x;
-                            pt2.y           = pts.y;
+                            ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                            pt2.x                 = pts.x;
+                            pt2.y                 = pts.y;
                             m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
                             pt1 = pt2;
                         }
                         m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-                        ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-                        Point pt3(spt1.x, spt1.y);
-                        ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-                        Point pt4(spt2.x, spt2.y);
+                        ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                        Point const pt3(spt1.x, spt1.y);
+                        ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                        Point const pt4(spt2.x, spt2.y);
                         m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
                     }
                 }
@@ -112,22 +112,22 @@ namespace FIFE
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
                 auto vit                  = vertices.begin();
                 const std::size_t halfind = vertices.size() / 2;
-                ScreenPoint firstpt       = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                 Point pt1(firstpt.x, firstpt.y);
                 Point pt2;
                 ++vit;
                 for (; vit != vertices.end(); vit++) {
-                    ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
-                    pt2.x           = pts.x;
-                    pt2.y           = pts.y;
+                    ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                    pt2.x                 = pts.x;
+                    pt2.y                 = pts.y;
                     m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
                     pt1 = pt2;
                 }
                 m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-                ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-                Point pt3(spt1.x, spt1.y);
-                ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-                Point pt4(spt2.x, spt2.y);
+                ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                Point const pt3(spt1.x, spt1.y);
+                ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                Point const pt4(spt2.x, spt2.y);
                 m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
             }
         }

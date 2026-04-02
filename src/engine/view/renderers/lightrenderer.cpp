@@ -71,19 +71,19 @@ namespace FIFE
 
     void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
-        Point p = m_anchor.getCalculatedPoint(cam, layer, true);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport = cam->getViewPort();
-            auto width    = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
-            auto height   = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
-            r.x           = p.x - width / 2;
-            r.y           = p.y - height / 2;
-            r.w           = width;
-            r.h           = height;
+            Rect const viewport = cam->getViewPort();
+            auto width          = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+            auto height         = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+            r.x                 = p.x - width / 2;
+            r.y                 = p.y - height / 2;
+            r.w                 = width;
+            r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t lm = renderbackend->getLightingModel();
+                uint8_t const lm = renderbackend->getLightingModel();
                 m_image->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -109,22 +109,22 @@ namespace FIFE
     void LightRendererAnimationInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
-        Point p = m_anchor.getCalculatedPoint(cam, layer, true);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
-            int32_t animtime =
+            int32_t const animtime =
                 scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
-            ImagePtr img = m_animation->getFrameByTimestamp(animtime);
+            ImagePtr const img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
-            Rect viewport = cam->getViewPort();
-            auto width    = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-            auto height   = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
-            r.x           = p.x - width / 2;
-            r.y           = p.y - height / 2;
-            r.w           = width;
-            r.h           = height;
+            Rect const viewport = cam->getViewPort();
+            auto width          = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+            auto height         = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+            r.x                 = p.x - width / 2;
+            r.y                 = p.y - height / 2;
+            r.w                 = width;
+            r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t lm = renderbackend->getLightingModel();
+                uint8_t const lm = renderbackend->getLightingModel();
                 img->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -146,19 +146,19 @@ namespace FIFE
 
     void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
-        Point p = m_anchor.getCalculatedPoint(cam, layer, true);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport = cam->getViewPort();
-            auto width    = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-            auto height   = static_cast<uint32_t>(round(m_height * cam->getZoom()));
-            r.x           = p.x - width / 2;
-            r.y           = p.y - height / 2;
-            r.w           = width;
-            r.h           = height;
+            Rect const viewport = cam->getViewPort();
+            auto width          = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+            auto height         = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+            r.x                 = p.x - width / 2;
+            r.y                 = p.y - height / 2;
+            r.w                 = width;
+            r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t lm = renderbackend->getLightingModel();
+                uint8_t const lm = renderbackend->getLightingModel();
                 m_image->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -199,11 +199,11 @@ namespace FIFE
     void LightRendererSimpleLightInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
-        Point p = m_anchor.getCalculatedPoint(cam, layer, true);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
-            double zoom = cam->getZoom();
+            double const zoom = cam->getZoom();
 
-            uint8_t lm = renderbackend->getLightingModel();
+            uint8_t const lm = renderbackend->getLightingModel();
             renderbackend->drawLightPrimitive(
                 p,
                 m_intensity,
@@ -364,7 +364,7 @@ namespace FIFE
     // Render
     void LightRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        uint8_t lm = m_renderbackend->getLightingModel();
+        uint8_t const lm = m_renderbackend->getLightingModel();
 
         if (!layer->areInstancesVisible()) {
             return;

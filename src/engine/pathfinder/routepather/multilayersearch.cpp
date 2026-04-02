@@ -126,7 +126,7 @@ namespace FIFE
         m_gCosts.clear();
         // fill with defaults
         m_sortedFrontier.pushElement(PriorityQueue<int32_t, double>::value_type(startInt, 0.0));
-        int32_t max_index = cache->getMaxIndex();
+        int32_t const max_index = cache->getMaxIndex();
         m_spt.resize(toSize(max_index), -1);
         m_sf.resize(toSize(max_index), -1);
         m_gCosts.resize(toSize(max_index), 0.0);
@@ -165,7 +165,7 @@ namespace FIFE
             createSearchFrontier(m_lastStartCoordInt, m_currentCache);
         }
 
-        PriorityQueue<int32_t, double>::value_type topvalue = m_sortedFrontier.getPriorityElement();
+        PriorityQueue<int32_t, double>::value_type const topvalue = m_sortedFrontier.getPriorityElement();
         m_sortedFrontier.popElement();
         m_next                      = topvalue.first;
         const std::size_t nextIndex = toIndex(m_next);
@@ -187,18 +187,18 @@ namespace FIFE
             return;
         }
 
-        ModelCoordinate destCoord = m_currentCache->convertIntToCoord(m_lastDestCoordInt);
-        ModelCoordinate nextCoord = m_currentCache->convertIntToCoord(m_next);
-        CellGrid* grid            = m_currentCache->getLayer()->getCellGrid();
-        Cell* nextCell            = m_currentCache->getCell(nextCoord);
+        ModelCoordinate const destCoord = m_currentCache->convertIntToCoord(m_lastDestCoordInt);
+        ModelCoordinate const nextCoord = m_currentCache->convertIntToCoord(m_next);
+        CellGrid* grid                  = m_currentCache->getLayer()->getCellGrid();
+        Cell* nextCell                  = m_currentCache->getCell(nextCoord);
         if (nextCell == nullptr) {
             return;
         }
-        int32_t cellZ                       = nextCell->getLayerCoordinates().z;
-        int32_t maxZ                        = m_route->getZStepRange();
-        bool zLimited                       = maxZ != -1;
-        uint8_t blockerThreshold            = m_ignoreDynamicBlockers ? 2 : 1;
-        bool limitedArea                    = m_route->isAreaLimited();
+        int32_t const cellZ                 = nextCell->getLayerCoordinates().z;
+        int32_t const maxZ                  = m_route->getZStepRange();
+        bool const zLimited                 = maxZ != -1;
+        uint8_t const blockerThreshold      = m_ignoreDynamicBlockers ? 2 : 1;
+        bool const limitedArea              = m_route->isAreaLimited();
         const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
         if (adjacents.empty()) {
             return;
@@ -210,7 +210,7 @@ namespace FIFE
             if (adjacent->getLayer()->getCellCache() != m_currentCache) {
                 continue;
             }
-            int32_t adjacentInt             = adjacent->getCellId();
+            int32_t const adjacentInt       = adjacent->getCellId();
             const std::size_t adjacentIndex = toIndex(adjacentInt);
             if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
                 continue;
@@ -218,8 +218,8 @@ namespace FIFE
             if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
-            bool blocker                  = adjacent->getCellType() > blockerThreshold;
-            ModelCoordinate adjacentCoord = adjacent->getLayerCoordinates();
+            bool blocker                        = adjacent->getCellType() > blockerThreshold;
+            ModelCoordinate const adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (blocker && m_multicell) {
                     auto bc_it = std::ranges::find(m_ignoredBlockers, adjacent);
@@ -238,7 +238,7 @@ namespace FIFE
                 Location adjacentLoc(adjacent->getLayer());
                 adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
-                int32_t rotation = getAngleBetween(currentLoc, adjacentLoc);
+                int32_t const rotation = getAngleBetween(currentLoc, adjacentLoc);
                 std::vector<ModelCoordinate> coords =
                     grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
                 auto coord_it = coords.begin();
@@ -298,7 +298,7 @@ namespace FIFE
             } else {
                 gCost += m_currentCache->getAdjacentCost(adjacentCoord, nextCoord);
             }
-            double hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
+            double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
             if (m_sf[adjacentIndex] == -1) {
                 m_sortedFrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
                 m_gCosts[adjacentIndex] = gCost;
@@ -313,8 +313,8 @@ namespace FIFE
 
     void MultiLayerSearch::calcPathStep()
     {
-        int32_t current = m_lastDestCoordInt;
-        int32_t end     = m_lastStartCoordInt;
+        int32_t current   = m_lastDestCoordInt;
+        int32_t const end = m_lastStartCoordInt;
         Location newnode(m_currentCache->getLayer());
         Path path;
         // This assures that the agent always steps into the center of the target cell.
@@ -341,8 +341,8 @@ namespace FIFE
 
     void MultiLayerSearch::calcPath()
     {
-        int32_t current = m_lastDestCoordInt;
-        int32_t end     = m_lastStartCoordInt;
+        int32_t current   = m_lastDestCoordInt;
+        int32_t const end = m_lastStartCoordInt;
         Location newnode(m_currentCache->getLayer());
         Path path;
         // This assures that the agent always steps into the center of the target cell.
@@ -394,8 +394,8 @@ namespace FIFE
                 Location loc2(it->getTransition()->m_layer);
                 loc2.setLayerCoordinates(it->getTransition()->m_mc);
 
-                double temp_distance    = temp.getLayerDistanceTo(m_from) + loc2.getLayerDistanceTo(m_to);
-                double current_distance = loc.getLayerDistanceTo(m_from) + loc1.getLayerDistanceTo(m_to);
+                double const temp_distance    = temp.getLayerDistanceTo(m_from) + loc2.getLayerDistanceTo(m_to);
+                double const current_distance = loc.getLayerDistanceTo(m_from) + loc1.getLayerDistanceTo(m_to);
                 if (current_distance > temp_distance) {
                     loc  = temp;
                     cell = it;
@@ -458,9 +458,9 @@ namespace FIFE
             distanceZoneMap.insert(std::pair<int32_t, Zone*>(distance, *zit));
         }
         // start zone
-        int32_t startZone = zoneDistanceMap.find(m_startZone)->second;
+        int32_t const startZone = zoneDistanceMap.find(m_startZone)->second;
         // target zone
-        int32_t targetZone = zoneDistanceMap.find(m_endZone)->second;
+        int32_t const targetZone = zoneDistanceMap.find(m_endZone)->second;
         // Priority queue to sort zones
         PriorityQueue<int32_t, double> sortedfrontier;
         // add start zone
@@ -478,9 +478,9 @@ namespace FIFE
             if (sortedfrontier.empty()) {
                 break;
             }
-            PriorityQueue<int32_t, double>::value_type topvalue = sortedfrontier.getPriorityElement();
+            PriorityQueue<int32_t, double>::value_type const topvalue = sortedfrontier.getPriorityElement();
             sortedfrontier.popElement();
-            int32_t next                = topvalue.first;
+            int32_t const next          = topvalue.first;
             const std::size_t nextIndex = toIndex(next);
             spt[nextIndex]              = sf[nextIndex];
             // found destination zone
@@ -503,12 +503,12 @@ namespace FIFE
                 // target transition cell
                 Cell* transCelle = transCache->getCell(trans->m_mc);
                 // next zone as int
-                int32_t nextInt = zoneDistanceMap.find(transCelle->getZone())->second;
+                int32_t const nextInt = zoneDistanceMap.find(transCelle->getZone())->second;
                 if (nextInt == next && nextInt != targetZone) {
                     continue;
                 }
                 // iterator distance as cost
-                double cost                    = costs[nextIndex] + static_cast<double>(std::abs(nextInt - startZone));
+                double const cost              = costs[nextIndex] + static_cast<double>(std::abs(nextInt - startZone));
                 const std::size_t nextIntIndex = toIndex(nextInt);
                 if (sf[nextIntIndex] == -1) {
                     sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(nextInt, cost));
@@ -524,8 +524,8 @@ namespace FIFE
         // startZone to endZone could be solved
         if (found) {
             // fetch sorted zones
-            int32_t current = targetZone;
-            int32_t end     = startZone;
+            int32_t current   = targetZone;
+            int32_t const end = startZone;
 
             std::list<Zone*> betweenZones;
             Zone* tempZone = distanceZoneMap.find(current)->second;
@@ -568,7 +568,7 @@ namespace FIFE
                     // nearest transistion (air-line distance)
                     Location tmpLoc(tempCell->getLayer());
                     tmpLoc.setLayerCoordinates(tempCell->getLayerCoordinates());
-                    double locCost = lastLoc.getLayerDistanceTo(tmpLoc);
+                    double const locCost = lastLoc.getLayerDistanceTo(tmpLoc);
                     if ((transCell == nullptr) || locCost < nextCost) {
                         nextCost  = locCost;
                         transCell = tempCell;

@@ -187,7 +187,7 @@ namespace fcn
         Rectangle dim = widget->getDimension();
         widget->getAbsolutePosition(dim.x, dim.y);
         std::list<Widget*>::const_iterator currChild(mChildren.begin());
-        std::list<Widget*>::const_iterator endChildren(mChildren.end());
+        std::list<Widget*>::const_iterator const endChildren(mChildren.end());
         for (; currChild != endChildren; ++currChild) {
             if (!(*currChild)->isVisible() || (*currChild) == widget) {
                 continue;
@@ -272,8 +272,8 @@ namespace fcn
                 if (right != nullptr) {
                     if (top->getY() + top->getHeight() >= right->getY() ||
                         top->getY() + top->getHeight() + 1 < right->getY()) {
-                        int32_t newY = top->getY() + top->getHeight() + 1;
-                        int32_t diff = newY - right->getY();
+                        int32_t const newY = top->getY() + top->getHeight() + 1;
+                        int32_t const diff = newY - right->getY();
                         right->setY(newY);
                         right->setHeight(right->getHeight() + diff);
                     }
@@ -281,16 +281,16 @@ namespace fcn
                 if (left != nullptr) {
                     if (top->getY() + top->getHeight() >= left->getY() ||
                         top->getY() + top->getHeight() + 1 < left->getY()) {
-                        int32_t newY = top->getY() + top->getHeight() + 1;
-                        int32_t diff = newY - left->getY();
+                        int32_t const newY = top->getY() + top->getHeight() + 1;
+                        int32_t const diff = newY - left->getY();
                         left->setY(newY);
                         left->setHeight(left->getHeight() + diff);
                     }
                 }
                 if (bottom != nullptr) {
                     if (top->getY() + top->getHeight() >= bottom->getY()) {
-                        int32_t newY = top->getY() + top->getHeight() + 1;
-                        int32_t diff = newY - bottom->getY();
+                        int32_t const newY = top->getY() + top->getHeight() + 1;
+                        int32_t const diff = newY - bottom->getY();
                         bottom->setY(newY);
                         bottom->setHeight(bottom->getHeight() + diff);
                     }
@@ -301,10 +301,10 @@ namespace fcn
                 if (right != nullptr) {
                     if (right->getY() + right->getHeight() >= bottom->getY() ||
                         right->getY() + right->getHeight() + 1 < bottom->getY()) {
-                        Size min = right->getMinSize();
-                        Size tmp;
+                        Size const min = right->getMinSize();
+                        Size const tmp;
                         right->setMinSize(tmp);
-                        int32_t diff = bottom->getY() - (right->getY() + right->getHeight() + 1);
+                        int32_t const diff = bottom->getY() - (right->getY() + right->getHeight() + 1);
                         right->setHeight(right->getHeight() + diff);
                         right->setMinSize(min);
                     }
@@ -312,10 +312,10 @@ namespace fcn
                 if (left != nullptr) {
                     if (left->getY() + left->getHeight() >= bottom->getY() ||
                         left->getY() + left->getHeight() + 1 < bottom->getY()) {
-                        Size min = left->getMinSize();
-                        Size tmp;
+                        Size const min = left->getMinSize();
+                        Size const tmp;
                         left->setMinSize(tmp);
-                        int32_t diff = bottom->getY() - (left->getY() + left->getHeight() + 1);
+                        int32_t const diff = bottom->getY() - (left->getY() + left->getHeight() + 1);
                         left->setHeight(left->getHeight() + diff);
                         left->setMinSize(min);
                     }
@@ -330,8 +330,8 @@ namespace fcn
         if (parent == nullptr) {
             return;
         }
-        Rectangle childArea = parent->getChildrenArea();
-        Rectangle childDim  = getDimension();
+        Rectangle const childArea = parent->getChildrenArea();
+        Rectangle const childDim  = getDimension();
         if (childDim.x < childArea.x) {
             setX(childArea.x);
         }
@@ -371,8 +371,8 @@ namespace fcn
     void DockArea::add(Widget* widget)
     {
         ResizableWindow::add(widget);
-        int32_t x = widget->getX();
-        int32_t y = widget->getY();
+        int32_t const x = widget->getX();
+        int32_t const y = widget->getY();
         adaptLayout(true);
         widget->setPosition(x, y);
         repositionWidget(widget);
@@ -387,17 +387,17 @@ namespace fcn
 
     void DockArea::resizeToContent(bool recursiv)
     {
-        Rectangle oldDimension = getDimension();
+        Rectangle const oldDimension = getDimension();
         if (m_resizing) {
             ResizableWindow::resizeToContent(recursiv);
         } else {
             ResizableWindow::resizeToContent(recursiv);
         }
         if (isRightSide()) {
-            int32_t wDiff = oldDimension.width - getWidth();
+            int32_t const wDiff = oldDimension.width - getWidth();
             setX(oldDimension.x + wDiff);
         } else if (isBottomSide()) {
-            int32_t hDiff = oldDimension.height - getHeight();
+            int32_t const hDiff = oldDimension.height - getHeight();
             setY(oldDimension.y + hDiff);
         }
         repositionDockAreas();
@@ -405,17 +405,17 @@ namespace fcn
 
     void DockArea::expandContent(bool recursiv)
     {
-        Rectangle oldDimension = getDimension();
+        Rectangle const oldDimension = getDimension();
         if (m_resizing) {
             ResizableWindow::expandContent(recursiv);
         } else {
             Window::expandContent(recursiv);
         }
         if (isRightSide()) {
-            int32_t wDiff = oldDimension.width - getWidth();
+            int32_t const wDiff = oldDimension.width - getWidth();
             setX(oldDimension.x + wDiff);
         } else if (isBottomSide()) {
-            int32_t hDiff = oldDimension.height - getHeight();
+            int32_t const hDiff = oldDimension.height - getHeight();
             setY(oldDimension.y + hDiff);
         }
         repositionDockAreas();

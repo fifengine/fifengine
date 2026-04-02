@@ -62,22 +62,22 @@ namespace FIFE
             visited = 0;
         }
 
-        int32_t x    = node->x();
-        int32_t y    = node->y();
-        int32_t size = node->size();
+        int32_t const x    = node->x();
+        int32_t const y    = node->y();
+        int32_t const size = node->size();
 
         ++visited;
         CellGrid* cg = m_layer->getCellGrid(); /// we have checked for null pointer in  quadtreerenderer::render().. no
                                                /// need to check again
 
         ExactModelCoordinate emc = cg->toMapCoordinates(ExactModelCoordinate(x, y)); // 0.5 for each cell's half-width
-        ScreenPoint scrpt1       = m_camera->toScreenCoordinates(emc);
+        ScreenPoint const scrpt1 = m_camera->toScreenCoordinates(emc);
         emc = cg->toMapCoordinates(ExactModelCoordinate(x, y + size)); // this size usage is wrong.. me thinks
-        ScreenPoint scrpt2 = m_camera->toScreenCoordinates(emc);
-        emc                = cg->toMapCoordinates(ExactModelCoordinate(x + size, y));
-        ScreenPoint scrpt3 = m_camera->toScreenCoordinates(emc);
-        emc                = cg->toMapCoordinates(ExactModelCoordinate(x + size, y + size));
-        ScreenPoint scrpt4 = m_camera->toScreenCoordinates(emc);
+        ScreenPoint const scrpt2 = m_camera->toScreenCoordinates(emc);
+        emc                      = cg->toMapCoordinates(ExactModelCoordinate(x + size, y));
+        ScreenPoint const scrpt3 = m_camera->toScreenCoordinates(emc);
+        emc                      = cg->toMapCoordinates(ExactModelCoordinate(x + size, y + size));
+        ScreenPoint const scrpt4 = m_camera->toScreenCoordinates(emc);
 
         m_renderbackend->drawLine(Point(scrpt1.x, scrpt1.y), Point(scrpt2.x, scrpt2.y), 255, 255, 255);
         m_renderbackend->drawLine(Point(scrpt1.x, scrpt1.y), Point(scrpt3.x, scrpt3.y), 255, 255, 255);

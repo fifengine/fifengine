@@ -51,7 +51,7 @@ namespace FIFE
         ~ActionInfo()
         {
             if ((m_route != nullptr) && m_delete_route) {
-                int32_t sessionId = m_route->getSessionId();
+                int32_t const sessionId = m_route->getSessionId();
                 if (sessionId != -1) {
                     m_pather->cancelSession(sessionId);
                 }
@@ -206,7 +206,8 @@ namespace FIFE
                 std::vector<ModelCoordinate> partcoords = (*it)->getMultiPartCoordinates(m_rotation);
                 auto coordit                            = partcoords.begin();
                 for (; coordit != partcoords.end(); ++coordit) {
-                    ExactModelCoordinate tmp_emc(emc.x + (*coordit).x, emc.y + (*coordit).y, emc.z + (*coordit).z);
+                    ExactModelCoordinate const tmp_emc(
+                        emc.x + (*coordit).x, emc.y + (*coordit).y, emc.z + (*coordit).z);
                     std::ostringstream counter;
                     counter << count;
                     Instance* instance = layer->createInstance(*it, tmp_emc, identifier + counter.str());
@@ -696,12 +697,12 @@ namespace FIFE
 
         if (route->getRouteStatus() == ROUTE_SOLVED) {
             // timeslice for this movement
-            uint32_t timedelta = m_activity->m_timeProvider->getGameTime() - info->m_prev_call_time;
+            uint32_t const timedelta = m_activity->m_timeProvider->getGameTime() - info->m_prev_call_time;
             // how far we can travel
-            double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
+            double const distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
             // location for this movement
             Location nextLocation = m_location;
-            bool can_follow       = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation);
+            bool const can_follow = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation);
             if (can_follow) {
                 setRotation(route->getRotation());
                 // move to another layer
@@ -782,7 +783,7 @@ namespace FIFE
 
             if (info->m_target != nullptr) {
                 //				FL_DBG(_log, "action contains target for movement");
-                bool movement_finished = processMovement();
+                bool const movement_finished = processMovement();
                 if (movement_finished) {
                     //					FL_DBG(_log, "movement finished");
                     finalizeAction();
@@ -1130,15 +1131,15 @@ namespace FIFE
             if (m_object->isRestrictedRotation()) {
                 rot = m_object->getRestrictedRotation(m_rotation);
             }
-            double mcos = Mathd::Cos(static_cast<double>(rot) * (Mathd::pi() / 180.0));
-            double msin = Mathd::Sin(static_cast<double>(rot) * (Mathd::pi() / 180.0));
-            auto it     = m_multiInstances.begin();
+            double const mcos = Mathd::Cos(static_cast<double>(rot) * (Mathd::pi() / 180.0));
+            double const msin = Mathd::Sin(static_cast<double>(rot) * (Mathd::pi() / 180.0));
+            auto it           = m_multiInstances.begin();
             for (; it != m_multiInstances.end(); ++it) {
                 // use rotation 0 to get the "default" coordinate
                 std::vector<ModelCoordinate> mcv = (*it)->getObject()->getMultiPartCoordinates(0);
                 loc.setLayerCoordinates(mcv.front());
                 ExactModelCoordinate emc = loc.getMapCoordinates();
-                ExactModelCoordinate nemc(emc.x - anchor_offset.x, emc.y - anchor_offset.y);
+                ExactModelCoordinate const nemc(emc.x - anchor_offset.x, emc.y - anchor_offset.y);
                 emc.x = ((nemc.x * mcos + nemc.y * msin) + anchor_offset.x) + anchor.x;
                 emc.y = ((-nemc.x * msin + nemc.y * mcos) + anchor_offset.y) + anchor.y;
                 loc.setMapCoordinates(emc);
@@ -1330,12 +1331,12 @@ namespace FIFE
             }
             if (create) {
                 // if we change the current action then we have to replace the pointer
-                bool replace = getCurrentAction() == action;
+                bool const replace = getCurrentAction() == action;
                 // check if its the default action
-                bool defaultAction = m_object->getDefaultAction() == action;
-                auto* av           = action->getVisual<ActionVisual>();
-                action             = m_object->createAction(actionName, defaultAction);
-                nav                = av->clone();
+                bool const defaultAction = m_object->getDefaultAction() == action;
+                auto* av                 = action->getVisual<ActionVisual>();
+                action                   = m_object->createAction(actionName, defaultAction);
+                nav                      = av->clone();
                 action->adoptVisual(nav);
                 if (replace) {
                     m_activity->m_actionInfo->m_action = action;

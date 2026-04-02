@@ -35,7 +35,7 @@ namespace FIFE
 
     bool RoutePather::locationsEqual(const Location& a, const Location& b)
     {
-        bool sameLayer                = a.getLayer() == b.getLayer();
+        bool const sameLayer          = a.getLayer() == b.getLayer();
         const ModelCoordinate a_coord = a.getLayerCoordinates();
         const ModelCoordinate b_coord = b.getLayerCoordinates();
 
@@ -258,20 +258,20 @@ namespace FIFE
 
     bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation)
     {
-        Path path = route->getPath();
+        Path const path = route->getPath();
         if (path.empty()) {
             return false;
         }
         if (Mathd::Equal(speed, 0.0)) {
             return true;
         }
-        bool nextBlocker     = false;
-        Location currentNode = route->getCurrentNode();
-        bool multiCell       = route->isMultiCell();
+        bool nextBlocker           = false;
+        Location const currentNode = route->getCurrentNode();
+        bool const multiCell       = route->isMultiCell();
         if (!locationsEqual(current, currentNode)) {
             // special blocker check for multicell
             if (multiCell) {
-                int32_t oldRotation = route->getRotation();
+                int32_t const oldRotation = route->getRotation();
                 // old coordinates
                 std::vector<ModelCoordinate> oldCoords = current.getLayer()->getCellGrid()->toMultiCoordinates(
                     current.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
@@ -325,9 +325,9 @@ namespace FIFE
         if (tmpCell != nullptr) {
             targetPos.z = tmpCell->getLayerCoordinates().z + nodeGrid->getZShift();
         }
-        double dx       = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
-        double dy       = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
-        double distance = Mathd::Sqrt((dx * dx) + (dy * dy));
+        double const dx       = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
+        double const dy       = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
+        double const distance = Mathd::Sqrt((dx * dx) + (dy * dy));
         // cell speed multi
         double multi = 0.0;
         if (nodeCache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
@@ -341,7 +341,7 @@ namespace FIFE
             pop   = true;
         }
         if (!Mathd::Equal(distance, 0.0) && !pop) {
-            Location prevNode            = route->getPreviousNode();
+            Location const prevNode      = route->getPreviousNode();
             CellCache* prevCache         = prevNode.getLayer()->getCellCache();
             CellGrid* prevGrid           = prevNode.getLayer()->getCellGrid();
             ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
@@ -349,11 +349,11 @@ namespace FIFE
             if (tmpCell != nullptr) {
                 prevPos.z = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
             }
-            double cell_dz = (targetPos.z - prevPos.z);
+            double const cell_dz = (targetPos.z - prevPos.z);
             if (!Mathd::Equal(cell_dz, 0.0)) {
-                double cell_dx       = (targetPos.x - prevPos.x);
-                double cell_dy       = (targetPos.y - prevPos.y);
-                double cell_distance = Mathd::Sqrt((cell_dx * cell_dx) + (cell_dy * cell_dy));
+                double const cell_dx       = (targetPos.x - prevPos.x);
+                double const cell_dy       = (targetPos.y - prevPos.y);
+                double const cell_distance = Mathd::Sqrt((cell_dx * cell_dx) + (cell_dy * cell_dy));
                 if (cell_dz > 0) {
                     if (locationsEqual(current, currentNode)) {
                         instancePos.z = targetPos.z;
@@ -378,7 +378,7 @@ namespace FIFE
         if (pop) {
             nextLocation.setMapCoordinates(targetPos);
             // if cw is false we have reached the end
-            bool cw = route->walkToNextNode();
+            bool const cw = route->walkToNextNode();
             // check transistion
             CellCache* cache = nextLocation.getLayer()->getCellCache();
             if (cache != nullptr) {
@@ -411,7 +411,7 @@ namespace FIFE
             if (cw && !multiCell &&
                 currentNode.getLayer()->cellContainsBlockingInstance(route->getCurrentNode().getLayerCoordinates())) {
                 // set facing to end blocker
-                Location facing = route->getCurrentNode();
+                Location const facing = route->getCurrentNode();
                 route->setRotation(getAngleBetween(current, facing));
 
                 return false;

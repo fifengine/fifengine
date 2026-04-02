@@ -39,9 +39,9 @@ namespace FIFE
 
     bool AnimationLoader::isLoadable(const std::string& filename)
     {
-        fs::path animPath(filename);
+        fs::path const animPath(filename);
 
-        std::string animationFilename = animPath.string();
+        std::string const animationFilename = animPath.string();
         XML::Document animFile;
 
         try {
@@ -80,9 +80,9 @@ namespace FIFE
 
     AnimationPtr AnimationLoader::load(const std::string& filename)
     {
-        fs::path animPath(filename);
+        fs::path const animPath(filename);
 
-        std::string animationFilename = GetFilenameFromPath(animPath);
+        std::string const animationFilename = GetFilenameFromPath(animPath);
 
         XML::Document doc;
 
@@ -128,9 +128,9 @@ namespace FIFE
 
     std::vector<AnimationPtr> AnimationLoader::loadMultiple(const std::string& filename)
     {
-        fs::path animPath(filename);
+        fs::path const animPath(filename);
 
-        std::string animationFile = animPath.string();
+        std::string const animationFile = animPath.string();
 
         XML::Document doc;
 
@@ -170,7 +170,7 @@ namespace FIFE
         if (XML::HasName(root, "assets")) {
             for (XML::Element* animationElem = root->FirstChildElement("animation"); animationElem != nullptr;
                  animationElem               = animationElem->NextSiblingElement("animation")) {
-                AnimationPtr animation = loadAnimation(filename, animationElem);
+                AnimationPtr const animation = loadAnimation(filename, animationElem);
                 if (animation) {
                     animationVector.push_back(animation);
                 }
@@ -188,7 +188,7 @@ namespace FIFE
         }
 
         fs::path animPath(filename);
-        std::string animationFile = animPath.string();
+        std::string const animationFile = animPath.string();
 
         bool alreadyLoaded = false;
         // first try to use the id, if no id exists it use the filename as fallback

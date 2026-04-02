@@ -79,13 +79,13 @@ namespace FIFE
 
     const std::string& SquareGrid::getType() const
     {
-        static std::string type("square");
+        static std::string const type("square");
         return type;
     }
 
     const std::string& SquareGrid::getName() const
     {
-        static std::string squareGrid("Square Grid");
+        static std::string const squareGrid("Square Grid");
         return squareGrid;
     }
 
@@ -101,14 +101,14 @@ namespace FIFE
 
     ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord)
     {
-        ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
+        ExactModelCoordinate const dblpt = toExactLayerCoordinates(map_coord);
         return toLayerCoordinatesFromExactLayerCoordinates(dblpt);
     }
 
     ModelCoordinate SquareGrid::toLayerCoordinatesFromExactLayerCoordinates(
         const ExactModelCoordinate& exact_layer_coords)
     {
-        ModelCoordinate result(
+        ModelCoordinate const result(
             static_cast<int32_t>(round(exact_layer_coords.x)),
             static_cast<int32_t>(round(exact_layer_coords.y)),
             static_cast<int32_t>(round(exact_layer_coords.z)));
@@ -153,17 +153,17 @@ namespace FIFE
         const ModelCoordinate& start, const ModelCoordinate& end)
     {
         std::vector<ModelCoordinate> coords;
-        int32_t dx = std::abs(end.x - start.x);
-        int32_t dy = std::abs(end.y - start.y);
-        int8_t sx  = (start.x < end.x) ? 1 : -1;
-        int8_t sy  = (start.y < end.y) ? 1 : -1;
+        int32_t const dx = std::abs(end.x - start.x);
+        int32_t const dy = std::abs(end.y - start.y);
+        int8_t const sx  = (start.x < end.x) ? 1 : -1;
+        int8_t const sy  = (start.y < end.y) ? 1 : -1;
 
         int32_t err  = dx - dy;
         int32_t err2 = err * 2;
         ModelCoordinate current(start);
 
         // We know how many points to generate: max(dx, dy) + 1
-        int32_t steps = std::max(dx, dy);
+        int32_t const steps = std::max(dx, dy);
 
         for (int32_t i = 0; i <= steps; ++i) {
             coords.push_back(current);

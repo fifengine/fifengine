@@ -106,7 +106,7 @@ namespace FIFE
 
     Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id)
     {
-        ExactModelCoordinate emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
+        ExactModelCoordinate const emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
         return createInstance(object, emc, id);
     }
 
@@ -290,7 +290,7 @@ namespace FIFE
     std::list<Instance*> Layer::getInstancesIn(Rect& rec)
     {
         std::list<Instance*> matching_instances;
-        ModelCoordinate mc(rec.x, rec.y);
+        ModelCoordinate const mc(rec.x, rec.y);
         m_instanceTree->findInstances(mc, rec.w, rec.h, matching_instances);
 
         return matching_instances;
@@ -300,7 +300,7 @@ namespace FIFE
     {
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
-        std::vector<ModelCoordinate> coords = m_grid->getCoordinatesInLine(pt1, pt2);
+        std::vector<ModelCoordinate> const coords = m_grid->getCoordinatesInLine(pt1, pt2);
         for (auto& coord : coords) {
             m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
             if (!matchingInstances.empty()) {
@@ -318,7 +318,7 @@ namespace FIFE
         const int32_t radiusp2 = static_cast<int32_t>(radius + 1) * static_cast<int32_t>(radius);
 
         ModelCoordinate current(center.x - radius, center.y - radius);
-        ModelCoordinate target(center.x + radius, center.y + radius);
+        ModelCoordinate const target(center.x + radius, center.y + radius);
         for (; current.y < center.y; current.y++) {
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
@@ -377,13 +377,13 @@ namespace FIFE
         const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle)
     {
         std::vector<Instance*> instances;
-        ExactModelCoordinate exactCenter(center.x, center.y);
+        ExactModelCoordinate const exactCenter(center.x, center.y);
         std::vector<Instance*> tmpInstances = getInstancesInCircle(center, radius);
-        int32_t s                           = (sangle + 360) % 360;
-        int32_t e                           = (eangle + 360) % 360;
-        bool greater                        = s > e;
+        int32_t const s                     = (sangle + 360) % 360;
+        int32_t const e                     = (eangle + 360) % 360;
+        bool const greater                  = s > e;
         for (auto& tmpInstance : tmpInstances) {
-            int32_t angle =
+            int32_t const angle =
                 getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
@@ -412,11 +412,11 @@ namespace FIFE
             max = min;
 
             for (auto* m_instance : m_instances) {
-                ModelCoordinate coord = m_instance->getLocationRef().getLayerCoordinates(layer);
-                min.x                 = std::min(min.x, coord.x);
-                max.x                 = std::max(max.x, coord.x);
-                min.y                 = std::min(min.y, coord.y);
-                max.y                 = std::max(max.y, coord.y);
+                ModelCoordinate const coord = m_instance->getLocationRef().getLayerCoordinates(layer);
+                min.x                       = std::min(min.x, coord.x);
+                max.x                       = std::max(max.x, coord.x);
+                min.y                       = std::min(min.y, coord.y);
+                max.y                       = std::max(max.y, coord.y);
             }
         }
     }
@@ -441,7 +441,7 @@ namespace FIFE
 
         const float layerSpan   = globalrange / static_cast<float>(numlayers);
         const float layerOffset = static_cast<float>(numlayers - (thislayer - 1));
-        float offset            = globalmax - (layerOffset * layerSpan);
+        float const offset      = globalmax - (layerOffset * layerSpan);
         return offset;
     }
 
@@ -663,8 +663,8 @@ namespace FIFE
             }
         }
         // std::cout << "Layer named " << Id() << " changed = 0\n";
-        bool retval = m_changed;
-        m_changed   = false;
+        bool const retval = m_changed;
+        m_changed         = false;
         return retval;
     }
 

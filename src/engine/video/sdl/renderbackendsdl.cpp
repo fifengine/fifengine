@@ -58,7 +58,7 @@ namespace FIFE
 
     const std::string& RenderBackendSDL::getName() const
     {
-        static std::string backend_name = "SDL";
+        static std::string const backend_name = "SDL";
         return backend_name;
     }
 
@@ -97,10 +97,10 @@ namespace FIFE
 
     void RenderBackendSDL::setScreenMode(const ScreenMode& mode)
     {
-        uint16_t width        = mode.getWidth();
-        uint16_t height       = mode.getHeight();
-        uint16_t bitsPerPixel = mode.getBPP();
-        uint32_t flags        = mode.getSDLFlags();
+        uint16_t const width        = mode.getWidth();
+        uint16_t const height       = mode.getHeight();
+        uint16_t const bitsPerPixel = mode.getBPP();
+        uint32_t flags              = mode.getSDLFlags();
         // in case of recreating
         if (m_window != nullptr) {
             SDL_DestroyRenderer(m_renderer);
@@ -108,9 +108,9 @@ namespace FIFE
             m_screen = nullptr;
         }
         // create window
-        uint8_t displayIndex = mode.getDisplay();
-        int32_t windowX      = mode.getWindowPositionX();
-        int32_t windowY      = mode.getWindowPositionY();
+        uint8_t const displayIndex = mode.getDisplay();
+        int32_t const windowX      = mode.getWindowPositionX();
+        int32_t const windowY      = mode.getWindowPositionY();
 
         // Determine X position
         int xPos{};
@@ -387,8 +387,8 @@ namespace FIFE
             }
 
             for (std::size_t i = 0; i < xs.size(); i += 2) {
-                int32_t x1 = xs[i];
-                int32_t x2 = xs[i + 1];
+                int32_t x1       = xs[i];
+                int32_t const x2 = xs[i + 1];
                 // vertical line
                 while (x1 <= x2) {
                     putPixel(x1, y, r, g, b, a);
@@ -434,14 +434,14 @@ namespace FIFE
             return;
         }
 
-        bool thick = width > 1;
-        float step = 1.0 / static_cast<float>(steps - 1);
-        float t    = 0.0;
-        Point old  = getBezierPoint(points, elements + 1, t);
+        bool const thick = width > 1;
+        float const step = 1.0 / static_cast<float>(steps - 1);
+        float t          = 0.0;
+        Point old        = getBezierPoint(points, elements + 1, t);
         if (thick) {
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
-                Point next = getBezierPoint(points, elements, t);
+                Point const next = getBezierPoint(points, elements, t);
                 drawThickLine(old, next, width, r, g, b, a);
                 drawFillCircle(old, width / 2, r, g, b, a);
                 old = next;
@@ -450,7 +450,7 @@ namespace FIFE
         } else {
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
-                Point next = getBezierPoint(points, elements, t);
+                Point const next = getBezierPoint(points, elements, t);
                 drawLine(old, next, r, g, b, a);
                 old = next;
             }
@@ -498,10 +498,10 @@ namespace FIFE
 
     void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        Point p1 = Point(p.x - size, p.y + size);
-        Point p2 = Point(p.x + size, p.y + size);
-        Point p3 = Point(p.x + size, p.y - size);
-        Point p4 = Point(p.x - size, p.y - size);
+        Point const p1 = Point(p.x - size, p.y + size);
+        Point const p2 = Point(p.x + size, p.y + size);
+        Point const p3 = Point(p.x + size, p.y - size);
+        Point const p4 = Point(p.x - size, p.y - size);
 
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
         SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
@@ -565,7 +565,7 @@ namespace FIFE
         float angle = static_cast<float>(s) * step;
         Point oldPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
         for (; s <= e; ++s, angle += step) {
-            Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+            Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
             drawLine(oldPoint, newPoint, r, g, b, a);
             oldPoint = newPoint;
         }
@@ -590,14 +590,14 @@ namespace FIFE
         int32_t yMin = p.y;
         float angle  = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step) {
-            Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+            Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
             yMax = std::max(yMax, newPoint.y);
             yMin = std::min(yMin, newPoint.y);
             points.push_back(newPoint);
         }
         // add end point (again)
         angle = static_cast<float>(e) * step;
-        Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+        Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
         points.push_back(newPoint);
         yMax = std::max(yMax, newPoint.y);
         yMin = std::min(yMin, newPoint.y);
@@ -622,8 +622,8 @@ namespace FIFE
             }
 
             for (std::size_t i = 0; i < xs.size(); i += 2) {
-                int32_t x1 = xs[i];
-                int32_t x2 = xs[i + 1];
+                int32_t x1       = xs[i];
+                int32_t const x2 = xs[i + 1];
                 // vertical line
                 while (x1 <= x2) {
                     putPixel(x1, y, r, g, b, a);

@@ -171,7 +171,7 @@ namespace FIFE
         static_cast<void>(renderbackend);
         const uint32_t duration = toAnimationTimestamp(m_animation->getDuration());
         const uint32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
-        ImagePtr img            = m_animation->getFrameByTimestamp(animtime);
+        ImagePtr const img      = m_animation->getFrameByTimestamp(animtime);
 
         Rect r;
         const int32_t width  = toScreenSize(img->getWidth());

@@ -131,7 +131,7 @@ namespace FIFE
 
     void JoystickManager::saveMapping(const std::string& guid, const std::string& file)
     {
-        std::string stringMapping = getStringMapping(guid);
+        std::string const stringMapping = getStringMapping(guid);
         m_mappingSaver.save(stringMapping, file);
     }
 
@@ -147,8 +147,8 @@ namespace FIFE
 
     std::string JoystickManager::getStringMapping(const std::string& guid)
     {
-        SDL_JoystickGUID realGuid = SDL_JoystickGetGUIDFromString(guid.c_str());
-        char* mapping             = SDL_GameControllerMappingForGUID(realGuid);
+        SDL_JoystickGUID const realGuid = SDL_JoystickGetGUIDFromString(guid.c_str());
+        char* mapping                   = SDL_GameControllerMappingForGUID(realGuid);
         if (mapping == nullptr) {
             throw SDLException(SDL_GetError());
         }
@@ -159,7 +159,7 @@ namespace FIFE
         if (stringMapping.find_last_of(',') != stringMapping.length() - 1) {
             stringMapping += ",";
         }
-        std::size_t platPos = stringMapping.find("platform:");
+        std::size_t const platPos = stringMapping.find("platform:");
         if (platPos == std::string::npos) {
             stringMapping += "platform:" + std::string(SDL_GetPlatform()) + ",\n";
         }
@@ -168,7 +168,7 @@ namespace FIFE
 
     void JoystickManager::setStringMapping(const std::string& mapping)
     {
-        int32_t result = SDL_GameControllerAddMapping(mapping.c_str());
+        int32_t const result = SDL_GameControllerAddMapping(mapping.c_str());
         if (result == 1) {
             // check if one of the joysticks can now be opened as gamecontroller
             for (auto& m_activeJoystick : m_activeJoysticks) {
@@ -326,7 +326,7 @@ namespace FIFE
     std::string JoystickManager::getGuidString(int32_t deviceIndex)
     {
         char tmp[33];
-        SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(deviceIndex);
+        SDL_JoystickGUID const guid = SDL_JoystickGetDeviceGUID(deviceIndex);
         SDL_JoystickGetGUIDString(guid, &tmp[0], sizeof(tmp));
         std::string guidString(&tmp[0]);
         return guidString;
@@ -334,7 +334,7 @@ namespace FIFE
 
     float JoystickManager::convertRange(int16_t value)
     {
-        float range = static_cast<float>(value) / 32768.0F;
+        float const range = static_cast<float>(value) / 32768.0F;
         if (Mathf::FAbs(range) < 0.01F) {
             return 0.0F;
         }

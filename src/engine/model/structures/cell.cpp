@@ -66,7 +66,7 @@ namespace FIFE
     {
         CellCache* cache = m_layer->getCellCache();
         for (auto* instance : instances) {
-            std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
+            std::pair<std::set<Instance*>::iterator, bool> const ret = m_instances.insert(instance);
             if (ret.second) {
                 if (instance->isSpecialCost()) {
                     cache->registerCost(instance->getCostId(), instance->getCost());
@@ -86,7 +86,7 @@ namespace FIFE
 
     void Cell::addInstance(Instance* instance)
     {
-        std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
+        std::pair<std::set<Instance*>::iterator, bool> const ret = m_instances.insert(instance);
         if (ret.second) {
             CellCache* cache = m_layer->getCellCache();
             if (instance->isSpecialCost()) {
@@ -152,16 +152,16 @@ namespace FIFE
 
     void Cell::updateCellBlockingInfo()
     {
-        CellTypeInfo old_type = m_type;
-        m_coordinate.z        = MIN_CELL_Z;
+        CellTypeInfo const old_type = m_type;
+        m_coordinate.z              = MIN_CELL_Z;
         if (!m_instances.empty()) {
-            int32_t pos    = -1;
-            bool cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
+            int32_t pos          = -1;
+            bool const cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
             for (auto* m_instance : m_instances) {
                 if (cellblock) {
                     continue;
                 }
-                uint8_t stackpos = m_instance->getCellStackPosition();
+                uint8_t const stackpos = m_instance->getCellStackPosition();
                 if (std::cmp_less(stackpos, pos)) {
                     continue;
                 }
@@ -202,7 +202,7 @@ namespace FIFE
         }
 
         if (old_type != m_type) {
-            bool block =
+            bool const block =
                 (m_type == CTYPE_STATIC_BLOCKER || m_type == CTYPE_DYNAMIC_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
             m_layer->getCellCache()->setBlockingUpdate(true);
             callOnBlockingChanged(block);

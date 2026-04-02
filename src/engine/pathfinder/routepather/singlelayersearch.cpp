@@ -54,7 +54,7 @@ namespace FIFE
     {
 
         m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));
-        int32_t max_index = m_cellCache->getMaxIndex();
+        int32_t const max_index = m_cellCache->getMaxIndex();
         m_spt.resize(toSize(max_index), -1);
         m_sf.resize(toSize(max_index), -1);
         m_gCosts.resize(toSize(max_index), 0.0);
@@ -70,7 +70,7 @@ namespace FIFE
             return;
         }
 
-        PriorityQueue<int32_t, double>::value_type topvalue = m_sortedfrontier.getPriorityElement();
+        PriorityQueue<int32_t, double>::value_type const topvalue = m_sortedfrontier.getPriorityElement();
         m_sortedfrontier.popElement();
         m_next                      = topvalue.first;
         const std::size_t nextIndex = toIndex(m_next);
@@ -82,18 +82,18 @@ namespace FIFE
             return;
         }
 
-        ModelCoordinate destCoord = m_to.getLayerCoordinates();
-        ModelCoordinate nextCoord = m_cellCache->convertIntToCoord(m_next);
-        CellGrid* grid            = m_cellCache->getLayer()->getCellGrid();
-        Cell* nextCell            = m_cellCache->getCell(nextCoord);
+        ModelCoordinate const destCoord = m_to.getLayerCoordinates();
+        ModelCoordinate const nextCoord = m_cellCache->convertIntToCoord(m_next);
+        CellGrid* grid                  = m_cellCache->getLayer()->getCellGrid();
+        Cell* nextCell                  = m_cellCache->getCell(nextCoord);
         if (nextCell == nullptr) {
             return;
         }
-        int32_t cellZ                       = nextCell->getLayerCoordinates().z;
-        int32_t maxZ                        = m_route->getZStepRange();
-        bool zLimited                       = maxZ != -1;
-        uint8_t blockerThreshold            = m_ignoreDynamicBlockers ? 2 : 1;
-        bool limitedArea                    = m_route->isAreaLimited();
+        int32_t const cellZ                 = nextCell->getLayerCoordinates().z;
+        int32_t const maxZ                  = m_route->getZStepRange();
+        bool const zLimited                 = maxZ != -1;
+        uint8_t const blockerThreshold      = m_ignoreDynamicBlockers ? 2 : 1;
+        bool const limitedArea              = m_route->isAreaLimited();
         const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
         for (auto* adjacent : adjacents) {
             if (adjacent == nullptr) {
@@ -102,7 +102,7 @@ namespace FIFE
             if (adjacent->getLayer()->getCellCache() != m_cellCache) {
                 continue;
             }
-            int32_t adjacentInt             = adjacent->getCellId();
+            int32_t const adjacentInt       = adjacent->getCellId();
             const std::size_t adjacentIndex = toIndex(adjacentInt);
             if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
                 continue;
@@ -110,8 +110,8 @@ namespace FIFE
             if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
-            bool blocker                  = adjacent->getCellType() > blockerThreshold;
-            ModelCoordinate adjacentCoord = adjacent->getLayerCoordinates();
+            bool blocker                        = adjacent->getCellType() > blockerThreshold;
+            ModelCoordinate const adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (!blocker && m_multicell) {
                     continue;
@@ -128,7 +128,7 @@ namespace FIFE
                 Location adjacentLoc(adjacent->getLayer());
                 adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
-                int32_t rotation = getAngleBetween(currentLoc, adjacentLoc);
+                int32_t const rotation = getAngleBetween(currentLoc, adjacentLoc);
                 std::vector<ModelCoordinate> coords =
                     grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
                 auto coord_it = coords.begin();
@@ -188,7 +188,7 @@ namespace FIFE
             } else {
                 gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord);
             }
-            double hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
+            double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
             if (m_sf[adjacentIndex] == -1) {
                 m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
                 m_gCosts[adjacentIndex] = gCost;
@@ -203,8 +203,8 @@ namespace FIFE
 
     void SingleLayerSearch::calcPath()
     {
-        int32_t current = m_destCoordInt;
-        int32_t end     = m_startCoordInt;
+        int32_t current   = m_destCoordInt;
+        int32_t const end = m_startCoordInt;
         Path path;
         Location newnode(m_cellCache->getLayer());
         // This assures that the agent always steps into the center of the cell.
@@ -218,8 +218,8 @@ namespace FIFE
                 m_route->setRouteStatus(ROUTE_FAILED);
                 break;
             }
-            current                      = m_spt[currentIndex];
-            ModelCoordinate currentCoord = m_cellCache->convertIntToCoord(current);
+            current                            = m_spt[currentIndex];
+            ModelCoordinate const currentCoord = m_cellCache->convertIntToCoord(current);
             newnode.setLayerCoordinates(currentCoord);
             path.push_front(newnode);
         }

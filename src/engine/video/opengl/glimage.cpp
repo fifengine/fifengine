@@ -295,8 +295,8 @@ namespace FIFE
             m_tex_coords[3] = 1.0F;
         }
 
-        auto* data    = static_cast<uint8_t*>(m_surface->pixels);
-        int32_t pitch = m_surface->pitch;
+        auto* data          = static_cast<uint8_t*>(m_surface->pixels);
+        int32_t const pitch = m_surface->pitch;
 
         assert(!m_texId);
 
@@ -307,7 +307,7 @@ namespace FIFE
         // set filters for texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        bool mipmapping = RenderBackend::instance()->isMipmappingEnabled();
+        bool const mipmapping = RenderBackend::instance()->isMipmappingEnabled();
         if (mipmapping) {
             glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
         }
@@ -348,9 +348,9 @@ namespace FIFE
             m_compressed = false;
         }
 
-        bool monochrome    = RenderBackend::instance()->isMonochromeEnabled();
-        int32_t bpp_target = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
-        int32_t bpp_source = m_surface->format->BitsPerPixel;
+        bool const monochrome    = RenderBackend::instance()->isMonochromeEnabled();
+        int32_t const bpp_target = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
+        int32_t const bpp_source = m_surface->format->BitsPerPixel;
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
             auto* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];
@@ -358,7 +358,7 @@ namespace FIFE
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
-                    uint32_t pos = (y * pitch) + (x * 4);
+                    uint32_t const pos = (y * pitch) + (x * 4);
 
                     uint8_t r = data[pos + 0];
                     uint8_t g = data[pos + 1];
@@ -410,11 +410,11 @@ namespace FIFE
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t gid = x + (y * pitch);
+                        uint32_t const gid = x + (y * pitch);
 
-                        uint8_t r = oglbuffer[gid + 0];
-                        uint8_t g = oglbuffer[gid + 1];
-                        uint8_t b = oglbuffer[gid + 2];
+                        uint8_t const r = oglbuffer[gid + 0];
+                        uint8_t const g = oglbuffer[gid + 1];
+                        uint8_t const b = oglbuffer[gid + 2];
 
                         // set alpha to zero
                         if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
@@ -449,7 +449,7 @@ namespace FIFE
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t gid = x + (y * pitch);
+                        uint32_t const gid = x + (y * pitch);
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         auto lum = static_cast<uint8_t>(
                             (oglbuffer[gid + 0] * 0.3) + (oglbuffer[gid + 1] * 0.59) + (oglbuffer[gid + 2] * 0.11));
@@ -492,7 +492,7 @@ namespace FIFE
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
-                    uint32_t pos = (y * pitch) + (x * 4);
+                    uint32_t const pos = (y * pitch) + (x * 4);
 
                     uint8_t a = data[pos + 3];
                     uint8_t b = data[pos + 2];
@@ -632,10 +632,10 @@ namespace FIFE
             // check atlas image
             // if it does not exist, it is generated.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
-                ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
-                auto* img         = dynamic_cast<GLImage*>(newAtlas.get());
-                m_atlas_img       = newAtlas;
-                m_shared_img      = img;
+                ImagePtr const newAtlas = ImageManager::instance()->create(m_atlas_name);
+                auto* img               = dynamic_cast<GLImage*>(newAtlas.get());
+                m_atlas_img             = newAtlas;
+                m_shared_img            = img;
             }
             validateShared();
             // check if texture ids and surfaces are identical
@@ -656,8 +656,8 @@ namespace FIFE
     void GLImage::free()
     {
         // save the image offsets
-        int32_t xshift = m_xshift;
-        int32_t yshift = m_yshift;
+        int32_t const xshift = m_xshift;
+        int32_t const yshift = m_yshift;
         setSurface(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;

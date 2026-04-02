@@ -30,14 +30,14 @@ namespace FIFE
         auto* dstColor       = reinterpret_cast<ColorRGBA8*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
-            uint32_t aMulA = alpha * srcColor->a;
+            uint32_t const aMulA = alpha * srcColor->a;
 
             if (aMulA != 0U) {
-                uint32_t OneMin_aMulA = 65535 - aMulA;
-                dstColor->r           = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
-                dstColor->g           = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
-                dstColor->b           = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
-                dstColor->a           = 255;
+                uint32_t const OneMin_aMulA = 65535 - aMulA;
+                dstColor->r = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
+                dstColor->g = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
+                dstColor->b = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
+                dstColor->a = 255;
             }
             ++dstColor;
             ++srcColor;
@@ -50,12 +50,12 @@ namespace FIFE
         auto* dstColor       = reinterpret_cast<ColorRGB8*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
-            uint32_t aMulA = alpha * srcColor->a;
+            uint32_t const aMulA = alpha * srcColor->a;
             if (aMulA != 0U) {
-                uint32_t OneMin_aMulA = 65535 - aMulA;
-                dstColor->r           = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
-                dstColor->g           = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
-                dstColor->b           = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
+                uint32_t const OneMin_aMulA = 65535 - aMulA;
+                dstColor->r = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
+                dstColor->g = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
+                dstColor->b = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
             }
 
             ++dstColor;
@@ -69,11 +69,11 @@ namespace FIFE
         auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
-            uint32_t aMulA = (alpha * srcColor->a) >> 8;
+            uint32_t const aMulA = (alpha * srcColor->a) >> 8;
             if (aMulA != 0U) {
-                uint32_t OneMin_aMulA = 255 - aMulA;
-                uint32_t c            = *dstColor;
-                *dstColor             = (((srcColor->b * aMulA) + (((c & 0xF800) >> 8) * OneMin_aMulA)) & 0xF800) |
+                uint32_t const OneMin_aMulA = 255 - aMulA;
+                uint32_t const c            = *dstColor;
+                *dstColor = (((srcColor->b * aMulA) + (((c & 0xF800) >> 8) * OneMin_aMulA)) & 0xF800) |
                             ((((srcColor->g * aMulA) + (((c & 0x07E0) >> 3) * OneMin_aMulA)) >> 5) & 0x07E0) |
                             ((((srcColor->r * aMulA) + (((c & 0x001F) << 3) * OneMin_aMulA)) >> 11) & 0x001F);
             }
@@ -89,14 +89,14 @@ namespace FIFE
         auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
-            uint32_t c1 = *dstColor;
-            uint32_t c2 = *srcColor;
+            uint32_t const c1 = *dstColor;
+            uint32_t const c2 = *srcColor;
 
             uint32_t aMulA = c2 & 0xF;
             aMulA          = (alpha * aMulA) / 15; ///< upgrade to range 0-255
             if (aMulA != 0U) {
-                uint32_t OneMin_aMulA = 255 - aMulA;
-                uint32_t result       = 0;
+                uint32_t const OneMin_aMulA = 255 - aMulA;
+                uint32_t result             = 0;
                 result = ((((c2 & 0xF000) | 0x0800) * aMulA) + ((c1 & 0xF800) * OneMin_aMulA)) & 0xF80000;
                 result |= (((((c2 & 0x0F00) >> 1) | 0x0040) * aMulA) + ((c1 & 0x07E0) * OneMin_aMulA)) & 0x07E000;
                 result |= (((((c2 & 0x00F0) >> 3) | 0x0001) * aMulA) + ((c1 & 0x001F) * OneMin_aMulA)) & 0x001F00;

@@ -196,7 +196,7 @@ namespace FIFE
     void SoundEmitter::setDirection(const AudioSpaceCoordinate& direction)
     {
         if (isActive()) {
-            ALfloat vec[3] = {
+            ALfloat const vec[3] = {
                 static_cast<ALfloat>(direction.x),
                 static_cast<ALfloat>(direction.y),
                 static_cast<ALfloat>(direction.z)};
@@ -244,7 +244,7 @@ namespace FIFE
         if (m_directFilter != nullptr) {
             m_manager->deactivateFilter(m_directFilter, this);
         }
-        std::vector<SoundEffect*> effects = m_effects;
+        std::vector<SoundEffect*> const effects = m_effects;
         for (auto& effect : effects) {
             if (effect != nullptr) {
                 m_manager->removeEmitterFromSoundEffect(effect, this);
@@ -313,7 +313,7 @@ namespace FIFE
 
     void SoundEmitter::setSoundClip(const std::string& name)
     {
-        SoundClipPtr clip = SoundClipManager::instance()->get(name);
+        SoundClipPtr const clip = SoundClipManager::instance()->get(name);
         setSoundClip(clip);
     }
 
@@ -347,7 +347,7 @@ namespace FIFE
         if (!m_soundClip) {
             return;
         }
-        SoundStateType state = getState();
+        SoundStateType const state = getState();
         if (state == SD_PLAYING_STATE || state == SD_PAUSED_STATE) {
             stop();
         }
@@ -397,8 +397,8 @@ namespace FIFE
 
     void SoundEmitter::play(float inTime, float outTime)
     {
-        float zero = 0;
-        m_origGain = m_internData.volume;
+        float const zero = 0;
+        m_origGain       = m_internData.volume;
         if (!Mathf::Equal(zero, inTime)) {
             m_fadeIn = true;
             setGain(0.0F);
@@ -533,12 +533,12 @@ namespace FIFE
     {
         if (m_soundClip) {
             // convert to milliseconds
-            double samplerate = static_cast<double>(getSampleRate()) / 1000.0;
-            auto bitres       = static_cast<double>(getBitResolution());
+            double const samplerate = static_cast<double>(getSampleRate()) / 1000.0;
+            auto bitres             = static_cast<double>(getBitResolution());
             // convert to bits
-            double size   = static_cast<double>(getDecodedLength()) * 8.0;
-            double stereo = (isStereo() ? 2.0 : 1.0);
-            double time   = (size / (samplerate * bitres)) / stereo;
+            double const size   = static_cast<double>(getDecodedLength()) * 8.0;
+            double const stereo = (isStereo() ? 2.0 : 1.0);
+            double const time   = (size / (samplerate * bitres)) / stereo;
 
             return static_cast<uint64_t>(time);
         }
@@ -681,7 +681,7 @@ namespace FIFE
 
     bool SoundEmitter::isPosition() const
     {
-        double zero = 0;
+        double const zero = 0;
         return !(
             Mathd::Equal(zero, m_internData.position.x) && Mathd::Equal(zero, m_internData.position.y) &&
             Mathd::Equal(zero, m_internData.position.z));
@@ -836,7 +836,7 @@ namespace FIFE
             if (m_internData.loop) {
                 timediff = timediff % toTimestampMillis(getDuration());
             }
-            float time = static_cast<float>(timediff) / 1000.0F;
+            float const time = static_cast<float>(timediff) / 1000.0F;
             attachSoundClip();
             setCursor(SD_TIME_POS, time);
             if (m_soundClip && isActive()) {
@@ -869,9 +869,9 @@ namespace FIFE
 
     void SoundEmitter::checkFade()
     {
-        uint32_t timestamp = TimeManager::instance()->getTime();
+        uint32_t const timestamp = TimeManager::instance()->getTime();
         if (m_fadeIn) {
-            float delta = m_origGain / static_cast<float>(m_fadeInEndTimestamp - m_fadeInStartTimestamp);
+            float const delta = m_origGain / static_cast<float>(m_fadeInEndTimestamp - m_fadeInStartTimestamp);
             if (timestamp >= m_fadeInEndTimestamp) {
                 m_fadeIn = false;
                 setGain(m_origGain);
@@ -881,7 +881,7 @@ namespace FIFE
                 setGain(gain);
             }
         } else if (m_fadeOut) {
-            float delta = m_origGain / static_cast<float>(m_fadeOutEndTimestamp - m_fadeOutStartTimestamp);
+            float const delta = m_origGain / static_cast<float>(m_fadeOutEndTimestamp - m_fadeOutStartTimestamp);
             if (timestamp >= m_fadeOutEndTimestamp) {
                 m_fadeOut = false;
                 stop();

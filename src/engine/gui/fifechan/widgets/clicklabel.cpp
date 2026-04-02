@@ -86,8 +86,8 @@ namespace fcn
 
     void ClickLabel::setTextWrapping(bool textWrapping)
     {
-        bool wrappingEnabled = !mTextWrapping && textWrapping;
-        mTextWrapping        = textWrapping;
+        bool const wrappingEnabled = !mTextWrapping && textWrapping;
+        mTextWrapping              = textWrapping;
         if (wrappingEnabled) {
             wrapText();
         }
@@ -101,14 +101,14 @@ namespace fcn
     void ClickLabel::wrapText()
     {
         if (isTextWrapping() && (mGuiFont != nullptr)) {
-            int32_t w    = getWidth() - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
-            mWrappedText = mGuiFont->splitTextToWidth(mCaption, w);
+            int32_t const w = getWidth() - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+            mWrappedText    = mGuiFont->splitTextToWidth(mCaption, w);
         }
     }
 
     void ClickLabel::setDimension(const Rectangle& dimension)
     {
-        int32_t w = getWidth();
+        int32_t const w = getWidth();
         Widget::setDimension(dimension);
         if (getWidth() != w && isTextWrapping()) {
             wrapText();
@@ -129,8 +129,8 @@ namespace fcn
                 if (getParent() != nullptr) {
                     w = getParent()->getChildrenArea().width;
                 }
-                int32_t textW = w - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
-                int32_t maxW  = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
+                int32_t textW      = w - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+                int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
                 if (textW < 1) {
                     w     = maxW;
                     textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
@@ -152,8 +152,8 @@ namespace fcn
 
     void ClickLabel::draw(Graphics* graphics)
     {
-        bool active = isFocused();
-        Rectangle offsetRec(getBorderSize(), getBorderSize(), 2 * getBorderSize(), 2 * getBorderSize());
+        bool const active = isFocused();
+        Rectangle const offsetRec(getBorderSize(), getBorderSize(), 2 * getBorderSize(), 2 * getBorderSize());
 
         if (isOpaque()) {
             Color faceColor          = getBackgroundColor();
@@ -181,7 +181,7 @@ namespace fcn
             FIFE::Image* image      = mGuiFont->getAsImageMultiline(text);
 
             int32_t textX = 0;
-            int32_t textY =
+            int32_t const textY =
                 offsetRec.y + getPaddingTop() +
                 ((getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2);
 
@@ -247,7 +247,7 @@ namespace fcn
 
     void ClickLabel::keyPressed(KeyEvent& keyEvent)
     {
-        Key key = keyEvent.getKey();
+        Key const key = keyEvent.getKey();
 
         if (key.getValue() == Key::Enter || key.getValue() == Key::Space) {
             mKeyPressed = true;
@@ -257,7 +257,7 @@ namespace fcn
 
     void ClickLabel::keyReleased(KeyEvent& keyEvent)
     {
-        Key key = keyEvent.getKey();
+        Key const key = keyEvent.getKey();
 
         if ((key.getValue() == Key::Enter || key.getValue() == Key::Space) && mKeyPressed) {
             mKeyPressed = false;

@@ -206,7 +206,7 @@ namespace FIFE
         std::set<std::string> list;
         auto end = m_sources.end();
         for (auto i = m_sources.begin(); i != end; ++i) {
-            std::set<std::string> sourcelist = (*i)->listFiles(pathstr);
+            std::set<std::string> const sourcelist = (*i)->listFiles(pathstr);
             list.insert(sourcelist.begin(), sourcelist.end());
         }
 
@@ -215,7 +215,7 @@ namespace FIFE
 
     std::set<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const
     {
-        std::set<std::string> list = listFiles(path);
+        std::set<std::string> const list = listFiles(path);
         return filterList(list, filterregex);
     }
 
@@ -224,7 +224,7 @@ namespace FIFE
         std::set<std::string> list;
         auto end = m_sources.end();
         for (auto i = m_sources.begin(); i != end; ++i) {
-            std::set<std::string> sourcelist = (*i)->listDirectories(pathstr);
+            std::set<std::string> const sourcelist = (*i)->listDirectories(pathstr);
             list.insert(sourcelist.begin(), sourcelist.end());
         }
 
@@ -233,14 +233,14 @@ namespace FIFE
 
     std::set<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const
     {
-        std::set<std::string> list = listDirectories(path);
+        std::set<std::string> const list = listDirectories(path);
         return filterList(list, filterregex);
     }
 
     std::set<std::string> VFS::filterList(const std::set<std::string>& list, const std::string& fregex) const
     {
         std::set<std::string> results;
-        std::regex regex(fregex);
+        std::regex const regex(fregex);
         auto end = list.end();
         for (auto i = list.begin(); i != end;) {
             std::cmatch match;

@@ -155,37 +155,37 @@ namespace FIFE
     double Location::getCellOffsetDistance() const
     {
         const ExactModelCoordinate& pt = m_exact_layer_coords;
-        double dx                      = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
-        double dy                      = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
+        double const dx                = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
+        double const dy                = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
         return Mathd::Sqrt((dx * dx) + (dy * dy));
     }
 
     std::ostream& operator<<(std::ostream& os, const Location& l)
     {
-        ExactModelCoordinate p = l.getExactLayerCoordinates();
+        ExactModelCoordinate const p = l.getExactLayerCoordinates();
         return os << "x=" << p.x << ", y=" << p.y;
     }
 
     double Location::getMapDistanceTo(const Location& location) const
     {
-        ExactModelCoordinate current = getMapCoordinates();
-        ExactModelCoordinate target  = location.getMapCoordinates();
+        ExactModelCoordinate const current = getMapCoordinates();
+        ExactModelCoordinate const target  = location.getMapCoordinates();
 
-        double rx = current.x - target.x;
-        double ry = current.y - target.y;
-        double rz = current.z - target.z;
+        double const rx = current.x - target.x;
+        double const ry = current.y - target.y;
+        double const rz = current.z - target.z;
 
         return Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
     }
 
     double Location::getLayerDistanceTo(const Location& location) const
     {
-        ModelCoordinate current = getLayerCoordinates();
-        ModelCoordinate target  = location.getLayerCoordinates(m_layer);
+        ModelCoordinate const current = getLayerCoordinates();
+        ModelCoordinate const target  = location.getLayerCoordinates(m_layer);
 
-        double rx = current.x - target.x;
-        double ry = current.y - target.y;
-        double rz = current.z - target.z;
+        double const rx = current.x - target.x;
+        double const ry = current.y - target.y;
+        double const rz = current.z - target.z;
 
         return Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
     }

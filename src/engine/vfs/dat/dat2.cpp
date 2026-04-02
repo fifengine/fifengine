@@ -32,8 +32,8 @@ namespace FIFE
         FL_LOG(_log, LMsg("MFFalloutDAT2") << "loading: " << file << " filesize: " << m_data->getDataLength());
 
         m_data->setIndex(m_data->getDataLength() - 8);
-        uint32_t fileListLength = m_data->read32Little();
-        uint32_t archiveSize    = m_data->read32Little();
+        uint32_t const fileListLength = m_data->read32Little();
+        uint32_t const archiveSize    = m_data->read32Little();
 
         FL_LOG(_log, LMsg("MFFalloutDAT2") << "FileListLength: " << fileListLength << " ArchiveSize: " << archiveSize);
 
@@ -67,14 +67,14 @@ namespace FIFE
         m_filecount -= load_per_cycle;
 
         // Save the old index in an exception save way.
-        IndexSaver isaver(m_data.get());
+        IndexSaver const isaver(m_data.get());
 
         // Move index to file list and read the entries.
         m_data->setIndex(m_currentIndex);
         RawDataDAT2::s_info info;
         while ((load_per_cycle--) != 0U) {
-            uint32_t namelen = m_data->read32Little();
-            info.name        = fixPath(m_data->readString(namelen));
+            uint32_t const namelen = m_data->read32Little();
+            info.name              = fixPath(m_data->readString(namelen));
 
             info.type           = m_data->read8();
             info.unpackedLength = m_data->read32Little();
@@ -170,7 +170,7 @@ namespace FIFE
             path.erase(0, 2);
         }
 
-        size_t lastIndex = path.size();
+        size_t const lastIndex = path.size();
         if (lastIndex != 0 && path[lastIndex - 1] != '/') {
             path += '/';
         }
@@ -180,7 +180,7 @@ namespace FIFE
             const std::string& file = i->first;
             if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
-                bool isdir = cleanedfile.find('/') != std::string::npos;         // if we still have a / it's a subdir
+                bool const isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir
 
                 if (isdir) {
                     cleanedfile.resize(cleanedfile.find('/'));

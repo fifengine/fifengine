@@ -157,8 +157,8 @@ namespace FIFE
     void Image::free()
     {
         // save the image offsets
-        int32_t xshift = m_xshift;
-        int32_t yshift = m_yshift;
+        int32_t const xshift = m_xshift;
+        int32_t const yshift = m_yshift;
         reset(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;
@@ -222,7 +222,7 @@ namespace FIFE
 
         assert(m_surface);
 
-        int32_t bpp = m_surface->format->BytesPerPixel;
+        int32_t const bpp = m_surface->format->BytesPerPixel;
 
         if (!isSharedImage()) {
             if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
@@ -367,8 +367,8 @@ namespace FIFE
     std::string Image::createUniqueImageName()
     {
         // automated counting for name generation, in case the user doesn't provide a name
-        static uint32_t uniqueNumber = 0;
-        static std::string baseName  = "image";
+        static uint32_t uniqueNumber      = 0;
+        static std::string const baseName = "image";
 
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
@@ -402,8 +402,8 @@ namespace FIFE
                 static_cast<Uint16>(srcimg->getWidth()),
                 static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {
-                Rect const & srcRect = srcimg->getSubImageRect();
-                SDL_Rect srcrect     = {
+                Rect const & srcRect   = srcimg->getSubImageRect();
+                SDL_Rect const srcrect = {
                     static_cast<Sint16>(srcRect.x),
                     static_cast<Sint16>(srcRect.y),
                     static_cast<Uint16>(srcRect.w),
@@ -419,8 +419,8 @@ namespace FIFE
                 static_cast<Uint16>(srcimg->getWidth()),
                 static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {
-                Rect const & rect = srcimg->getSubImageRect();
-                SDL_Rect srcrect  = {
+                Rect const & rect      = srcimg->getSubImageRect();
+                SDL_Rect const srcrect = {
                     static_cast<Sint16>(rect.x),
                     static_cast<Sint16>(rect.y),
                     static_cast<Uint16>(rect.w),
@@ -440,10 +440,10 @@ namespace FIFE
             return false;
         }
 
-        int32_t bpp = surface->format->BytesPerPixel;
+        int32_t const bpp = surface->format->BytesPerPixel;
         SDL_LockSurface(surface);
-        Uint8* p     = static_cast<Uint8*>(surface->pixels) + (y * surface->pitch) + (x * bpp);
-        Uint32 pixel = SDL_MapRGBA(surface->format, r, g, b, a);
+        Uint8* p           = static_cast<Uint8*>(surface->pixels) + (y * surface->pitch) + (x * bpp);
+        Uint32 const pixel = SDL_MapRGBA(surface->format, r, g, b, a);
         switch (bpp) {
         case 1:
             *p = pixel;

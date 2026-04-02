@@ -63,8 +63,8 @@ namespace FIFE
     void RenderBackend::endFrame()
     {
         if (m_isframelimit) {
-            uint16_t frame_time     = SDL_GetTicks() - m_frame_start;
-            const float frame_limit = 1000.0F / m_framelimit;
+            uint16_t const frame_time = SDL_GetTicks() - m_frame_start;
+            const float frame_limit   = 1000.0F / m_framelimit;
             if (frame_time < frame_limit) {
                 SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
             }
@@ -92,7 +92,7 @@ namespace FIFE
     {
         assert(m_screen->w >= 0);
         assert(m_screen->h >= 0);
-        static Rect r(0, 0, m_screen->w, m_screen->h);
+        static Rect const r(0, 0, m_screen->w, m_screen->h);
         return r;
     }
 
@@ -112,7 +112,7 @@ namespace FIFE
         if (m_clipstack.empty()) {
             setClipArea(getArea(), false);
         } else {
-            ClipInfo ci = m_clipstack.top();
+            ClipInfo const ci = m_clipstack.top();
             // instead of using ci.clearing, we set it to false
             // to avoid double clearing
             setClipArea(ci.r, false);
@@ -277,12 +277,12 @@ namespace FIFE
         }
 
         // Interpolate
-        double px   = 0.0;
-        double py   = 0.0;
-        int32_t n   = elements - 1;
-        double muk  = 1.0;
-        double mu   = static_cast<double>(t) / static_cast<double>(elements);
-        double munk = Mathd::Pow(1.0 - mu, static_cast<double>(n));
+        double px       = 0.0;
+        double py       = 0.0;
+        int32_t const n = elements - 1;
+        double muk      = 1.0;
+        double const mu = static_cast<double>(t) / static_cast<double>(elements);
+        double munk     = Mathd::Pow(1.0 - mu, static_cast<double>(n));
         for (size_t pointIndex = 0; std::cmp_less_equal(pointIndex, n); ++pointIndex) {
             const int32_t i = static_cast<int32_t>(pointIndex);
             int32_t tmpn    = n;

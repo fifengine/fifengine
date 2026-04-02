@@ -91,7 +91,7 @@ namespace FIFE
         const bool render_costs = (!m_visualCosts.empty() && (m_font != nullptr));
         const bool zoomed       = !Mathd::Equal(1.0, cam->getZoom());
 
-        Rect layerView           = cam->getLayerViewPort(layer);
+        Rect const layerView     = cam->getLayerViewPort(layer);
         std::vector<Cell*> cells = cache->getCellsInRect(layerView);
         auto cit                 = cells.begin();
         for (; cit != cells.end(); ++cit) {
@@ -102,24 +102,24 @@ namespace FIFE
                     auto it                      = vertices.begin();
                     const size_t halfVertexIndex = vertices.size() / 2;
                     assert(halfVertexIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
-                    int32_t halfind     = static_cast<int32_t>(halfVertexIndex);
-                    ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                    int32_t const halfind     = static_cast<int32_t>(halfVertexIndex);
+                    ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                     Point pt1(firstpt.x, firstpt.y);
                     Point pt2;
                     ++it;
                     for (; it != vertices.end(); it++) {
-                        ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-                        pt2.x           = pts.x;
-                        pt2.y           = pts.y;
+                        ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                        pt2.x                 = pts.x;
+                        pt2.y                 = pts.y;
                         m_renderbackend->drawLine(pt1, pt2, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
                         pt1 = pt2;
                     }
                     m_renderbackend->drawLine(
                         pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-                    ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-                    Point pt3(spt1.x, spt1.y);
-                    ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-                    Point pt4(spt2.x, spt2.y);
+                    ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                    Point const pt3(spt1.x, spt1.y);
+                    ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                    Point const pt4(spt2.x, spt2.y);
                     m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
                 }
             }
@@ -145,7 +145,7 @@ namespace FIFE
                 if (match) {
                     Location loc(layer);
                     loc.setLayerCoordinates((*cit)->getLayerCoordinates());
-                    ScreenPoint drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
+                    ScreenPoint const drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
 
                     std::stringstream stream;
                     stream << cost;
@@ -153,11 +153,11 @@ namespace FIFE
 
                     Rect r;
                     if (zoomed) {
-                        double zoom = cam->getZoom();
-                        r.x         = drawpt.x - (img->getWidth() / 2.0) * zoom;
-                        r.y         = drawpt.y - (img->getHeight() / 2.0) * zoom;
-                        r.w         = img->getWidth() * zoom;
-                        r.h         = img->getHeight() * zoom;
+                        double const zoom = cam->getZoom();
+                        r.x               = drawpt.x - (img->getWidth() / 2.0) * zoom;
+                        r.y               = drawpt.y - (img->getHeight() / 2.0) * zoom;
+                        r.w               = img->getWidth() * zoom;
+                        r.h               = img->getHeight() * zoom;
                         img->render(r);
                     } else {
                         r.x = drawpt.x - img->getWidth() / 2.0;
@@ -184,15 +184,15 @@ namespace FIFE
                             }
                             std::vector<ExactModelCoordinate> vertices;
                             cg->getVertices(vertices, (*pit).getLayerCoordinates());
-                            auto vertIt         = vertices.begin();
-                            ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
+                            auto vertIt               = vertices.begin();
+                            ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
                             Point pt1(firstpt.x, firstpt.y);
                             Point pt2;
                             ++vertIt;
                             for (; vertIt != vertices.end(); ++vertIt) {
-                                ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
-                                pt2.x           = pts.x;
-                                pt2.y           = pts.y;
+                                ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
+                                pt2.x                 = pts.x;
+                                pt2.y                 = pts.y;
                                 m_renderbackend->drawLine(pt1, pt2, m_pathColor.r, m_pathColor.g, m_pathColor.b);
                                 pt1 = pt2;
                             }

@@ -72,8 +72,8 @@ namespace FIFE
     void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p1 = m_edge1.getCalculatedPoint(cam, layer);
-        Point p2 = m_edge2.getCalculatedPoint(cam, layer);
+        Point const p1 = m_edge1.getCalculatedPoint(cam, layer);
+        Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
         if (m_edge1.getLayer() == layer) {
             renderbackend->drawLine(p1, p2, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
@@ -94,7 +94,7 @@ namespace FIFE
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p = m_anchor.getCalculatedPoint(cam, layer);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer);
         if (m_anchor.getLayer() == layer) {
             renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
@@ -121,9 +121,9 @@ namespace FIFE
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p1 = m_edge1.getCalculatedPoint(cam, layer);
-        Point p2 = m_edge2.getCalculatedPoint(cam, layer);
-        Point p3 = m_edge3.getCalculatedPoint(cam, layer);
+        Point const p1 = m_edge1.getCalculatedPoint(cam, layer);
+        Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
+        Point const p3 = m_edge3.getCalculatedPoint(cam, layer);
         if (m_edge1.getLayer() == layer) {
             renderbackend->drawTriangle(p1, p2, p3, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
@@ -158,10 +158,10 @@ namespace FIFE
     void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p1 = m_edge1.getCalculatedPoint(cam, layer);
-        Point p2 = m_edge2.getCalculatedPoint(cam, layer);
-        Point p3 = m_edge3.getCalculatedPoint(cam, layer);
-        Point p4 = m_edge4.getCalculatedPoint(cam, layer);
+        Point const p1 = m_edge1.getCalculatedPoint(cam, layer);
+        Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
+        Point const p3 = m_edge3.getCalculatedPoint(cam, layer);
+        Point const p4 = m_edge4.getCalculatedPoint(cam, layer);
         if (m_edge1.getLayer() == layer) {
             renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
@@ -182,7 +182,7 @@ namespace FIFE
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p = m_center.getCalculatedPoint(cam, layer);
+        Point const p = m_center.getCalculatedPoint(cam, layer);
         if (m_center.getLayer() == layer) {
             renderbackend->drawVertex(p, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
@@ -203,12 +203,12 @@ namespace FIFE
     {
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
-        Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport  = cam->getViewPort();
-            int32_t width  = 0;
-            int32_t height = 0;
+            Rect const viewport = cam->getViewPort();
+            int32_t width       = 0;
+            int32_t height      = 0;
             if (m_zoomed) {
                 width  = static_cast<int32_t>(round(m_image->getWidth() * cam->getZoom()));
                 height = static_cast<int32_t>(round(m_image->getHeight() * cam->getZoom()));
@@ -244,16 +244,16 @@ namespace FIFE
     {
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
-        Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             const uint32_t duration = toAnimationTimestamp(m_animation->getDuration());
             const uint32_t animtime =
                 scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
-            ImagePtr img = m_animation->getFrameByTimestamp(animtime);
+            ImagePtr const img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
-            Rect viewport  = cam->getViewPort();
-            int32_t width  = 0;
-            int32_t height = 0;
+            Rect const viewport = cam->getViewPort();
+            int32_t width       = 0;
+            int32_t height      = 0;
             if (m_zoomed) {
                 width  = static_cast<int32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<int32_t>(round(img->getHeight() * cam->getZoom()));
@@ -282,13 +282,13 @@ namespace FIFE
     void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         static_cast<void>(instances);
-        Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Image* img = m_font->getAsImageMultiline(m_text);
             Rect r;
-            Rect viewport  = cam->getViewPort();
-            int32_t width  = 0;
-            int32_t height = 0;
+            Rect const viewport = cam->getViewPort();
+            int32_t width       = 0;
+            int32_t height      = 0;
             if (m_zoomed) {
                 width  = static_cast<int32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<int32_t>(round(img->getHeight() * cam->getZoom()));
@@ -327,12 +327,12 @@ namespace FIFE
     {
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
-        Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
+        Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport  = cam->getViewPort();
-            int32_t width  = 0;
-            int32_t height = 0;
+            Rect const viewport = cam->getViewPort();
+            int32_t width       = 0;
+            int32_t height      = 0;
             if (m_zoomed) {
                 width  = static_cast<int32_t>(round(m_width * cam->getZoom()));
                 height = static_cast<int32_t>(round(m_height * cam->getZoom()));

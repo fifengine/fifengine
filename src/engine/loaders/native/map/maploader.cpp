@@ -62,8 +62,8 @@ namespace FIFE
         m_loaderName("fife")
 
     {
-        AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
-        AtlasLoaderPtr atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
+        AnimationLoaderPtr const animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
+        AtlasLoaderPtr const atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
         m_objectLoader.reset(
             new ObjectLoader(m_model, m_vfs, m_imageManager, m_animationManager, animationLoader, atlasLoader));
     }
@@ -78,7 +78,7 @@ namespace FIFE
         // it has residual data from last load
         m_percentDoneListener.reset();
 
-        fs::path mapPath(filename);
+        fs::path const mapPath(filename);
 
         if (HasParentPath(mapPath)) {
             if (GetParentPath(mapPath).string() != m_mapDirectory) {
@@ -89,7 +89,7 @@ namespace FIFE
 
         XML::Document mapFile;
 
-        std::string mapFilename = mapPath.string();
+        std::string const mapFilename = mapPath.string();
 
         try {
             RawData* data = m_vfs->open(mapFilename);
@@ -220,13 +220,13 @@ namespace FIFE
                         double zScale   = 1.0;
                         double rotation = 0.0;
 
-                        int xOffsetRetVal = XML::QueryAttribute(layerElement, "x_offset", &xOffset);
-                        int yOffsetRetVal = XML::QueryAttribute(layerElement, "y_offset", &yOffset);
+                        int const xOffsetRetVal = XML::QueryAttribute(layerElement, "x_offset", &xOffset);
+                        int const yOffsetRetVal = XML::QueryAttribute(layerElement, "y_offset", &yOffset);
                         XML::QueryAttribute(layerElement, "z_offset", &zOffset);
-                        int xScaleRetVal = XML::QueryAttribute(layerElement, "x_scale", &xScale);
-                        int yScaleRetVal = XML::QueryAttribute(layerElement, "y_scale", &yScale);
+                        int const xScaleRetVal = XML::QueryAttribute(layerElement, "x_scale", &xScale);
+                        int const yScaleRetVal = XML::QueryAttribute(layerElement, "y_scale", &yScale);
                         XML::QueryAttribute(layerElement, "z_scale", &zScale);
-                        int rotationRetVal = XML::QueryAttribute(layerElement, "rotation", &rotation);
+                        int const rotationRetVal = XML::QueryAttribute(layerElement, "rotation", &rotation);
 
                         const char* layerName     = XML::Attribute(layerElement, "id");
                         const char* pathing       = XML::Attribute(layerElement, "pathing");
@@ -323,8 +323,8 @@ namespace FIFE
                                                 namespaceId = XML::Attribute(instance, "namespace");
                                             }
 
-                                            int xRetVal = XML::QueryAttribute(instance, "x", &x);
-                                            int yRetVal = XML::QueryAttribute(instance, "y", &y);
+                                            int const xRetVal = XML::QueryAttribute(instance, "x", &x);
+                                            int const yRetVal = XML::QueryAttribute(instance, "y", &y);
                                             XML::QueryAttribute(instance, "z", &z);
                                             int rRetVal = XML::QueryAttribute(instance, "r", &r);
 
@@ -344,8 +344,9 @@ namespace FIFE
                                                 rRetVal = XML::QueryAttribute(instance, "rotation", &r);
                                             }
 
-                                            int stackRetVal = XML::QueryAttribute(instance, "stackpos", &stackpos);
-                                            int cellStackRetVal =
+                                            int const stackRetVal =
+                                                XML::QueryAttribute(instance, "stackpos", &stackpos);
+                                            int const cellStackRetVal =
                                                 XML::QueryAttribute(instance, "cellstack", &cellStack);
 
                                             if (objectId != nullptr) {
@@ -391,7 +392,7 @@ namespace FIFE
 
                                                         if (costId != nullptr) {
                                                             double cost = 0;
-                                                            int costRetVal =
+                                                            int const costRetVal =
                                                                 XML::QueryAttribute(instance, "cost", &cost);
                                                             if (costRetVal == XML::SUCCESS) {
                                                                 inst->setCost(costId, cost);
@@ -399,7 +400,7 @@ namespace FIFE
                                                         }
 
                                                         if (object->getAction("default") != nullptr) {
-                                                            Location target(layer);
+                                                            Location const target(layer);
 
                                                             inst->actRepeat("default", target);
                                                         }
@@ -459,16 +460,16 @@ namespace FIFE
                                             int success = cellElement->QueryIntAttribute("x", &cellX);
                                             success &= cellElement->QueryIntAttribute("y", &cellY);
                                             if (success == XML::SUCCESS) {
-                                                ModelCoordinate mc(cellX, cellY);
+                                                ModelCoordinate const mc(cellX, cellY);
                                                 Cell* cell = cache->createCell(mc);
 
                                                 const char* cellBlocker = XML::Attribute(cellElement, "blocker_type");
                                                 if (cellBlocker != nullptr) {
                                                     if (std::string(cellBlocker) == "no_blocker") {
-                                                        CellTypeInfo cti = CTYPE_CELL_NO_BLOCKER;
+                                                        CellTypeInfo const cti = CTYPE_CELL_NO_BLOCKER;
                                                         cell->setCellType(cti);
                                                     } else if (std::string(cellBlocker) == "blocker") {
-                                                        CellTypeInfo cti = CTYPE_CELL_BLOCKER;
+                                                        CellTypeInfo const cti = CTYPE_CELL_BLOCKER;
                                                         cell->setCellType(cti);
                                                     }
                                                 }
@@ -543,7 +544,7 @@ namespace FIFE
                                             int success = cellElement->QueryIntAttribute("x", &cellX);
                                             success &= cellElement->QueryIntAttribute("y", &cellY);
                                             if (success == XML::SUCCESS) {
-                                                ModelCoordinate mc(cellX, cellY);
+                                                ModelCoordinate const mc(cellX, cellY);
                                                 Cell* cell = cache->getCell(mc);
                                                 if (cell == nullptr) {
                                                     continue;
@@ -560,7 +561,7 @@ namespace FIFE
                                                     success &= transitionElement->QueryIntAttribute("y", &targetY);
                                                     transitionElement->QueryIntAttribute("z", &targetZ);
                                                     if (success == XML::SUCCESS) {
-                                                        ModelCoordinate mc_target(targetX, targetY, targetZ);
+                                                        ModelCoordinate const mc_target(targetX, targetY, targetZ);
                                                         Layer* targetLayer = nullptr;
                                                         const char* targetLayerId =
                                                             XML::Attribute(transitionElement, "id");
@@ -690,7 +691,7 @@ namespace FIFE
 
                                 // make sure the right number of viewport parameters were parsed
                                 if (viewportParameters.size() == 4) {
-                                    Rect rect(
+                                    Rect const rect(
                                         viewportParameters[0],
                                         viewportParameters[1],
                                         viewportParameters[2],
@@ -708,7 +709,8 @@ namespace FIFE
                                 const uint32_t screenHeight = m_renderBackend->getScreenHeight();
                                 assert(screenWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
                                 assert(screenHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-                                Rect rect(0, 0, static_cast<int32_t>(screenWidth), static_cast<int32_t>(screenHeight));
+                                Rect const rect(
+                                    0, 0, static_cast<int32_t>(screenWidth), static_cast<int32_t>(screenHeight));
 
                                 try {
                                     cam = map->addCamera(cameraId, rect);
@@ -792,11 +794,11 @@ namespace FIFE
 
     bool MapLoader::isLoadable(const std::string& filename) const
     {
-        fs::path mapPath(filename);
+        fs::path const mapPath(filename);
 
         XML::Document mapFile;
 
-        std::string mapFilename = mapPath.string();
+        std::string const mapFilename = mapPath.string();
 
         try {
             RawData* data = m_vfs->open(mapFilename);
@@ -845,7 +847,7 @@ namespace FIFE
             fs::path importFilePath(directory);
             importFilePath /= file;
 
-            std::string importFileString = importFilePath.string();
+            std::string const importFileString = importFilePath.string();
             if (m_objectLoader && m_objectLoader->getAtlasLoader() &&
                 m_objectLoader->getAtlasLoader()->isLoadable(importFileString)) {
                 m_objectLoader->getAtlasLoader()->loadMultiple(importFileString);
@@ -863,23 +865,23 @@ namespace FIFE
     void MapLoader::loadImportDirectory(const std::string& directory)
     {
         if (!directory.empty()) {
-            fs::path importDirectory(directory);
-            std::string importDirectoryString = importDirectory.string();
+            fs::path const importDirectory(directory);
+            std::string const importDirectoryString = importDirectory.string();
 
-            std::set<std::string> files = m_vfs->listFiles(importDirectoryString);
+            std::set<std::string> const files = m_vfs->listFiles(importDirectoryString);
 
             // load all xml files in the directory
             std::set<std::string>::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
                 // TODO - vtchill - may need a way to allow clients to load things other
                 // than .xml and .zip files
-                std::string ext = GetExtension(*iter);
+                std::string const ext = GetExtension(*iter);
                 if (ext == ".xml" || ext == ".zip") {
                     loadImportFile(*iter, importDirectoryString);
                 }
             }
 
-            std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
+            std::set<std::string> const nestedDirectories = m_vfs->listDirectories(importDirectoryString);
             for (iter = nestedDirectories.begin(); iter != nestedDirectories.end(); ++iter) {
                 // do not attempt to load anything from a .svn directory
                 if ((*iter).find(".svn") == std::string::npos) {

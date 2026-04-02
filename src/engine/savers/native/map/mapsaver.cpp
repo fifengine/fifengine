@@ -157,7 +157,7 @@ namespace FIFE
 
                 instanceElement->SetAttribute("o", obj->getId().c_str());
 
-                ExactModelCoordinate position = instance->getLocationRef().getExactLayerCoordinates();
+                ExactModelCoordinate const position = instance->getLocationRef().getExactLayerCoordinates();
                 instanceElement->SetAttribute("x", position.x);
                 instanceElement->SetAttribute("y", position.y);
                 instanceElement->SetAttribute("z", position.z);
@@ -205,7 +205,7 @@ namespace FIFE
             cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
 
             const std::set<Cell*>& narrowCells = cache->getNarrowCells();
-            bool saveNarrows                   = !cache->isSearchNarrowCells() && !narrowCells.empty();
+            bool const saveNarrows             = !cache->isSearchNarrowCells() && !narrowCells.empty();
 
             const std::vector<std::vector<Cell*>>& cells = cache->getCells();
             auto it                                      = cells.begin();
@@ -214,9 +214,9 @@ namespace FIFE
                 for (; cit != (*it).end(); ++cit) {
                     Cell* cell                     = *cit;
                     std::list<std::string> costIds = cache->getCosts();
-                    bool costsEmpty                = costIds.empty();
-                    bool defaultCost               = cell->defaultCost();
-                    bool defaultSpeed              = cell->defaultSpeed();
+                    bool const costsEmpty          = costIds.empty();
+                    bool const defaultCost         = cell->defaultCost();
+                    bool const defaultSpeed        = cell->defaultSpeed();
 
                     // check if area is part of the cell or object
                     std::vector<std::string> areaIds = cache->getCellAreas(cell);
@@ -245,8 +245,8 @@ namespace FIFE
                         areasEmpty = cellAreaIds.empty();
                     }
 
-                    CellTypeInfo cti           = cell->getCellType();
-                    bool cellBlocker           = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
+                    CellTypeInfo const cti     = cell->getCellType();
+                    bool const cellBlocker     = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
                     TransitionInfo* transition = cell->getTransition();
                     bool isNarrow              = false;
                     if (saveNarrows) {
@@ -260,8 +260,8 @@ namespace FIFE
                         continue;
                     }
                     // add cell tag to document
-                    ModelCoordinate cellCoord = cell->getLayerCoordinates();
-                    XML::Element* cellElement = doc.NewElement("cell");
+                    ModelCoordinate const cellCoord = cell->getLayerCoordinates();
+                    XML::Element* cellElement       = doc.NewElement("cell");
                     cellElement->SetAttribute("x", cellCoord.x);
                     cellElement->SetAttribute("y", cellCoord.y);
                     if (!defaultCost) {
@@ -387,13 +387,13 @@ namespace FIFE
                     cameraElement->SetAttribute("ztoy", camera->getZToY());
                 }
 
-                Rect viewport = camera->getViewPort();
+                Rect const viewport = camera->getViewPort();
                 std::ostringstream viewportString;
                 viewportString << viewport.x << "," << viewport.y << "," << viewport.w << "," << viewport.h;
 
                 cameraElement->SetAttribute("viewport", viewportString.str().c_str());
 
-                Point p = camera->getCellImageDimensions();
+                Point const p = camera->getCellImageDimensions();
                 cameraElement->SetAttribute("ref_cell_width", p.x);
                 cameraElement->SetAttribute("ref_cell_height", p.y);
 

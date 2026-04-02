@@ -43,8 +43,8 @@ namespace FIFE
         ZipNode* tempNode   = nullptr;
         ZipNode* returnNode = nullptr;
         for (fs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
-            std::string pathString = GetPathIteratorAsString(iter);
-            tempNode               = node->getChild(pathString);
+            std::string const pathString = GetPathIteratorAsString(iter);
+            tempNode                     = node->getChild(pathString);
 
             if (tempNode == nullptr) {
                 // attempt to add the child since it was not found

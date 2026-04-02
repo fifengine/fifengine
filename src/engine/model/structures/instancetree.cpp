@@ -75,7 +75,7 @@ namespace FIFE
     {
         InstanceTree::InstanceList& list = node->data();
         for (InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
-            ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
+            ModelCoordinate const coords = (*it)->getLocationRef().getLayerCoordinates();
             if (searchRect.contains(Point(coords.x, coords.y))) {
                 instanceList->push_back(*it);
             }

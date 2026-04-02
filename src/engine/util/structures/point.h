@@ -383,7 +383,7 @@ namespace FIFE
      */
     inline Point doublePt2intPt(const DoublePoint& pt)
     {
-        Point tmp(static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)));
+        Point const tmp(static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)));
         return tmp;
     }
 
@@ -391,7 +391,7 @@ namespace FIFE
      */
     inline Point3D doublePt2intPt(const DoublePoint3D& pt)
     {
-        Point3D tmp(
+        Point3D const tmp(
             static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)), static_cast<int32_t>(round(pt.z)));
         return tmp;
     }
@@ -400,7 +400,7 @@ namespace FIFE
      */
     inline DoublePoint intPt2doublePt(const Point& pt)
     {
-        DoublePoint tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
+        DoublePoint const tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
         return tmp;
     }
 
@@ -408,7 +408,7 @@ namespace FIFE
      */
     inline DoublePoint3D intPt2doublePt(const Point3D& pt)
     {
-        DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
+        DoublePoint3D const tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
         return tmp;
     }
 

@@ -144,7 +144,7 @@ namespace fcn
 
     void ResizableWindow::restoreCursor()
     {
-        FIFE::MouseCursorType type = m_saved.cursorType;
+        FIFE::MouseCursorType const type = m_saved.cursorType;
         switch (type) {
         case FIFE::CURSOR_NATIVE:
             m_cursor->set(m_saved.cursorId);
@@ -162,7 +162,7 @@ namespace fcn
 
     void ResizableWindow::saveCursor()
     {
-        FIFE::MouseCursorType type = m_cursor->getType();
+        FIFE::MouseCursorType const type = m_cursor->getType();
         switch (type) {
         case FIFE::CURSOR_NATIVE:
             m_saved.cursorType = type;
@@ -310,8 +310,8 @@ namespace fcn
     {
         // we keep the size in case we want it resizable
         if (m_resizable) {
-            int w = getWidth();
-            int h = getHeight();
+            int const w = getWidth();
+            int const h = getHeight();
             Window::resizeToContent(recursiv);
             setSize(w, h);
         } else {
@@ -380,8 +380,8 @@ namespace fcn
             if (index > 0) {
                 // to get the real index value
                 index -= 1;
-                CursorState state          = m_cursors[index];
-                FIFE::MouseCursorType type = state.cursorType;
+                CursorState const state          = m_cursors[index];
+                FIFE::MouseCursorType const type = state.cursorType;
                 switch (type) {
                 case FIFE::CURSOR_NATIVE:
                     m_cursor->set(state.cursorId);
@@ -406,17 +406,17 @@ namespace fcn
     void ResizableWindow::mouseDragged(MouseEvent& mouseEvent)
     {
         if (m_resizable && m_resizing) {
-            int x = mouseEvent.getX();
-            int y = mouseEvent.getY();
+            int const x = mouseEvent.getX();
+            int const y = mouseEvent.getY();
             if (m_resizeLeft) {
-                int oldW = getWidth();
-                int newW = std::max(0, oldW - x);
+                int const oldW = getWidth();
+                int newW       = std::max(0, oldW - x);
                 setWidth(newW);
                 if (m_shove) {
                     setX(getX() + x);
                 } else {
-                    newW     = getWidth();
-                    int newX = oldW - newW;
+                    newW           = getWidth();
+                    int const newX = oldW - newW;
                     setX(getX() + newX);
                 }
             } else if (m_resizeRight) {
@@ -427,14 +427,14 @@ namespace fcn
             }
 
             if (m_resizeTop) {
-                int oldH = getHeight();
-                int newH = std::max(0, oldH - y);
+                int const oldH = getHeight();
+                int newH       = std::max(0, oldH - y);
                 setHeight(newH);
                 if (m_shove) {
                     setY(getY() + y);
                 } else {
-                    newH     = getHeight();
-                    int newY = oldH - newH;
+                    newH           = getHeight();
+                    int const newY = oldH - newH;
                     setY(getY() + newY);
                 }
             } else if (m_resizeBottom) {

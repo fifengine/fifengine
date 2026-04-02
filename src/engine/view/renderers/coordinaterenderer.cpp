@@ -80,11 +80,11 @@ namespace FIFE
     void CoordinateRenderer::adjustLayerArea()
     {
         m_tmploc.setMapCoordinates(m_c);
-        ModelCoordinate c = m_tmploc.getLayerCoordinates();
-        m_layer_area.x    = std::min(c.x, m_layer_area.x);
-        m_layer_area.w    = std::max(c.x, m_layer_area.w);
-        m_layer_area.y    = std::min(c.y, m_layer_area.y);
-        m_layer_area.h    = std::max(c.y, m_layer_area.h);
+        ModelCoordinate const c = m_tmploc.getLayerCoordinates();
+        m_layer_area.x          = std::min(c.x, m_layer_area.x);
+        m_layer_area.w          = std::max(c.x, m_layer_area.w);
+        m_layer_area.y          = std::min(c.y, m_layer_area.y);
+        m_layer_area.h          = std::max(c.y, m_layer_area.h);
     }
 
     const int32_t MIN_COORD = -9999999;
@@ -98,7 +98,7 @@ namespace FIFE
         }
         Rect r            = Rect();
         const bool zoomed = (!Mathd::Equal(1.0, cam->getZoom()) && m_zoom);
-        Rect cv           = cam->getViewPort();
+        Rect const cv     = cam->getViewPort();
 
         m_tmploc.setLayer(layer);
         m_layer_area.x = MAX_COORD;
@@ -115,16 +115,16 @@ namespace FIFE
         m_c = cam->toMapCoordinates(ScreenPoint(cv.x + cv.w, cv.y + cv.h), false);
         adjustLayerArea();
 
-        SDL_Color old_color = m_font->getColor();
+        SDL_Color const old_color = m_font->getColor();
         if (old_color.r != m_color.r || old_color.g != m_color.g || old_color.b != m_color.b) {
             m_font->setColor(m_color.r, m_color.g, m_color.b);
             m_font_color = true;
         }
         for (int32_t x = m_layer_area.x - 1; x < m_layer_area.w + 1; x++) {
             for (int32_t y = m_layer_area.y - 1; y < m_layer_area.h + 1; y++) {
-                ModelCoordinate mc(x, y);
+                ModelCoordinate const mc(x, y);
                 m_tmploc.setLayerCoordinates(mc);
-                ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());
+                ScreenPoint const drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());
                 if (drawpt.x < cv.x || drawpt.x > cv.x + cv.w || drawpt.y < cv.y || drawpt.y > cv.y + cv.h) {
                     continue;
                 }

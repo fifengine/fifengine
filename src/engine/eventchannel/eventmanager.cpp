@@ -528,17 +528,17 @@ namespace FIFE
 
             float modifier = 0.0F;
             if (m_acceleration) {
-                uint32_t ticks    = SDL_GetTicks();
-                auto difference   = static_cast<float>((ticks - m_lastTicks) + 1);
-                m_lastTicks       = ticks;
-                auto dx           = static_cast<float>(tmp_x - m_oldX);
-                auto dy           = static_cast<float>(tmp_y - m_oldY);
-                float distance    = Mathf::Sqrt((dx * dx) + (dy * dy));
-                auto acceleration = (distance / difference) / difference;
-                float velocity    = (m_oldVelocity + acceleration * difference) / 2;
-                velocity          = std::min(velocity, m_mouseSensitivity + 1);
-                m_oldVelocity     = velocity;
-                modifier          = velocity;
+                uint32_t const ticks = SDL_GetTicks();
+                auto difference      = static_cast<float>((ticks - m_lastTicks) + 1);
+                m_lastTicks          = ticks;
+                auto dx              = static_cast<float>(tmp_x - m_oldX);
+                auto dy              = static_cast<float>(tmp_y - m_oldY);
+                float const distance = Mathf::Sqrt((dx * dx) + (dy * dy));
+                auto acceleration    = (distance / difference) / difference;
+                float velocity       = (m_oldVelocity + acceleration * difference) / 2;
+                velocity             = std::min(velocity, m_mouseSensitivity + 1);
+                m_oldVelocity        = velocity;
+                modifier             = velocity;
             } else {
                 modifier = m_mouseSensitivity;
             }
@@ -546,7 +546,7 @@ namespace FIFE
             const int32_t tmp_xrel = tmp_x - m_oldX;
             const int32_t tmp_yrel = tmp_y - m_oldY;
             if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
-                Rect screen          = RenderBackend::instance()->getArea();
+                Rect const screen    = RenderBackend::instance()->getArea();
                 const int32_t x_fact = static_cast<int32_t>(round(static_cast<float>(tmp_xrel) * modifier));
                 const int32_t y_fact = static_cast<int32_t>(round(static_cast<float>(tmp_yrel) * modifier));
                 if ((tmp_x + x_fact) > screen.w) {
@@ -600,7 +600,7 @@ namespace FIFE
         //}
 
         char* tmp = event.drop.file;
-        std::string path(tmp);
+        std::string const path(tmp);
         SDL_free(tmp);
 
         DropEvent drop;
@@ -692,7 +692,7 @@ namespace FIFE
             return;
         }
 
-        SDL_Keysym keysym = sdlevt.key.keysym;
+        SDL_Keysym const keysym = sdlevt.key.keysym;
         keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
         keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
         keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
@@ -705,11 +705,11 @@ namespace FIFE
     {
         if (sdlevt.type == SDL_TEXTINPUT) {
             txtevt.setType(TextEvent::INPUT);
-            Text t(&sdlevt.text.text[0]);
+            Text const t(&sdlevt.text.text[0]);
             txtevt.setText(t);
         } else if (sdlevt.type == SDL_TEXTEDITING) {
             txtevt.setType(TextEvent::EDIT);
-            Text t(&sdlevt.edit.text[0], sdlevt.edit.start, sdlevt.edit.length);
+            Text const t(&sdlevt.edit.text[0], sdlevt.edit.start, sdlevt.edit.length);
             txtevt.setText(t);
         } else {
             FL_WARN(

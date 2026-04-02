@@ -235,7 +235,7 @@ namespace FIFE
                 const uint32_t cursorHeight = img2->getHeight();
                 assert(cursorWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
                 assert(cursorHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-                Rect area(
+                Rect const area(
                     m_mx + img2->getXShift(),
                     m_my + img2->getYShift(),
                     static_cast<int32_t>(cursorWidth),

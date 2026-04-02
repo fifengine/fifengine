@@ -89,7 +89,7 @@ namespace FIFE
 
     bool ObjectLoader::isLoadable(const std::string& filename) const
     {
-        fs::path objectPath(filename);
+        fs::path const objectPath(filename);
 
         XML::Document objectFile;
 
@@ -154,7 +154,7 @@ namespace FIFE
 
     void ObjectLoader::load(const std::string& filename)
     {
-        fs::path objectPath(filename);
+        fs::path const objectPath(filename);
 
         XML::Document objectFile;
 
@@ -286,8 +286,8 @@ namespace FIFE
                     const char* costId = XML::Attribute(objectElem, "cost_id");
                     if (costId != nullptr) {
                         obj->setCostId(costId);
-                        double cost = 1.0;
-                        int success = objectElem->QueryDoubleAttribute("cost", &cost);
+                        double cost       = 1.0;
+                        int const success = objectElem->QueryDoubleAttribute("cost", &cost);
                         if (success == XML::SUCCESS) {
                             obj->setCost(cost);
                         }
@@ -320,9 +320,9 @@ namespace FIFE
                     assert(cellStack <= std::numeric_limits<uint8_t>::max());
                     obj->setCellStackPosition(static_cast<uint8_t>(cellStack));
 
-                    double ax = 0;
-                    double ay = 0;
-                    double az = 0;
+                    double ax       = 0;
+                    double ay       = 0;
+                    double const az = 0;
 
                     int xRetVal = XML::QueryAttribute(objectElem, "anchor_x", &ax);
                     int yRetVal = XML::QueryAttribute(objectElem, "anchor_y", &ay);
@@ -334,8 +334,8 @@ namespace FIFE
                     objectElem->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
                     obj->setRestrictedRotation(isRestrictedRotation != 0);
 
-                    int zStep   = 0;
-                    int zRetVal = objectElem->QueryIntAttribute("z_step_limit", &zStep);
+                    int zStep         = 0;
+                    int const zRetVal = objectElem->QueryIntAttribute("z_step_limit", &zStep);
                     if (zRetVal == XML::SUCCESS) {
                         obj->setZStepRange(zStep);
                     }
@@ -527,7 +527,7 @@ namespace FIFE
                                 // Fetch already created animation
                                 const char* animationId = XML::Attribute(animElement, "animation_id");
                                 if (animationId != nullptr) {
-                                    AnimationPtr animation = m_animationManager->getPtr(animationId);
+                                    AnimationPtr const animation = m_animationManager->getPtr(animationId);
                                     if (animation) {
                                         auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
@@ -578,8 +578,8 @@ namespace FIFE
                                         int dir = 0;
                                         dirElement->QueryIntAttribute("dir", &dir);
 
-                                        std::string aniId      = std::format("{}:{}:{:03d}", objectId, actionId, dir);
-                                        AnimationPtr animation = m_animationManager->create(aniId);
+                                        std::string const aniId = std::format("{}:{}:{:03d}", objectId, actionId, dir);
+                                        AnimationPtr const animation = m_animationManager->create(aniId);
 
                                         int frames       = 0;
                                         int success_attr = XML::QueryAttribute(dirElement, "frames", &frames);
@@ -612,9 +612,9 @@ namespace FIFE
                                         }
 
                                         for (int iframe = 0; iframe < frames; ++iframe) {
-                                            std::string frameId =
+                                            std::string const frameId =
                                                 std::format("{}:{}:{:03d}:{:04d}", objectId, actionId, dir, iframe);
-                                            Rect region(
+                                            Rect const region(
                                                 frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight);
                                             ImagePtr framePtr;
                                             if (!m_imageManager->exists(frameId)) {
@@ -642,8 +642,8 @@ namespace FIFE
                                 // Load animation.xml with frames
                                 sourceId = XML::Attribute(animElement, "source");
                                 if (sourceId != nullptr) {
-                                    int direction    = 0;
-                                    int success_attr = XML::QueryAttribute(animElement, "direction", &direction);
+                                    int direction          = 0;
+                                    int const success_attr = XML::QueryAttribute(animElement, "direction", &direction);
 
                                     fs::path animPath(filename);
 
@@ -687,7 +687,7 @@ namespace FIFE
             fs::path importFilePath(directory);
             importFilePath /= file;
 
-            std::string importFileString = importFilePath.string();
+            std::string const importFileString = importFilePath.string();
             if (m_atlasLoader && m_atlasLoader->isLoadable(importFileString)) {
                 m_atlasLoader->loadMultiple(importFileString);
             }
@@ -703,23 +703,23 @@ namespace FIFE
     void ObjectLoader::loadImportDirectory(const std::string& directory)
     {
         if (!directory.empty()) {
-            fs::path importDirectory(directory);
-            std::string importDirectoryString = importDirectory.string();
+            fs::path const importDirectory(directory);
+            std::string const importDirectoryString = importDirectory.string();
 
-            std::set<std::string> files = m_vfs->listFiles(importDirectoryString);
+            std::set<std::string> const files = m_vfs->listFiles(importDirectoryString);
 
             // load all xml files in the directory
             std::set<std::string>::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
                 // TODO - vtchill - may need a way to allow clients to load things other
                 // than .xml and .zip files
-                std::string ext = GetExtension(*iter);
+                std::string const ext = GetExtension(*iter);
                 if (ext == ".xml" || ext == ".zip") {
                     loadImportFile(*iter, importDirectoryString);
                 }
             }
 
-            std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
+            std::set<std::string> const nestedDirectories = m_vfs->listDirectories(importDirectoryString);
             for (iter = nestedDirectories.begin(); iter != nestedDirectories.end(); ++iter) {
                 // do not attempt to load anything from a .svn directory
                 if ((*iter).find(".svn") == std::string::npos) {

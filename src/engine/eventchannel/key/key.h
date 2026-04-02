@@ -292,7 +292,7 @@ namespace FIFE
          */
         bool isPrintable() const
         {
-            std::string name = getAsString();
+            std::string const name = getAsString();
             return !name.empty();
         }
 

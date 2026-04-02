@@ -75,9 +75,9 @@ namespace fcn
                 setSize(m_state.dimension.width, m_state.dimension.height);
                 // setInnerBorderSize(m_state.innerBorder);
                 //  center it
-                Rectangle childrenRec = getParent()->getChildrenArea();
-                int32_t x             = childrenRec.x + (childrenRec.width / 2) - (getWidth() / 2);
-                int32_t y             = childrenRec.y + (childrenRec.height / 2) - (getHeight() / 2);
+                Rectangle const childrenRec = getParent()->getChildrenArea();
+                int32_t const x             = childrenRec.x + (childrenRec.width / 2) - (getWidth() / 2);
+                int32_t const y             = childrenRec.y + (childrenRec.height / 2) - (getHeight() / 2);
                 setPosition(x, y);
                 setResizable(m_state.resizable);
                 setMovable(m_state.movable);
@@ -173,9 +173,9 @@ namespace fcn
         if (!m_docked) {
             ResizableWindow::mousePressed(mouseEvent);
         } else {
-            int32_t height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
-            mDragOffsetX   = mouseEvent.getX();
-            mDragOffsetY   = mouseEvent.getY();
+            int32_t const height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
+            mDragOffsetX         = mouseEvent.getX();
+            mDragOffsetY         = mouseEvent.getY();
 
             mMoved = mouseEvent.getY() <= height;
         }
@@ -206,9 +206,9 @@ namespace fcn
     {
         if (m_docked) {
             if (isMovable() && mMoved) {
-                Rectangle rec = getDockedArea()->getChildrenArea();
-                int32_t x     = mouseEvent.getX() - mDragOffsetX + getX();
-                int32_t y     = mouseEvent.getY() - mDragOffsetY + getY();
+                Rectangle const rec = getDockedArea()->getChildrenArea();
+                int32_t x           = mouseEvent.getX() - mDragOffsetX + getX();
+                int32_t y           = mouseEvent.getY() - mDragOffsetY + getY();
                 if (x < 0) {
                     x = 0;
                 } else if (x + getWidth() > rec.width) {

@@ -143,7 +143,7 @@ namespace FIFE
         m_availableVideoDrivers.clear();
         const int driverCount = SDL_GetNumVideoDrivers();
         for (int i = 0; i != driverCount; ++i) {
-            std::string driver(SDL_GetVideoDriver(i));
+            std::string const driver(SDL_GetVideoDriver(i));
             m_availableVideoDrivers.push_back(driver);
         }
         m_videoDriverName = std::string(SDL_GetCurrentVideoDriver());
@@ -154,7 +154,7 @@ namespace FIFE
         const int renderDriverCount = SDL_GetNumRenderDrivers();
         for (int i = 0; i != renderDriverCount; ++i) {
             SDL_GetRenderDriverInfo(i, &info);
-            std::string name(info.name);
+            std::string const name(info.name);
             m_availableRenderDrivers.push_back(name);
         }
     }
@@ -196,15 +196,15 @@ namespace FIFE
         bpps[1] = 24;
         bpps[2] = 32;
 
-        bool renderDriver      = m_renderDriverIndex != -1;
-        const int displayCount = SDL_GetNumVideoDisplays();
+        bool const renderDriver = m_renderDriverIndex != -1;
+        const int displayCount  = SDL_GetNumVideoDisplays();
         for (int i = 0; i != displayCount; ++i) {
             SDL_DisplayMode mode;
             const int displayModes = SDL_GetNumDisplayModes(i);
             for (int m = 0; m != displayModes; ++m) {
                 if (SDL_GetDisplayMode(i, m, &mode) == 0) {
-                    for (int16_t bpp : bpps) {
-                        for (unsigned int flag : flags) {
+                    for (int16_t const bpp : bpps) {
+                        for (unsigned int const flag : flags) {
                             // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
                             // mode.refresh_rate, flags[j]));
                             ScreenMode sm(mode.w, mode.h, bpp, mode.refresh_rate, flag);

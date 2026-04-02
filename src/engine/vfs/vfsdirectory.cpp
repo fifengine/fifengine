@@ -39,9 +39,9 @@ namespace FIFE
 
     bool VFSDirectory::fileExists(const std::string& name) const
     {
-        std::string filename = m_root + name;
+        std::string const filename = m_root + name;
 
-        fs::path path(filename);
+        fs::path const path(filename);
         std::ifstream file(path.string().c_str());
 
         return file.is_open();
@@ -75,18 +75,18 @@ namespace FIFE
         }
 
         try {
-            fs::path dirPath(dir);
+            fs::path const dirPath(dir);
             if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
                 return list;
             }
 
-            fs::directory_iterator end;
+            fs::directory_iterator const end;
             for (fs::directory_iterator i(dirPath); i != end; ++i) {
                 if (fs::is_directory(*i) != directorys) {
                     continue;
                 }
 
-                std::string filename = GetFilenameFromDirectoryIterator(i);
+                std::string const filename = GetFilenameFromDirectoryIterator(i);
                 if (!filename.empty()) {
                     list.insert(filename);
                 }

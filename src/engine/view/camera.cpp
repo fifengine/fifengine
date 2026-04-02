@@ -201,7 +201,7 @@ namespace FIFE
         if (m_location.getLayer() != nullptr) {
             const CellGrid* cg = m_location.getLayer()->getCellGrid();
             if (cg != nullptr) {
-                ExactModelCoordinate pt = m_location.getMapCoordinates();
+                ExactModelCoordinate const pt = m_location.getMapCoordinates();
                 matrix.applyTranslate(-pt.x * m_referenceScaleX, -pt.y * m_referenceScaleY, -pt.z * m_referenceScaleX);
             }
         }
@@ -275,9 +275,9 @@ namespace FIFE
     Point Camera::getCellImageDimensions(Layer* layer) const
     {
         Point p;
-        DoublePoint dimensions = getLogicalCellDimensions(layer);
-        p.x                    = static_cast<int32_t>(round(m_referenceScaleX * dimensions.x));
-        p.y                    = static_cast<int32_t>(round(m_referenceScaleY * dimensions.y));
+        DoublePoint const dimensions = getLogicalCellDimensions(layer);
+        p.x                          = static_cast<int32_t>(round(m_referenceScaleX * dimensions.x));
+        p.y                          = static_cast<int32_t>(round(m_referenceScaleY * dimensions.y));
         return p;
     }
 
@@ -310,10 +310,10 @@ namespace FIFE
     {
         if (!m_mapViewPortUpdated) {
             // Screenpoints
-            ScreenPoint sp1(m_viewport.x, m_viewport.y);
-            ScreenPoint sp2(m_viewport.x, m_viewport.y + m_viewport.h);
-            ScreenPoint sp3(m_viewport.x + m_viewport.w, m_viewport.y);
-            ScreenPoint sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
+            ScreenPoint const sp1(m_viewport.x, m_viewport.y);
+            ScreenPoint const sp2(m_viewport.x, m_viewport.y + m_viewport.h);
+            ScreenPoint const sp3(m_viewport.x + m_viewport.w, m_viewport.y);
+            ScreenPoint const sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
 
             // Convert viewport corners to map coordinates
             const ExactModelCoordinate p0 = toMapCoordinates(sp1, false);
@@ -410,7 +410,7 @@ namespace FIFE
         if (m_enabledZToY) {
             m_matrix.m9 = -m_zToY; // z -> y height in pixels
         }
-        double scale = m_zoom;
+        double const scale = m_zoom;
         m_matrix.applyScale(scale, scale, scale);
         m_matrix.applyTranslate(+m_viewport.x + (m_viewport.w / 2.0), +m_viewport.y + (m_viewport.h / 2.0), 0);
         m_inverse_matrix = m_matrix.inverse();
@@ -444,8 +444,8 @@ namespace FIFE
 
     void Camera::calculateZValue(DoublePoint3D& screen_coords)
     {
-        int32_t dy      = -(screen_coords.y - toScreenCoordinates(m_position).y);
-        screen_coords.z = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
+        int32_t const dy = -(screen_coords.y - toScreenCoordinates(m_position).y);
+        screen_coords.z  = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
     }
 
     ExactModelCoordinate Camera::toMapCoordinates(const ScreenPoint& screen_coords, bool z_calculated)
@@ -459,13 +459,13 @@ namespace FIFE
 
     ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords)
     {
-        ScreenPoint pt = doublePt2intPt(m_matrix * elevation_coords);
+        ScreenPoint const pt = doublePt2intPt(m_matrix * elevation_coords);
         return pt;
     }
 
     DoublePoint3D Camera::toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords)
     {
-        DoublePoint3D pt = (m_vs_matrix * elevation_coords);
+        DoublePoint3D const pt = (m_vs_matrix * elevation_coords);
         return pt;
     }
 
@@ -485,7 +485,7 @@ namespace FIFE
         CellGrid* cg = layer->getCellGrid();
         assert(cg);
 
-        ModelCoordinate cell(0, 0);
+        ModelCoordinate const cell(0, 0);
         std::vector<ExactModelCoordinate> vertices;
         cg->getVertices(vertices, cell);
 
@@ -548,9 +548,9 @@ namespace FIFE
 
     void Camera::updateReferenceScale()
     {
-        DoublePoint dim   = getLogicalCellDimensions();
-        m_referenceScaleX = static_cast<double>(m_screenCellWidth) / dim.x;
-        m_referenceScaleY = static_cast<double>(m_screenCellHeight) / dim.y;
+        DoublePoint const dim = getLogicalCellDimensions();
+        m_referenceScaleX     = static_cast<double>(m_screenCellWidth) / dim.x;
+        m_referenceScaleY     = static_cast<double>(m_screenCellHeight) / dim.y;
 
         FL_DBG(_log, "Updating reference scale");
         FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
@@ -569,8 +569,8 @@ namespace FIFE
         const ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
-        bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
-        bool special_alpha = alpha != 0;
+        bool const zoomed        = !Mathd::Equal(m_zoom, 1.0);
+        bool const special_alpha = alpha != 0;
 
         const RenderList& layer_instances = m_layerToInstances[&layer];
         auto instance_it                  = layer_instances.end();
@@ -629,8 +629,8 @@ namespace FIFE
         const Rect& screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
-        bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
-        bool special_alpha = alpha != 0;
+        bool const zoomed        = !Mathd::Equal(m_zoom, 1.0);
+        bool const special_alpha = alpha != 0;
 
         const RenderList& layer_instances = m_layerToInstances[&layer];
         auto instance_it                  = layer_instances.end();
@@ -643,14 +643,14 @@ namespace FIFE
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
                 }
-                uint8_t r                   = 0;
-                uint8_t g                   = 0;
-                uint8_t b                   = 0;
-                uint8_t a                   = 0;
-                int32_t intersection_left   = std::max(screen_rect.x, vc.dimensions.x);
-                int32_t intersection_right  = std::min(screen_rect.right(), vc.dimensions.right());
-                int32_t intersection_top    = std::max(screen_rect.y, vc.dimensions.y);
-                int32_t intersection_bottom = std::min(screen_rect.bottom(), vc.dimensions.bottom());
+                uint8_t r                         = 0;
+                uint8_t g                         = 0;
+                uint8_t b                         = 0;
+                uint8_t a                         = 0;
+                int32_t const intersection_left   = std::max(screen_rect.x, vc.dimensions.x);
+                int32_t const intersection_right  = std::min(screen_rect.right(), vc.dimensions.right());
+                int32_t const intersection_top    = std::max(screen_rect.y, vc.dimensions.y);
+                int32_t const intersection_bottom = std::min(screen_rect.bottom(), vc.dimensions.bottom());
 
                 for (int32_t xx = intersection_left; xx < intersection_right; xx++) {
                     for (int32_t yy = intersection_top; yy < intersection_bottom; yy++) {
@@ -739,7 +739,7 @@ found_non_transparent_pixel:;
         if (m_attachedTo == nullptr) {
             return;
         }
-        ExactModelCoordinate pos = m_attachedTo->getLocationRef().getMapCoordinates();
+        ExactModelCoordinate const pos = m_attachedTo->getLocationRef().getMapCoordinates();
         if (Mathd::Equal(m_position.x, pos.x) && Mathd::Equal(m_position.y, pos.y)) {
             return;
         }
@@ -928,21 +928,21 @@ found_non_transparent_pixel:;
         if (!m_col_overlay && !m_img_overlay && !m_ani_overlay) {
             return;
         }
-        uint16_t width  = m_viewport.w;
-        uint16_t height = m_viewport.h;
-        Point pm        = Point(m_viewport.x + (width / 2), m_viewport.y + (height / 2));
+        uint16_t const width  = m_viewport.w;
+        uint16_t const height = m_viewport.h;
+        Point const pm        = Point(m_viewport.x + (width / 2), m_viewport.y + (height / 2));
         Rect r;
 
         // color overlay
         if (m_col_overlay) {
-            Point p = Point(m_viewport.x, m_viewport.y);
+            Point const p = Point(m_viewport.x, m_viewport.y);
             m_renderbackend->fillRectangle(
                 p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.a);
         }
         // image overlay
         if (m_img_overlay) {
-            ImagePtr resptr = ImageManager::instance()->get(m_img_id);
-            Image* img      = resptr.get();
+            ImagePtr const resptr = ImageManager::instance()->get(m_img_id);
+            Image* img            = resptr.get();
             if (img != nullptr) {
                 if (m_img_fill) {
                     r.w = width;
@@ -963,9 +963,9 @@ found_non_transparent_pixel:;
             if (m_start_time == 0) {
                 m_start_time = TimeManager::instance()->getTime();
             }
-            uint32_t animtime =
+            uint32_t const animtime =
                 scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % m_ani_ptr->getDuration();
-            ImagePtr img = m_ani_ptr->getFrameByTimestamp(animtime);
+            ImagePtr const img = m_ani_ptr->getFrameByTimestamp(animtime);
             if (img) {
                 if (m_ani_fill) {
                     r.w = width;
@@ -1009,11 +1009,11 @@ found_non_transparent_pixel:;
             RenderList& instancesToRender = m_layerToInstances[layer];
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
-                uint8_t batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
-                uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+                uint8_t const batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+                uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
-                    uint32_t start = i * MAX_BATCH_SIZE;
-                    uint32_t end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
+                    uint32_t const start = i * MAX_BATCH_SIZE;
+                    uint32_t const end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
                     RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
                     auto r_it = m_pipeline.begin();
                     for (; r_it != m_pipeline.end(); ++r_it) {
@@ -1070,7 +1070,7 @@ found_non_transparent_pixel:;
             return;
         }
 
-        uint32_t lm = m_renderbackend->getLightingModel();
+        uint32_t const lm = m_renderbackend->getLightingModel();
         if (lm != 0) {
             m_renderbackend->resetStencilBuffer(0);
             if (m_lighting) {
@@ -1101,11 +1101,11 @@ found_non_transparent_pixel:;
             RenderList& instancesToRender = m_layerToInstances[*layer_it];
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
-                uint8_t batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
-                uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+                uint8_t const batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+                uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
-                    uint32_t start = i * MAX_BATCH_SIZE;
-                    uint32_t end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
+                    uint32_t const start = i * MAX_BATCH_SIZE;
+                    uint32_t const end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
                     RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
                     auto r_it = m_pipeline.begin();
                     for (; r_it != m_pipeline.end(); ++r_it) {
