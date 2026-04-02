@@ -33,7 +33,7 @@ namespace FIFE {
 	class ObjectVisual: public Visual2DGfx {
 	public:
 		static ObjectVisual* create(Object* object);
-		virtual ~ObjectVisual();
+		~ObjectVisual();
 		void addStaticImage(uint32_t angle, int32_t image_index);
 		int32_t getStaticImageIndexByAngle(int32_t angle);
 		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
@@ -46,11 +46,11 @@ namespace FIFE {
 	};
 	%template(get2dGfxVisual) Object::getVisual<ObjectVisual>;
 	%clear std::vector<int32_t> angles;
-	
+
 	class InstanceVisual: public Visual2DGfx {
 	public:
 		static InstanceVisual* create(Instance* instance);
-		virtual ~InstanceVisual();
+		~InstanceVisual();
 		void setTransparency(uint8_t transparency);
 		uint8_t getTransparency();
 		void setVisible(bool visible);
@@ -61,12 +61,12 @@ namespace FIFE {
 		InstanceVisual();
 	};
 	%template(get2dGfxVisual) Instance::getVisual<InstanceVisual>;
-	
+
 	%apply std::vector<int32_t> &OUTPUT { std::vector<int32_t>& angles };
 	class ActionVisual: public Visual2DGfx {
 	public:
 		static ActionVisual* create(Action* action);
-		virtual ~ActionVisual();
+		~ActionVisual();
 		void addAnimation(uint32_t angle, AnimationPtr animationptr);
 		AnimationPtr getAnimationByAngle(int32_t angle);
 		void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr);

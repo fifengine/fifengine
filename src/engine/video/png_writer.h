@@ -1,4 +1,8 @@
-#pragma once
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+#ifndef FIFE_PNG_WRITER_H
+#define FIFE_PNG_WRITER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,3 +19,5 @@ int save_png_from_memory(const char* path, const void* pixels, int width, int he
 #ifdef __cplusplus
 }
 #endif
+
+#endif // FIFE_PNG_WRITER_H

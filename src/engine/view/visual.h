@@ -220,7 +220,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~ActionVisual() noexcept override = default;
+        ~ActionVisual() noexcept override = default;
 
         // Delete copy operations (prevents C5267 warning)
         ActionVisual(const ActionVisual&)            = delete;
