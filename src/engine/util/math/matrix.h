@@ -387,8 +387,10 @@ namespace FIFE
         }
 
     private:
-#define cofactor_maker(f1, mj1, mi1, f2, mj2, mi2, f3, mj3, mi3) \
-    ((f1) * (((mj1) * (mi1)) - ((mj2) * (mi3)))) + ((f2) * (((mj2) * (mi2)) - ((mj3) * (mi1)))) + ((f3) * (((mj3) * (mi3)) - ((mj1) * (mi2))))
+    // TODO cleanup
+#define cofactor_maker(f1, mj1, mi1, f2, mj2, mi2, f3, mj3, mi3)                                  \
+    ((f1) * (((mj1) * (mi1)) - ((mj2) * (mi3)))) + ((f2) * (((mj2) * (mi2)) - ((mj3) * (mi1)))) + \
+        ((f3) * (((mj3) * (mi3)) - ((mj1) * (mi2))))
 
         T cofactorm0() const
         {

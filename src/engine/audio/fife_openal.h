@@ -20,6 +20,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+// clang-format off
 #ifdef LOG_ENABLED
 
     #define CHECK_OPENAL_LOG(logger, level, msg) \
@@ -33,7 +34,7 @@
             error = alGetError();                                            \
             if (AL_NO_ERROR != error) {                                      \
                 (logger).log((level), LMsg() << (msg) << ", Error#: " << error); \
-            }                                                                \
+            }                                                                    \
         }
 
 #else
@@ -41,11 +42,12 @@
     #define CHECK_OPENAL_LOG(logger, level, msg)
     #define CHECK_OPENAL_LOG_DETAIL(logger, level, msg)
 
-#endif
+#endif // LOG_ENABLED
+// clang-format on
 
 #define CHECK_OPENAL_EXCEPTION(msg)    \
     if (AL_NO_ERROR != alGetError()) { \
         throw Exception((msg));        \
     }
 
-#endif
+#endif // FIFE_FIFE_OPENAL_H

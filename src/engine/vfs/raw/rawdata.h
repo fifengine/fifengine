@@ -202,7 +202,6 @@ namespace FIFE
     private:
         RawData* m_rd;
         uint32_t m_index;
-
     };
 
 } // namespace FIFE
