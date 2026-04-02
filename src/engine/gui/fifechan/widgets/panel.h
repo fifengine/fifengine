@@ -81,9 +81,9 @@ namespace fcn
         struct SavedState
         {
             Rectangle dimension;
-            uint32_t innerBorder;
-            bool resizable;
-            bool movable;
+            uint32_t innerBorder{0};
+            bool resizable{false};
+            bool movable{false};
         };
         SavedState m_state;
     };

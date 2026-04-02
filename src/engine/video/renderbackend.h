@@ -630,7 +630,7 @@ namespace FIFE
         {
         public:
             Rect r;
-            bool clearing;
+            bool clearing{false};
         };
         std::stack<ClipInfo> m_clipstack;
 

@@ -73,6 +73,12 @@ namespace FIFE
         m_viewport(viewport),
         m_renderbackend(renderbackend),
         m_position(ExactModelCoordinate(0, 0, 0)),
+        m_matrix(),
+        m_inverse_matrix(),
+        m_vs_matrix(),
+        m_vs_inverse_matrix(),
+        m_vscreen_2_screen(),
+        m_screen_2_vscreen(),
 
         m_tilt(0),
         m_rotation(0),

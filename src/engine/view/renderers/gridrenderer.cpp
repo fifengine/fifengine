@@ -29,12 +29,10 @@ namespace FIFE
      */
     static Logger _log(LM_VIEWVIEW);
 
-    GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position) : RendererBase(renderbackend, position)
+    GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position) :
+        RendererBase(renderbackend, position), m_color{0, 255, 0, 255}
     {
         setEnabled(false);
-        m_color.r = 0;
-        m_color.g = 255;
-        m_color.b = 0;
     }
 
     GridRenderer::GridRenderer(const GridRenderer& old) : RendererBase(old), m_color(old.m_color)

@@ -20,7 +20,7 @@ namespace FIFE
 {
     AtlasBlock AtlasBlock::intersects(AtlasBlock const & rect) const
     {
-        AtlasBlock ret;
+        AtlasBlock ret{};
 
         ret.left   = std::max(rect.left, left);
         ret.right  = std::min(rect.right, right);

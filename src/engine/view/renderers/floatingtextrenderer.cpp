@@ -54,8 +54,11 @@ namespace FIFE
         m_renderbackend(renderbackend),
         m_font(nullptr),
         m_font_color(false),
+        m_color{255, 255, 255, 255},
         m_background(false),
-        m_backborder(false)
+        m_backborder(false),
+        m_backcolor{0, 0, 0, 255},
+        m_backbordercolor{255, 255, 255, 255}
     {
         setEnabled(false);
     }
@@ -67,7 +70,9 @@ namespace FIFE
         m_font_color(old.m_font_color),
         m_color(old.m_color),
         m_background(old.m_background),
-        m_backborder(old.m_backborder)
+        m_backborder(old.m_backborder),
+        m_backcolor(old.m_backcolor),
+        m_backbordercolor(old.m_backbordercolor)
     {
         setEnabled(false);
     }

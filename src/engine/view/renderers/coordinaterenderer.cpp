@@ -48,6 +48,7 @@ namespace FIFE
 
         m_font(nullptr),
         m_font_color(false),
+        m_color{255, 255, 255, 255},
         m_zoom(true)
     {
         setEnabled(false);

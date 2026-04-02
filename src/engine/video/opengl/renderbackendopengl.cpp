@@ -2298,7 +2298,7 @@ namespace FIFE
         uint8_t const * rgba)
     {
         if (rgba != nullptr) {
-            renderData2TC rd;
+            renderData2TC rd{};
             rd.vertex[0] = static_cast<float>(rect.x);
             rd.vertex[1] = static_cast<float>(rect.y);
             rd.texel[0]  = st1[0];
@@ -2429,7 +2429,7 @@ namespace FIFE
             rd.texel[1]  = st[1];
             m_renderTextureDatasZ.push_back(rd);
 
-            RenderZObject ro;
+            RenderZObject ro{};
             ro.texture_id = id;
             m_renderTextureObjectsZ.push_back(ro);
         } else {
@@ -2504,7 +2504,7 @@ namespace FIFE
                 rd.texel[1]  = st[1];
                 m_renderTextureColorDatasZ.push_back(rd);
 
-                RenderZObject ro;
+                RenderZObject ro{};
                 ro.texture_id = id;
                 m_renderTextureColorObjectsZ.push_back(ro);
             }
@@ -2522,7 +2522,7 @@ namespace FIFE
         uint8_t const * rgba)
     {
         if (rgba != nullptr) {
-            renderData2TCZ rd;
+            renderData2TCZ rd{};
             rd.vertex[0] = static_cast<float>(rect.x);
             rd.vertex[1] = static_cast<float>(rect.y);
             rd.vertex[2] = vertexZ;

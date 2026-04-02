@@ -49,9 +49,9 @@ namespace FIFE
         void validateShared();
 
         // colorkey for the image
-        SDL_Color m_colorkey;
+        SDL_Color m_colorkey{};
         // texture of image
-        SDL_Texture* m_texture;
+        SDL_Texture* m_texture{nullptr};
 
         // Holds Atlas ImagePtr if this is a shared image
         ImagePtr m_atlas_img;
