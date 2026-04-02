@@ -33,10 +33,10 @@ namespace FIFE
         m_coneInnerAngle(360.0),
         m_coneOuterAngle(360.0),
         m_coneOuterGain(0.0),
+        m_velocity(AudioSpaceCoordinate(0.0, 0.0, 0.0)),
         m_looping(false),
         m_positioning(false),
-        m_direction(false),
-        m_velocity(AudioSpaceCoordinate(0.0, 0.0, 0.0))
+        m_direction(false)
     {
     }
 
