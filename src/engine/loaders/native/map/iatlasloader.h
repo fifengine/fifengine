@@ -23,7 +23,7 @@ namespace FIFE
     class IAtlasLoader
     {
     public:
-        virtual ~IAtlasLoader() { }
+        virtual ~IAtlasLoader() = default;
 
         /** determines whether the resource is in
          *	the correct format for this loader

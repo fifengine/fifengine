@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeKeyListener(IKeyListener* listener) = 0;
 
-        virtual ~IKeyController() { }
+        virtual ~IKeyController() = default;
     };
 
 } // namespace FIFE

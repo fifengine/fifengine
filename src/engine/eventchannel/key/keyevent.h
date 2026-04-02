@@ -39,7 +39,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~KeyEvent() { }
+        virtual ~KeyEvent() = default;
 
         KeyEventType getType() const
         {

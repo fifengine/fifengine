@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeDropListener(IDropListener* listener) = 0;
 
-        virtual ~IDropController() { }
+        virtual ~IDropController() = default;
     };
 
 } // namespace FIFE

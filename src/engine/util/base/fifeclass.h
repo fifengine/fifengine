@@ -26,7 +26,7 @@ namespace FIFE
     public:
         FifeClass() : m_fifeid(m_curid++) { }
 
-        virtual ~FifeClass() { }
+        virtual ~FifeClass() = default;
 
         /** Gets unique id of this instance inside the engine
          */

@@ -24,8 +24,8 @@ namespace FIFE
     class IResourceLoader
     {
     public:
-        IResourceLoader() { }
-        virtual ~IResourceLoader() { }
+        IResourceLoader()          = default;
+        virtual ~IResourceLoader() = default;
 
         virtual void load(IResource* resource) = 0;
     };
@@ -45,7 +45,7 @@ namespace FIFE
         {
         }
 
-        virtual ~IResource() { }
+        virtual ~IResource() = default;
 
         virtual const std::string& getName()
         {

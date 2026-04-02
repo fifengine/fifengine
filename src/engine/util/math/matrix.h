@@ -35,7 +35,7 @@ namespace FIFE
     class Matrix
     {
     public:
-        Matrix() { }
+        Matrix() = default;
         template <typename U>
         friend class Matrix;
         template <typename U>

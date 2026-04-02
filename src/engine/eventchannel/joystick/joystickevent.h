@@ -54,7 +54,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~JoystickEvent() { }
+        virtual ~JoystickEvent() = default;
 
         /** Return the event type.
          */

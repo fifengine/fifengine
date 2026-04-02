@@ -32,7 +32,7 @@ namespace FIFE
          */
         virtual bool onSdlEvent(SDL_Event& evt) = 0;
 
-        virtual ~ISdlEventListener() { }
+        virtual ~ISdlEventListener() = default;
     };
 
 } // namespace FIFE

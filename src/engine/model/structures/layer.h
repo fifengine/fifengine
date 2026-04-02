@@ -58,7 +58,7 @@ namespace FIFE
     class LayerChangeListener
     {
     public:
-        virtual ~LayerChangeListener() { }
+        virtual ~LayerChangeListener() = default;
 
         /** Called when some instance is changed on layer. @see InstanceChangeType
          * @param layer where change occurred

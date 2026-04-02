@@ -38,7 +38,7 @@ namespace FIFE
     class InstanceActionListener
     {
     public:
-        virtual ~InstanceActionListener() { }
+        virtual ~InstanceActionListener()                                                     = default;
         virtual void onInstanceActionFinished(Instance* instance, Action* action)             = 0;
         virtual void onInstanceActionCancelled(Instance* instance, Action* action)            = 0;
         virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
@@ -64,14 +64,14 @@ namespace FIFE
     class InstanceChangeListener
     {
     public:
-        virtual ~InstanceChangeListener() { }
+        virtual ~InstanceChangeListener()                                           = default;
         virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
     };
 
     class InstanceDeleteListener
     {
     public:
-        virtual ~InstanceDeleteListener() { }
+        virtual ~InstanceDeleteListener()                  = default;
         virtual void onInstanceDeleted(Instance* instance) = 0;
     };
 

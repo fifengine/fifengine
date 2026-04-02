@@ -26,7 +26,7 @@ namespace FIFE
     class IObjectLoader
     {
     public:
-        virtual ~IObjectLoader() { }
+        virtual ~IObjectLoader() = default;
 
         /** allows setting which animation loader will be
          * used to load animation files

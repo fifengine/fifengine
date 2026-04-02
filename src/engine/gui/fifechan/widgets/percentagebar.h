@@ -38,7 +38,7 @@ namespace fcn
          *
          */
         PercentageBar();
-        virtual ~PercentageBar() { }
+        virtual ~PercentageBar() = default;
 
         PercentageBar(const PercentageBar&)            = delete;
         PercentageBar& operator=(const PercentageBar&) = delete;

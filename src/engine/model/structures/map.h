@@ -40,7 +40,7 @@ namespace FIFE
     class MapChangeListener
     {
     public:
-        virtual ~MapChangeListener() { }
+        virtual ~MapChangeListener() = default;
 
         /** Called when some layer is changed on map. @see LayerChangeListener
          * Layer is effectively changed, in case some of its instances

@@ -30,7 +30,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~DropEvent() { }
+        virtual ~DropEvent() = default;
 
         /** Gets the path for the file that is droped.
          */

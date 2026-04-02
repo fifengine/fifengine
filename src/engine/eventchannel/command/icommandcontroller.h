@@ -51,7 +51,7 @@ namespace FIFE
          */
         virtual void dispatchCommand(Command& command) = 0;
 
-        virtual ~ICommandController() { }
+        virtual ~ICommandController() = default;
     };
 
 } // namespace FIFE

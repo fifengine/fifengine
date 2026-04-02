@@ -37,7 +37,7 @@ namespace FIFE
          */
         virtual void textEdit(TextEvent& evt) = 0;
 
-        virtual ~ITextListener() { }
+        virtual ~ITextListener() = default;
     };
 
 } // namespace FIFE

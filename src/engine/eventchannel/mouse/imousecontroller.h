@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeMouseListener(IMouseListener* listener) = 0;
 
-        virtual ~IMouseController() { }
+        virtual ~IMouseController() = default;
     };
 
 } // namespace FIFE

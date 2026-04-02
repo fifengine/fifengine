@@ -34,11 +34,11 @@ namespace FIFE
     public:
         /** Default constructor.
          */
-        IResourceManager() { }
+        IResourceManager() = default;
 
         /** destructor
          */
-        virtual ~IResourceManager() { }
+        virtual ~IResourceManager() = default;
 
         /** Gets the total amount of memory used by resources
          *

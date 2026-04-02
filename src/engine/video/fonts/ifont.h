@@ -26,7 +26,7 @@ namespace FIFE
     class IFont
     {
     public:
-        virtual ~IFont() { }
+        virtual ~IFont() = default;
 
         /**
          * Sets the spacing between rows in pixels. Default is 0 pixels.

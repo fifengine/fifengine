@@ -20,7 +20,7 @@ namespace FIFE
     class IAtlasSaver
     {
     public:
-        virtual ~IAtlasSaver() { }
+        virtual ~IAtlasSaver() = default;
 
         /** responsible for saving the atlas
          */

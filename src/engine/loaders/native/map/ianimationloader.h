@@ -22,7 +22,7 @@ namespace FIFE
     class IAnimationLoader
     {
     public:
-        virtual ~IAnimationLoader() { }
+        virtual ~IAnimationLoader() = default;
 
         /** determines whether the resource is in
          *	the correct format for this loader

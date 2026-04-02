@@ -39,7 +39,7 @@ namespace FIFE
     class SoundEmitterListener
     {
     public:
-        virtual ~SoundEmitterListener() { }
+        virtual ~SoundEmitterListener() = default;
 
         /** Called when a sound finished playing. Or stop() was called.
          * @param emitterId The id of emitter.

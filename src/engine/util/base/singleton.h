@@ -38,9 +38,9 @@ namespace FIFE
         }
 
     protected:
-        StaticSingleton() { }
+        StaticSingleton() = default;
 
-        virtual ~StaticSingleton() { }
+        virtual ~StaticSingleton() = default;
 
     private:
         StaticSingleton(const StaticSingleton<T>& rhs)

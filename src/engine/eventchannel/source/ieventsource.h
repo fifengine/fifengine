@@ -30,7 +30,7 @@ namespace FIFE
          */
         virtual EventSourceType getEventSourceType() = 0;
 
-        virtual ~IEventSource() { }
+        virtual ~IEventSource() = default;
     };
 
 } // namespace FIFE

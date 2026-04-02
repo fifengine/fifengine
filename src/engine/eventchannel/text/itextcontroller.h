@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeTextListener(ITextListener* listener) = 0;
 
-        virtual ~ITextController() { }
+        virtual ~ITextController() = default;
     };
 
 } // namespace FIFE

@@ -21,7 +21,7 @@ namespace FIFE
     class ImageLoader : public IResourceLoader
     {
     public:
-        ImageLoader() { }
+        ImageLoader() = default;
         virtual void load(IResource* res);
     };
 } // namespace FIFE

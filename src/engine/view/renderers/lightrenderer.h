@@ -29,7 +29,7 @@ namespace FIFE
     {
     public:
         LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst);
-        virtual ~LightRendererElementInfo() { }
+        virtual ~LightRendererElementInfo() = default;
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
         virtual std::string getName()                                                                       = 0;

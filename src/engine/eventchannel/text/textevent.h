@@ -40,7 +40,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~TextEvent() { }
+        virtual ~TextEvent() = default;
 
         TextEventType getType() const
         {

@@ -30,7 +30,7 @@ namespace FIFE
          */
         virtual bool isFiltered(const KeyEvent& event) = 0;
 
-        virtual ~IKeyFilter() { }
+        virtual ~IKeyFilter() = default;
     };
 
 } // namespace FIFE

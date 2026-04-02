@@ -116,7 +116,7 @@ namespace FIFE
             m_global = global;
         }
 
-        virtual ~IMouseListener() { }
+        virtual ~IMouseListener() = default;
 
     protected:
         IMouseListener()

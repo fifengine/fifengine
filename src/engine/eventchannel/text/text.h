@@ -37,7 +37,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Text() { }
+        virtual ~Text() = default;
 
         /** Tells whether the Text can be represented as a string.
          */

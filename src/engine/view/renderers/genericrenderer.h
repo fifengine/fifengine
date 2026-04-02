@@ -34,7 +34,7 @@ namespace FIFE
             static_cast<void>(instances);
             static_cast<void>(renderbackend);
         }
-        virtual ~GenericRendererElementInfo() { }
+        virtual ~GenericRendererElementInfo() = default;
     };
 
     class GenericRendererLineInfo : public GenericRendererElementInfo

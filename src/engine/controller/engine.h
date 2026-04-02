@@ -50,7 +50,7 @@ namespace FIFE
     class IEngineChangeListener
     {
     public:
-        virtual ~IEngineChangeListener() { }
+        virtual ~IEngineChangeListener() = default;
 
         /** Screen mode has been changed
          */

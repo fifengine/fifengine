@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeSdlEventListener(ISdlEventListener* listener) = 0;
 
-        virtual ~ISdlEventController() { }
+        virtual ~ISdlEventController() = default;
     };
 
 } // namespace FIFE

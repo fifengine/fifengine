@@ -26,7 +26,7 @@ namespace FIFE
     class IMapLoader
     {
     public:
-        virtual ~IMapLoader() { }
+        virtual ~IMapLoader() = default;
 
         /** allows setting which object loader will be
          * used to load object files

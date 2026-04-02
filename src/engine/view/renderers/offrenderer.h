@@ -29,7 +29,7 @@ namespace FIFE
         {
             static_cast<void>(renderbackend);
         }
-        virtual ~OffRendererElementInfo() { }
+        virtual ~OffRendererElementInfo() = default;
     };
 
     class OffRendererLineInfo : public OffRendererElementInfo

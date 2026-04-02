@@ -38,7 +38,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~Event() { }
+        virtual ~Event() = default;
 
         /** Marks the event as consumed.
          */

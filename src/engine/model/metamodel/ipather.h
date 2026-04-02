@@ -33,7 +33,7 @@ namespace FIFE
     class IPather
     {
     public:
-        virtual ~IPather() { }
+        virtual ~IPather() = default;
 
         /** Creates a route between the start and end location that needs be solved.
          *

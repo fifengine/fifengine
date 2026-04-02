@@ -41,7 +41,7 @@ namespace FIFE
             assert(rect.bottom() >= 0);
         }
 
-        AtlasBlock() { }
+        AtlasBlock() = default;
 
         //	      (0,0) [left]   [right]
         //	         +--------------------
@@ -61,7 +61,6 @@ namespace FIFE
         {
             left = right = top = bottom = 0;
         }
-
         bool isTrivial() const
         {
             return getWidth() == 0 || getHeight() == 0;

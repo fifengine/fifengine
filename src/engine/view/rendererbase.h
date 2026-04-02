@@ -34,7 +34,7 @@ namespace FIFE
     class IRendererListener
     {
     public:
-        virtual ~IRendererListener() { }
+        virtual ~IRendererListener() = default;
 
         /** Renderer's pipeline position has been changed
          */
@@ -51,7 +51,7 @@ namespace FIFE
     class IRendererContainer
     {
     public:
-        virtual ~IRendererContainer() { }
+        virtual ~IRendererContainer() = default;
 
         /** Returns renderer with given name
          */
@@ -80,7 +80,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~RendererBase() { }
+        virtual ~RendererBase() = default;
 
         /** This method is called by the view to ask renderer to draw its rendering aspect based on
          * given parameters. Renderers receive non-clipped instance stack since there is no

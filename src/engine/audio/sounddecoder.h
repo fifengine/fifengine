@@ -24,7 +24,7 @@ namespace FIFE
     class SoundDecoder
     {
     public:
-        virtual ~SoundDecoder() { }
+        virtual ~SoundDecoder() = default;
 
         /** Returns the decoded length of the file in bytes
          */

@@ -44,7 +44,7 @@ namespace FIFE
          */
         virtual void removeJoystickListener(IJoystickListener* listener) = 0;
 
-        virtual ~IJoystickController() { }
+        virtual ~IJoystickController() = default;
     };
 
 } // namespace FIFE

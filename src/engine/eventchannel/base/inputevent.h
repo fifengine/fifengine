@@ -37,7 +37,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        ~InputEvent() { }
+        ~InputEvent() = default;
 
         /** Checks whether alt is pressed.
          */

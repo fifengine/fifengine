@@ -86,7 +86,7 @@ namespace FIFE
     {
     public:
         explicit LMsg(const std::string& msg = "") : str(msg) { }
-        ~LMsg() { }
+        ~LMsg() = default;
 
         template <typename T>
         LMsg& operator<<(const T& t)

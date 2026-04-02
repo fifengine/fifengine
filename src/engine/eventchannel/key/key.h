@@ -286,7 +286,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~Key() { }
+        virtual ~Key() = default;
 
         /** Tells whether the Key can be represented as a string.
          */

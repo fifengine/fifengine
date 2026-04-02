@@ -62,7 +62,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~MouseEvent() { }
+        virtual ~MouseEvent() = default;
 
         /**
          * Gets the button of the mouse event.

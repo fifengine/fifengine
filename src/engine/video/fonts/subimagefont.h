@@ -34,7 +34,7 @@ namespace FIFE
          * @param glyphs the glyphs for Fifechan format.
          */
         SubImageFont(const std::string& filename, const std::string& glyphs);
-        ~SubImageFont() override { }
+        ~SubImageFont() override = default;
 
     private:
         SDL_Color m_colorkey;

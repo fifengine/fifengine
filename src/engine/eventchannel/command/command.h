@@ -31,7 +31,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        virtual ~Command() { }
+        virtual ~Command() = default;
 
         /** Gets the type of this command
          * @return type of this command

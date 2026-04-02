@@ -30,7 +30,7 @@ namespace FIFE
     public:
         /** Destructor
          */
-        virtual ~ConsoleExecuter() { }
+        virtual ~ConsoleExecuter() = default;
 
         /** Called when console tools button is clicked
          */
