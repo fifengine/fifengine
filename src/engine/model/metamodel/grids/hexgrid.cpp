@@ -121,17 +121,17 @@ namespace FIFE
     {
         if (m_axial) {
             return HEX_TO_EDGE * y;
-        } else {
-            // each uneven row has shifted coordinate of 0.5 horizontally
-            // shift has to be gradual on vertical axis
-            double const ay = std::abs(y);
-            auto i_layer_y  = static_cast<int32_t>(ay);
-            double offset   = ay - static_cast<double>(i_layer_y);
-            if ((i_layer_y % 2) == 1) {
-                offset = 1 - offset;
-            }
-            return HEX_TO_EDGE * offset;
         }
+
+        // each uneven row has shifted coordinate of 0.5 horizontally
+        // shift has to be gradual on vertical axis
+        double const ay = std::abs(y);
+        auto i_layer_y  = static_cast<int32_t>(ay);
+        double offset   = ay - static_cast<double>(i_layer_y);
+        if ((i_layer_y % 2) == 1) {
+            offset = 1 - offset;
+        }
+        return HEX_TO_EDGE * offset;
     }
 
     ExactModelCoordinate HexGrid::toMapCoordinates(const ExactModelCoordinate& layer_coords)

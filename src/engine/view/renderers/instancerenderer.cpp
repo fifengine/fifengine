@@ -755,9 +755,8 @@ namespace FIFE
     {
         if (threshold > 1) {
             return (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha));
-        } else {
-            return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
         }
+        return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
     }
 
     Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)

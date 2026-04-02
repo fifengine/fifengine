@@ -53,7 +53,8 @@ namespace FIFE
         if ((x <= 1) && (y <= 1)) {
             if (m_allow_diagonals) {
                 return true;
-            } else if ((x ^ y) != 0) {
+            }
+            if ((x ^ y) != 0) {
                 return true;
             }
         }

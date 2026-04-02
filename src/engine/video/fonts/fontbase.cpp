@@ -159,9 +159,8 @@ namespace FIFE
             if (getWidth(buff) > x) {
                 assert(buff.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
                 return static_cast<int32_t>(buff.size());
-            } else {
-                utf8::next(cur, text.end());
             }
+            utf8::next(cur, text.end());
         }
 
         if (x > getWidth(text)) {
