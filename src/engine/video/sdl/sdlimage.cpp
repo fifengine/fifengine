@@ -112,7 +112,11 @@ namespace FIFE
         srcRect.w = tmpRect.w;
         srcRect.h = tmpRect.h;
 
-        SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
+        RenderBackendSDL* backend = dynamic_cast<RenderBackendSDL*>(RenderBackend::instance());
+        if (backend == nullptr) {
+            throw SDLException("Render backend is not SDL.");
+        }
+        SDL_Renderer* renderer = backend->getRenderer();
 
         // create texture
         if (m_texture == nullptr) {

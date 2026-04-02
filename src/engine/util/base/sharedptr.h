@@ -58,7 +58,7 @@ namespace FIFE
          * to this shared pointer type
          */
         template <typename U>
-        SharedPtr(const SharedPtr<U>& rhs) : m_ptr(rhs.get()), m_refCount(rhs.useCountPtr())
+        explicit SharedPtr(const SharedPtr<U>& rhs) : m_ptr(rhs.get()), m_refCount(rhs.useCountPtr())
         {
             incRefCount();
         }
@@ -194,7 +194,7 @@ namespace FIFE
          * a convenience for checking validity
          * of a shared pointer in a conditional
          */
-        operator bool() const
+        explicit operator bool() const
         {
             return (m_ptr != 0);
         }

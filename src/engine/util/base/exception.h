@@ -82,7 +82,7 @@ namespace FIFE
         }                                                         \
         const std::string& getDescription() const override        \
         {                                                         \
-            static const std::string s = _description;            \
+            static const std::string s = (_description);          \
             return s;                                             \
         }                                                         \
     }
