@@ -58,7 +58,7 @@ namespace FIFE
 
         /** Holds translation of key scancodes from SDL to CEGUI.
          */
-        std::map<SDL_Keycode, CEGUI::Key::Scan> m_keymap;
+        std::map<SDL_Keycode, CEGUI::Key::Scan> m_keymap{};
     };
 
 } // namespace FIFE

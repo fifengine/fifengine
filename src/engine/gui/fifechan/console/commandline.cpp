@@ -57,12 +57,15 @@ namespace FIFE
 
     void CommandLine::keyPressed(fcn::KeyEvent& keyEvent)
     {
-        const fcn::Key key    = keyEvent.getKey();
-        const int32_t keyType = key.getValue();
+        const fcn::Key key      = keyEvent.getKey();
+        const int32_t keyType   = key.getValue();
+        const bool editInBounds = (keyType == Key::Left && getCaretPosition() > 0) ||
+                                  (keyType == Key::Right && getCaretPosition() < getText().size()) ||
+                                  (keyType == Key::Delete && getCaretPosition() < getText().size()) ||
+                                  (keyType == Key::Backspace && getCaretPosition() > 0) || key.isCharacter() ||
+                                  static_cast<uint32_t>(key.getValue()) > 255;
 
-        if (keyType == Key::Left && getCaretPosition() > 0) {
-            TextField::keyPressed(keyEvent);
-        } else if (keyType == Key::Right && getCaretPosition() < getText().size()) {
+        if (editInBounds) {
             TextField::keyPressed(keyEvent);
         } else if (keyType == Key::Down && !m_history.empty()) {
             if (m_history_position < m_history.size()) {
@@ -81,10 +84,6 @@ namespace FIFE
                 --m_history_position;
                 setText(m_history[m_history_position]);
             }
-        } else if (keyType == Key::Delete && getCaretPosition() < getText().size()) {
-            TextField::keyPressed(keyEvent);
-        } else if (keyType == Key::Backspace && getCaretPosition() > 0) {
-            TextField::keyPressed(keyEvent);
         } else if (keyType == Key::Enter) {
             if (!getText().empty()) {
                 if (m_callback) {
@@ -99,8 +98,6 @@ namespace FIFE
         } else if (keyType == Key::End) {
             assert(getText().size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
             setCaretPosition(static_cast<int>(getText().size()));
-        } else if (key.isCharacter() || static_cast<uint32_t>(key.getValue()) > 255) {
-            TextField::keyPressed(keyEvent);
         }
         stopBlinking();
         fixScroll();

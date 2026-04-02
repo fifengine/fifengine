@@ -88,52 +88,21 @@ namespace FIFE
                 return;
             }
 
-            if ((info & ICHANGE_LOC) == ICHANGE_LOC &&
-                std::ranges::find(types, INSTANCE_TRIGGER_LOCATION) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_ROTATION) == ICHANGE_ROTATION &&
-                std::ranges::find(types, INSTANCE_TRIGGER_ROTATION) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_SPEED) == ICHANGE_SPEED &&
-                std::ranges::find(types, INSTANCE_TRIGGER_SPEED) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_ACTION) == ICHANGE_ACTION &&
-                std::ranges::find(types, INSTANCE_TRIGGER_ACTION) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_TIME_MULTIPLIER) == ICHANGE_TIME_MULTIPLIER &&
-                std::ranges::find(types, INSTANCE_TRIGGER_TIME_MULTIPLIER) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_SAYTEXT) == ICHANGE_SAYTEXT &&
-                std::ranges::find(types, INSTANCE_TRIGGER_SAYTEXT) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_BLOCK) == ICHANGE_BLOCK &&
-                std::ranges::find(types, INSTANCE_TRIGGER_BLOCK) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_CELL) == ICHANGE_CELL &&
-                std::ranges::find(types, INSTANCE_TRIGGER_CELL) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_TRANSPARENCY) == ICHANGE_TRANSPARENCY &&
-                std::ranges::find(types, INSTANCE_TRIGGER_TRANSPARENCY) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_VISIBLE) == ICHANGE_VISIBLE &&
-                std::ranges::find(types, INSTANCE_TRIGGER_VISIBLE) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_STACKPOS) == ICHANGE_STACKPOS &&
-                std::ranges::find(types, INSTANCE_TRIGGER_STACKPOS) != types.end()) {
-                m_trigger->setTriggered();
-            } else if (
-                (info & ICHANGE_VISUAL) == ICHANGE_VISUAL &&
-                std::ranges::find(types, INSTANCE_TRIGGER_VISUAL) != types.end()) {
+            const auto hasTrigger = [&](InstanceChangeInfo change, TriggerCondition condition) {
+                return (info & change) == change && std::ranges::find(types, condition) != types.end();
+            };
+
+            if (hasTrigger(ICHANGE_LOC, INSTANCE_TRIGGER_LOCATION) ||
+                hasTrigger(ICHANGE_ROTATION, INSTANCE_TRIGGER_ROTATION) ||
+                hasTrigger(ICHANGE_SPEED, INSTANCE_TRIGGER_SPEED) ||
+                hasTrigger(ICHANGE_ACTION, INSTANCE_TRIGGER_ACTION) ||
+                hasTrigger(ICHANGE_TIME_MULTIPLIER, INSTANCE_TRIGGER_TIME_MULTIPLIER) ||
+                hasTrigger(ICHANGE_SAYTEXT, INSTANCE_TRIGGER_SAYTEXT) ||
+                hasTrigger(ICHANGE_BLOCK, INSTANCE_TRIGGER_BLOCK) || hasTrigger(ICHANGE_CELL, INSTANCE_TRIGGER_CELL) ||
+                hasTrigger(ICHANGE_TRANSPARENCY, INSTANCE_TRIGGER_TRANSPARENCY) ||
+                hasTrigger(ICHANGE_VISIBLE, INSTANCE_TRIGGER_VISIBLE) ||
+                hasTrigger(ICHANGE_STACKPOS, INSTANCE_TRIGGER_STACKPOS) ||
+                hasTrigger(ICHANGE_VISUAL, INSTANCE_TRIGGER_VISUAL)) {
                 m_trigger->setTriggered();
             }
         }

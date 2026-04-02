@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 
 // Platform specific includes
 
@@ -82,12 +83,21 @@ namespace FIFE
         gain   = std::max(gain, 0.0F);
         m_gain = gain;
 
-        if (m_type == SF_FILTER_LOWPASS) {
-            alFilterf(m_filter, AL_LOWPASS_GAIN, m_gain);
-        } else if (m_type == SF_FILTER_HIGHPASS) {
-            alFilterf(m_filter, AL_HIGHPASS_GAIN, m_gain);
-        } else if (m_type == SF_FILTER_BANDPASS) {
-            alFilterf(m_filter, AL_BANDPASS_GAIN, m_gain);
+        ALenum gainParam                                                              = 0;
+        static constexpr std::array<std::pair<SoundFilterType, ALenum>, 3> gainParams = {
+            std::pair{SF_FILTER_LOWPASS, AL_LOWPASS_GAIN},
+            std::pair{SF_FILTER_HIGHPASS, AL_HIGHPASS_GAIN},
+            std::pair{SF_FILTER_BANDPASS, AL_BANDPASS_GAIN},
+        };
+        for (const auto& [filterType, param] : gainParams) {
+            if (m_type == filterType) {
+                gainParam = param;
+                break;
+            }
+        }
+
+        if (gainParam != 0) {
+            alFilterf(m_filter, gainParam, m_gain);
         }
     }
 
@@ -120,10 +130,20 @@ namespace FIFE
         gain    = std::max(gain, 0.0F);
         m_lGain = gain;
 
-        if (m_type == SF_FILTER_HIGHPASS) {
-            alFilterf(m_filter, AL_HIGHPASS_GAINLF, m_lGain);
-        } else if (m_type == SF_FILTER_BANDPASS) {
-            alFilterf(m_filter, AL_BANDPASS_GAINLF, m_lGain);
+        ALenum gainLfParam                                                              = 0;
+        static constexpr std::array<std::pair<SoundFilterType, ALenum>, 2> gainLfParams = {
+            std::pair{SF_FILTER_HIGHPASS, AL_HIGHPASS_GAINLF},
+            std::pair{SF_FILTER_BANDPASS, AL_BANDPASS_GAINLF},
+        };
+        for (const auto& [filterType, param] : gainLfParams) {
+            if (m_type == filterType) {
+                gainLfParam = param;
+                break;
+            }
+        }
+
+        if (gainLfParam != 0) {
+            alFilterf(m_filter, gainLfParam, m_lGain);
         }
     }
 

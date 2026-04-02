@@ -51,10 +51,7 @@ namespace FIFE
         const int32_t x = std::abs(target.x - curpos.x);
         const int32_t y = std::abs(target.y - curpos.y);
         if ((x <= 1) && (y <= 1)) {
-            if (m_allow_diagonals) {
-                return true;
-            }
-            if ((x ^ y) != 0) {
+            if (m_allow_diagonals || ((x ^ y) != 0)) {
                 return true;
             }
         }

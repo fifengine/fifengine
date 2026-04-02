@@ -146,11 +146,7 @@ namespace fcn
 
     void Panel::resizeToContent(bool recursiv)
     {
-        if (!m_docked) {
-            ResizableWindow::resizeToContent(recursiv);
-        } else {
-            ResizableWindow::resizeToContent(recursiv);
-        }
+        ResizableWindow::resizeToContent(recursiv);
     }
 
     void Panel::expandContent(bool recursiv)

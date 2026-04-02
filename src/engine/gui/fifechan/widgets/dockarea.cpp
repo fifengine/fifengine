@@ -388,11 +388,7 @@ namespace fcn
     void DockArea::resizeToContent(bool recursiv)
     {
         Rectangle const oldDimension = getDimension();
-        if (m_resizing) {
-            ResizableWindow::resizeToContent(recursiv);
-        } else {
-            ResizableWindow::resizeToContent(recursiv);
-        }
+        ResizableWindow::resizeToContent(recursiv);
         if (isRightSide()) {
             int32_t const wDiff = oldDimension.width - getWidth();
             setX(oldDimension.x + wDiff);

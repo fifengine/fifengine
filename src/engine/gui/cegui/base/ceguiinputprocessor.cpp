@@ -15,7 +15,7 @@
 
 namespace FIFE
 {
-    CEGuiInputProcessor::CEGuiInputProcessor() : m_keymap()
+    CEGuiInputProcessor::CEGuiInputProcessor()
     {
         initializeKeyMap();
     }
@@ -53,19 +53,19 @@ namespace FIFE
 
     bool CEGuiInputProcessor::processKeyInput(SDL_Event& event)
     {
-        bool const consumed = false;
+        bool consumed = false;
 
         switch (event.type) {
         case SDL_KEYDOWN:
-            if (m_keymap.find(event.key.keysym.sym) != m_keymap.end())
-                consumed |=
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyDown(m_keymap[event.key.keysym.sym]);
-            break;
-
         case SDL_KEYUP:
-            if (m_keymap.find(event.key.keysym.sym) != m_keymap.end())
-                consumed =
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyUp(m_keymap[event.key.keysym.sym]);
+            if (auto it = m_keymap.find(event.key.keysym.sym); it != m_keymap.end()) {
+                auto& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                if (event.type == SDL_KEYDOWN) {
+                    consumed = context.injectKeyDown(it->second);
+                } else {
+                    consumed = context.injectKeyUp(it->second);
+                }
+            }
             break;
 
         default:;
@@ -77,7 +77,7 @@ namespace FIFE
     bool CEGuiInputProcessor::processTextInput(SDL_Event& event)
     {
         CEGUI::String character(event.text.text);
-        const bool consumed = false;
+        bool consumed = false;
         if (!character.empty()) {
             consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(character[0]);
         }
@@ -87,47 +87,24 @@ namespace FIFE
 
     bool CEGuiInputProcessor::processMouseInput(SDL_Event& event)
     {
-        const bool consumed = false;
+        bool consumed = false;
 
         switch (event.type) {
-        case SDL_MOUSEBUTTONDOWN: {
-            switch (event.button.button) {
-            case SDL_BUTTON_LEFT:
-                consumed =
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::LeftButton);
-                break;
-
-            case SDL_BUTTON_RIGHT:
-                consumed =
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::RightButton);
-                break;
-
-            case SDL_BUTTON_MIDDLE:
-                consumed =
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::MiddleButton);
-                break;
-
-            default:;
-            }
-            break;
-        }
-
+        case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
-            switch (event.button.button) {
-            case SDL_BUTTON_LEFT:
-                consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::LeftButton);
-                break;
+            static const std::map<uint8_t, CEGUI::MouseButton> buttonMap = {
+                {SDL_BUTTON_LEFT, CEGUI::LeftButton},
+                {SDL_BUTTON_RIGHT, CEGUI::RightButton},
+                {SDL_BUTTON_MIDDLE, CEGUI::MiddleButton},
+            };
 
-            case SDL_BUTTON_RIGHT:
-                consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::RightButton);
-                break;
-
-            case SDL_BUTTON_MIDDLE:
-                consumed =
-                    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::MiddleButton);
-                break;
-
-            default:;
+            if (auto it = buttonMap.find(event.button.button); it != buttonMap.end()) {
+                auto& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                if (event.type == SDL_MOUSEBUTTONDOWN) {
+                    consumed = context.injectMouseButtonDown(it->second);
+                } else {
+                    consumed = context.injectMouseButtonUp(it->second);
+                }
             }
             break;
         }

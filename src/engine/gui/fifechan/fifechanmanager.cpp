@@ -150,12 +150,8 @@ namespace FIFE
             return false;
 
         case SDL_TEXTINPUT:
-            // don't consume TEXTINPUT
-            m_input->pushInput(evt);
-            return false;
-
         case SDL_WINDOWEVENT:
-            // don't consume WINDOWEVENTS
+            // don't consume TEXTINPUT / WINDOWEVENTS
             m_input->pushInput(evt);
             return false;
 

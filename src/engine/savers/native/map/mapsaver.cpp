@@ -171,16 +171,10 @@ namespace FIFE
                     instanceElement->SetAttribute("cellstack", instance->getCellStackPosition());
                 }
 
-                if (instance->isSpecialCost()) {
-                    if (!obj->isSpecialCost()) {
-                        instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
-                        instanceElement->SetAttribute("cost", instance->getCost());
-                    } else if (
-                        instance->getCostId() != obj->getCostId() ||
-                        !Mathd::Equal(instance->getCost(), obj->getCost())) {
-                        instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
-                        instanceElement->SetAttribute("cost", instance->getCost());
-                    }
+                if (instance->isSpecialCost() && (!obj->isSpecialCost() || instance->getCostId() != obj->getCostId() ||
+                                                  !Mathd::Equal(instance->getCost(), obj->getCost()))) {
+                    instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
+                    instanceElement->SetAttribute("cost", instance->getCost());
                 }
 
                 auto* instanceVisual = instance->getVisual<InstanceVisual>();
