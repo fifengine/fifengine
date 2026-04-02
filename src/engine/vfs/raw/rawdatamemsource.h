@@ -38,6 +38,9 @@ namespace FIFE
         explicit RawDataMemSource(uint32_t datalen);
         ~RawDataMemSource() override;
 
+        RawDataMemSource(const RawDataMemSource&)            = delete;
+        RawDataMemSource& operator=(const RawDataMemSource&) = delete;
+
         uint32_t getSize() const override;
         void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
         uint8_t* getRawData() const;
@@ -45,9 +48,6 @@ namespace FIFE
     private:
         uint8_t* m_data;
         uint32_t m_datalen;
-
-        RawDataMemSource(const RawDataMemSource&)            = delete;
-        RawDataMemSource& operator=(const RawDataMemSource&) = delete;
     };
 
 } // namespace FIFE

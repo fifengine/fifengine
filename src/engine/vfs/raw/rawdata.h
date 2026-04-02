@@ -34,6 +34,9 @@ namespace FIFE
     {
     public:
         explicit RawData(RawDataSource* datasource);
+
+        RawData(const RawData&)            = delete;
+        RawData& operator=(const RawData&) = delete;
         virtual ~RawData();
 
         /** get the data as a vector of bytes
@@ -176,9 +179,6 @@ namespace FIFE
             return retval;
         }
 
-        RawData(const RawData&);
-        RawData& operator=(const RawData&) = delete;
-
         static bool littleEndian();
     };
     using RawDataPtr = std::shared_ptr<RawData>;
@@ -186,6 +186,9 @@ namespace FIFE
     {
     public:
         explicit IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) { }
+
+        IndexSaver(const IndexSaver&)            = delete;
+        IndexSaver& operator=(const IndexSaver&) = delete;
 
         ~IndexSaver()
         {
@@ -198,9 +201,6 @@ namespace FIFE
     private:
         RawData* m_rd;
         uint32_t m_index;
-
-        IndexSaver(const IndexSaver&);
-        IndexSaver& operator=(const IndexSaver&) = delete;
     };
 
 } // namespace FIFE

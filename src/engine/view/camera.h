@@ -66,6 +66,9 @@ namespace FIFE
          */
         ~Camera() override;
 
+        Camera(const Camera&)            = delete;
+        Camera& operator=(const Camera&) = delete;
+
         /** Gets the identifier for this camera.
          */
         const std::string& getId() const
@@ -519,9 +522,6 @@ namespace FIFE
         bool m_img_fill;
         bool m_ani_fill;
         uint32_t m_start_time;
-
-        Camera(const Camera&)            = delete;
-        Camera& operator=(const Camera&) = delete;
     };
 } // namespace FIFE
 #endif

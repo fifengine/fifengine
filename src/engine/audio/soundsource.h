@@ -31,6 +31,9 @@ namespace FIFE
         explicit SoundSource(Instance* instance);
         ~SoundSource();
 
+        SoundSource(const SoundSource&)            = delete;
+        SoundSource& operator=(const SoundSource&) = delete;
+
         /** Sets the ActionAudio. Owned by Object.
          */
         void setActionAudio(ActionAudio* audio);
@@ -60,9 +63,6 @@ namespace FIFE
         SoundEmitter* m_emitter;
         //! InstanceChangeListener for position and direction
         SoundChangeListener* m_listener;
-
-        SoundSource(const SoundSource&)            = delete;
-        SoundSource& operator=(const SoundSource&) = delete;
     };
 } // namespace FIFE
 
