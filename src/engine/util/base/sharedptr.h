@@ -263,7 +263,7 @@ namespace FIFE
     template <class T, class U>
     inline bool operator<(SharedPtr<T> const & lhs, SharedPtr<U> const & rhs)
     {
-        return std::less<const void*>()(lhs.get(), rhs.get());
+        return std::less<>()(lhs.get(), rhs.get());
     }
 
     /** convenience function for making a shared pointer
