@@ -12,6 +12,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -85,7 +86,7 @@ namespace FIFE
     class LMsg
     {
     public:
-        explicit LMsg(const std::string& msg = "") : str(msg) { }
+        explicit LMsg(std::string msg = "") : str(std::move(msg)) { }
         ~LMsg() = default;
 
         template <typename T>

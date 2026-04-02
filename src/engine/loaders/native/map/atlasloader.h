@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -41,7 +42,7 @@ namespace FIFE
     class Atlas
     {
     public:
-        explicit Atlas(const std::string& name) : m_name(name)
+        explicit Atlas(std::string name) : m_name(std::move(name))
         {
             ;
         }
