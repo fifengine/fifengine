@@ -303,31 +303,40 @@ namespace FIFE
     const Rect& Camera::getMapViewPort()
     {
         if (!m_mapViewPortUpdated) {
+            // Screenpoints
             ScreenPoint sp1(m_viewport.x, m_viewport.y);
             ScreenPoint sp2(m_viewport.x, m_viewport.y + m_viewport.h);
             ScreenPoint sp3(m_viewport.x + m_viewport.w, m_viewport.y);
             ScreenPoint sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
 
-            std::vector<ExactModelCoordinate> coords;
-            coords.push_back(toMapCoordinates(sp2, false));
-            coords.push_back(toMapCoordinates(sp3, false));
-            coords.push_back(toMapCoordinates(sp4, false));
+            // Convert viewport corners to map coordinates
+            const ExactModelCoordinate p0 = toMapCoordinates(sp1, false);
+            const ExactModelCoordinate p1 = toMapCoordinates(sp2, false);
+            const ExactModelCoordinate p2 = toMapCoordinates(sp3, false);
+            const ExactModelCoordinate p3 = toMapCoordinates(sp4, false);
 
-            ExactModelCoordinate emc = toMapCoordinates(sp1, false);
-            ModelCoordinate min(static_cast<int32_t>(emc.x), static_cast<int32_t>(emc.y));
-            ModelCoordinate max(static_cast<int32_t>(emc.x + 0.5), static_cast<int32_t>(emc.y + 0.5));
-            auto it = coords.begin();
-            for (; it != coords.end(); ++it) {
-                min.x = std::min(min.x, static_cast<int32_t>((*it).x));
-                min.y = std::min(min.y, static_cast<int32_t>((*it).y));
-                max.x = std::max(max.x, static_cast<int32_t>((*it).x + 0.5));
-                max.y = std::max(max.y, static_cast<int32_t>((*it).y + 0.5));
-            }
-            // makes the viewport a bit larger
-            m_mapViewPort.x      = min.x - 1;
-            m_mapViewPort.y      = min.y - 1;
-            m_mapViewPort.w      = std::abs(max.x - min.x) + 2;
-            m_mapViewPort.h      = std::abs(max.y - min.y) + 2;
+            // TODO move into utils or anon namespace for reuse
+            auto toFloor = [](double v) -> int32_t {
+                return static_cast<int32_t>(std::floor(v));
+            };
+            auto toCeil = [](double v) -> int32_t {
+                return static_cast<int32_t>(std::ceil(v));
+            };
+
+            // Compute bounds
+            const int32_t minX = std::min({toFloor(p0.x), toFloor(p1.x), toFloor(p2.x), toFloor(p3.x)});
+            const int32_t minY = std::min({toFloor(p0.y), toFloor(p1.y), toFloor(p2.y), toFloor(p3.y)});
+            const int32_t maxX = std::max({toCeil(p0.x), toCeil(p1.x), toCeil(p2.x), toCeil(p3.x)});
+            const int32_t maxY = std::max({toCeil(p0.y), toCeil(p1.y), toCeil(p2.y), toCeil(p3.y)});
+
+            // Optional padding (makes the viewport a bit larger)
+            constexpr int32_t padding = 1;
+
+            m_mapViewPort.x = minX - padding;
+            m_mapViewPort.y = minY - padding;
+            m_mapViewPort.w = (maxX - minX) + padding * 2;
+            m_mapViewPort.h = (maxY - minY) + padding * 2;
+
             m_mapViewPortUpdated = true;
         }
 
