@@ -20,9 +20,7 @@ namespace FIFE
 
     TimeEvent::TimeEvent(int32_t period) : m_period(period), m_last_updated(TimeManager::instance()->getTime()) { }
 
-    TimeEvent::~TimeEvent()
-    {
-    }
+    TimeEvent::~TimeEvent() { }
 
     void TimeEvent::managerUpdateEvent(uint32_t time)
     {

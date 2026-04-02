@@ -85,7 +85,7 @@ namespace FIFE
          * @param sessionId The id of the session to cancel.
          * @return True if the session could be canceled false otherwise.
          */
-        bool cancelSession(const int32_t sessionId);
+        bool cancelSession(int32_t sessionId);
 
         /** Sets maximal ticks (update steps) to solve routes. @see update()
          * @param ticks A integer which holds the steps. default is 1000
@@ -115,7 +115,7 @@ namespace FIFE
          *
          * @param sessionId The session id to store.
          */
-        void addSessionId(const int32_t sessionId);
+        void addSessionId(int32_t sessionId);
 
         /** Makes a new session id.
          *
@@ -138,14 +138,14 @@ namespace FIFE
          * @param sessionId The session id to check.
          * @return true if one has, false otherwise.
          */
-        bool sessionIdValid(const int32_t sessionId);
+        bool sessionIdValid(int32_t sessionId);
 
         /** Removes a session id from the session map.
          *
          * @param sessionId The session id to remove.
          * @return True if the sessionId could be removed, false otherwise.
          */
-        bool invalidateSessionId(const int32_t sessionId);
+        bool invalidateSessionId(int32_t sessionId);
 
         //! A map of currently running sessions (searches).
         SessionQueue m_sessions;

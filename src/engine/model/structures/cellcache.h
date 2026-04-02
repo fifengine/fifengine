@@ -217,7 +217,7 @@ namespace FIFE
          * @param cell A const reference to the integer id which should be converted.
          * @return A ModelCoordinate, contain the cell coordinate.
          */
-        ModelCoordinate convertIntToCoord(const int32_t cell) const;
+        ModelCoordinate convertIntToCoord(int32_t cell) const;
 
         /** Returns the number of cells on this CellCache.
          * @return A integer value, the number of cells.

@@ -241,8 +241,7 @@ namespace FIFE
          *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
          *  @param costId id for special costs which is be used as extra multiplier.
          */
-        void move(
-            const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
+        void move(const std::string& actionName, const Location& target, double speed, const std::string& costId = "");
 
         /** Performs given named action to the instance, once only. Performs no movement
          *  @param actionName name of the action
@@ -290,7 +289,7 @@ namespace FIFE
          *  @param leader followed instance
          *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
          */
-        void follow(const std::string& actionName, Instance* leader, const double speed);
+        void follow(const std::string& actionName, Instance* leader, double speed);
 
         /** Performs given named action to the instance. While performing the action
          *  follows given route with given speed. Note: In this case route isn't deleted or resetted at the end.
@@ -298,7 +297,7 @@ namespace FIFE
          *  @param route followed route
          *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
          */
-        void follow(const std::string& actionName, Route* route, const double speed);
+        void follow(const std::string& actionName, Route* route, double speed);
 
         /** Cancel movement after a given length.
          *  If no length is set then 1 is used. This means that the instance

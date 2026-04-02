@@ -86,7 +86,7 @@ namespace FIFE
          * @param sessionId The id of the session to cancel.
          * @return A boolean to signify whether the session was successfully found and cancelled.
          */
-        virtual bool cancelSession(const int32_t sessionId) = 0;
+        virtual bool cancelSession(int32_t sessionId) = 0;
 
         /** Sets maximal ticks (update steps) to solve routes. @see update()
          * @param ticks A integer which holds the steps. default is 1000

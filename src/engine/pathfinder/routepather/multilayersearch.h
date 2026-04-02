@@ -35,7 +35,7 @@ namespace FIFE
          * @param route A pointer to the route for which a path should be searched.
          * @param sessionId A integer containing the session id for this search.
          */
-        MultiLayerSearch(Route* route, const int32_t sessionId);
+        MultiLayerSearch(Route* route, int32_t sessionId);
 
         /** Destructor
          */

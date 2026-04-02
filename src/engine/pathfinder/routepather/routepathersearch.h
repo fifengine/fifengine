@@ -32,7 +32,7 @@ namespace FIFE
          * @param route A pointer to the route for which a path should be searched.
          * @param sessionId A integer containing the session id for this search.
          */
-        RoutePatherSearch(Route* route, const int32_t sessionId);
+        RoutePatherSearch(Route* route, int32_t sessionId);
 
         virtual ~RoutePatherSearch();
 
@@ -82,7 +82,7 @@ namespace FIFE
          * @param status The status to set.
          * @see SearchStatus
          */
-        void setSearchStatus(const SearchStatus status);
+        void setSearchStatus(SearchStatus status);
 
         //! Pointer to route
         Route* m_route;

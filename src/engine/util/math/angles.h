@@ -32,7 +32,7 @@ namespace FIFE
     /** Gets facing location defined by given angle and location
      *  @return facing location
      */
-    Location getFacing(const Location& loc, const int32_t angle);
+    Location getFacing(const Location& loc, int32_t angle);
 
     /** Gets angle of vector defined by given map coordinates
      *  @return angle in polar coordinates between the line
@@ -43,7 +43,7 @@ namespace FIFE
     /** Gets facing map coordinate defined by given angle and map coordinate
      *  @return facing map coordinate
      */
-    ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, const int32_t angle);
+    ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, int32_t angle);
 } // namespace FIFE
 
 #endif

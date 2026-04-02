@@ -111,7 +111,7 @@ namespace FIFE
 
         /** Sets executer for the console
          */
-        void setConsoleExecuter(ConsoleExecuter* const consoleexec);
+        void setConsoleExecuter(ConsoleExecuter* consoleexec);
 
         /** Removes executer for the console
          */
