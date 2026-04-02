@@ -122,7 +122,7 @@ namespace FIFE
         /** allows dereferencing of shared pointer to act
          * identical to dereferencing the underlying pointer
          */
-        inline T& operator*() const
+        T& operator*() const
         {
             assert(m_ptr);
             return *m_ptr;
@@ -131,7 +131,7 @@ namespace FIFE
         /** allows dereferencing of shared pointer to act
          * identical to dereferencing the underlying pointer
          */
-        inline T* operator->() const
+        T* operator->() const
         {
             assert(m_ptr);
             return m_ptr;
@@ -139,7 +139,7 @@ namespace FIFE
 
         /** allows direct access to underlying pointer
          */
-        inline T* get() const
+        T* get() const
         {
             return m_ptr;
         }
@@ -149,7 +149,7 @@ namespace FIFE
          * of the shared resource or set the underlying pointer
          * to different pointer.
          */
-        inline void reset(T* ptr = 0)
+        void reset(T* ptr = 0)
         {
             assert(ptr == 0 || ptr != m_ptr);
             SharedPtr<T>(ptr).swap(*this);
@@ -159,7 +159,7 @@ namespace FIFE
          * this should only be called on a non-null
          * shared pointer
          */
-        inline uint32_t useCount() const
+        uint32_t useCount() const
         {
             assert(m_refCount);
 
@@ -174,7 +174,7 @@ namespace FIFE
          * provides direct access to the user count pointer
          * this should really only be used internally
          */
-        inline uint32_t* useCountPtr() const
+        uint32_t* useCountPtr() const
         {
             return m_refCount;
         }
@@ -185,7 +185,7 @@ namespace FIFE
          * this should only be called on a non-null
          * shared pointer
          */
-        inline bool unique() const
+        bool unique() const
         {
             assert(m_refCount);
             return (*m_refCount == 1);
@@ -212,7 +212,7 @@ namespace FIFE
         /** provides swapping function between
          * two shared pointers, used internally
          */
-        inline void swap(SharedPtr<T>& rhs)
+        void swap(SharedPtr<T>& rhs)
         {
             std::swap(m_ptr, rhs.m_ptr);
             std::swap(m_refCount, rhs.m_refCount);
@@ -221,7 +221,7 @@ namespace FIFE
         /** increases the reference count for
          * this shared resource, used internally
          */
-        inline void incRefCount()
+        void incRefCount()
         {
             if (m_refCount) {
                 ++(*m_refCount);
@@ -231,7 +231,7 @@ namespace FIFE
         /** decreases the reference count for
          * this shared resource, used internally
          */
-        inline void decRefCount()
+        void decRefCount()
         {
             if (m_refCount) {
                 --(*m_refCount);

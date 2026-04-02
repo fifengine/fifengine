@@ -206,7 +206,7 @@ namespace FIFE
 
         /** Returns string representation of given event type
          */
-        inline static std::string mouseEventType2str(MouseEventType t)
+        static std::string mouseEventType2str(MouseEventType t)
         {
             std::string s("unknown");
             switch (t) {
@@ -254,7 +254,7 @@ namespace FIFE
 
         /** Returns string representation of given button type
          */
-        inline static std::string mouseButtonType2str(MouseButtonType t)
+        static std::string mouseButtonType2str(MouseButtonType t)
         {
             std::string s("unknown");
             switch (t) {

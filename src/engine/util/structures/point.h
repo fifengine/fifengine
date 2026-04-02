@@ -172,7 +172,7 @@ namespace FIFE
             y = _y;
         }
 
-        inline T& operator[](int32_t ind)
+        T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 2);
             switch (ind) {
@@ -185,7 +185,7 @@ namespace FIFE
             }
         }
 
-        inline const T& operator[](int32_t ind) const
+        const T& operator[](int32_t ind) const
         {
             assert(ind > -1 && ind < 2);
             switch (ind) {
@@ -336,7 +336,7 @@ namespace FIFE
             z = _z;
         }
 
-        inline T& operator[](int32_t ind)
+        T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 3);
             switch (ind) {
@@ -351,7 +351,7 @@ namespace FIFE
             }
         }
 
-        inline const T& operator[](int32_t ind) const
+        const T& operator[](int32_t ind) const
         {
             assert(ind > -1 && ind < 3);
             switch (ind) {

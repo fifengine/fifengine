@@ -50,14 +50,14 @@ namespace FIFE
 
         /** Compares equality of two locations
          */
-        inline bool operator==(const Location& loc) const
+        bool operator==(const Location& loc) const
         {
             return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
         }
 
         /** Compares unequality of two locations
          */
-        inline bool operator!=(const Location& loc) const
+        bool operator!=(const Location& loc) const
         {
             return !(*this == loc);
         }

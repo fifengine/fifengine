@@ -66,7 +66,7 @@ namespace FIFE
 
         /** Divide this matrix by a scalar
          */
-        inline Matrix& operator/=(T val)
+        Matrix& operator/=(T val)
         {
             for (int32_t i = 0; i < 16; ++i) {
                 (*this)[i] /= val;
@@ -106,7 +106,7 @@ namespace FIFE
         /** Make this a rotation matrix
          */
 
-        inline Matrix& loadRotate(T angle, T x, T y, T z)
+        Matrix& loadRotate(T angle, T x, T y, T z)
         {
             T magSqr = x * x + y * y + z * z;
             if (magSqr != 1.0) {
@@ -142,7 +142,7 @@ namespace FIFE
 
         /** Apply scale into this matrix
          */
-        inline Matrix& applyScale(T x, T y, T z)
+        Matrix& applyScale(T x, T y, T z)
         {
             static Matrix<T> temp;
             temp.loadScale(x, y, z);
@@ -152,7 +152,7 @@ namespace FIFE
 
         /** Make this a scale matrix
          */
-        inline Matrix& loadScale(T x, T y, T z = 1)
+        Matrix& loadScale(T x, T y, T z = 1)
         {
             m0  = x;
             m4  = 0;
@@ -176,7 +176,7 @@ namespace FIFE
 
         /** Apply translation into this matrix
          */
-        inline Matrix& applyTranslate(T x, T y, T z)
+        Matrix& applyTranslate(T x, T y, T z)
         {
             static Matrix<T> temp;
             temp.loadTranslate(x, y, z);
@@ -186,7 +186,7 @@ namespace FIFE
 
         /** Make this a translation matrix
          */
-        inline Matrix& loadTranslate(const T x, const T y, const T z)
+        Matrix& loadTranslate(const T x, const T y, const T z)
         {
             m0  = 1;
             m4  = 0;
@@ -210,7 +210,7 @@ namespace FIFE
 
         /** Transform given point using this matrix
          */
-        inline PointType3D<T> operator*(const PointType3D<T>& vec)
+        PointType3D<T> operator*(const PointType3D<T>& vec)
         {
             return PointType3D<T>(
                 vec.x * m0 + vec.y * m4 + vec.z * m8 + m12,
@@ -220,7 +220,7 @@ namespace FIFE
 
         /** Direct access to the matrix elements, just remember they are in column major format!!
          */
-        inline T& operator[](int32_t ind)
+        T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 16);
             switch (ind) {
@@ -260,7 +260,7 @@ namespace FIFE
                 return m0;
             }
         }
-        inline const T& operator[](int32_t ind) const
+        const T& operator[](int32_t ind) const
         {
             assert(ind > -1 && ind < 16);
             switch (ind) {
@@ -303,7 +303,7 @@ namespace FIFE
 
         /** Apply the matrix dot product to this matrix
          */
-        inline Matrix& mult3by3(const Matrix& mat)
+        Matrix& mult3by3(const Matrix& mat)
         {
             Matrix temp(*this);
             m0 = temp.m0 * mat.m0 + temp.m4 * mat.m1 + temp.m8 * mat.m2;
@@ -326,7 +326,7 @@ namespace FIFE
 
         /** this->Rmult4by4(temp) == [temp] X [*this] **/
         /** also equal to temp->mult4by4(*this) **/
-        inline Matrix<T>& Rmult4by4(const Matrix<T>& mat)
+        Matrix<T>& Rmult4by4(const Matrix<T>& mat)
         {
             Matrix temp(*this);
 
@@ -352,7 +352,7 @@ namespace FIFE
             return *this;
         }
 
-        inline Matrix<T>& mult4by4(const Matrix<T>& mat)
+        Matrix<T>& mult4by4(const Matrix<T>& mat)
         {
             Matrix temp(*this);
 
@@ -390,67 +390,67 @@ namespace FIFE
 #define cofactor_maker(f1, mj1, mi1, f2, mj2, mi2, f3, mj3, mi3) \
     f1*(mj1 * mi1 - mj2 * mi3) + f2*(mj2 * mi2 - mj3 * mi1) + f3*(mj3 * mi3 - mj1 * mi2)
 
-        inline T cofactorm0() const
+        T cofactorm0() const
         {
             return cofactor_maker(m5, m10, m15, m6, m11, m13, m7, m9, m14);
         }
-        inline T cofactorm1() const
+        T cofactorm1() const
         {
             return cofactor_maker(m6, m11, m12, m7, m8, m14, m4, m10, m15);
         }
-        inline T cofactorm2() const
+        T cofactorm2() const
         {
             return cofactor_maker(m7, m8, m13, m4, m9, m15, m5, m11, m12);
         }
-        inline T cofactorm3() const
+        T cofactorm3() const
         {
             return cofactor_maker(m4, m9, m14, m5, m10, m12, m6, m8, m13);
         }
-        inline T cofactorm4() const
+        T cofactorm4() const
         {
             return cofactor_maker(m9, m14, m3, m10, m15, m1, m11, m13, m2);
         }
-        inline T cofactorm5() const
+        T cofactorm5() const
         {
             return cofactor_maker(m10, m15, m0, m11, m12, m2, m8, m14, m3);
         }
-        inline T cofactorm6() const
+        T cofactorm6() const
         {
             return cofactor_maker(m11, m12, m1, m8, m13, m3, m9, m15, m0);
         }
-        inline T cofactorm7() const
+        T cofactorm7() const
         {
             return cofactor_maker(m8, m13, m2, m9, m14, m0, m10, m12, m1);
         }
-        inline T cofactorm8() const
+        T cofactorm8() const
         {
             return cofactor_maker(m13, m2, m7, m14, m3, m5, m15, m1, m6);
         }
-        inline T cofactorm9() const
+        T cofactorm9() const
         {
             return cofactor_maker(m14, m13, m4, m15, m0, m6, m12, m2, m7);
         }
-        inline T cofactorm10() const
+        T cofactorm10() const
         {
             return cofactor_maker(m15, m0, m5, m12, m1, m7, m13, m3, m4);
         }
-        inline T cofactorm11() const
+        T cofactorm11() const
         {
             return cofactor_maker(m12, m1, m6, m13, m2, m4, m14, m0, m5);
         }
-        inline T cofactorm12() const
+        T cofactorm12() const
         {
             return cofactor_maker(m1, m6, m11, m2, m7, m9, m3, m5, m10);
         }
-        inline T cofactorm13() const
+        T cofactorm13() const
         {
             return cofactor_maker(m2, m7, m8, m3, m4, m10, m10, m6, m11);
         }
-        inline T cofactorm14() const
+        T cofactorm14() const
         {
             return cofactor_maker(m3, m4, m9, m0, m5, m11, m1, m7, m8);
         }
-        inline T cofactorm15() const
+        T cofactorm15() const
         {
             return cofactor_maker(m0, m5, m10, m1, m6, m8, m2, m4, m9);
         }
