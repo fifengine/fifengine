@@ -84,7 +84,7 @@ namespace FIFE
             m_instance = static_cast<T*>(this);
         }
 
-        virtual ~DynamicSingleton()
+        ~DynamicSingleton()
         {
             m_instance = 0;
         }
