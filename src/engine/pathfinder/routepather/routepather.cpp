@@ -395,8 +395,9 @@ namespace FIFE
                             }
                             nextLocation.setLayerCoordinates(ti->m_mc);
                             return cw;
-                            // immediate "beam"
-                        } else if (ti->m_immediate) {
+                        }
+                        // immediate "beam"
+                        if (ti->m_immediate) {
                             if (ti->m_difflayer) {
                                 nextLocation.setLayer(ti->m_layer);
                             }

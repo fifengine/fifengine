@@ -152,9 +152,8 @@ namespace FIFE
         {
             if (littleEndian()) {
                 return value;
-            } else {
-                return revert(value);
             }
+            return revert(value);
         }
 
         template <typename T>
@@ -162,9 +161,8 @@ namespace FIFE
         {
             if (!littleEndian()) {
                 return value;
-            } else {
-                return revert(value);
             }
+            return revert(value);
         }
 
         template <typename T>

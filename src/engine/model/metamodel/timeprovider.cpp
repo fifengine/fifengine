@@ -42,9 +42,8 @@ namespace FIFE
     {
         if (m_master != nullptr) {
             return m_master->getTotalMultiplier() * m_multiplier;
-        } else {
-            return m_multiplier;
         }
+        return m_multiplier;
     }
 
     uint32_t TimeProvider::getGameTime() const

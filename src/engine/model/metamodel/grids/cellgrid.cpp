@@ -67,7 +67,8 @@ namespace FIFE
         double o = ((pt2.x - pt1.x) * (pt.y - pt1.y)) - ((pt.x - pt1.x) * (pt2.y - pt1.y));
         if (o > 0.0) {
             return 1;
-        } else if (o < 0.0) {
+        }
+        if (o < 0.0) {
             return -1;
         }
         return 0;

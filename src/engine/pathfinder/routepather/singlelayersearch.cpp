@@ -115,7 +115,8 @@ namespace FIFE
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (!blocker && m_multicell) {
                     continue;
-                } else if (!m_multicell) {
+                }
+                if (!m_multicell) {
                     continue;
                 }
             }

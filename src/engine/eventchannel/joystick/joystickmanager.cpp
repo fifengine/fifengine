@@ -340,7 +340,8 @@ namespace FIFE
         }
         if (range < -0.99F) {
             return -1.0F;
-        } else if (range > 0.99F) {
+        }
+        if (range > 0.99F) {
             return 1.0F;
         }
         return range;

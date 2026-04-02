@@ -50,9 +50,8 @@ namespace FIFE
                 m_sources[file] = source;
             }
             return source;
-        } else {
-            throw Exception("File " + file + " is not readable.");
         }
+        throw Exception("File " + file + " is not readable.");
     }
 
     VFSSource* ZipProvider::getSource(const std::string& path) const

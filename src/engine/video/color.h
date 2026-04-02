@@ -56,9 +56,11 @@ namespace FIFE
         {
             if (m_r != rhs.m_r) {
                 return m_r < rhs.m_r;
-            } else if (m_g != rhs.m_g) {
+            }
+            if (m_g != rhs.m_g) {
                 return m_g < rhs.m_g;
-            } else if (m_b != rhs.m_b) {
+            }
+            if (m_b != rhs.m_b) {
                 return m_b < rhs.m_b;
             }
             return m_a < rhs.m_a;

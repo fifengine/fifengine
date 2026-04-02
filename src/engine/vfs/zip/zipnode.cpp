@@ -85,9 +85,8 @@ namespace FIFE
             fs::path path(m_parent->getFullName());
             path /= m_name;
             return (path.string());
-        } else {
-            return m_name;
         }
+        return m_name;
     }
 
     ZipContentType::Enum ZipNode::getContentType() const

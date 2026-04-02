@@ -322,8 +322,7 @@ namespace FIFE
         }
         if (zoomed) {
             return Point(round(m_point.x * cam->getZoom()) + p.x, round(m_point.y * cam->getZoom()) + p.y);
-        } else {
-            return Point(m_point.x + p.x, m_point.y + p.y);
         }
+        return Point(m_point.x + p.x, m_point.y + p.y);
     }
 } // namespace FIFE

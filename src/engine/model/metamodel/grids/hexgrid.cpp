@@ -70,11 +70,13 @@ namespace FIFE
             } else {
                 if (y == 0) {
                     return true;
-                } else if ((curpos.y & 1) != 0) {
+                }
+                if ((curpos.y & 1) != 0) {
                     if (x >= 0) {
                         return true;
                     }
-                } else if (x <= 0) {
+                }
+                if (x <= 0) {
                     return true;
                 }
             }
@@ -100,10 +102,9 @@ namespace FIFE
         if (m_axial) {
             static std::string type("hexagonal_axial");
             return type;
-        } else {
-            static std::string type("hexagonal");
-            return type;
         }
+        static std::string type("hexagonal");
+        return type;
     }
 
     const std::string& HexGrid::getName() const
@@ -111,10 +112,9 @@ namespace FIFE
         if (m_axial) {
             static std::string hexGrid("Hex Grid (Axial)");
             return hexGrid;
-        } else {
-            static std::string hexGrid("Hex Grid");
-            return hexGrid;
         }
+        static std::string hexGrid("Hex Grid");
+        return hexGrid;
     }
 
     double HexGrid::getXZigzagOffset(double y)

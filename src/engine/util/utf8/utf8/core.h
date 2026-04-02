@@ -153,10 +153,12 @@ namespace utf8
             if (cp < 0x80) {
                 if (length != 1)
                     return true;
-            } else if (cp < 0x800) {
+            }
+            if (cp < 0x800) {
                 if (length != 2)
                     return true;
-            } else if (cp < 0x10000) {
+            }
+            if (cp < 0x10000) {
                 if (length != 3)
                     return true;
             }
@@ -342,21 +344,21 @@ namespace utf8
             if (!is_surrogate(first_word)) {
                 code_point = first_word;
                 return UTF8_OK;
-            } else {
-                if (it == end)
-                    err = NOT_ENOUGH_ROOM;
-                else if (is_lead_surrogate(first_word)) {
-                    const utfchar16_t second_word = *it++;
-                    if (is_trail_surrogate(static_cast<utfchar32_t>(second_word))) {
-                        code_point = static_cast<utfchar32_t>(first_word << 10) +
-                                     static_cast<utfchar32_t>(second_word) + SURROGATE_OFFSET;
-                        return UTF8_OK;
-                    } else
-                        err = INCOMPLETE_SEQUENCE;
+            }
 
-                } else {
-                    err = INVALID_LEAD;
-                }
+            if (it == end)
+                err = NOT_ENOUGH_ROOM;
+            else if (is_lead_surrogate(first_word)) {
+                const utfchar16_t second_word = *it++;
+                if (is_trail_surrogate(static_cast<utfchar32_t>(second_word))) {
+                    code_point = static_cast<utfchar32_t>(first_word << 10) + static_cast<utfchar32_t>(second_word) +
+                                 SURROGATE_OFFSET;
+                    return UTF8_OK;
+                } else
+                    err = INCOMPLETE_SEQUENCE;
+
+            } else {
+                err = INVALID_LEAD;
             }
             // error branch
             it = original_it;

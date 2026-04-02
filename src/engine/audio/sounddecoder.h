@@ -86,9 +86,8 @@ namespace FIFE
         {
             if (m_isstereo) {
                 return m_is8bit ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16;
-            } else {
-                return m_is8bit ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
             }
+            return m_is8bit ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
         }
 
         /** Returns the bit resolution

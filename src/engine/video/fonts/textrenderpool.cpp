@@ -97,10 +97,9 @@ namespace FIFE
         if (m_poolSize < m_poolMaxSize) {
             m_poolSize++;
             return;
-        } else {
-            delete m_pool.back().image;
-            m_pool.pop_back();
         }
+        delete m_pool.back().image;
+        m_pool.pop_back();
     }
 
     void TextRenderPool::removeOldEntries()

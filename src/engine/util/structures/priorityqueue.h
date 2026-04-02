@@ -293,7 +293,8 @@ int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type
 
         if (a.second > b.second) {
             return 1;
-        } else if (b.second > a.second) {
+        }
+        if (b.second > a.second) {
             return -1;
         }
 
@@ -301,7 +302,8 @@ int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type
 
         if (a.second < b.second) {
             return 1;
-        } else if (b.second < a.second) {
+        }
+        if (b.second < a.second) {
             return -1;
         }
     }

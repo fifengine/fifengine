@@ -768,9 +768,8 @@ namespace FIFE
             removeFromCheck(info.outline);
             // optimization for outline that has not changed
             return info.outline.get();
-        } else {
-            info.curimg = vc.image.get();
         }
+        info.curimg = vc.image.get();
 
         // if outline has changed we can maybe free the old effect image
         if (valid) {
@@ -1006,9 +1005,8 @@ namespace FIFE
             removeFromCheck(info.overlay);
             // optimization for coloring that has not changed
             return info.overlay.get();
-        } else {
-            info.curimg = vc.image.get();
         }
+        info.curimg = vc.image.get();
 
         // if coloring has changed we can maybe free the old effect image
         if (valid) {

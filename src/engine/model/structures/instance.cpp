@@ -758,7 +758,8 @@ namespace FIFE
                 setFacingLocation(target);
             }
             return true;
-        } else if (route->getRouteStatus() == ROUTE_FAILED) {
+        }
+        if (route->getRouteStatus() == ROUTE_FAILED) {
             return true;
         }
         return false;
@@ -1326,7 +1327,8 @@ namespace FIFE
             action = m_object->getAction(actionName);
             if (action == nullptr) {
                 throw NotFound(std::string("action ") + actionName + " not found");
-            } else if (create) {
+            }
+            if (create) {
                 // if we change the current action then we have to replace the pointer
                 bool replace = getCurrentAction() == action;
                 // check if its the default action

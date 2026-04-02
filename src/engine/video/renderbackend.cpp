@@ -123,9 +123,8 @@ namespace FIFE
     {
         if (!m_clipstack.empty()) {
             return m_clipstack.top().r;
-        } else {
-            return getArea();
         }
+        return getArea();
     }
 
     void RenderBackend::clearClipArea()
@@ -272,7 +271,8 @@ namespace FIFE
     {
         if (t < 0.0) {
             return points[0];
-        } else if (t >= static_cast<double>(elements)) {
+        }
+        if (t >= static_cast<double>(elements)) {
             return points.back();
         }
 

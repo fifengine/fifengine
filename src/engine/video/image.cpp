@@ -177,7 +177,8 @@ namespace FIFE
         if (m_shared) {
             assert(m_subimagerect.w >= 0);
             return static_cast<uint32_t>(m_subimagerect.w);
-        } else if (m_surface == nullptr) {
+        }
+        if (m_surface == nullptr) {
             return 0;
         }
         assert(m_surface->w >= 0);
@@ -189,7 +190,8 @@ namespace FIFE
         if (m_shared) {
             assert(m_subimagerect.h >= 0);
             return static_cast<uint32_t>(m_subimagerect.h);
-        } else if (m_surface == nullptr) {
+        }
+        if (m_surface == nullptr) {
             return 0;
         }
         assert(m_surface->h >= 0);
@@ -381,7 +383,8 @@ namespace FIFE
     {
         if (srcimg->m_surface == nullptr) {
             return;
-        } else if (m_surface == nullptr) {
+        }
+        if (m_surface == nullptr) {
             const uint32_t srcWidth  = srcimg->getWidth();
             const uint32_t srcHeight = srcimg->getHeight();
             assert(srcWidth <= static_cast<uint32_t>(std::numeric_limits<int>::max()));

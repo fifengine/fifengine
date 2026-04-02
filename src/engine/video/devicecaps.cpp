@@ -88,28 +88,32 @@ namespace FIFE
         // first by display, from lower to higher
         if (m_display > rhs.getDisplay()) {
             return true;
-        } else if (m_display < rhs.getDisplay()) {
+        }
+        if (m_display < rhs.getDisplay()) {
             return false;
         }
 
         // sort by fullscreen first
         if (!isFullScreen() && rhs.isFullScreen()) {
             return true;
-        } else if (isFullScreen() && !rhs.isFullScreen()) {
+        }
+        if (isFullScreen() && !rhs.isFullScreen()) {
             return false;
         }
 
         // next by bpp
         if (m_bpp < rhs.getBPP()) {
             return true;
-        } else if (m_bpp > rhs.getBPP()) {
+        }
+        if (m_bpp > rhs.getBPP()) {
             return false;
         }
 
         // then by screen dimensions
         if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
             return true;
-        } else if (m_width > rhs.getWidth() || m_height > rhs.getHeight()) {
+        }
+        if (m_width > rhs.getWidth() || m_height > rhs.getHeight()) {
             return false;
         }
         // last by refresh rate

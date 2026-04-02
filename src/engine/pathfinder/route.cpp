@@ -197,7 +197,8 @@ namespace FIFE
             m_walked    = 1;
             m_replanned = true;
             return;
-        } else if (length >= m_path.size()) {
+        }
+        if (length >= m_path.size()) {
             return;
         }
 

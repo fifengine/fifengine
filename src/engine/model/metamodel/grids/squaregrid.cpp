@@ -65,7 +65,8 @@ namespace FIFE
     {
         if (curpos == target) {
             return 0.0;
-        } else if (std::abs(target.x - curpos.x) != std::abs(target.y - curpos.y)) {
+        }
+        if (std::abs(target.x - curpos.x) != std::abs(target.y - curpos.y)) {
             return 1.0;
         }
         return 1.4;

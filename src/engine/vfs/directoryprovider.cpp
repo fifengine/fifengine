@@ -35,9 +35,8 @@ namespace FIFE
                 m_sources[path] = source;
             }
             return source;
-        } else {
-            throw Exception("Path " + path + " is not readable.");
         }
+        throw Exception("Path " + path + " is not readable.");
     }
 
     VFSSource* DirectoryProvider::getSource(const std::string& path) const

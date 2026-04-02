@@ -167,10 +167,9 @@ namespace FIFE
         if (x > getWidth(text)) {
             assert(text.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
             return static_cast<int32_t>(text.size());
-        } else {
-            assert(buff.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
-            return static_cast<int32_t>(buff.size());
         }
+        assert(buff.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        return static_cast<int32_t>(buff.size());
     }
 
     Image* FontBase::getAsImage(const std::string& text)

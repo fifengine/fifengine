@@ -180,9 +180,8 @@ namespace FIFE
             if (!(*token).empty()) {
                 if (*token != "." && *token != ".." && listDirectories(currentpath, *token).empty()) {
                     return false;
-                } else {
-                    currentpath += *token + "/";
                 }
+                currentpath += *token + "/";
             }
             ++token;
         }
