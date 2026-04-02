@@ -40,7 +40,6 @@ namespace FIFE
         /** Constructor
          */
         JoystickEvent() :
-            InputEvent(),
             m_eventType(UNKNOWN_EVENT),
             m_instanceId(-1),
             m_axis(-1),

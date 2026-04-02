@@ -28,42 +28,27 @@
 namespace FIFE
 {
     Image::Image(IResourceLoader* loader) :
-        IResource(createUniqueImageName(), loader),
-        m_surface(nullptr),
-        m_subimagerect(),
-        m_xshift(0),
-        m_yshift(0),
-        m_shared(false)
+        IResource(createUniqueImageName(), loader), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(const std::string& name, IResourceLoader* loader) :
-        IResource(name, loader), m_surface(nullptr), m_subimagerect(), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name, loader), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(SDL_Surface* surface) :
-        IResource(createUniqueImageName(), nullptr),
-        m_surface(surface),
-        m_subimagerect(),
-        m_xshift(0),
-        m_yshift(0),
-        m_shared(false)
+        IResource(createUniqueImageName(), nullptr), m_surface(surface), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(const std::string& name, SDL_Surface* surface) :
-        IResource(name, nullptr), m_surface(surface), m_subimagerect(), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name, nullptr), m_surface(surface), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(const uint8_t* data, uint32_t width, uint32_t height) :
-        IResource(createUniqueImageName(), nullptr),
-        m_surface(nullptr),
-        m_subimagerect(),
-        m_xshift(0),
-        m_yshift(0),
-        m_shared(false)
+        IResource(createUniqueImageName(), nullptr), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         if (data == nullptr || width == 0 || height == 0) {
             return;
@@ -103,7 +88,7 @@ namespace FIFE
     }
 
     Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
-        IResource(name, nullptr), m_surface(nullptr), m_subimagerect(), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name, nullptr), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         if (data == nullptr || width == 0 || height == 0) {
             return;

@@ -27,7 +27,7 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        Command() : Event(), m_commandType(CMD_UNKNOWN), m_code(0) { }
+        Command() : m_commandType(CMD_UNKNOWN), m_code(0) { }
 
         /** Destructor.
          */

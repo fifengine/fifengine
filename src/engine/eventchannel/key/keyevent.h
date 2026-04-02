@@ -35,7 +35,7 @@ namespace FIFE
 
         /** Constructor
          */
-        KeyEvent() : InputEvent(), m_eventType(UNKNOWN), m_isNumericPad(false), m_key(Key()) { }
+        KeyEvent() : m_eventType(UNKNOWN), m_isNumericPad(false) { }
 
         /** Destructor.
          */

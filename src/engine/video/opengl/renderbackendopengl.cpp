@@ -139,8 +139,6 @@ namespace FIFE
         m_state{},
         m_fbo_id(0),
         m_indicebufferId(0),
-        m_indices(),
-        m_img_target(),
         m_target_discard(false),
         m_context(nullptr)
     {

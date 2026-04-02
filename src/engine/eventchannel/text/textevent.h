@@ -36,7 +36,7 @@ namespace FIFE
 
         /** Constructor
          */
-        TextEvent() : InputEvent(), m_eventType(UNKNOWN), m_text(Text()) { }
+        TextEvent() : m_eventType(UNKNOWN) { }
 
         /** Destructor.
          */

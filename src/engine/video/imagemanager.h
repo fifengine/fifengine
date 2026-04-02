@@ -40,7 +40,7 @@ namespace FIFE
     public:
         /** Default constructor.
          */
-        ImageManager() : IResourceManager() { }
+        ImageManager() = default;
 
         /** Destructor.
          */

@@ -26,7 +26,6 @@ namespace FIFE
         /** Constructor.
          */
         InputEvent() :
-            Event(),
             m_consumedByWidgets(false),
             m_isShiftPressed(false),
             m_isControlPressed(false),

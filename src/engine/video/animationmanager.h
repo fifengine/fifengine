@@ -40,7 +40,7 @@ namespace FIFE
     public:
         /** Default constructor.
          */
-        AnimationManager() : IResourceManager() { }
+        AnimationManager() = default;
 
         /** Destructor.
          */

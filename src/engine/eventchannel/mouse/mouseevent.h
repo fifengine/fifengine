@@ -58,7 +58,7 @@ namespace FIFE
 
         /** Constructor.
          */
-        MouseEvent() : InputEvent(), m_eventType(UNKNOWN_EVENT), m_buttonType(UNKNOWN_BUTTON), m_x(-1), m_y(-1) { }
+        MouseEvent() : m_eventType(UNKNOWN_EVENT), m_buttonType(UNKNOWN_BUTTON), m_x(-1), m_y(-1) { }
 
         /** Destructor.
          */

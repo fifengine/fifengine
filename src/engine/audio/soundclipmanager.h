@@ -40,7 +40,7 @@ namespace FIFE
     public:
         /** Default constructor.
          */
-        SoundClipManager() : IResourceManager() { }
+        SoundClipManager() = default;
 
         /** Destructor.
          */
