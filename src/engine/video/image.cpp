@@ -67,7 +67,7 @@ namespace FIFE
         const int bpp      = surface->format->BytesPerPixel;
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + y * pitch;
+            uint8_t* row = dst + (y * pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 const uint32_t idx   = ((y * width) + x) * 4;
                 const uint8_t r      = src[idx + 0];
@@ -107,7 +107,7 @@ namespace FIFE
         const int bpp      = surface->format->BytesPerPixel;
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + y * pitch;
+            uint8_t* row = dst + (y * pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 const uint32_t idx   = ((y * width) + x) * 4;
                 const uint8_t r      = src[idx + 0];

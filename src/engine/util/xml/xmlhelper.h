@@ -11,46 +11,43 @@
 // 3rd party library includes
 #include <tinyxml2.h>
 
-namespace FIFE
+namespace FIFE::XML
 {
-    namespace XML
+    using Document = tinyxml2::XMLDocument;
+    using Element  = tinyxml2::XMLElement;
+    using Error    = tinyxml2::XMLError;
+
+    constexpr Error SUCCESS = tinyxml2::XML_SUCCESS;
+
+    inline bool Parse(Document& document, const std::string& xml)
     {
-        using Document = tinyxml2::XMLDocument;
-        using Element  = tinyxml2::XMLElement;
-        using Error    = tinyxml2::XMLError;
+        return document.Parse(xml.c_str(), xml.size()) == SUCCESS;
+    }
 
-        constexpr Error SUCCESS = tinyxml2::XML_SUCCESS;
+    inline const char* Attribute(const Element* element, const char* name)
+    {
+        return element != nullptr ? element->Attribute(name) : nullptr;
+    }
 
-        inline bool Parse(Document& document, const std::string& xml)
-        {
-            return document.Parse(xml.c_str(), xml.size()) == SUCCESS;
-        }
+    inline bool HasName(const Element* element, const char* expectedName)
+    {
+        return element != nullptr && std::strcmp(element->Name(), expectedName) == 0;
+    }
 
-        inline const char* Attribute(const Element* element, const char* name)
-        {
-            return element != nullptr ? element->Attribute(name) : nullptr;
-        }
+    inline Error QueryAttribute(const Element* element, const char* name, int* value)
+    {
+        return element != nullptr ? element->QueryIntAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
+    }
 
-        inline bool HasName(const Element* element, const char* expectedName)
-        {
-            return element != nullptr && std::strcmp(element->Name(), expectedName) == 0;
-        }
+    inline Error QueryAttribute(const Element* element, const char* name, double* value)
+    {
+        return element != nullptr ? element->QueryDoubleAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
+    }
 
-        inline Error QueryAttribute(const Element* element, const char* name, int* value)
-        {
-            return element != nullptr ? element->QueryIntAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
-        }
-
-        inline Error QueryAttribute(const Element* element, const char* name, double* value)
-        {
-            return element != nullptr ? element->QueryDoubleAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
-        }
-
-        inline Error QueryAttribute(const Element* element, const char* name, float* value)
-        {
-            return element != nullptr ? element->QueryFloatAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
-        }
-    } // namespace XML
-} // namespace FIFE
+    inline Error QueryAttribute(const Element* element, const char* name, float* value)
+    {
+        return element != nullptr ? element->QueryFloatAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
+    }
+} // namespace FIFE::XML
 
 #endif
