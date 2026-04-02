@@ -145,8 +145,8 @@ namespace FIFE
 
                 if (zoomed) {
                     const double zoom = cam->getZoom();
-                    r.x = static_cast<int32_t>(round(drawpt.x - ((widthX + widthComma + widthY) / 2.0) * zoom));
-                    r.y = static_cast<int32_t>(round(drawpt.y - (heightX / 2.0) * zoom));
+                    r.x = static_cast<int32_t>(round(drawpt.x - (((widthX + widthComma + widthY) / 2.0) * zoom)));
+                    r.y = static_cast<int32_t>(round(drawpt.y - ((heightX / 2.0) * zoom)));
                     r.w = static_cast<int32_t>(round(widthX * zoom));
                     r.h = static_cast<int32_t>(round(heightX * zoom));
                     imgx->render(r);

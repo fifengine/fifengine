@@ -635,11 +635,11 @@ namespace FIFE
                             const float alphaFactor1 = alphaFraction(coloringColor[3]);
                             const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
                             rgba[0]                  = toUint8Channel(
-                                coloringColor[0] * (1.0F - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1);
+                                (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
                             rgba[1] = toUint8Channel(
-                                coloringColor[1] * (1.0F - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1);
+                                (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
                             rgba[2] = toUint8Channel(
-                                coloringColor[2] * (1.0F - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1);
+                                (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
                             rgba[3] = std::min(coloringColor[3], rgba[3]);
                         }
                     }
@@ -723,11 +723,11 @@ namespace FIFE
                         const float alphaFactor1 = alphaFraction(coloringColor[3]);
                         const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
                         rgba[0]                  = toUint8Channel(
-                            coloringColor[0] * (1.0F - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1);
+                            (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
                         rgba[1] = toUint8Channel(
-                            coloringColor[1] * (1.0F - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1);
+                            (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
                         rgba[2] = toUint8Channel(
-                            coloringColor[2] * (1.0F - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1);
+                            (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
                         rgba[3] = std::min(coloringColor[3], rgba[3]);
                     }
                 }

@@ -46,7 +46,7 @@ namespace FIFE
             .minor = @PROJECT_VERSION_MINOR@,
             .patch = @PROJECT_VERSION_PATCH@,
         };
-        static constexpr int version_id = @PROJECT_VERSION_MAJOR@ * 10000 + @PROJECT_VERSION_MINOR@ * 100 + @PROJECT_VERSION_PATCH@;
+        static constexpr int version_id = (@PROJECT_VERSION_MAJOR@ * 10000) + (@PROJECT_VERSION_MINOR@ * 100) + @PROJECT_VERSION_PATCH@;
         // clang-format on
 
         /**

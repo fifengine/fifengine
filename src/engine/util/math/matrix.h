@@ -57,7 +57,7 @@ namespace FIFE
         {
             Matrix ret(adjoint());
 
-            T determinant = m0 * ret[0] + m1 * ret[4] + m2 * ret[8] + m3 * ret[12];
+            T determinant = (m0 * ret[0]) + (m1 * ret[4]) + (m2 * ret[8]) + (m3 * ret[12]);
             assert(determinant != 0 && "Singular matrix has no inverse");
 
             ret /= determinant;
@@ -108,7 +108,7 @@ namespace FIFE
 
         Matrix& loadRotate(T angle, T x, T y, T z)
         {
-            T magSqr = x * x + y * y + z * z;
+            T magSqr = (x * x) + (y * y) + (z * z);
             if (magSqr != 1.0) {
                 T mag = Math<T>::Sqrt(magSqr);
                 x /= mag;
@@ -213,9 +213,9 @@ namespace FIFE
         PointType3D<T> operator*(const PointType3D<T>& vec)
         {
             return PointType3D<T>(
-                vec.x * m0 + vec.y * m4 + vec.z * m8 + m12,
-                vec.x * m1 + vec.y * m5 + vec.z * m9 + m13,
-                vec.x * m2 + vec.y * m6 + vec.z * m10 + m14);
+                (vec.x * m0) + (vec.y * m4) + (vec.z * m8) + m12,
+                (vec.x * m1) + (vec.y * m5) + (vec.z * m9) + m13,
+                (vec.x * m2) + (vec.y * m6) + (vec.z * m10) + m14);
         }
 
         /** Direct access to the matrix elements, just remember they are in column major format!!
@@ -388,7 +388,7 @@ namespace FIFE
 
     private:
 #define cofactor_maker(f1, mj1, mi1, f2, mj2, mi2, f3, mj3, mi3) \
-    f1*(mj1 * mi1 - mj2 * mi3) + f2*(mj2 * mi2 - mj3 * mi1) + f3*(mj3 * mi3 - mj1 * mi2)
+    ((f1) * ((mj1 * mi1) - (mj2 * mi3))) + ((f2) * ((mj2 * mi2) - (mj3 * mi1))) + ((f3) * ((mj3 * mi3) - (mj1 * mi2)))
 
         T cofactorm0() const
         {

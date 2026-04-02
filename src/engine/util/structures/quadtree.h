@@ -296,17 +296,18 @@ namespace FIFE
             return m_nodes[0]->find_container(x, y, w, h);
         case 1:
             if (m_nodes[1] == 0) {
-                m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + m_size / 2, m_y, m_size / 2);
+                m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y, m_size / 2);
             }
             return m_nodes[1]->find_container(x, y, w, h);
         case 2:
             if (m_nodes[2] == 0) {
-                m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + m_size / 2, m_size / 2);
+                m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + (m_size / 2), m_size / 2);
             }
             return m_nodes[2]->find_container(x, y, w, h);
         case 3:
             if (m_nodes[3] == 0) {
-                m_nodes[3] = new QuadNode<DataType, MinimumSize>(this, m_x + m_size / 2, m_y + m_size / 2, m_size / 2);
+                m_nodes[3] =
+                    new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
             }
             return m_nodes[3]->find_container(x, y, w, h);
         default:
@@ -371,13 +372,13 @@ namespace FIFE
             m_nodes[0] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y, m_size / 2);
         }
         if (m_nodes[1] == 0) {
-            m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + m_size / 2, m_y, m_size / 2);
+            m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y, m_size / 2);
         }
         if (m_nodes[2] == 0) {
-            m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + m_size / 2, m_size / 2);
+            m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + (m_size / 2), m_size / 2);
         }
         if (m_nodes[3] == 0) {
-            m_nodes[3] = new QuadNode<DataType, MinimumSize>(this, m_x + m_size / 2, m_y + m_size / 2, m_size / 2);
+            m_nodes[3] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
         }
     }
 

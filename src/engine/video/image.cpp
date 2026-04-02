@@ -84,7 +84,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + y * pitch;
             for (uint32_t x = 0; x < width; ++x) {
-                const uint32_t idx   = (y * width + x) * 4;
+                const uint32_t idx   = ((y * width) + x) * 4;
                 const uint8_t r      = src[idx + 0];
                 const uint8_t g      = src[idx + 1];
                 const uint8_t b      = src[idx + 2];
@@ -93,7 +93,7 @@ namespace FIFE
                 if (bpp == 4) {
                     reinterpret_cast<uint32_t*>(row)[x] = pixel;
                 } else {
-                    std::memcpy(row + x * bpp, &pixel, static_cast<size_t>(std::min(bpp, 4)));
+                    std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + y * pitch;
             for (uint32_t x = 0; x < width; ++x) {
-                const uint32_t idx   = (y * width + x) * 4;
+                const uint32_t idx   = ((y * width) + x) * 4;
                 const uint8_t r      = src[idx + 0];
                 const uint8_t g      = src[idx + 1];
                 const uint8_t b      = src[idx + 2];
@@ -133,7 +133,7 @@ namespace FIFE
                 if (bpp == 4) {
                     reinterpret_cast<uint32_t*>(row)[x] = pixel;
                 } else {
-                    std::memcpy(row + x * bpp, &pixel, static_cast<size_t>(std::min(bpp, 4)));
+                    std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
                 }
             }
         }
