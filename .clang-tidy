@@ -4,6 +4,18 @@
 # https://clang.llvm.org/extra/clang-tidy/
 # https://clang.llvm.org/extra/clang-tidy/checks/list.html
 #
+# Reasons for disabling specific checks:
+#
+# - bugprone-easily-swappable-parameters:
+#   Disabled because, too many false positives.
+#
+# - bugprone-narrowing-conversions:
+#   Disabled because, too many false positives.
+#
+# - misc-use-internal-linkage:
+#   Disabled because, Swig has problems with symbol lookup for internal linkage.
+#   This results in errors like "undefined symbol: ...".
+#
 Checks: >
   -*,
   bugprone-*,
@@ -20,12 +32,12 @@ Checks: >
   -cppcoreguidelines-non-private-member-variables-in-classes,
   -cppcoreguidelines-pro-type-union-access,
   google-explicit-constructor,
-  misc*,
-  misc-uniqueptr-reset-release,
+  misc-*,
+  -misc-use-internal-linkage,
   -misc-no-recursion,
   -misc-include-cleaner,
   -misc-non-private-member-variables-in-classes,
-  modernize*,
+  modernize-*,
   -modernize-use-auto,
   -modernize-use-trailing-return-type,
   -modernize-use-nodiscard,
@@ -39,8 +51,10 @@ Checks: >
 
 WarningsAsErrors: >
   clang-analyzer-security.*
+
 # Analyze only headers under include/ and not system headers.
 HeaderFilterRegex: '^src/.*'
 SystemHeaders: false
+
 # Use our .clang-format file when applying fixes.
 FormatStyle: file
