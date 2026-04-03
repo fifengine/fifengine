@@ -31,43 +31,43 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     // Effect Slots
-    LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
-    LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = nullptr;
-    LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = nullptr;
-    LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = nullptr;
-    LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = nullptr;
-    LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = nullptr;
-    LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = nullptr;
-    LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = nullptr;
-    LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = nullptr;
-    LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = nullptr;
-    LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = nullptr;
+    static LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
+    static LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = nullptr;
+    static LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = nullptr;
+    static LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = nullptr;
+    static LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = nullptr;
+    static LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = nullptr;
+    static LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = nullptr;
+    static LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = nullptr;
+    static LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = nullptr;
+    static LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = nullptr;
+    static LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = nullptr;
 
     // Effects
-    LPALGENEFFECTS alGenEffects       = nullptr;
-    LPALDELETEEFFECTS alDeleteEffects = nullptr;
-    LPALISEFFECT alIsEffect           = nullptr;
-    LPALEFFECTI alEffecti             = nullptr;
-    LPALEFFECTIV alEffectiv           = nullptr;
-    LPALEFFECTF alEffectf             = nullptr;
-    LPALEFFECTFV alEffectfv           = nullptr;
-    LPALGETEFFECTI alGetEffecti       = nullptr;
-    LPALGETEFFECTIV alGetEffectiv     = nullptr;
-    LPALGETEFFECTF alGetEffectf       = nullptr;
-    LPALGETEFFECTFV alGetEffectfv     = nullptr;
+    static LPALGENEFFECTS alGenEffects       = nullptr;
+    static LPALDELETEEFFECTS alDeleteEffects = nullptr;
+    static LPALISEFFECT alIsEffect           = nullptr;
+    static LPALEFFECTI alEffecti             = nullptr;
+    static LPALEFFECTIV alEffectiv           = nullptr;
+    static LPALEFFECTF alEffectf             = nullptr;
+    static LPALEFFECTFV alEffectfv           = nullptr;
+    static LPALGETEFFECTI alGetEffecti       = nullptr;
+    static LPALGETEFFECTIV alGetEffectiv     = nullptr;
+    static LPALGETEFFECTF alGetEffectf       = nullptr;
+    static LPALGETEFFECTFV alGetEffectfv     = nullptr;
 
     // Filters
-    LPALGENFILTERS alGenFilters       = nullptr;
-    LPALDELETEFILTERS alDeleteFilters = nullptr;
-    LPALISFILTER alIsFilter           = nullptr;
-    LPALFILTERI alFilteri             = nullptr;
-    LPALFILTERIV alFilteriv           = nullptr;
-    LPALFILTERF alFilterf             = nullptr;
-    LPALFILTERFV alFilterfv           = nullptr;
-    LPALGETFILTERI alGetFilteri       = nullptr;
-    LPALGETFILTERIV alGetFilteriv     = nullptr;
-    LPALGETFILTERF alGetFilterf       = nullptr;
-    LPALGETFILTERFV alGetFilterfv     = nullptr;
+    static LPALGENFILTERS alGenFilters       = nullptr;
+    static LPALDELETEFILTERS alDeleteFilters = nullptr;
+    static LPALISFILTER alIsFilter           = nullptr;
+    static LPALFILTERI alFilteri             = nullptr;
+    static LPALFILTERIV alFilteriv           = nullptr;
+    static LPALFILTERF alFilterf             = nullptr;
+    static LPALFILTERFV alFilterfv           = nullptr;
+    static LPALGETFILTERI alGetFilteri       = nullptr;
+    static LPALGETFILTERIV alGetFilteriv     = nullptr;
+    static LPALGETFILTERF alGetFilterf       = nullptr;
+    static LPALGETFILTERFV alGetFilterfv     = nullptr;
 
     SoundEffectManager::SoundEffectManager() :
         m_device(nullptr), m_active(false), m_createdSlots(0), m_maxSlots(0), m_effectSlots{}

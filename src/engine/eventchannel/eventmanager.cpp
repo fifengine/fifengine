@@ -53,7 +53,7 @@ namespace FIFE
     }
 
     template <typename T>
-    void addListener(std::deque<T>& vec, T& listener)
+    static void addListener(std::deque<T>& vec, T& listener)
     {
         if (!listener->isActive()) {
             listener->setActive(true);
@@ -62,7 +62,7 @@ namespace FIFE
     }
 
     template <typename T>
-    void addListenerFront(std::deque<T>& vec, T& listener)
+    static void addListenerFront(std::deque<T>& vec, T& listener)
     {
         if (!listener->isActive()) {
             listener->setActive(true);
@@ -71,7 +71,7 @@ namespace FIFE
     }
 
     template <typename T>
-    void removeListener(std::deque<T>& vec, T& listener)
+    static void removeListener(std::deque<T>& vec, T& listener)
     {
         if (listener->isActive()) {
             listener->setActive(false);

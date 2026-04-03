@@ -751,7 +751,7 @@ namespace FIFE
         }
     }
 
-    inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
+    static inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
     {
         if (threshold > 1) {
             return (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha));

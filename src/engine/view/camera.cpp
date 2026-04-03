@@ -762,7 +762,7 @@ found_non_transparent_pixel:;
         m_transform = NoneTransform;
     }
 
-    bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs)
+    static bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs)
     {
         return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
     }

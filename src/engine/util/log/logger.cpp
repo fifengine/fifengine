@@ -27,7 +27,7 @@ struct ModuleInfo
     std::string name;
 };
 
-ModuleInfo moduleInfos[] = {
+static ModuleInfo moduleInfos[] = {
     {.module = LM_AUDIO, .parent = LM_CORE, .name = "Audio"},
     {.module = LM_CONTROLLER, .parent = LM_CORE, .name = "Controller"},
     {.module = LM_EVTCHANNEL, .parent = LM_CORE, .name = "Event Channel"},
