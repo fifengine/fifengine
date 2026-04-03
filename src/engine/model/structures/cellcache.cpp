@@ -884,7 +884,7 @@ namespace FIFE
     {
         std::vector<Cell*> cells;
         std::vector<ModelCoordinate> const coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
-        for (auto& coord : coords) {
+        for (const auto& coord : coords) {
             Cell* c = getCell(coord);
             if (c != nullptr) {
                 if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
@@ -1007,7 +1007,7 @@ namespace FIFE
         int32_t const s                   = (sangle + 360) % 360;
         int32_t const e                   = (eangle + 360) % 360;
         bool const greater                = s > e;
-        for (auto& tmpCell : tmpCells) {
+        for (const auto& tmpCell : tmpCells) {
             int32_t const angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {

@@ -245,7 +245,7 @@ namespace FIFE
             m_manager->deactivateFilter(m_directFilter, this);
         }
         std::vector<SoundEffect*> const effects = m_effects;
-        for (auto& effect : effects) {
+        for (const auto& effect : effects) {
             if (effect != nullptr) {
                 m_manager->removeEmitterFromSoundEffect(effect, this);
             }

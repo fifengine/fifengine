@@ -301,7 +301,7 @@ namespace FIFE
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         std::vector<ModelCoordinate> const coords = m_grid->getCoordinatesInLine(pt1, pt2);
-        for (auto& coord : coords) {
+        for (const auto& coord : coords) {
             m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
             if (!matchingInstances.empty()) {
                 instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
