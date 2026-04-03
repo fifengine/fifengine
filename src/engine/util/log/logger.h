@@ -123,7 +123,7 @@ namespace FIFE
          * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
          * log message is not outputted
          */
-        enum LogLevel
+        enum LogLevel : uint8_t
         {
             LEVEL_DEBUG = 0,
             LEVEL_LOG   = 1,
