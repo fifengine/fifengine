@@ -2694,9 +2694,8 @@ namespace FIFE
 
         SDL_LockSurface(surface);
         pixels = new uint8_t[swidth * sheight * 3];
-        glReadPixels(
-            0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-        auto* imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
+        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        auto* imagepixels = static_cast<uint8_t*>(surface->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
             uint8_t* rowbegin = pixels + (y * swidth * 3);
@@ -2743,10 +2742,9 @@ namespace FIFE
             SDL_LockSurface(src);
         }
         pixels = new uint8_t[swidth * sheight * 4];
-        glReadPixels(
-            0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
+        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-        auto* imagepixels = reinterpret_cast<uint8_t*>(src->pixels);
+        auto* imagepixels = static_cast<uint8_t*>(src->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
             uint8_t* rowbegin = pixels + (y * swidth * 4);
@@ -2811,8 +2809,8 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            src_help_pointer = reinterpret_cast<uint32_t*>(
-                reinterpret_cast<uint8_t*>(src_help_pointer) + ((*sy_ca >> 16) * src->pitch));
+            auto* srcBytes   = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            src_help_pointer = static_cast<uint32_t*>(static_cast<void*>(srcBytes + ((*sy_ca >> 16) * src->pitch)));
         }
 
         if (SDL_MUSTLOCK(dst)) {

@@ -31,18 +31,18 @@ namespace FIFE
     {
         static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
-            auto* rdp            = reinterpret_cast<RawData*>(datasource);
+            auto* rdp            = static_cast<RawData*>(datasource);
             const size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
             const size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
             if (len != 0U) {
-                rdp->readInto(reinterpret_cast<uint8_t*>(ptr), len);
+                rdp->readInto(static_cast<uint8_t*>(ptr), len);
             }
             return len;
         }
 
         static int seek(void* datasource, ogg_int64_t offset, int whence)
         {
-            auto* rdp                 = reinterpret_cast<RawData*>(datasource);
+            auto* rdp                 = static_cast<RawData*>(datasource);
             const int64_t data_length = static_cast<int64_t>(rdp->getDataLength());
 
             switch (whence) {
@@ -79,10 +79,11 @@ namespace FIFE
             return 0;
         }
 
-        static long tell(void* datasource)
+        // Required by ov_callbacks::tell_func ABI from libvorbis.
+        static long tell(void* datasource) // NOLINT(runtime/int)
         {
-            auto* rdp = reinterpret_cast<RawData*>(datasource);
-            return static_cast<long>((*rdp).getCurrentIndex());
+            auto* rdp = static_cast<RawData*>(datasource);
+            return static_cast<long>((*rdp).getCurrentIndex()); // NOLINT(runtime/int)
         }
     } // namespace OGG_cb
 

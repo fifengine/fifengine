@@ -26,8 +26,9 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGBA8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        auto* dstColor       = reinterpret_cast<ColorRGBA8*>(dst);
+        const auto* srcColor =
+            reinterpret_cast<const ColorRGBA8*>(src);        // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto* dstColor = reinterpret_cast<ColorRGBA8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t const aMulA = alpha * srcColor->a;
@@ -46,8 +47,9 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        auto* dstColor       = reinterpret_cast<ColorRGB8*>(dst);
+        const auto* srcColor =
+            reinterpret_cast<const ColorRGBA8*>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto* dstColor = reinterpret_cast<ColorRGB8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t const aMulA = alpha * srcColor->a;
@@ -65,8 +67,9 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
+        const auto* srcColor =
+            reinterpret_cast<const ColorRGBA8*>(src);      // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t const aMulA = (alpha * srcColor->a) >> 8;
@@ -85,8 +88,9 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA4_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor = reinterpret_cast<const uint16_t*>(src);
-        auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
+        const auto* srcColor =
+            reinterpret_cast<const uint16_t*>(src);        // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t const c1 = *dstColor;

@@ -76,7 +76,7 @@ namespace FIFE
                 const uint8_t a      = src[idx + 3];
                 const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
                 if (bpp == 4) {
-                    reinterpret_cast<uint32_t*>(row)[x] = pixel;
+                    std::memcpy(row + (x * 4), &pixel, sizeof(pixel));
                 } else {
                     std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
                 }
@@ -116,7 +116,7 @@ namespace FIFE
                 const uint8_t a      = src[idx + 3];
                 const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
                 if (bpp == 4) {
-                    reinterpret_cast<uint32_t*>(row)[x] = pixel;
+                    std::memcpy(row + (x * 4), &pixel, sizeof(pixel));
                 } else {
                     std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
                 }
@@ -252,9 +252,11 @@ namespace FIFE
             pixel = *p;
             break;
 
-        case 2:
-            pixel = *reinterpret_cast<Uint16*>(p);
-            break;
+        case 2: {
+            Uint16 pixel16 = 0;
+            std::memcpy(&pixel16, p, sizeof(pixel16));
+            pixel = pixel16;
+        } break;
 
         case 3:
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
@@ -265,7 +267,7 @@ namespace FIFE
             break;
 
         case 4:
-            pixel = *reinterpret_cast<Uint32*>(p);
+            std::memcpy(&pixel, p, sizeof(pixel));
             break;
 
         default:
@@ -449,9 +451,10 @@ namespace FIFE
             *p = pixel;
             break;
 
-        case 2:
-            *reinterpret_cast<Uint16*>(p) = pixel;
-            break;
+        case 2: {
+            const Uint16 pixel16 = static_cast<Uint16>(pixel);
+            std::memcpy(p, &pixel16, sizeof(pixel16));
+        } break;
 
         case 3:
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
@@ -466,7 +469,7 @@ namespace FIFE
             break;
 
         case 4:
-            *reinterpret_cast<Uint32*>(p) = pixel;
+            std::memcpy(p, &pixel, sizeof(pixel));
             break;
 
         default:

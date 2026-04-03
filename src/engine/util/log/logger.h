@@ -5,6 +5,7 @@
 #define FIFE_LOGGER_H
 
 // Standard C++ library includes
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <list>
@@ -313,7 +314,8 @@ namespace std
     template <class Ch, class Tr>
     basic_ostream<Ch, Tr>& operator<<(basic_ostream<Ch, Tr>& s, const FIFE::pprint& p)
     {
-        s << "0x" << hex << setw(2 * sizeof(void*)) << setfill('0') << reinterpret_cast<uint64_t>(p.p);
+        s << "0x" << hex << setw(2 * sizeof(void*)) << setfill('0')
+          << reinterpret_cast<std::uintptr_t>(p.p); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         return s;
     }

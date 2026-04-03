@@ -333,7 +333,7 @@ namespace FIFE
         template <typename T>
         T* getVisual() const
         {
-            return reinterpret_cast<T*>(m_visual);
+            return static_cast<T*>(m_visual);
         }
 
         void callOnTransparencyChange();
