@@ -72,13 +72,9 @@ namespace FIFE
                     return true;
                 }
                 if ((curpos.y & 1) != 0) {
-                    if (x >= 0) {
-                        return true;
-                    }
+                    return x >= 0;
                 }
-                if (x <= 0) {
-                    return true;
-                }
+                return x <= 0;
             }
         }
         return false;
