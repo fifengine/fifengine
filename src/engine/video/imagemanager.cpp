@@ -126,8 +126,11 @@ namespace FIFE
 
     ImagePtr ImageManager::loadBlank(uint32_t width, uint32_t height)
     {
-        auto* pixdata = new uint8_t[width * height * 4];
-        memset(pixdata, 0, width * height * 4);
+        const size_t pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
+
+        auto* pixdata = new uint8_t[pixelBufferSize];
+
+        memset(pixdata, 0, pixelBufferSize);
         Image* ptr = RenderBackend::instance()->createImage(pixdata, width, height);
         delete[] pixdata;
         ptr->setState(IResource::RES_LOADED);
@@ -140,8 +143,9 @@ namespace FIFE
         if (nit != m_imgNameMap.end()) {
             remove(nit->second);
         }
-        auto* pixdata = new uint8_t[width * height * 4];
-        memset(pixdata, 0, width * height * 4);
+        const size_t pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
+        auto* pixdata                = new uint8_t[pixelBufferSize];
+        memset(pixdata, 0, pixelBufferSize);
         Image* ptr = RenderBackend::instance()->createImage(name, pixdata, width, height);
         delete[] pixdata;
         ptr->setState(IResource::RES_LOADED);

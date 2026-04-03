@@ -901,7 +901,7 @@ namespace FIFE
     std::vector<Cell*> CellCache::getCellsInRect(const Rect& rec)
     {
         std::vector<Cell*> cells;
-        cells.reserve(rec.w * rec.h);
+        cells.reserve(static_cast<std::size_t>(rec.w) * static_cast<std::size_t>(rec.h));
 
         ModelCoordinate current(rec.x, rec.y);
         ModelCoordinate const target(rec.x + rec.w, rec.y + rec.h);
@@ -920,7 +920,7 @@ namespace FIFE
     std::vector<Cell*> CellCache::getBlockingCellsInRect(const Rect& rec)
     {
         std::vector<Cell*> cells;
-        cells.reserve(rec.w * rec.h);
+        cells.reserve(static_cast<std::size_t>(rec.w) * static_cast<std::size_t>(rec.h));
 
         ModelCoordinate current(rec.x, rec.y);
         ModelCoordinate const target(rec.x + rec.w, rec.y + rec.h);

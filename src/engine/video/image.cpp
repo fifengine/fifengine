@@ -67,18 +67,21 @@ namespace FIFE
         const int bpp      = surface->format->BytesPerPixel;
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + (y * pitch);
+            uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                const uint32_t idx   = ((y * width) + x) * 4;
+                const size_t idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
                 const uint8_t r      = src[idx + 0];
                 const uint8_t g      = src[idx + 1];
                 const uint8_t b      = src[idx + 2];
                 const uint8_t a      = src[idx + 3];
                 const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
                 if (bpp == 4) {
-                    std::memcpy(row + (x * 4), &pixel, sizeof(pixel));
+                    std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
                 } else {
-                    std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
+                    std::memcpy(
+                        row + (static_cast<size_t>(x) * static_cast<size_t>(bpp)),
+                        &pixel,
+                        static_cast<size_t>(std::min(bpp, 4)));
                 }
             }
         }
@@ -107,18 +110,21 @@ namespace FIFE
         const int bpp      = surface->format->BytesPerPixel;
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + (y * pitch);
+            uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                const uint32_t idx   = ((y * width) + x) * 4;
+                const size_t idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
                 const uint8_t r      = src[idx + 0];
                 const uint8_t g      = src[idx + 1];
                 const uint8_t b      = src[idx + 2];
                 const uint8_t a      = src[idx + 3];
                 const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
                 if (bpp == 4) {
-                    std::memcpy(row + (x * 4), &pixel, sizeof(pixel));
+                    std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
                 } else {
-                    std::memcpy(row + (x * bpp), &pixel, static_cast<size_t>(std::min(bpp, 4)));
+                    std::memcpy(
+                        row + (static_cast<size_t>(x) * static_cast<size_t>(bpp)),
+                        &pixel,
+                        static_cast<size_t>(std::min(bpp, 4)));
                 }
             }
         }
@@ -203,7 +209,7 @@ namespace FIFE
         if ((m_surface == nullptr) || m_shared) {
             return 0;
         }
-        return m_surface->h * m_surface->pitch;
+        return static_cast<size_t>(m_surface->h) * static_cast<size_t>(m_surface->pitch);
     }
 
     Rect Image::getArea() const
@@ -232,7 +238,9 @@ namespace FIFE
                 (void)a;
                 return;
             }
-            p = static_cast<Uint8*>(m_surface->pixels) + y * m_surface->pitch + x * bpp;
+            p = static_cast<Uint8*>(m_surface->pixels) +
+                (static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch)) +
+                (static_cast<size_t>(x) * static_cast<size_t>(bpp));
         } else {
             if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
                 ((y + m_subimagerect.y) >= m_surface->h)) {
@@ -242,8 +250,9 @@ namespace FIFE
                 (void)a;
                 return;
             }
-            p = static_cast<Uint8*>(m_surface->pixels) + (y + m_subimagerect.y) * m_surface->pitch +
-                (x + m_subimagerect.x) * bpp;
+            p = static_cast<Uint8*>(m_surface->pixels) +
+                (static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch)) +
+                (static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp));
         }
 
         uint32_t pixel = 0;
@@ -354,7 +363,8 @@ namespace FIFE
         assert(surface.h >= 0);
         rowpointers = new png_bytep[static_cast<size_t>(surface.h)];
         for (int32_t i = 0; i < surface.h; i++) {
-            rowpointers[i] = static_cast<png_bytep>(static_cast<Uint8*>(surface.pixels)) + i * surface.pitch;
+            rowpointers[i] = static_cast<png_bytep>(static_cast<Uint8*>(surface.pixels)) +
+                             (static_cast<size_t>(i) * static_cast<size_t>(surface.pitch));
         }
         // write the image
         png_write_image(pngptr, rowpointers);
@@ -444,7 +454,9 @@ namespace FIFE
 
         int32_t const bpp = surface->format->BytesPerPixel;
         SDL_LockSurface(surface);
-        Uint8* p           = static_cast<Uint8*>(surface->pixels) + (y * surface->pitch) + (x * bpp);
+        Uint8* p = static_cast<Uint8*>(surface->pixels) +
+                   (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
+                   (static_cast<size_t>(x) * static_cast<size_t>(bpp));
         Uint32 const pixel = SDL_MapRGBA(surface->format, r, g, b, a);
         switch (bpp) {
         case 1:

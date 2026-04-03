@@ -146,7 +146,7 @@ namespace FIFE
     {
         size_t size = 0;
         if ((m_surface != nullptr) && !m_shared) {
-            size += m_surface->h * m_surface->pitch;
+            size += static_cast<size_t>(m_surface->h) * static_cast<size_t>(m_surface->pitch);
         }
 
         return size;

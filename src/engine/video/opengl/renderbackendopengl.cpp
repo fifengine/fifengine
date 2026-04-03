@@ -2693,13 +2693,13 @@ namespace FIFE
         }
 
         SDL_LockSurface(surface);
-        pixels = new uint8_t[swidth * sheight * 3];
+        pixels = new uint8_t[static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 3U];
         glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGB, GL_UNSIGNED_BYTE, pixels);
         auto* imagepixels = static_cast<uint8_t*>(surface->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
-            uint8_t* rowbegin = pixels + (y * swidth * 3);
-            uint8_t* rowend   = rowbegin + (swidth * 3);
+            uint8_t* rowbegin = pixels + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 3U);
+            uint8_t* rowend   = rowbegin + (static_cast<size_t>(swidth) * 3U);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2741,14 +2741,14 @@ namespace FIFE
         if (SDL_MUSTLOCK(src)) {
             SDL_LockSurface(src);
         }
-        pixels = new uint8_t[swidth * sheight * 4];
+        pixels = new uint8_t[static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 4U];
         glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
         auto* imagepixels = static_cast<uint8_t*>(src->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
-            uint8_t* rowbegin = pixels + (y * swidth * 4);
-            uint8_t* rowend   = rowbegin + (swidth * 4);
+            uint8_t* rowbegin = pixels + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 4U);
+            uint8_t* rowend   = rowbegin + (static_cast<size_t>(swidth) * 4U);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2809,8 +2809,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes   = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
-            src_help_pointer = static_cast<uint32_t*>(static_cast<void*>(srcBytes + ((*sy_ca >> 16) * src->pitch)));
+            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            const size_t srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
+            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
         }
 
         if (SDL_MUSTLOCK(dst)) {
@@ -2870,7 +2871,7 @@ namespace FIFE
         // quick & dirty hack for attaching compressed texture
         if (glimage->isCompressed()) {
             bindTexture(targetid);
-            auto* pixels = new GLubyte[w * h * 4];
+            auto* pixels = new GLubyte[static_cast<size_t>(w) * static_cast<size_t>(h) * 4U];
             // here we get decompressed pixels
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, toGLsizei(w), toGLsizei(h), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);

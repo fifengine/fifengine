@@ -353,12 +353,16 @@ namespace FIFE
         int32_t const bpp_source = m_surface->format->BitsPerPixel;
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
-            auto* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];
-            memset(oglbuffer, 0x00, m_chunk_size_w * m_chunk_size_h * sizeof(uint16_t));
+            auto* oglbuffer = new uint16_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
+            memset(
+                oglbuffer,
+                0x00,
+                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h) * sizeof(uint16_t));
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
-                    uint32_t const pos = (y * pitch) + (x * 4);
+                    size_t const pos =
+                        (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
                     uint8_t r = data[pos + 0];
                     uint8_t g = data[pos + 1];
@@ -378,7 +382,7 @@ namespace FIFE
                         g        = lum;
                         b        = lum;
                     }
-                    oglbuffer[(y * m_chunk_size_w) + x] =
+                    oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
                         ((r >> 4) << 12) | ((g >> 4) << 8) | ((b >> 4) << 4) | ((a >> 4) << 0);
                 }
             }
@@ -405,12 +409,13 @@ namespace FIFE
 
         if (GLEW_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
             if (RenderBackend::instance()->isColorKeyEnabled()) {
-                auto* oglbuffer = new uint8_t[width * height * 4];
-                memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
+                auto* oglbuffer = new uint8_t[static_cast<size_t>(width) * static_cast<size_t>(height) * 4U];
+                memcpy(oglbuffer, data, static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t const gid = x + (y * pitch);
+                        size_t const gid =
+                            static_cast<size_t>(x) + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
 
                         uint8_t const r = oglbuffer[gid + 0];
                         uint8_t const g = oglbuffer[gid + 1];
@@ -444,12 +449,13 @@ namespace FIFE
 
                 delete[] oglbuffer;
             } else if (monochrome) {
-                auto* oglbuffer = new uint8_t[width * height * 4];
-                memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
+                auto* oglbuffer = new uint8_t[static_cast<size_t>(width) * static_cast<size_t>(height) * 4U];
+                memcpy(oglbuffer, data, static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t const gid = x + (y * pitch);
+                        size_t const gid =
+                            static_cast<size_t>(x) + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         auto lum = static_cast<uint8_t>(
                             (oglbuffer[gid + 0] * 0.3) + (oglbuffer[gid + 1] * 0.59) + (oglbuffer[gid + 2] * 0.11));
@@ -487,12 +493,16 @@ namespace FIFE
             }
             // Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
         } else {
-            auto* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
-            memset(oglbuffer, 0x00, m_chunk_size_w * m_chunk_size_h * sizeof(uint32_t));
+            auto* oglbuffer = new uint32_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
+            memset(
+                oglbuffer,
+                0x00,
+                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h) * sizeof(uint32_t));
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
-                    uint32_t const pos = (y * pitch) + (x * 4);
+                    size_t const pos =
+                        (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
                     uint8_t a = data[pos + 3];
                     uint8_t b = data[pos + 2];
@@ -513,7 +523,8 @@ namespace FIFE
                         b        = lum;
                     }
 
-                    oglbuffer[(y * m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a << 24);
+                    oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
+                        r | (g << 8) | (b << 16) | (a << 24);
                 }
             }
 

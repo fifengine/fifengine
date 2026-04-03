@@ -769,8 +769,9 @@ namespace FIFE
                     dst_pointer++;
                 }
                 sy_ca++;
-                auto* srcBytes   = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
-                src_help_pointer = static_cast<uint32_t*>(static_cast<void*>(srcBytes + ((*sy_ca >> 16) * src->pitch)));
+                auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+                const size_t srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
+                src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
             }
 
             if (SDL_MUSTLOCK(dst)) {
