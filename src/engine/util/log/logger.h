@@ -28,10 +28,12 @@
 
 #ifdef LOG_ENABLED
 
+    // TODO(jakoch): Try to remove macros and use functions instead.
+
     /**
      * Logs given message with log level "debug" using given logger instance
      */
-    #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
+    #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));            \
@@ -40,7 +42,7 @@
     /**
      * Logs given message with log level "log" using given logger instance
      */
-    #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
+    #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));              \
@@ -49,7 +51,7 @@
     /**
      * Logs given message with log level "warning" using given logger instance
      */
-    #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */   \
+    #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));             \
@@ -58,7 +60,7 @@
     /**
      * Logs given message with log level "error" using given logger instance
      */
-    #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
+    #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));            \
@@ -68,7 +70,7 @@
      * Logs given message with log level "pacic" using given logger instance.
      * Causes also program to abort
      */
-    #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */  \
+    #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));            \
