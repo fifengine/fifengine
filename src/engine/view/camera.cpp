@@ -54,9 +54,9 @@ namespace FIFE
         explicit MapObserver(Camera* camera) : m_camera(camera) { }
         ~MapObserver() override = default;
 
-        void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
+        void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override { }
 
-        void onLayerCreate(Map* map, Layer* layer) override
+        void onLayerCreate([[maybe_unused]] Map* map, Layer* layer) override
         {
             m_camera->addLayer(layer);
         }
@@ -777,7 +777,7 @@ found_non_transparent_pixel:;
         m_pipeline.sort(pipelineSort);
     }
 
-    void Camera::onRendererPipelinePositionChanged(RendererBase* renderer)
+    void Camera::onRendererPipelinePositionChanged([[maybe_unused]] RendererBase* renderer)
     {
         m_pipeline.sort(pipelineSort);
     }

@@ -34,7 +34,7 @@ namespace FIFE
         ~TriggerChangeListener() override = default;
 
         // InstanceDeleteListener callback
-        void onInstanceDeleted(Instance* instance) override
+        void onInstanceDeleted([[maybe_unused]] Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, INSTANCE_TRIGGER_DELETE) != types.end()) {
@@ -44,7 +44,7 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        void onInstanceEnteredCell(Cell* cell, Instance* instance) override
+        void onInstanceEnteredCell([[maybe_unused]] Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, CELL_TRIGGER_ENTER) != types.end()) {
@@ -56,7 +56,7 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        void onInstanceExitedCell(Cell* cell, Instance* instance) override
+        void onInstanceExitedCell([[maybe_unused]] Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, CELL_TRIGGER_EXIT) != types.end()) {
@@ -68,7 +68,8 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) override
+        void onBlockingChangedCell(
+            [[maybe_unused]] Cell* cell, [[maybe_unused]] CellTypeInfo type, [[maybe_unused]] bool blocks) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {

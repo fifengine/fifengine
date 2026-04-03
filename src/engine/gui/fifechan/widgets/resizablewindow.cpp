@@ -449,7 +449,7 @@ namespace fcn
         }
     }
 
-    void ResizableWindow::focusLost(const Event& event)
+    void ResizableWindow::focusLost([[maybe_unused]] const Event& event)
     {
         m_resizing = false;
         restoreCursor();

@@ -334,11 +334,11 @@ namespace FIFE
         explicit ZoneCellChangeListener(CellCache* cache) : m_cache(cache) { }
         ~ZoneCellChangeListener() override = default;
 
-        void onInstanceEnteredCell(Cell* cell, Instance* instance) override { }
+        void onInstanceEnteredCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override { }
 
-        void onInstanceExitedCell(Cell* cell, Instance* instance) override { }
+        void onInstanceExitedCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override { }
 
-        void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) override
+        void onBlockingChangedCell(Cell* cell, [[maybe_unused]] CellTypeInfo type, bool blocks) override
         {
             if (blocks) {
                 cell->setZoneProtected(true);

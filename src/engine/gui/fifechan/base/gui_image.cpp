@@ -46,13 +46,14 @@ namespace FIFE
         return m_imgPtr->getHeight();
     }
 
-    fcn::Color GuiImage::getPixel(int32_t x, int32_t y)
+    fcn::Color GuiImage::getPixel([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y)
     {
         FL_PANIC(_log, "GuiImage::getPixel, not implemented");
         return {};
     }
 
-    void GuiImage::putPixel(int32_t x, int32_t y, const fcn::Color& color)
+    void GuiImage::putPixel(
+        [[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y, [[maybe_unused]] const fcn::Color& color)
     {
         FL_PANIC(_log, "GuiImage::putPixel, not implemented");
     }

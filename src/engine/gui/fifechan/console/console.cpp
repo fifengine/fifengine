@@ -277,7 +277,7 @@ namespace FIFE
         m_outputscrollarea->showWidgetPart(m_output, rect);
     }
 
-    void Console::action(const fcn::ActionEvent& event)
+    void Console::action([[maybe_unused]] const fcn::ActionEvent& event)
     {
         if (m_consoleexec != nullptr) {
             m_consoleexec->onToolsClick();

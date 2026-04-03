@@ -69,7 +69,8 @@ namespace FIFE
 
     LightRendererImageInfo::~LightRendererImageInfo() = default;
 
-    void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+    void LightRendererImageInfo::render(
+        Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
@@ -107,7 +108,7 @@ namespace FIFE
     LightRendererAnimationInfo::~LightRendererAnimationInfo() = default;
 
     void LightRendererAnimationInfo::render(
-        Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+        Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
@@ -144,7 +145,8 @@ namespace FIFE
 
     LightRendererResizeInfo::~LightRendererResizeInfo() = default;
 
-    void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+    void LightRendererResizeInfo::render(
+        Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
@@ -197,7 +199,7 @@ namespace FIFE
     LightRendererSimpleLightInfo::~LightRendererSimpleLightInfo() = default;
 
     void LightRendererSimpleLightInfo::render(
-        Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+        Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {

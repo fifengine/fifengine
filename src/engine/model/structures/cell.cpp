@@ -104,7 +104,7 @@ namespace FIFE
         }
     }
 
-    void Cell::changeInstance(Instance* instance)
+    void Cell::changeInstance([[maybe_unused]] Instance* instance)
     {
         updateCellBlockingInfo();
     }

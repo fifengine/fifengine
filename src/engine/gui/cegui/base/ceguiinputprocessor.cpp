@@ -76,7 +76,7 @@ namespace FIFE
         return consumed;
     }
 
-    bool CEGuiInputProcessor::processTextInput(SDL_Event& event)
+    bool CEGuiInputProcessor::processTextInput([[maybe_unused]] SDL_Event& event)
     {
         CEGUI::String character(event.text.text);
         bool consumed = false;

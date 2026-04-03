@@ -491,7 +491,14 @@ namespace FIFE
     }
 
     void RenderBackendSDL::drawQuad(
-        const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const Point& p1,
+        [[maybe_unused]] const Point& p2,
+        const Point& p3,
+        [[maybe_unused]] const Point& p4,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         fillRectangle(p1, static_cast<uint16_t>(p3.x - p1.x), static_cast<uint16_t>(p3.y - p1.y), r, g, b, a);
     }

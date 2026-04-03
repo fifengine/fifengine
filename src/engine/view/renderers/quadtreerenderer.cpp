@@ -87,7 +87,7 @@ namespace FIFE
         return true;
     }
 
-    void QuadTreeRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    void QuadTreeRenderer::render(Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances)
     {
         const CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {

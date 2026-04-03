@@ -41,7 +41,7 @@ namespace FIFE
     class ActionInfo
     {
     public:
-        ActionInfo(IPather* pather, const Location& curloc) :
+        ActionInfo(IPather* pather, [[maybe_unused]] const Location& curloc) :
 
             m_pather(pather)
 

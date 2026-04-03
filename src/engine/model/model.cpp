@@ -41,9 +41,9 @@ namespace FIFE
         explicit ModelMapObserver(Model* model) : m_model(model) { }
         ~ModelMapObserver() override = default;
 
-        void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
+        void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override { }
 
-        void onLayerCreate(Map* map, Layer* layer) override { }
+        void onLayerCreate([[maybe_unused]] Map* map, [[maybe_unused]] Layer* layer) override { }
 
         void onLayerDelete(Map* map, Layer* layer) override
         {

@@ -84,7 +84,7 @@ namespace FIFE
         }
     }
 
-    void CellSelectionRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    void CellSelectionRenderer::render(Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances)
     {
         if (m_locations.empty()) {
             return;

@@ -75,7 +75,7 @@ namespace FIFE
         return "CellRenderer";
     }
 
-    void CellRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    void CellRenderer::render(Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances)
     {
         CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {

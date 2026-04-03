@@ -115,7 +115,7 @@ namespace fcn
         }
     }
 
-    void ClickLabel::resizeToContent(bool recursiv)
+    void ClickLabel::resizeToContent([[maybe_unused]] bool recursiv)
     {
         adjustSize();
     }
@@ -218,12 +218,12 @@ namespace fcn
         }
     }
 
-    void ClickLabel::mouseExited(MouseEvent& mouseEvent)
+    void ClickLabel::mouseExited([[maybe_unused]] MouseEvent& mouseEvent)
     {
         mHasMouse = false;
     }
 
-    void ClickLabel::mouseEntered(MouseEvent& mouseEvent)
+    void ClickLabel::mouseEntered([[maybe_unused]] MouseEvent& mouseEvent)
     {
         mHasMouse = true;
     }
@@ -266,14 +266,14 @@ namespace fcn
         }
     }
 
-    void ClickLabel::focusLost(const Event& event)
+    void ClickLabel::focusLost([[maybe_unused]] const Event& event)
     {
         mMousePressed = false;
         mKeyPressed   = false;
         mHasMouse     = false;
     }
 
-    void ClickLabel::ancestorHidden(const Event& event)
+    void ClickLabel::ancestorHidden([[maybe_unused]] const Event& event)
     {
         mMousePressed = false;
         mKeyPressed   = false;

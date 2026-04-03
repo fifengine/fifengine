@@ -48,19 +48,19 @@ namespace FIFE
         explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache) { }
         ~CacheLayerChangeListener() override = default;
 
-        void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
+        void onLayerChanged([[maybe_unused]] Layer* layer, std::vector<Instance*>& instances) override
         {
             for (auto& instance : instances) {
                 m_cache->updateInstance(instance);
             }
         }
 
-        void onInstanceCreate(Layer* layer, Instance* instance) override
+        void onInstanceCreate([[maybe_unused]] Layer* layer, Instance* instance) override
         {
             m_cache->addInstance(instance);
         }
 
-        void onInstanceDelete(Layer* layer, Instance* instance) override
+        void onInstanceDelete([[maybe_unused]] Layer* layer, Instance* instance) override
         {
             m_cache->removeInstance(instance);
         }
@@ -356,7 +356,7 @@ namespace FIFE
         bool visit(LayerCache::CacheTree::Node* node, int32_t d = -1);
     };
 
-    bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, int32_t d)
+    bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, [[maybe_unused]] int32_t d)
     {
         if (!m_viewport.intersects(Rect(node->x(), node->y(), node->size(), node->size()))) {
             return false;

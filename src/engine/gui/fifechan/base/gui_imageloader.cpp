@@ -28,7 +28,7 @@ namespace FIFE
         delete m_atlasbook;
     }
 
-    fcn::Image* GuiImageLoader::load(const std::string& filename, bool convertToDisplayFormat)
+    fcn::Image* GuiImageLoader::load(const std::string& filename, [[maybe_unused]] bool convertToDisplayFormat)
     {
         ImageManager* imgManager = ImageManager::instance();
 
