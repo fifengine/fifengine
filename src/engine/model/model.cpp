@@ -45,7 +45,7 @@ namespace FIFE
 
         void onLayerCreate([[maybe_unused]] Map* map, [[maybe_unused]] Layer* layer) override { }
 
-        void onLayerDelete(Map* map, Layer* layer) override
+        void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
         {
             m_model->removeCellGrid(layer->getCellGrid());
         }

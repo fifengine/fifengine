@@ -30,8 +30,9 @@ namespace FIFE
 
     Location::Location(Layer* layer) : m_layer(layer)
     {
-        reset();
-        m_layer = layer; // keep
+        m_exact_layer_coords.x = 0;
+        m_exact_layer_coords.y = 0;
+        m_exact_layer_coords.z = 0;
     }
 
     void Location::reset()

@@ -5,6 +5,7 @@
 #define FIFE_VFS_RAW_RAWDATA_H
 
 // Standard C++ library includes
+#include <array>
 #include <cstring>
 #include <memory>
 #include <string>
@@ -83,8 +84,8 @@ namespace FIFE
         template <typename T>
         T readSingle()
         {
-            T val;
-            readInto(reinterpret_cast<uint8_t*>(&val), sizeof(T));
+            T val{};
+            readInto(static_cast<uint8_t*>(static_cast<void*>(&val)), sizeof(T));
             return val;
         }
 
@@ -169,14 +170,15 @@ namespace FIFE
         template <typename T>
         T revert(T value) const
         {
-            // Value-initialize to avoid "may be used uninitialized" warnings
-            T retval{};
-            auto* outBytes      = reinterpret_cast<uint8_t*>(&retval);
-            const auto* inBytes = reinterpret_cast<const uint8_t*>(&value);
+            std::array<uint8_t, sizeof(T)> inBytes{};
+            std::array<uint8_t, sizeof(T)> outBytes{};
+            std::memcpy(inBytes.data(), &value, sizeof(T));
             for (uint32_t i = 0; i < sizeof(T); ++i) {
-                outBytes[i] = inBytes[sizeof(T) - 1 - i];
+                outBytes[i] = inBytes[sizeof(T) - 1U - i];
             }
 
+            T retval{};
+            std::memcpy(&retval, outBytes.data(), sizeof(T));
             return retval;
         }
 

@@ -5,6 +5,7 @@
 #define FIFE_ROUTE_H
 
 // Standard C++ library includes
+#include <cstdint>
 #include <list>
 #include <string>
 #include <vector>
@@ -31,7 +32,7 @@ namespace FIFE
      * ROUTE_SOLVED means that a path could be found.
      * ROUTE_FAILED means the search failed. No path could be found.
      */
-    enum RouteStatus : uint8_t
+    enum RouteStatus : std::uint8_t
     {
         ROUTE_CREATED = 0,
         ROUTE_SEARCHING,
@@ -39,7 +40,7 @@ namespace FIFE
         ROUTE_SOLVED,
         ROUTE_FAILED
     };
-    using RouteStatusInfo = uint8_t;
+    using RouteStatusInfo = std::uint8_t;
     //! A path is a list with locations. Each location holds the coordinate for one cell.
     using Path = std::list<Location>;
     /** A basic route.

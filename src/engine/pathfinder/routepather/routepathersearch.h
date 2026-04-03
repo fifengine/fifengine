@@ -5,6 +5,7 @@
 #define FIFE_PATHFINDER_ROUTEPATHERSEARCH
 
 // Standard C++ library includes
+#include <cstdint>
 
 // 3rd party library includes
 
@@ -39,7 +40,7 @@ namespace FIFE
         /** An enumeration of the different status the search can be in.
          *
          */
-        enum SearchStatus : uint8_t
+        enum SearchStatus : std::uint8_t
         {
             search_status_failed,
             search_status_complete,

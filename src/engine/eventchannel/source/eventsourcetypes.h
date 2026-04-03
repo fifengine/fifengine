@@ -5,7 +5,7 @@
 #define FIFE_EVENTCHANNEL_EVENTSOURCETYPES_H
 
 // Standard C++ library includes
-//
+#include <cstdint>
 
 // 3rd party library includes
 //
@@ -21,7 +21,7 @@ namespace FIFE
 
     /**  Types for different event sources
      */
-    enum EventSourceType : uint8_t
+    enum EventSourceType : std::uint8_t
     {
         ES_ENGINE          = 1,
         ES_FIFECHAN_WIDGET = 2,

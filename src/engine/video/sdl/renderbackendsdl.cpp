@@ -769,8 +769,8 @@ namespace FIFE
                     dst_pointer++;
                 }
                 sy_ca++;
-                auto* srcBytes   = reinterpret_cast<uint8_t*>(src_help_pointer);
-                src_help_pointer = reinterpret_cast<uint32_t*>(srcBytes + ((*sy_ca >> 16) * src->pitch));
+                auto* srcBytes   = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+                src_help_pointer = static_cast<uint32_t*>(static_cast<void*>(srcBytes + ((*sy_ca >> 16) * src->pitch)));
             }
 
             if (SDL_MUSTLOCK(dst)) {

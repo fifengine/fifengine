@@ -5,6 +5,7 @@
 #define FIFE_TRIGGER_H
 
 // Standard C++ library includes
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -31,7 +32,7 @@ namespace FIFE
         virtual void onTriggered() = 0;
     };
 
-    enum TriggerCondition : uint8_t
+    enum TriggerCondition : std::uint8_t
     {
         // cell conditions
         CELL_TRIGGER_ENTER = 0,

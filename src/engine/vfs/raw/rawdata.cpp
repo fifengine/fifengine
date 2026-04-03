@@ -152,7 +152,7 @@ namespace FIFE
         outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
+        readInto(static_cast<uint8_t*>(static_cast<void*>(outbuffer.data())), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)
@@ -174,8 +174,10 @@ namespace FIFE
     {
         static int32_t endian = 2;
         if (endian == 2) {
-            uint32_t value = 0x01;
-            endian         = static_cast<int32_t>(reinterpret_cast<const uint8_t*>(&value)[0]);
+            uint32_t value    = 0x01;
+            uint8_t firstByte = 0;
+            std::memcpy(&firstByte, &value, sizeof(firstByte));
+            endian = static_cast<int32_t>(firstByte);
             FL_LOG(
                 _log,
                 LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");

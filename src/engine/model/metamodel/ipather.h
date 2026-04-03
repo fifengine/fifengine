@@ -5,6 +5,7 @@
 #define FIFE_MODEL_IPATHER_H
 
 // Standard C++ library includes
+#include <cstdint>
 #include <list>
 #include <string>
 
@@ -23,7 +24,7 @@ namespace FIFE
 
     //! A path is a list with locations. Each location holds the coordinate for one cell.
     using Path = std::list<Location>;
-    enum PriorityType : uint8_t
+    enum PriorityType : std::uint8_t
     {
         HIGH_PRIORITY,
         MEDIUM_PRIORITY,

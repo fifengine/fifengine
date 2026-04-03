@@ -61,7 +61,7 @@ namespace FIFE
             m_camera->addLayer(layer);
         }
 
-        void onLayerDelete(Map* map, Layer* layer) override
+        void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
         {
             m_camera->removeLayer(layer);
         }
