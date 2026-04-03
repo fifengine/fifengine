@@ -84,7 +84,7 @@ namespace FIFE
         T readSingle()
         {
             T val;
-            readInto(static_cast<uint8_t*>(static_cast<void*>(&val)), sizeof(T));
+            readInto(reinterpret_cast<uint8_t*>(&val), sizeof(T));
             return val;
         }
 
@@ -171,8 +171,8 @@ namespace FIFE
         {
             // Value-initialize to avoid "may be used uninitialized" warnings
             T retval{};
-            auto* outBytes      = static_cast<uint8_t*>(static_cast<void*>(&retval));
-            const auto* inBytes = static_cast<const uint8_t*>(static_cast<const void*>(&value));
+            auto* outBytes      = reinterpret_cast<uint8_t*>(&retval);
+            const auto* inBytes = reinterpret_cast<const uint8_t*>(&value);
             for (uint32_t i = 0; i < sizeof(T); ++i) {
                 outBytes[i] = inBytes[sizeof(T) - 1 - i];
             }

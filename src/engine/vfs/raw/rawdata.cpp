@@ -152,7 +152,7 @@ namespace FIFE
         outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(static_cast<uint8_t*>(static_cast<void*>(outbuffer.data())), static_cast<size_t>(size));
+        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)
@@ -175,7 +175,7 @@ namespace FIFE
         static int32_t endian = 2;
         if (endian == 2) {
             uint32_t value = 0x01;
-            endian         = static_cast<int32_t>(static_cast<const uint8_t*>(static_cast<const void*>(&value))[0]);
+            endian         = static_cast<int32_t>(reinterpret_cast<const uint8_t*>(&value)[0]);
             FL_LOG(
                 _log,
                 LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");
