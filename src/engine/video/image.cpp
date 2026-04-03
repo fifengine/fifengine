@@ -13,6 +13,7 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#include <SDL_image.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -22,8 +23,6 @@
 #include "util/resource/resource.h"
 
 #include "image.h"
-#include "png_loader.h"
-#include "png_writer.h"
 
 namespace FIFE
 {
@@ -292,88 +291,9 @@ namespace FIFE
 
     void Image::saveAsPng(const std::string& filename, SDL_Surface& surface)
     {
-        FILE* fp               = nullptr;
-        png_structp pngptr     = nullptr;
-        png_infop infoptr      = nullptr;
-        int32_t colortype      = 0;
-        png_bytep* rowpointers = nullptr;
-
-#ifdef _MSC_VER
-        errno_t _fopen_err = fopen_s(&fp, filename.c_str(), "wb");
-        if (_fopen_err != 0 || fp == nullptr) {
-            return;
+        if (IMG_SavePNG(&surface, filename.c_str()) != 0) {
+            std::cerr << "Failed to save PNG '" << filename << "': " << IMG_GetError() << std::endl;
         }
-#else
-        fp = fopen(filename.c_str(), "wb");
-
-        if (fp == nullptr) {
-            return;
-        }
-#endif
-
-        // create the png file
-        pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-        if (pngptr == nullptr) {
-            fclose(fp);
-            return;
-        }
-
-        // create information struct
-        infoptr = png_create_info_struct(pngptr);
-        if (infoptr == nullptr) {
-            fclose(fp);
-            png_destroy_write_struct(&pngptr, (png_infopp) nullptr);
-            return;
-        }
-
-        if (setjmp(png_jmpbuf(pngptr))) {
-            png_destroy_write_struct(&pngptr, &infoptr);
-            fclose(fp);
-            return;
-        }
-
-        // initialize io
-        png_init_io(pngptr, fp);
-
-        // lock the surface for pixel access while encoding
-        SDL_LockSurface(&surface);
-
-        colortype = PNG_COLOR_TYPE_RGB;
-        if (surface.format->palette != nullptr) {
-            colortype |= PNG_COLOR_TYPE_PALETTE;
-        } else if (surface.format->Amask != 0U) {
-            colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
-        } else {
-        }
-
-        png_set_IHDR(
-            pngptr,
-            infoptr,
-            static_cast<png_uint_32>(surface.w),
-            static_cast<png_uint_32>(surface.h),
-            8,
-            colortype,
-            PNG_INTERLACE_NONE,
-            PNG_COMPRESSION_TYPE_DEFAULT,
-            PNG_FILTER_TYPE_DEFAULT);
-
-        png_write_info(pngptr, infoptr);
-        png_set_packing(pngptr);
-
-        assert(surface.h >= 0);
-        rowpointers = new png_bytep[static_cast<size_t>(surface.h)];
-        for (int32_t i = 0; i < surface.h; i++) {
-            rowpointers[i] = static_cast<png_bytep>(static_cast<Uint8*>(surface.pixels)) +
-                             (static_cast<size_t>(i) * static_cast<size_t>(surface.pitch));
-        }
-        // write the image
-        png_write_image(pngptr, rowpointers);
-        png_write_end(pngptr, infoptr);
-
-        SDL_UnlockSurface(&surface);
-        delete[] rowpointers;
-        png_destroy_write_struct(&pngptr, &infoptr);
-        fclose(fp);
     }
 
     std::string Image::createUniqueImageName()
