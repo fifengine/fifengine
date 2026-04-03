@@ -78,7 +78,11 @@ namespace FIFE
                 OggLoader loader;
                 loader.load(this);
             } else {
-                FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << m_name << "\"!");
+                LMsg msg;
+                msg << "No audio-decoder available for file \"";
+                msg << m_name;
+                msg << "\"!";
+                FL_WARN(_log, msg);
                 throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
             }
         }
