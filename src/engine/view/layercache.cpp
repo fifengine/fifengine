@@ -130,12 +130,12 @@ namespace FIFE
             ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
             lpos.x += lpos.y / 2;
             rpos.x += rpos.y / 2;
-            auto* liv   = lhs->instance->getVisual<InstanceVisual>();
-            auto* riv   = rhs->instance->getVisual<InstanceVisual>();
-            int32_t lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
-                          liv->getStackPosition();
-            int32_t rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
-                          riv->getStackPosition();
+            auto* liv         = lhs->instance->getVisual<InstanceVisual>();
+            auto* riv         = rhs->instance->getVisual<InstanceVisual>();
+            int32_t const lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
+                                liv->getStackPosition();
+            int32_t const rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
+                                riv->getStackPosition();
             if (lvc == rvc) {
                 if (Mathd::Equal(lpos.z, rpos.z)) {
                     return liv->getStackPosition() < riv->getStackPosition();
@@ -262,7 +262,7 @@ namespace FIFE
             entry->entryIndex = static_cast<int32_t>(entryIndex);
         } else {
             // uses free/unused RenderItem
-            int32_t index = m_freeEntries.front();
+            int32_t const index = m_freeEntries.front();
             m_freeEntries.pop_front();
             item                     = m_renderItems[index];
             item->instance           = instance;
@@ -422,22 +422,23 @@ namespace FIFE
             }
 
             // create viewport coordinates to collect entries
-            Rect viewport            = m_camera->getViewPort();
-            Rect screenViewport      = viewport;
-            DoublePoint3D viewport_a = m_camera->screenToVirtualScreen(Point3D(viewport.x, viewport.y));
-            DoublePoint3D viewport_b = m_camera->screenToVirtualScreen(Point3D(viewport.right(), viewport.bottom()));
-            viewport.x               = static_cast<int32_t>(std::min(viewport_a.x, viewport_b.x));
-            viewport.y               = static_cast<int32_t>(std::min(viewport_a.y, viewport_b.y));
-            viewport.w               = static_cast<int32_t>(std::max(viewport_a.x, viewport_b.x) - viewport.x);
-            viewport.h               = static_cast<int32_t>(std::max(viewport_a.y, viewport_b.y) - viewport.y);
-            m_zMin                   = 0.0;
-            m_zMax                   = 0.0;
+            Rect viewport                  = m_camera->getViewPort();
+            Rect const screenViewport      = viewport;
+            DoublePoint3D const viewport_a = m_camera->screenToVirtualScreen(Point3D(viewport.x, viewport.y));
+            DoublePoint3D const viewport_b =
+                m_camera->screenToVirtualScreen(Point3D(viewport.right(), viewport.bottom()));
+            viewport.x = static_cast<int32_t>(std::min(viewport_a.x, viewport_b.x));
+            viewport.y = static_cast<int32_t>(std::min(viewport_a.y, viewport_b.y));
+            viewport.w = static_cast<int32_t>(std::max(viewport_a.x, viewport_b.x) - viewport.x);
+            viewport.h = static_cast<int32_t>(std::max(viewport_a.y, viewport_b.y) - viewport.y);
+            m_zMin     = 0.0;
+            m_zMax     = 0.0;
 
             // FL_LOG(_log, LMsg("camera-update viewport") << viewport);
             std::vector<int32_t> index_list;
             collect(viewport, index_list);
             // fill renderlist
-            for (int i : index_list) {
+            for (int const i : index_list) {
                 Entry* entry     = m_entries[i];
                 RenderItem* item = m_renderItems[entry->instanceIndex];
                 if (!item->image || !entry->visible) {
@@ -453,16 +454,16 @@ namespace FIFE
                 sortRenderList(renderlist);
             } else {
                 // calculates zmin and zmax of the current viewport
-                Rect r = m_camera->getMapViewPort();
+                Rect const r = m_camera->getMapViewPort();
                 std::vector<ExactModelCoordinate> coords;
                 coords.emplace_back(r.x, r.y);
                 coords.emplace_back(r.x, r.y + r.h);
                 coords.emplace_back(r.x + r.w, r.y);
                 coords.emplace_back(r.x + r.w, r.y + r.h);
                 for (uint8_t i = 0; i < 4; ++i) {
-                    double z = m_camera->toVirtualScreenCoordinates(coords[i]).z;
-                    m_zMin   = std::min(z, m_zMin);
-                    m_zMax   = std::max(z, m_zMax);
+                    double const z = m_camera->toVirtualScreenCoordinates(coords[i]).z;
+                    m_zMin         = std::min(z, m_zMin);
+                    m_zMax         = std::max(z, m_zMax);
                 }
 
                 sortRenderList(renderlist);
@@ -472,11 +473,11 @@ namespace FIFE
 
     void LayerCache::fullUpdate(Camera::Transform transform)
     {
-        bool rotationChange = (transform & Camera::RotationTransform) == Camera::RotationTransform;
+        bool const rotationChange = (transform & Camera::RotationTransform) == Camera::RotationTransform;
         for (auto* entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (rotationChange || entry->forceUpdate) {
-                    bool force = entry->forceUpdate;
+                    bool const force = entry->forceUpdate;
                     updateVisual(entry);
                     if (force && !entry->forceUpdate) {
                         // no action
@@ -495,7 +496,7 @@ namespace FIFE
 
     void LayerCache::fullCoordinateUpdate(Camera::Transform transform)
     {
-        bool zoomChange = (transform & Camera::ZoomTransform) == Camera::ZoomTransform;
+        bool const zoomChange = (transform & Camera::ZoomTransform) == Camera::ZoomTransform;
         for (auto* entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (entry->forceUpdate) {
@@ -516,8 +517,8 @@ namespace FIFE
     void LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist)
     {
         RenderList needSorting;
-        Rect viewport = m_camera->getViewPort();
-        auto entry_it = m_entriesToUpdate.begin();
+        Rect const viewport = m_camera->getViewPort();
+        auto entry_it       = m_entriesToUpdate.begin();
         for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
             Entry* entry       = m_entries[*entry_it];
             entry->forceUpdate = false;
@@ -526,16 +527,16 @@ namespace FIFE
                 removes.insert(*entry_it);
                 continue;
             }
-            RenderItem* item    = m_renderItems[entry->instanceIndex];
-            bool onScreenA      = entry->visible && item->image && item->dimensions.intersects(viewport);
-            bool positionUpdate = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
+            RenderItem* item     = m_renderItems[entry->instanceIndex];
+            bool const onScreenA = entry->visible && item->image && item->dimensions.intersects(viewport);
+            bool positionUpdate  = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
             if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
                 positionUpdate |= updateVisual(entry);
             }
             if (positionUpdate) {
                 updatePosition(entry);
             }
-            bool onScreenB = entry->visible && item->image && item->dimensions.intersects(viewport);
+            bool const onScreenB = entry->visible && item->image && item->dimensions.intersects(viewport);
             if (onScreenA != onScreenB) {
                 if (!onScreenA) {
                     // add to renderlist and sort
@@ -576,20 +577,20 @@ namespace FIFE
 
     bool LayerCache::updateVisual(Entry* entry)
     {
-        RenderItem* item   = m_renderItems[entry->instanceIndex];
-        Instance* instance = item->instance;
-        auto* visual       = instance->getVisual<InstanceVisual>();
-        item->facingAngle  = instance->getRotation();
-        int32_t angle      = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
-        Action* action     = instance->getCurrentAction();
+        RenderItem* item    = m_renderItems[entry->instanceIndex];
+        Instance* instance  = item->instance;
+        auto* visual        = instance->getVisual<InstanceVisual>();
+        item->facingAngle   = instance->getRotation();
+        int32_t const angle = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
+        Action* action      = instance->getCurrentAction();
         ImagePtr image;
 
         if (visual != nullptr) {
-            uint8_t layerTrans    = m_layer->getLayerTransparency();
-            uint8_t instanceTrans = visual->getTransparency();
+            uint8_t const layerTrans = m_layer->getLayerTransparency();
+            uint8_t instanceTrans    = visual->getTransparency();
             if (layerTrans != 0) {
                 if (instanceTrans != 0) {
-                    uint8_t calcTrans = layerTrans - instanceTrans;
+                    uint8_t const calcTrans = layerTrans - instanceTrans;
                     if (calcTrans >= 0) {
                         instanceTrans = calcTrans;
                     } else {
@@ -608,7 +609,7 @@ namespace FIFE
 
         if (action == nullptr) {
             // Try static images then default action.
-            int32_t image_id = item->getStaticImageIndexByAngle(angle, instance);
+            int32_t const image_id = item->getStaticImageIndexByAngle(angle, instance);
             if (image_id == -1) {
                 if (!instance->getObject()->isStatic()) {
                     action = instance->getObject()->getDefaultAction();
@@ -620,8 +621,8 @@ namespace FIFE
         entry->forceUpdate = (action != nullptr);
 
         if (action != nullptr) {
-            auto* actionVisual = action->getVisual<ActionVisual>();
-            bool colorOverlay  = actionVisual->isColorOverlay();
+            auto* actionVisual      = action->getVisual<ActionVisual>();
+            bool const colorOverlay = actionVisual->isColorOverlay();
             // assumed all have the same size
             if (actionVisual->isAnimationOverlay()) {
                 std::map<int32_t, AnimationPtr> animations = actionVisual->getAnimationOverlay(angle);
@@ -637,16 +638,16 @@ namespace FIFE
                     if (colorOverlay) {
                         OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
                         if (co != nullptr) {
-                            AnimationPtr ovAnim = co->getColorOverlayAnimation();
-                            animationTime       = instance->getActionRuntime() % ovAnim->getDuration();
+                            AnimationPtr const ovAnim = co->getColorOverlayAnimation();
+                            animationTime             = instance->getActionRuntime() % ovAnim->getDuration();
                             co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
                         }
                         animationColorOverlays->push_back(co);
                     }
                     // works only for one animation
-                    int32_t actionFrame = it->second->getActionFrame();
+                    int32_t const actionFrame = it->second->getActionFrame();
                     if (actionFrame != -1) {
-                        int32_t newFrame = it->second->getFrameIndex(animationTime);
+                        int32_t const newFrame = it->second->getFrameIndex(animationTime);
                         if (item->currentFrame != newFrame) {
                             // Also notify if the action frame was skipped.
                             if (actionFrame == newFrame ||
@@ -660,9 +661,9 @@ namespace FIFE
                 // transfer ownership of the vectors to RenderItem
                 item->setAnimationOverlay(animOverlays, animationColorOverlays);
             } else {
-                AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
-                uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
-                image                  = animation->getFrameByTimestamp(animationTime);
+                AnimationPtr const animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
+                uint32_t animationTime       = instance->getActionRuntime() % animation->getDuration();
+                image                        = animation->getFrameByTimestamp(animationTime);
                 // if the action have an animation with only one frame (idle animation) then
                 // a forced update is not necessary.
                 if (animation->getFrameCount() <= 1) {
@@ -671,16 +672,16 @@ namespace FIFE
                 if (colorOverlay) {
                     OverlayColors* co = actionVisual->getColorOverlay(angle);
                     if (co != nullptr) {
-                        AnimationPtr ovAnim = co->getColorOverlayAnimation();
-                        animationTime       = instance->getActionRuntime() % ovAnim->getDuration();
+                        AnimationPtr const ovAnim = co->getColorOverlayAnimation();
+                        animationTime             = instance->getActionRuntime() % ovAnim->getDuration();
                         co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
                         item->setColorOverlay(co);
                     }
                 }
-                int32_t actionFrame = animation->getActionFrame();
+                int32_t const actionFrame = animation->getActionFrame();
                 if (actionFrame != -1) {
                     if (item->image != image) {
-                        int32_t newFrame = animation->getFrameIndex(animationTime);
+                        int32_t const newFrame = animation->getFrameIndex(animationTime);
                         // Also notify if the action frame was skipped.
                         if (actionFrame == newFrame || (newFrame > actionFrame && item->currentFrame < actionFrame)) {
                             instance->callOnActionFrame(action, actionFrame);
@@ -704,15 +705,15 @@ namespace FIFE
 
     void LayerCache::updatePosition(Entry* entry)
     {
-        RenderItem* item               = m_renderItems[entry->instanceIndex];
-        Instance* instance             = item->instance;
-        ExactModelCoordinate mapCoords = instance->getLocationRef().getMapCoordinates();
-        DoublePoint3D screenPosition   = m_camera->toVirtualScreenCoordinates(mapCoords);
-        ImagePtr image                 = item->image;
+        RenderItem* item                     = m_renderItems[entry->instanceIndex];
+        Instance* instance                   = item->instance;
+        ExactModelCoordinate const mapCoords = instance->getLocationRef().getMapCoordinates();
+        DoublePoint3D screenPosition         = m_camera->toVirtualScreenCoordinates(mapCoords);
+        ImagePtr const image                 = item->image;
 
         if (image) {
-            int32_t w        = image->getWidth();
-            int32_t h        = image->getHeight();
+            int32_t const w  = image->getWidth();
+            int32_t const h  = image->getHeight();
             screenPosition.x = (screenPosition.x - w / 2.0) + image->getXShift();
             screenPosition.y = (screenPosition.y - h / 2.0) + image->getYShift();
             item->bbox.w     = w;
@@ -741,7 +742,7 @@ namespace FIFE
 
     inline void LayerCache::updateScreenCoordinate(RenderItem* item, bool changedZoom)
     {
-        Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
+        Point3D const screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
         // NOTE:
         // One would expect this to be necessary here,
         // however it works the same without, sofar
@@ -776,15 +777,15 @@ namespace FIFE
         // more an workaround, because z values are wrong in case of inverted top with bottom
         if (!m_needSorting && !m_layer->isStatic()) {
             // if (!m_needSorting) {
-            float det = m_zMin - m_zMax;
+            float const det = m_zMin - m_zMax;
             if (fabs(det) > FLT_EPSILON) {
                 static const float globalrange = 200.0;
                 static const float stackdelta  = (FLT_EPSILON * 100.0);
-                int32_t numlayers              = m_layer->getLayerCount();
-                float lmin                     = m_layer->getZOffset();
-                float lmax                     = lmin + (globalrange / numlayers);
-                float a                        = (lmin - lmax) / det;
-                float b                        = (lmax * m_zMin - lmin * m_zMax) / det;
+                int32_t const numlayers        = m_layer->getLayerCount();
+                float const lmin               = m_layer->getZOffset();
+                float const lmax               = lmin + (globalrange / numlayers);
+                float const a                  = (lmin - lmax) / det;
+                float const b                  = (lmax * m_zMin - lmin * m_zMax) / det;
 
                 auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {
@@ -794,22 +795,22 @@ namespace FIFE
                 }
             }
         } else {
-            SortingStrategy strat = m_layer->getSortingStrategy();
+            SortingStrategy const strat = m_layer->getSortingStrategy();
             switch (strat) {
             case SORTING_CAMERA: {
-                InstanceDistanceSortCamera ids;
+                InstanceDistanceSortCamera const ids;
                 std::ranges::stable_sort(renderlist, ids);
             } break;
             case SORTING_LOCATION: {
-                InstanceDistanceSortLocation ids(m_camera->getRotation());
+                InstanceDistanceSortLocation const ids(m_camera->getRotation());
                 std::ranges::stable_sort(renderlist, ids);
             } break;
             case SORTING_CAMERA_AND_LOCATION: {
-                InstanceDistanceSortCameraAndLocation ids;
+                InstanceDistanceSortCameraAndLocation const ids;
                 std::ranges::stable_sort(renderlist, ids);
             } break;
             default: {
-                InstanceDistanceSortCamera ids;
+                InstanceDistanceSortCamera const ids;
                 std::ranges::stable_sort(renderlist, ids);
             } break;
             }

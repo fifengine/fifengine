@@ -195,13 +195,13 @@ namespace FIFE
 
     const std::string& RenderBackendOpenGL::getName() const
     {
-        static std::string backend_name = "OpenGL";
+        static std::string const backend_name = "OpenGL";
         return backend_name;
     }
 
     void RenderBackendOpenGL::init(const std::string& driver)
     {
-        Uint32 flags = SDL_INIT_VIDEO;
+        Uint32 const flags = SDL_INIT_VIDEO;
         if (SDL_InitSubSystem(flags) < 0) {
             throw SDLException(SDL_GetError());
         }
@@ -251,11 +251,11 @@ namespace FIFE
 
     void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode)
     {
-        bool recreate         = m_window != nullptr;
-        uint16_t width        = mode.getWidth();
-        uint16_t height       = mode.getHeight();
-        uint16_t bitsPerPixel = mode.getBPP();
-        uint32_t flags        = mode.getSDLFlags();
+        bool const recreate         = m_window != nullptr;
+        uint16_t const width        = mode.getWidth();
+        uint16_t const height       = mode.getHeight();
+        uint16_t const bitsPerPixel = mode.getBPP();
+        uint32_t const flags        = mode.getSDLFlags();
         // in case of recreating
         if (recreate) {
             SDL_DestroyWindow(m_window);
@@ -267,9 +267,9 @@ namespace FIFE
             }
         }
         // create window
-        uint8_t displayIndex = mode.getDisplay();
-        int32_t windowX      = mode.getWindowPositionX();
-        int32_t windowY      = mode.getWindowPositionY();
+        uint8_t const displayIndex = mode.getDisplay();
+        int32_t const windowX      = mode.getWindowPositionX();
+        int32_t const windowY      = mode.getWindowPositionY();
 
         // Determine X position
         int xPos{};
@@ -332,8 +332,8 @@ namespace FIFE
         }
 
         // initialize GLEW
-        glewExperimental = GL_TRUE;
-        GLenum glewError = glewInit();
+        glewExperimental       = GL_TRUE;
+        GLenum const glewError = glewInit();
         if (glewError != GLEW_OK) {
             FL_LOG(_log, LMsg("RenderBackendOpenGL") << "Error initializing GLEW!" << glewGetErrorString(glewError));
         }
@@ -489,7 +489,7 @@ namespace FIFE
             return new GLImage(surface);
         }
 
-        uint8_t bpp                = m_rgba_format.BitsPerPixel;
+        uint8_t const bpp          = m_rgba_format.BitsPerPixel;
         m_rgba_format.BitsPerPixel = 32;
         SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
         m_rgba_format.BitsPerPixel = bpp;
@@ -518,7 +518,7 @@ namespace FIFE
             return new GLImage(name, surface);
         }
 
-        uint8_t bpp                = m_rgba_format.BitsPerPixel;
+        uint8_t const bpp          = m_rgba_format.BitsPerPixel;
         m_rgba_format.BitsPerPixel = 32;
         SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
         m_rgba_format.BitsPerPixel = bpp;
@@ -641,7 +641,7 @@ namespace FIFE
     void RenderBackendOpenGL::setLighting(float red, float green, float blue)
     {
         if (m_state.lightmodel != 0) {
-            GLfloat lightDiffuse[] = {red, green, blue, 1.0F};
+            GLfloat const lightDiffuse[] = {red, green, blue, 1.0F};
             glLightfv(GL_LIGHT0, GL_DIFFUSE, &lightDiffuse[0]);
         }
     }
@@ -763,7 +763,7 @@ namespace FIFE
         if ((memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4) != 0) || m_state.active_tex != texUnit) {
 
             memcpy(m_state.env_color, rgba, sizeof(uint8_t) * 4);
-            GLfloat rgbaf[4] = {
+            GLfloat const rgbaf[4] = {
                 static_cast<float>(m_state.env_color[0]) / 255.0F,
                 static_cast<float>(m_state.env_color[1]) / 255.0F,
                 static_cast<float>(m_state.env_color[2]) / 255.0F,
@@ -1697,7 +1697,7 @@ namespace FIFE
 
         m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 
-        RenderObject ro(GL_POINTS, 1);
+        RenderObject const ro(GL_POINTS, 1);
         m_renderObjects.push_back(ro);
 
         return true;
@@ -1721,7 +1721,7 @@ namespace FIFE
         m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
         m_pIndices.push_back(m_pIndices.back() + 1);
 
-        RenderObject ro(GL_LINES, 2);
+        RenderObject const ro(GL_LINES, 2);
         m_renderObjects.push_back(ro);
     }
 
@@ -1759,11 +1759,11 @@ namespace FIFE
         rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
 
-        RenderObject ro(GL_TRIANGLES, 6);
+        RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
     }
 
@@ -1796,7 +1796,7 @@ namespace FIFE
                 m_renderPrimitiveDatas.push_back(rd);
                 m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
             }
-            RenderObject ro(GL_LINE_STRIP, toRenderObjectSize(points.size()));
+            RenderObject const ro(GL_LINE_STRIP, toRenderObjectSize(points.size()));
             m_renderObjects.push_back(ro);
         }
     }
@@ -1812,7 +1812,7 @@ namespace FIFE
             return;
         }
 
-        bool thick       = width > 1;
+        bool const thick = width > 1;
         const float step = 1.0F / static_cast<float>(steps - 1);
         float t          = 0.0F;
         Point old        = getBezierPoint(points, elements + 1, t);
@@ -1820,7 +1820,7 @@ namespace FIFE
             const uint32_t capRadius = static_cast<uint32_t>(width / 2U);
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
-                Point next = getBezierPoint(points, elements, t);
+                Point const next = getBezierPoint(points, elements, t);
                 drawThickLine(old, next, width, r, g, b, a);
                 drawFillCircle(old, capRadius, r, g, b, a);
                 old = next;
@@ -1834,14 +1834,14 @@ namespace FIFE
             rd.color[3] = a;
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
-                Point next   = getBezierPoint(points, elements, t);
-                rd.vertex[0] = static_cast<float>(old.x);
-                rd.vertex[1] = static_cast<float>(old.y);
+                Point const next = getBezierPoint(points, elements, t);
+                rd.vertex[0]     = static_cast<float>(old.x);
+                rd.vertex[1]     = static_cast<float>(old.y);
                 m_renderPrimitiveDatas.push_back(rd);
                 old = next;
                 m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
             }
-            RenderObject ro(GL_LINE_STRIP, toRenderObjectSize((elements * steps) + 1));
+            RenderObject const ro(GL_LINE_STRIP, toRenderObjectSize((elements * steps) + 1));
             m_renderObjects.push_back(ro);
         }
     }
@@ -1866,11 +1866,11 @@ namespace FIFE
         rd.vertex[1] = static_cast<float>(p3.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
 
-        RenderObject ro(GL_TRIANGLES, 3);
+        RenderObject const ro(GL_TRIANGLES, 3);
         m_renderObjects.push_back(ro);
     }
 
@@ -1895,11 +1895,11 @@ namespace FIFE
         rd.vertex[0] = static_cast<float>(p.x);
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2, index + 3};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2, index + 3};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
 
-        RenderObject ro(GL_LINE_LOOP, 4);
+        RenderObject const ro(GL_LINE_LOOP, 4);
         m_renderObjects.push_back(ro);
     }
 
@@ -1924,11 +1924,11 @@ namespace FIFE
         rd.vertex[1] = static_cast<float>(p.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
 
-        RenderObject ro(GL_TRIANGLES, 6);
+        RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
     }
 
@@ -1956,11 +1956,11 @@ namespace FIFE
         rd.vertex[1] = static_cast<float>(p4.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
 
-        RenderObject ro(GL_TRIANGLES, 6);
+        RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
     }
 
@@ -1984,11 +1984,11 @@ namespace FIFE
         rd.vertex[0] = static_cast<float>(p.x - size);
         m_renderPrimitiveDatas.push_back(rd);
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[] = {index, index + 1, index + 2, index + 3};
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t indices[]   = {index, index + 1, index + 2, index + 3};
         m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
 
-        RenderObject ro(GL_LINE_LOOP, 4);
+        RenderObject const ro(GL_LINE_LOOP, 4);
         m_renderObjects.push_back(ro);
     }
 
@@ -2014,7 +2014,7 @@ namespace FIFE
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
         }
 
-        RenderObject ro(GL_LINE_LOOP, toRenderObjectSize(subdivisions - 1));
+        RenderObject const ro(GL_LINE_LOOP, toRenderObjectSize(subdivisions - 1));
         m_renderObjects.push_back(ro);
     }
 
@@ -2027,7 +2027,7 @@ namespace FIFE
         const float radiusF  = static_cast<float>(radius);
         const float step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         float angle          = Mathf::twoPi();
-        uint32_t index       = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
 
         // center vertex
@@ -2049,7 +2049,7 @@ namespace FIFE
             uint32_t indices[] = {index, lastIndex, ++lastIndex};
             m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
         }
-        RenderObject ro(GL_TRIANGLES, toRenderObjectSize((subdivisions + 1) * 3));
+        RenderObject const ro(GL_TRIANGLES, toRenderObjectSize((subdivisions + 1) * 3));
         m_renderObjects.push_back(ro);
     }
 
@@ -2081,7 +2081,7 @@ namespace FIFE
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
         }
 
-        RenderObject ro(GL_LINE_STRIP, toRenderObjectSize(elements));
+        RenderObject const ro(GL_LINE_STRIP, toRenderObjectSize(elements));
         m_renderObjects.push_back(ro);
     }
 
@@ -2099,8 +2099,8 @@ namespace FIFE
             return;
         }
 
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t lastIndex = index;
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t lastIndex   = index;
         // center vertex
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p.x);
@@ -2123,7 +2123,7 @@ namespace FIFE
             m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
         }
 
-        RenderObject ro(GL_TRIANGLES, toRenderObjectSize(elements * 3));
+        RenderObject const ro(GL_TRIANGLES, toRenderObjectSize(elements * 3));
         m_renderObjects.push_back(ro);
     }
 
@@ -2138,10 +2138,10 @@ namespace FIFE
         uint8_t green,
         uint8_t blue)
     {
-        const float step   = Mathf::twoPi() / static_cast<float>(subdivisions);
-        uint32_t elements  = 0;
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t lastIndex = index;
+        const float step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        uint32_t elements    = 0;
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t lastIndex   = index;
         // center vertex
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p.x);
@@ -2167,7 +2167,7 @@ namespace FIFE
             uint32_t indices[] = {index, ++lastIndex, ++lastIndex};
             m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
         }
-        RenderObject ro(GL_TRIANGLES, toRenderObjectSize(elements));
+        RenderObject const ro(GL_TRIANGLES, toRenderObjectSize(elements));
         m_renderObjects.push_back(ro);
     }
 
@@ -2202,8 +2202,8 @@ namespace FIFE
 
             ro.color = false;
 
-            uint32_t index     = m_tIndices.empty() ? 0 : m_tIndices.back() + 1;
-            uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+            uint32_t const index = m_tIndices.empty() ? 0 : m_tIndices.back() + 1;
+            uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
             m_tIndices.insert(m_tIndices.end(), indices, indices + 6);
         } else {
             if (rgba != nullptr) {
@@ -2245,8 +2245,8 @@ namespace FIFE
                 ro.rgba[2]      = rgba[2];
                 ro.rgba[3]      = rgba[3];
 
-                uint32_t index     = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
-                uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+                uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
+                uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
                 m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
                 // texture quad with alpha
             } else {
@@ -2278,8 +2278,8 @@ namespace FIFE
 
                 ro.color = true;
 
-                uint32_t index     = m_tcIndices.empty() ? 0 : m_tcIndices.back() + 1;
-                uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+                uint32_t const index = m_tcIndices.empty() ? 0 : m_tcIndices.back() + 1;
+                uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
                 m_tcIndices.insert(m_tcIndices.end(), indices, indices + 6);
             }
         }
@@ -2327,8 +2327,8 @@ namespace FIFE
             rd.texel2[1] = st2[1];
             m_renderMultitextureDatas.push_back(rd);
 
-            uint32_t index     = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
-            uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
+            uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
+            uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
             m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
 
             RenderObject ro(GL_TRIANGLES, 6, id1, id2);
@@ -2350,7 +2350,7 @@ namespace FIFE
                 }
             }
         }
-        int32_t max_quads_per_texbatch = 1000;
+        int32_t const max_quads_per_texbatch = 1000;
         // nothing was found (or we were forced to make new batch), we need to create new one
         RenderZObjectTest obj{};
         if (!m_renderZ_objects.empty()) {
@@ -2863,9 +2863,9 @@ namespace FIFE
 
         auto* glimage = dynamic_cast<GLImage*>(m_img_target.get());
 
-        GLuint targetid = glimage->getTexId();
-        uint32_t w      = m_img_target->getWidth();
-        uint32_t h      = m_img_target->getHeight();
+        GLuint const targetid = glimage->getTexId();
+        uint32_t const w      = m_img_target->getWidth();
+        uint32_t const h      = m_img_target->getHeight();
 
         // quick & dirty hack for attaching compressed texture
         if (glimage->isCompressed()) {

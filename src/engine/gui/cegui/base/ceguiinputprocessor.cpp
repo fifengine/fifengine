@@ -79,10 +79,8 @@ namespace FIFE
     bool CEGuiInputProcessor::processTextInput([[maybe_unused]] SDL_Event& event)
     {
         CEGUI::String character(event.text.text);
-        bool consumed = false;
-        if (!character.empty()) {
-            consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(character[0]);
-        }
+        bool const consumed =
+            !character.empty() ? CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(character[0]) : false;
 
         return consumed;
     }
