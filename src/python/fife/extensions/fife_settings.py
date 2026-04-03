@@ -522,6 +522,16 @@ class Setting(object):
                     elif name == "JoystickSupport":
                         self._settingsFromFile[module][name] = e_value
 
+                    elif name == "Display":
+                        min_display, max_display = self._validSetting[module][name]
+                        if type(e_value) is int and min_display <= e_value <= max_display:
+                            self._settingsFromFile[module][name] = e_value
+                        else:
+                            if self._logger:
+                                self._logger.log_log(
+                                    "Invalid Display setting. Setting to Default."
+                                )
+
                     elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
                         if type(e_value) is int:
                             try:

@@ -247,16 +247,56 @@ namespace FIFE
         FL_LOG(_log, "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
 
+        const uint8_t displayCount = m_devcaps.getDisplayCount();
+        if (displayCount == 0) {
+            throw NotSupported("Could not find any display!");
+        }
+
+        const uint8_t requestedDisplay = m_settings.getDisplay();
+        uint8_t selectedDisplay        = requestedDisplay;
+        if (requestedDisplay >= displayCount) {
+            FL_WARN(
+                _log,
+                LMsg("Selected display index ") << int32_t(requestedDisplay) << " is out of range [0, "
+                                                << int32_t(displayCount - 1) << "] and will fall back to display 0.");
+            selectedDisplay = 0;
+        }
+
+        const uint16_t requestedWidth  = m_settings.getScreenWidth();
+        const uint16_t requestedHeight = m_settings.getScreenHeight();
+        uint16_t selectedWidth         = requestedWidth;
+        uint16_t selectedHeight        = requestedHeight;
+
+        Rect const displayBounds = m_devcaps.getDisplayBounds(selectedDisplay);
+        int32_t const maxWidth   = std::max<int32_t>(1, displayBounds.w);
+        int32_t const maxHeight  = std::max<int32_t>(1, displayBounds.h);
+        selectedWidth            = static_cast<uint16_t>(std::clamp<int32_t>(selectedWidth, 1, maxWidth));
+        selectedHeight           = static_cast<uint16_t>(std::clamp<int32_t>(selectedHeight, 1, maxHeight));
+        if (selectedWidth != requestedWidth || selectedHeight != requestedHeight) {
+
+            FL_WARN(
+                _log,
+                LMsg("Requested resolution ")
+                    << requestedWidth << "x" << requestedHeight << " exceeds selected display bounds "
+                    << displayBounds.w << "x" << displayBounds.h << ". Clamping to " << selectedWidth << "x"
+                    << selectedHeight << ".");
+        }
+
+        FL_LOG(
+            _log,
+            LMsg("Using display index ") << int32_t(selectedDisplay) << " out of " << int32_t(displayCount)
+                                         << " displays with resolution " << selectedWidth << "x" << selectedHeight);
+
         const uint16_t bpp = m_settings.getBitsPerPixel();
 
         m_screenMode = m_devcaps.getNearestScreenMode(
-            m_settings.getScreenWidth(),
-            m_settings.getScreenHeight(),
+            selectedWidth,
+            selectedHeight,
             bpp,
             rbackend,
             m_settings.isFullScreen(),
             m_settings.getRefreshRate(),
-            m_settings.getDisplay());
+            selectedDisplay);
 
         // Set window position
         m_screenMode.setWindowPositionX(m_settings.getWindowPositionX());

@@ -28,6 +28,19 @@ if not hasattr(fife, "ExactModelCoordinate") and hasattr(fife, "DoublePoint3D"):
 from fife.extensions import fifelog  # noqa: E402
 
 
+def _env_truthy(value):
+    if value is None:
+        return False
+    return str(value).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def getEngine(minimized=False):
     e = fife.Engine()
     try:
@@ -39,6 +52,10 @@ def getEngine(minimized=False):
     s = e.getSettings()
     if hasattr(s, "setRenderBackend"):
         s.setRenderBackend("SDL")
+    if hasattr(s, "setFullScreen"):
+        s.setFullScreen(_env_truthy(os.environ.get("FIFE_TEST_FULLSCREEN")))
+    if hasattr(s, "setDisplay"):
+        s.setDisplay(_env_int(os.environ.get("FIFE_TEST_DISPLAY"), 0))
     if hasattr(s, "setDefaultFontPath"):
         s.setDefaultFontPath("../data/FreeMono.ttf")
     if hasattr(s, "setDefaultFontGlyphs"):
@@ -51,6 +68,11 @@ def getEngine(minimized=False):
             s.setScreenWidth(1)
         if hasattr(s, "setScreenHeight"):
             s.setScreenHeight(1)
+    else:
+        if hasattr(s, "setScreenWidth"):
+            s.setScreenWidth(1024)
+        if hasattr(s, "setScreenHeight"):
+            s.setScreenHeight(768)
     if hasattr(s, "setDefaultFontSize"):
         s.setDefaultFontSize(12)
     e.init()

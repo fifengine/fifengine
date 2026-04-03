@@ -34,36 +34,36 @@
      * Logs given message with log level "debug" using given logger instance
      */
     #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
-                (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));            \
+        do {                                                                                                 \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+                (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));                                          \
         } while (0)
 
     /**
      * Logs given message with log level "log" using given logger instance
      */
     #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
-                (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));              \
+        do {                                                                                                 \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+                (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));                                            \
         } while (0)
 
     /**
      * Logs given message with log level "warning" using given logger instance
      */
     #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
-                (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));             \
+        do {                                                                                                  \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                \
+                (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));                                            \
         } while (0)
 
     /**
      * Logs given message with log level "error" using given logger instance
      */
     #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
-                (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));            \
+        do {                                                                                                 \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+                (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));                                          \
         } while (0)
 
     /**
@@ -71,9 +71,9 @@
      * Causes also program to abort
      */
     #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
-                (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));            \
+        do {                                                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                 \
+                (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));                                            \
         } while (0)
 
 #else

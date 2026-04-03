@@ -66,26 +66,26 @@ namespace FIFE
     };
 
 // NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
-#define FIFE_EXCEPTION_DECL(_name, _description) \
-    class _name : public Exception                                                        \
-    {                                                                                     \
-    public:                                                                               \
-        explicit _name(const std::string& msg) : Exception((msg))                         \
-        {                                                                                 \
-            Logger _log(LM_EXCEPTION);                                                    \
-            update();                                                                     \
-            FL_ERR(_log, what());                                                         \
-        }                                                                                 \
-        const std::string& getTypeStr() const override                                    \
-        {                                                                                 \
-            static const std::string s = #_name;                                          \
-            return s;                                                                     \
-        }                                                                                 \
-        const std::string& getDescription() const override                                \
-        {                                                                                 \
-            static const std::string s = (_description);                                  \
-            return s;                                                                     \
-        }                                                                                 \
+#define FIFE_EXCEPTION_DECL(_name, _description)                  \
+    class _name : public Exception                                \
+    {                                                             \
+    public:                                                       \
+        explicit _name(const std::string& msg) : Exception((msg)) \
+        {                                                         \
+            Logger _log(LM_EXCEPTION);                            \
+            update();                                             \
+            FL_ERR(_log, what());                                 \
+        }                                                         \
+        const std::string& getTypeStr() const override            \
+        {                                                         \
+            static const std::string s = #_name;                  \
+            return s;                                             \
+        }                                                         \
+        const std::string& getDescription() const override        \
+        {                                                         \
+            static const std::string s = (_description);          \
+            return s;                                             \
+        }                                                         \
     }
 
     FIFE_EXCEPTION_DECL(SDLException, "SDL reported something bad");

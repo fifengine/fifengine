@@ -112,46 +112,74 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        // Determine X position
-        int xPos{};
-        if (windowX >= 0) {
-            xPos = windowX;
-        } else if (mode.isFullScreen()) {
-            xPos = toDisplayWindowPos(displayIndex, false);
-        } else {
-            xPos = toDisplayWindowPos(displayIndex, true);
-        }
+        int const displayCount      = SDL_GetNumVideoDisplays();
+        bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
+        uint16_t createWidth        = width;
+        uint16_t createHeight       = height;
 
-        // Determine Y position
+        // Determine X/Y position.
+        int xPos{};
         int yPos{};
-        if (windowY >= 0) {
+        if (windowX >= 0 && windowY >= 0) {
+            xPos = windowX;
             yPos = windowY;
-        } else if (mode.isFullScreen()) {
+        } else if (mode.isFullScreen() && !pseudoFullscreen) {
+            xPos = toDisplayWindowPos(displayIndex, false);
             yPos = toDisplayWindowPos(displayIndex, false);
         } else {
-            yPos = toDisplayWindowPos(displayIndex, true);
+            SDL_Rect displayBounds;
+            if (SDL_GetDisplayBounds(displayIndex, &displayBounds) != 0) {
+                throw SDLException(SDL_GetError());
+            }
+
+            if (displayCount == 1 && windowX < 0 && windowY < 0) {
+                // Some desktop setups expose all monitors as one virtual display (X11).
+                // Center window inside the first monitor area (left half) instead
+                // of centering on the the whole combined desktop.
+                int32_t const monitorWidth = std::max(1, displayBounds.w / 2);
+
+                xPos = displayBounds.x + ((monitorWidth - width) / 2);
+                yPos = displayBounds.y + ((displayBounds.h - height) / 2);
+
+                if (pseudoFullscreen) {
+                    // SDL cannot fullscreen a sub-monitor region when only one combined display is exposed (X11).
+                    // Emulate monitor-1 fullscreen with a borderless window on the first-monitor area.
+                    flags &= ~SDL_WINDOW_FULLSCREEN;
+                    flags |= SDL_WINDOW_BORDERLESS;
+
+                    createWidth  = static_cast<uint16_t>(monitorWidth);
+                    createHeight = static_cast<uint16_t>(std::max(1, displayBounds.h));
+
+                    xPos = displayBounds.x;
+                    yPos = displayBounds.y;
+                }
+            } else {
+                // Center inside the selected display bounds instead of the virtual desktop.
+                xPos = (windowX >= 0) ? windowX : displayBounds.x + ((displayBounds.w - width) / 2);
+                yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
+            }
         }
 
-        if (mode.isFullScreen()) {
+        if (mode.isFullScreen() && !pseudoFullscreen) {
             m_window = SDL_CreateWindow(
                 "",
                 toDisplayWindowPos(displayIndex, false),
                 toDisplayWindowPos(displayIndex, false),
-                width,
-                height,
+                createWidth,
+                createHeight,
                 flags | SDL_WINDOW_SHOWN);
         } else {
-            m_window = SDL_CreateWindow("", xPos, yPos, width, height, flags | SDL_WINDOW_SHOWN);
+            m_window = SDL_CreateWindow("", xPos, yPos, createWidth, createHeight, flags | SDL_WINDOW_SHOWN);
         }
 
         if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
         }
-        // make sure the window have the right settings
+        // make sure the window has the right settings
         SDL_DisplayMode displayMode;
         displayMode.format       = mode.getFormat();
-        displayMode.w            = width;
-        displayMode.h            = height;
+        displayMode.w            = createWidth;
+        displayMode.h            = createHeight;
         displayMode.refresh_rate = mode.getRefreshRate();
         if (SDL_SetWindowDisplayMode(m_window, &displayMode) != 0) {
             throw SDLException(SDL_GetError());

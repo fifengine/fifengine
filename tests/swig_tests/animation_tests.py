@@ -86,6 +86,7 @@ class TestView(unittest.TestCase):
         cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
         cam.setRotation(45)
         cam.setTilt(40)
+        cam.setLocation(fife.Location(self.layer))
 
         cam.setViewPort(viewport)
 

@@ -248,11 +248,42 @@ namespace FIFE
         uint8_t display) const
     {
         ScreenMode mode;
+        uint32_t flags = 0;
+        if (renderer == "OpenGL") {
+            if (fs) {
+                flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+            } else {
+                flags = SDL_WINDOW_OPENGL;
+            }
+        } else {
+            if (fs) {
+                flags = SDL_WINDOW_FULLSCREEN;
+            }
+        }
+
+        if (!fs) {
+            SDL_DisplayMode desktopMode;
+            if (SDL_GetDesktopDisplayMode(display, &desktopMode) != 0) {
+                throw SDLException(SDL_GetError());
+            }
+
+            // Keep requested dimensions in windowed mode.
+            // SDL_GetClosestDisplayMode() can pick a desktop/fullscreen-sized mode and unexpectedly enlarge
+            // windowed windows (for example across a virtual combined desktop).
+            mode = ScreenMode(width, height, bpp, desktopMode.refresh_rate, flags);
+            mode.setFormat(desktopMode.format);
+            mode.setDisplay(display);
+            if (m_renderDriverIndex != -1) {
+                mode.setRenderDriverName(m_renderDriverName);
+                mode.setRenderDriverIndex(m_renderDriverIndex);
+            }
+            return mode;
+        }
+
         SDL_DisplayMode target;
         SDL_DisplayMode closest;
-        bool foundMode = false;
 
-        // Set the desired resolution, etc.
+        // Set the desired fullscreen resolution, etc.
         target.w = width;
         target.h = height;
         if (bpp == 0) {
@@ -265,32 +296,16 @@ namespace FIFE
         target.refresh_rate = refresh;
         target.driverdata   = nullptr; // initialize to 0
 
-        // only first display
-        if (SDL_GetClosestDisplayMode(display, &target, &closest) != nullptr) {
-            uint32_t flags = 0;
-            if (renderer == "OpenGL") {
-                if (fs) {
-                    flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
-                } else {
-                    flags = SDL_WINDOW_OPENGL;
-                }
-            } else {
-                if (fs) {
-                    flags = SDL_WINDOW_FULLSCREEN;
-                }
-            }
-            mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
-            mode.setFormat(closest.format);
-            mode.setDisplay(display);
-            if (m_renderDriverIndex != -1) {
-                mode.setRenderDriverName(m_renderDriverName);
-                mode.setRenderDriverIndex(m_renderDriverIndex);
-            }
-            foundMode = true;
+        if (SDL_GetClosestDisplayMode(display, &target, &closest) == nullptr) {
+            throw NotSupported("Could not find a matching screen mode for the values given!");
         }
 
-        if (!foundMode) {
-            throw NotSupported("Could not find a matching screen mode for the values given!");
+        mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
+        mode.setFormat(closest.format);
+        mode.setDisplay(display);
+        if (m_renderDriverIndex != -1) {
+            mode.setRenderDriverName(m_renderDriverName);
+            mode.setRenderDriverIndex(m_renderDriverIndex);
         }
 
         return mode;
