@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <map>
 #include <cstdint>
+#include <map>
 
 // 3rd party library includes
 #include <CEGUI/CEGUI.h>
