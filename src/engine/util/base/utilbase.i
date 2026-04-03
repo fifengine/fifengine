@@ -6,13 +6,15 @@
 #include "util/base/fifeclass.h"
 %}
 
+// ignore overload operator
+%ignore FIFE::Exception::operator=;
 %include "util/base/exception.h"
 %include "util/resource/resource.i"
 
 namespace FIFE {
 
 	typedef std::size_t fifeid_t;
-	
+
 	class FifeClass{
 	public:
 		virtual ~FifeClass();

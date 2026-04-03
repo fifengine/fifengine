@@ -28,9 +28,13 @@
 #include "eventchannel/eventmanager.h"
 %}
 
+// ignore overload operator
+%ignore FIFE::Key::operator=;
 %include "eventchannel/key/key.h"
 // delete the enum value KEY_DELETE, as it conflicts with the C++ delete keyword
 %rename(DELETE) FIFE::Key::KeyType::KEY_DELETE;
+// ignore overload operator
+%ignore FIFE::Text::operator=;
 %include "eventchannel/text/text.h"
 %include "eventchannel/source/eventsourcetypes.h"
 %include "eventchannel/command/commandids.h"

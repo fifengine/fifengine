@@ -31,6 +31,7 @@ namespace FIFE
     Location::Location(Layer* layer) : m_layer(layer)
     {
         reset();
+        m_layer = layer; // keep
     }
 
     void Location::reset()
