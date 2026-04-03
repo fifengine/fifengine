@@ -129,7 +129,9 @@ function(install_runtime_dlls)
 
     file(CONFIGURE OUTPUT "${_SCRIPT_FILE}"
         CONTENT [[
-        cmake_policy(SET CMP0207 NEW)
+        if(POLICY CMP0207)
+          cmake_policy(SET CMP0207 NEW) # file(GET_RUNTIME_DEPENDENCIES) normalizes paths before matching
+        endif()
         message(STATUS "Installing runtime DLLs to @_DEST@...")
 
         # 1. Resolve ALL dependencies recursively in one call
