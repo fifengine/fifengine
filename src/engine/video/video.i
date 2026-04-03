@@ -96,7 +96,7 @@ namespace FIFE {
 		virtual void freeAll();
 		virtual void freeUnreferenced();
 
-		virtual void remove(ImagePtr& resource);
+		virtual void remove(AnimationPtr& resource);
 		virtual void remove(const std::string& name);
 		virtual void remove(ResourceHandle handle);
 		virtual void removeAll();
