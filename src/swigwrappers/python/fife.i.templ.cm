@@ -206,3 +206,9 @@ print(s)\n\
 @CMAKE_SWIG_INCLUSIONS@
 
 %include engine/swigwrappers/python/extensions.i.templ
+
+%pythoncode %{
+AudioSpaceCoordinate = DoublePoint3D
+ModelCoordinate = Point3D
+ExactModelCoordinate = DoublePoint3D
+%}
