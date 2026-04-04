@@ -3,11 +3,9 @@
 
 """utilities for xml maploading process"""
 
-from __future__ import division, print_function
 
 import math
 import os
-from builtins import range
 
 from past.utils import old_div
 

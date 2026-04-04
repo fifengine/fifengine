@@ -5,6 +5,15 @@
 
 # These used to be defined in here, duplicating the definitions in .layout
 # Retain for backwards compatibility of any code importing them from .common
+from fife.extensions.pychan.attrs import (
+    Attr,
+    BoolAttr,
+    ColorAttr,
+    IntAttr,
+    PointAttr,
+    UnicodeAttr,
+)
+from .layout import AlignBottom, AlignCenter, AlignLeft, AlignRight, AlignTop
 
 
 def get_manager():

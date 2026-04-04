@@ -1,10 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
 
 import os
-from builtins import range
 
 import fife
 
@@ -21,7 +19,7 @@ __all__ = (
 )
 
 try:
-    import xml.etree.cElementTree as ET
+    import xml.etree.ElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET  # type: ignore[no-redef]
 
@@ -47,7 +45,7 @@ class NotFound(SerializerError):
 
 
 def warn(self, msg):
-    print("Warning (%s): %s" % (self.filename, msg))
+    print("Warning ({}): {}".format(self.filename, msg))
 
 
 def reverse_root_subfile(masterfile, subfile):

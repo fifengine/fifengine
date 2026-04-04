@@ -3,9 +3,7 @@
 
 """submodule for xml map parsing"""
 
-from __future__ import print_function
 
-from builtins import object, str
 
 from fife import fife
 from fife.extensions.serializers import (
@@ -19,7 +17,7 @@ from fife.extensions.serializers import (
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 
-class XMLObjectSaver(object):
+class XMLObjectSaver:
     """The B{XMLObjectSaver} serializes a fife.Object instance by saving
     it back to its XML file
 
@@ -243,7 +241,7 @@ class XMLObjectSaver(object):
                 print("\t\ty offset: ", element.attrib["y_offset"])
 
 
-class XMLObjectLoader(object):
+class XMLObjectLoader:
     """ """
 
     def __init__(self, engine):

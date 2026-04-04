@@ -11,7 +11,6 @@ It is by no means complete but it does provide a good starting point.
 
 import os
 import shutil
-from builtins import object, range, str
 
 from future import standard_library
 
@@ -23,7 +22,7 @@ standard_library.install_aliases()
 FIFE_MODULE = "FIFE"
 
 
-class Setting(object):
+class Setting:
     """
     This class manages loading and saving of game settings.
 
@@ -708,7 +707,7 @@ class Setting(object):
     serializer = property(_getSerializer)
 
 
-class SettingEntry(object):
+class SettingEntry:
 
     def __init__(
         self, module, name, applyfunction=None, initialdata=None, requiresrestart=False

@@ -3,10 +3,8 @@
 
 """main xml parser class for xml map loading"""
 
-from __future__ import print_function
 
 import time
-from builtins import object, str
 
 from fife import fife
 from fife.extensions.serializers import (
@@ -23,7 +21,7 @@ from fife.extensions.serializers.xmlobject import XMLObjectLoader
 FORMAT = "1.0"
 
 
-class XMLMapLoader(object):
+class XMLMapLoader:
     """The B{XMLMapLoader} parses the xml map using several section.
     Each section fires a callback (if given) which can e. g. be
     used to show a progress bar.

@@ -7,7 +7,6 @@ The basic application and main loop.
 See the L{ApplicationBase} documentation.
 """
 
-from builtins import map
 
 import PyCEGUI
 
@@ -54,7 +53,7 @@ DEFAULT_GUI_DIR = "gui/"
 
 class CEGUIApplicationBase(ApplicationBase):
     def __init__(self, setting=None):
-        super(CEGUIApplicationBase, self).__init__(setting)
+        super().__init__(setting)
 
         self._initGuiManager()
         self._loadCEGuiSettings()

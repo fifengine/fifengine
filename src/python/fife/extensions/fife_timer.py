@@ -56,7 +56,7 @@ class Timer(fife.TimeEvent):
         @param callback: The function to execute when the time delay has passed
         @param repeat: The number of times to execute the callback.  1=once, 0=forever
         """
-        super(Timer, self).__init__(delay)
+        super().__init__(delay)
         self._active = False
         self._callback = callback
         self._manager = _manager

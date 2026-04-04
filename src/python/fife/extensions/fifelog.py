@@ -1,14 +1,12 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
 
-from builtins import object
 
 from fife import fife
 
 
-class LogManager(object):
+class LogManager:
     """
     Log manager provides convenient apis to access engine logging functionality.
     You can set log targets individually (prompt, file). You can also adjust
@@ -30,7 +28,7 @@ class LogManager(object):
         for k, v in list(fife.__dict__.items()):
             if k.startswith("LM_") and k not in ("LM_CORE", "LM_MODULE_MAX"):
                 self.mod2name[v] = self.lm.getModuleName(v)
-        self.name2mod = dict([(v.lower(), k) for k, v in list(self.mod2name.items())])
+        self.name2mod = {v.lower(): k for k, v in list(self.mod2name.items())}
 
     def addVisibleModules(self, *names):
         """

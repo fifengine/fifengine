@@ -3,14 +3,13 @@
 
 """Loaders plugin manager"""
 
-from __future__ import print_function
 
 import os.path
 
 from fife.extensions.serializers.xmlmap import XMLMapLoader
 
 mapFileMapping = {"xml": XMLMapLoader}
-fileExtensions = set(["xml"])
+fileExtensions = {"xml"}
 
 
 def loadMapFile(path, engine, callback=None, debug=True, extensions={}):

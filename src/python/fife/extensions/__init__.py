@@ -8,4 +8,5 @@ __all__ = [
     "pythonize",
     "savers",
     "loaders",
+    "pychan",
 ]

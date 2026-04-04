@@ -5,7 +5,6 @@
 
 import os
 import re
-from builtins import str
 
 __all__ = ["is_fife_exc", "getUserDataDirectory"]
 
@@ -25,7 +24,7 @@ def is_fife_exc(type, original_exc):
     ret = False
     m = _exc_re.search(str(original_exc))
     if m:
-        if m.group(1) == type("").getTypeStr():
+        if m.group(1) == str.getTypeStr():
             ret = True
     return ret
 

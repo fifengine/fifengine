@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 import os
-from builtins import object, range, str, zip
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
 
@@ -14,7 +13,7 @@ MAPFORMAT = "1.0"
 fileExtensions = ("xml",)
 
 
-class XMLMapSaver(object):
+class XMLMapSaver:
 
     def __init__(self, filepath, engine, map, importList, state=0, datastate=0):
         (
@@ -386,7 +385,7 @@ class XMLMapSaver(object):
                 colors = cam.getLightingColor()
                 if colors[0] < 1.0 or colors[1] < 1.0 or colors[2] < 1.0:
                     attr_names[(None, "light_color")] = "light_color"
-                    attr_vals[(None, "light_color")] = "%f,%f,%f" % (
+                    attr_vals[(None, "light_color")] = "{:f},{:f},{:f}".format(
                         colors[0],
                         colors[1],
                         colors[2],

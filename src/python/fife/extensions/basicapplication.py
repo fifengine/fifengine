@@ -7,9 +7,7 @@ The basic application and main loop.
 See the L{ApplicationBase} documentation.
 """
 
-from __future__ import print_function
 
-from builtins import object, str
 
 from fife import fife
 from fife.extensions import fifelog
@@ -41,7 +39,7 @@ class ExitEventListener(fife.IKeyListener):
         pass
 
 
-class ApplicationBase(object):
+class ApplicationBase:
     """
     ApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
     This kind of application base does not offer GUI support.
@@ -72,11 +70,11 @@ class ApplicationBase(object):
 		"""
         screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes()
         resolutions = list(
-            set([(mode.getWidth(), mode.getHeight()) for mode in screen_modes])
+            {(mode.getWidth(), mode.getHeight()) for mode in screen_modes}
         )
 
         resolutions = [
-            "{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]
+            "{}x{}".format(item[0], item[1]) for item in sorted(resolutions)[1:]
         ]
         self._setting.setValidResolutions(resolutions)
 

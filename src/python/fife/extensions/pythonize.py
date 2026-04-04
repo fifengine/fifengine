@@ -20,10 +20,8 @@ conveniences:
     - fife.Rect
 """
 
-from __future__ import print_function
 
 import re
-from builtins import map
 
 from fife import fife, fifechan
 
@@ -108,7 +106,7 @@ def createProperties():
 
         # We need to override the swig setattr function
         # to get properties to work.
-        class_._property_names = set([name for name, method in getters])
+        class_._property_names = {name for name, method in getters}
 
         def _setattr_wrapper_(self, *args):
             if name in class_._property_names:

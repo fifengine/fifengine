@@ -17,7 +17,6 @@ run code that wasn't adapted to API changes in FIFE.
 
 """
 
-from __future__ import print_function
 
 from fife import fife
 

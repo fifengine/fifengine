@@ -1,7 +1,7 @@
 """Fallback fifechan module for test runs without generated GUI bindings."""
 
 
-class Widget(object):
+class Widget:
     pass
 
 
