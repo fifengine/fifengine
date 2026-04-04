@@ -279,6 +279,22 @@
       ]
     },
     {
+      "name": "compiler-clang22-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-22",
+        "CMAKE_CXX_COMPILER": "clang++-22"
+      }
+    },
+    {
+      "name": "clang22-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang22-linux"
+      ]
+    },
+    {
       "name": "clang20-x64-linux",
       "hidden": true,
       "inherits": [
