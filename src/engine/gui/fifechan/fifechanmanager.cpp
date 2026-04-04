@@ -103,6 +103,7 @@ namespace FIFE
         case SDL_MOUSEWHEEL:
         case SDL_MOUSEBUTTONDOWN:
             m_had_widget = overWidget;
+            [[fallthrough]];
         case SDL_MOUSEBUTTONUP:
             // Always send the button up/down events to fifechan
             m_input->pushInput(evt);
