@@ -937,6 +937,16 @@ if(BUILD_PYTHON_BINDINGS)
 
   set_property(SOURCE "${PROJECT_BINARY_DIR}/fife.i" PROPERTY CPLUSPLUS ON)
 
+  if(MSVC)
+    # SWIG runtime code checks for macro define __GNUC__ in generated wrappers.
+    # We need to define it for the generated sources,
+    # so MSVC does not emit "undefined macro" warning C4668 for __GNUC__.
+    set_property(
+      SOURCE "${PROJECT_BINARY_DIR}/fife.i"
+      APPEND PROPERTY SWIG_GENERATED_COMPILE_DEFINITIONS "__GNUC__=0"
+    )
+  endif()
+
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
 
   target_include_directories(fife_swig PRIVATE
@@ -977,6 +987,14 @@ if(BUILD_PYTHON_BINDINGS)
 
   if(ENABLE_FIFEGUI)
     set_property(SOURCE "${PROJECT_BINARY_DIR}/fifechan.i" PROPERTY CPLUSPLUS ON)
+
+    if(MSVC)
+      # Keep the same generated-source-only workaround for the fifechan wrapper.
+      set_property(
+        SOURCE "${PROJECT_BINARY_DIR}/fifechan.i"
+        APPEND PROPERTY SWIG_GENERATED_COMPILE_DEFINITIONS "__GNUC__=0"
+      )
+    endif()
 
     swig_add_library(fifechan_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
 
