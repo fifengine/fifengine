@@ -259,8 +259,7 @@ namespace FIFE
             return;
         }
 
-        ALuint const slot   = m_freeSlots.front();
-        ALuint const filter = (effect->getFilter() != nullptr) ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
+        ALuint const slot = m_freeSlots.front();
         m_freeSlots.pop();
         alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect->getEffectId());
         effect->setSlotId(slot);
