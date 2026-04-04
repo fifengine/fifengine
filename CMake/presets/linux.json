@@ -101,43 +101,11 @@
       }
     },
     {
-      "name": "gcc9-x64-linux",
+      "name": "gcc15-x64-linux",
       "hidden": true,
       "inherits": [
         "gcc-x64-linux-base",
-        "compiler-gcc9-linux"
-      ]
-    },
-    {
-      "name": "gcc10-x64-linux",
-      "hidden": true,
-      "inherits": [
-        "gcc-x64-linux-base",
-        "compiler-gcc10-linux"
-      ]
-    },
-    {
-      "name": "gcc11-x64-linux",
-      "hidden": true,
-      "inherits": [
-        "gcc-x64-linux-base",
-        "compiler-gcc11-linux"
-      ]
-    },
-    {
-      "name": "gcc12-x64-linux",
-      "hidden": true,
-      "inherits": [
-        "gcc-x64-linux-base",
-        "compiler-gcc12-linux"
-      ]
-    },
-    {
-      "name": "gcc13-x64-linux",
-      "hidden": true,
-      "inherits": [
-        "gcc-x64-linux-base",
-        "compiler-gcc13-linux"
+        "compiler-gcc15-linux"
       ]
     },
     {
@@ -149,11 +117,43 @@
       ]
     },
     {
-      "name": "gcc15-x64-linux",
+      "name": "gcc13-x64-linux",
       "hidden": true,
       "inherits": [
         "gcc-x64-linux-base",
-        "compiler-gcc15-linux"
+        "compiler-gcc13-linux"
+      ]
+    },
+    {
+      "name": "gcc12-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc12-linux"
+      ]
+    },
+    {
+      "name": "gcc11-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc11-linux"
+      ]
+    },
+    {
+      "name": "gcc10-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc10-linux"
+      ]
+    },
+    {
+      "name": "gcc9-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc9-linux"
       ]
     },
     {
