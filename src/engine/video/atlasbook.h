@@ -92,7 +92,7 @@ namespace FIFE
             assert((width * height * pixelSize) <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         }
 
-        AtlasBlock* getBlock(uint32_t width, uint32_t height);
+        AtlasBlock* getBlock(uint32_t blockWidth, uint32_t blockHeight);
         void shrink(bool pot);
 
         uint32_t getWidth() const

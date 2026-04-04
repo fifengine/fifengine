@@ -42,27 +42,27 @@ namespace FIFE
         bottom = std::max(rect.bottom, bottom);
     }
 
-    AtlasBlock* AtlasPage::getBlock(uint32_t width, uint32_t height)
+    AtlasBlock* AtlasPage::getBlock(uint32_t blockWidth, uint32_t blockHeight)
     {
-        if (std::cmp_greater(width * height * pixelSize, freePixels)) {
+        if (std::cmp_greater(blockWidth * blockHeight * pixelSize, freePixels)) {
             return nullptr;
         }
 
         blocks.emplace_back(Rect(), 0);
         AtlasBlock* newBlock = &blocks[blocks.size() - 1];
 
-        for (uint32_t v = 0; (v + 1) * height <= this->height; ++v) {
-            newBlock->top    = v * height;
-            newBlock->bottom = (v + 1) * height;
+        for (uint32_t v = 0; (v + 1) * blockHeight <= this->height; ++v) {
+            newBlock->top    = v * blockHeight;
+            newBlock->bottom = (v + 1) * blockHeight;
 
-            for (uint32_t u = 0; (u + 1) * width <= this->width; ++u) {
+            for (uint32_t u = 0; (u + 1) * blockWidth <= this->width; ++u) {
 
-                newBlock->left  = u * width;
-                newBlock->right = (u + 1) * width;
+                newBlock->left  = u * blockWidth;
+                newBlock->right = (u + 1) * blockWidth;
 
                 AtlasBlock const * intersection = intersects(newBlock);
                 if (intersection == nullptr) {
-                    freePixels -= width * height * pixelSize;
+                    freePixels -= blockWidth * blockHeight * pixelSize;
                     assert(freePixels >= 0);
 
                     // try to squeeze a little bit (horizontal)
@@ -76,17 +76,17 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
-                            const uint32_t blockWidth = newBlock->getWidth();
+                            const uint32_t squeezedWidth = newBlock->getWidth();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.left -= blockWidth / div;
-                                squeezed.right -= blockWidth / div;
+                                squeezed.left -= squeezedWidth / div;
+                                squeezed.right -= squeezedWidth / div;
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.left += blockWidth / div;
-                                    squeezed.right += blockWidth / div;
+                                    squeezed.left += squeezedWidth / div;
+                                    squeezed.right += squeezedWidth / div;
                                 }
                                 div <<= 1;
                             }
@@ -114,17 +114,17 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
-                            const uint32_t blockHeight = newBlock->getHeight();
+                            const uint32_t squeezedHeight = newBlock->getHeight();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.top -= blockHeight / div;
-                                squeezed.bottom -= blockHeight / div;
+                                squeezed.top -= squeezedHeight / div;
+                                squeezed.bottom -= squeezedHeight / div;
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.top += blockHeight / div;
-                                    squeezed.bottom += blockHeight / div;
+                                    squeezed.top += squeezedHeight / div;
+                                    squeezed.bottom += squeezedHeight / div;
                                 }
                                 div <<= 1;
                             }
