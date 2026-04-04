@@ -133,6 +133,14 @@
       }
     },
     {
+      "name": "clang22-x64-linux-rel",
+      "displayName": "Clang22 Release",
+      "inherits": "clang22-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "gcc12-x64-linux-rel",
       "displayName": "GCC12 Release",
       "inherits": "gcc12-x64-linux",
