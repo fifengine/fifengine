@@ -11,7 +11,6 @@ on top level widgets which can also be set from xml.
 For direct use call L{placeWidget}.
 """
 
-from __future__ import absolute_import
 
 from .exceptions import PyChanException
 from .internal import screen_height, screen_width

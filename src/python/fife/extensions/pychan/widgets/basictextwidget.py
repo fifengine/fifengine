@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from fife.extensions.pychan.attrs import UnicodeAttr
 
@@ -65,7 +64,7 @@ class BasicTextWidget(Widget):
     ):
 
         self.text = self.DEFAULT_TEXT
-        super(BasicTextWidget, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

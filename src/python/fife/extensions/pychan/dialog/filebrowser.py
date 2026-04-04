@@ -3,22 +3,15 @@
 
 """a filebrowser implementation for pychan"""
 
-from __future__ import print_function
-
 import os
 import sys
-from builtins import object, str
 
 import fife.extensions.pychan as pychan
 import fife.extensions.pychan.widgets as widgets
 from fife.fife import Engine
 
 
-def u2s(string):
-    return string.encode(sys.getfilesystemencoding())
-
-
-class FileBrowser(object):
+class FileBrowser:
     """The B{FileBrowser} displays directory and file listings.
 
     B{The fileSelected} parameter is a callback invoked when a file selection has been made; its

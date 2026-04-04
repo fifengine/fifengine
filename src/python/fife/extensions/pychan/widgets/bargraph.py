@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr
@@ -74,7 +73,7 @@ class BarGraph(Widget):
         self.bar_width = self.DEFAULT_BAR_WIDTH
         self.bar_height = self.DEFAULT_BAR_HEIGHT
 
-        super(BarGraph, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

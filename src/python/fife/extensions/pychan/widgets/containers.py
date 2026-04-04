@@ -1,10 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
-
-from builtins import str
-
 from fife import fife, fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr, UnicodeAttr
 
@@ -91,7 +87,7 @@ class Container(Widget):
         self.opaque = self.DEFAULT_OPAQUE
         # self.layout = self.DEFAULT_LAYOUT
 
-        super(Container, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -235,7 +231,7 @@ class Container(Widget):
     def removeChild(self, widget):
         if widget not in self.children:
             raise RuntimeError(
-                "%s does not have %s as direct child widget." % (str(self), str(widget))
+                "{} does not have {} as direct child widget.".format(str(self), str(widget))
             )
 
         if widget in self.children:
@@ -516,7 +512,7 @@ class ABox(Container):
         _real_widget=None,
     ):
 
-        super(ABox, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -643,7 +639,7 @@ class VBox(Container):
         _real_widget=None,
     ):
 
-        super(VBox, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -763,7 +759,7 @@ class HBox(Container):
         _real_widget=None,
     ):
 
-        super(HBox, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -883,7 +879,7 @@ class CBox(Container):
         _real_widget=None,
     ):
 
-        super(CBox, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -1021,7 +1017,7 @@ class Window(Container):
         if _real_widget is None:
             _real_widget = fifechan.Window()
 
-        super(Window, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

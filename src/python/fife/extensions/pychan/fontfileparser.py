@@ -10,9 +10,9 @@ class FontFileParser(ContentHandler):
         self._fonts = {}
 
     def startElement(self, tag, rawAttributes):
-        attributes = dict(
-            [(name, rawAttributes.getValue(name)) for name in rawAttributes.getNames()]
-        )
+        attributes = {
+            name: rawAttributes.getValue(name) for name in rawAttributes.getNames()
+        }
         if tag.lower() == "font":
             if "name" not in attributes:
                 raise ValueError("Fonts must have a name")

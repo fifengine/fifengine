@@ -1,10 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
-
-from builtins import range
-
 from fife import fifechan
 
 from .listbox import GenericListmodel
@@ -81,7 +77,7 @@ class DropDown(Widget):
                 self.selected = 0
 
         self.real_widget = fifechan.DropDown(self._items)
-        super(DropDown, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

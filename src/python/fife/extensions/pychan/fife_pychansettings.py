@@ -10,15 +10,10 @@ pychan.
 """
 
 import os
-from builtins import str
 from io import BytesIO, StringIO
-
-from future import standard_library
 
 from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting, SettingEntry
-
-standard_library.install_aliases()
 
 SETTINGS_GUI_XML = """\
 <Window name="Settings" title="Settings">
@@ -71,7 +66,7 @@ class FifePychanSettings(Setting):
         serializer=None,
     ):
 
-        super(FifePychanSettings, self).__init__(
+        super().__init__(
             app_name, settings_file, default_settings_file, copy_dist, serializer
         )
 
@@ -271,7 +266,7 @@ class FifePychanSettings(Setting):
                     if entry.requiresrestart:
                         self.changesRequireRestart = True
 
-        super(FifePychanSettings, self).saveSettings()
+        super().saveSettings()
 
         self._optionsDialog.hide()
         if self.changesRequireRestart:
@@ -286,7 +281,7 @@ class FifePychanSettings(Setting):
         RestartDlg.show()
 
     def setDefaults(self):
-        super(FifePychanSettings, self).setDefaults()
+        super().setDefaults()
 
         # On startup the settings dialog is not yet initialized.  We dont
         # fill the widgets with data in that case.
@@ -305,7 +300,7 @@ class PychanSettingEntry(SettingEntry):
         initialdata=None,
         requiresrestart=False,
     ):
-        super(PychanSettingEntry, self).__init__(
+        super().__init__(
             module, name, applyfunction, initialdata, requiresrestart
         )
 

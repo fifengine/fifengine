@@ -48,7 +48,7 @@ class PychanApplicationBase(ApplicationBase):
     """
 
     def __init__(self, setting=None):
-        super(PychanApplicationBase, self).__init__(setting)
+        super().__init__(setting)
 
         pychan.init(self.engine, debug=self._finalSetting["PychanDebug"])
         pychan.setupModalExecution(self.mainLoop, self.breakFromMainLoop)

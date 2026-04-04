@@ -1,19 +1,13 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
-
-from builtins import object, str
 from io import StringIO
-
-from future import standard_library
 
 from fife.extensions import pychan
 from fife.extensions.pychan import loadXML
 
 from .internal import screen_height, screen_width
 
-standard_library.install_aliases()
 
 OK, YES, NO, CANCEL = True, True, False, None
 
@@ -22,7 +16,7 @@ def print_event(**kwargs):
     print(kwargs)
 
 
-class XMLDialog(object):
+class XMLDialog:
     def __init__(self, xml, ok_field=None, cancel_field=None, initial_data={}, data={}):
         self.gui = loadXML(xml)
         self.ok_field = ok_field

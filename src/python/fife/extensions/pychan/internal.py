@@ -1,10 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
-
-from builtins import map, object, str
-
 from fife.extensions import fife_timer as timer
 
 from . import fonts
@@ -30,11 +26,11 @@ def screen_height():
     return get_manager().hook.screen_height
 
 
-class Manager(object):
+class Manager:
     manager = None
 
     def __init__(self, hook, debug=False, compat_layout=False):
-        super(Manager, self).__init__()
+        super().__init__()
         self.hook = hook
         self.debug = debug
         self.compat_layout = compat_layout

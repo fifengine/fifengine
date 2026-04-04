@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, ColorAttr, UnicodeAttr
@@ -86,7 +85,7 @@ class DockArea(ResizableWindow):
         if _real_widget is None:
             _real_widget = fifechan.DockArea()
 
-        super(DockArea, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -195,7 +194,7 @@ class DockArea(ResizableWindow):
         return dockAreaClone
 
     def addChild(self, widget):
-        super(DockArea, self).addChild(widget)
+        super().addChild(widget)
         widget.docked = True
 
     def _getActiveDockArea(self):

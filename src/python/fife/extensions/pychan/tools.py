@@ -5,10 +5,7 @@
 Functional utilities designed for pychan use cases.
 """
 
-from __future__ import absolute_import, print_function
-
 import sys
-from builtins import range
 
 from . import exceptions
 
@@ -22,12 +19,8 @@ def applyOnlySuitable(func, *args, **kwargs):
     keyword arguments, these are silently discarded. The result of the application is returned.
     This is useful to pass information to callbacks without enforcing a particular signature.
     """
-    if sys.version_info < (3,):
-        func_name = "im_func"
-        code_name = "func_code"
-    else:
-        func_name = "__func__"
-        code_name = "__code__"
+    func_name = "__func__"
+    code_name = "__code__"
     if hasattr(func, func_name):
         code = func.__func__.__code__
         varnames = code.co_varnames[1 : code.co_argcount]  # ditch bound instance

@@ -1,10 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
-
 import weakref
-from builtins import object, str
 
 from fife import fife, fifechan
 from fife.extensions.pychan import events
@@ -23,7 +20,7 @@ from fife.extensions.pychan.properties import ColorProperty
 from .common import get_manager
 
 
-class Widget(object):
+class Widget:
     """
     This is the common widget base class, which provides most of the wrapping
     functionality.

@@ -1,22 +1,15 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
-from builtins import map, object
-
-from future import standard_library
 
 from .exceptions import InitializationError
 from .fontfileparser import FontFileParser
 
-standard_library.install_aliases()
 
-
-class Font(object):
+class Font:
     def __init__(self, name, get):
         from .internal import get_manager
-
         self.font = None
         self.name = name
         self.typename = get("type")
@@ -31,7 +24,7 @@ class Font(object):
             self.italic = bool(get("italic", False))
             self.underline = bool(get("underline", False))
             self.recoloring = bool(get("recoloring", False))
-            self.color = map(int, get("color", "255,255,255").split(","))
+            self.color = list(map(int, get("color", "255,255,255").split(",")))
             self.font = get_manager().createFont(self.source, self.size)
 
             if self.font is None:
@@ -71,7 +64,7 @@ class Font(object):
         return "Font(source='%s')" % self.source
 
     def __repr__(self):
-        return "<Font(source='%s') at %x>" % (self.source, id(self))
+        return "<Font(source='{}') at {:x}>".format(self.source, id(self))
 
 
 def loadFonts(filename):
@@ -82,3 +75,4 @@ def loadFonts(filename):
 
     for font in Font.loadFromFile(filename):
         get_manager().addFont(font)
+

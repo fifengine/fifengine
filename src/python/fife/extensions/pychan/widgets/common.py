@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
 
-from builtins import str
 
 # These used to be defined in here, duplicating the definitions in .layout
 # Retain for backwards compatibility of any code importing them from .common

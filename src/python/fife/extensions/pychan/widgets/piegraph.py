@@ -1,10 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
-
 import weakref
-from builtins import object, range
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr, MixedListAttr, PointAttr
@@ -12,7 +9,7 @@ from fife.extensions.pychan.attrs import BoolAttr, IntAttr, MixedListAttr, Point
 from .widget import Widget
 
 
-class PieSegment(object):
+class PieSegment:
     def __init__(self, pie, start, stop, color):
         self.pie = weakref.ref(pie)
         self.start = start

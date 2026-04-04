@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 import inspect
-from builtins import object, str
 from typing import Any
 
 in_fife = None
@@ -85,7 +84,7 @@ def _munge_engine_hook(engine):
         # use its image loader that supports creating/using atlases
         # return fifechan.GuiImage().load(filename)
 
-    class hook(object):
+    class hook:
         pass
 
     hook = hook()
@@ -117,7 +116,7 @@ class _multilistener(
         fifechan.KeyListener.__init__(self)
 
 
-class _point(object):
+class _point:
     def __init__(self, x=0, y=0):
         self.x = 0
         self.y = 0

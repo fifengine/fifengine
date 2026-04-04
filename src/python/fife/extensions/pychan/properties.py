@@ -1,14 +1,11 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
-
-from builtins import object
-from builtins import str as new_str
-
 from fife import fife, fifechan
 
 from .exceptions import RuntimeError
+
+new_str = str
 
 
 def get_manager():
@@ -27,7 +24,7 @@ the widgets, factored out to de-clutter the Widget.
 """
 
 
-class WrappedProperty(object):
+class WrappedProperty:
     def __init__(self, name):
         self.name = name
 
@@ -50,7 +47,7 @@ class ColorProperty(WrappedProperty):
     """
 
     def __init__(self, name):
-        super(ColorProperty, self).__init__(name)
+        super().__init__(name)
 
     def __set__(self, obj, color):
         if isinstance(color, tuple):
@@ -72,7 +69,7 @@ class ImageProperty(WrappedProperty):
     """
 
     def __init__(self, name):
-        super(ImageProperty, self).__init__(name)
+        super().__init__(name)
         self.prop_name = "_prop_" + self.name.lower()
 
     def __set__(self, obj, image):
@@ -102,7 +99,7 @@ class ImageProperty(WrappedProperty):
                 image_info["image"] = get_manager().loadImage(image_info["source"])
             self._getSetter(obj)(image_info["image"])
         else:
-            attribute_name = "%s.%s" % (obj.__class__.__name__, self.name)
+            attribute_name = "{}.{}".format(obj.__class__.__name__, self.name)
             error_message = "%s only accepts GuiImage and python strings, not '%s'"
             raise RuntimeError(error_message % (attribute_name, repr(image)))
 

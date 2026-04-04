@@ -210,10 +210,7 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
-from __future__ import absolute_import, print_function
-
 import sys
-from builtins import map
 from traceback import print_exc
 from xml.sax import handler
 
@@ -267,20 +264,14 @@ def traced(f):
     return traced_f
 
 
-if sys.version_info < (3,):
 
-    class __GuiLoaderBase(object, handler.ContentHandler):
-        pass
-
-else:
-
-    class __GuiLoaderBase(handler.ContentHandler):
-        pass
+class __GuiLoaderBase(handler.ContentHandler):
+    pass
 
 
 class _GuiLoader(__GuiLoaderBase):
     def __init__(self):
-        super(_GuiLoader, self).__init__()
+        super().__init__()
         self.root = None
         self.indent = ""
         self.stack = []
@@ -315,9 +306,9 @@ class _GuiLoader(__GuiLoaderBase):
                     return
         except GuiXMLError as e:
             raise GuiXMLError(
-                "Error parsing attr '%s'='%s' for '%s': '%s'" % (name, value, obj, e)
+                "Error parsing attr '{}'='{}' for '{}': '{}'".format(name, value, obj, e)
             )
-        raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name, repr(obj)))
+        raise GuiXMLError("Unknown GUI Attribute '{}' on '{}'".format(name, repr(obj)))
 
     def startElement(self, name, attrs):
         self._printTag(name, attrs)

@@ -39,13 +39,8 @@ Available Events
 
 """
 
-from __future__ import absolute_import, print_function
-
 import traceback
 import weakref
-from builtins import object, range, str
-
-from future.utils import itervalues
 
 from fife.extensions.fife_timer import Timer
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -100,7 +95,7 @@ But there was no event mapped. Did you accidently call a function instead of pas
 """
 
 
-class EventListenerBase(object):
+class EventListenerBase:
     """
     Redirector for event callbacks.
     Use *only* from L{EventMapper}.
@@ -112,7 +107,7 @@ class EventListenerBase(object):
     """
 
     def __init__(self):
-        super(EventListenerBase, self).__init__()
+        super().__init__()
         self.events = {}
         self.indent = 0
         self.debug = get_manager().debug
@@ -165,7 +160,7 @@ class EventListenerBase(object):
             if name in self.events:
                 if self.debug:
                     print("-" * self.indent, name)
-                for f in itervalues(self.events[name]):
+                for f in self.events[name].values():
                     if not self._redirect:
                         f(event)
                         continue
@@ -205,7 +200,7 @@ class EventListenerBase(object):
 
 class _ActionEventListener(EventListenerBase, fifechan.ActionListener):
     def __init__(self):
-        super(_ActionEventListener, self).__init__()
+        super().__init__()
 
     def doAttach(self, real_widget):
         real_widget.addActionListener(self)
@@ -219,7 +214,7 @@ class _ActionEventListener(EventListenerBase, fifechan.ActionListener):
 
 class _MouseEventListener(EventListenerBase, fifechan.MouseListener):
     def __init__(self):
-        super(_MouseEventListener, self).__init__()
+        super().__init__()
 
     def doAttach(self, real_widget):
         real_widget.addMouseListener(self)
@@ -263,7 +258,7 @@ class _MouseEventListener(EventListenerBase, fifechan.MouseListener):
 
 class _KeyEventListener(EventListenerBase, fifechan.KeyListener):
     def __init__(self):
-        super(_KeyEventListener, self).__init__()
+        super().__init__()
 
     def doAttach(self, real_widget):
         real_widget.addKeyListener(self)
@@ -280,7 +275,7 @@ class _KeyEventListener(EventListenerBase, fifechan.KeyListener):
 
 class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
     def __init__(self):
-        super(_WidgetEventListener, self).__init__()
+        super().__init__()
 
     def doAttach(self, real_widget):
         real_widget.addWidgetListener(self)
@@ -310,7 +305,7 @@ class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
         self._redirectEvent("ancestorShown", e)
 
 
-class EventMapper(object):
+class EventMapper:
     """
     Handles events and callbacks for L{widgets.Widget}
     and derived classes.
@@ -333,7 +328,7 @@ class EventMapper(object):
     """
 
     def __init__(self, widget):
-        super(EventMapper, self).__init__()
+        super().__init__()
         self.widget_ref = weakref.ref(widget)
         self.callbacks = {}
         self.listener = {
@@ -369,14 +364,14 @@ class EventMapper(object):
         self.addEvent(event_name, callback, group_name)
 
     def isCaptured(self, event_name, group_name="default"):
-        return ("%s/%s" % (event_name, group_name)) in self.getCapturedEvents()
+        return ("{}/{}".format(event_name, group_name)) in self.getCapturedEvents()
 
     def getCapturedEvents(self):
         events = []
         for event_type, listener in list(self.listener.items()):
             for event_name, group in list(listener.events.items()):
                 for group_name in list(group.keys()):
-                    events.append("%s/%s" % (event_name, group_name))
+                    events.append("{}/{}".format(event_name, group_name))
         return events
 
     def getListener(self, event_name):

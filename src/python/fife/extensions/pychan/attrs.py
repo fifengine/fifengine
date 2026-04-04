@@ -21,14 +21,10 @@ accepted attributes in classes and is used by pychan internally.
 
 """
 
-from __future__ import absolute_import
-
-from builtins import map, object, str
-
 from .exceptions import ParserError
 
 
-class Attr(object):
+class Attr:
     """
     A simple text attribute.
     """
