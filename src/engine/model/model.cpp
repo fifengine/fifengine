@@ -57,8 +57,9 @@ namespace FIFE
         m_timeprovider(nullptr),
         m_renderbackend(renderbackend),
         m_renderers(renderers),
-        m_mapObserver(new ModelMapObserver(this))
+        m_mapObserver(nullptr)
     {
+        m_mapObserver = new ModelMapObserver(this);
     }
 
     Model::~Model()

@@ -48,8 +48,9 @@ namespace FIFE
         m_instance(instance),
         m_audio(nullptr),
         m_emitter(SoundManager::instance()->createEmitter()),
-        m_listener(new SoundChangeListener(this))
+        m_listener(nullptr)
     {
+        m_listener = new SoundChangeListener(this);
         m_instance->addChangeListener(m_listener);
 
         // inital data

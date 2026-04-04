@@ -45,8 +45,9 @@ namespace FIFE
         m_renderBackend(renderBackend),
         m_renderers(renderers),
         m_changed(false),
-        m_triggerController(new TriggerController(this))
+        m_triggerController(nullptr)
     {
+        m_triggerController = new TriggerController(this);
     }
 
     Map::~Map()

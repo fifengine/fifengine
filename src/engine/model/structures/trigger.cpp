@@ -113,8 +113,9 @@ namespace FIFE
     };
 
     Trigger::Trigger() :
-        m_triggered(false), m_enabledAll(false), m_attached(nullptr), m_changeListener(new TriggerChangeListener(this))
+        m_triggered(false), m_enabledAll(false), m_attached(nullptr), m_changeListener(nullptr)
     {
+        m_changeListener = new TriggerChangeListener(this);
     }
 
     Trigger::Trigger(std::string name) :
@@ -122,8 +123,9 @@ namespace FIFE
         m_triggered(false),
         m_enabledAll(false),
         m_attached(nullptr),
-        m_changeListener(new TriggerChangeListener(this))
+        m_changeListener(nullptr)
     {
+        m_changeListener = new TriggerChangeListener(this);
     }
 
     Trigger::~Trigger()

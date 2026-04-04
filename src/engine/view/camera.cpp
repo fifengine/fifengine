@@ -109,8 +109,9 @@ namespace FIFE
         m_img_fill(false),
         m_ani_fill(false),
         m_start_time(0),
-        m_map_observer(new MapObserver(this))
+        m_map_observer(nullptr)
     {
+        m_map_observer = new MapObserver(this);
         init();
     }
 
