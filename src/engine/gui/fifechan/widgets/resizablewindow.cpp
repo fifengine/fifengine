@@ -155,6 +155,8 @@ namespace fcn
         case FIFE::CURSOR_ANIMATION:
             m_cursor->set(m_saved.cursorAnimation);
             break;
+        case FIFE::CURSOR_NONE:
+            return;
         default:
             return;
         }
@@ -183,6 +185,9 @@ namespace fcn
             ;
             m_saved.cursorImage.reset();
             m_saved.cursorAnimation = m_cursor->getAnimation();
+            break;
+        case FIFE::CURSOR_NONE:
+            m_saved.cursorType = FIFE::CURSOR_NONE;
             break;
         default:
             m_saved.cursorType = FIFE::CURSOR_NONE;
@@ -391,6 +396,8 @@ namespace fcn
                     break;
                 case FIFE::CURSOR_ANIMATION:
                     m_cursor->set(state.cursorAnimation);
+                    break;
+                case FIFE::CURSOR_NONE:
                     break;
                 default:
                     break;
