@@ -300,9 +300,7 @@ class PychanSettingEntry(SettingEntry):
         initialdata=None,
         requiresrestart=False,
     ):
-        super().__init__(
-            module, name, applyfunction, initialdata, requiresrestart
-        )
+        super().__init__(module, name, applyfunction, initialdata, requiresrestart)
 
         self._settingwidgetname = widgetname
 

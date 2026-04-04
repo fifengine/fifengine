@@ -3,7 +3,6 @@
 
 """Savers plugin manager"""
 
-
 import os.path
 
 from fife.extensions.serializers.xmlmapsaver import XMLMapSaver

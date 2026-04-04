@@ -13,6 +13,7 @@ EMPTY_XML_FILE = """\
 </Settings>
 """
 
+
 class SimpleSerializer:
     """
     Use this as a base class for custom setting loaders/savers to use with the
@@ -69,11 +70,13 @@ class SimpleXMLSerializer(SimpleSerializer):
             self._file = filename
 
         if not self._file:
-            raise SerializerError("Cannot load file or create file. No filename specified!")
+            raise SerializerError(
+                "Cannot load file or create file. No filename specified!"
+            )
 
         if not os.path.exists(self._file):
             # In Python 3, ET.parse works well with BytesIO for encoded XML strings
-            self._tree = ET.parse(BytesIO(EMPTY_XML_FILE.encode('utf-8')))
+            self._tree = ET.parse(BytesIO(EMPTY_XML_FILE.encode("utf-8")))
             self._tree.write(self._file, encoding="UTF-8", xml_declaration=True)
         else:
             self._tree = ET.parse(self._file)
@@ -115,7 +118,9 @@ class SimpleXMLSerializer(SimpleSerializer):
             self.load()
 
         if not isinstance(name, str):
-            raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+            raise AttributeError(
+                "SimpleXMLSerializer.get(): Invalid type for name argument."
+            )
 
         moduleTree = self._getModuleTree(module)
         element = None
@@ -151,7 +156,9 @@ class SimpleXMLSerializer(SimpleSerializer):
             self.load()
 
         if not isinstance(name, str):
-            raise AttributeError("SimpleXMLSerializer.set(): Invalid type for name argument.")
+            raise AttributeError(
+                "SimpleXMLSerializer.set(): Invalid type for name argument."
+            )
 
         moduleTree = self._getModuleTree(module)
 
@@ -191,10 +198,12 @@ class SimpleXMLSerializer(SimpleSerializer):
             self.load()
 
         if not isinstance(name, str):
-            raise AttributeError("SimpleXMLSerializer.remove(): Invalid type for name argument.")
+            raise AttributeError(
+                "SimpleXMLSerializer.remove(): Invalid type for name argument."
+            )
 
         moduleTree = self._getModuleTree(module)
-        for e in list(moduleTree): # Use list to allow removal while iterating
+        for e in list(moduleTree):  # Use list to allow removal while iterating
             if e.tag == "Setting" and e.get("name", "") == name:
                 moduleTree.remove(e)
 
@@ -239,17 +248,23 @@ class SimpleXMLSerializer(SimpleSerializer):
     def _validateTree(self):
         for c in self._root_element:
             if c.tag != "Module":
-                raise InvalidFormat(f"Invalid tag in {self._file}. Expected Module, got: {c.tag}")
+                raise InvalidFormat(
+                    f"Invalid tag in {self._file}. Expected Module, got: {c.tag}"
+                )
             if not c.get("name"):
                 raise InvalidFormat(f"Invalid tag in {self._file}. Module name is empty.")
 
             for e in c:
                 if e.tag != "Setting":
-                    raise InvalidFormat(f"Invalid tag in {self._file} in module {c.get('name')}. Expected Setting, got: {e.tag}")
+                    raise InvalidFormat(
+                        f"Invalid tag in {self._file} in module {c.get('name')}. Expected Setting, got: {e.tag}"
+                    )
 
     def _getModuleTree(self, module):
         if not isinstance(module, str):
-            raise AttributeError("Settings:_getModuleTree: Invalid type for module argument.")
+            raise AttributeError(
+                "Settings:_getModuleTree: Invalid type for module argument."
+            )
 
         for c in self._root_element:
             if c.tag == "Module" and c.get("name", "") == module:

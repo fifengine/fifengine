@@ -20,7 +20,6 @@ conveniences:
     - fife.Rect
 """
 
-
 import re
 
 from fife import fife, fifechan

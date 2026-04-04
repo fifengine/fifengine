@@ -221,7 +221,9 @@ class Scene(Serializer):
         Query the main camera for instances on the specified layer.
         """
         screen_point = fife.Point3D(int(clickpoint.x), int(clickpoint.y), 0)
-        return self.cameras[self._maincameraname].getMatchingInstances(screen_point, layer)
+        return self.cameras[self._maincameraname].getMatchingInstances(
+            screen_point, layer
+        )
 
     def getLocationAt(self, clickpoint):
         """

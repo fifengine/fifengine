@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 
-
 from .exceptions import InitializationError
 from .fontfileparser import FontFileParser
 
@@ -10,6 +9,7 @@ from .fontfileparser import FontFileParser
 class Font:
     def __init__(self, name, get):
         from .internal import get_manager
+
         self.font = None
         self.name = name
         self.typename = get("type")
@@ -75,4 +75,3 @@ def loadFonts(filename):
 
     for font in Font.loadFromFile(filename):
         get_manager().addFont(font)
-

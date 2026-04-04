@@ -3,7 +3,6 @@
 
 """main xml parser class for xml map loading"""
 
-
 import time
 
 from fife import fife

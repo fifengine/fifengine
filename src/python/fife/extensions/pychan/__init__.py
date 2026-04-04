@@ -264,7 +264,6 @@ def traced(f):
     return traced_f
 
 
-
 class __GuiLoaderBase(handler.ContentHandler):
     pass
 

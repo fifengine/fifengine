@@ -153,7 +153,7 @@ class BaseGameObject(Serializer):
 
     def serialize(self):
         lvars = {}
-        (x, y) = self.position
+        x, y = self.position
         lvars["posx"] = x
         lvars["posy"] = y
         lvars["type"] = self._typename

@@ -7,8 +7,6 @@ The basic application and main loop.
 See the L{ApplicationBase} documentation.
 """
 
-
-
 from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.fife_settings import Setting
@@ -69,9 +67,7 @@ class ApplicationBase:
 		we are giving users a valid screen resolution option that is supported
 		"""
         screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes()
-        resolutions = list(
-            {(mode.getWidth(), mode.getHeight()) for mode in screen_modes}
-        )
+        resolutions = list({(mode.getWidth(), mode.getHeight()) for mode in screen_modes})
 
         resolutions = [
             "{}x{}".format(item[0], item[1]) for item in sorted(resolutions)[1:]

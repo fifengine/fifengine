@@ -14,7 +14,6 @@ import sys
 from builtins import input
 from glob import glob
 
-
 DEFAULT_MODULE_TIMEOUT = 120
 DEFAULT_ANIMATION_MODULE_TIMEOUT = 90
 
@@ -289,7 +288,9 @@ def prepare_python_bindings(build_dir):
                     pass
 
                 # copy DLLs from dependencies install bin (vcpkg/deps)
-                deps_bin = os.path.join(project_root, "out", "fife-dependencies", "install", "bin")
+                deps_bin = os.path.join(
+                    project_root, "out", "fife-dependencies", "install", "bin"
+                )
                 try:
                     if os.path.isdir(deps_bin):
                         for fname in os.listdir(deps_bin):
@@ -311,7 +312,9 @@ def prepare_python_bindings(build_dir):
                 import importlib.util
 
                 pkg_name = os.path.basename(build_pkg_dir)
-                submod_name = pkg_name + "." + os.path.splitext(os.path.basename(dst_ext))[0]
+                submod_name = (
+                    pkg_name + "." + os.path.splitext(os.path.basename(dst_ext))[0]
+                )
                 if submod_name not in sys.modules:
                     spec = importlib.util.spec_from_file_location(submod_name, dst_ext)
                     if spec and spec.loader:
@@ -340,8 +343,18 @@ def prepare_python_bindings(build_dir):
         project_root = os.path.dirname(os.path.abspath(__file__))
         dep_bins = [
             os.path.join(project_root, "out", "fife-dependencies", "install", "bin"),
-            os.path.join(project_root, "out", "build", "vcpkg_installed", "x64-windows", "bin"),
-            os.path.join(project_root, "out", "build", "vcpkg_installed", "x64-windows", "debug", "bin"),
+            os.path.join(
+                project_root, "out", "build", "vcpkg_installed", "x64-windows", "bin"
+            ),
+            os.path.join(
+                project_root,
+                "out",
+                "build",
+                "vcpkg_installed",
+                "x64-windows",
+                "debug",
+                "bin",
+            ),
             os.path.join(project_root, "vcpkg_installed", "x64-windows", "bin"),
             "f:\\tools\\vcpkg\\installed\\x64-windows\\bin",
             "f:\\tools\\vcpkg\\installed\\x64-windows\\debug\\bin",
@@ -393,7 +406,9 @@ def _parse_timeout(value, fallback, key_name):
         return fallback
 
 
-def _build_test_subprocess_env(build_dir, extra_pythonpath, extra_library_path, headless=False):
+def _build_test_subprocess_env(
+    build_dir, extra_pythonpath, extra_library_path, headless=False
+):
     env = os.environ.copy()
     pythonpath = env.get("PYTHONPATH", "")
     python_parts = []
@@ -414,7 +429,9 @@ def _build_test_subprocess_env(build_dir, extra_pythonpath, extra_library_path, 
     return env
 
 
-def run_test_modules(modules, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False):
+def run_test_modules(
+    modules, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
+):
     env = _build_test_subprocess_env(
         build_dir,
         extra_pythonpath=extra_pythonpath,
@@ -476,7 +493,9 @@ def run_test_modules(modules, build_dir, extra_pythonpath=None, extra_library_pa
     return errors, failures
 
 
-def run_all(tests, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False):
+def run_all(
+    tests, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
+):
     def print_errors(txt, errs):
         if errs:
             print(txt + ":")
@@ -562,7 +581,9 @@ def _append_test_group(tests, index, header, test_names, runner):
     return index + 1
 
 
-def _build_test_menu(core_tests, swig_tests, extension_tests, build_dir, headless_mode, extras):
+def _build_test_menu(
+    core_tests, swig_tests, extension_tests, build_dir, headless_mode, extras
+):
     index = 0
     tests = {}
     module_runner = _bind_runner(run_test_modules, build_dir, headless_mode, extras)
@@ -570,7 +591,9 @@ def _build_test_menu(core_tests, swig_tests, extension_tests, build_dir, headles
 
     index = _append_test_group(tests, index, "Core tests", core_tests, run_core_tests)
     index = _append_test_group(tests, index, "SWIG tests", swig_tests, module_runner)
-    index = _append_test_group(tests, index, "Extension tests", extension_tests, module_runner)
+    index = _append_test_group(
+        tests, index, "Extension tests", extension_tests, module_runner
+    )
 
     alltests = {"core": core_tests, "swig": swig_tests, "ext": extension_tests}
     tests[index] = ("Other", "Run all tests", alltests, all_runner)

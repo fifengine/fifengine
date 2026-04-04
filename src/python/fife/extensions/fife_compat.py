@@ -17,7 +17,6 @@ run code that wasn't adapted to API changes in FIFE.
 
 """
 
-
 from fife import fife
 
 # Utility functions

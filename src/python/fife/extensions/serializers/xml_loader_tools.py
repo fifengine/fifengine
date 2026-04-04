@@ -3,7 +3,6 @@
 
 """utilities for xml maploading process"""
 
-
 import math
 import os
 

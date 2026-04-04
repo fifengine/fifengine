@@ -3,7 +3,6 @@
 
 """Loaders plugin manager"""
 
-
 import os.path
 
 from fife.extensions.serializers.xmlmap import XMLMapLoader

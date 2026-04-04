@@ -231,7 +231,9 @@ class Container(Widget):
     def removeChild(self, widget):
         if widget not in self.children:
             raise RuntimeError(
-                "{} does not have {} as direct child widget.".format(str(self), str(widget))
+                "{} does not have {} as direct child widget.".format(
+                    str(self), str(widget)
+                )
             )
 
         if widget in self.children:

@@ -7,7 +7,6 @@ The basic application and main loop.
 See the L{ApplicationBase} documentation.
 """
 
-
 import PyCEGUI
 
 from fife import fife

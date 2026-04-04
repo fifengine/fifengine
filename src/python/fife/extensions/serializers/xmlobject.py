@@ -3,8 +3,6 @@
 
 """submodule for xml map parsing"""
 
-
-
 from fife import fife
 from fife.extensions.serializers import (
     ET,

@@ -8,7 +8,6 @@ from fife.extensions.pychan import loadXML
 
 from .internal import screen_height, screen_width
 
-
 OK, YES, NO, CANCEL = True, True, False, None
 
 
