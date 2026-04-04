@@ -85,7 +85,7 @@ FIFE uses CMake for building. The build process requires several dependencies th
 #### Build Steps
 1. Configure the build using CMake presets:
    ```bash
-   cmake --preset clang20-x64-linux-rel -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
+   cmake --preset clang20-x64-linux-rel -DENABLE_FIFEGUI=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_LIBRARY=ON
    ```
    This creates the build directory `out/build/clang20-x64-linux-rel` and configures for:
    - Release build with Clang 20
@@ -106,8 +106,8 @@ FIFE uses CMake for building. The build process requires several dependencies th
 The built library `libfife.so` will be located in `out/build/clang20-x64-linux-rel/`.
 
 #### Alternative Build Options
-- To build with fifechan GUI support: `-Dfifechan=ON`
-- To build Python bindings: `-Dbuild-python=ON`
+- To build with fifechan GUI support: `-DENABLE_FIFEGUI=ON`
+- To build Python bindings: `-DBUILD_PYTHON_BINDINGS=ON`
 - For debug build, use preset `clang20-x64-linux-dbg`
 - For different compilers, use appropriate presets (see `CMakePresets.json`)
 
@@ -123,25 +123,25 @@ Existing Targets:
 
 Target                | Description                     | CMake Options Required
 ---                   | ---                             | ---
-1. fife               | C++ library                     | -Dbuild-library=ON
+1. fife               | C++ library                     | -DBUILD_LIBRARY=ON
 2. fife.headers       | Custom target for headers       |
 3. fife.swig-wrappers | Custom target for SWIG wrappers |
-4. fife_swig          | Python extension for FIFE       | -Dbuild-python=ON (default)
-5. fifechan_swig      | Python extension for fifechan   | -Dbuild-python=ON -Dfifechan=ON (default)
-6. C++ tests:         | Various test_*                  | -Dbuild-library=ON -Dbuild-tests=ON
+4. fife_swig          | Python extension for FIFE       | -DBUILD_PYTHON_BINDINGS=ON
+5. fifechan_swig      | Python extension for fifechan   | -DBUILD_PYTHON_BINDINGS=ON -DENABLE_FIFEGUI=ON
+6. C++ tests:         | Various test_*                  | -DBUILD_LIBRARY=ON -DBUILD_TESTS=ON
 
 #### Build commands (example):
 
 ##### Build SWIG Python modules
 
 ```
-cmake -B build -S . -Dbuild-python=ON
+cmake -B build -S . -DBUILD_PYTHON_BINDINGS=ON
 cmake --build build --target fife_swig fifechan_swig
 ```
 ##### Build C++ library + tests
 
 ```
-cmake -B build -S . -Dbuild-library=ON -Dbuild-tests=ON
+cmake -B build -S . -DBUILD_LIBRARY=ON -DBUILD_TESTS=ON
 cmake --build build
 ```
 
@@ -167,7 +167,7 @@ Prerequisites:
 C++ tests use Catch2 and require the fife library target to exist.
 
 Prerequisites:
-1. Configure with `-Dbuild-library=ON -Dbuild-tests=ON`
+1. Configure with `-DBUILD_LIBRARY=ON -DBUILD_TESTS=ON`
 2. Build the targets
 
 Running tests:
