@@ -271,14 +271,6 @@
       }
     },
     {
-      "name": "clang21-x64-linux",
-      "hidden": true,
-      "inherits": [
-        "clang-x64-linux-base",
-        "compiler-clang21-linux"
-      ]
-    },
-    {
       "name": "compiler-clang22-linux",
       "hidden": true,
       "cacheVariables": {
@@ -292,6 +284,14 @@
       "inherits": [
         "clang-x64-linux-base",
         "compiler-clang22-linux"
+      ]
+    },
+    {
+      "name": "clang21-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang21-linux"
       ]
     },
     {
