@@ -33,7 +33,7 @@ class MapListener(fife.MapChangeListener):
             print(
                 "    ",
                 [
-                    "%s, %x" % (i.getObject().getId(), i.getChangeInfo())
+                    f"{i.getObject().getId()}, {i.getChangeInfo():x}"
                     for i in layer.getChangedInstances()
                 ],
             )
@@ -60,7 +60,7 @@ class World(EventListenerBase):
     """
 
     def __init__(self, engine):
-        super(World, self).__init__(engine, regMouse=True, regKeys=True)
+        super().__init__(engine, regMouse=True, regKeys=True)
         self.engine = engine
         self.eventmanager = engine.getEventManager()
         self.model = engine.getModel()
@@ -487,9 +487,9 @@ class World(EventListenerBase):
         inst = self.instancemenu.instance
         saytext = ["Engine told me that this instance has"]
         if inst.getId():
-            saytext.append(" name %s," % inst.getId())
-        saytext.append(" ID %s and" % inst.getFifeId())
-        saytext.append(" object name %s" % inst.getObject().getId())
+            saytext.append(f" name {inst.getId()},")
+        saytext.append(f" ID {inst.getFifeId()} and")
+        saytext.append(f" object name {inst.getObject().getId()}")
         self.hero.agent.say("\n".join(saytext), 3500)
 
     def pump(self):

@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import FloatAttr, IntAttr
@@ -90,7 +89,7 @@ class Slider(Widget):
         self.step_length = self.DEFAULT_STEP_LENGTH
         self.marker_length = self.DEFAULT_MARKER_LENGTH
 
-        super(Slider, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

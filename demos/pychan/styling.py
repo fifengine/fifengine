@@ -61,7 +61,7 @@ STYLES = {
 
 class StylingExample(PyChanExample):
     def __init__(self):
-        super(StylingExample, self).__init__("gui/styling.xml")
+        super().__init__("gui/styling.xml")
 
         self.styles = ["default"] + list(STYLES.keys())
         for name, style in list(STYLES.items()):
@@ -89,7 +89,7 @@ class StylingExample(PyChanExample):
         self.styledCredits.show()
 
     def stop(self):
-        super(StylingExample, self).stop()
+        super().stop()
         if self.styledCredits:
             self.styledCredits.hide()
             self.styledCredits = None

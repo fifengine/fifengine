@@ -48,7 +48,7 @@ class KeyFilter(fife.IKeyFilter):
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
     def __init__(self, engine, world):
-        super(ApplicationListener, self).__init__(
+        super().__init__(
             engine,
             regKeys=True,
             regCmd=True,
@@ -101,7 +101,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
             self.quit = True
             result = "quitting"
         elif command.lower() in ("help", "help()"):
-            get_manager().getConsole().println(open("misc/infotext.txt", "r").read())
+            get_manager().getConsole().println(open("misc/infotext.txt").read())
             result = "-- End of help --"
         else:
             result = self.world.onConsoleCommand(command)
@@ -132,7 +132,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 
 class IslandDemo(PychanApplicationBase):
     def __init__(self):
-        super(IslandDemo, self).__init__(TDS)
+        super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
         self.world = world.World(self.engine)
         self.listener = ApplicationListener(self.engine, self.world)

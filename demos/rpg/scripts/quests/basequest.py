@@ -47,7 +47,7 @@ class Quest:
 
 class ReturnItemQuest(Quest):
     def __init__(self, ownerid, questid, questtitle, questtext):
-        super(ReturnItemQuest, self).__init__(ownerid, questid, questtitle, questtext)
+        super().__init__(ownerid, questid, questtitle, questtext)
 
         self._requireditems = []
         self._requiredgold = 0

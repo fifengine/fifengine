@@ -10,7 +10,7 @@ _STATE_NONE, _STATE_TALK = 0, 1
 
 class Beekeeper(Agent):
     def __init__(self, settings, model, agentName, layer, uniqInMap=True):
-        super(Beekeeper, self).__init__(settings, model, agentName, layer, uniqInMap)
+        super().__init__(settings, model, agentName, layer, uniqInMap)
         self.state = _STATE_NONE
 
     def onInstanceActionFinished(self, instance, action):

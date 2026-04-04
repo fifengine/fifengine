@@ -36,7 +36,7 @@ class World(EventListenerBase):
     """
 
     def __init__(self, app, engine, setting):
-        super(World, self).__init__(engine, regKeys=True)
+        super().__init__(engine, regKeys=True)
 
         self._applictaion = app
         self._engine = engine
@@ -348,15 +348,15 @@ class World(EventListenerBase):
                 fps = old_div(1, (old_div(avgframe, 1000)))
             else:
                 fps = 0
-            fpstxt = "%3.2f" % fps
+            fpstxt = f"{fps:3.2f}"
             self._hudwindow.setFPSText(str(fpstxt))
 
             player = self._scene.player
             exactcoords = player.location.getExactLayerCoordinates()
-            pos = "%1.2f" % exactcoords.x + ", %1.2f" % exactcoords.y
+            pos = f"{exactcoords.x:1.2f}, {exactcoords.y:1.2f}"
             self._hudwindow.setPositionText(str(pos))
 
-            vel = "%1.2f" % player.velocity.x + ", %1.2f" % player.velocity.y
+            vel = f"{player.velocity.x:1.2f}, {player.velocity.y:1.2f}"
             self._hudwindow.setVelocityText(str(vel))
 
             score = str(player.score)

@@ -274,7 +274,7 @@ class Widget:
 
         Prefix is used to create the name of the cloned widget.
         """
-        raise RuntimeError("No implementation of clone method for %s" % self.__class__)
+        raise RuntimeError(f"No implementation of clone method for {self.__class__}")
 
     def execute(self, bind, focus=None):
         """
@@ -299,7 +299,7 @@ class Widget:
         if not get_manager().can_execute:
             raise RuntimeError("Synchronous execution is not set up!")
         if self.__parent:
-            raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
+            raise RuntimeError(f"You can only 'execute' root widgets, not {str(self)}!")
 
         for name, returnValue in list(bind.items()):
 
@@ -647,7 +647,7 @@ class Widget:
         automatically.
         """
         raise RuntimeError(
-            "Trying to add a widget to %s, which doesn't allow this." % repr(self)
+            f"Trying to add a widget to {repr(self)}, which doesn't allow this."
         )
 
     def insertChild(self, widget, position):
@@ -657,7 +657,7 @@ class Widget:
         See L{addChild} and L{insertChildBefore}
         """
         raise RuntimeError(
-            "Trying to insert a widget to %s, which doesn't allow this." % repr(self)
+            f"Trying to insert a widget to {repr(self)}, which doesn't allow this."
         )
 
     def insertChildBefore(self, widget, before):
@@ -668,7 +668,7 @@ class Widget:
         See L{addChild} and L{insertChild}
         """
         raise RuntimeError(
-            "Trying to insert a widget to %s, which doesn't allow this." % repr(self)
+            f"Trying to insert a widget to {repr(self)}, which doesn't allow this."
         )
 
     def addChildren(self, *widgets):
@@ -696,8 +696,7 @@ class Widget:
         automatically.
         """
         raise RuntimeError(
-            "Trying to remove a widget from %s, which is not a container widget."
-            % repr(self)
+            f"Trying to remove a widget from {repr(self)}, which is not a container widget."
         )
 
     def removeChildren(self, *widgets):
@@ -764,7 +763,7 @@ class Widget:
                 for widget in widgets:
                     widget.capture(func, event_name=event_name, group_name=group_name)
             elif not ignoreMissing:
-                raise RuntimeError("No widget with the name: %s" % name)
+                raise RuntimeError(f"No widget with the name: {name}")
 
     def setInitialData(self, data):
         """
@@ -773,8 +772,7 @@ class Widget:
         """
         if not self.accepts_initial_data:
             raise RuntimeError(
-                "Trying to set data on a widget that does not accept initial data. Widget: %s Data: %s "
-                % (repr(self), repr(data))
+                f"Trying to set data on a widget that does not accept initial data. Widget: {repr(self)} Data: {repr(data)}"
             )
         self._realSetInitialData(data)
 
@@ -985,10 +983,10 @@ class Widget:
         pass
 
     def __str__(self):
-        return "%s(name='%s')" % (self.__class__.__name__, self.name)
+        return f"{self.__class__.__name__}(name='{self.name}')"
 
     def __repr__(self):
-        return "<%s(name='%s') at %x>" % (self.__class__.__name__, self.name, id(self))
+        return f"<{self.__class__.__name__}(name='{self.name}') at {id(self):x}>"
 
     def _setSize(self, size):
         if isinstance(size, fife.Point):
@@ -1249,9 +1247,7 @@ class Widget:
             raise RuntimeError("Widget names should be prefixed with a string")
 
         if prefix in self._usedPrefixes:
-            raise RuntimeError(
-                "Widget %s already cloned with prefix %s" % (self.name, prefix)
-            )
+            raise RuntimeError(f"Widget {self.name} already cloned with prefix {prefix}")
 
         if len(prefix) == 0:
             raise RuntimeError("New widget name cannot be created with an empty prefix")

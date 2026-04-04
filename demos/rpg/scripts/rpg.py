@@ -107,7 +107,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
             helptextfile = self._gamecontroller.settings.get(
                 "RPG", "HelpText", "misc/help.txt"
             )
-            get_manager().getConsole().println(open(helptextfile, "r").read())
+            get_manager().getConsole().println(open(helptextfile).read())
             result = "--OK--"
         elif cmd[0].lower() in ("eval"):
             try:
@@ -134,7 +134,7 @@ class RPGApplication(PychanApplicationBase):
     """
 
     def __init__(self, TDS):
-        super(RPGApplication, self).__init__(TDS)
+        super().__init__(TDS)
         self._settings = TDS
         self.engine.getVFS().addNewSource(os.getcwd())
 

@@ -4,7 +4,6 @@
 """proof-of-concept pychan demo app to test gui animations"""
 
 import random
-from builtins import range, str
 
 from fife.extensions import pychan
 from fife.extensions.fife_timer import Timer
@@ -25,7 +24,7 @@ class PocAnimations(PyChanExample):
     """
 
     def __init__(self):
-        super(PocAnimations, self).__init__("gui/poc_guianimation.xml")
+        super().__init__("gui/poc_guianimation.xml")
 
         self._move_timer = None
         self._resize_timer = None
@@ -70,7 +69,7 @@ class PocAnimations(PyChanExample):
         self.little_matrix = []
         for x in range(1, 4):
             for y in range(1, 4):
-                name = "color_%s_%s" % (x, y)
+                name = f"color_{x}_{y}"
                 widget = self.widget.findChild(name=name)
                 self.little_matrix.append(widget)
 

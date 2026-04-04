@@ -7,7 +7,7 @@ from pychan_demo import PyChanExample
 
 class DynamicExample(PyChanExample):
     def __init__(self):
-        super(DynamicExample, self).__init__("gui/dynamic.xml")
+        super().__init__("gui/dynamic.xml")
 
     def start(self):
         self.widget = pychan.loadXML(self.xmlFile)

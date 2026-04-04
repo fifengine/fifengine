@@ -148,7 +148,7 @@ class Manager:
             if hasattr(font, "font") and isinstance(getattr(font, "font"), fife.GuiFont):
                 return font.font
             raise InitializationError(
-                "Couldn't find the font '%s'. Please load the xml file." % str(name)
+                f"Couldn't find the font '{name}'. Please load the xml file."
             )
         else:
             return self.hook.get_font(name)
@@ -168,8 +168,7 @@ class Manager:
         """
         if not isinstance(font, fifechan.GuiFont):
             raise InitializationError(
-                "PyChan Manager expected a fifechan.GuiFont instance, not %s."
-                % repr(font)
+                f"PyChan Manager expected a fifechan.GuiFont instance, not {repr(font)}."
             )
         self.hook.release_font(font)
 
@@ -185,7 +184,7 @@ class Manager:
         """
         if not isinstance(font, fonts.Font):
             raise InitializationError(
-                "PyChan Manager expected a fonts.Font instance, not %s." % repr(font)
+                f"PyChan Manager expected a fonts.Font instance, not {repr(font)}."
             )
         self.fonts[font.name] = font
 
@@ -229,7 +228,7 @@ class Manager:
                 return class_
             if str(class_) not in widgets.WIDGETS:
                 raise InitializationError(
-                    "Can't resolve %s to a widget class." % repr(class_)
+                    f"Can't resolve {repr(class_)} to a widget class."
                 )
             return widgets.WIDGETS[str(class_)]
 

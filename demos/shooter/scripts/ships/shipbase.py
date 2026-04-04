@@ -68,7 +68,7 @@ class Ship(SpaceObject):
 
         """
 
-        super(Ship, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
 
         self._weapon = None
 
@@ -134,7 +134,7 @@ class Ship(SpaceObject):
             location = self.location.getExactLayerCoordinates()
             self._explodclip.setPosition(location)
             self._explodclip.play()
-            super(Ship, self).destroy()
+            super().destroy()
 
     def _getHitPoints(self):
         return self._hitpoints

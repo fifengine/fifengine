@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
-from builtins import str
-from builtins import range
 from fife import fife
 from fife.extensions import pychan
 
@@ -151,7 +148,7 @@ class OverlayTest(test.Test):
 		return "Use this as a template for more complicated tests."
 
 	def getHelp(self):
-		return open('data/help/OverlayTest.txt', 'r').read()
+		return open('data/help/OverlayTest.txt').read()
 
 	def pump(self):
 		time = self._timemanager.getTime()
@@ -196,7 +193,7 @@ class OverlayTest(test.Test):
 		overlay = fife.OverlayColors(img)
 		overlay.changeColor(fife.Color(255,255,255), fife.Color(0,0,255,128))
 		for n in (1, 5, 9):
-			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance = self._actorlayer.getInstance(f"toilett{n}")
 			instance.addStaticColorOverlay(0, overlay)
 
 		img = self._imagemanager.load("data/tilesets/toilett_multicolor_overlay.png")
@@ -205,14 +202,14 @@ class OverlayTest(test.Test):
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,80))
 		overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,80))
 		for n in (2, 6, 10):
-			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance = self._actorlayer.getInstance(f"toilett{n}")
 			instance.addStaticColorOverlay(0, overlay)
 
 		overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,200))
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,200))
 		overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,200))
 		for n in (3, 7, 11):
-			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance = self._actorlayer.getInstance(f"toilett{n}")
 			instance.addStaticColorOverlay(0, overlay)
 
 	def createColorOverlay(self):
@@ -344,7 +341,7 @@ class OverlayTest(test.Test):
 		self.addAnimationOverlay("walk", "shield_run_", 8, 30, 100)
 
 	def createColoringAndOutlines(self):
-		instances = [self._actorlayer.getInstance("toilett%s" % n) for n in range(4, 12)]
+		instances = [self._actorlayer.getInstance(f"toilett{n}") for n in range(4, 12)]
 		for count, i in enumerate(instances, start=1):
 			if count < 5:
 				self._instance_renderer.addOutlined(i, 173, 255, 47, 2)

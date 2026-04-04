@@ -23,7 +23,7 @@ from scripts.quests.questmanager import QuestManager
 from scripts.scene import Scene
 
 
-class KeyState(object):
+class KeyState:
     """
     Holds the current state of the keys on the keyboard (down or up).
     False = down, True = up.
@@ -224,7 +224,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
         self._gamecontroller.keystate.updateKey(keyval, False)
 
 
-class GameController(object):
+class GameController:
     """
     The main game class.
 

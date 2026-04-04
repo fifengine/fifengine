@@ -7,7 +7,7 @@ from pychan_demo import PyChanExample
 
 class ImageProgressBarExample(PyChanExample):
     def __init__(self):
-        super(ImageProgressBarExample, self).__init__("gui/imageprogressbar.xml")
+        super().__init__("gui/imageprogressbar.xml")
 
     def start(self):
         self.widget = pychan.loadXML(self.xmlFile)

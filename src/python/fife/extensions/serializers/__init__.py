@@ -45,7 +45,7 @@ class NotFound(SerializerError):
 
 
 def warn(self, msg):
-    print("Warning ({}): {}".format(self.filename, msg))
+    print(f"Warning ({self.filename}): {msg}")
 
 
 def reverse_root_subfile(masterfile, subfile):

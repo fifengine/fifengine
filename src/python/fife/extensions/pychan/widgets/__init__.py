@@ -7,8 +7,6 @@ Widget wrappers.
 Please look at the documentation of L{Widget} for details.
 """
 
-from __future__ import absolute_import
-
 from .adjustingcontainer import AdjustingContainer
 from .animationicon import AnimationIcon
 from .bargraph import BarGraph

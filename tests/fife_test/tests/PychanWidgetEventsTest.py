@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from builtins import str
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -76,15 +75,15 @@ class PychanWidgetEventsTest(test.Test):
             self._controlsPanel.findChild(name="controlBtn").text = str("Show Window", "UTF-8")
 
     def _widgetHiddenCallback(self, widget_name):
-        txt = str("Widget with name %s was hidden" % widget_name, "UTF-8")
+        txt = str(f"Widget with name {widget_name} was hidden", "UTF-8")
         self._printToOutput(txt)
 
     def _widgetShownCallback(self, widget_name):
-        txt = str("Widget with name %s was shown" % widget_name, "UTF-8")
+        txt = str(f"Widget with name {widget_name} was shown", "UTF-8")
         self._printToOutput(txt)
 
     def _widgetMovedCallback(self, widget_name):
-        txt = str("%s was moved" % widget_name, "UTF-8")
+        txt = str(f"{widget_name} was moved", "UTF-8")
         self._printToOutput(txt)
 
     def _printToOutput(self, txt):

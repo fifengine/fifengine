@@ -17,10 +17,10 @@ def cmp(a, b):
 
 class PlayerActionListener(ShipActionListener):
     def __init__(self, ship):
-        super(PlayerActionListener, self).__init__(ship)
+        super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
-        super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
+        super().onInstanceActionFinished(instance, action)
 
         if action.getId() == "explode":
             self._ship.respawn()
@@ -31,7 +31,7 @@ class PlayerActionListener(ShipActionListener):
 
 class Player(Ship):
     def __init__(self, scene, playerName):
-        super(Player, self).__init__(scene, playerName)
+        super().__init__(scene, playerName)
 
         self._type = SHTR_PLAYER
 
@@ -97,7 +97,7 @@ class Player(Ship):
 
     def applyHit(self, hp):
         if not self._invulnerable and not self._dead:
-            super(Player, self).applyHit(hp)
+            super().applyHit(hp)
             if not self._dead:
                 self.flash(1)
 
@@ -155,7 +155,7 @@ class Player(Ship):
         if self._dead and self._velocity.length() > 0:
             self.applyBrake(self._acceleration)
 
-        super(Player, self).update()
+        super().update()
 
         # set up the players camera bounds
         # @todo: grab screen resolution from somewhere

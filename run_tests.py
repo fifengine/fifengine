@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
 
 import optparse
 import os
@@ -11,7 +10,6 @@ import re
 import shutil
 import subprocess
 import sys
-from builtins import input
 from glob import glob
 
 DEFAULT_MODULE_TIMEOUT = 120
@@ -191,7 +189,7 @@ def resolve_test_progs(build_dir):
             ctest_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            universal_newlines=True,
+            text=True,
             check=False,
         )
     except OSError:
@@ -370,11 +368,11 @@ def prepare_python_bindings(build_dir):
 def run_core_tests(progs):
     build_dir = resolve_build_dir()
     if not os.path.isdir(build_dir):
-        return ["Build directory not found: %s" % build_dir], []
+        return [f"Build directory not found: {build_dir}"], []
 
     errors, failures = [], []
     for prog in progs:
-        print("\n===== Running %s =====" % prog)
+        print(f"\n===== Running {prog} =====")
         build_cmd = ["cmake", "--build", build_dir, "--target", prog]
         if subprocess.call(build_cmd):
             errors.append(prog)
@@ -385,7 +383,7 @@ def run_core_tests(progs):
             build_dir,
             "--output-on-failure",
             "-R",
-            "^%s$" % prog,
+            f"^{prog}$",
         ]
         if subprocess.call(cmd):
             errors.append(prog)
@@ -400,8 +398,7 @@ def _parse_timeout(value, fallback, key_name):
         return parsed
     except (TypeError, ValueError):
         print(
-            "Warning: invalid timeout for %s=%r. Using %d seconds."
-            % (key_name, value, fallback)
+            f"Warning: invalid timeout for {key_name}={value!r}. Using {fallback} seconds."
         )
         return fallback
 
@@ -470,14 +467,14 @@ def run_test_modules(
     failures = []
     for module in modules:
         module_timeout = resolve_module_timeout(module)
-        print("\n===== Running %s =====" % module)
+        print(f"\n===== Running {module} =====")
         cmd = [sys.executable, "-m", "unittest", module]
         try:
             proc = subprocess.run(
                 cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                universal_newlines=True,
+                text=True,
                 env=env,
                 timeout=module_timeout,
             )
@@ -487,7 +484,7 @@ def run_test_modules(
         except subprocess.TimeoutExpired as exc:
             timeout_output = (
                 exc.stdout or ""
-            ) + "\n[timeout] module %s exceeded %ss\n" % (module, module_timeout)
+            ) + f"\n[timeout] module {module} exceeded {module_timeout}s\n"
             print(timeout_output)
             errors.append(timeout_output)
     return errors, failures
@@ -612,13 +609,13 @@ def run(automatic, selected_cases, headless=None):
         install_extras = prepare_install_bindings(install_dir)
         if install_extras:
             extras = install_extras
-            print("Using installed FIFE python package from: %s" % install_dir)
+            print(f"Using installed FIFE python package from: {install_dir}")
         else:
             prepare_python_bindings(build_dir)
-            print("Using build-directory FIFE python package from: %s" % build_dir)
+            print(f"Using build-directory FIFE python package from: {build_dir}")
     else:
         prepare_python_bindings(build_dir)
-        print("Using build-directory FIFE python package from: %s" % build_dir)
+        print(f"Using build-directory FIFE python package from: {build_dir}")
 
     core_tests = resolve_test_progs(build_dir)
     swig_tests = resolve_test_modules(genpath("tests/swig_tests"))
@@ -642,7 +639,7 @@ def run(automatic, selected_cases, headless=None):
                 if header != prevheader:
                     print(header)
                     prevheader = header
-                print("  %d) %s" % (ind, name))
+                print(f"  {ind}) {name}")
             selection = input("-> : ")
 
             try:
@@ -651,7 +648,7 @@ def run(automatic, selected_cases, headless=None):
                     raise ValueError
                 break
             except ValueError:
-                print("Please enter number between 0-%d\n" % max(tests.keys()))
+                print(f"Please enter number between 0-{max(tests.keys())}\n")
                 continue
         header, name, params, fn = tests[selection]
         return _run_case_and_report(fn, params)
@@ -665,7 +662,7 @@ def run(automatic, selected_cases, headless=None):
                 header, name, params, fn = tests[caseid]
                 success = _run_case_and_report(fn, params) and success
             except ValueError:
-                print("No test case with value %s found" % case)
+                print(f"No test case with value {case} found")
                 success = False
         return success
     else:

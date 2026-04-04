@@ -11,7 +11,7 @@ from scripts.weapons import CannonSpread5
 
 class PowerUp(SpaceObject):
     def __init__(self, scene, powerupName, instance, findInstance=True):
-        super(PowerUp, self).__init__(scene, powerupName, findInstance)
+        super().__init__(scene, powerupName, findInstance)
 
         self.instance = instance
         self._type = SHTR_POWERUP
@@ -26,7 +26,7 @@ class PowerUp(SpaceObject):
 
 class CannonSpread5PU(PowerUp):
     def __init__(self, scene, powerupName, instance, findInstance=True):
-        super(CannonSpread5PU, self).__init__(scene, powerupName, instance, findInstance)
+        super().__init__(scene, powerupName, instance, findInstance)
 
         self._dir = 0
         self._time = 1500
@@ -58,12 +58,12 @@ class CannonSpread5PU(PowerUp):
 
         self._time += self._scene.timedelta
 
-        super(CannonSpread5PU, self).update()
+        super().update()
 
 
 class ExtraLifePU(PowerUp):
     def __init__(self, scene, powerupName, instance, findInstance=True):
-        super(ExtraLifePU, self).__init__(scene, powerupName, instance, findInstance)
+        super().__init__(scene, powerupName, instance, findInstance)
 
         self._pickupclip = self._scene.soundmanager.createEmitter("sounds/pickup.ogg")
         self._pickupclip.setRelativePositioning(True)

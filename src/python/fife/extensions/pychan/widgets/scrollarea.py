@@ -65,7 +65,7 @@ class ScrollArea(Widget):
 
         self.real_widget = fifechan.ScrollArea()
         self._content = None
-        super(ScrollArea, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -149,7 +149,7 @@ class ScrollArea(Widget):
     def removeChild(self, widget):
         if self._content != widget:
             raise RuntimeError(
-                "%s does not have %s as direct child widget." % (str(self), str(widget))
+                f"{str(self)} does not have {str(widget)} as direct child widget."
             )
         self.content = None
         widget.parent = None

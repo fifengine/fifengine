@@ -8,10 +8,10 @@ from scripts.actors.baseactor import Actor, ActorActionListener
 
 class PlayerActionListener(ActorActionListener):
     def __init__(self, gamecontroller, obj):
-        super(PlayerActionListener, self).__init__(gamecontroller, obj)
+        super().__init__(gamecontroller, obj)
 
     def onInstanceActionFinished(self, instance, action):
-        super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
+        super().onInstanceActionFinished(instance, action)
         if action.getId() == "walk":
             pass
 
@@ -21,7 +21,7 @@ class PlayerActionListener(ActorActionListener):
 
 class Player(Actor):
     def __init__(self, gamecontroller, layer, playermodelname):
-        super(Player, self).__init__(
+        super().__init__(
             gamecontroller, layer, "PLAYER", "player", playermodelname, "player", True
         )
 
@@ -31,7 +31,7 @@ class Player(Actor):
         self._quests = []
 
     def serialize(self):
-        lvars = super(Player, self).serialize()
+        lvars = super().serialize()
 
         activequests = ""
 
@@ -56,7 +56,7 @@ class Player(Actor):
         return lvars
 
     def deserialize(self, valuedict):
-        super(Player, self).deserialize(valuedict)
+        super().deserialize(valuedict)
 
         activequests = valuedict["activequests"].split(",")
 

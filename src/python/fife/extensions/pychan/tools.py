@@ -171,7 +171,7 @@ def this_is_deprecated(func, message=None):
         message = repr(func)
 
     def wrapped_func(*args, **kwargs):
-        print("PyChan: You are using the DEPRECATED functionality: %s" % message)
+        print(f"PyChan: You are using the DEPRECATED functionality: {message}")
         return func(*args, **kwargs)
 
     return wrapped_func

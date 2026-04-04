@@ -14,7 +14,7 @@ LMB = 0x100
 RMB = 0x400
 DBLCLICK_TRESHOLD = 0.3 # secs
 
-class Shape(object):
+class Shape:
 	def __init__(self, center_pt, sidecount):
 		assert (sidecount in (4, 6))
 		self.rotation = 0
@@ -107,7 +107,7 @@ class Shape(object):
 	def get_rotation(self):
 		return math.degrees(self.rotation)
 
-class Gui(object):
+class Gui:
 	W = 400
 	H = 400
 	def __init__(self):
@@ -161,10 +161,34 @@ class Gui(object):
 		self.canvas.create_polygon(fill=fillcolor, outline="black", tag="shape", *self.flatten_pts(shapepts))
 
 	def update_texts(self, size, transform):
-		self.canvas.create_text(10, 20, text="Bounding box size x:%d, y:%d" % (size[0], size[1]), tag="size", anchor=TK.NW)
-		self.canvas.create_text(10, 40, text="Transform x:%d, y:%d" % (transform[0], transform[1]), tag="transform", anchor=TK.NW)
-		self.canvas.create_text(10, 60, text="Tilting: %d" % self.shape.get_tilting(), tag="tilting", anchor=TK.NW)
-		self.canvas.create_text(10, 80, text="Rotation: %d" % self.shape.get_rotation(), tag="rotation", anchor=TK.NW)
+		self.canvas.create_text(
+			10,
+			20,
+			text=f"Bounding box size x:{size[0]}, y:{size[1]}",
+			tag="size",
+			anchor=TK.NW,
+		)
+		self.canvas.create_text(
+			10,
+			40,
+			text=f"Transform x:{transform[0]}, y:{transform[1]}",
+			tag="transform",
+			anchor=TK.NW,
+		)
+		self.canvas.create_text(
+			10,
+			60,
+			text=f"Tilting: {self.shape.get_tilting()}",
+			tag="tilting",
+			anchor=TK.NW,
+		)
+		self.canvas.create_text(
+			10,
+			80,
+			text=f"Rotation: {self.shape.get_rotation()}",
+			tag="rotation",
+			anchor=TK.NW,
+		)
 		self.canvas.create_text(10, 330, text="Doubleclick to change shape", anchor=TK.NW)
 		self.canvas.create_text(10, 350, text="Right button + drag = zoom", anchor=TK.NW)
 		self.canvas.create_text(10, 370, text="Left button + drag = tilt/rotate", anchor=TK.NW)

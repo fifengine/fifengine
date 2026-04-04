@@ -9,7 +9,7 @@ from pychan_demo import PyChanExample
 
 class DynamicGraphExample(PyChanExample):
     def __init__(self):
-        super(DynamicGraphExample, self).__init__("gui/dynamicgraph.xml")
+        super().__init__("gui/dynamicgraph.xml")
 
     def start(self):
         self.moved_point = None

@@ -2,11 +2,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
-from builtins import object
 import os
 
-class TestManager(object):
+class TestManager:
 	def __init__(self, engine, application, settings):
 		self._engine = engine
 		self._application = application
@@ -82,7 +80,7 @@ class TestManager(object):
 	testnames = property(_getTestNameList)
 	runningtest = property(_getRunningTest)
 
-class Test(object):
+class Test:
 	""" The base calss for all tests.  All tests must override these functions! """
 
 	def create(self, engine, application):

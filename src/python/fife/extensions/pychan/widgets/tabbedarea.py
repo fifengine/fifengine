@@ -59,7 +59,7 @@ class Tab(Container):
         # name of the widget that is associated with this tab
         self.content_name = None
 
-        super(Tab, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -195,7 +195,7 @@ class TabbedArea(Container):
         if _real_widget is None:
             _real_widget = fifechan.TabbedArea()
 
-        super(TabbedArea, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,
@@ -302,7 +302,7 @@ class TabbedArea(Container):
     def removeChild(self, widget):
         if widget not in self.children:
             raise RuntimeError(
-                "%s does not have %s as direct tab widget." % (str(self), str(widget))
+                f"{str(self)} does not have {str(widget)} as direct tab widget."
             )
 
         # remove all from the manager
@@ -335,7 +335,7 @@ class TabbedArea(Container):
             return widget
         else:
             raise RuntimeError(
-                "%s does not have %s in the tab definitions." % (str(self), str(name))
+                f"{str(self)} does not have {str(name)} in the tab definitions."
             )
 
     def getNumberOfTabs(self):

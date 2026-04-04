@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -111,7 +110,7 @@ class TriggerTest(test.Test):
 
 		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
 		if self._font is None:
-			raise InitializationError("Could not load font %s" % name)
+			raise InitializationError(f"Could not load font {name}")
 
 		self.loadMap("data/maps/grassland.xml")
 
@@ -140,7 +139,7 @@ class TriggerTest(test.Test):
 		return "Test for TriggerSystem."
 
 	def getHelp(self):
-		return open( 'data/help/TriggerTest.txt', 'r' ).read()
+		return open( 'data/help/TriggerTest.txt' ).read()
 
 	def pump(self):
 		"""

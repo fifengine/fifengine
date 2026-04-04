@@ -223,17 +223,14 @@ class Container(Widget):
     def insertChildBefore(self, widget, before):
         if before not in self.children:
             raise RuntimeError(
-                "Couldn't find widget %s as child of %s - in insertChildBefore"
-                % (str(widget), str(before))
+                f"Couldn't find widget {str(widget)} as child of {str(before)} - in insertChildBefore"
             )
         self.insertChild(widget, self.children.index(before))
 
     def removeChild(self, widget):
         if widget not in self.children:
             raise RuntimeError(
-                "{} does not have {} as direct child widget.".format(
-                    str(self), str(widget)
-                )
+                f"{str(self)} does not have {str(widget)} as direct child widget."
             )
 
         if widget in self.children:

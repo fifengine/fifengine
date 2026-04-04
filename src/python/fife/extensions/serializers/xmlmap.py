@@ -62,8 +62,8 @@ class XMLMapLoader:
         self.msg = {}
         self.msg["map"] = "created map"
         self.msg["imports"] = "loaded imports"
-        self.msg["layer"] = "loaded layer: %s"
-        self.msg["camera"] = "loaded camera: %s"
+        self.msg["layer"] = "loaded layer: {}"
+        self.msg["camera"] = "loaded camera: {}"
 
         if "sound" not in extensions:
             extensions["sound"] = False
@@ -148,7 +148,7 @@ class XMLMapLoader:
         self.map.importDirs = []
 
         if self.callback is not None:
-            self.callback(self.msg["map"], float(0.25))
+            self.callback(self.msg["map"], 0.25)
 
         self.parse_imports(mapelt, self.map)
         self.parse_layers(mapelt, self.map)
@@ -262,7 +262,7 @@ class XMLMapLoader:
 
             cellgrid = self.model.getCellGrid(grid_type)
             if not cellgrid:
-                self._err("<layer> declared with invalid cellgrid type. (%s)" % grid_type)
+                self._err(f"<layer> declared with invalid cellgrid type. ({grid_type})")
 
             cellgrid.setRotation(float(rotation))
             cellgrid.setXScale(float(x_scale))
@@ -303,7 +303,7 @@ class XMLMapLoader:
             if self.callback is not None:
                 i += 1
                 self.callback(
-                    self.msg["layer"] % str(_id),
+                    self.msg["layer"].format(str(_id)),
                     float(i / float(len(tmplist)) * 0.25 + 0.5),
                 )
 
@@ -341,7 +341,7 @@ class XMLMapLoader:
         print("Processing lights ... ")
         lightelt = layerelt.find("lights")
         if not lightelt:
-            print("\tno lights found on layer %s" % layer.getId())
+            print(f"\tno lights found on layer {layer.getId()}")
             return
 
         lights = []
@@ -439,7 +439,7 @@ class XMLMapLoader:
 
                     color = light.get("color")
                     if not color:
-                        color = "%d,%d,%d" % (255, 255, 255)
+                        color = f"{255},{255},{255}"
                     node["color"] = [int(c) for c in color.split(",")]
 
             else:
@@ -457,7 +457,7 @@ class XMLMapLoader:
             self.light_data[cam_id][group].append(node)
 
         for camera, groups in self.light_data.items():
-            print("Lights for camera %s" % camera)
+            print(f"Lights for camera {camera}")
             for group, lights in groups.items():
                 print(group, lights)
 
@@ -504,9 +504,7 @@ class XMLMapLoader:
                 if objectID:
                     break
             if not objectID:
-                self._err(
-                    "<instance> %s does not specify an object attribute." % str(objectID)
-                )
+                self._err(f"<instance> {objectID} does not specify an object attribute.")
             objectID = str(objectID)
 
             nspace = ""
@@ -519,8 +517,7 @@ class XMLMapLoader:
                 nspace = self.nspace
             if not nspace and not self.nspace:
                 self._err(
-                    "<instance> %s does not specify an object namespace, and no default is available."
-                    % str(objectID)
+                    f"<instance> {objectID} does not specify an object namespace, and no default is available."
                 )
             nspace = str(nspace)
             self.nspace = nspace
@@ -529,8 +526,7 @@ class XMLMapLoader:
             object = self.model.getObject(objectID, nspace)
             if not object:
                 print(
-                    "Object with id=%s, ns=%s could not be found. Omitting..."
-                    % (objectID, nspace)
+                    f"Object with id={objectID}, ns={nspace} could not be found. Omitting..."
                 )
                 continue
 
@@ -667,7 +663,8 @@ class XMLMapLoader:
             if self.callback:
                 i += 1
                 self.callback(
-                    self.msg["camera"] % str(_id), float(i / len(tmplist) * 0.25 + 0.75)
+                    self.msg["camera"].format(str(_id)),
+                    float(i / len(tmplist) * 0.25 + 0.75),
                 )
 
     def create_light_nodes(self, map):
@@ -824,7 +821,7 @@ class XMLMapLoader:
         def dump_data():
             """dump all loaded data"""
             for camera, groups in self.light_data.items():
-                print("Lights for camera %s" % camera)
+                print(f"Lights for camera {camera}")
                 for group, lights in groups.items():
                     print(group, lights)
 

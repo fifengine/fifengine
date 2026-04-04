@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
-
-from builtins import range
 
 from .swig_test_utils import fife, getEngine, unittest
 
@@ -14,7 +11,7 @@ class MyEventListener(fife.ICommandListener):
         fife.ICommandListener.__init__(self)
 
     def onCommand(self, command):
-        print("received command with code %d" % command.getCode())
+        print(f"received command with code {command.getCode()}")
 
 
 class TestEventChannel(unittest.TestCase):

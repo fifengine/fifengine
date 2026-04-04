@@ -35,7 +35,7 @@ def create_anonymous_agents(settings, model, objectName, layer, agentClass):
     instances = [a for a in layer.getInstances() if a.getObject().getId() == objectName]
     i = 0
     for a in instances:
-        agentName = "%s:i:%d" % (objectName, i)
+        agentName = f"{objectName}:i:{i}"
         i += 1
         agent = agentClass(settings, model, agentName, layer, False)
         agent.agent = a

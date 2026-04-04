@@ -2,11 +2,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
 
 import time
-from builtins import range
-
 from .swig_test_utils import fife, getEngine, unittest
 
 
@@ -16,7 +13,7 @@ class MyTimeEvent(fife.TimeEvent):
         self.counter = 0
 
     def updateEvent(self, curtime):
-        print("testing timer event... %d, %d" % (curtime, self.counter))
+        print(f"testing timer event... {curtime}, {self.counter}")
         self.counter += 1
 
 

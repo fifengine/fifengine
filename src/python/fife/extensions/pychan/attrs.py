@@ -78,7 +78,7 @@ class ColorAttr(Attr):
                     if not 0 <= c < 256:
                         raise ParserError(
                             str(self.name)
-                            + " expected a color (Failed: 0 <= %d <= 255)" % c
+                            + f" expected a color (Failed: 0 <= {c} <= 255)"
                         )
             except ValueError:
                 r, g, b = tuple(map(int, str(value).split(",")))
@@ -86,7 +86,7 @@ class ColorAttr(Attr):
                     if not 0 <= c < 256:
                         raise ParserError(
                             str(self.name)
-                            + " expected a color (Failed: 0 <= %d <= 255)" % c
+                            + f" expected a color (Failed: 0 <= {c} <= 255)"
                         )
         except (TypeError, ValueError, ParserError):
             raise ParserError(str(self.name) + " expected a color.")

@@ -14,7 +14,7 @@ from scripts.objects.items import GoldStack
 Actions = {"NONE": 0, "PICKUP": 1, "TALK": 2, "ATTACK": 3, "OPEN": 4, "ENTER": 5}
 
 
-class BaseAction(object):
+class BaseAction:
     def __init__(self):
         self._actiontype = Actions["NONE"]
 
@@ -77,7 +77,7 @@ ActorStates = {"STAND": 0, "WALK": 1, "ATTACK": 2}
 
 class ActorActionListener(ObjectActionListener):
     def __init__(self, gamecontroller, obj):
-        super(ActorActionListener, self).__init__(gamecontroller, obj)
+        super().__init__(gamecontroller, obj)
 
     def onInstanceActionFinished(self, instance, action):
         if action.getId() == "walk":
@@ -167,7 +167,7 @@ class Actor(BaseGameObject):
         instanceid=None,
         createInstance=False,
     ):
-        super(Actor, self).__init__(
+        super().__init__(
             gamecontroller,
             layer,
             typename,
@@ -241,7 +241,7 @@ class Actor(BaseGameObject):
             self._inventory.remove(itemtoremove)
 
     def serialize(self):
-        lvars = super(Actor, self).serialize()
+        lvars = super().serialize()
 
         lvars["gold"] = self._gold
 
@@ -252,7 +252,7 @@ class Actor(BaseGameObject):
         return lvars
 
     def deserialize(self, valuedict):
-        super(Actor, self).deserialize(valuedict)
+        super().deserialize(valuedict)
 
         if "gold" in valuedict:
             self._gold = int(valuedict["gold"])

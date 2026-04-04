@@ -68,11 +68,11 @@ class XMLObjectSaver:
 
         file = object.getFilename()
         if not file:
-            raise SerializerError("Object cannot be saved, no file found %s" % object)
+            raise SerializerError(f"Object cannot be saved, no file found {object}")
             return result
 
         if not self.vfs.exists(file):
-            raise NotFound("File not within vfs: %s" % file)
+            raise NotFound(f"File not within vfs: {file}")
             return result
 
         file_handle = self.vfs.open(file)
@@ -115,7 +115,7 @@ class XMLObjectSaver:
             _id = obj.get("id")
             if _id != object_id:
                 if self.debug:
-                    print("...ommitting object %s " % _id)
+                    print(f"...ommitting object {_id} ")
                 continue
 
             if int(obj.attrib["blocking"]) != int(blocking):
@@ -282,8 +282,7 @@ class XMLObjectLoader:
                 # but animation.xml files will raise this exception
                 # because apparently they come through here first
                 raise WrongFileType(
-                    "Tried to open non-object file %s with XMLObjectLoader."
-                    % self.filename
+                    f"Tried to open non-object file {self.filename} with XMLObjectLoader."
                 )
 
         self.do_load_resource(f)
@@ -298,7 +297,7 @@ class XMLObjectLoader:
     def parse_object(self, object):
         """ """
         if self.node.tag != "object":
-            raise InvalidFormat("Expected <object> tag, but found <%s>." % self.node.tag)
+            raise InvalidFormat(f"Expected <object> tag, but found <{self.node.tag}>.")
 
         _id = object.get("id")
         if not _id:
@@ -307,9 +306,7 @@ class XMLObjectLoader:
 
         nspace = object.get("namespace")
         if not nspace:
-            raise InvalidFormat(
-                "<object> %s declared without a namespace attribute." % str(_id)
-            )
+            raise InvalidFormat(f"<object> {_id} declared without a namespace attribute.")
         nspace = str(nspace)
 
         obj = None
@@ -317,11 +314,9 @@ class XMLObjectLoader:
         if parent:
             query = self.metamodel.getObjects("id", str(parent))
             if len(query) == 0:
-                raise NotFound("No objects found with identifier %s." % str(parent))
+                raise NotFound(f"No objects found with identifier {parent}.")
             elif len(query) > 1:
-                raise NameClash(
-                    "%d objects found with identifier %s." % (len(query), str(parent))
-                )
+                raise NameClash(f"{len(query)} objects found with identifier {parent}.")
             parent = query[0]
 
         # check if model already has this object
@@ -330,8 +325,7 @@ class XMLObjectLoader:
         else:
             print(
                 NameClash(
-                    "Tried to create already existing object \n\t...ignoring: %s, %s"
-                    % (_id, nspace)
+                    f"Tried to create already existing object \n\t...ignoring: {_id}, {nspace}"
                 )
             )
             return

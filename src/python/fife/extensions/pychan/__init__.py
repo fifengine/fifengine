@@ -278,8 +278,8 @@ class _GuiLoader(__GuiLoaderBase):
     def _printTag(self, name, attrs):
         if not manager.debug:
             return
-        attrstrings = ['%s="%s"' % tuple(map(str, t)) for t in list(attrs.items())]
-        tag = "<%s " % name + " ".join(attrstrings) + ">"
+        attrstrings = [f'{str(k)}="{str(v)}"' for k, v in attrs.items()]
+        tag = f"<{name} " + " ".join(attrstrings) + ">"
         try:
             print(self.indent + tag)
         except UnicodeEncodeError:
@@ -289,14 +289,13 @@ class _GuiLoader(__GuiLoaderBase):
         """Resolve a XML Tag to a PyChan GUI class."""
         cls = WIDGETS.get(name, None)
         if cls is None:
-            raise GuiXMLError("Unknown GUI Element: %s" % name)
+            raise GuiXMLError(f"Unknown GUI Element: {name}")
         return cls
 
     def _setAttr(self, obj, name, value):
         if not hasattr(obj.__class__, "ATTRIBUTES"):
             raise PyChanException(
-                "The registered widget/spacer class %s does not supply an 'ATTRIBUTES'."
-                % repr(obj)
+                f"The registered widget/spacer class {repr(obj)} does not supply an 'ATTRIBUTES'."
             )
         try:
             for attr in obj.ATTRIBUTES:
@@ -304,10 +303,8 @@ class _GuiLoader(__GuiLoaderBase):
                     attr.set(obj, value)
                     return
         except GuiXMLError as e:
-            raise GuiXMLError(
-                "Error parsing attr '{}'='{}' for '{}': '{}'".format(name, value, obj, e)
-            )
-        raise GuiXMLError("Unknown GUI Attribute '{}' on '{}'".format(name, repr(obj)))
+            raise GuiXMLError(f"Error parsing attr '{name}'='{value}' for '{obj}': '{e}'")
+        raise GuiXMLError(f"Unknown GUI Attribute '{name}' on '{repr(obj)}'")
 
     def startElement(self, name, attrs):
         self._printTag(name, attrs)
@@ -337,7 +334,7 @@ class _GuiLoader(__GuiLoaderBase):
     def endElement(self, name):
         self.indent = self.indent[:-4]
         if manager.debug:
-            print(self.indent + "</%s>" % name)
+            print(f"{self.indent}</{name}>")
         if self.stack.pop() in ("gui_element"):
             self.root = self.root.parent or self.root
 

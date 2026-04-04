@@ -1,15 +1,13 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from builtins import map, str
-
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
 
 
 class StretchingExample(PyChanExample):
     def __init__(self):
-        super(StretchingExample, self).__init__("gui/stretching.xml")
+        super().__init__("gui/stretching.xml")
 
     def start(self):
         self.widget = pychan.loadXML(self.xmlFile)

@@ -3,8 +3,6 @@
 
 """pychan demo app for testing rgba colors on widgets"""
 
-from builtins import str
-
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
 
@@ -13,7 +11,7 @@ class ColorExample(PyChanExample):
     """a small app (^^) to show how fifechan uses colors on various widgets"""
 
     def __init__(self):
-        super(ColorExample, self).__init__("gui/colortester.xml")
+        super().__init__("gui/colortester.xml")
 
     def start(self):
         """

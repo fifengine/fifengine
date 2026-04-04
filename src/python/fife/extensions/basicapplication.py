@@ -69,9 +69,7 @@ class ApplicationBase:
         screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes()
         resolutions = list({(mode.getWidth(), mode.getHeight()) for mode in screen_modes})
 
-        resolutions = [
-            "{}x{}".format(item[0], item[1]) for item in sorted(resolutions)[1:]
-        ]
+        resolutions = [f"{item[0]}x{item[1]}" for item in sorted(resolutions)[1:]]
         self._setting.setValidResolutions(resolutions)
 
         self.quitRequested = False

@@ -37,8 +37,7 @@ def _import_fifechan():
 
         traceback.print_exc()
         raise ImportError(
-            "Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'"
-            % (err_fife, str(e))
+            f"Couldn't import neither fife nor fifechan: fife:'{err_fife}' fifechan:'{e}'"
         )
 
 

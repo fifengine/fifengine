@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from .swig_test_utils import fife, getEngine, unittest
 
@@ -284,9 +283,9 @@ class GridTests(unittest.TestCase):
         grid.getAccessibleCoordinates(curpos, accessiblepts)
         costpts = [fife.ModelCoordinate(*pt) for pt in list(cost.keys())]
         for pt in costpts:
-            self.assert_(pt in accessiblepts)
+            self.assertTrue(pt in accessiblepts)
         for pt in accessiblepts:
-            self.assert_(pt in costpts)
+            self.assertTrue(pt in costpts)
 
     def testHexGrid(self):
         self.engine = getEngine(True)

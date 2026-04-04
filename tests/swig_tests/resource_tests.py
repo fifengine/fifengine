@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from .swig_test_utils import fife, getEngine, unittest
 
@@ -17,8 +16,8 @@ class TestImgMgr(unittest.TestCase):
 
     def testImageImgMgr(self):
         imgMgr = self.engine.getImageManager()
-        self.assert_(imgMgr)
-        self.assert_(imgMgr.getTotalResources() == 0)
+        self.assertTrue(imgMgr)
+        self.assertTrue(imgMgr.getTotalResources() == 0)
         img = imgMgr.create("tests/data/beach_e1.png")
         self.assertEqual(imgMgr.getTotalResourcesLoaded(), 0)
         self.assertEqual(imgMgr.getTotalResourcesCreated(), 1)

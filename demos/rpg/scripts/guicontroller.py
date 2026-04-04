@@ -6,7 +6,7 @@
 from fife.extensions import pychan
 
 
-class Window(object):
+class Window:
     def __init__(self, gamecontroller):
         self._guicontroller = gamecontroller.guicontroller
         self._gamecontroller = gamecontroller
@@ -22,7 +22,7 @@ class Window(object):
 
 class MainMenu(Window):
     def __init__(self, gamecontroller):
-        super(MainMenu, self).__init__(gamecontroller)
+        super().__init__(gamecontroller)
         self._widget = pychan.loadXML("gui/mainmenu.xml")
 
         self._newgame = self._widget.findChild(name="new_game")
@@ -43,7 +43,7 @@ class MainMenu(Window):
 
 class Credits(Window):
     def __init__(self, gamecontroller):
-        super(Credits, self).__init__(gamecontroller)
+        super().__init__(gamecontroller)
         self._widget = pychan.loadXML("gui/credits.xml")
 
         eventMap = {
@@ -55,7 +55,7 @@ class Credits(Window):
 
 class QuestDialog(Window):
     def __init__(self, guicontroller, questgiver):
-        super(QuestDialog, self).__init__(guicontroller)
+        super().__init__(guicontroller)
         self._widget = pychan.loadXML("gui/quest.xml")
         self._questgiver = questgiver
         self._quest = questgiver.getNextQuest()
@@ -81,7 +81,7 @@ class QuestDialog(Window):
         self._widget.hide()
 
 
-class GUIController(object):
+class GUIController:
     def __init__(self, gamecontroller):
         self._gamecontroller = gamecontroller
         self._engine = gamecontroller.engine

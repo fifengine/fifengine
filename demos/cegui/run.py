@@ -7,11 +7,9 @@
 # This is the CEGUI demo of Fifengine.
 # ------------------------------------------------------------------------------
 
-from __future__ import print_function
 
 import os
 import sys
-from builtins import str
 
 fife_path = os.path.join("..", "..", "engine", "python")
 if os.path.isdir(fife_path) and fife_path not in sys.path:
@@ -29,7 +27,7 @@ DemoSettings = Setting(app_name="CEGUI Demo", settings_file="./settings.xml")
 
 class CEGUIDemo(CEGUIApplicationBase):
     def __init__(self, setting=None):
-        super(CEGUIDemo, self).__init__(setting)
+        super().__init__(setting)
 
         self._loadSchemes()
 

@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr
@@ -62,7 +61,7 @@ class Label(BasicTextWidget):
 
         self.real_widget = fifechan.Label("")
         self.wrap_text = self.DEFAULT_WRAP_TEXT
-        super(Label, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

@@ -30,7 +30,7 @@ class Projectile(SpaceObject):
         @type timeToLive: C{int}
 
         """
-        super(Projectile, self).__init__(scene, projectileName, False)
+        super().__init__(scene, projectileName, False)
 
         self._obj = self._model.getObject(
             self._name, "http://www.fifengine.net/xml/tutorial"
@@ -93,7 +93,7 @@ class Projectile(SpaceObject):
     def update(self):
         self._totaltime += self._scene.timedelta
         if self._running and self._totaltime < self._ttl:
-            super(Projectile, self).update()
+            super().update()
         else:
             self.destroy()
 
@@ -108,7 +108,7 @@ class Projectile(SpaceObject):
     damage = property(_getDamage, _setDamage)
 
 
-class Weapon(object):
+class Weapon:
     """
     Weapon
 
@@ -155,7 +155,7 @@ class Weapon(object):
 
 class Cannon(Weapon):
     def __init__(self, scene, ship, firerate):
-        super(Cannon, self).__init__(scene, ship, firerate)
+        super().__init__(scene, ship, firerate)
 
         self._projectileVelocity = 0.75
         self._soundclip = scene.soundmanager.createEmitter("sounds/cannon.ogg")
@@ -180,7 +180,7 @@ class Cannon(Weapon):
 
 class FireBall(Weapon):
     def __init__(self, scene, ship, firerate):
-        super(FireBall, self).__init__(scene, ship, firerate)
+        super().__init__(scene, ship, firerate)
 
         self._projectileVelocity = 0.50
         self._soundclip = scene.soundmanager.createEmitter("sounds/fireball.ogg")
@@ -205,7 +205,7 @@ class FireBall(Weapon):
 
 class FireBallBurst(Weapon):
     def __init__(self, scene, ship, firerate, burstrate, burstnumber):
-        super(FireBallBurst, self).__init__(scene, ship, firerate)
+        super().__init__(scene, ship, firerate)
 
         self._projectileVelocity = 0.50
         self._soundclip = scene.soundmanager.createEmitter("sounds/fireball.ogg")
@@ -247,7 +247,7 @@ class FireBallBurst(Weapon):
 
 class FireBallSpread(Weapon):
     def __init__(self, scene, ship, firerate):
-        super(FireBallSpread, self).__init__(scene, ship, firerate)
+        super().__init__(scene, ship, firerate)
 
         self._projectileVelocity = 0.50
         self._soundclip = scene.soundmanager.createEmitter("sounds/fireball.ogg")
@@ -317,7 +317,7 @@ class FireBallSpread(Weapon):
 
 class CannonSpread5(Weapon):
     def __init__(self, scene, ship, firerate):
-        super(CannonSpread5, self).__init__(scene, ship, firerate)
+        super().__init__(scene, ship, firerate)
 
         self._projectileVelocity = 1
         self._soundclip = scene.soundmanager.createEmitter("sounds/cannon.ogg")

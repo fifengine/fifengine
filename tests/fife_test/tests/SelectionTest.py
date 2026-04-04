@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -150,7 +149,7 @@ class SelectionTest(test.Test):
 
 		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
 		if self._font is None:
-			raise InitializationError("Could not load font %s" % name)
+			raise InitializationError(f"Could not load font {name}")
 
 		self.loadMap("data/maps/grassland.xml")
 
@@ -179,7 +178,7 @@ class SelectionTest(test.Test):
 		return "Simple test of selecting multiple instances at once using the mouse."
 
 	def getHelp(self):
-		return open( 'data/help/SelectionTest.txt', 'r' ).read()
+		return open( 'data/help/SelectionTest.txt' ).read()
 
 	def pump(self):
 		"""

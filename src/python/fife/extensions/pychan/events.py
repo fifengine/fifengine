@@ -341,7 +341,7 @@ class EventMapper:
         self.debug = get_manager().debug
 
     def __repr__(self):
-        return "EventMapper(%s)" % repr(self.widget_ref())
+        return f"EventMapper({repr(self.widget_ref())})"
 
     def attach(self):
         for listener in list(self.listener.values()):
@@ -364,14 +364,14 @@ class EventMapper:
         self.addEvent(event_name, callback, group_name)
 
     def isCaptured(self, event_name, group_name="default"):
-        return ("{}/{}".format(event_name, group_name)) in self.getCapturedEvents()
+        return (f"{event_name}/{group_name}") in self.getCapturedEvents()
 
     def getCapturedEvents(self):
         events = []
         for event_type, listener in list(self.listener.items()):
             for event_name, group in list(listener.events.items()):
                 for group_name in list(group.keys()):
-                    events.append("{}/{}".format(event_name, group_name))
+                    events.append(f"{event_name}/{group_name}")
         return events
 
     def getListener(self, event_name):
@@ -393,8 +393,7 @@ class EventMapper:
     def addEvent(self, event_name, callback, group_name):
         if not callable(callback):
             raise RuntimeError(
-                "An event callback must be either a callable or None - not %s"
-                % repr(callback)
+                f"An event callback must be either a callable or None - not {repr(callback)}"
             )
         # The closure self needs to keep a weak ref.
         # Otherwise the GC has problems.

@@ -13,10 +13,10 @@ from scripts.weapons import Cannon, FireBall, FireBallBurst, FireBallSpread
 
 class EnemyActionListener(ShipActionListener):
     def __init__(self, ship):
-        super(EnemyActionListener, self).__init__(ship)
+        super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
-        super(EnemyActionListener, self).onInstanceActionFinished(instance, action)
+        super().onInstanceActionFinished(instance, action)
 
     def onInstanceActionCancelled(self, instance, action):
         pass
@@ -24,10 +24,10 @@ class EnemyActionListener(ShipActionListener):
 
 class BossActionListener(ShipActionListener):
     def __init__(self, ship):
-        super(BossActionListener, self).__init__(ship)
+        super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
-        super(BossActionListener, self).onInstanceActionFinished(instance, action)
+        super().onInstanceActionFinished(instance, action)
 
         if action.getId() == "explode":
             self.delayed = fife_timer.delayCall(5000, self._ship.endLevel())
@@ -38,7 +38,7 @@ class BossActionListener(ShipActionListener):
 
 class Saucer1(Ship):
     def __init__(self, scene, name, instance, findInstance=True):
-        super(Saucer1, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
         self.instance = instance
         self._type = SHTR_ENEMYSHIP
         self._dir = 0
@@ -71,14 +71,14 @@ class Saucer1(Ship):
 
         self._time += self._scene.timedelta
 
-        super(Saucer1, self).update()
+        super().update()
 
         self.fire(fife.DoublePoint(-1, 0))
 
 
 class Saucer2(Ship):
     def __init__(self, scene, name, instance, findInstance=True):
-        super(Saucer2, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
         self.instance = instance
         self._type = SHTR_ENEMYSHIP
         self._dir = 0
@@ -97,7 +97,7 @@ class Saucer2(Ship):
 
     def applyHit(self, hp):
         self.flash(1)
-        super(Saucer2, self).applyHit(hp)
+        super().applyHit(hp)
 
     def update(self):
         if self._dir == 1:
@@ -115,14 +115,14 @@ class Saucer2(Ship):
 
         self._time += self._scene.timedelta
 
-        super(Saucer2, self).update()
+        super().update()
 
         self.fire(fife.DoublePoint(-1, 0))
 
 
 class DiagSaucer(Ship):
     def __init__(self, scene, name, direction, instance, findInstance=True):
-        super(DiagSaucer, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
         self.instance = instance
         self._type = SHTR_ENEMYSHIP
         self.width = 0.2
@@ -143,14 +143,14 @@ class DiagSaucer(Ship):
 
     def update(self):
         self.applyThrust(fife.DoublePoint(-0.25, self._ythrust))
-        super(DiagSaucer, self).update()
+        super().update()
 
         self.fire(fife.DoublePoint(-1, 0))
 
 
 class Streaker(Ship):
     def __init__(self, scene, name, instance, findInstance=True):
-        super(Streaker, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
         self.instance = instance
         self._type = SHTR_ENEMYSHIP
         self.width = 0.2
@@ -168,11 +168,11 @@ class Streaker(Ship):
 
     def applyHit(self, hp):
         self.flash(1)
-        super(Streaker, self).applyHit(hp)
+        super().applyHit(hp)
 
     def update(self):
         self.applyThrust(fife.DoublePoint(-0.40, 0))
-        super(Streaker, self).update()
+        super().update()
 
         playerloc = self._scene.player.location.getExactLayerCoordinates()
         enemyloc = self.location.getExactLayerCoordinates()
@@ -185,7 +185,7 @@ class Streaker(Ship):
 
 class Boss(Ship):
     def __init__(self, scene, name, instance, findInstance=True):
-        super(Boss, self).__init__(scene, name, findInstance)
+        super().__init__(scene, name, findInstance)
         self.instance = instance
         self._type = SHTR_LASTBOSS
         self.width = 0.85
@@ -209,7 +209,7 @@ class Boss(Ship):
         self._scene.endLevel()
 
     def update(self):
-        super(Boss, self).update()
+        super().update()
 
         playerloc = self._scene.player.location.getExactLayerCoordinates()
         bossloc = self.location.getExactLayerCoordinates()
@@ -221,7 +221,7 @@ class Boss(Ship):
 
     def applyHit(self, hp):
         self.flash(2)
-        super(Boss, self).applyHit(hp)
+        super().applyHit(hp)
 
         if self.hitpoints == 20:
             self.weapon = FireBallBurst(self._scene, self, 2000, 100, 10)

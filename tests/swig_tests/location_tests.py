@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
 
 from .swig_test_utils import fife, fifelog, getEngine, unittest
 
@@ -78,8 +77,8 @@ class TestLocation(unittest.TestCase):
         self.loc1.setLayerCoordinates(P(1, 1))
         pt = self.loc1.getMapCoordinates()
         print(pt)
-        self.assert_(is_near(pt.x, -3))
-        self.assert_(is_near(pt.y, 7))
+        self.assertTrue(is_near(pt.x, -3))
+        self.assertTrue(is_near(pt.y, 7))
 
 
 class TestHexGrid(unittest.TestCase):
@@ -103,59 +102,59 @@ class TestHexGrid(unittest.TestCase):
 
     def testHexGrid0row(self):
         self.loc1.setMapCoordinates(D(-2, 0))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-2, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-2, 0))
 
         self.loc1.setMapCoordinates(D(-1, 0))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, 0))
 
         self.loc1.setMapCoordinates(D(0, 0))
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, 0))
 
         self.loc1.setMapCoordinates(D(1, 0))
-        self.assert_(self.loc1.getLayerCoordinates() == P(1, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(1, 0))
 
         self.loc1.setMapCoordinates(D(2, 0))
-        self.assert_(self.loc1.getLayerCoordinates() == P(2, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(2, 0))
 
     def testHexGrid1row(self):
         self.loc1.setMapCoordinates(D(-1.1, 1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-2, 1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-2, 1))
 
         self.loc1.setMapCoordinates(D(-0.5, 1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, 1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, 1))
 
         self.loc1.setMapCoordinates(D(-0.1, 1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, 1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, 1))
 
         self.loc1.setMapCoordinates(D(0.1, 1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, 1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, 1))
 
     def testHexGridm1row(self):
         self.loc1.setMapCoordinates(D(-1.1, -1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-2, -1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-2, -1))
 
         self.loc1.setMapCoordinates(D(-0.5, -1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, -1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, -1))
 
         self.loc1.setMapCoordinates(D(-0.1, -1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, -1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, -1))
 
         self.loc1.setMapCoordinates(D(0.1, -1))
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, -1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, -1))
 
     def testEdgeHits(self):
         self.loc1.setMapCoordinates(D(0.5, 0.5))
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, 1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, 1))
 
         self.loc1.setMapCoordinates(D(0.1, 0.4))
         # print "______''___" + str(self.loc1.getLayerCoordinates())
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, 0))
 
         self.loc1.setMapCoordinates(D(0.1, -0.4))
-        self.assert_(self.loc1.getLayerCoordinates() == P(0, 0))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(0, 0))
 
         self.loc1.setMapCoordinates(D(-0.5, -0.5))
-        self.assert_(self.loc1.getLayerCoordinates() == P(-1, -1))
+        self.assertTrue(self.loc1.getLayerCoordinates() == P(-1, -1))
 
 
 TEST_CLASSES = [TestHexGrid, TestLocation]

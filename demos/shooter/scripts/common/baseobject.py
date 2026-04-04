@@ -21,7 +21,7 @@ SHTR_ENEMYSHIP = 4
 SHTR_POWERUP = 5
 
 
-class SpaceObject(object):
+class SpaceObject:
     """
     Space Object is the base class for all game objects.
     """

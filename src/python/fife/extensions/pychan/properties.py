@@ -99,7 +99,7 @@ class ImageProperty(WrappedProperty):
                 image_info["image"] = get_manager().loadImage(image_info["source"])
             self._getSetter(obj)(image_info["image"])
         else:
-            attribute_name = "{}.{}".format(obj.__class__.__name__, self.name)
+            attribute_name = f"{obj.__class__.__name__}.{self.name}"
             error_message = "%s only accepts GuiImage and python strings, not '%s'"
             raise RuntimeError(error_message % (attribute_name, repr(image)))
 

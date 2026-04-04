@@ -65,7 +65,7 @@ class LineGraph(Widget):
         self.opaque = self.DEFAULT_OPAQUE
         self.thickness = self.DEFAULT_THICKNESS
 
-        super(LineGraph, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

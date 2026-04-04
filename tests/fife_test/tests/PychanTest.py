@@ -2,10 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from builtins import map
-from builtins import str
-from builtins import range
-from builtins import object
 from fife import fife, fifechan
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -93,7 +89,7 @@ ACTIONS = [ACTION_MOVE, ACTION_RESIZE, ACTION_COLOR]
 DEFAULT_DELAY = 10
 
 
-class PyChanExample(object):
+class PyChanExample:
 	"""
 	Example class.
 	"""
@@ -131,7 +127,7 @@ class PyChanExample(object):
 
 class StylingExample(PyChanExample):
 	def __init__(self):
-		super(StylingExample,self).__init__('data/gui/styling.xml')
+		super().__init__('data/gui/styling.xml')
 
 		self.styles = ['default'] + list(STYLES.keys())
 		for name,style in list(STYLES.items()):
@@ -158,7 +154,7 @@ class StylingExample(PyChanExample):
 		self.styledCredits.show()
 
 	def stop(self):
-		super(StylingExample,self).stop()
+		super().stop()
 		if self.styledCredits:
 			self.styledCredits.hide()
 
@@ -171,7 +167,7 @@ class StylingExample(PyChanExample):
 
 class ShowHideTest(PyChanExample):
 	def __init__(self):
-		super(ShowHideTest,self).__init__('data/gui/showhide.xml')
+		super().__init__('data/gui/showhide.xml')
 
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
@@ -200,7 +196,7 @@ class ShowHideTest(PyChanExample):
 
 class ModalTest(PyChanExample):
 		def __init__(self):
-			super(ModalTest,self).__init__('data/gui/showhide.xml')
+			super().__init__('data/gui/showhide.xml')
 
 		def start(self):
 			self.widget = pychan.loadXML(self.xmlFile)
@@ -237,7 +233,7 @@ class ModalTest(PyChanExample):
 
 class DynamicExample(PyChanExample):
 	def __init__(self):
-		super(DynamicExample,self).__init__('data/gui/dynamic.xml')
+		super().__init__('data/gui/dynamic.xml')
 
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
@@ -263,7 +259,7 @@ class DynamicExample(PyChanExample):
 
 class SliderExample(PyChanExample):
 	def __init__(self):
-		super(SliderExample,self).__init__('data/gui/slider.xml')
+		super().__init__('data/gui/slider.xml')
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
 		self.widget.mapEvents({
@@ -300,7 +296,7 @@ class ColorExample(PyChanExample):
 
 	"""
 	def __init__(self):
-		super(ColorExample,self).__init__('data/gui/colortester.xml')
+		super().__init__('data/gui/colortester.xml')
 
 	def start(self):
 		"""
@@ -456,7 +452,7 @@ class PocAnimations(PyChanExample):
 		made by using B{fife.TimeEvent}s
 	"""
 	def __init__(self):
-		super(PocAnimations,self).__init__('data/gui/poc_guianimation.xml')
+		super().__init__('data/gui/poc_guianimation.xml')
 
 		self._move_timer = None
 		self._resize_timer = None
@@ -501,7 +497,7 @@ class PocAnimations(PyChanExample):
 		self.little_matrix = []
 		for x in range(1,4):
 			for y in range(1,4):
-				name = "color_%s_%s" % (x, y)
+				name = f"color_{x}_{y}"
 				widget = self.widget.findChild(name=name)
 				self.little_matrix.append(widget)
 
@@ -642,12 +638,12 @@ class PychanTest(test.Test):
 		# credits.capture(credits._setText(u"CREDITS"), event_name="mouseEntered")
 		# that's because that would call credits._setText NOW and we want to call
 		# it later.
-		credits.capture(lambda : credits._setText(u"CREDITS"), event_name="mouseEntered")
+		credits.capture(lambda : credits._setText("CREDITS"), event_name="mouseEntered")
 		# Note that we can't simply write:
 		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
 		# that's because that would call credits._setText NOW and we want to call
 		# it later.
-		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
+		credits.capture(lambda : credits._setText("Credits"), event_name="mouseExited")
 
 		self._examples = {
 			'Absolute Positioning' : PyChanExample('data/gui/absolute.xml'),
@@ -715,4 +711,4 @@ class PychanTest(test.Test):
 		return "Use this to test all pychan widgets."
 
 	def getHelp(self):
-		return open( 'data/help/PychanTest.txt', 'r' ).read()
+		return open( 'data/help/PychanTest.txt' ).read()

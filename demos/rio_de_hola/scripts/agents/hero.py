@@ -12,7 +12,7 @@ _STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_KICK, _STATE_TALK = range(5)
 
 class Hero(Agent):
     def __init__(self, settings, model, agentName, layer, uniqInMap=True):
-        super(Hero, self).__init__(settings, model, agentName, layer, uniqInMap)
+        super().__init__(settings, model, agentName, layer, uniqInMap)
         self.state = _STATE_NONE
         self.idlecounter = 1
 

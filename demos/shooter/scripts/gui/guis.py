@@ -11,7 +11,7 @@ from fife import fife  # noqa: F401
 from fife.extensions import pychan
 
 
-class MainMenu(object):
+class MainMenu:
     def __init__(self, world, setting):
         self._world = world
         self._setting = setting
@@ -64,7 +64,7 @@ class MainMenu(object):
         return self._widget.isVisible()
 
 
-class HeadsUpDisplay(object):
+class HeadsUpDisplay:
     def __init__(self, world):
         self._world = world
         self._widget = pychan.loadXML("gui/hud.xml")
@@ -98,7 +98,7 @@ class HeadsUpDisplay(object):
         self._livestext.text = text
 
 
-class GameOverDisplay(object):
+class GameOverDisplay:
     def __init__(self):
         self._widget = pychan.loadXML("gui/gameover.xml")
 
@@ -109,7 +109,7 @@ class GameOverDisplay(object):
         self._widget.hide()
 
 
-class WinnerDisplay(object):
+class WinnerDisplay:
     def __init__(self):
         self._widget = pychan.loadXML("gui/winner.xml")
 
@@ -120,13 +120,13 @@ class WinnerDisplay(object):
         self._widget.hide()
 
 
-class HighScore(object):
+class HighScore:
     def __init__(self, name, score):
         self._name = name
         self._score = int(score)
 
 
-class HighScores(object):
+class HighScores:
     """
     Handles all the high scores.  It saves and loads the high score file.
     """
@@ -145,8 +145,8 @@ class HighScores(object):
 
         for i in range(1, 11):
             self._widget.findChild(name=str(i))
-            name = self._widget.findChild(name="%iname" % i)
-            score = self._widget.findChild(name="%iscore" % i)
+            name = self._widget.findChild(name=f"{i}name")
+            score = self._widget.findChild(name=f"{i}score")
             highscore = HighScore(name.text, int(score.text))
             self._scores.append(highscore)
 
@@ -359,7 +359,7 @@ class HighScores(object):
         return self._widget.isVisible()
 
 
-class CreditsDisplay(object):
+class CreditsDisplay:
     def __init__(self, world):
         self._world = world
         self._widget = pychan.loadXML("gui/credits.xml")

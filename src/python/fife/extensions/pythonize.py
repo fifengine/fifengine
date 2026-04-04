@@ -30,7 +30,7 @@ fife.Exception.__str__ = fife.Exception.what
 
 
 def _Color2Str(c):
-    return "Color(%s)" % ",".join(map(str, (c.r, c.g, c.b, c.a)))
+    return f"Color({','.join(map(str, (c.r, c.g, c.b, c.a)))})"
 
 
 fifechan.Color.__str__ = _Color2Str

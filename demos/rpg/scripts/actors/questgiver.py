@@ -18,7 +18,7 @@ class QuestGiver(Actor):
         instanceid=None,
         createInstance=False,
     ):
-        super(QuestGiver, self).__init__(
+        super().__init__(
             gamecontroller,
             layer,
             typename,
@@ -84,14 +84,14 @@ class QuestGiver(Actor):
         )
 
     def serialize(self):
-        lvars = super(QuestGiver, self).serialize()
+        lvars = super().serialize()
 
         lvars["noquest_dialog"] = self._noquest_dialog
 
         return lvars
 
     def deserialize(self, valuedict):
-        super(QuestGiver, self).deserialize(valuedict)
+        super().deserialize(valuedict)
 
         self._noquest_dialog = valuedict["noquest_dialog"]
 

@@ -14,7 +14,7 @@ class RPGDemoException(Exception):
 
 class InvalidCommandError(RPGDemoException):
     def __init__(self, msg=None):
-        super(InvalidCommandError, self).__init__(msg)
+        super().__init__(msg)
 
     def __str__(self):
         if self._msg:
@@ -25,7 +25,7 @@ class InvalidCommandError(RPGDemoException):
 
 class ObjectNotFoundError(RPGDemoException):
     def __init__(self, msg=None):
-        super(ObjectNotFoundError, self).__init__(msg)
+        super().__init__(msg)
 
     def __str__(self):
         if self._msg:
@@ -36,7 +36,7 @@ class ObjectNotFoundError(RPGDemoException):
 
 class ObjectAlreadyInSceneError(RPGDemoException):
     def __init__(self, msg=None):
-        super(ObjectAlreadyInSceneError, self).__init__(msg)
+        super().__init__(msg)
 
     def __str__(self):
         if self._msg:
@@ -47,7 +47,7 @@ class ObjectAlreadyInSceneError(RPGDemoException):
 
 class InstanceNotFoundError(RPGDemoException):
     def __init__(self, msg=None):
-        super(InstanceNotFoundError, self).__init__(msg)
+        super().__init__(msg)
 
     def __str__(self):
         if self._msg:

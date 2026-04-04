@@ -32,7 +32,7 @@ TDS.setAvailableScreenResolutions(["1024x768"])
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
     def __init__(self, engine, world):
-        super(ApplicationListener, self).__init__(
+        super().__init__(
             engine,
             regKeys=True,
             regCmd=True,
@@ -58,7 +58,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 
 class Shooter(PychanApplicationBase):
     def __init__(self):
-        super(Shooter, self).__init__(TDS)
+        super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
 
         self._world = world.World(self, self.engine, self._setting)

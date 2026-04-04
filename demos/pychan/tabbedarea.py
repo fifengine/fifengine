@@ -7,7 +7,7 @@ from pychan_demo import PyChanExample
 
 class TabbedAreaExample(PyChanExample):
     def __init__(self):
-        super(TabbedAreaExample, self).__init__("gui/tabbedarea.xml")
+        super().__init__("gui/tabbedarea.xml")
 
     def start(self):
         self.labelCount = 4
@@ -62,9 +62,7 @@ class TabbedAreaExample(PyChanExample):
         content = pychan.widgets.Label()
         content.text = str("Tab " + number)
         widget.tab.addChild(content)
-        content = pychan.widgets.Button(
-            text=str("X"), name="close" + number, border_size=0
-        )
+        content = pychan.widgets.Button(text="X", name="close" + number, border_size=0)
         widget.tab.addChild(content)
         widget.tab.mapEvents(
             {

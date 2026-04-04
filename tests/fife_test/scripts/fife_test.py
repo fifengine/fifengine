@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import print_function
-from __future__ import absolute_import
 import sys, os, re, math, random, shutil, time
 from datetime import datetime
 
@@ -126,7 +124,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 					result = "No help available for: " + cmd[1]
 
 			else:
-				self._console.println( open( 'data/help/fife_test.txt', 'r' ).read() )
+				self._console.println( open( 'data/help/fife_test.txt' ).read() )
 
 		elif cmd[0].lower() in ('clear', 'cls'):
 			self._console.clear()
@@ -197,7 +195,7 @@ class FifeTestApplication(PychanApplicationBase):
 	Implements ApplicationBase._pump().
 	"""
 	def __init__(self, TDS):
-		super(FifeTestApplication,self).__init__(TDS)
+		super().__init__(TDS)
 		self._settings = TDS
 
 		#initialize TestManager and load all test plugins

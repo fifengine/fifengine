@@ -28,7 +28,7 @@ class Font:
             self.font = get_manager().createFont(self.source, self.size)
 
             if self.font is None:
-                raise InitializationError("Could not load font %s" % name)
+                raise InitializationError(f"Could not load font {name}")
 
             self.font.setAntiAlias(self.antialias)
             self.font.setBoldStyle(self.bold)
@@ -37,7 +37,7 @@ class Font:
             self.font.setDynamicColoring(self.recoloring)
             self.font.setColor(*self.color)
         else:
-            raise InitializationError("Unsupported font type %s" % self.typename)
+            raise InitializationError(f"Unsupported font type {self.typename}")
 
         self.font.setRowSpacing(self.row_spacing)
         self.font.setGlyphSpacing(self.glyph_spacing)
@@ -61,10 +61,10 @@ class Font:
         return fonts
 
     def __str__(self):
-        return "Font(source='%s')" % self.source
+        return f"Font(source='{self.source}')"
 
     def __repr__(self):
-        return "<Font(source='{}') at {:x}>".format(self.source, id(self))
+        return f"<Font(source='{self.source}') at {id(self):x}>"
 
 
 def loadFonts(filename):

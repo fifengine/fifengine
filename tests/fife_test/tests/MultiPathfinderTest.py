@@ -119,7 +119,7 @@ class MultiPathfinderTest(test.Test):
 
 		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
 		if self._font is None:
-			raise InitializationError("Could not load font %s" % name)
+			raise InitializationError(f"Could not load font {name}")
 
 		self.loadMap("data/maps/multipathfinder_grassland.xml")
 
@@ -148,7 +148,7 @@ class MultiPathfinderTest(test.Test):
 		return "Use this as a template for more complicated tests."
 
 	def getHelp(self):
-		return open( 'data/help/MultiPathfinderTest.txt', 'r' ).read()
+		return open( 'data/help/MultiPathfinderTest.txt' ).read()
 
 	def pump(self):
 		"""

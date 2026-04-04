@@ -287,10 +287,8 @@ class XMLMapSaver:
                             attr_names[(None, "radius")] = "radius"
                         if info.getColor():
                             color = info.getColor()
-                            attr_vals[(None, "color")] = "%d,%d,%d" % (
-                                color[0],
-                                color[1],
-                                color[2],
+                            attr_vals[(None, "color")] = (
+                                f"{color[0]},{color[1]},{color[2]}"
                             )
                             attr_vals[(None, "intensity")] = str(color[3])
                             attr_names[(None, "color")] = "color"
@@ -375,20 +373,15 @@ class XMLMapSaver:
                 # add a viewport entry if the cam isn't full sized
                 if not (viewport == self.engine.getRenderBackend().getArea()):
                     attr_names[(None, "viewport")] = "viewport"
-                    attr_vals[(None, "viewport")] = "%d,%d,%d,%d" % (
-                        viewport.x,
-                        viewport.y,
-                        viewport.w,
-                        viewport.h,
+                    attr_vals[(None, "viewport")] = (
+                        f"{viewport.x},{viewport.y},{viewport.w},{viewport.h}"
                     )
 
                 colors = cam.getLightingColor()
                 if colors[0] < 1.0 or colors[1] < 1.0 or colors[2] < 1.0:
                     attr_names[(None, "light_color")] = "light_color"
-                    attr_vals[(None, "light_color")] = "{:f},{:f},{:f}".format(
-                        colors[0],
-                        colors[1],
-                        colors[2],
+                    attr_vals[(None, "light_color")] = (
+                        f"{colors[0]:f},{colors[1]:f},{colors[2]:f}"
                     )
                 attrs = AttributesNSImpl(attr_vals, attr_names)
                 self.startElement("camera", attrs)

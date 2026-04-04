@@ -14,7 +14,7 @@ class GenericListmodel(fifechan.ListModel, list):
     """
 
     def __init__(self, *args):
-        super(GenericListmodel, self).__init__()
+        super().__init__()
         list(map(self.append, args))
 
     def clear(self):
@@ -103,7 +103,7 @@ class ListBox(Widget):
             if len(items) > 0:
                 self.selected = 0
 
-        super(ListBox, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

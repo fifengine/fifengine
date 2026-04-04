@@ -134,7 +134,7 @@ class Scene(Serializer):
         """
         modeldict = self._modelsettings.get("models", "Player", {})
 
-        print("loading: %s" % modeldict["file"])
+        print(f"loading: {modeldict['file']}")
         self._loader.loadImportFile(modeldict["file"])
         self._player = Player(self._gamecontroller, self.actorlayer, "warrior")
 

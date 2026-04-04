@@ -114,7 +114,7 @@ class PieGraph(Widget):
         self.radius = self.DEFAULT_RADIUS
         self._segments = []
 
-        super(PieGraph, self).__init__(
+        super().__init__(
             parent=parent,
             name=name,
             size=size,

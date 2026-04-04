@@ -23,7 +23,7 @@ from fife.extensions.pychan import pychanbasicapplication
 from fife.extensions.pychan.dialogs import trace
 
 
-class PyChanExample(object):
+class PyChanExample:
     """
     Example class.
     """
@@ -61,7 +61,7 @@ class PyChanExample(object):
             self.application.demoList.requestFocus()
 
 
-class TextSetter(object):
+class TextSetter:
     def __init__(self, text):
         self.text = text
 
@@ -134,7 +134,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
 class DemoApplication(pychanbasicapplication.PychanApplicationBase):
     def __init__(self):
         # Let the ApplicationBase initialise FIFE
-        super(DemoApplication, self).__init__()
+        super().__init__()
 
         # Init Pychan
         pychan.loadFonts("fonts/freefont.xml")
@@ -286,7 +286,7 @@ class TestXMLApplication(pychanbasicapplication.PychanApplicationBase):
     """
 
     def __init__(self, xmlfile):
-        super(TestXMLApplication, self).__init__()
+        super().__init__()
         pychan.init(self.engine, debug=True)
         self.start()
 

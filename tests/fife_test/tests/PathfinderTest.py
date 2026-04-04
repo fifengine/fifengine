@@ -99,7 +99,7 @@ class PathfinderTest(test.Test):
 
 		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
 		if self._font is None:
-			raise InitializationError("Could not load font %s" % name)
+			raise InitializationError(f"Could not load font {name}")
 
 		self.loadMap("data/maps/pathfinder_grassland.xml")
 
@@ -128,7 +128,7 @@ class PathfinderTest(test.Test):
 		return "Use this as a template for more complicated tests."
 
 	def getHelp(self):
-		return open( 'data/help/PathfinderTest.txt', 'r' ).read()
+		return open( 'data/help/PathfinderTest.txt' ).read()
 
 	def pump(self):
 		"""

@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import
 
-from builtins import range
+# builtins import removed (not needed in Python 3)
 
 from .swig_test_utils import fife, getEngine, unittest
 
@@ -39,10 +38,10 @@ class ActionTests(unittest.TestCase):
             degree = 45 * index
             animation = self.animMgr.create("walk_" + direction)
             frame1 = self.imgMgr.load(
-                "tests/data/wolf_walk/gfx/fidgit_%s_1.png" % direction
+                f"tests/data/wolf_walk/gfx/fidgit_{direction}_1.png"
             )
             frame2 = self.imgMgr.load(
-                "tests/data/wolf_walk/gfx/fidgit_%s_2.png" % direction
+                f"tests/data/wolf_walk/gfx/fidgit_{direction}_2.png"
             )
             animation.addFrame(frame1, 100)
             animation.addFrame(frame2, 100)

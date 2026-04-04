@@ -7,7 +7,7 @@ from pychan_demo import PyChanExample
 
 class ModalFocusExample(PyChanExample):
     def __init__(self):
-        super(ModalFocusExample, self).__init__("gui/modalfocus.xml")
+        super().__init__("gui/modalfocus.xml")
 
     def start(self):
         self.widget = pychan.loadXML(self.xmlFile)

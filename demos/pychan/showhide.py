@@ -7,7 +7,7 @@ from pychan_demo import PyChanExample
 
 class ShowHideExample(PyChanExample):
     def __init__(self):
-        super(ShowHideExample, self).__init__("gui/showhide.xml")
+        super().__init__("gui/showhide.xml")
 
     def start(self):
         self.widget = pychan.loadXML(self.xmlFile)

@@ -10,7 +10,7 @@ class BaseItem(BaseGameObject):
     def __init__(
         self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname
     ):
-        super(BaseItem, self).__init__(
+        super().__init__(
             gamecontroller, layer, typename, baseobjectname, itemtype, itemname, True
         )
 
@@ -28,7 +28,7 @@ class PickableItem(BaseItem):
     def __init__(
         self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname
     ):
-        super(PickableItem, self).__init__(
+        super().__init__(
             gamecontroller, layer, typename, baseobjectname, itemtype, itemname
         )
         self._type = GameObjectTypes["ITEM"]
@@ -49,20 +49,20 @@ class GoldStack(PickableItem):
     def __init__(
         self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname
     ):
-        super(GoldStack, self).__init__(
+        super().__init__(
             gamecontroller, layer, typename, baseobjectname, itemtype, itemname
         )
 
         self._value = 0
 
     def serialize(self):
-        lvars = super(GoldStack, self).serialize()
+        lvars = super().serialize()
         lvars["value"] = self._value
 
         return lvars
 
     def deserialize(self, valuedict):
-        super(GoldStack, self).deserialize(valuedict)
+        super().deserialize(valuedict)
 
         if "value" in valuedict:
             self._value = int(valuedict["value"])
@@ -82,7 +82,7 @@ class Portal(BaseItem):
     def __init__(
         self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname
     ):
-        super(Portal, self).__init__(
+        super().__init__(
             gamecontroller, layer, typename, baseobjectname, itemtype, itemname
         )
         self._type = GameObjectTypes["PORTAL"]
@@ -90,13 +90,13 @@ class Portal(BaseItem):
         self._dest = None
 
     def serialize(self):
-        lvars = super(Portal, self).serialize()
+        lvars = super().serialize()
         lvars["dest"] = self._dest
 
         return lvars
 
     def deserialize(self, valuedict):
-        super(Portal, self).deserialize(valuedict)
+        super().deserialize(valuedict)
 
         if "dest" in valuedict:
             self._dest = valuedict["dest"]

@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from __future__ import absolute_import, print_function
 
 import time
-from builtins import range, str
 
 from .swig_test_utils import fife, getEngine, unittest
 

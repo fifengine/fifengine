@@ -39,7 +39,7 @@ class SoundEmitterListener(fife.SoundEmitterListener):
         self._scene.musicHasFinished()
 
 
-class SceneNode(object):
+class SceneNode:
     """
     A node in the scene graph.
 
@@ -66,7 +66,7 @@ class SceneNode(object):
     spaceobjects = property(_getObjects, _setObjects)
 
 
-class Scene(object):
+class Scene:
     """
     Master game scene.  Keeps track of all game objects.
 

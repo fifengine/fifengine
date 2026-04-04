@@ -400,7 +400,7 @@ class Setting:
             if module not in modules:
                 if self._logger:
                     self._logger.log_log(
-                        "Settings module '%s' was not found in serializer input." % module
+                        f"Settings module '{module}' was not found in serializer input."
                     )
                 self._settingsFromFile[module] = None
                 return self._settingsFromFile[module]
@@ -537,12 +537,11 @@ class Setting:
                                 e_value = (False, True)[e_value]
                             except IndexError:
                                 self._logger.log_warn(
-                                    "Invalid int-value for %s. Defaulted to False!" % name
+                                    f"Invalid int-value for {name}. Defaulted to False!"
                                 )
                                 e_value = False
                             self._logger.log_warn(
-                                "Use of type int for %s is deprecated. Use bool instead!"
-                                % name
+                                f"Use of type int for {name} is deprecated. Use bool instead!"
                             )
                         self._settingsFromFile[module][name] = e_value
 
