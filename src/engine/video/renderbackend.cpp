@@ -33,7 +33,7 @@ namespace FIFE
         m_maxAnisotropy(0),
         m_monochrome(false),
         m_isDepthBuffer(false),
-        m_alphaValue(0.3),
+        m_alphaValue(0.3F),
         m_vSync(false),
         m_isframelimit(false),
         m_frame_start(0),
