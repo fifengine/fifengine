@@ -38,6 +38,29 @@ for people wishing to play around with FIFE or base your game off of.
 
 A basic RPG example.
 
+The RPG demos is a simple RPG demo with a main menu, one level and a very basic
+quest, where you contact a NPC and get a quest to find gold. You can then
+travel to the mine and find the gold.
+
+The demo is meant to show how to switch between different maps, how to use the
+pathfinding and how to use the quest system.
+
+It also shows how to use the GUI library to create a very simple main menu.
+
+It is located in the `<FIFE>/demos/rpg` directory and can be launched by running `run.py`.
+
+<a href="rpg/screenshots/rpg_start_menu.png">
+  <img src="rpg/screenshots/rpg_start_menu.png" width="400">
+</a>
+
+<a href="rpg/screenshots/rpg_menu_settings.png">
+  <img src="rpg/screenshots/rpg_menu_settings.png" width="400">
+</a>
+
+<a href="rpg/screenshots/rpg_level1.png">
+  <img src="rpg/screenshots/rpg_level1.png" width="400">
+</a>
+
 ### Shooter
 
 The Shooter demo was an attempt to show the versatility and flexibility of FIFE.

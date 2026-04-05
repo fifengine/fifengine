@@ -4,7 +4,7 @@
     <Setting name="FullScreen" type="bool"> False </Setting>
     <Setting name="PlaySounds" type="bool"> True </Setting>
     <Setting name="RenderBackend" type="str"> OpenGL </Setting>
-    <Setting name="ScreenResolution" type="str">1280x720</Setting>
+    <Setting name="ScreenResolution" type="str">1024x768</Setting>
     <Setting name="BitsPerPixel" type="int"> 0 </Setting>
     <Setting name="InitialVolume" type="float"> 5.0 </Setting>
     <Setting name="SDLRemoveFakeAlpha" type="bool"> True </Setting>
