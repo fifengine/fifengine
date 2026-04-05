@@ -22,7 +22,7 @@
 namespace FIFE
 {
 
-    TextRenderPool::TextRenderPool(size_t poolSize) : m_poolMaxSize(poolSize), m_poolSize(0)
+    TextRenderPool::TextRenderPool(size_t poolSize) : m_poolSize(0), m_poolMaxSize(poolSize)
     {
         m_collectTimer.setInterval(1000 * 60);
         m_collectTimer.setCallback([this] {

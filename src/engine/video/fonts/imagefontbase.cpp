@@ -24,7 +24,7 @@
 namespace FIFE
 {
 
-    ImageFontBase::ImageFontBase() : m_height(0), m_placeholder() { }
+    ImageFontBase::ImageFontBase() : m_placeholder(), m_height(0) { }
 
     ImageFontBase::~ImageFontBase()
     {

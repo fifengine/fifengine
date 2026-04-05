@@ -28,6 +28,9 @@ namespace FIFE
         m_isalphaoptimized(false),
         m_iscolorkeyenabled(false),
         m_colorkey(colorkey),
+        m_rgba_format{},
+        m_isbackgroundcolor(false),
+        m_backgroundcolor{0, 0, 0, 0},
         m_isMipmapping(false),
         m_textureFilter(TEXTURE_FILTER_NONE),
         m_maxAnisotropy(0),
@@ -35,13 +38,10 @@ namespace FIFE
         m_isDepthBuffer(false),
         m_alphaValue(0.3F),
         m_vSync(false),
+        m_guiClip(),
         m_isframelimit(false),
         m_frame_start(0),
-        m_framelimit(60),
-        m_guiClip(),
-        m_backgroundcolor{0, 0, 0, 0},
-        m_rgba_format{},
-        m_isbackgroundcolor(false)
+        m_framelimit(60)
     {
     }
 

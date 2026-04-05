@@ -38,10 +38,10 @@ namespace FIFE
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_id(std::move(identifier)),
+        m_map(map),
         m_instanceTree(new InstanceTree()),
         m_grid(grid),
         m_cellCache(nullptr),
-        m_map(map),
         m_pathingStrategy(CELL_EDGES_ONLY),
         m_sortingStrategy(SORTING_CAMERA),
         m_transparency(0),

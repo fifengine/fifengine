@@ -29,16 +29,16 @@ namespace FIFE
 
     Console::Console() :
 
+        m_isAttached(false),
         m_consoleexec(nullptr),
         m_input(new CommandLine()),
         m_output(new fcn::TextBox()),
         m_outputscrollarea(new fcn::ScrollArea(m_output)),
         m_status(new fcn::Label()),
         m_toolsbutton(new fcn::Button("Tools")),
+        m_prompt("-- "),
         m_hiddenPos(0),
         m_animationDelta(0),
-        m_prompt("-- "),
-        m_isAttached(false),
         m_hiding(true)
     {
         reLayout();

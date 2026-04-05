@@ -176,13 +176,13 @@ namespace FIFE
         m_layer(nullptr),
         m_layerObserver(nullptr),
         m_tree(nullptr),
+        m_needSorting(
+            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled())),
         m_zMin(0.0),
         m_zMax(0.0),
         m_zoom(camera->getZoom()),
         m_zoomed(!Mathd::Equal(m_zoom, 1.0)),
-        m_straightZoom(Mathd::Equal(fmod(m_zoom, 1.0), 0.0)),
-        m_needSorting(
-            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled()))
+        m_straightZoom(Mathd::Equal(fmod(m_zoom, 1.0), 0.0))
     {
     }
 

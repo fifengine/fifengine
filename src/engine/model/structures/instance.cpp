@@ -177,6 +177,7 @@ namespace FIFE
         m_id(identifier),
         m_rotation(0),
         m_location(location),
+        m_costId(object->getCostId()),
 
         m_activity(nullptr),
         m_object(object),
@@ -188,8 +189,7 @@ namespace FIFE
         m_blocking(object->isBlocking()),
         m_overrideBlocking(false),
         m_cellStackPos(object->getCellStackPosition()),
-        m_specialCost(object->isSpecialCost()),
-        m_costId(object->getCostId())
+        m_specialCost(object->isSpecialCost())
     {
         // create multi object instances
         if (object->isMultiObject()) {

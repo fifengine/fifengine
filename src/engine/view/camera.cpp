@@ -73,9 +73,12 @@ namespace FIFE
         m_map(map),
         m_viewport(viewport),
         m_renderbackend(renderbackend),
+
         m_position(ExactModelCoordinate(0, 0, 0)),
+
         m_matrix(),
         m_inverse_matrix(),
+
         m_vs_matrix(),
         m_vs_inverse_matrix(),
         m_vscreen_2_screen(),
@@ -96,12 +99,12 @@ namespace FIFE
         m_referenceScaleY(1),
         m_enabled(true),
         m_attachedTo(nullptr),
+
         m_transform(NoneTransform),
 
         m_updated(false),
-
+        m_map_observer(nullptr),
         m_lighting(false),
-
         m_col_overlay(false),
         m_img_overlay(false),
         m_ani_overlay(false),
@@ -109,8 +112,7 @@ namespace FIFE
         m_img_id(-1),
         m_img_fill(false),
         m_ani_fill(false),
-        m_start_time(0),
-        m_map_observer(nullptr)
+        m_start_time(0)
     {
         m_map_observer = new MapObserver(this);
         init();

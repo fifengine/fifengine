@@ -46,23 +46,21 @@ namespace FIFE
 
     FifechanManager::FifechanManager() :
         m_fcn_gui(new fcn::Gui()),
+        m_gui_graphics(nullptr),
         m_focushandler(nullptr),
         m_fcn_topcontainer(new fcn::Container()),
         m_imgloader(new GuiImageLoader()),
         m_input(new fcn::sdl2::Input()),
-        m_gui_graphics(nullptr),
-        m_fontsize(0),
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
-
-        m_logic_executed(false),
-        m_enabled_console(true),
         m_had_mouse(false),
         m_had_widget(false),
         m_lastMotionX(0),
-        m_lastMotionY(0)
-
+        m_lastMotionY(0),
+        m_fontsize(0),
+        m_logic_executed(false),
+        m_enabled_console(true)
     {
 
         m_fcn_gui->setInput(m_input);

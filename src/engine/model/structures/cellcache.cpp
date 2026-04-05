@@ -369,13 +369,13 @@ namespace FIFE
         m_layer(layer),
         m_defaultCostMulti(1.0),
         m_defaultSpeedMulti(1.0),
+        m_cellListener(new CellCacheChangeListener(m_layer)),
         m_neighborZ(-1),
         m_blockingUpdate(false),
         m_sizeUpdate(false),
         m_searchNarrow(true),
         m_staticSize(false),
-        m_cellZoneListener(nullptr),
-        m_cellListener(new CellCacheChangeListener(m_layer))
+        m_cellZoneListener(nullptr)
     {
         m_cellZoneListener = new ZoneCellChangeListener(this);
         // set base size

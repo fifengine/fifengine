@@ -33,9 +33,9 @@ namespace FIFE
         m_layer(layer),
         m_zone(nullptr),
         m_transition(nullptr),
-        m_type(CTYPE_NO_BLOCKER),
         m_inserted(false),
-        m_protect(false)
+        m_protect(false),
+        m_type(CTYPE_NO_BLOCKER)
     {
     }
 

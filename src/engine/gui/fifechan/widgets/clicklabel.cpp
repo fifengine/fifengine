@@ -21,7 +21,7 @@
 namespace fcn
 {
     ClickLabel::ClickLabel() :
-        mAlignment(Graphics::Alignment::Left), mOpaque(true), mGuiFont(nullptr), mTextWrapping(false)
+        mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
         setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
@@ -35,7 +35,7 @@ namespace fcn
     }
 
     ClickLabel::ClickLabel(const std::string& caption) :
-        mAlignment(Graphics::Alignment::Left), mOpaque(true), mGuiFont(nullptr), mTextWrapping(false)
+        mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
         setCaption(caption);
         setAlignment(Graphics::Alignment::Left);
