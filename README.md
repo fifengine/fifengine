@@ -1,4 +1,4 @@
-![FIFE LOGO](https://raw.githubusercontent.com/fifengine/fifengine/master/doc/logo/FIFE_small_c3.png)
+![FIFE LOGO](https://raw.githubusercontent.com/fifengine/fifengine/main/docs/logo/FIFE_small_c3.png)
 
 # FIFE
 
@@ -6,21 +6,18 @@ Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
 It comes with Python bindings allowing users to create games using Python as well as C++.
 The engine is extendable and enables you to add any feature you can imagine to your project.
 
-| [Website](http://fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
-|:--------:|:--------:|:--------:|:--------:|:--------:|
+[Website](http://fifengine.net/) | [Changelog](https://github.com/fifengine/fifengine/blob/main/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Docs](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](https://fifengine.github.io/fifengine/api/) | [Python API](https://fifengine.github.io/fifengine/api/python)
 
-| Continuous Integration | Linux |   Mac    | Windows |
-|:----------------------:|:-----:|:--------:|:-------:|
-| **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/github/fifengine/fifengine?branch=master&svg=true)](https://ci.appveyor.com/project/LinuxDonald/fifengine) |
-| **Development Releases**  |   -    |    -     | [All artifacts](https://ci.appveyor.com/project/LinuxDonald/fifengine/build/artifacts) |
 
-| **Documentations** | | | |
-|:----------------------:|:----------------:|:-------:|:----------:|
-| [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.ragingreality.com/doxygen/) | [Python API](http://www.ragingreality.com/epydoc) |
+| Continuous Integration | Windows | Linux  |   Mac   | Python Wheels |
+|:----------------------:|:-----:|:--------:|:-------:|:-------------:|
+| **Build Status** | [![Build on Windows (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml) | [![Build on Linux (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml) | 👷🏼 | [![Build Fifengine (Python Wheels)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml)
+
+## Releases
 
 Fifengine is also already available from the following package repositories:
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg)](https://repology.org/metapackage/fife)
+[![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg?columns=3)](https://repology.org/metapackage/fife)
 
 # Table of contents
 1. [Features](#1-features)
@@ -41,7 +38,6 @@ A [complete list of the features](https://fifengine.github.io/fifengine-docs/use
 ## 2) License
 
 - The source code (*.cpp, *.h & *.py) is licensed under [LGPL v2.1 or newer](http://www.gnu.org/licenses/lgpl-2.1.html).
-- Files in /src/engine/util/utf8/ are under BSL license
 - Content was taken from a lot a lot of different 3rd party sources. Therefore
 each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
@@ -189,20 +185,20 @@ ctest --test-dir . -L core -V
 
 ### [Editor](https://github.com/fifengine/fifengine-editor)
 The Python based editor tool can be found within the [fifengine-editor repo](https://github.com/fifengine/fifengine-editor).
-You can launch it by running `run.py`. It is used to edit map files for the [Rio De Hola demo](https://github.com/fifengine/fifengine-demos/tree/master/rio_de_hola). Other clients extend it and use it to edit their maps.
+You can launch it by running `run.py`. It is used to edit map files for the [Rio De Hola demo](https://github.com/fifengine/fifengine-demos/tree/main/rio_de_hola). Other clients extend it and use it to edit their maps.
 
-### [Rio De Hola](https://github.com/fifengine/fifengine-demos/tree/master/rio_de_hola)
+### [Rio De Hola](https://github.com/fifengine/fifengine-demos/tree/main/rio_de_hola)
 Rio de hola is a technology demo showing off many of the FIFE features.  It is
 located in the `rio_de_hola` directory and can be launched by running `run.py`.
 Once started as an example game, it's now a playground for developers to test their code.
 It serves as a good starting point for own game developments.
 
-### [Shooter](https://github.com/fifengine/fifengine-demos/tree/master/shooter)
+### [Shooter](https://github.com/fifengine/fifengine-demos/tree/main/shooter)
 The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
 It is a simple side scrolling shooter that has a main menu, one level and an end boss.
 Try your luck and see if you can defeat the boss!
 
-### [PyChan](https://github.com/fifengine/fifengine-demos/tree/master/pychan_demo)
+### [PyChan](https://github.com/fifengine/fifengine-demos/tree/main/pychan_demo)
 There is an example client residing in `pychan_demo` that shows how the pychan GUI library works.
 You may start the GUI demo application by running `pychan_demo.py`.
 
