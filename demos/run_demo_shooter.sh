@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,7 +10,7 @@ ENGINE_PYTHON_DIR="$REPO_ROOT/engine/python"
 cd "$REPO_ROOT"
 
 echo "=== Step 1: Configure with CMake (clang20-x64-linux-rel) ==="
-cmake --preset clang20-x64-linux-rel -Dfifechan=ON -Dbuild-python=ON -Dbuild-library=ON
+cmake --preset clang20-x64-linux-rel -DENABLE_FIFEGUI=ON -DBUILD_PYTHON_BINDINGS=ON -DBUILD_LIBRARY=ON
 
 echo "=== Step 2: Build the project ==="
 cmake --build "$BUILD_DIR" --target fife fife_swig

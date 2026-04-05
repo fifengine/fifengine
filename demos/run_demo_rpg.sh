@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,7 +18,7 @@ if [ ! -d "$FIFE_DEPS_INSTALL_DIR" ]; then
 fi
 
 echo "=== Step 2: Configure with CMake (clang20-x64-linux-rel) ==="
-cmake --preset clang20-x64-linux-rel -Dfifechan=ON -Dbuild-python=ON -Dbuild-library=ON
+cmake --preset clang20-x64-linux-rel -DENABLE_FIFEGUI=ON -DBUILD_PYTHON_BINDINGS=ON -DBUILD_LIBRARY=ON
 
 echo "=== Step 3: Build the project ==="
 cmake --build "$BUILD_DIR" --target fife fife_swig fifechan_swig
