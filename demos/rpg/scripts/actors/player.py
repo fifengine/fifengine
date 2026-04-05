@@ -58,12 +58,16 @@ class Player(Actor):
     def deserialize(self, valuedict):
         super().deserialize(valuedict)
 
-        activequests = valuedict["activequests"].split(",")
+        activequests_raw = valuedict.get("activequests", "")
+        activequests = activequests_raw.split(",") if activequests_raw else []
 
         for questid in activequests:
-            self._gamecontroller.questmanager.activateQuestById(questid)
+            if questid:
+                self._gamecontroller.questmanager.activateQuestById(questid)
 
-        completedquests = valuedict["completedquests"].split(",")
+        completedquests_raw = valuedict.get("completedquests", "")
+        completedquests = completedquests_raw.split(",") if completedquests_raw else []
 
         for questid in completedquests:
-            self._gamecontroller.questmanager.completeQuestById(questid)
+            if questid:
+                self._gamecontroller.questmanager.completeQuestById(questid)
