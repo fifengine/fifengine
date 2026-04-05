@@ -90,7 +90,9 @@ namespace FIFE
         m_device = device;
 
         if (alcIsExtensionPresent(m_device, "ALC_EXT_EFX") == AL_FALSE) {
-            FL_WARN(_log, LMsg() << "ALC_EXT_EFX not supported!\n");
+            LMsg msg;
+            msg << "ALC_EXT_EFX not supported!\n";
+            FL_WARN(_log, msg);
             return;
         }
 
@@ -112,7 +114,9 @@ namespace FIFE
             alAuxiliaryEffectSlotfv == nullptr || alGetAuxiliaryEffectSloti == nullptr ||
             alGetAuxiliaryEffectSlotiv == nullptr || alGetAuxiliaryEffectSlotf == nullptr ||
             alGetAuxiliaryEffectSlotfv == nullptr) {
-            FL_WARN(_log, LMsg() << "Failed initializing slot function pointers\n");
+            LMsg msg;
+            msg << "Failed initializing slot function pointers\n";
+            FL_WARN(_log, msg);
             return;
         }
 
@@ -131,7 +135,9 @@ namespace FIFE
         if (alGenEffects == nullptr || alDeleteEffects == nullptr || alIsEffect == nullptr || alEffecti == nullptr ||
             alEffectiv == nullptr || alEffectf == nullptr || alEffectfv == nullptr || alGetEffecti == nullptr ||
             alGetEffectiv == nullptr || alGetEffectf == nullptr || alGetEffectfv == nullptr) {
-            FL_WARN(_log, LMsg() << "Failed initializing effect function pointers\n");
+            LMsg msg;
+            msg << "Failed initializing effect function pointers\n";
+            FL_WARN(_log, msg);
             return;
         }
 
@@ -150,7 +156,9 @@ namespace FIFE
         if (alGenFilters == nullptr || alDeleteFilters == nullptr || alIsFilter == nullptr || alFilteri == nullptr ||
             alFilteriv == nullptr || alFilterf == nullptr || alFilterfv == nullptr || alGetFilteri == nullptr ||
             alGetFilteriv == nullptr || alGetFilterf == nullptr || alGetFilterfv == nullptr) {
-            FL_WARN(_log, LMsg() << "Failed initializing filter function pointers\n");
+            LMsg msg;
+            msg << "Failed initializing filter function pointers\n";
+            FL_WARN(_log, msg);
             return;
         }
 
@@ -254,7 +262,9 @@ namespace FIFE
     {
         if (m_freeSlots.empty() || effect->isEnabled()) {
             if (m_freeSlots.empty()) {
-                FL_WARN(_log, LMsg() << "No free auxiliary slot available");
+                LMsg msg;
+                msg << "No free auxiliary slot available";
+                FL_WARN(_log, msg);
             }
             return;
         }
@@ -298,7 +308,9 @@ namespace FIFE
     void SoundEffectManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
         if (std::cmp_equal(emitter->getEffectCount(), m_maxSlots)) {
-            FL_WARN(_log, LMsg() << "Maximal effect number for SoundEmitter reached");
+            LMsg msg;
+            msg << "Maximal effect number for SoundEmitter reached";
+            FL_WARN(_log, msg);
             return;
         }
         m_effectEmitters[effect].push_back(emitter);
@@ -312,7 +324,9 @@ namespace FIFE
     {
         auto effectIt = m_effectEmitters.find(effect);
         if (effectIt == m_effectEmitters.end()) {
-            FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown effect");
+            LMsg msg;
+            msg << "SoundEmitter can not removed from unknown effect";
+            FL_WARN(_log, msg);
             return;
         }
         bool found      = false;
@@ -331,7 +345,9 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, LMsg() << "SoundEmitter could not be found for the given effect.");
+            LMsg msg;
+            msg << "SoundEmitter could not be found for the given effect.";
+            FL_WARN(_log, msg);
             return;
         }
     }
@@ -339,7 +355,9 @@ namespace FIFE
     void SoundEffectManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
         if (effect->getFilter() != nullptr) {
-            FL_WARN(_log, LMsg() << "SoundEffect already has a filter");
+            LMsg msg;
+            msg << "SoundEffect already has a filter";
+            FL_WARN(_log, msg);
             return;
         }
         effect->setFilter(filter);
@@ -354,7 +372,9 @@ namespace FIFE
     {
         auto filterIt = m_filterdEffects.find(filter);
         if (filterIt == m_filterdEffects.end()) {
-            FL_WARN(_log, LMsg() << "SoundEffect can not removed from unknown filter");
+            LMsg msg;
+            msg << "SoundEffect can not removed from unknown filter";
+            FL_WARN(_log, msg);
             return;
         }
         bool found     = false;
@@ -374,7 +394,9 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, LMsg() << "SoundEffect could not be found for the given filter.");
+            LMsg msg;
+            msg << "SoundEffect could not be found for the given filter.";
+            FL_WARN(_log, msg);
             return;
         }
     }
@@ -473,7 +495,9 @@ namespace FIFE
     void SoundEffectManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
         if (emitter->getDirectFilter() != nullptr) {
-            FL_WARN(_log, LMsg() << "SoundEmitter already has a direct filter");
+            LMsg msg;
+            msg << "SoundEmitter already has a direct filter";
+            FL_WARN(_log, msg);
             return;
         }
         emitter->setDirectFilter(filter);
@@ -487,7 +511,9 @@ namespace FIFE
     {
         auto filterIt = m_filterdEmitters.find(filter);
         if (filterIt == m_filterdEmitters.end()) {
-            FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown filter");
+            LMsg msg;
+            msg << "SoundEmitter can not removed from unknown filter";
+            FL_WARN(_log, msg);
             return;
         }
         bool found      = false;
@@ -506,7 +532,9 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, LMsg() << "SoundEmitter could not be found for the given filter.");
+            LMsg msg;
+            msg << "SoundEmitter could not be found for the given filter.";
+            FL_WARN(_log, msg);
             return;
         }
     }

@@ -82,10 +82,12 @@ namespace FIFE
     SoundClipPtr SoundClipManager::create(const std::string& name, IResourceLoader* loader)
     {
         if (exists(name)) {
-            FL_WARN(
-                _log,
-                LMsg("SoundClipManager::create(std::string, IResourceLoader* loader) - ")
-                    << "Resource name " << name << " was previously created.  Returning original SoundClip...");
+            {
+                LMsg msg;
+                msg << "SoundClipManager::create(std::string, IResourceLoader* loader) - "
+                    << "Resource name " << name << " was previously created.  Returning original SoundClip...";
+                FL_WARN(_log, msg);
+            }
             return get(name);
         }
 
@@ -110,10 +112,12 @@ namespace FIFE
         ptr->load();
 
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
-            FL_WARN(
-                _log,
-                LMsg("SoundClipManager::load(std::string) - ")
-                    << "Resource name " << name << " was not found and could not be loaded.");
+            {
+                LMsg msg;
+                msg << "SoundClipManager::load(std::string) - " << "Resource name " << name
+                    << " was not found and could not be loaded.";
+                FL_WARN(_log, msg);
+            }
             remove(name);
         }
 
@@ -134,10 +138,12 @@ namespace FIFE
             m_sclipNameMap.insert(
                 SoundClipNameMapPair(returnValue.first->second->getName(), returnValue.first->second));
         } else {
-            FL_WARN(
-                _log,
-                LMsg("SoundClipManager::add(IResource*) - ")
-                    << "Resource " << res->getName() << " already exists.... ignoring.");
+            {
+                LMsg msg;
+                msg << "SoundClipManager::add(IResource*) - " << "Resource " << res->getName()
+                    << " already exists.... ignoring.";
+                FL_WARN(_log, msg);
+            }
         }
 
         return returnValue.first->second;
@@ -167,7 +173,11 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("SoundClipManager::reload(std::string) - ") << "Resource name " << name << " not found.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::reload(std::string) - " << "Resource name " << name << " not found.";
+            FL_WARN(_log, msg);
+        }
     }
 
     void SoundClipManager::reload(ResourceHandle handle)
@@ -182,8 +192,11 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log, LMsg("SoundClipManager::reload(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::reload(ResourceHandle) - " << "Resource handle " << handle << " not found.";
+            FL_WARN(_log, msg);
+        }
     }
 
     void SoundClipManager::reloadAll()
@@ -211,8 +224,11 @@ namespace FIFE
                 count++;
             }
         }
-        FL_DBG(
-            _log, LMsg("SoundClipManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::loadUnreferenced() - " << "Loaded " << count << " unreferenced resources.";
+            FL_DBG(_log, msg);
+        }
     }
 
     void SoundClipManager::free(const std::string& name)
@@ -226,7 +242,11 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("SoundClipManager::free(std::string) - ") << "Resource name " << name << " not found.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::free(std::string) - " << "Resource name " << name << " not found.";
+            FL_WARN(_log, msg);
+        }
     }
 
     void SoundClipManager::free(ResourceHandle handle)
@@ -239,8 +259,11 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log, LMsg("SoundClipManager::free(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::free(ResourceHandle) - " << "Resource handle " << handle << " not found.";
+            FL_WARN(_log, msg);
+        }
     }
 
     void SoundClipManager::freeAll()
@@ -257,7 +280,11 @@ namespace FIFE
             }
         }
 
-        FL_DBG(_log, LMsg("SoundClipManager::freeAll() - ") << "Freed all " << count << " resources.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::freeAll() - " << "Freed all " << count << " resources.";
+            FL_DBG(_log, msg);
+        }
     }
 
     void SoundClipManager::freeUnreferenced()
@@ -273,8 +300,11 @@ namespace FIFE
             }
         }
 
-        FL_DBG(
-            _log, LMsg("SoundClipManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::freeUnreferenced() - " << "Freed " << count << " unreferenced resources.";
+            FL_DBG(_log, msg);
+        }
     }
 
     void SoundClipManager::remove(SoundClipPtr& resource)
@@ -292,10 +322,12 @@ namespace FIFE
             assert(false); // should never get here
         }
 
-        FL_WARN(
-            _log,
-            LMsg("SoundClipManager::remove(ResourcePtr&) - ")
-                << "Resource " << resource->getName() << " was not found.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::remove(ResourcePtr&) - " << "Resource " << resource->getName()
+                << " was not found.";
+            FL_WARN(_log, msg);
+        }
     }
 
     void SoundClipManager::remove(const std::string& name)
@@ -307,7 +339,11 @@ namespace FIFE
             handle = nit->second->getHandle();
             m_sclipNameMap.erase(nit);
         } else {
-            FL_WARN(_log, LMsg("SoundClipManager::remove(std::string) - ") << "Resource " << name << " was not found.");
+            {
+                LMsg msg;
+                msg << "SoundClipManager::remove(std::string) - " << "Resource " << name << " was not found.";
+                FL_WARN(_log, msg);
+            }
             return;
         }
 
@@ -330,10 +366,12 @@ namespace FIFE
             name = it->second->getName();
             m_sclipHandleMap.erase(it);
         } else {
-            FL_WARN(
-                _log,
-                LMsg("SoundClipManager::remove(ResourceHandle) - ")
-                    << "Resource handle " << handle << " was not found.");
+            {
+                LMsg msg;
+                msg << "SoundClipManager::remove(ResourceHandle) - " << "Resource handle " << handle
+                    << " was not found.";
+                FL_WARN(_log, msg);
+            }
             return;
         }
 
@@ -356,7 +394,11 @@ namespace FIFE
         m_sclipHandleMap.clear();
         m_sclipNameMap.clear();
 
-        FL_DBG(_log, LMsg("SoundClipManager::removeAll() - ") << "Removed all " << count << " resources.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::removeAll() - " << "Removed all " << count << " resources.";
+            FL_DBG(_log, msg);
+        }
     }
 
     void SoundClipManager::removeUnreferenced()
@@ -372,9 +414,11 @@ namespace FIFE
             }
         }
 
-        FL_DBG(
-            _log,
-            LMsg("SoundClipManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::removeUnreferenced() - " << "Removed " << count << " unreferenced resources.";
+            FL_DBG(_log, msg);
+        }
     }
 
     SoundClipPtr SoundClipManager::get(const std::string& name)
@@ -405,8 +449,11 @@ namespace FIFE
             return it->second;
         }
 
-        FL_WARN(
-            _log, LMsg("SoundClipManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::get(ResourceHandle) - " << "Resource handle " << handle << " is undefined.";
+            FL_WARN(_log, msg);
+        }
 
         return {};
     }
@@ -418,9 +465,11 @@ namespace FIFE
             return nit->second->getHandle();
         }
 
-        FL_WARN(
-            _log,
-            LMsg("SoundClipManager::getResourceHandle(std::string) - ") << "Resource " << name << " is undefined.");
+        {
+            LMsg msg;
+            msg << "SoundClipManager::getResourceHandle(std::string) - " << "Resource " << name << " is undefined.";
+            FL_WARN(_log, msg);
+        }
 
         return 0;
     }
