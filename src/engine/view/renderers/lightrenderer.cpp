@@ -44,11 +44,13 @@ namespace FIFE
         m_anchor(n), m_src(src), m_dst(dst), m_stencil(false), m_stencil_ref(0)
     {
     }
+
     void LightRendererElementInfo::setStencil(uint8_t stencil_ref)
     {
         m_stencil     = true;
         m_stencil_ref = stencil_ref;
     }
+
     int32_t LightRendererElementInfo::getStencil() const
     {
         if (!m_stencil) {
@@ -56,11 +58,13 @@ namespace FIFE
         }
         return m_stencil_ref;
     }
+
     void LightRendererElementInfo::removeStencil()
     {
         m_stencil     = false;
         m_stencil_ref = 0;
     }
+
     LightRendererImageInfo::LightRendererImageInfo(
         const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image)
@@ -84,7 +88,7 @@ namespace FIFE
             r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t const lm = renderbackend->getLightingModel();
+                auto const lm = renderbackend->getLightingModel();
                 m_image->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -96,6 +100,7 @@ namespace FIFE
             }
         }
     }
+
     LightRendererAnimationInfo::LightRendererAnimationInfo(
         const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst),
@@ -125,7 +130,7 @@ namespace FIFE
             r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t const lm = renderbackend->getLightingModel();
+                auto const lm = renderbackend->getLightingModel();
                 img->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -137,6 +142,7 @@ namespace FIFE
             }
         }
     }
+
     LightRendererResizeInfo::LightRendererResizeInfo(
         const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image), m_width(width), m_height(height)
@@ -160,7 +166,7 @@ namespace FIFE
             r.h                 = height;
 
             if (r.intersects(viewport)) {
-                uint8_t const lm = renderbackend->getLightingModel();
+                auto const lm = renderbackend->getLightingModel();
                 m_image->render(r);
                 if (m_stencil) {
                     renderbackend->changeRenderInfos(
@@ -172,6 +178,7 @@ namespace FIFE
             }
         }
     }
+
     LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(
         const RendererNode& anchor,
         uint8_t intensity,
@@ -205,7 +212,7 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             double const zoom = cam->getZoom();
 
-            uint8_t const lm = renderbackend->getLightingModel();
+            auto const lm = renderbackend->getLightingModel();
             renderbackend->drawLightPrimitive(
                 p,
                 m_intensity,
@@ -235,23 +242,29 @@ namespace FIFE
         colors.push_back(m_intensity);
         return colors;
     }
+
     LightRenderer* LightRenderer::getInstance(IRendererContainer* cnt)
     {
         return dynamic_cast<LightRenderer*>(cnt->getRenderer("LightRenderer"));
     }
+
     LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position) : RendererBase(renderbackend, position)
     {
         setEnabled(false);
     }
+
     LightRenderer::LightRenderer(const LightRenderer& old) : RendererBase(old)
     {
         setEnabled(false);
     }
+
     RendererBase* LightRenderer::clone()
     {
         return new LightRenderer(*this);
     }
+
     LightRenderer::~LightRenderer() = default;
+
     // Add a static lightmap
     void LightRenderer::addImage(
         const std::string& group, const RendererNode& n, const ImagePtr& image, int32_t src, int32_t dst)
@@ -259,6 +272,7 @@ namespace FIFE
         LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
         m_groups[group].push_back(info);
     }
+
     // Add a animation lightmap
     void LightRenderer::addAnimation(
         const std::string& group, const RendererNode& n, const AnimationPtr& animation, int32_t src, int32_t dst)
@@ -266,6 +280,7 @@ namespace FIFE
         LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
         m_groups[group].push_back(info);
     }
+
     // Add a simple light
     void LightRenderer::addSimpleLight(
         const std::string& group,
@@ -285,6 +300,7 @@ namespace FIFE
             new LightRendererSimpleLightInfo(n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
         m_groups[group].push_back(info);
     }
+
     // Resize an Image
     void LightRenderer::resizeImage(
         const std::string& group,
@@ -298,6 +314,7 @@ namespace FIFE
         LightRendererElementInfo* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
         m_groups[group].push_back(info);
     }
+
     // Enable stencil test for the group
     void LightRenderer::addStencilTest(const std::string& group, uint8_t stencil_ref)
     {
@@ -306,6 +323,7 @@ namespace FIFE
             (*info_it)->setStencil(stencil_ref);
         }
     }
+
     // Disable stencil test for the group
     void LightRenderer::removeStencilTest(const std::string& group)
     {
@@ -314,6 +332,7 @@ namespace FIFE
             (*info_it)->removeStencil();
         }
     }
+
     // Return a list of all groups
     std::list<std::string> LightRenderer::getGroups()
     {
@@ -326,6 +345,7 @@ namespace FIFE
         groups.unique();
         return groups;
     }
+
     // Return a vector of all LightElementInfos
     std::vector<LightRendererElementInfo*> LightRenderer::getLightInfo(const std::string& group)
     {
@@ -336,6 +356,7 @@ namespace FIFE
         }
         return info;
     }
+
     // Remove the group
     void LightRenderer::removeAll(const std::string& group)
     {
@@ -346,6 +367,7 @@ namespace FIFE
         m_groups[group].clear();
         m_groups.erase(group);
     }
+
     // Remove all groups
     void LightRenderer::removeAll()
     {
@@ -358,15 +380,17 @@ namespace FIFE
         }
         m_groups.clear();
     }
+
     // Clear all groups
     void LightRenderer::reset()
     {
         removeAll();
     }
+
     // Render
     void LightRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        uint8_t const lm = m_renderbackend->getLightingModel();
+        auto const lm = m_renderbackend->getLightingModel();
 
         if (!layer->areInstancesVisible()) {
             return;

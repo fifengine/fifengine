@@ -380,7 +380,7 @@ namespace FIFE
         Uint32 const pixel = SDL_MapRGBA(surface->format, r, g, b, a);
         switch (bpp) {
         case 1:
-            *p = pixel;
+            *p = static_cast<Uint8>(pixel & 0xffU);
             break;
 
         case 2: {

@@ -207,7 +207,13 @@ namespace FIFE
                         for (unsigned int const flag : flags) {
                             // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
                             // mode.refresh_rate, flags[j]));
-                            ScreenMode sm(mode.w, mode.h, bpp, mode.refresh_rate, flag);
+                            const uint16_t modeW = static_cast<uint16_t>(
+                                std::clamp(mode.w, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                            const uint16_t modeH = static_cast<uint16_t>(
+                                std::clamp(mode.h, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                            const uint16_t modeRefresh = static_cast<uint16_t>(std::clamp(
+                                mode.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                            ScreenMode sm(modeW, modeH, static_cast<uint16_t>(bpp), modeRefresh, flag);
                             sm.setFormat(mode.format);
                             assert(i <= std::numeric_limits<uint8_t>::max());
                             sm.setDisplay(static_cast<uint8_t>(i));
@@ -270,7 +276,9 @@ namespace FIFE
             // Keep requested dimensions in windowed mode.
             // SDL_GetClosestDisplayMode() can pick a desktop/fullscreen-sized mode and unexpectedly enlarge
             // windowed windows (for example across a virtual combined desktop).
-            mode = ScreenMode(width, height, bpp, desktopMode.refresh_rate, flags);
+            const uint16_t desktopRefresh = static_cast<uint16_t>(
+                std::clamp(desktopMode.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+            mode = ScreenMode(width, height, bpp, desktopRefresh, flags);
             mode.setFormat(desktopMode.format);
             mode.setDisplay(display);
             if (m_renderDriverIndex != -1) {
@@ -300,7 +308,13 @@ namespace FIFE
             throw NotSupported("Could not find a matching screen mode for the values given!");
         }
 
-        mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
+        const uint16_t closestW =
+            static_cast<uint16_t>(std::clamp(closest.w, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+        const uint16_t closestH =
+            static_cast<uint16_t>(std::clamp(closest.h, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+        const uint16_t closestRefresh = static_cast<uint16_t>(
+            std::clamp(closest.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+        mode = ScreenMode(closestW, closestH, bpp, closestRefresh, flags);
         mode.setFormat(closest.format);
         mode.setDisplay(display);
         if (m_renderDriverIndex != -1) {

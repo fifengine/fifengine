@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -928,8 +929,10 @@ found_non_transparent_pixel:;
         if (!m_col_overlay && !m_img_overlay && !m_ani_overlay) {
             return;
         }
-        uint16_t const width  = m_viewport.w;
-        uint16_t const height = m_viewport.h;
+        assert(m_viewport.w >= 0 && m_viewport.w <= std::numeric_limits<uint16_t>::max());
+        assert(m_viewport.h >= 0 && m_viewport.h <= std::numeric_limits<uint16_t>::max());
+        uint16_t const width  = static_cast<uint16_t>(m_viewport.w);
+        uint16_t const height = static_cast<uint16_t>(m_viewport.h);
         Point const pm        = Point(m_viewport.x + (width / 2), m_viewport.y + (height / 2));
         Rect r;
 

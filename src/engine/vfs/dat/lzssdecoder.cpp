@@ -77,7 +77,7 @@ namespace FIFE
                 c                 = in[ibuf++];
                 out[m_outindex++] = static_cast<uint8_t>(c);
 
-                buffer[r++] = c;
+                buffer[r++] = static_cast<char>(c);
                 r &= (kRingBufferSize - 1);
             } else {
                 i = in[ibuf++];
@@ -91,7 +91,7 @@ namespace FIFE
 
                     out[m_outindex++] = static_cast<uint8_t>(c);
 
-                    buffer[r++] = c;
+                    buffer[r++] = static_cast<char>(c);
                     r &= (kRingBufferSize - 1);
                 }
             }
