@@ -7,6 +7,7 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#include <utf8.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -14,7 +15,6 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
-#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 

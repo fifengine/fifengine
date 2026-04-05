@@ -216,6 +216,7 @@ endif()
 
 # GCC and Clang compiler options
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -finput-charset=UTF-8")
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")
   else()
@@ -536,10 +537,6 @@ set(
   src/engine/util/time/timeevent.h
   src/engine/util/time/timemanager.h
   src/engine/util/time/timer.h
-  src/engine/util/utf8/utf8.h
-  src/engine/util/utf8/utf8/checked.h
-  src/engine/util/utf8/utf8/core.h
-  src/engine/util/utf8/utf8/unchecked.h
   src/engine/vfs/directoryprovider.h
   src/engine/vfs/filesystem.h
   src/engine/vfs/vfs.h
@@ -792,6 +789,7 @@ find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
+find_package(utf8cpp CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
 find_package(GLEW CONFIG REQUIRED)
@@ -1174,6 +1172,7 @@ if(BUILD_LIBRARY)
       Vorbis::vorbisenc
       OpenAL::OpenAL
       tinyxml2::tinyxml2
+      utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
       $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
       $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>

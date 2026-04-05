@@ -10,9 +10,9 @@
 #include "fife_unittest.h"
 
 // 3rd party library includes
+#include <utf8.h>
 
 // FIFE includes
-#include "util/utf8/utf8.h"
 
 namespace
 {
@@ -158,10 +158,10 @@ TEST_CASE("utf8_mixed_languages")
     uint32_t cp2   = utf8::unchecked::next(it);
     uint32_t cp3   = utf8::unchecked::next(it);
     uint32_t cp4   = utf8::unchecked::next(it);
-    CHECK(cp1 == 72);
-    CHECK(cp2 == 101);
-    CHECK(cp3 == 108);
-    CHECK(cp4 == 108);
+    CHECK_EQ(cp1, 72);
+    CHECK_EQ(cp2, 101);
+    CHECK_EQ(cp3, 108);
+    CHECK_EQ(cp4, 108);
 }
 
 TEST_CASE("utf8_append_codepoints")
@@ -228,10 +228,10 @@ TEST_CASE("utf8_advance_through_languages")
     const char* it1 = s.data();
     utf8::unchecked::advance(it1, 5);
     uint32_t cp1 = utf8::unchecked::next(it1);
-    CHECK(cp1 == 1055); // П = 0x041F
+    CHECK_EQ(cp1, 1055); // П = 0x041F
 
     const char* it2 = s.data();
     utf8::unchecked::advance(it2, 6);
     uint32_t cp2 = utf8::unchecked::next(it2);
-    CHECK(cp2 == 1088); // р = 0x0440
+    CHECK_EQ(cp2, 1088); // р = 0x0440
 }
