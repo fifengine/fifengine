@@ -43,7 +43,6 @@ def getUserDataDirectory(vendor, appname):
 
     # WINDOWS
     if os.name == "nt":
-
         # Try env APPDATA or USERPROFILE or HOMEDRIVE/HOMEPATH
         if "APPDATA" in os.environ:
             dir = os.environ["APPDATA"]

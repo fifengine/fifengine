@@ -290,7 +290,6 @@ class FifePychanSettings(Setting):
 
 
 class PychanSettingEntry(SettingEntry):
-
     def __init__(
         self,
         module,

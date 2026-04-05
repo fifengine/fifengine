@@ -394,7 +394,6 @@ class Setting:
     # get all the settings of a module name module
     def getSettingsFromFile(self, module, logger=None):
         if self._serializer:
-
             self._logger = logger
             modules = self._serializer.getModuleNameList()
             if module not in modules:
@@ -423,7 +422,6 @@ class Setting:
                 # if the setting name is known, so that it is
                 # both in self._settingsFromFile and validSetting
                 if name in self._validSetting[module]:
-
                     e_value = self._settingsFromFile[module][name]
 
                     if name == "InitialVolume":
@@ -546,7 +544,6 @@ class Setting:
                         self._settingsFromFile[module][name] = e_value
 
                     else:
-
                         if isinstance(
                             self._settingsFromFile[module][name], list
                         ) or isinstance(self._settingsFromFile[module][name], dict):
@@ -707,7 +704,6 @@ class Setting:
 
 
 class SettingEntry:
-
     def __init__(
         self, module, name, applyfunction=None, initialdata=None, requiresrestart=False
     ):

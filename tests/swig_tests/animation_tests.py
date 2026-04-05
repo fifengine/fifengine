@@ -10,7 +10,6 @@ from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestView(unittest.TestCase):
-
     def setUp(self):
         self._pumping_initialized = False
         self.engine = getEngine()

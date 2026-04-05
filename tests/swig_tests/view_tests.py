@@ -9,7 +9,6 @@ from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestView(unittest.TestCase):
-
     def setUp(self):
         self.engine = getEngine()
         self.model = self.engine.getModel()

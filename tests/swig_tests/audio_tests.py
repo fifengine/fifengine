@@ -11,7 +11,6 @@ from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestAudio(unittest.TestCase):
-
     def setUp(self):
         self.engine = getEngine(True)
         self.soundmanager = self.engine.getSoundManager()
