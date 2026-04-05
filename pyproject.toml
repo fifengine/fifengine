@@ -110,10 +110,14 @@ target-version = "py313"
 extend-exclude = ["build", "out", "vcpkg_installed", "engine/swigwrappers"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I"]
+select = ["E", "F", "W", "I", "U"]
 
 [tool.ruff.lint.per-file-ignores]
 "*.py" = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
 python_version = "3.13"
