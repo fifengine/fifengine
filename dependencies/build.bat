@@ -22,6 +22,16 @@ rem ============================================================================
 
 rem Get the directory where this script resides
 set "SCRIPT_DIR=%~dp0"
+for %%I in ("%SCRIPT_DIR%..") do set "REPO_ROOT=%%~fI"
+
+set "TRIPLET=x64-windows"
+if defined FIFE_DEP_TRIPLET set "TRIPLET=%FIFE_DEP_TRIPLET%"
+
+set "BUILD_TYPE=Release"
+if defined FIFE_DEP_CONFIG set "BUILD_TYPE=%FIFE_DEP_CONFIG%"
+
+set "DO_CLEAN=0"
+if defined FIFE_DEP_CLEAN set "DO_CLEAN=%FIFE_DEP_CLEAN%"
 
 rem Initialize Visual Studio Developer Command Prompt
 if exist "C:\Program Files\Microsoft Visual Studio\18\Insiders\Common7\Tools\vsdevcmd.bat" (
@@ -51,21 +61,26 @@ call %VCPKG_ROOT%\vcpkg integrate install
 echo Using CMake command: %CMAKE_CMD%
 
 rem Set build and install directories
-set "BUILD_DIR=%SCRIPT_DIR%..\out\fife-dependencies\x64-windows\build"
-set "INSTALL_DIR=%SCRIPT_DIR%..\out\fife-dependencies\x64-windows\install"
+set "DEPS_ROOT=%REPO_ROOT%\out\fife-dependencies"
+set "BUILD_DIR=%DEPS_ROOT%\%TRIPLET%\build"
+set "INSTALL_DIR=%DEPS_ROOT%\%TRIPLET%\install"
+
+if "%DO_CLEAN%"=="1" if exist "%DEPS_ROOT%\%TRIPLET%" (
+    rmdir /s /q "%DEPS_ROOT%\%TRIPLET%"
+)
 
 rem Configure
 "%CMAKE_CMD%" ^
-      -S %SCRIPT_DIR% ^
-      -B %BUILD_DIR% ^
-      -G Ninja ^
-      -DCMAKE_BUILD_TYPE=Release ^
-      -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ^
-      -DVCPKG_TARGET_TRIPLET=x64-windows ^
-      -DCMAKE_PREFIX_PATH=%VCPKG_ROOT%/installed/x64-windows ^
-      -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR% ^
-      -DFIFECHAN_BUILD_FROM_SOURCE=ON ^
-      --fresh
+    -S %SCRIPT_DIR% ^
+    -B %BUILD_DIR% ^
+    -G Ninja ^
+    -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+    -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ^
+    -DVCPKG_TARGET_TRIPLET=%TRIPLET% ^
+    -DCMAKE_PREFIX_PATH=%VCPKG_ROOT%/installed/%TRIPLET% ^
+    -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR% ^
+    -DFIFECHAN_BUILD_FROM_SOURCE=ON ^
+    --fresh
 if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 rem Build
