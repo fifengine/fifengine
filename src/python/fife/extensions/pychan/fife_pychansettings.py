@@ -20,14 +20,14 @@ SETTINGS_GUI_XML = """\
 	<Label text="Settings menu!" />
 	<HBox>
 		<VBox>
+            <Label text="Display:" />
 			<Label text="Resolution:" />
 			<Label text="Renderer:" />
-			<Label text="Display:" />
 		</VBox>
 		<VBox min_size="120,90">
+            <DropDown name="display" min_size="120,0" />
 			<DropDown name="screen_resolution" min_size="120,0" />
 			<DropDown name="render_backend" min_size="120,0" />
-			<DropDown name="display" min_size="120,0" />
 		</VBox>
 	</HBox>
 	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
@@ -139,6 +139,16 @@ class FifePychanSettings(Setting):
             initialdata=self._renderbackends,
             requiresrestart=True,
         )
+        self.createAndAddEntry(
+            FIFE_MODULE,
+            "Display",
+            "display",
+            initialdata=self._displayDropdownLabels(),
+            requiresrestart=True,
+        )
+
+    def _displayDropdownLabels(self):
+        return [f"Display {index + 1}" for index in self._displays]
 
     # sets valid resolution options in the settings->Resolution
     def setValidResolutions(self, options):
@@ -149,6 +159,23 @@ class FifePychanSettings(Setting):
             "ScreenResolution",
             "screen_resolution",
             initialdata=self._resolutions,
+            requiresrestart=True,
+        )
+
+    # sets valid display options in the settings->Display
+    def setValidDisplays(self, options):
+        if options:
+            normalized = sorted({int(display) for display in options})
+            if len(normalized) <= 1:
+                normalized = [0, 1]
+            self._displays = normalized
+        elif len(self._displays) <= 1:
+            self._displays = [0, 1]
+        self.createAndAddEntry(
+            FIFE_MODULE,
+            "Display",
+            "display",
+            initialdata=self._displayDropdownLabels(),
             requiresrestart=True,
         )
 
@@ -215,6 +242,14 @@ class FifePychanSettings(Setting):
 				"""
                 value = self.get(entry.module, entry.name)
 
+                if entry.name == "Display" and isinstance(entry.initialdata, list):
+                    try:
+                        display_index = self._displays.index(int(value))
+                        entry.initializeWidget(widget, display_index)
+                        continue
+                    except (TypeError, ValueError):
+                        pass
+
                 if isinstance(entry.initialdata, list):
                     try:
                         value = entry.initialdata.index(value)
@@ -229,7 +264,7 @@ class FifePychanSettings(Setting):
                         )
                 elif isinstance(entry.initialdata, dict):
                     try:
-                        value = list(entry.initialdata.keys()).index(value)
+                        value = list(entry.initialdata.values()).index(value)
                     except ValueError:
                         raise ValueError(
                             '"'
@@ -237,7 +272,7 @@ class FifePychanSettings(Setting):
                             + '" is not a valid value for '
                             + entry.name
                             + ". Valid options: "
-                            + str(list(entry.initialdata.keys()))
+                            + str(list(entry.initialdata.values()))
                         )
                 entry.initializeWidget(widget, value)
 
@@ -256,7 +291,14 @@ class FifePychanSettings(Setting):
                 if type(entry.initialdata) is list:
                     data = entry.initialdata[data]
                 elif isinstance(entry.initialdata, dict):
-                    data = list(entry.initialdata.keys())[data]
+                    data = list(entry.initialdata.values())[data]
+
+                if entry.name == "Display":
+                    selected_index = widget.getData()
+                    if 0 <= selected_index < len(self._displays):
+                        data = self._displays[selected_index]
+                    else:
+                        data = self._displays[0]
 
                 # only take action if something really changed
                 if data != self.get(entry.module, entry.name):

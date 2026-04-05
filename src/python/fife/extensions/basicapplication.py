@@ -72,6 +72,19 @@ class ApplicationBase:
         resolutions = [f"{item[0]}x{item[1]}" for item in sorted(resolutions)[1:]]
         self._setting.setValidResolutions(resolutions)
 
+        display_count = self.engine.getDeviceCaps().getDisplayCount()
+        displays = set(range(max(1, display_count)))
+        displays.update(mode.getDisplay() for mode in screen_modes)
+        displays = sorted(displays)
+
+        # Some SDL/drivers only list display 0, even with multiple monitors.
+        # Ensure we have at least 2 entries so users can pick display 2 manually.
+        if len(displays) <= 1:
+            min_count = max(2, display_count)
+            displays = list(range(min_count))
+
+        self._setting.setValidDisplays(displays)
+
         self.quitRequested = False
         self.breakRequested = False
         self.returnValues = []

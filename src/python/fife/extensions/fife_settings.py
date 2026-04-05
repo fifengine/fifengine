@@ -244,6 +244,8 @@ class Setting:
         # default settings
         self._resolutions = self._validSetting["FIFE"]["ScreenResolution"]
         self._renderbackends = self._validSetting["FIFE"]["RenderBackend"]
+        min_display, max_display = self._validSetting["FIFE"]["Display"]
+        self._displays = list(range(min_display, max_display + 1))
         self._lightingmodels = self._validSetting["FIFE"]["Lighting"]
 
         # Used to stylize the options gui
@@ -313,6 +315,22 @@ class Setting:
             requiresrestart=True,
         )
 
+    # sets valid display options in the settings->Display
+    def setValidDisplays(self, options):
+        if options:
+            normalized = sorted({int(display) for display in options})
+            if len(normalized) <= 1:
+                normalized = [0, 1]
+            self._displays = normalized
+        elif len(self._displays) <= 1:
+            self._displays = [0, 1]
+        self.createAndAddEntry(
+            FIFE_MODULE,
+            "Display",
+            initialdata=self._displays,
+            requiresrestart=True,
+        )
+
     def initSerializer(self):
         self._serializer.load(os.path.join(self._appdata, self._settings_file))
 
@@ -334,6 +352,13 @@ class Setting:
             FIFE_MODULE,
             "RenderBackend",
             initialdata=self._renderbackends,
+            requiresrestart=True,
+        )
+
+        self.createAndAddEntry(
+            FIFE_MODULE,
+            "Display",
+            initialdata=self._displays,
             requiresrestart=True,
         )
 
