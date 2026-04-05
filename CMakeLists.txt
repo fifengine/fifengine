@@ -978,6 +978,7 @@ if(BUILD_PYTHON_BINDINGS)
       Vorbis::vorbisfile
       Ogg::ogg
       tinyxml2::tinyxml2
+      utf8cpp::utf8cpp
   )
 
   if(ENABLE_OPENGL)
@@ -988,7 +989,9 @@ if(BUILD_PYTHON_BINDINGS)
     set_property(SOURCE "${PROJECT_BINARY_DIR}/fifechan.i" PROPERTY CPLUSPLUS ON)
 
     if(MSVC)
-      # Keep the same generated-source-only workaround for the fifechan wrapper.
+      # SWIG runtime code checks for macro define __GNUC__ in generated wrappers.
+      # We need to define it for the generated sources,
+      # so MSVC does not emit "undefined macro" warning C4668 for __GNUC__.
       set_property(
         SOURCE "${PROJECT_BINARY_DIR}/fifechan.i"
         APPEND PROPERTY SWIG_GENERATED_COMPILE_DEFINITIONS "__GNUC__=0"

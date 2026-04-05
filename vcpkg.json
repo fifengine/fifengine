@@ -30,6 +30,7 @@
     "openal-soft",
     "tinyxml2",
     "zlib",
+    "utfcpp",
     "catch2"
   ],
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json"
