@@ -24,6 +24,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
+
 #ifndef UTF8_FOR_CPP_7e906c01_03a3_4daf_b420_ea7ea952b3c9
 #define UTF8_FOR_CPP_7e906c01_03a3_4daf_b420_ea7ea952b3c9
 
@@ -92,3 +93,4 @@ namespace utf8
 } // namespace utf8
 
 #endif // header guard
+

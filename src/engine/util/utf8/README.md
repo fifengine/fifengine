@@ -1,7 +1,7 @@
-# UTF8-CPP
+# UTF8-CPP v4.0.9
 
 Github: https://github.com/nemtrif/utfcpp
 
-Version: 4.0.9
-
 Tag: https://github.com/nemtrif/utfcpp/releases/tag/v4.0.9
+
+Warning: Do not apply clang-tidy to this third-party library.

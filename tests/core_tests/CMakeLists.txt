@@ -17,6 +17,7 @@ set(
   test_dat2.cpp
   test_rect.cpp
   test_sharedptr.cpp
+  test_utf.cpp
   test_vfs.cpp
 )
 
