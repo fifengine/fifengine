@@ -209,6 +209,7 @@ if(MSVC)
   add_compile_options(/wd4710) # function not inlined
   add_compile_options(/wd4820) # Disable warning about padding added to structures for alignment
   add_compile_options(/wd5045) # Compiler will insert Spectre mitigation
+  add_compile_options(/wd4191) # Disable warning about unsafe type casting. 6k+ warnings. Could be UB though ;)
 
 endif()
 
