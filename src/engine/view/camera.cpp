@@ -963,7 +963,7 @@ found_non_transparent_pixel:;
         }
         // animation overlay
         if (m_ani_overlay) {
-            assert(m_ani_ptr != 0);
+            assert(m_ani_ptr);
 
             if (m_start_time == 0) {
                 m_start_time = TimeManager::instance()->getTime();

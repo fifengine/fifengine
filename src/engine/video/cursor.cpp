@@ -64,7 +64,7 @@ namespace FIFE
 
     void Cursor::set(const ImagePtr& image)
     {
-        assert(image != 0);
+        assert(image);
 
         m_cursor_image = image;
         m_cursor_type  = CURSOR_IMAGE;
@@ -86,7 +86,7 @@ namespace FIFE
 
     void Cursor::set(const AnimationPtr& anim)
     {
-        assert(anim != 0);
+        assert(anim);
 
         m_cursor_animation = anim;
         m_cursor_type      = CURSOR_ANIMATION;
@@ -109,7 +109,7 @@ namespace FIFE
 
     void Cursor::setDrag(const ImagePtr& image, int32_t drag_offset_x, int32_t drag_offset_y)
     {
-        assert(image != 0);
+        assert(image);
 
         m_cursor_drag_image = image;
         m_drag_type         = CURSOR_IMAGE;
@@ -121,7 +121,7 @@ namespace FIFE
 
     void Cursor::setDrag(const AnimationPtr& anim, int32_t drag_offset_x, int32_t drag_offset_y)
     {
-        assert(anim != 0);
+        assert(anim);
 
         m_cursor_drag_animation = anim;
         m_drag_type             = CURSOR_ANIMATION;
