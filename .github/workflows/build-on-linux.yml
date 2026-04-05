@@ -1,5 +1,5 @@
 #
-# .github/workflows/build.yml
+# .github/workflows/build-on-linux.yml
 #
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2026 Jens A. Koch.
@@ -7,9 +7,12 @@
 #
 
 # -----------------------------------------------------------------------------
-# This workflow builds the Fifengine C++ library.
+# This workflow builds the Fifengine C++ library on Linux.
+#
+# The "build-on-linux" job runs on GitHub-hosted runners.
+# The "build-on-container" job runs in the Docker devcontainer environment.
 # -----------------------------------------------------------------------------
-name: Build Fifengine (C++ Library)
+name: Build on Linux (C++ Library)
 
 on:
   push:
@@ -180,211 +183,6 @@ jobs:
         run: |
           ls -lahr ${{ env.BUILD_DIR }}
           ls -lahr ${{ env.INSTALL_DIR }}
-
-      - name: 🔼 Upload build artifacts
-        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
-        with:
-          name: ${{ matrix.config.artifact-name }}
-          path: ${{ env.INSTALL_DIR }}/**/*
-          retention-days: 30
-
-# ---------------------------------------------------------------------------------------
-
-  build-on-windows:
-
-# ---------------------------------------------------------------------------------------
-
-    name: "${{ matrix.config.job_name }}"
-
-    # https://github.com/actions/runner-images#available-environments
-    runs-on: ${{ matrix.config.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
-        - {
-            job_name: "Win | VC17 | Release",
-            os: windows-2025,
-            preset: vc17-x64-windows-rel,
-            triplet: x64-windows,
-            artifact-name: libfife-vc17-x64-windows
-          }
-        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-VS2026-Readme.md
-        - {
-            job_name: "Win | VC18 | Shared | Release",
-            os: windows-2025-vs2026,
-            preset: vc18-x64-windows-rel,
-            triplet: x64-windows,
-            artifact-name: libfife-vc18-x64-windows
-          }
-        # disabled, because "Linker cannot open file 'python314_d.lib'"
-        # - {
-        #     job_name: "Win | VC18 | Shared | Debug",
-        #     os: windows-2025-vs2026,
-        #     preset: vc18-x64-windows-dbg,
-        #     triplet: x64-windows,
-        #     artifact-name: libfife-vc18-x64-windows-debug
-        #   }
-        - {
-            job_name: "Win | VC18 | Shared | RelWithDebInfo",
-            os: windows-2025-vs2026,
-            preset: vc18-x64-windows-rdi,
-            triplet: x64-windows,
-            artifact-name: libfife-vc18-x64-windows-rdi
-          }
-
-    env:
-      VCPKG_DISABLE_METRICS: 1
-      VCPKG_INSTALLED_DIR: ${{ github.workspace }}\vcpkg_installed
-      SOURCE_DIR:          ${{ github.workspace }}
-      BUILD_DIR:           ${{ github.workspace }}\build
-      INSTALL_DIR:         ${{ github.workspace }}\install
-      DEPS_DIR:            ${{ github.workspace }}\out\fife-dependencies
-
-    defaults:
-      run:
-        shell: cmd
-
-    steps:
-      - name: 🤘 Checkout Code
-        uses: actions/checkout@v6 # https://github.com/actions/checkout
-
-      # https://community.chocolatey.org/packages/ninja
-      - name: 🔽 Install Ninja
-        run: choco install ninja --no-progress
-
-      # https://community.chocolatey.org/packages/cmake
-      - name: 🔽 Install CMake
-        run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
-
-      # WARNING
-      # ENV VCPKG_ROOT is redefined by this action
-      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
-      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
-      - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1
-
-      # Default Location is "c:\vcpkg"
-      - name: 🔽 Define VCPKG_ROOT
-        shell: pwsh
-        run: |
-          $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
-          echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
-
-      # Reminder: This step requires that the CMakePresets for CI contain
-      # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
-      - name: 🎯 Setup Build Cache
-        uses: hendrikmuhs/ccache-action@v1.2.22 # https://github.com/hendrikmuhs/ccache-action
-        with:
-          variant: sccache
-          key: build-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('.github/workflows/build.yml') }}
-          restore-keys: |
-            build-${{ matrix.config.preset }}-${{ github.ref }}
-            build-${{ matrix.config.preset }}
-
-      - name: 🎯 Setup VCPKG Cache
-        id: cache-vcpkg
-        uses: actions/cache@v5 # https://github.com/actions/cache
-        with:
-          # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
-          path: |
-            ${{ env.VCPKG_INSTALLED_DIR }}
-            ${{ env.VCPKG_ROOT }}\packages
-            ~\AppData\Local\vcpkg\archives\
-          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-vcpkg-${{ matrix.config.preset }}
-
-      - name: 🎯 Setup Dependencies Cache
-        id: cache-deps
-        uses: actions/cache@v5 # https://github.com/actions/cache
-        with:
-          path: |
-            ${{ env.DEPS_DIR }}
-          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
-          restore-keys: |
-            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-deps-${{ matrix.config.preset }}
-
-      # Default Locations (env var VCPKG_INSTALLATION_ROOT):
-      # Windows: "c:\vcpkg"
-      # Linux: /usr/local/share/vcpkg
-      - name: 🔽 1.1 Setup VCPKG
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "[VCPKG] Updating registry..."
-          cd "${{ env.VCPKG_ROOT }}"
-          git fetch --tags
-          LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
-          git checkout $LATEST_VCPKG_TAG
-          echo "[VCPKG] Bootstrapping..."
-          bootstrap-vcpkg.bat
-          echo "[VCPKG] Integrating with the system..."
-          vcpkg integrate install
-
-      - name: 📦 1.2 Install VCPKG dependencies
-        run: |
-          vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
-
-      - name: 🧩 2.1 Configure non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: |
-          cmake ^
-            -S dependencies ^
-            -B "%DEPS_DIR%\build" ^
-            -G Ninja ^
-            -DCMAKE_BUILD_TYPE=Release ^
-            -DFIFE_DEPENDENCIES_ROOT="%DEPS_DIR%" ^
-            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
-            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
-            -DFIFECHAN_BUILD_FROM_SOURCE=ON
-
-      - name: 🏗️ 2.2 Build non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: |
-          cmake --build "%DEPS_DIR%\build" --parallel
-
-      # Notes:
-      # - SWIG: the detection uses the CMake FindSWIG module, which looks for SWIG_EXECUTABLE and SWIG_DIR.
-      #   It will find the pre-installed SWIG in C:/ProgramData/chocolatey/lib/swig/ first.
-      #   We need to override it to use the one we fetched.
-      #   If SWIG_EXECUTABLE is not set, the system one will be used (C:/ProgramData/chocolatey/lib/swig/)
-      #   If SWIG_DIR is not set, SWIG_LIB will be the system one (C:/ProgramData/chocolatey/lib/swig/tools/install/swigwin-4.3.1/Lib)
-      # - CMAKE_CXX_COMPILER_LAUNCHER=sccache must be set manually, can not be set via presets.
-      #   As local developer might not have sccache installed, but on CI we want to use it for caching.
-      - name: 🛠️ 3.1 Configure fifengine
-        run: |
-          cmake ^
-            --preset ${{ matrix.config.preset }} ^
-            -B "%BUILD_DIR%" ^
-            -DENABLE_FIFEGUI=ON ^
-            -DBUILD_PYTHON_BINDINGS=OFF ^
-            -DBUILD_LIBRARY=ON ^
-            -DCMAKE_PREFIX_PATH="%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}" ^
-            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
-            -DVCPKG_MANIFEST_MODE=OFF ^
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
-            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-
-        #    -DSWIG_EXECUTABLE="%DEPS_DIR%\build-tools\swig\swig.exe" ^
-        #    -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
-
-      - name: 🙏 3.2 Build fifengine
-        run: cmake --build ${{ env.BUILD_DIR }}
-
-      - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
-
-      - name: ❔ CHECK important folders, to see if everything is present (after building)
-        run: |
-          dir ${{ env.BUILD_DIR }}
-          dir ${{ env.INSTALL_DIR }}
 
       - name: 🔼 Upload build artifacts
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
