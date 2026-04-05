@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <string>
 #include <vector>
 
 // This needs to be here, before Fifechan includes gl.h
@@ -234,7 +233,10 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::opengl::Graphics::pushClipArea(area);
+
+        // Use the generic fcn clip-stack logic. The fcn::opengl::Graphics
+        // popClipArea implementation in current dependencies is recursive.
+        fcn::Graphics::pushClipArea(area);
 
         // Due to some odd conception in guiChan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -250,7 +252,11 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::opengl::Graphics::popClipArea();
+
+        // Use the generic fcn clip-stack logic. The fcn::opengl::Graphics
+        // popClipArea implementation in current dependencies is recursive.
+        fcn::Graphics::popClipArea();
+
         m_renderbackend->popClipArea();
     }
 

@@ -191,7 +191,7 @@ class BaseGameObject(Serializer):
 
         self._instance = layer.createInstance(
             self._fifeobject,
-            fife.Point3D(float(self._position.x), float(self._position.y), 0.0),
+            fife.Point3D(int(round(self._position.x)), int(round(self._position.y)), 0),
             self._id,
         )
         fife.InstanceVisual.create(self._instance)
