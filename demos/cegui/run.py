@@ -9,11 +9,6 @@
 
 
 import os
-import sys
-
-fife_path = os.path.join("..", "..", "engine", "python")
-if os.path.isdir(fife_path) and fife_path not in sys.path:
-    sys.path.insert(0, fife_path)
 
 import PyCEGUI
 from fife import fife

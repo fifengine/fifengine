@@ -10,13 +10,6 @@
 import os
 import sys
 
-try:
-    fife_path = os.path.join("..", "..", "engine", "python")
-    if os.path.isdir(fife_path):
-        sys.path.insert(0, fife_path)
-except Exception:
-    pass
-
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import pychanbasicapplication
