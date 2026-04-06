@@ -236,9 +236,11 @@ jobs:
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🛠️ 3.5 Bundle DLLs into wheels
+        shell: bash
         run: |
-          for whl in wheelhouse\*.whl; do
-            python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin"
+          set -euo pipefail
+          for whl in wheelhouse/*.whl; do
+            python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "$DEPS_DIR/install/bin;$VCPKG_INSTALLED_DIR/${{ matrix.config.triplet }}/bin"
           done
 
       - name: 🛠️ 3.6 Verify wheels
