@@ -1333,27 +1333,32 @@ if(BUILD_LIBRARY)
     add_subdirectory(tests/core_tests)
   endif()
 
-  install(TARGETS fife
-   EXPORT fife-targets
+  # scikit-build-core wheel builds bundle runtime DLLs via delvewheel in CI.
+  if(SKBUILD AND SKBUILD_STATE STREQUAL "wheel")
+    message(STATUS "Skipping C++ library installation to avoid duplicate wheel content (SKBUILD_STATE=wheel).")
+  else()
+   install(TARGETS fife
+     EXPORT fife-targets
 
-   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 
-   FILE_SET fife_public_headers
-   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+     FILE_SET fife_public_headers
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 
-   PERMISSIONS
-    OWNER_READ OWNER_WRITE OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE
+     PERMISSIONS
+      OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
 
-   # Experimental!
-   # EXPORT_PACKAGE_DEPENDENCIES
-  )
+     # Experimental!
+     # EXPORT_PACKAGE_DEPENDENCIES
+    )
 
-  # TODO check if this install folder is correct
-  install(FILES src/engine/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife)
+    # TODO check if this install folder is correct
+    install(FILES src/engine/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife)
+  endif()
 
 endif(BUILD_LIBRARY)
 
@@ -1372,9 +1377,14 @@ endif()
 # Copies all DLLs and transitive dependencies to CMAKE_INSTALL_LIBDIR
 #------------------------------------------------------------------------------
 if(WIN32)
-  install_fifechan_dlls()
-  install_vcpkg_dlls()
-  install_runtime_dlls()
+  # scikit-build-core wheel builds bundle runtime DLLs via delvewheel in CI.
+  if(SKBUILD AND SKBUILD_STATE STREQUAL "wheel")
+    message(STATUS "Skipping CMake based runtime DLL installation to avoid duplicate wheel content (SKBUILD_STATE=wheel).")
+  else()
+    install_fifechan_dlls()
+    install_vcpkg_dlls()
+    install_runtime_dlls()
+  endif()
 endif()
 
 #-------------------------------------------------------------------
