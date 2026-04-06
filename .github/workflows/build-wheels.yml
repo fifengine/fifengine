@@ -168,6 +168,11 @@ jobs:
         run: |
           cmake --build "%DEPS_DIR%\build" --parallel
 
+      - name: ❔ CHECK important folders, to see if everything is present (after building)
+        run: |
+          dir /S "%DEPS_DIR%\install"
+          dir /S "%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}"
+
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v5 # https://github.com/actions/cache
@@ -184,8 +189,12 @@ jobs:
         with:
           python-version: "3.14.3" # "3.15.0-alpha.7"
 
-      - name: 🛠️ 3.2 Install build tools
-        run: python -m pip install cibuildwheel
+      - name: 🛠️ 3.2 Install wheel building tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install check-wheel-contents
+          python -m pip install cibuildwheel
+          python -m pip install delvewheel
 
       - name: 🔧 3.3 Normalize paths for cibuildwheel
         shell: pwsh
@@ -207,7 +216,8 @@ jobs:
       - name: 🛠️ 3.4 Build wheels
         run: cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp312-win_amd64 cp313-win_amd64 cp314-win_amd64"
+          #CIBW_BUILD: "cp312-win_amd64 cp313-win_amd64 cp314-win_amd64"
+          CIBW_BUILD: "cp314-win_amd64"
           CIBW_ENVIRONMENT: >
             VCPKG_ROOT=${{ env.VCPKG_ROOT }}
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
@@ -225,15 +235,16 @@ jobs:
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install check-wheel-contents
+      # - name: 🛠️ 3.5 Bundle DLLs into wheels
+      #   run: |
+      #     for whl in wheelhouse\*.whl; do
+      #       python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}"
+      #     done
 
-      - name: Verify wheels
+      - name: 🛠️ 3.6 Verify wheels
         run: |
-          ls wheelhouse\*.whl
-          python -m check_wheel_contents wheelhouse\*.whl
+          ls wheelhouse/*.whl
+          python -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
 
       - uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         with:
