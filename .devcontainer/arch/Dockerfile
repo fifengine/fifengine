@@ -16,7 +16,6 @@ RUN echo "[PACMAN] Install packages" && \
     echo "[PACMAN] Clean up" && \
     rm -rf /var/cache/pacman/pkg/*
 
-
 RUN echo "[ZSH] Configure zsh as default shell for root" && \
     echo "/usr/bin/zsh" >> /etc/shells && \
     chsh -s /usr/bin/zsh root && \
@@ -30,15 +29,9 @@ RUN echo "[ZSH] Configure zsh as default shell for root" && \
     echo "source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" >> /root/.zshrc && \
     echo "source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> /root/.zshrc
 
-#RUN echo "[VCPKG] Install vcpkg" && \
-#    git clone https://github.com/microsoft/vcpkg.git /usr/local/vcpkg && \
-#    /usr/local/vcpkg/bootstrap-vcpkg.sh
-#    /usr/local/vcpkg/vcpkg integrate install
-
 RUN echo "[Status]" && \
     clang --version && \
-    cmake --version && \
-    ninja --version
+    cmake --version
 
 RUN echo "[FIFEGUI] Dependencies" &&
     pacman -Su --noconfirm \
@@ -89,6 +82,9 @@ RUN cd /workspaces/fifengine && \
     cmake ../.. \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=ON \
+      -DBUILD_LIBRARY=ON \
+      -DBUILD_PYTHON_BINDINGS=ON \
+      -DENABLE_FIFEGUI=ON \
       -DUSE_VCPKG=OFF \
       -DCMAKE_PREFIX_PATH=/out/fife-dependencies/x64-linux/install
     echo "[FIFE] Build" && \
