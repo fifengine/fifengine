@@ -12,12 +12,9 @@ It is by no means complete but it does provide a good starting point.
 import os
 import shutil
 
-from future import standard_library
-
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
-standard_library.install_aliases()
 
 FIFE_MODULE = "FIFE"
 
