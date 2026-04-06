@@ -792,6 +792,12 @@ find_package(tinyxml2 CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 
+if(WIN32)
+  find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
+  find_package(Freetype CONFIG REQUIRED)
+  find_package(GLEW CONFIG REQUIRED)
+endif()
+
 #------------------------------------------------------------------------------
 # Packages requiring PKGCONFIG support to find them
 #------------------------------------------------------------------------------
@@ -799,25 +805,28 @@ find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 # We try a quiet find_package first, this will fail and Package_FOUND
 # will be false, then we try to find it using pkg-config.
 
-find_package(PkgConfig REQUIRED)
+if(UNIX)
 
-find_package(Vorbis CONFIG QUIET) # Vorbis, not VORBIS
-find_package(Freetype CONFIG QUIET)
-find_package(GLEW CONFIG QUIET)
+  find_package(PkgConfig REQUIRED)
+  find_package(Vorbis CONFIG QUIET) # Vorbis, not VORBIS
+  find_package(Freetype CONFIG QUIET)
+  find_package(GLEW CONFIG QUIET)
 
-if (NOT Vorbis_FOUND)
+  if (NOT Vorbis_FOUND)
     message(STATUS "Vorbis CMake config not found, trying pkg-config.")
     pkg_check_modules(VORBIS REQUIRED vorbis)
-endif()
+  endif()
 
-if(NOT Freetype_FOUND)
+  if(NOT Freetype_FOUND)
     message(STATUS "Freetype CMake config not found, trying pkg-config.")
     pkg_check_modules(FREETYPE REQUIRED freetype2)
-endif()
+  endif()
 
-if(NOT GLEW_FOUND)
+  if(NOT GLEW_FOUND)
     message(STATUS "GLEW CMake config not found, trying pkg-config.")
     pkg_check_modules(GLEW REQUIRED glew)
+  endif()
+
 endif()
 
 #------------------------------------------------------------------------------
