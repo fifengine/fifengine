@@ -170,8 +170,9 @@ jobs:
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
-          dir /S "%DEPS_DIR%\install"
-          dir /S "%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}"
+          dir /S "%DEPS_DIR%\install\bin"
+          dir /S "%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin"
+          dir /S "%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\debug\bin"
 
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
@@ -216,8 +217,7 @@ jobs:
       - name: 🛠️ 3.4 Build wheels
         run: cibuildwheel --output-dir wheelhouse
         env:
-          #CIBW_BUILD: "cp312-win_amd64 cp313-win_amd64 cp314-win_amd64"
-          CIBW_BUILD: "cp314-win_amd64"
+          CIBW_BUILD: "cp312-win_amd64 cp313-win_amd64 cp314-win_amd64"
           CIBW_ENVIRONMENT: >
             VCPKG_ROOT=${{ env.VCPKG_ROOT }}
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
@@ -235,11 +235,11 @@ jobs:
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      # - name: 🛠️ 3.5 Bundle DLLs into wheels
-      #   run: |
-      #     for whl in wheelhouse\*.whl; do
-      #       python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}"
-      #     done
+       - name: 🛠️ 3.5 Bundle DLLs into wheels
+         run: |
+           for whl in wheelhouse\*.whl; do
+             python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin"
+           done
 
       - name: 🛠️ 3.6 Verify wheels
         run: |
