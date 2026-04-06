@@ -1,6 +1,12 @@
 {
     "name": "Fife DevBox",
+    // By default we use a pre-built cpp-devbox image
     "image": "ghcr.io/jakoch/cpp-devbox:trixie-latest",
+    // To use the arch based Dockerfile uncomment the following section:
+    //"build": {
+    //    "dockerfile": "arch/Dockerfile",
+    //    "context": "."
+    //},
     "customizations": {
         "vscode": {
             "extensions": [

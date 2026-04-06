@@ -791,12 +791,106 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
-find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
-find_package(GLEW CONFIG REQUIRED)
+
+#------------------------------------------------------------------------------
+# Packages requiring PKGCONFIG support to find them
+#------------------------------------------------------------------------------
+# For all packages without CMake config files:
+# We try a quiet find_package first, this will fail and Package_FOUND
+# will be false, then we try to find it using pkg-config.
+
+find_package(PkgConfig REQUIRED)
+
+find_package(Vorbis CONFIG QUIET) # Vorbis, not VORBIS
+find_package(Freetype CONFIG QUIET)
+find_package(GLEW CONFIG QUIET)
+
+if (NOT Vorbis_FOUND)
+    message(STATUS "Vorbis CMake config not found, trying pkg-config.")
+    pkg_check_modules(VORBIS REQUIRED vorbis)
+endif()
+
+if(NOT Freetype_FOUND)
+    message(STATUS "Freetype CMake config not found, trying pkg-config.")
+    pkg_check_modules(FREETYPE REQUIRED freetype2)
+endif()
+
+if(NOT GLEW_FOUND)
+    message(STATUS "GLEW CMake config not found, trying pkg-config.")
+    pkg_check_modules(GLEW REQUIRED glew)
+endif()
+
+#------------------------------------------------------------------------------
+# Define CMake Target fallbacks for dependencies without CMake config files.
+#------------------------------------------------------------------------------
+
+# Vorvis:vorbis target fallback
+if (NOT TARGET Vorbis::vorbis)
+    message(STATUS "Creating fallback Vorbis::vorbis target, because Vorbis CMake config not found.")
+    add_library(Vorbis::vorbis INTERFACE IMPORTED)
+    set_target_properties(Vorbis::vorbis PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_INCLUDE_DIRS}"
+    )
+endif()
+
+# Vorbis::vorbisfile target fallback
+# Vorbisfile typically links to libvorbisfile + libvorbis + libogg
+if (NOT TARGET Vorbis::vorbisfile)
+    message(STATUS "Creating fallback Vorbis::vorbisfile target, because Vorbis CMake config not found.")
+    add_library(Vorbis::vorbisfile INTERFACE IMPORTED)
+    set_target_properties(Vorbis::vorbisfile PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_INCLUDE_DIRS}"
+    )
+endif()
+
+# Vorbis::vorbisenc target fallback
+if (NOT TARGET Vorbis::vorbisenc)
+    message(STATUS "Creating fallback Vorbis::vorbisenc target, because Vorbis CMake config not found.")
+    add_library(Vorbis::vorbisenc INTERFACE IMPORTED)
+    set_target_properties(Vorbis::vorbisenc PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_INCLUDE_DIRS}"
+    )
+endif()
+
+# Freetype::Freetype target fallback
+if (NOT TARGET Freetype::Freetype)
+    message(STATUS "Creating fallback Freetype::Freetype target, because Freetype CMake config not found.")
+    add_library(Freetype::Freetype INTERFACE IMPORTED)
+    set_target_properties(Freetype::Freetype PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${FREETYPE_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${FREETYPE_INCLUDE_DIRS}"
+    )
+endif()
+
+if (NOT TARGET GLEW::GLEW)
+    message(STATUS "Creating fallback GLEW::GLEW target, because GLEW CMake config not found.")
+    add_library(GLEW::GLEW UNKNOWN IMPORTED)
+
+    message(STATUS "GLEW_INCLUDE_DIRS=${GLEW_INCLUDE_DIRS}")
+    message(STATUS "GLEW_LIBRARIES=${GLEW_LIBRARIES}")
+    message(STATUS "GLEW_LIB=${GLEW_LIB}")
+
+    # Because this is a list, but we need a file:
+    # GLEW_LIBRARIES=GLEW;GL;X11;GLU;OpenGL
+
+    file(GLOB GLEW_SO "${GLEW_LIBDIR}/libGLEW.so*")
+    list(GET GLEW_SO 0 GLEW_LIB)
+
+    set_target_properties(GLEW::GLEW PROPERTIES
+        IMPORTED_LOCATION_RELEASE "${GLEW_LIB}"
+        INTERFACE_INCLUDE_DIRECTORIES "${GLEW_INCLUDE_DIRS}"
+    )
+endif()
+
+# ------------------------------------------------------------------------------
+# Optional dependencies (based on BUILD options)
+# ------------------------------------------------------------------------------
 
 if(ENABLE_OPENGL)
   find_package(OpenGL REQUIRED)
-  find_package(GLEW CONFIG REQUIRED)
 endif()
 
 if(ENABLE_CEGUI)
@@ -844,6 +938,25 @@ if(ENABLE_FIFEGUI)
   find_package(fifechan COMPONENTS sdl REQUIRED)
   if(ENABLE_OPENGL)
     find_package(fifechan COMPONENTS opengl REQUIRED)
+  endif()
+
+  # guard: honor BUILD_SHARED_LIBS, but fail early when shared builds are
+  # incompatible with static-only fifechan archives on Linux.
+  if(UNIX AND NOT APPLE AND BUILD_SHARED_LIBS)
+    get_target_property(FIFECHAN_IMPORTED_LOCATION_RELEASE fifechan::fifechan IMPORTED_LOCATION_RELEASE)
+    get_target_property(FIFECHAN_IMPORTED_LOCATION fifechan::fifechan IMPORTED_LOCATION)
+    set(FIFECHAN_IMPORTED_LIB "${FIFECHAN_IMPORTED_LOCATION_RELEASE}")
+    if(NOT FIFECHAN_IMPORTED_LIB)
+      set(FIFECHAN_IMPORTED_LIB "${FIFECHAN_IMPORTED_LOCATION}")
+    endif()
+
+    if(FIFECHAN_IMPORTED_LIB MATCHES "\\.a$")
+      message(FATAL_ERROR
+        "Your decided for a build with BUILD_SHARED_LIBS=ON.
+        This requires a shared fifechan, but we found only a static one '${FIFECHAN_IMPORTED_LIB}'.
+        Please reconfigure fifechan -DBUILD_SHARED_LIBS=OFF or provide shared fifechan libs."
+      )
+    endif()
   endif()
 
   if(BUILD_PYTHON_BINDINGS)
