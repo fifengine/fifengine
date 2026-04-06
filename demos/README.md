@@ -72,3 +72,10 @@ Try your luck and see if you can defeat the boss!
 The engine utilizes special settings files for configuring FIFE. This file is called `settings.xml` and resides in the `~/.fife directory` (in `<User>\Application Data\fife` for Windows users). The Shooter Demo and the PyChan demo are exceptions. They both store their `settings.xml` file in their root directories.
 
 NOTE that the `settings.xml` file is auto generated and wont be there until you run the demos for the first time. FIFE automatically fills the settings file with default values. For more information on FIFE settings please see the manual: https://fifengine.github.io/fifengine-docs/developer-manual/en/#_engine_settings
+
+### [Editor](https://github.com/fifengine/fifengine-editor)
+
+The Python based editor tool can be found within the [fifengine-editor repo](https://github.com/fifengine/fifengine-editor).
+You can launch it by running `run.py`.
+It is used to edit map files for the [Rio De Hola demo](https://github.com/fifengine/fifengine-demos/tree/main/rio_de_hola).
+Other clients extend it and use it to edit their maps.
