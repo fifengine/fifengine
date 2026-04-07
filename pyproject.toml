@@ -32,7 +32,22 @@ Documentation = "https://docs.fifengine.net/"
 Tracker = "https://github.com/fifengine/fifengine/issues"
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = [
+  "ruff",
+  "black",
+  "isort",
+  "pytest",
+  "pytest-cov"
+]
+test = [
+  "pytest",
+  "pytest-cov>",
+]
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme",
+  "myst-parser",
+]
 
 # ---------------------------------------------------------------------
 # Build System
@@ -53,8 +68,8 @@ dev = ["pytest"]
 
 [build-system]
 requires = [
-    "scikit-build-core",
-    "packaging"
+  "scikit-build-core",
+  "packaging"
 ]
 build-backend = "scikit_build_core.build"
 
@@ -83,7 +98,7 @@ include = [
 # ---------------------------------------------------------------------
 
 [tool.cibuildwheel]
-build = "cp{312,313,314}-*"
+build = "cp{313,314}-*"  # lowest version must equal project.requires-python
 skip = "*-musllinux_*"
 
 [tool.cibuildwheel.linux]
@@ -94,11 +109,17 @@ manylinux-x86_64-image = "manylinux_2_28"
 archs = ["AMD64"]
 
 # ---------------------------------------------------------------------
-# Check wheel contents
+# check-wheel-contents
 # ---------------------------------------------------------------------
 
 [tool.check-wheel-contents]
-toplevel = ["fife"]
+toplevel = [
+  "fife",
+  "libfife.libs"
+]
+ignore = [
+  "W010" # TODO? toplevel library directory contains no Python modules
+]
 
 # ---------------------------------------------------------------------
 # Additional Python Tools
@@ -107,25 +128,25 @@ toplevel = ["fife"]
 [tool.black]
 line-length = 90
 target-version = ["py313"]
-extend-exclude = "^(build|out|vcpkg_installed|engine/swigwrappers)/"
+extend-exclude = "^(src/swigwrappers)/"
 
 [tool.ruff]
 line-length = 90
 target-version = "py313"
-extend-exclude = ["build", "out", "vcpkg_installed", "engine/swigwrappers"]
+extend-exclude = ["build", "out", "vcpkg_installed", "swigwrappers"]
 
 # https://docs.astral.sh/ruff/rules/
 [tool.ruff.lint]
 select = [
-    "E",       # pycodestyle-error
-    "W",       # pycodestyle-warnings
-    "F",       # pyflakes
-    "I",       # isort
-    "U"        # pyupgrade
+  "E",  # pycodestyle-error
+  "W",  # pycodestyle-warnings
+  "F",  # pyflakes
+  "I",  # isort
+  "U"   # pyupgrade
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"*.py" = ["E501"]
+"*.py" = ["E501"]  # line too long
 
 [tool.ruff.format]
 quote-style = "double"

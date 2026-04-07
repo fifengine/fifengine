@@ -213,11 +213,11 @@ jobs:
           Write-Host "✅ Paths normalized (overwritten) for remaining steps"
 
       # For Python versions see: https://devguide.python.org/versions/#versions
-      # We build wheels for the current Python version and the two preceding minor versions.
+      # We build wheels for the current Python version and one preceding minor version.
       - name: 🛠️ 3.4 Build wheels
         run: cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp312-win_amd64 cp313-win_amd64 cp314-win_amd64"
+          CIBW_BUILD: "cp313-win_amd64 cp314-win_amd64"
           CIBW_ENVIRONMENT: >
             VCPKG_ROOT=${{ env.VCPKG_ROOT }}
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
@@ -234,16 +234,10 @@ jobs:
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >
+            python -m delvewheel repair {wheel} --wheel-dir {dest_dir} --ignore-existing --add-path "$DEPS_DIR/install/bin;$VCPKG_INSTALLED_DIR/${{ matrix.config.triplet }}/bin"
 
-      - name: 🛠️ 3.5 Bundle DLLs into wheels
-        shell: bash
-        run: |
-          set -euo pipefail
-          for whl in wheelhouse/*.whl; do
-            python -m delvewheel repair "$whl" --wheel-dir wheelhouse --add-path "$DEPS_DIR/install/bin;$VCPKG_INSTALLED_DIR/${{ matrix.config.triplet }}/bin"
-          done
-
-      - name: 🛠️ 3.6 Verify wheels
+      - name: 🛠️ 3.5 Verify wheels
         run: |
           ls wheelhouse/*.whl
           python -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl

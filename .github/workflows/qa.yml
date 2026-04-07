@@ -137,32 +137,37 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: ["3.13", "3.14"]
+
     steps:
 
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6
 
-      - name: 🔽 Setup Python
-        uses: actions/setup-python@v6
+      - name: 🔽 Setup UV and Python
+        uses: astral-sh/setup-uv@v8.0.0 # https://github.com/astral-sh/setup-uv
         with:
-          python-version: '3.14.3'
+          version: "latest"
+          python-version: ${{ matrix.python-version }}
 
       - name: 🔽 Install Python QA tools
         run: |
-          python -m pip install --upgrade pip
-          pip install black ruff mypy
+          uv pip install pip
+          uv pip install black ruff mypy
 
       - name: 🛠️ Check formatting (black)
         run: |
-          black --check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
+          uv tool run black --check .
         #continue-on-error: true
 
       - name: 🛠️ Lint (ruff)
         run: |
-          ruff check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
+          uv tool run ruff check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
         #continue-on-error: true
 
       - name: 🛠️ Type checking (mypy)
         run: |
-          mypy src/python/fife
+          uv tool run mypy src/python/fife
         #continue-on-error: true
