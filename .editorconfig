@@ -23,7 +23,7 @@ max_line_length = 100
 [*.py]
 indent_size = 4
 
-[*.{cmake,json,sh,yaml,yml},CMakeLists.txt]
+[*.{cmake,json,sh,yaml,yml,toml},CMakeLists.txt]
 indent_size = 2
 
 ; do not remove spaces in docs
