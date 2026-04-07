@@ -10,14 +10,6 @@ using the "clang20-x64-linux-rel" build preset.
 
 You can also run the demos directly by running the `run.py` script in each demo's directory.
 
-### CEGUI
-
-The CEGUI demo shows, how to work with CrazyEddie's GUI.
-The demo requires [PyCEGUI](http://cegui.org.uk/wiki/PyCEGUI).
-
-To compile and start the application: `run_demo_cegui.sh`.
-To just start the application: `cegui/run.py`.
-
 ### PyChan
 
 The PyChan demo shows, how to work with the FifeGUI library.

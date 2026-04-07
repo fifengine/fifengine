@@ -24,8 +24,7 @@ namespace FIFE
     enum EventSourceType : std::uint8_t
     {
         ES_ENGINE          = 1,
-        ES_FIFECHAN_WIDGET = 2,
-        ES_CEGUI_WIDGET    = 3
+        ES_FIFECHAN_WIDGET = 2
     };
 
 } // namespace FIFE

@@ -83,7 +83,6 @@ The following extensions require the compiled C++ engine for documentation:
 * ``fife.extensions.basicapplication`` - Basic application framework
 * ``fife.extensions.pychan`` - PyChan GUI toolkit
 * ``fife.extensions.pychan.widgets`` - PyChan widgets
-* ``fife.extensions.cegui`` - CEGUI integration
 * ``fife.extensions.fife_settings`` - Settings management
 
 See the C++ API documentation for the underlying fifechan module.

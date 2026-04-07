@@ -68,10 +68,6 @@ foreach(test_source ${FIFE_CORE_TEST_SOURCES})
     endif()
   endif(ENABLE_FIFEGUI)
 
-  if(ENABLE_CEGUI)
-    target_link_libraries(${test_name} PRIVATE ${CEGUI_LIBRARIES} ${CEGUI_OpenGLRenderer_LIBRARIES})
-  endif()
-
   add_test(NAME ${test_name} COMMAND ${test_name})
   set_tests_properties(${test_name} PROPERTIES LABELS core WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 endforeach()

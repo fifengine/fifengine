@@ -63,7 +63,6 @@ option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
 option(ENABLE_FIFEGUI         "Enable Fifechan GUI subsystem"                ON)
-option(ENABLE_CEGUI           "Enable Crazy Eddie's GUI subsystem"          OFF)
 option(ENABLE_LOGGING         "Enable logging"                               ON)
 option(BUILD_PYTHON_BINDINGS  "Build python extension module"               OFF)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
@@ -88,10 +87,6 @@ endif()
 
 if(ENABLE_OPENGL)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL)
-endif()
-
-if(ENABLE_CEGUI)
-  target_compile_definitions(fife_options INTERFACE HAVE_CEGUI)
 endif()
 
 #-------------------------------------------------------------------
@@ -249,7 +244,6 @@ message(STATUS "[INFO] Build shared libraries   -> '${BUILD_SHARED_LIBS}'.")
 message(STATUS "")
 message(STATUS "[INFO] Enable OpenGL support               -> '${ENABLE_OPENGL}'")
 message(STATUS "[INFO] Enable Fifechan GUI subsystem       -> '${ENABLE_FIFEGUI}'")
-message(STATUS "[INFO] Enable Crazy Eddie's GUI subsystem  -> '${ENABLE_CEGUI}'")
 message(STATUS "[INFO] Enable logging                      -> '${ENABLE_LOGGING}'")
 message(STATUS "[INFO] Build the python extension module   -> '${BUILD_PYTHON_BINDINGS}'")
 message(STATUS "[INFO] Build C++ library                   -> '${BUILD_LIBRARY}'")
@@ -382,13 +376,6 @@ set(
   src/engine/view/renderers/targetrenderer.cpp
 )
 
-# CEGUI v0.8.0+
-set(
-  FIFE_CEGUI_SRC
-  src/engine/gui/cegui/ceguimanager.cpp
-  src/engine/gui/cegui/base/ceguiinputprocessor.cpp
-)
-
 # FIFECHAN
 set(
   FIFE_FCHAN_SRC
@@ -414,7 +401,6 @@ set(
 #------------------------------------------------------------------------------
 
 source_group("fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
 source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 
 #------------------------------------------------------------------------------
@@ -598,13 +584,6 @@ set(
   src/engine/gui/guimanager.h
 )
 
-# CEGUI
-set(
-  FIFE_CEGUI_HDR
-  src/engine/gui/cegui/ceguimanager.h
-  src/engine/gui/cegui/base/ceguiinputprocessor.h
-)
-
 # Fifechan
 set(
   FIFE_FCHAN_HDR
@@ -630,12 +609,10 @@ set(
 #------------------------------------------------------------------------------
 
 source_group("fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
 
 add_custom_target(fife.headers SOURCES
     ${FIFE_CORE_HDR}
-    ${FIFE_CEGUI_HDR}
     ${FIFE_FCHAN_HDR}
 )
 
@@ -648,7 +625,6 @@ add_custom_target(fife.headers SOURCES
 #
 # 1. We have the following interface file sets:
 #   - FIFE_CORE_SWIG: The main SWIG interface files for the core engine.
-#   - FIFE_CEGUI_SWIG: The SWIG interface files for the CEGUI subsystem.
 #   - FIFE_FCHAN_SWIG_LIB: The SWIG interface files for the FIFECHAN library (the base components).
 #     These files declare the `%module fifechan` and are included in the seperate fifechan.i template.
 #   - FIFE_FCHAN_SWIG: The SWIG interface files for the FIFE-specific extensions to FIFECHAN library (the actual GUI components).
@@ -728,9 +704,6 @@ set(
   gui/guimanager.i
 )
 
-# CEGUI
-set(FIFE_CEGUI_SWIG gui/cegui/ceguimanager.i)
-
 # FIFECHAN
 set(FIFE_FCHAN_SWIG_LIB gui/fifechan/lib/fifechanlistener.i gui/fifechan/lib/widgets.i)
 
@@ -749,12 +722,11 @@ set(
 #------------------------------------------------------------------------------
 
 source_group("fife.core"                    FILES ${FIFE_CORE_SWIG})
-source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
 source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
 
 # TODO if enabled, the files are not found. ${CMAKE_CURRENT_SOURCE_DIR} needs to be used.
-# add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG})
+# add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG})
 
 #------------------------------------------------------------------------------
 # SWIG WRAPPER Files
@@ -815,6 +787,27 @@ if(UNIX)
   if (NOT Vorbis_FOUND)
     message(STATUS "Vorbis CMake config not found, trying pkg-config.")
     pkg_check_modules(VORBIS REQUIRED vorbis)
+    pkg_check_modules(VORBISFILE QUIET vorbisfile)
+    pkg_check_modules(VORBISENC QUIET vorbisenc)
+
+    if(NOT VORBISFILE_FOUND)
+      message(STATUS "vorbisfile pkg-config entry not found, falling back to vorbis link flags.")
+      set(VORBISFILE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}")
+      set(VORBISFILE_INCLUDE_DIRS "${VORBIS_INCLUDE_DIRS}")
+    endif()
+
+    if(NOT VORBISENC_FOUND)
+      message(STATUS "vorbisenc pkg-config entry not found, falling back to vorbis link flags.")
+      set(VORBISENC_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}")
+      set(VORBISENC_INCLUDE_DIRS "${VORBIS_INCLUDE_DIRS}")
+    endif()
+
+    message(STATUS "VORBIS_LINK_LIBRARIES=${VORBIS_LINK_LIBRARIES}")
+    message(STATUS "VORBIS_INCLUDE_DIRS=${VORBIS_INCLUDE_DIRS}")
+    message(STATUS "VORBISFILE_LINK_LIBRARIES=${VORBISFILE_LINK_LIBRARIES}")
+    message(STATUS "VORBISFILE_INCLUDE_DIRS=${VORBISFILE_INCLUDE_DIRS}")
+    message(STATUS "VORBISENC_LINK_LIBRARIES=${VORBISENC_LINK_LIBRARIES}")
+    message(STATUS "VORBISENC_INCLUDE_DIRS=${VORBISENC_INCLUDE_DIRS}")
   endif()
 
   if(NOT Freetype_FOUND)
@@ -825,6 +818,10 @@ if(UNIX)
   if(NOT GLEW_FOUND)
     message(STATUS "GLEW CMake config not found, trying pkg-config.")
     pkg_check_modules(GLEW REQUIRED glew)
+
+    message(STATUS "GLEW_INCLUDE_DIRS=${GLEW_INCLUDE_DIRS}")
+    message(STATUS "GLEW_LIBRARIES=${GLEW_LIBRARIES}")
+    message(STATUS "GLEW_LIB=${GLEW_LIB}")
   endif()
 
 endif()
@@ -849,8 +846,8 @@ if (NOT TARGET Vorbis::vorbisfile)
     message(STATUS "Creating fallback Vorbis::vorbisfile target, because Vorbis CMake config not found.")
     add_library(Vorbis::vorbisfile INTERFACE IMPORTED)
     set_target_properties(Vorbis::vorbisfile PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}"
-      INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_INCLUDE_DIRS}"
+      INTERFACE_LINK_LIBRARIES "${VORBISFILE_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${VORBISFILE_INCLUDE_DIRS}"
     )
 endif()
 
@@ -859,8 +856,8 @@ if (NOT TARGET Vorbis::vorbisenc)
     message(STATUS "Creating fallback Vorbis::vorbisenc target, because Vorbis CMake config not found.")
     add_library(Vorbis::vorbisenc INTERFACE IMPORTED)
     set_target_properties(Vorbis::vorbisenc PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${VORBIS_LINK_LIBRARIES}"
-      INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_INCLUDE_DIRS}"
+      INTERFACE_LINK_LIBRARIES "${VORBISENC_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${VORBISENC_INCLUDE_DIRS}"
     )
 endif()
 
@@ -878,13 +875,8 @@ if (NOT TARGET GLEW::GLEW)
     message(STATUS "Creating fallback GLEW::GLEW target, because GLEW CMake config not found.")
     add_library(GLEW::GLEW UNKNOWN IMPORTED)
 
-    message(STATUS "GLEW_INCLUDE_DIRS=${GLEW_INCLUDE_DIRS}")
-    message(STATUS "GLEW_LIBRARIES=${GLEW_LIBRARIES}")
-    message(STATUS "GLEW_LIB=${GLEW_LIB}")
-
     # Because this is a list, but we need a file:
     # GLEW_LIBRARIES=GLEW;GL;X11;GLU;OpenGL
-
     file(GLOB GLEW_SO "${GLEW_LIBDIR}/libGLEW.so*")
     list(GET GLEW_SO 0 GLEW_LIB)
 
@@ -902,26 +894,8 @@ if(ENABLE_OPENGL)
   find_package(OpenGL REQUIRED)
 endif()
 
-if(ENABLE_CEGUI)
-  find_package(CEGUI REQUIRED)
-
-  if(NOT CEGUI_OpenGLRenderer_FOUND)
-    message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
-  endif(NOT CEGUI_OpenGLRenderer_FOUND)
-
-  if(NOT ENABLE_OPENGL)
-    message(FATAL_ERROR "OpenGL cannot be disabled, when CEGUI is enabled.")
-  endif(NOT ENABLE_OPENGL)
-
-  # TODO use import targets
-  target_include_directories(fife_options INTERFACE ${CEGUI_INCLUDE_DIR})
-
-  message(STATUS "Using CEGUI v0.8+")
-  set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
-endif()
-
 #------------------------------------------------------------------------------
-# Build extensions (fifegui, cegui) as a Python extension module using SWIG
+# Build extensions (fifegui) as a Python extension module using SWIG
 #------------------------------------------------------------------------------
 
 if(BUILD_PYTHON_BINDINGS)
@@ -993,17 +967,6 @@ if(ENABLE_FIFEGUI)
     )
   endif(BUILD_PYTHON_BINDINGS)
 endif(ENABLE_FIFEGUI)
-
-if(ENABLE_CEGUI)
-  if(BUILD_PYTHON_BINDINGS)
-
-    # Files in FIFE_CEGUI_SWIG go into CMAKE_SWIG_INCLUSIONS (fife module).
-    foreach(filename ${FIFE_CEGUI_SWIG})
-      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
-      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-    endforeach()
-  endif(BUILD_PYTHON_BINDINGS)
-endif(ENABLE_CEGUI)
 
 if(BUILD_PYTHON_BINDINGS)
   configure_file(
@@ -1153,12 +1116,6 @@ if(BUILD_PYTHON_BINDINGS)
     endif()
   endif(ENABLE_FIFEGUI)
 
-  if(ENABLE_CEGUI)
-    # TODO use import targets
-    target_link_libraries(fife_swig PRIVATE cegui::cegui)
-    target_link_libraries(fife_swig PRIVATE ${CEGUI_OpenGLRenderer_LIBRARIES})
-  endif()
-
   #---------------------------------------------------------------------------------
   # Install Python package into a prefix-relative site-packages path by default.
   # This keeps `cmake --install --prefix <dir>` working on CI and local builds.
@@ -1183,22 +1140,13 @@ if(BUILD_PYTHON_BINDINGS)
   install(FILES src/python/fife/__init__.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 
   # copy all files/folders from the extension folder
-  # but exclude extension folders of the optional dependencies: cegui, pychan
+  # but exclude extension folders of the optional dependencies: pychan
   install(
     DIRECTORY src/python/fife/extensions/
     DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions
-    PATTERN "extensions/cegui" EXCLUDE
     PATTERN "extensions/pychan" EXCLUDE
     PATTERN "extensions/*"
   )
-
-  if(ENABLE_CEGUI)
-    # install fife's extension for cegui
-    install(
-      DIRECTORY src/python/fife/extensions/cegui/
-      DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/cegui
-    )
-  endif()
 
   if(ENABLE_FIFEGUI)
     # install pychan - fife's extension for fifechan
@@ -1236,9 +1184,6 @@ if(BUILD_LIBRARY)
   set(FIFE_PUBLIC_HEADERS ${FIFE_CORE_HDR})
   if(ENABLE_FIFEGUI)
     list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_FCHAN_HDR})
-  endif()
-  if(ENABLE_CEGUI)
-    list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_CEGUI_HDR})
   endif()
 
   set(FIFE_PRIVATE_SOURCES ${FIFE_CORE_SRC})
@@ -1307,12 +1252,6 @@ if(BUILD_LIBRARY)
       $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
       $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
   )
-
-  if(ENABLE_CEGUI)
-    # TODO use import targets
-    target_link_libraries(fife cegui::cegui)
-    target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
-  endif()
 
   # Fifechan + OpenGL
   # keep if/elseif for clarity, generator expressions make it hard to read otherwise

@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - removed dependency on librocket
   - removed all code related to librocket
   - removed all pychan code that was related to librocket
+- removed dependency on cegui
+  - removed all code related to cegui
 - transition dependencies to vcpkg
   - removed `get-*.cmake` scripts for dependencies that are now provided by vcpkg
 
