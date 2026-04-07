@@ -154,8 +154,7 @@ jobs:
 
       - name: 🔽 Install Python QA tools
         run: |
-          uv pip install pip
-          uv pip install black ruff mypy
+          uv tool install black ruff mypy
 
       - name: 🛠️ Check formatting (black)
         run: |
