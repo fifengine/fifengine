@@ -107,6 +107,7 @@ manylinux-x86_64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
+before-build = "pip install wheel delvewheel"
 
 # ---------------------------------------------------------------------
 # check-wheel-contents
