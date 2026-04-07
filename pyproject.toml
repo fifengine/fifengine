@@ -17,7 +17,6 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
   "Operating System :: OS Independent",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
@@ -42,7 +41,7 @@ dev = [
 ]
 test = [
   "pytest",
-  "pytest-cov>",
+  "pytest-cov",
 ]
 docs = [
   "sphinx",
