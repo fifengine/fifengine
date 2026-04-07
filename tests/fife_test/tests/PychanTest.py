@@ -9,7 +9,6 @@ from fife.extensions.fife_timer import Timer
 
 import scripts.test as test
 
-
 """
 For use with the styling example
 """

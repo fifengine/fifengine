@@ -38,7 +38,9 @@ class DisplayTest(test.Test):
         self._settings_dialog.setValidDisplays(displays)
         self._settings_dialog.showSettingsDialog()
 
-        self._display_widget = self._settings_dialog._optionsDialog.findChildByName("display")
+        self._display_widget = self._settings_dialog._optionsDialog.findChildByName(
+            "display"
+        )
         model = self._display_widget.items
         entries = [model.getElementAt(i) for i in range(model.getNumberOfElements())]
 

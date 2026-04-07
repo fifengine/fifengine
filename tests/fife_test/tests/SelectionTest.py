@@ -125,14 +125,16 @@ class MouseListener(fife.IMouseListener):
                 )
 
             instances = self._test._camera.getMatchingInstances(
-                fife.Rect(
-                    min(self.select_begin[0], event.getX()),
-                    min(self.select_begin[1], event.getY()),
-                    abs(event.getX() - self.select_begin[0]),
-                    abs(event.getY() - self.select_begin[1]),
-                )
-                if do_multi
-                else fife.ScreenPoint(event.getX(), event.getY()),
+                (
+                    fife.Rect(
+                        min(self.select_begin[0], event.getX()),
+                        min(self.select_begin[1], event.getY()),
+                        abs(event.getX() - self.select_begin[0]),
+                        abs(event.getY() - self.select_begin[1]),
+                    )
+                    if do_multi
+                    else fife.ScreenPoint(event.getX(), event.getY())
+                ),
                 self._test._actorlayer,
                 0,
             )  # False for accurate

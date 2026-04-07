@@ -15,7 +15,6 @@ import shutil
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
-
 FIFE_MODULE = "FIFE"
 
 
