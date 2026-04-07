@@ -228,7 +228,7 @@ jobs:
             cmake.define.ENABLE_FIFEGUI=ON
             cmake.define.BUILD_PYTHON_BINDINGS=ON
             cmake.define.BUILD_LIBRARY=ON
-            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}
+            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install/bin;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/bin
             cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             cmake.define.VCPKG_MANIFEST_MODE=OFF
