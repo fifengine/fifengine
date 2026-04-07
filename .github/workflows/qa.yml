@@ -152,10 +152,6 @@ jobs:
           version: "latest"
           python-version: ${{ matrix.python-version }}
 
-      - name: 🔽 Install Python QA tools
-        run: |
-          uv tool install black ruff mypy
-
       - name: 🛠️ Check formatting (black)
         run: |
           uv tool run black --check .
