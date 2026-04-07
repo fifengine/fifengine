@@ -8,7 +8,6 @@
 # ------------------------------------------------------------------------------
 
 import os
-import sys
 
 from fife import fife  # noqa: E402
 from fife.extensions.pychan.fife_pychansettings import FifePychanSettings  # noqa: E402

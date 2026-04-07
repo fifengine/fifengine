@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-import sys, os, re, math, random, shutil, time
-from datetime import datetime
+import time
 
 from fife import fife
 from fife.extensions import *

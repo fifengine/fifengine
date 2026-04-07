@@ -5,8 +5,6 @@
 Functional utilities designed for pychan use cases.
 """
 
-import sys
-
 from . import exceptions
 
 ### Functools ###
@@ -14,7 +12,7 @@ from . import exceptions
 
 def applyOnlySuitable(func, *args, **kwargs):
     """
-    This nifty little function takes another function and applies it to a dictionary of
+    This function takes another function and applies it to a dictionary of
     keyword arguments. If the supplied function does not expect one or more of the
     keyword arguments, these are silently discarded. The result of the application is returned.
     This is useful to pass information to callbacks without enforcing a particular signature.

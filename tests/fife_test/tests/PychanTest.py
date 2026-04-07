@@ -69,7 +69,6 @@ STYLES = {
 """
 Used with the GUI animation test
 """
-import time
 import random
 
 ACTION_MOVE = 1

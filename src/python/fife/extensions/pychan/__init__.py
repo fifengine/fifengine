@@ -210,7 +210,6 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
-import sys
 from traceback import print_exc
 from xml.sax import handler
 
