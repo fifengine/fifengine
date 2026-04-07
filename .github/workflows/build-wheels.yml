@@ -216,8 +216,7 @@ jobs:
       - name: 🛠️ 3.4 Build wheels
         run: cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp313-win_amd64"
-          #CIBW_BUILD: "cp313-win_amd64 cp314-win_amd64"
+          CIBW_BUILD: "cp313-win_amd64 cp314-win_amd64"
           CIBW_ENVIRONMENT: >
             VCPKG_ROOT=${{ env.VCPKG_ROOT }}
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
