@@ -1061,6 +1061,7 @@ if(BUILD_PYTHON_BINDINGS)
       PNG::PNG
       Vorbis::vorbis
       Vorbis::vorbisfile
+      Vorbis::vorbisenc
       Ogg::ogg
       tinyxml2::tinyxml2
       utf8cpp::utf8cpp
