@@ -216,7 +216,8 @@ jobs:
       - name: 🛠️ 3.4 Build wheels
         run: cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp313-win_amd64 cp314-win_amd64"
+          CIBW_BUILD: "cp313-win_amd64"
+          #CIBW_BUILD: "cp313-win_amd64 cp314-win_amd64"
           CIBW_ENVIRONMENT: >
             VCPKG_ROOT=${{ env.VCPKG_ROOT }}
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
@@ -234,7 +235,7 @@ jobs:
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >
-            set PATH=%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin;%PATH% && \
+            set PATH=%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin;%PATH% &&
             python -m delvewheel repair {wheel} --wheel-dir {dest_dir} --ignore-existing
 
       - name: 🛠️ 3.5 Verify wheels
