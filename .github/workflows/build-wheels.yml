@@ -228,13 +228,14 @@ jobs:
             cmake.define.ENABLE_FIFEGUI=ON
             cmake.define.BUILD_PYTHON_BINDINGS=ON
             cmake.define.BUILD_LIBRARY=ON
-            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install/bin;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/bin
+            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}
             cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >
-            python -m delvewheel repair {wheel} --wheel-dir {dest_dir} --ignore-existing --add-path "$DEPS_DIR/install/bin;$VCPKG_INSTALLED_DIR/${{ matrix.config.triplet }}/bin"
+            set PATH=%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin;%PATH% && \
+            python -m delvewheel repair {wheel} --wheel-dir {dest_dir} --ignore-existing
 
       - name: 🛠️ 3.5 Verify wheels
         run: |

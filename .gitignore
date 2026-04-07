@@ -15,13 +15,9 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 *.pyc
-.venv/
-
-# Build Engine
-./engine/
-
-.cache/
 
 # Python Virtual Envs
 .venv/
 .venv-sphinx/
+
+.cache/
