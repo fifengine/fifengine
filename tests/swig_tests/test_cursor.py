@@ -4,7 +4,7 @@
 
 
 def test_animated_cursor(engine):
-    model = engine.getModel()
+    engine.getModel()
     img_mgr = engine.getImageManager()
     anim_mgr = engine.getAnimationManager()
 

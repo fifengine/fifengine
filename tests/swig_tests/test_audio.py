@@ -20,7 +20,7 @@ def test_2_streams(engine_minimized):
     soundmanager = engine_minimized.getSoundManager()
     soundclipmanager = engine_minimized.getSoundClipManager()
     soundmanager.init()
-    log = fifelog.LogManager(engine_minimized, promptlog=True, filelog=False)
+    fifelog.LogManager(engine_minimized, promptlog=True, filelog=False)
 
     em = soundmanager.createEmitter()
     sound = soundmanager.createEmitter()

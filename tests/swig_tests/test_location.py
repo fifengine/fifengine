@@ -11,7 +11,7 @@ def test_basic_mapping(engine_minimized):
     layer1 = fife.Layer("layer1", None, squaregrid1)
     layer2 = fife.Layer("layer2", None, squaregrid2)
     loc1 = fife.Location(layer1)
-    loc2 = fife.Location(layer2)
+    fife.Location(layer2)
 
     P = fife.ModelCoordinate
     D = fife.ExactModelCoordinate
@@ -87,7 +87,6 @@ def test_square_combinations(engine_minimized):
     loc1 = fife.Location(layer1)
 
     P = fife.ModelCoordinate
-    D = fife.ExactModelCoordinate
 
     NEAR_TRESHOLD = 0.001
 

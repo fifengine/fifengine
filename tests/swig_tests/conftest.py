@@ -10,7 +10,7 @@ fife_path = os.path.join("..", "..", "src", "python")
 if os.path.isdir(fife_path) and fife_path not in sys.path:
     sys.path.insert(0, fife_path)
 
-from fife import fife as fife_internal
+from fife import fife as fife_internal  # noqa: E402
 
 fife = fife_internal
 
@@ -20,7 +20,7 @@ if not hasattr(fife, "ModelCoordinate") and hasattr(fife, "Point3D"):
 if not hasattr(fife, "ExactModelCoordinate") and hasattr(fife, "DoublePoint3D"):
     fife.ExactModelCoordinate = fife.DoublePoint3D
 
-from fife.extensions import fifelog
+from fife.extensions import fifelog  # noqa: E402
 
 
 def _env_truthy(value):
