@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-import pytest
-from fife import fife
 
 
 def test_instances(engine_minimized):
