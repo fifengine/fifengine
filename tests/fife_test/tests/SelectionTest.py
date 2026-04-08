@@ -2,12 +2,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import scripts.test as test
 from fife import fife
 from fife.extensions import pychan
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-from fife.extensions.fife_timer import Timer
-
-import scripts.test as test
+from fife.extensions.pychan.exceptions import InitializationError
 
 
 class KeyListener(fife.IKeyListener):
@@ -19,7 +17,6 @@ class KeyListener(fife.IKeyListener):
         fife.IKeyListener.__init__(self)
 
     def keyPressed(self, evt):
-        keyval = evt.getKey().getValue()
         keystr = evt.getKey().getAsString().lower()
         if keystr == "t":
             r = self._test._camera.getRenderer("GridRenderer")
@@ -174,7 +171,7 @@ class SelectionTest(test.Test):
 
         self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
         if self._font is None:
-            raise InitializationError(f"Could not load font {name}")
+            raise InitializationError("Could not load font rpgfont.png")
 
         self.loadMap("data/maps/grassland.xml")
 

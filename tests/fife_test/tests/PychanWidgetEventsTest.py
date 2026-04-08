@@ -2,11 +2,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from fife import fife
+import scripts.test as test
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-
-import scripts.test as test
 
 
 class PychanWidgetEventsTest(test.Test):

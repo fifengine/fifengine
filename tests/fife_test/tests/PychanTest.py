@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from fife import fife, fifechan
-from fife.extensions import pychan
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-from fife.extensions.fife_timer import Timer
+import random
 
 import scripts.test as test
+from fife import fifechan
+from fife.extensions import pychan
+from fife.extensions.fife_timer import Timer
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 """
 For use with the styling example
@@ -69,7 +70,6 @@ STYLES = {
 """
 Used with the GUI animation test
 """
-import random
 
 ACTION_MOVE = 1
 ACTION_RESIZE = 2
@@ -607,7 +607,6 @@ class PocAnimations(PyChanExample):
     def _update_progress(self):
         """ """
         if self.progressbar.value < self.progressbar.size[0]:
-            size = self.progressbar.size
             value = int(self.progressbar.value) + random.randint(0, DEFAULT_DELAY)
             self.progressbar.value = value
         # self.progressbar2.value = value

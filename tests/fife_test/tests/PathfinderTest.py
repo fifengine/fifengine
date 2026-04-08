@@ -2,12 +2,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import scripts.test as test
 from fife import fife
 from fife.extensions import pychan
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-from fife.extensions.fife_timer import Timer
-
-import scripts.test as test
+from fife.extensions.pychan.exceptions import InitializationError
 
 
 class KeyListener(fife.IKeyListener):
@@ -19,7 +17,6 @@ class KeyListener(fife.IKeyListener):
         fife.IKeyListener.__init__(self)
 
     def keyPressed(self, evt):
-        keyval = evt.getKey().getValue()
         keystr = evt.getKey().getAsString().lower()
         if keystr == "t":
             r = self._test._camera.getRenderer("GridRenderer")
@@ -103,7 +100,7 @@ class PathfinderTest(test.Test):
 
         self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
         if self._font is None:
-            raise InitializationError(f"Could not load font {name}")
+            raise InitializationError("Could not load font rpgfont.png")
 
         self.loadMap("data/maps/pathfinder_grassland.xml")
 
@@ -195,23 +192,29 @@ class PathfinderTest(test.Test):
         location.setMapCoordinates(target_mapcoord)
         # use top instance
         layers = self._map.getLayers()
-        for l in reversed(layers):
-            loc = fife.Location(l)
+        for layer in reversed(layers):
+            loc = fife.Location(layer)
             loc.setMapCoordinates(target_mapcoord)
-            instances = l.getInstancesAt(loc)
+            instances = layer.getInstancesAt(loc)
             if len(instances) > 0:
-                if l.getId() == "peak_item_layer" or l.getId() == "peak_ground_layer":
+                if (
+                    layer.getId() == "peak_item_layer"
+                    or layer.getId() == "peak_ground_layer"
+                ):
                     loc.setLayer(self._peakactorlayer)
                     location = loc
                     break
-                if l.getId() == "top_item_layer" or l.getId() == "top_ground_layer":
+                if (
+                    layer.getId() == "top_item_layer"
+                    or layer.getId() == "top_ground_layer"
+                ):
                     loc.setLayer(self._topactorlayer)
                     location = loc
                     break
                 if (
-                    l.getId() == "item_layer"
-                    or l.getId() == "ground_layer"
-                    or l.getId() == "water_layer"
+                    layer.getId() == "item_layer"
+                    or layer.getId() == "ground_layer"
+                    or layer.getId() == "water_layer"
                 ):
                     loc.setLayer(self._actorlayer)
                     location = loc

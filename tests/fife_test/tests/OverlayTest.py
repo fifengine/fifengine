@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import scripts.test as test
 from fife import fife
 from fife.extensions import pychan
-
-import scripts.test as test
 
 
 class KeyListener(fife.IKeyListener):

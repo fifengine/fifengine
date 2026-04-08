@@ -5,12 +5,10 @@
 import time
 
 from fife import fife
-from fife.extensions import *
+from fife.extensions import *  # noqa: F403
 from fife.extensions import pychan
-from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
-from fife.extensions.pychan import widgets
 from fife.extensions.pychan.internal import get_manager
-from fife.extensions.fife_utils import getUserDataDirectory
+from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 
 from . import test
 
@@ -81,7 +79,6 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
             return
 
         keyval = event.getKey().getValue()
-        keystr = event.getKey().getAsString().lower()
 
         if keyval == fife.Key.ESCAPE:
             self.quit = True

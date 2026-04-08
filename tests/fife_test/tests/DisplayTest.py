@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
-
 import scripts.test as test
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 
 
 class DisplayTest(test.Test):

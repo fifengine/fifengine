@@ -5,17 +5,21 @@
 import os
 import sys
 
-fife_path = os.path.join("..", "..", "engine", "python", "fife")
+print("Working directory:", os.getcwd())
+
+fife_path = os.path.join("..", "..", "src", "python")
 if os.path.isdir(fife_path) and fife_path not in sys.path:
     sys.path.insert(0, fife_path)
 
-from fife import fife
+from fife import fife  # noqa: E402
 
-print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
+print(
+    "Using the FIFE python module found here: ",
+    os.path.dirname(os.path.abspath(fife.__file__)),
+)
 
-from fife.extensions.fife_settings import Setting
-
-from scripts.fife_test import FifeTestApplication
+from fife.extensions.fife_settings import Setting  # noqa: E402
+from scripts.fife_test import FifeTestApplication  # noqa: E402
 
 TDS = Setting(app_name="fife_test", settings_file="./settings.xml")
 
@@ -27,15 +31,14 @@ def main():
 
 if __name__ == "__main__":
     if TDS.get("FIFE", "ProfilingOn"):
-        import hotshot
-        import hotshot.stats
+        import cProfile
+        import pstats
 
         print("Starting profiler")
-        prof = hotshot.Profile("fife.prof")
+        prof = cProfile.Profile()
         prof.runcall(main)
-        prof.close()
         print("analysing profiling results")
-        stats = hotshot.stats.load("fife.prof")
+        stats = pstats.Stats(prof)
         stats.strip_dirs()
         stats.sort_stats("time", "calls")
         stats.print_stats(20)

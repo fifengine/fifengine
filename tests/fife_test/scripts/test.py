@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import importlib
 import os
 
 
@@ -31,8 +32,8 @@ class TestManager:
             if importtest:
                 try:
                     print("Importing test plugin: ", f)
-                    exec("import " + self._testdir + "." + f)
-                    test = eval(self._testdir + "." + f + "." + f + "()")
+                    module = importlib.import_module(f"tests.{f}")
+                    test = getattr(module, f)()
                     if isinstance(test, Test) is False:
                         print(f + " is not an instance of Test!")
                     else:
