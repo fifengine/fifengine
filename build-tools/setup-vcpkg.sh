@@ -14,9 +14,17 @@ apt-get update
 # Package required to build libxcrypt
 apt-get install -y autoconf autoconf-archive automake libtool
 
-# Packages required to build SDL2
+# Packages required to build SDL2 - X11 backend
 
 apt-get install -y libx11-dev libxft-dev libxext-dev
+
+# Packages required to build for Glew
+
+apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+
+# Packages required to build SWIG bindings
+
+apt-get install -y python3 python3.13-dev
 
 # Install jq if not already installed (required to update vcpkg baseline)
 if ! command -v jq > /dev/null 2>&1; then
