@@ -31,11 +31,12 @@ Changelog = "https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md"
 Documentation = "https://docs.fifengine.net/"
 Tracker = "https://github.com/fifengine/fifengine/issues"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
   "ruff",
   "black",
   "isort",
+  "mypy",
   "pytest",
   "pytest-cov"
 ]
@@ -44,8 +45,9 @@ test = [
   "pytest-cov",
 ]
 docs = [
-  "sphinx",
-  "sphinx-rtd-theme",
+  "sphinx>=7.0",
+  "furo>=2024.1",
+  "sphinx-autodoc-typehints",
   "myst-parser",
 ]
 
@@ -56,13 +58,14 @@ docs = [
 # 2. cibuildwheel      -> orchestrates
 # 3. vcpkg             -> dependencies
 # ---------------------------------------------------------------------
-# External dependencies (not bundled by default):
+# External dependencies are not bundled by default:
 #   libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
-# Bundling external deps into the wheel (for redistributable wheels):
+# cibuildwheel uses the following tools internally to bundle the dependencies
+# into redistributable platform wheels:
 #   Windows: delevewheel
 #   Linux:   auditwheel
 #   Mac:     delocate
-# These can copy those .so/.dylib/.dll into the wheel and patch load paths.
+# The tools copy .so/.dylib/.dll files into the wheel and patch load paths.
 # This is done during CI via cibuildwheel as a post-build step of the wheel.
 # ---------------------------------------------------------------------
 
@@ -94,7 +97,7 @@ include = [
 ]
 
 # ---------------------------------------------------------------------
-# cibuildwheel
+# cibuildwheel                  https://cibuildwheel.pypa.io/en/stable/
 # ---------------------------------------------------------------------
 
 [tool.cibuildwheel]
@@ -134,7 +137,14 @@ extend-exclude = "^(src/swigwrappers)/"
 [tool.ruff]
 line-length = 90
 target-version = "py313"
-extend-exclude = ["build", "out", "vcpkg_installed", "swigwrappers"]
+extend-exclude = [
+  "build",
+  "out",
+  "vcpkg_installed",
+  "src/swigwrappers",
+  "src/python/fife/fife.py",
+  "src/python/fife/fifechan.py"
+]
 
 # https://docs.astral.sh/ruff/rules/
 [tool.ruff.lint]
@@ -143,11 +153,17 @@ select = [
   "W",  # pycodestyle-warnings
   "F",  # pyflakes
   "I",  # isort
-  "U"   # pyupgrade
+  "U",  # pyupgrade
+  "D",  # pydocstyle
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "*.py" = ["E501"]  # line too long
+"tests/*" = ["D"]   # pydocstyle
+"demos/*" = ["D"]    # pydocstyle
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.ruff.format]
 quote-style = "double"
@@ -159,3 +175,7 @@ files = ["src/python/fife"]
 ignore_missing_imports = true
 show_error_codes = true
 exclude = "^(tests|build|out|vcpkg_installed)/"
+
+[tool.pydoclint]
+style = "numpy"
+exclude = ["tests/", "docs/"]
