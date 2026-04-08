@@ -1,22 +1,18 @@
-#!/usr/bin/env python
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-
 import os
 import sys
-import unittest
 
-if not hasattr(unittest.TestCase, "assert_"):
-    unittest.TestCase.assert_ = unittest.TestCase.assertTrue
+import pytest
 
-fife_path = os.path.join("..", "..", "engine", "python")
+fife_path = os.path.join("..", "..", "src", "python")
 if os.path.isdir(fife_path) and fife_path not in sys.path:
     sys.path.insert(0, fife_path)
 
-from fife import fife  # noqa: E402
+from fife import fife as fife_internal
 
-print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
+fife = fife_internal
 
 if not hasattr(fife, "ModelCoordinate") and hasattr(fife, "Point3D"):
     fife.ModelCoordinate = fife.Point3D
@@ -24,7 +20,7 @@ if not hasattr(fife, "ModelCoordinate") and hasattr(fife, "Point3D"):
 if not hasattr(fife, "ExactModelCoordinate") and hasattr(fife, "DoublePoint3D"):
     fife.ExactModelCoordinate = fife.DoublePoint3D
 
-from fife.extensions import fifelog  # noqa: E402
+from fife.extensions import fifelog
 
 
 def _env_truthy(value):
@@ -40,7 +36,7 @@ def _env_int(value, default=0):
         return default
 
 
-def getEngine(minimized=False):
+def _create_engine(minimized=False, test_name=None):
     e = fife.Engine()
     try:
         log = fifelog.LogManager(e, promptlog=False, filelog=True)
@@ -62,6 +58,14 @@ def getEngine(minimized=False):
             " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
             + ".,!?-+/:();%`'*#=[]"
         )
+    version = fife.get_version()
+    title = (
+        f"FIFE {version} - SWIG Test: {test_name}"
+        if test_name
+        else f"FIFE {version} - SWIG Test"
+    )
+    if hasattr(s, "setWindowTitle"):
+        s.setWindowTitle(title)
     if minimized:
         if hasattr(s, "setScreenWidth"):
             s.setScreenWidth(1)
@@ -78,8 +82,13 @@ def getEngine(minimized=False):
     return e
 
 
-__all__ = []
-__all__.append("unittest")
-__all__.append("fife")
-__all__.append("fifelog")
-__all__.append("getEngine")
+@pytest.fixture
+def engine(request):
+    e = _create_engine(minimized=False, test_name=request.node.name)
+    return e
+
+
+@pytest.fixture
+def engine_minimized(request):
+    e = _create_engine(minimized=True, test_name=request.node.name)
+    return e
