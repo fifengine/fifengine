@@ -748,7 +748,7 @@ set(
 
 source_group("fife.swigwrappers.python" FILES ${FIFE_SWIGWRAPPERS_PYTHON})
 
-add_custom_target(fife.swig-wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
+add_custom_target(fife.swig.wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 
 #------------------------------------------------------------------------------
 # Find Packages
@@ -981,14 +981,43 @@ endif()
 # Build fifengine as a Python extension module using SWIG
 #------------------------------------------------------------------------------
 #
+# We have 2 swig_add_library() targets:
+#   - _fife_swig     : main fife module
+#   - _fifechan_swig : fifechan module
+#
+# 1. `_fife_swig` is the generated Python extension module.
+#    It contains the SWIG-generated wrapper code and is linked directly with
+#    the FIFE engine sources and their dependencies. The engine is built into
+#    the extension module itself and the resulting module is self-contained,
+#    so that when distributing the Python bindings, no separate `fife.so`
+#    or `fife.dll` needs to be distributed.
+#
+# 2. `_fifechan_swig` is the generated Python extension module for FifeGUI.
+#    It is separate from `_fife_swig` to allow importing the fifechan module
+#    separately in Python, and to avoid exposing the fifechan internals in the
+#    main fife module. The fifechan module is linked with the fifechan library
+#    and its dependencies, but not with the main fife engine sources.
+#    fife_swig requires fifechan_swig, because the main fife.i imports the
+#    fifechan.i module. The dependencies need to be shipped: fifechan.so/dll
+#    (optionally: fifechan_sdl2.so/dll, fifechan_opengl.so/dll).
+#
 # Relevant CMake docs:
-# - https://cmake.org/cmake/help/latest/module/FindPython3.html
-# - https://cmake.org/cmake/help/latest/module/FindSWIG.html
-# - https://cmake.org/cmake/help/latest/module/UseSWIG.html
+#   - https://cmake.org/cmake/help/latest/module/FindPython3.html
+#   - https://cmake.org/cmake/help/latest/module/FindSWIG.html
+#   - https://cmake.org/cmake/help/latest/module/UseSWIG.html
+#
 # Relevant Swig docs:
-# - https://www.swig.org/Doc4.4/Python.html
+#   - https://www.swig.org/Doc4.4/Python.html
+#
+#------------------------------------------------------------------------------
 
 if(BUILD_PYTHON_BINDINGS)
+
+  # We need the following components from the Python3 package:
+  # - Interpreter → Python runtime (python3 executable)
+  #   (requires python3 to be installed)
+  # - Development.Module → headers and libraries for building extension modules
+  #   (requires python3.X-dev to be installed, e.g. python3.13-dev)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 
   message(STATUS "Python executable:    ${Python3_EXECUTABLE}")
