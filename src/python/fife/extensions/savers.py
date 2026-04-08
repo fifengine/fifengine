@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""Savers plugin manager"""
+"""Savers plugin manager."""
 
 import os.path
 
@@ -12,17 +12,25 @@ fileExtensions = ("xml",)
 
 
 def saveMapFile(path, engine, map, importList=[], debug=True):
-    """save map file
-    @type	path:		string
-    @param	path:		The fully qualified path to the file to save
-    @type	engine:		object
-    @param	engine: 	FIFE engine instance
-    @type	map:		object
-    @param	map:		FIFE map object
-    @type	importList:	list
-    @param	importList:	A list of all imports
-    @type 	debug:		boolean
-    @param	debug:		Enables debugging information
+    """Save a map file.
+
+    Parameters
+    ----------
+    path : str
+        Fully qualified path to the file to save.
+    engine : object
+        FIFE engine instance.
+    map : object
+        FIFE map object.
+    importList : list, optional
+        A list of all imports.
+    debug : bool, optional
+        Enables debugging information.
+
+    Returns
+    -------
+    object
+        The saved map object.
     """
     filename, extension = os.path.splitext(path)
     map.setFilename(path)
@@ -35,12 +43,15 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
 
 
 def addMapSaver(fileExtension, saverClass):
-    """Add a new saver for fileextension
-    @type   fileExtension: string
-    @param  fileExtension: The file extension the saver is registered for
-    @type   saverClass:   object
-    @param  saverClass:   A fife.ResourceLoader implementation that saves maps
-                           from files with the given fileExtension
+    """Register a new map saver for a file extension.
+
+    Parameters
+    ----------
+    fileExtension : str
+        The file extension the saver is registered for.
+    saverClass : type
+        A ``fife.ResourceLoader`` implementation that saves maps from files
+        with the given extension.
     """
     mapFileMapping[fileExtension] = saverClass
     _updateMapFileExtensions()

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""a filebrowser implementation for pychan"""
+"""a filebrowser implementation for pychan."""
 
 import os
 import sys
@@ -25,7 +25,7 @@ class FileBrowser:
     """
 
     def __init__(self, *args, **kwargs):
-        """Temporary constructor for deprecation"""
+        """Temporary constructor for deprecation."""
         # TODO: Remove the engine argument
         display_deprecation = False
         if isinstance(args[0], Engine):
@@ -50,16 +50,20 @@ class FileBrowser:
         guixmlpath="gui/filebrowser.xml",
     ):
         """
-        @type	fileSelected:	function
-        @param	fileSelected:	callback invoked on file selection
-        @type	savefile:	bool
-        @param	savefile:	flag to provide a gui for an usergiven filename
-        @type	selectdir:	bool
-        @param	selectdir:	flag to fire fileSelected without filename
-        @type	extensions:	tuple
-        @param	extensions:	list of extensions the filebrowser should show (defaults to xml)
-        @type	guixmlpath:	string
-        @param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
+        Initialize the FileBrowser dialog.
+
+        Parameters
+        ----------
+        fileSelected : callable
+            Callback invoked on file selection. Signature must be fileSelected(path, filename).
+        savefile : bool, optional
+            Flag to provide a GUI for a user-given filename.
+        selectdir : bool, optional
+            Flag to allow selecting directories; fileSelected will be called without filename.
+        extensions : tuple, optional
+            List of extensions the filebrowser should show (defaults to ("xml",)).
+        guixmlpath : str, optional
+            Path to the XML GUI file (defaults to "gui/filebrowser.xml").
         """
         self.fileSelected = fileSelected
 
@@ -75,7 +79,7 @@ class FileBrowser:
         self.file_list = []
 
     def showBrowser(self):
-        """create and / or show the gui"""
+        """Create and / or show the gui."""
         if self._widget:
             self.setDirectory(self.path)
             self._widget.show()
@@ -97,7 +101,7 @@ class FileBrowser:
         self._widget.show()
 
     def setDirectory(self, path):
-        """sets the current directory according to path"""
+        """Set the current directory according to path."""
         path_copy = self.path
         self.path = path
         if not self._widget:
@@ -149,10 +153,10 @@ class FileBrowser:
         self._widget.adaptLayout()
 
     def _selectDir(self):
-        """callback for directory ListBox"""
+        """Handle directory selection from the ListBox."""
         selection = self._widget.collectData("dirList")
         if selection >= 0 and selection < len(self.dir_list):
-            new_dir = u2s(self.dir_list[selection])
+            new_dir = self.dir_list[selection]
             lst = self.path.split("/")
             if new_dir == ".." and lst[-1] != ".." and lst[-1] != ".":
                 lst.pop()
@@ -163,17 +167,17 @@ class FileBrowser:
             self.setDirectory(path)
 
     def _selectFile(self):
-        """callback for selectButton, hides filebrowser"""
+        """Handle file selection from the selectButton and hide the filebrowser."""
         self._widget.hide()
         selection = self._widget.collectData("fileList")
 
         if self.savefile:
             if self._widget.collectData("saveField"):
-                self.fileSelected(self.path, u2s(self._widget.collectData("saveField")))
+                self.fileSelected(self.path, self._widget.collectData("saveField"))
                 return
 
         if selection >= 0 and selection < len(self.file_list):
-            self.fileSelected(self.path, u2s(self.file_list[selection]))
+            self.fileSelected(self.path, self.file_list[selection])
             return
 
         if self.selectdir:

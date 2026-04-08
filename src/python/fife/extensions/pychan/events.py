@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""\
+"""
 PyChan event handling (internal).
-=================================
+
+Provide event handling for PyChan widgets.
 
 Users shouldn't need to use this module directly.
 L{widgets.Widget.capture} and L{widgets.Widget.mapEvents} provide
@@ -80,6 +81,7 @@ MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 
 
 def getEventType(name):
+    """Get the event type for a given event name."""
     if "mouse" in name:
         return MOUSE_EVENT
     if "key" in name:
@@ -97,13 +99,13 @@ But there was no event mapped. Did you accidently call a function instead of pas
 
 class EventListenerBase:
     """
-    Redirector for event callbacks.
+    Redirect events to callbacks.
+
     Use *only* from L{EventMapper}.
 
     This class uses the SWIG director feature - overriden
     virtual methods are called from C++ to - listen to
     Fifechan events.
-
     """
 
     def __init__(self):
@@ -121,9 +123,9 @@ class EventListenerBase:
     def attach(self, widget):
         """
         Start receiving events.
+
         No need to call this manually.
         """
-
         if self.is_attached:
             return
         if not self.events:
@@ -137,6 +139,7 @@ class EventListenerBase:
     def detach(self):
         """
         Stop receiving events.
+
         No need to call this manually.
         """
         if not self.is_attached:
@@ -147,6 +150,8 @@ class EventListenerBase:
 
     def setRedirection(self, redirect):
         """
+        Set event redirection mode.
+
         If enabled, the events are redirected to the next
         engine pump cycle. Otherwise the exectution is on
         the same engine cycle.
@@ -191,6 +196,7 @@ class EventListenerBase:
             self.indent -= 4
 
     def translateEvent(self, event_type, event):
+        """Translate event from fifechan to PyChan format."""
         if event_type == MOUSE_EVENT:
             return get_manager().hook.translate_mouse_event(event)
         if event_type == KEY_EVENT:
@@ -307,8 +313,7 @@ class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
 
 class EventMapper:
     """
-    Handles events and callbacks for L{widgets.Widget}
-    and derived classes.
+    Handle events and callbacks for L{widgets.Widget}.
 
     Every PyChan widget has an L{EventMapper} instance
     as attribute B{event_mapper}.
@@ -341,17 +346,21 @@ class EventMapper:
         self.debug = get_manager().debug
 
     def __repr__(self):
+        """Return string representation."""
         return f"EventMapper({repr(self.widget_ref())})"
 
     def attach(self):
+        """Attach all listeners to their widgets."""
         for listener in list(self.listener.values()):
             listener.attach()
 
     def detach(self):
+        """Detach all listeners from their widgets."""
         for listener in list(self.listener.values()):
             listener.detach()
 
     def capture(self, event_name, callback, group_name):
+        """Capture an event with a callback."""
         if event_name not in EVENTS:
             raise exceptions.RuntimeError("Unknown eventname: " + event_name)
 
@@ -364,9 +373,11 @@ class EventMapper:
         self.addEvent(event_name, callback, group_name)
 
     def isCaptured(self, event_name, group_name="default"):
+        """Check if an event is captured."""
         return (f"{event_name}/{group_name}") in self.getCapturedEvents()
 
     def getCapturedEvents(self):
+        """Get a list of captured events."""
         events = []
         for event_type, listener in list(self.listener.items()):
             for event_name, group in list(listener.events.items()):
@@ -375,9 +386,11 @@ class EventMapper:
         return events
 
     def getListener(self, event_name):
+        """Get the listener for an event type."""
         return self.listener[getEventType(event_name)]
 
     def removeEvent(self, event_name, group_name):
+        """Remove an event capture."""
         listener = self.getListener(event_name)
         del listener.events[event_name][group_name]
 
@@ -391,6 +404,7 @@ class EventMapper:
             del self.callbacks[group_name]
 
     def addEvent(self, event_name, callback, group_name):
+        """Add an event with a callback."""
         if not callable(callback):
             raise RuntimeError(
                 f"An event callback must be either a callable or None - not {repr(callback)}"
@@ -426,7 +440,7 @@ class EventMapper:
 
 
 def splitEventDescriptor(name):
-    """Utility function to split "widgetName/eventName" descriptions into tuples."""
+    """Split "widgetName/eventName" descriptions into tuples."""
     L = name.split("/")
     if len(L) not in (1, 2, 3):
         raise exceptions.RuntimeError(

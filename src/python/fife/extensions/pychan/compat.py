@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""
+Compatibility module for PyChan.
+
+This module provides compatibility functions for importing and handling
+fife and fifechan modules.
+"""
 
 import inspect
 from typing import Any

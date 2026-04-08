@@ -2,8 +2,7 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 """
-Automatic widget positioning
-============================
+Automatic widget positioning.
 
 You can use the C{position_technique} attribute
 on top level widgets which can also be set from xml.
@@ -87,9 +86,15 @@ def placeWidget(widget, position):
       "center:top+10"
       "center:center"
 
-    @param widget: The PyChan widget.
-    @param position: A position definition.
+    Parameters
+    ----------
+    widget : object
+        The PyChan widget.
+    position : str
+        A position definition.
 
+    Notes
+    -----
     If the position cannot be parsed a L{PyChanException} is thrown.
 
     """

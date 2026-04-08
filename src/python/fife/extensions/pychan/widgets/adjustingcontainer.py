@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
+"""Widget module for PyChan - contains the Adjustingcontainer class."""
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import IntAttr, IntListAttr
@@ -10,8 +10,7 @@ from .containers import Container
 
 class AdjustingContainer(Container):
     """
-    This is the adjusting container class. It provides space in which child widgets can
-    be position via the position attribute.
+    Adjusting container class providing space for child widgets positioned via the position attribute.
 
     New Attributes
     ==============

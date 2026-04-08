@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""XML map saver for FIFE maps."""
+
 import os
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
@@ -14,6 +16,8 @@ fileExtensions = ("xml",)
 
 
 class XMLMapSaver:
+    """Save FIFE maps to XML format."""
+
     def __init__(self, filepath, engine, map, importList, state=0, datastate=0):
         (
             self.SModel,
@@ -52,18 +56,21 @@ class XMLMapSaver:
         self.importList = importList
 
     def startElement(self, name, attrs):
+        """Handle XML start element."""
         self.file.write(self.indent_level)
         self.xmlout.startElementNS((None, name), name, attrs)
         self.file.write("\n")
         self.indent_level = self.indent_level + "\t"
 
     def endElement(self, name):
+        """Handle XML end element."""
         self.indent_level = self.indent_level[0 : (len(self.indent_level) - 1)]
         self.file.write(self.indent_level)
         self.xmlout.endElementNS((None, name), name)
         self.file.write("\n")
 
     def write_map(self):
+        """Write the map element."""
         assert self.state == self.SModel, "Declaration of <map> not at the top level."
 
         attr_vals = {
@@ -83,6 +90,7 @@ class XMLMapSaver:
         self.endElement("map")
 
     def write_imports(self, map, importList):
+        """Write import elements."""
         for importdir in importList:
             self.write_importdir(root_subfile(map.getFilename(), importdir))
 
@@ -96,7 +104,20 @@ class XMLMapSaver:
                         self.write_import(root_subfile(map.getFilename(), file))
 
     def have_superdir(self, file, importList):
-        """returns true, if file is in directories given in importList"""
+        """Return True if `file` is inside any directory from `importList`.
+
+        Parameters
+        ----------
+        file : str
+            File path to check.
+        importList : list[str]
+            List of directory paths to compare against.
+
+        Returns
+        -------
+        bool
+            True if `file` is located inside one of the directories.
+        """
         for dir in importList:
             have = True
             for test in zip(dir.split(os.path.sep), file.split(os.path.sep)):
@@ -108,6 +129,7 @@ class XMLMapSaver:
         return False
 
     def write_import(self, file):
+        """Write an import element."""
         attr_vals = {
             (None, "file"): file,
         }
@@ -121,6 +143,7 @@ class XMLMapSaver:
         self.file.write("\n")
 
     def write_importdir(self, dir):
+        """Write an import directory element."""
         attr_vals = {
             (None, "dir"): dir,
         }
@@ -134,6 +157,7 @@ class XMLMapSaver:
         self.file.write("\n")
 
     def pathing_val_to_str(self, val):
+        """Convert pathing value to string."""
         if val == fife.CELL_EDGES_AND_DIAGONALS:
             return "cell_edges_and_diagonals"
         if val == fife.FREEFORM:
@@ -141,6 +165,7 @@ class XMLMapSaver:
         return "cell_edges_only"
 
     def layer_type_to_str(self, layer):
+        """Convert layer type to string."""
         if layer.isWalkable():
             return "walkable"
         elif layer.isInteract():
@@ -148,6 +173,7 @@ class XMLMapSaver:
         return ""
 
     def write_layers(self, map):
+        """Write layer elements."""
         for layer in map.getLayers():
             cellgrid = layer.getCellGrid()
             attr_vals = {
@@ -183,6 +209,7 @@ class XMLMapSaver:
             self.endElement("layer")
 
     def write_instances(self, layer):
+        """Write instance elements."""
         attrs = AttributesNSImpl({}, {})
         self.startElement("instances", attrs)
 
@@ -238,6 +265,7 @@ class XMLMapSaver:
         self.endElement("instances")
 
     def write_lights(self, layer):
+        """Write light elements."""
         attrs = AttributesNSImpl({}, {})
         self.startElement("lights", attrs)
 
@@ -342,8 +370,8 @@ class XMLMapSaver:
 
         self.endElement("lights")
 
-    # Save the linked camera of a map.
     def write_camera(self, map):
+        """Save the linked camera of a map."""
         cameralist = map.getCameras()
 
         for cam in cameralist:
@@ -387,8 +415,10 @@ class XMLMapSaver:
                 self.endElement("camera")
 
     def flush(self):
+        """Flush and close the XML document."""
         self.xmlout.endDocument()
         self.file.close()
 
     def saveResource(self):
+        """Save the map resource."""
         self.write_map()

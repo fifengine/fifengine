@@ -10,10 +10,10 @@ from .widget import Widget
 
 class Container(Widget):
     """
-    This is the basic container class. It provides space in which child widgets can
-    be position via the position attribute. If you want to use the layout engine,
-    you have to use derived containers with vertical or horizontal orientation
-    (L{VBox} or L{HBox})
+    Basic container class providing space for child widgets positioned via the position attribute.
+
+    If you want to use the layout engine, you have to use derived containers with
+    vertical or horizontal orientation (L{VBox} or L{HBox}).
 
     New Attributes
     ==============
@@ -176,10 +176,10 @@ class Container(Widget):
 
     def addChild(self, widget):
         """
-        Adds a child widget to the container.
+        Add a child widget to the container.
 
-        This makes the childs widgets visible state the same as the containers.
-        i.e. if the containter is visible the child will be as well and if the
+        This makes the child's widgets visible state the same as the containers.
+        i.e. if the container is visible the child will be as well and if the
         container widget is hidden so will the child.  The child however WILL
         be shown when you show the container widget.  If you want the child to
         be hidden when you show the container widget you must call child.hide().

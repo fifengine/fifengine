@@ -22,8 +22,7 @@ from .common import get_manager
 
 class Widget:
     """
-    This is the common widget base class, which provides most of the wrapping
-    functionality.
+    Common widget base class providing wrapping functionality.
 
     Attributes
     ==========
@@ -319,7 +318,7 @@ class Widget:
 
     def requestFocus(self):
         """
-        Requests focus.
+        Request focus.
 
         The widget must be focusable in order for this to work.  See
         the is_focusable property.
@@ -330,24 +329,24 @@ class Widget:
 
     def isModalFocusable(self):
         """
-        Checks if a widget is modal focusable.
-        True if no other widget has modal focus, false otherwise.
+        Check if a widget is modal focusable.
+
+        Returns True if no other widget has modal focus, false otherwise.
         """
         return self.real_widget.isModalFocusable()
 
     def isModalFocused(self):
-        """
-        Checks if the widget or it's parent has modal focus.
-        """
+        """Check if the widget or its parent has modal focus."""
         return self.real_widget.isModalFocused()
 
     def requestModalFocus(self):
         """
-        Requests modal focus.
-        When a widget has modal focus, only that widget and it's children may recieve input.
+        Request modal focus.
+
+        When a widget has modal focus, only that widget and its children may receive input.
 
         The widget must be modal focusable in order for this to work. Therefore,
-        no other widget should has modal focus.
+        no other widget should have modal focus.
 
         """
         if self.isVisible():
@@ -355,34 +354,32 @@ class Widget:
                 self.real_widget.requestModalFocus()
 
     def releaseModalFocus(self):
-        """
-        Releases modal focus.
-        """
+        """Release modal focus."""
         if self.isModalFocused():
             self.real_widget.releaseModalFocus()
 
     def isModalMouseInputFocusable(self):
         """
-        Checks if a widget is modal mouse input focusable.
-        True if no other widget has modal mouse input focus, false otherwise.
+        Check if a widget is modal mouse input focusable.
+
+        Returns True if no other widget has modal mouse input focus, false otherwise.
         """
         return self.real_widget.isModalMouseInputFocusable()
 
     def isModalMouseInputFocused(self):
-        """
-        Checks if the widget or it's parent has modal mouse input focus.
-        """
+        """Check if the widget or its parent has modal mouse input focus."""
         return self.real_widget.isModalMouseInputFocused()
 
     def requestModalMouseInputFocus(self):
         """
-        Requests modal mouse input focus.
-        When a widget has modal input focus that widget will be the only widget
+        Request modal mouse input focus.
+
+        When a widget has modal input focus, that widget will be the only widget
         receiving input even if the input occurs outside of the widget and
         no matter what the input is.
 
         The widget must be modal mouse input focusable in order for this to work.
-        Therefore, no other widget should has modal input focus.
+        Therefore, no other widget should have modal input focus.
 
         """
         if self.isVisible():
@@ -390,16 +387,15 @@ class Widget:
                 self.real_widget.requestModalMouseInputFocus()
 
     def releaseModalMouseInputFocus(self):
-        """
-        Releases modal mouse input focus.
-        """
+        """Release modal mouse input focus."""
         if self.isModalMouseInputFocused():
             self.real_widget.releaseModalMouseInputFocus()
 
     def match(self, **kwargs):
         """
-        Matches the widget against a list of key-value pairs.
-        Only if all keys are attributes and their value is the same it returns True.
+        Match the widget against a list of key-value pairs.
+
+        Returns True only if all keys are attributes and their value is the same.
         """
         for k, v in list(kwargs.items()):
             if v != getattr(self, k, None):
@@ -536,21 +532,21 @@ class Widget:
 
     def beforeShow(self):
         """
-        This method is called just before the widget is shown.
-        You can override this in derived widgets to add finalization
-        behaviour.
+        Prepare the widget before it is shown.
+
+        Override this in derived widgets to add finalization behaviour.
 
         NOTE:
                 - if your widget is a container, you have to call
-                  _resetTiling(), as you will loose this call by using
+                  _resetTiling(), as you will lose this call by using
                   your override method
         """
 
     def afterHide(self):
         """
-        This method is called just before the widget is hidden.
-        You can override this in derived widgets to add finalization
-        behaviour.
+        Perform cleanup after the widget is hidden.
+
+        Override this in derived widgets to add finalization behaviour.
         """
 
     def findChildren(self, **kwargs):
@@ -639,8 +635,9 @@ class Widget:
 
     def addChild(self, widget):
         """
-        This function adds a widget as child widget and is only implemented
-        in container widgets.
+        Add a widget as child widget.
+
+        This function is only implemented in container widgets.
 
         You'll need to call L{adaptLayout} if the container is already shown,
         to adapt the layout to the new widget. This doesn't happen
@@ -652,7 +649,7 @@ class Widget:
 
     def insertChild(self, widget, position):
         """
-        This function inserts a widget a given index in the child list.
+        Insert a widget at a given index in the child list.
 
         See L{addChild} and L{insertChildBefore}
         """
@@ -662,8 +659,9 @@ class Widget:
 
     def insertChildBefore(self, widget, before):
         """
-        Inserts a child widget before a given widget. If the widget isn't found,
-        the widget is appended to the children list.
+        Insert a child widget before a given widget.
+
+        If the widget isn't found, the widget is appended to the children list.
 
         See L{addChild} and L{insertChild}
         """
@@ -688,8 +686,9 @@ class Widget:
 
     def removeChild(self, widget):
         """
-        This function removes a direct child widget and is only implemented
-        in container widgets.
+        Remove a direct child widget.
+
+        This function is only implemented in container widgets.
 
         You'll need to call L{adaptLayout} if the container is already shown,
         to adapt the layout to the removed widget. This doesn't happen
@@ -718,7 +717,8 @@ class Widget:
 
     def removeAllChildren(self):
         """
-        This function will remove all direct child widgets.
+        Remove all direct child widgets.
+
         This will work even for non-container widgets.
         """
         children = self.findChildren(parent=self)
@@ -727,8 +727,7 @@ class Widget:
 
     def mapEvents(self, eventMap, ignoreMissing=False):
         """
-        Convenience function to map widget events to functions
-        in a batch.
+        Map widget events to functions in a batch.
 
         Subsequent calls of mapEvents will merge events with different
         widget names and override the previously set callback.
@@ -908,8 +907,9 @@ class Widget:
 
     def listNamedWidgets(self):
         """
-        This function will print a list of all currently named child-widgets
-        to the standard output. This is useful for debugging purposes.
+        Print a list of all currently named child-widgets to stdout.
+
+        This is useful for debugging purposes.
         """
 
         def _printNamedWidget(widget):

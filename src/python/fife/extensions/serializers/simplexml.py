@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Simple XML serializer for settings."""
+
 import os
 from io import BytesIO
 
@@ -16,56 +18,76 @@ EMPTY_XML_FILE = """\
 
 class SimpleSerializer:
     """
+    Base class for custom setting loaders/savers.
+
     Use this as a base class for custom setting loaders/savers to use with the
     Setting class.
     """
 
     def __init__(self, filename=None):
+        """Initialize the serializer."""
         pass
 
     def get(self, module, name, defaultValue=None):
+        """Get a setting value."""
         pass
 
     def set(self, module, name, value, extra_attrs=None):
+        """Set a setting value."""
         pass
 
     def load(self, filename=None):
-        """
-        @note: If the filename specified is empty this function MUST
-        initialize an empty settings file in whatever format you need.
+        """Load settings from ``filename``.
+
+        Notes
+        -----
+        If the filename specified is empty this function must initialize an
+        empty settings file in the desired format.
         """
         pass
 
     def save(self, filename=None):
+        """Save settings to file."""
         pass
 
     def getModuleNameList(self):
-        """
-        @note: Returns all the module names that are present in the
-        settings.xml file as a list of strings
+        """Return a list of module names present in the settings file.
+
+        Returns
+        -------
+        list[str]
+            Module names found in the settings XML file.
         """
         pass
 
     def getAllSettings(self, module):
-        """
-        @note: Returns all the setting names and values under the Module name
-        module as a dictionary structure
+        """Return all setting names and values under a module as a dict.
+
+        Parameters
+        ----------
+        module : str
+            Module name to retrieve settings for.
+
+        Returns
+        -------
+        dict
+            Mapping of setting names to values.
         """
         pass
 
 
 class SimpleXMLSerializer(SimpleSerializer):
-    """
-    This class is a simple interface to get and store data in XML files.
-    """
+    """Provide a simple interface to get and store data in XML files."""
 
     def __init__(self, filename=None):
+        """Initialize the serializer."""
         self._file = filename
         self._tree = None
         self._root_element = None
         self._initialized = False
 
     def load(self, filename=None):
+        """Load settings from a file."""
         if filename:
             self._file = filename
 
@@ -86,6 +108,7 @@ class SimpleXMLSerializer(SimpleSerializer):
         self._initialized = True
 
     def save(self, filename=None):
+        """Save settings to a file."""
         if not self._initialized:
             self.load()
 
@@ -98,6 +121,7 @@ class SimpleXMLSerializer(SimpleSerializer):
         self._tree.write(savefile, encoding="UTF-8", xml_declaration=True)
 
     def getValue(self, e_type, e_value):
+        """Convert a value from string to the appropriate type."""
         if e_type == "int":
             return int(e_value)
         elif e_type == "float":
@@ -114,6 +138,7 @@ class SimpleXMLSerializer(SimpleSerializer):
         return e_value
 
     def get(self, module, name, defaultValue=None):
+        """Get a setting value from the XML file."""
         if not self._initialized:
             self.load()
 
@@ -149,6 +174,7 @@ class SimpleXMLSerializer(SimpleSerializer):
         return self.getValue(e_type, e_value)
 
     def set(self, module, name, value, extra_attrs=None):
+        """Set a setting value in the XML file."""
         if extra_attrs is None:
             extra_attrs = {}
 
@@ -194,6 +220,7 @@ class SimpleXMLSerializer(SimpleSerializer):
             elm.text = str_value
 
     def remove(self, module, name):
+        """Remove a setting from the XML file."""
         if not self._initialized:
             self.load()
 
@@ -208,6 +235,7 @@ class SimpleXMLSerializer(SimpleSerializer):
                 moduleTree.remove(e)
 
     def getModuleNameList(self):
+        """Get a list of module names in the file."""
         if not self._initialized:
             self.load()
 
@@ -219,6 +247,7 @@ class SimpleXMLSerializer(SimpleSerializer):
         return moduleNames
 
     def getAllSettings(self, module):
+        """Get all settings for a module."""
         settingsFromFile = {}
         if not self._initialized:
             self.load()

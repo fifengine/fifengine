@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Geometry visualization tool for testing shape transformations."""
 
 import math
 import time
@@ -13,6 +14,8 @@ DBLCLICK_TRESHOLD = 0.3  # secs
 
 
 class Shape:
+    """Represent a geometric shape with transformation capabilities."""
+
     def __init__(self, center_pt, sidecount):
         assert sidecount in (4, 6)
         self.rotation = 0
@@ -38,6 +41,7 @@ class Shape:
         self.reflections = self.create_shape_reflections()
 
     def create_shape_reflections(self):
+        """Create reflections of the shape for visualization."""
         reflections = []
         sides = len(self.shape_pts)
         if sides == 4:
@@ -60,6 +64,7 @@ class Shape:
         return reflections
 
     def tilt(self, degrees):
+        """Tilt the shape by the given degrees."""
         self.tilting += math.radians(degrees)
         if self.tilting < 0:
             self.tilting = 0
@@ -67,6 +72,7 @@ class Shape:
             self.tilting = math.pi / 2 * 0.95
 
     def rotate(self, degrees):
+        """Rotate the shape by the given degrees."""
         self.rotation += math.radians(degrees)
         if self.rotation < 0:
             self.rotation = 0
@@ -74,6 +80,7 @@ class Shape:
             self.rotation = math.pi / 2 * 0.95
 
     def zoom(self, amount):
+        """Zoom the shape by the given amount."""
         self.zoomval += amount
         if self.zoomval < 10:
             self.zoomval = 10
@@ -81,6 +88,7 @@ class Shape:
             self.zoomval = 150
 
     def transform_pts(self, pts):
+        """Transform points by rotation, tilt, and zoom."""
         rotated_pts = []
         for x, y, z in pts:
             rotated_pts.append(
@@ -111,9 +119,11 @@ class Shape:
         return zoomed_pts
 
     def get_screen_pts(self):
+        """Get transformed shape points for screen rendering."""
         return self.transform_pts(self.shape_pts)
 
     def get_screen_bounding_box(self, screenpts):
+        """Get the bounding box for the given screen points."""
         x2, y2 = x1, y1 = screenpts[0]
         for pt in screenpts:
             x1, y1 = min(x1, pt[0]), min(y1, pt[1])
@@ -121,16 +131,21 @@ class Shape:
         return (x1, y1), (x2, y2)
 
     def get_reflections(self):
+        """Get transformed reflection points for screen rendering."""
         return [self.transform_pts(reflection) for reflection in self.reflections]
 
     def get_tilting(self):
+        """Get the current tilting angle in degrees."""
         return math.degrees(self.tilting)
 
     def get_rotation(self):
+        """Get the current rotation angle in degrees."""
         return math.degrees(self.rotation)
 
 
 class Gui:
+    """GUI for geometry visualization."""
+
     W = 400
     H = 400
 
@@ -156,9 +171,11 @@ class Gui:
         self.last_click_time = time.time()
 
     def on_resize(self, event):
+        """Handle window resize event."""
         pass
 
     def on_move(self, event):
+        """Handle mouse move event for rotation/zoom/tilt."""
         if event.state & RMB:
             self.shape.zoom((self.prev_mouse_pt[1] - event.y) / 3)
             self.update_view()
@@ -169,6 +186,7 @@ class Gui:
             self.prev_mouse_pt = (event.x, event.y)
 
     def on_mb(self, event):
+        """Handle mouse button event for shape switching."""
         self.prev_mouse_pt = (event.x, event.y)
         if (time.time() - self.last_click_time) < DBLCLICK_TRESHOLD:
             self.cur_side_index = (self.cur_side_index + 1) % len(self.sides)
@@ -181,6 +199,7 @@ class Gui:
         self.last_click_time = time.time()
 
     def draw_shape(self, shapepts, boundpts=None, fillshape=True):
+        """Draw the shape and optional bounding box on the canvas."""
         if boundpts:
             pt1, pt2 = boundpts
             self.canvas.create_polygon(
@@ -204,6 +223,7 @@ class Gui:
         )
 
     def update_texts(self, size, transform):
+        """Update text labels showing current transform values."""
         self.canvas.create_text(
             10,
             20,
@@ -239,9 +259,11 @@ class Gui:
         )
 
     def flatten_pts(self, pts):
+        """Flatten a list of tuples into a flat list."""
         return [c for pt in pts for c in pt]
 
     def update_view(self):
+        """Redraw the entire view with current shape state."""
         self.canvas.delete("all")
         shapepts = self.shape.get_screen_pts()
         boundpts = self.shape.get_screen_bounding_box(shapepts)
@@ -262,6 +284,7 @@ class Gui:
         self.update_texts(size, transform)
 
     def run(self):
+        """Start the GUI main loop."""
         self.root.mainloop()
 
 

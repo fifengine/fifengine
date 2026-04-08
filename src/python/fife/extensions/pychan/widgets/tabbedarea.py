@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""Widget module for PyChan - contains the Tabbedarea class."""
 
 from fife import fifechan
 from fife.extensions.pychan.attrs import IntAttr, UnicodeAttr
@@ -139,12 +140,10 @@ class Tab(Container):
 
 class TabbedArea(Container):
     """
-    This is the tabbed area class.
+    Tabbed area class for organizing widgets into tabs.
 
     New Attributes
     ==============
-
-
     """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
@@ -270,10 +269,7 @@ class TabbedArea(Container):
         return tabbedareaClone
 
     def addChild(self, widget):
-        """
-        Adds a child widget to the container.
-
-        """
+        """Add a child widget to the container."""
 
         # if the widget have no tabwidget, we try to find one
         if widget.tab is None:

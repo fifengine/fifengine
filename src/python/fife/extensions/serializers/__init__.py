@@ -49,12 +49,18 @@ def warn(self, msg):
 
 
 def reverse_root_subfile(masterfile, subfile):
-    """
-    does inverse operation to root_subfile. E.g.
-    E.g. if masterfile is ./../foo/bar.xml and subfile is ../foo2/subfoo.xml,
-    returned path ./../foo2/subfoo.xml
-    Usually this function is used to convert saved paths into engine relative paths
-    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    """Do the inverse operation to :func:`root_subfile`.
+
+    Example
+    -------
+    If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
+    ``../foo2/subfoo.xml``, the returned path is ``./../foo2/subfoo.xml``.
+
+    Notes
+    -----
+    This is usually used to convert saved paths into engine-relative paths.
+    ``masterfile`` is expected to be a file, not a directory. ``subfile`` can
+    be either.
     """
     s = "/"
 
@@ -67,9 +73,10 @@ def reverse_root_subfile(masterfile, subfile):
 
 
 def norm_path(path):
-    """
-    Makes the path use '/' delimited separators. FIFE always uses these delimiters,
-    but some os-related routines will default to os.path.sep.
+    """Make the path use '/' delimited separators.
+
+    FIFE always uses these delimiters, but some OS-related routines will
+    default to ``os.path.sep``.
     """
     if os.path.sep == "/":
         return path
@@ -78,12 +85,18 @@ def norm_path(path):
 
 
 def loadImportFile(loader, path, engine, debug=False):
-    """uses XMLObjectLoader to load import files from path
+    """Use XMLObjectLoader to load an import file from a path.
 
-    @type	path:	string
-    @param	path:	path to import file
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance (XMLObjectLoader) to use.
+    path : str
+        Path to import file.
+    engine : object
+        Engine instance (unused by this helper but provided for API consistency).
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     loader.loadResource(fife.ResourceLocation(path))
     if debug:
@@ -91,12 +104,19 @@ def loadImportFile(loader, path, engine, debug=False):
 
 
 def loadImportDir(loader, path, engine, debug=False):
-    """helper function to call loadImportFile on a directory
+    """
+    Call :func:`loadImportFile` for every XML file in a directory.
 
-    @type	path:	string
-    @param	path:	path to import directory
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance.
+    path : str
+        Path to import directory.
+    engine : object
+        Engine instance used to list files.
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     for _file in [
         f for f in engine.getVFS().listFiles(path) if f.split(".")[-1] == "xml"
@@ -105,12 +125,19 @@ def loadImportDir(loader, path, engine, debug=False):
 
 
 def loadImportDirRec(loader, path, engine, debug=False):
-    """helper function to call loadImportFile recursive on a directory
+    """Recursively call :func:`loadImportFile` for XML files in a directory
+    tree.
 
-    @type	path:	string
-    @param	path:	path to import directory
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance.
+    path : str
+        Path to import directory.
+    engine : object
+        Engine instance used to list directories and files.
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     loadImportDir(loader, path, engine, debug)
 
@@ -122,10 +149,11 @@ def loadImportDirRec(loader, path, engine, debug=False):
 
 def root_subfile(masterfile, subfile):
     """
-    Returns new path for given subfile (path), which is rooted against masterfile
+    Return new path for given subfile rooted against masterfile.
+
     E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
     returned path is ../foo2/subfoo.xml
-    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    NOTE: masterfile is expected to be *file*, not directory. subfile can be either.
     """
     s = "/"
 

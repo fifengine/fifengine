@@ -2,8 +2,7 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 """
-Convenient timers
-=================
+Provide convenient timers.
 
 Usage::
   import fife.extensions.fife_timer
@@ -33,7 +32,10 @@ def init(timemanager):
     """
     Initialize timers.
 
-    @param timemanager: A L{fife.TimeManager} as retuned by L{fife.Engine.getTimeManager}.
+    Parameters
+    ----------
+    timemanager : fife.TimeManager
+        A fife.TimeManager as returned by ``fife.Engine.getTimeManager``.
     """
     global _manager
     _manager = timemanager
@@ -41,7 +43,7 @@ def init(timemanager):
 
 class Timer(fife.TimeEvent):
     """
-    Timer
+    Timer.
 
     This class wraps the fife.TimeEvent class to make it easily usable from Python
     It allows for a TimeEvent to be executed once or multiple times.
@@ -52,9 +54,16 @@ class Timer(fife.TimeEvent):
 
     def __init__(self, delay=0, callback=None, repeat=0):
         """
-        @param delay: The delay in milliseconds to execute the callback
-        @param callback: The function to execute when the time delay has passed
-        @param repeat: The number of times to execute the callback.  1=once, 0=forever
+        Initialize the timer.
+
+        Parameters
+        ----------
+        delay : int
+            The delay in milliseconds to execute the callback.
+        callback : callable
+            The function to execute when the time delay has passed.
+        repeat : int
+            The number of times to execute the callback. 1=once, 0=forever.
         """
         super().__init__(delay)
         self._active = False
@@ -82,9 +91,9 @@ class Timer(fife.TimeEvent):
 
     def stop(self):
         """
-        Stops the timer
+        Stop the timer.
 
-        This unregisters the timer from the time manager.
+        Unregister the timer from the time manager.
         """
         if not self._active:
             return
@@ -94,11 +103,10 @@ class Timer(fife.TimeEvent):
 
     def updateEvent(self, delta):
         """
-        This is called by FIFE::TimeManager when the delay has passed.
+        Respond to time manager callback.
 
-        Should not be called directly.
+        Called by FIFE::TimeManager when the delay has passed. Should not be called directly.
         """
-
         if self._repeat != 0:
             self._executed += 1
             if self._executed >= self._repeat:
@@ -109,23 +117,26 @@ class Timer(fife.TimeEvent):
 
     def _setDelay(self, delay):
         """
-        Sets how many milliseconds to wait before executing the callback.
+        Set the delay in milliseconds.
 
-        The timer must not be active to change this value
+        The timer must not be active to change this value.
 
-        @param delay: Number of milliseconds to wait before executing the callback.
-        @type delay: C{integer}
+        Parameters
+        ----------
+        delay : int
+            Number of milliseconds to wait before executing the callback.
         """
-
         if not self._active:
             self.setPeriod(delay)
 
     def _getDelay(self):
         """
-        Returns the number of milliseconds to wait before executing the callback.
+        Get the delay in milliseconds.
 
-        @return: Number of milliseconds.
-        @rtype: C{integer}
+        Returns
+        -------
+        int
+            Number of milliseconds.
         """
         return self.getPeriod()
 
@@ -137,41 +148,48 @@ class Timer(fife.TimeEvent):
 
     def _setRepeat(self, repeat):
         """
-        Sets how many times the timer should be repeated.
+        Set the number of repeats.
 
-        The timer must not be active to change it's repeat value.
+        The timer must not be active to change its repeat value.
 
-        @param repeat: Number of times to repeat the timer.  0=forever, 1=once.
-        @type repeat: C{integer}
+        Parameters
+        ----------
+        repeat : int
+            Number of times to repeat the timer. 0=forever, 1=once.
         """
-
         if not self._active:
             self._repeat = repeat
 
     def _getRepeat(self):
         """
-        Returns the number of times the timer will be executed.
+        Get the number of repeats.
 
-        @return: Number of times the timer will be executed.
-        @rtype: C{integer}
+        Returns
+        -------
+        int
+            Number of times the timer will be executed.
         """
         return self._repeat
 
     def _getActive(self):
         """
-        Returns True if the timer is active and False if it is not.
+        Get the active state.
 
-        @return: True if timer is active, False if it is not.
-        @rtype: C{boolean}
+        Returns
+        -------
+        bool
+            True if timer is active, False otherwise.
         """
         return self._active
 
     def _getNumExecuted(self):
         """
-        Returns the number of times the timer has been executed
+        Get the number of executions.
 
-        @return: Number of times the timer has been executed
-        @rtype: C{integer}
+        Returns
+        -------
+        int
+            Number of times the timer has been executed.
         """
         return self._executed
 
@@ -189,11 +207,17 @@ def delayCall(delay, callback):
     Remember to keep a reference to the timer this function returns.  If you
     do not python will delete the timer prematurely which may case a segfault.
 
-    @param delay: Delay in milliseconds.
-    @param callback: The function to call.
+    Parameters
+    ----------
+    delay : int
+        Delay in milliseconds.
+    callback : callable
+        The function to call.
 
-    @return: The timer.
-    @rtype: L{Timer}
+    Returns
+    -------
+    Timer
+        The timer.
     """
     timer = Timer(delay, callback, 1)
     timer.start()
@@ -207,11 +231,17 @@ def repeatCall(period, callback):
     Remember to keep a reference to the timer this function returns.  If you
     do not python will delete the timer prematurely which may case a segfault.
 
-    @param period: Period between calls in milliseconds.
-    @param callback: The function to call.
+    Parameters
+    ----------
+    period : int
+        Period between calls in milliseconds.
+    callback : callable
+        The function to call.
 
-    @return: The timer.
-    @rtype: L{Timer}
+    Returns
+    -------
+    Timer
+        The timer.
     """
     timer = Timer(period, callback, 0)
     timer.start()

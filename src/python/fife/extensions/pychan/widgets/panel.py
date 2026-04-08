@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
+"""Widget module for PyChan - contains the Panel class."""
 
 import weakref
 
@@ -222,19 +222,19 @@ class Panel(ResizableWindow):
             return self.parent
 
     def afterDock(self):
-        """called after dockTo() process if the panel is docked
+        """
+        Handle post-dock operations.
 
-        overwrite this to e.g. keep a record on where the widget
-        was last docked
+        Override this to keep a record of where the widget was last docked.
         """
         pass
 
     def afterUndock(self):
-        """called after undockTo() process if the panel is undocked
+        """
+        Handle post-undock operations.
 
-        overwrite and implement this in your Panel instance
-        to e.g. restore a particular default position
-        (otherwise the panel would re-appear on the center)
+        Override this in your Panel instance to restore a particular default
+        position (otherwise the panel would re-appear in the center).
         """
         pass
 

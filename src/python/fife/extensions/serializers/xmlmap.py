@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""main xml parser class for xml map loading"""
+"""main xml parser class for xml map loading."""
 
 import time
 
@@ -21,24 +21,33 @@ FORMAT = "1.0"
 
 
 class XMLMapLoader:
-    """The B{XMLMapLoader} parses the xml map using several section.
-    Each section fires a callback (if given) which can e. g. be
-    used to show a progress bar.
+    """Parse XML map files and construct FIFE map objects.
 
-    The callback sends two values, a string and a float (which shows
-    the overall process): callback(string, float)
+    The loader parses the XML map in sections; each section may fire an
+    optional callback with a description string and a progress float
+    (``callback(string, float)``).
     """
 
+    _LIGHT_DEFAULT_BLENDING_SRC = -1
+    _LIGHT_DEFAULT_BLENDING_DST = -1
+    _LIGHT_DEFAULT_SUBDIVISIONS = 32
+    _LIGHT_DEFAULT_CAM_ID = "default"
+    _LIGHT_DEFAULT_INTENSITY = 128
+    _LIGHT_DEFAULT_RADIUS = 10.0
+
     def __init__(self, engine, callback, debug, extensions):
-        """
-        @type	engine:		object
-        @param	engine:		a pointer to fife.engine
-        @type	callback:	function
-        @param	callback:	a callback with two arguments, optional
-        @type	debug:		bool
-        @param	debug:		flag to activate / deactivate print statements
-        @type	extensions:	dict
-        @param	extensions:	which extensions should be activated (lights, sounds)
+        """Create an XMLMapLoader.
+
+        Parameters
+        ----------
+        engine : fife.Engine
+            Pointer to the FIFE engine.
+        callback : callable or None
+            Optional callback accepting (string, float) for progress updates.
+        debug : bool
+            Enable debug output.
+        extensions : dict
+            Which extensions should be activated (e.g., lights, sound).
         """
         # 		self.thisown = 0
 
@@ -77,12 +86,17 @@ class XMLMapLoader:
         raise SyntaxError("".join(["File: ", self.source, " . ", msg]))
 
     def loadResource(self, location):
-        """overwrite of B{fife.ResourceLoader}
+        """Load a map resource from ``location`` and return a FIFE map.
 
-        @type	location:	object
-        @param	location:	path to a map file as a fife.ResourceLocation
-        @return	FIFE map object
-        @rtype	object
+        Parameters
+        ----------
+        location : fife.ResourceLocation
+            Path to a map file.
+
+        Returns
+        -------
+        object
+            The loaded FIFE map object.
         """
         start_time = time.time()
         self.source = location
@@ -96,14 +110,17 @@ class XMLMapLoader:
         return map
 
     def parse_map(self, mapelt):
-        """start parsing the xml structure and
-        call submethods for turning found tags
-        into FIFE objects and create the map
+        """Parse the XML structure and construct the map object.
 
-        @type	mapelt:	object
-        @param	mapelt:	ElementTree root
-        @return	FIFE map object
-        @rtype	object
+        Parameters
+        ----------
+        mapelt : ElementTree.Element
+            ElementTree root for the map.
+
+        Returns
+        -------
+        object
+            The created FIFE map object.
         """
         if not mapelt:
             self._err("No <map> element found at top level of map file definition.")
@@ -161,12 +178,14 @@ class XMLMapLoader:
         return self.map
 
     def parse_imports(self, mapelt, map):
-        """load all objects defined as import into memory
+        """Load all objects defined as imports into memory.
 
-        @type	mapelt:	object
-        @param	mapelt:	ElementTree root
-        @return	FIFE map object
-        @rtype	object
+        Parameters
+        ----------
+        mapelt : ElementTree.Element
+            ElementTree root.
+        map : object
+            The FIFE map object being constructed.
         """
         parsedImports = {}
 
@@ -209,12 +228,14 @@ class XMLMapLoader:
                 )
 
     def parse_layers(self, mapelt, map):
-        """create all layers and their instances
+        """Create all layers and their instances.
 
-        @type	mapelt:	object
-        @param	mapelt:	ElementTree root
-        @type	map:	object
-        @param	map:	FIFE map object
+        Parameters
+        ----------
+        mapelt : ElementTree.Element
+            ElementTree root containing layer definitions.
+        map : object
+            FIFE map object to populate.
         """
         if self.callback is not None:
             tmplist = mapelt.findall("layer")
@@ -324,19 +345,23 @@ class XMLMapLoader:
             del i
 
     def parse_lights(self, layerelt, layer):
-        """create light nodes
+        """Create sound emitters for a layer (work in progress).
 
-        @type	layerelt:	object
-        @param	layerelt:	ElementTree layer branch
-        @type	layer:	object
-        @param	layer:	FIFE layer object
+        Notes
+        -----
+        - FIFE has a hard limit of sound emitters; loading strategy is TBD.
+        - One approach is to collect sound files & metadata and let the
+            client decide how to create emitters.
+
+        Parameters
+        ----------
+        layerelt : ElementTree.Element
+                ElementTree layer branch.
+        layer : object
+                FIFE layer object.
         """
-        _LIGHT_DEFAULT_BLENDING_SRC = -1
-        _LIGHT_DEFAULT_BLENDING_DST = -1
-        _LIGHT_DEFAULT_SUBDIVISIONS = 32
-        _LIGHT_DEFAULT_CAM_ID = "default"
-        _LIGHT_DEFAULT_INTENSITY = 128
-        _LIGHT_DEFAULT_RADIUS = 10.0
+        # to be continued
+        pass
 
         print("Processing lights ... ")
         lightelt = layerelt.find("lights")
@@ -356,10 +381,10 @@ class XMLMapLoader:
 
             blending_src = light.get("src")
             if not blending_src:
-                blending_src = _LIGHT_DEFAULT_BLENDING_SRC
+                blending_src = self._LIGHT_DEFAULT_BLENDING_SRC
             blending_dst = light.get("dst")
             if not blending_dst:
-                blending_dst = _LIGHT_DEFAULT_BLENDING_DST
+                blending_dst = self._LIGHT_DEFAULT_BLENDING_DST
 
             _x = light.get("x")
             if not _x:
@@ -416,17 +441,17 @@ class XMLMapLoader:
                     node["type"] = type
                     radius = light.get("radius")
                     if not radius:
-                        radius = _LIGHT_DEFAULT_RADIUS
+                        radius = self._LIGHT_DEFAULT_RADIUS
                     node["radius"] = float(radius)
 
                     subdivisions = light.get("subdivisions")
                     if not subdivisions:
-                        subdivisions = _LIGHT_DEFAULT_SUBDIVISIONS
+                        subdivisions = self._LIGHT_DEFAULT_SUBDIVISIONS
                     node["subdivisions"] = int(subdivisions)
 
                     intensity = light.get("intensity")
                     if not intensity:
-                        intensity = _LIGHT_DEFAULT_INTENSITY
+                        intensity = self._LIGHT_DEFAULT_INTENSITY
                     node["intensity"] = int(intensity)
 
                     xstretch = light.get("xstretch")
@@ -447,7 +472,7 @@ class XMLMapLoader:
 
             cam_id = light.get("camera_id")
             if not cam_id:
-                cam_id = _LIGHT_DEFAULT_CAM_ID
+                cam_id = self._LIGHT_DEFAULT_CAM_ID
 
             if cam_id not in self.light_data:
                 self.light_data[cam_id] = {}
@@ -462,30 +487,33 @@ class XMLMapLoader:
                 print(group, lights)
 
     def parse_sounds(self, layerelt, layer):
-        """create sound emitter
+        """Create sound emitters for a layer.
 
-        FIXME:
-                - FIFE has a hard limit of sound emitters
-                  how should we load emitters here?
-                - my first thought: collect a list of sound
-                  files & data for emitter creation,
-                  then let the client decide what to do with it
+        Notes
+        -----
+        FIFE has a hard limit of sound emitters. This loader collects
+        sound definitions; the client is responsible for deciding how to
+        allocate actual emitters.
 
-        @type	layerelt:	object
-        @param	layerelt:	ElementTree layer branch
-        @type	layer:	object
-        @param	layer:	FIFE layer object
+        Parameters
+        ----------
+        layerelt : ElementTree.Element
+            ElementTree branch for the layer.
+        layer : object
+            FIFE layer object.
         """
         # to be continued
         pass
 
     def parse_instances(self, layerelt, layer):
-        """create all layers and their instances
+        """Create all instances for a layer.
 
-        @type	layerelt:	object
-        @param	layerelt:	ElementTree layer branch
-        @type	layer:	object
-        @param	layer:	FIFE layer object
+        Parameters
+        ----------
+        layerelt : ElementTree.Element
+            ElementTree branch for the layer.
+        layer : object
+            FIFE layer object.
         """
         instelt = layerelt.find("instances")
 
@@ -583,17 +611,19 @@ class XMLMapLoader:
                 inst.actRepeat("default", target)
 
     def parse_cameras(self, mapelt, map):
-        """create all cameras and activate them
+        """Create all cameras and activate them.
 
-        FIXME:
-                - should the cameras really be enabled here?
-                  IMO that's part of the setup within a client
-                  (we just _load_ things here)
+        Notes
+        -----
+        Clients may prefer to enable cameras during setup; this loader
+        only creates and configures cameras from the XML.
 
-        @type	mapelt:	object
-        @param	mapelt:	ElementTree root
-        @type	map:	object
-        @param	map:	FIFE map object
+        Parameters
+        ----------
+        mapelt : ElementTree.Element
+            ElementTree root containing camera definitions.
+        map : object
+            FIFE map object.
         """
         if self.callback:
             tmplist = mapelt.findall("camera")
@@ -668,27 +698,31 @@ class XMLMapLoader:
                 )
 
     def create_light_nodes(self, map):
-        """loop through all preloaded lights and create them
-        according to their data
+        """Loop through all preloaded lights and create them
+        according to their data.
 
-        @type	map:	object
-        @param	map:	FIFE map object
+        Parameters
+        ----------
+        map : object
+            FIFE map object
         """
         cameras = [i.getId() for i in map.getCameras()]
         renderers = {}
         default_cam = map.getCameras()[0].getId()
 
         def add_simple_light(group, renderer, node, data):
-            """add a node as simple light to the renderer
+            """Add a node as simple light to the renderer.
 
-            @type	group:	string
-            @param	group:	name of the light group
-            @type	renderer:	object
-            @param	renderer:	fife.LightRenderer instance
-            @type	node:		object
-            @param	node:		fife.RendererNode instance
-            @type	data:		dict
-            @param	data:		all data for the light type creation
+            Parameters
+            ----------
+            group : str
+                Name of the light group.
+            renderer : object
+                fife.LightRenderer instance.
+            node : object
+                fife.RendererNode instance.
+            data : dict
+                All data for the light type creation.
             """
             if not node:
                 return
@@ -712,16 +746,18 @@ class XMLMapLoader:
                 add_stencil_test(group, renderer, data)
 
         def add_animated_lightmap(group, renderer, node, data):
-            """add a node as animated lightmap to the renderer
+            """Add a node as animated lightmap to the renderer.
 
-            @type	group:	string
-            @param	group:	name of the light group
-            @type	renderer:	object
-            @param	renderer:	fife.LightRenderer instance
-            @type	node:		object
-            @param	node:		fife.RendererNode instance
-            @type	data:		dict
-            @param	data:		all data for the light type creation
+            Parameters
+            ----------
+            group : str
+                Name of the light group.
+            renderer : object
+                fife.LightRenderer instance.
+            node : object
+                fife.RendererNode instance.
+            data : dict
+                All data for the light type creation.
             """
             if not node:
                 return
@@ -738,16 +774,18 @@ class XMLMapLoader:
                 add_stencil_test(group, renderer, data)
 
         def add_lightmap(group, renderer, node, data):
-            """add a node as lightmap to the renderer
+            """Add a node as lightmap to the renderer.
 
-            @type	group:	string
-            @param	group:	name of the light group
-            @type	renderer:	object
-            @param	renderer:	fife.LightRenderer instance
-            @type	node:		object
-            @param	node:		fife.RendererNode instance
-            @type	data:		dict
-            @param	data:		all data for the light type creation
+            Parameters
+            ----------
+            group : str
+                Name of the light group.
+            renderer : object
+                fife.LightRenderer instance.
+            node : object
+                fife.RendererNode instance.
+            data : dict
+                All data for the light type creation.
             """
             if not node:
                 return
@@ -764,14 +802,16 @@ class XMLMapLoader:
                 add_stencil_test(group, renderer, data)
 
         def add_stencil_test(group, renderer, data):
-            """add a stencil test to a group
+            """Add a stencil test to a group.
 
-            @type	group:	string
-            @param	group:	name of the light group
-            @type	renderer:	object
-            @param	renderer:	fife.LightRenderer instance
-            @type	data:		dict
-            @param	data:		all data for the light type creation
+            Parameters
+            ----------
+            group : str
+                Name of the light group.
+            renderer : object
+                fife.LightRenderer instance.
+            data : dict
+                All data for the light type creation.
             """
             if not group:
                 return
@@ -782,7 +822,8 @@ class XMLMapLoader:
             )
 
         def create_node(instance=None, point=None, layer=None):
-            """creates a node of one of these types:
+            """
+            Create a node of one of these types:
 
                     - attached to an instance
                     - attached to an instance with offset
@@ -791,12 +832,14 @@ class XMLMapLoader:
                     FIXME:
                             - add location node
 
-            @type:	instance:	object
-            @param	instance:	fife instance object
-            @type	point:		tuple
-            @param	point:		x,y,z tuple
-            @type	layer:		object
-            @param	layer:		fife layer object
+            Parameters
+            ----------
+            instance : object
+                FIFE instance object.
+            point : tuple
+                x, y, z tuple.
+            layer : object
+                FIFE layer object.
             """
             node = None
             if not layer:
@@ -819,7 +862,7 @@ class XMLMapLoader:
             return node
 
         def dump_data():
-            """dump all loaded data"""
+            """Dump all loaded data."""
             for camera, groups in self.light_data.items():
                 print(f"Lights for camera {camera}")
                 for group, lights in groups.items():

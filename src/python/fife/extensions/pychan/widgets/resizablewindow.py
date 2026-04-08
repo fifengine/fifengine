@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
+"""Widget module for PyChan - contains the Resizablewindow class."""
 
 from fife import fife, fifechan
 from fife.extensions.pychan.attrs import BoolAttr, MixedListAttr
@@ -11,7 +11,7 @@ from .containers import Window
 
 class ResizableWindow(Window):
     """
-    This is a window class that can be resizable.
+    Window class that supports resizing.
 
     New Attributes
     ==============

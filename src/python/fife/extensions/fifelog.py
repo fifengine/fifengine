@@ -1,23 +1,31 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Logging utilities for FIFE engine."""
 
 from fife import fife
 
 
 class LogManager:
     """
-    Log manager provides convenient apis to access engine logging functionality.
+    Provide convenient APIs to access engine logging functionality.
+
     You can set log targets individually (prompt, file). You can also adjust
     things like visible modules through log manager.
     """
 
     def __init__(self, engine, promptlog=True, filelog=False):
         """
-        Constructs new log manager
-        @param engine: Engine to hook into
-        @param promptlog: If true, logs to prompt
-        @param filelog: If true, logs to file (fife.log)
+        Construct a new log manager.
+
+        Parameters
+        ----------
+        engine : fife.Engine
+            Engine to hook into.
+        promptlog : bool
+            If True, logs to prompt.
+        filelog : bool
+            If True, logs to file (fife.log).
         """
         self.engine = engine
         self.lm = engine.getLogManager()
@@ -31,10 +39,19 @@ class LogManager:
 
     def addVisibleModules(self, *names):
         """
-        Adds modules that are visible in logs. By default, all modules
-        are disabled. Does not remove previously visible modules
-        @param names: module names to set visible
-        @see: modules.h file for available modules in the engine
+        Add modules that are visible in logs.
+
+        By default, all modules are disabled. Does not remove previously visible modules.
+
+        Parameters
+        ----------
+        names : tuple[str]
+            Module names to set visible.
+
+        See Also
+        --------
+        modules.h
+            File for available modules in the engine.
         """
         names = [n.lower() for n in names]
         if "all" in names:
@@ -49,10 +66,18 @@ class LogManager:
 
     def removeVisibleModules(self, *names):
         """
-        Removes modules that are visible in logs. By default, all modules
-        are disabled.
-        @param names: module names to set invisible
-        @see: addVisibleModules
+        Remove modules that are visible in logs.
+
+        By default, all modules are disabled.
+
+        Parameters
+        ----------
+        names : tuple[str]
+            Module names to set invisible.
+
+        See Also
+        --------
+        addVisibleModules
         """
         names = [n.lower() for n in names]
         if "all" in names:
@@ -63,9 +88,16 @@ class LogManager:
                 self.lm.removeVisibleModule(self.name2mod[m])
 
     def getVisibleModules(self):
-        """
-        Gets currently visible modules
-        @see: addVisibleModules
+        """Get currently visible modules.
+
+        Returns
+        -------
+        list
+            List of currently visible module names.
+
+        See Also
+        --------
+        addVisibleModules
         """
         mods = []
         for k in list(self.mod2name.keys()):
@@ -73,52 +105,69 @@ class LogManager:
                 mods.append(self.mod2name[k])
 
     def setVisibleModules(self, *names):
-        """
-        Sets visible modules. Clears previously set modules.
-        @param names: module names to set visible
-        @see: addVisibleModules
+        """Set visible modules, clearing previously set modules.
+
+        Parameters
+        ----------
+        names : tuple[str]
+            Module names to set visible.
+
+        See Also
+        --------
+        addVisibleModules
         """
         self.lm.clearVisibleModules()
         self.addVisibleModules(*names)
 
     def setLevelFilter(self, fltr):
         """
-        Sets the minimum log level to view.
+        Set the minimum log level to view.
 
-        @param fltr: The filter level
+        Parameters
+        ----------
+        fltr : int
+            The filter level.
 
-        Valid values:
-                - L{fife.LogManager.LEVEL_DEBUG}
-                - L{fife.LogManager.LEVEL_LOG}
-                - L{fife.LogManager.LEVEL_WARN}
-                - L{fife.LogManager.LEVEL_ERROR}
+        Notes
+        -----
+        Valid values include the constants on :class:`fife.LogManager`, for
+        example ``fife.LogManager.LEVEL_DEBUG``, ``fife.LogManager.LEVEL_LOG``,
+        ``fife.LogManager.LEVEL_WARN``, and ``fife.LogManager.LEVEL_ERROR``.
         """
         self.lm.setLevelFilter(fltr)
 
     def setLogToPrompt(self, promptlog):
+        """Set whether to log to prompt."""
         return self.lm.setLogToPrompt(promptlog)
 
     def getLogToPrompt(self):
+        """Get whether logging to prompt is enabled."""
         return self.lm.isLogToPrompt()
 
     logToPrompt = property(getLogToPrompt, setLogToPrompt)
 
     def setLogToFile(self, filelog):
+        """Set whether to log to file."""
         return self.lm.setLogToFile(filelog)
 
     def getLogToFile(self):
+        """Get whether logging to file is enabled."""
         return self.lm.isLogToFile()
 
     logToFile = property(getLogToFile, setLogToFile)
 
     def log_debug(self, message):
+        """Log a debug message."""
         self.lm.log(0, self.name2mod["script"], message)
 
     def log_log(self, message):
+        """Log a standard message."""
         self.lm.log(1, self.name2mod["script"], message)
 
     def log_warn(self, message):
+        """Log a warning message."""
         self.lm.log(2, self.name2mod["script"], message)
 
     def log_error(self, message):
+        """Log an error message."""
         self.lm.log(3, self.name2mod["script"], message)

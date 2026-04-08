@@ -1,21 +1,25 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""utilities for xml maploading process"""
+"""Utilities for xml maploading process."""
 
 import math
 import os
 
-from past.utils import old_div
-
 
 def loadImportFile(loader, path, engine, debug=False):
-    """uses XMLObjectLoader to load import files from path
+    """Use XMLObjectLoader to load import files from path.
 
-    @type	path:	string
-    @param	path:	path to import file
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance (XMLObjectLoader) to use.
+    path : str
+        Path to import file.
+    engine : object
+        Engine instance (unused by this helper but provided for API consistency).
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     loader.loadResource(path)
     if debug:
@@ -23,12 +27,19 @@ def loadImportFile(loader, path, engine, debug=False):
 
 
 def loadImportDir(loader, path, engine, debug=False):
-    """helper function to call loadImportFile on a directory
+    """
+    Call :func:`loadImportFile` for every XML file in a directory.
 
-    @type	path:	string
-    @param	path:	path to import directory
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance.
+    path : str
+        Path to import directory.
+    engine : object
+        Engine instance used to list files.
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     for _file in [
         f for f in engine.getVFS().listFiles(path) if f.split(".")[-1] == "xml"
@@ -37,12 +48,19 @@ def loadImportDir(loader, path, engine, debug=False):
 
 
 def loadImportDirRec(loader, path, engine, debug=False):
-    """helper function to call loadImportFile recursive on a directory
+    """Recursively call :func:`loadImportFile` for XML files in a directory
+    tree.
 
-    @type	path:	string
-    @param	path:	path to import directory
-    @type	debug:	bool
-    @param	debug:	flag to activate / deactivate print statements
+    Parameters
+    ----------
+    loader : object
+        Loader instance.
+    path : str
+        Path to import directory.
+    engine : object
+        Engine instance used to list files and directories.
+    debug : bool, optional
+        Flag to activate/deactivate print statements.
     """
     loadImportDir(loader, path, engine, debug)
 
@@ -54,10 +72,17 @@ def loadImportDirRec(loader, path, engine, debug=False):
 
 def root_subfile(masterfile, subfile):
     """
-    Returns new path for given subfile (path), which is rooted against masterfile
-    E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
-    returned path is ../foo2/subfoo.xml
-    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    Return new path for given subfile rooted against ``masterfile``.
+
+    Example
+    -------
+    If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
+    ``./../foo2/subfoo.xml``, the returned path is ``../foo2/subfoo.xml``.
+
+    Notes
+    -----
+    ``masterfile`` is expected to be a file, not a directory. ``subfile`` can
+    be either.
     """
     s = "/"
 
@@ -86,12 +111,18 @@ def root_subfile(masterfile, subfile):
 
 
 def reverse_root_subfile(masterfile, subfile):
-    """
-    does inverse operation to root_subfile. E.g.
-    E.g. if masterfile is ./../foo/bar.xml and subfile is ../foo2/subfoo.xml,
-    returned path ./../foo2/subfoo.xml
-    Usually this function is used to convert saved paths into engine relative paths
-    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    """Do the inverse operation to :func:`root_subfile`.
+
+    Example
+    -------
+    If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
+    ``../foo2/subfoo.xml``, the returned path is ``./../foo2/subfoo.xml``.
+
+    Notes
+    -----
+    This is usually used to convert saved paths into engine-relative paths.
+    ``masterfile`` is expected to be a file, not a directory. ``subfile`` can
+    be either.
     """
     s = "/"
 
@@ -104,9 +135,10 @@ def reverse_root_subfile(masterfile, subfile):
 
 
 def norm_path(path):
-    """
-    Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
-    routines will default to os.path.sep.
+    """Make the path use '/' delimited separators.
+
+    FIFE always uses these delimiters, but some OS-related routines will
+    default to ``os.path.sep``.
     """
     if os.path.sep == "/":
         return path
@@ -116,32 +148,37 @@ def norm_path(path):
 
 def frange(limit1, limit2=None, increment=1.0):
     """Range function that accepts floats (and integers).
+
     If only one limit is specified, assumes 0 as lower limit.
 
-    Usage:
-    frange(-2, 2, 0.1)
-    frange(10)
-    frange(10, increment = 0.5)
+    Examples
+    --------
+    >>> frange(-2, 2, 0.1)
+    >>> frange(10)
+    >>> frange(10, increment=0.5)
 
-    The returned value is an iterator.  Use list(frange) for a list.
+    The returned value is an iterator. Use ``list(frange)`` for a list.
 
-    source: U{http://code.activestate.com/recipes/
-    66472-frange-a-range-function-with-float-increments/}
+    Source: U{http://code.activestate.com/recipes/66472-frange-a-range-function-with-float-increments/}
 
-    @type	limit1:	float
-    @param	limit1:	lower range limit
-    @type	limit2:	float
-    @param	limit2:	upper range limit
-    @type	increment:	float
-    @param	increment:	length of each step
-    @rtype	generator
-    @return	iterable over (limit2 - limit1) / increment steps
+    Parameters
+    ----------
+    limit1 : float
+        lower range limit
+    limit2 : float, optional
+        upper range limit
+    increment : float, optional
+        length of each step
+
+    Returns
+    -------
+    generator
+        iterable over (limit2 - limit1) / increment steps
     """
-
     if limit2 is None:
         limit2, limit1 = float(limit1), 0.0
     else:
         limit1 = float(limit1)
 
-    count = int(math.ceil(old_div((limit2 - limit1), increment)))
+    count = int(math.ceil((limit2 - limit1) / increment))
     return (limit1 + n * increment for n in range(count))

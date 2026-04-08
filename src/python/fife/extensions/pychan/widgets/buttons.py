@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""Widget module for PyChan - contains the Buttons class."""
 
 
 from fife import fifechan

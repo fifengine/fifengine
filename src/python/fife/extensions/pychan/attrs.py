@@ -25,15 +25,15 @@ from .exceptions import ParserError
 
 
 class Attr:
-    """
-    A simple text attribute.
-    """
+    """A simple text attribute."""
 
     def __init__(self, name):
         self.name = name
 
     def set(self, obj, value):
         """
+        Set the attribute value on an object.
+
         Parses the given value with the L{parse} method
         and sets it on the given instance with C{setattr}.
         """
@@ -42,23 +42,26 @@ class Attr:
 
     def parse(self, value):
         """
-        Parses a value and checks for errors.
-        Override with specialiced behaviour.
+        Parse a value and check for errors.
+
+        Override with specialized behavior.
         """
         return str(value)
 
 
 class UnicodeAttr(Attr):
+    """Unicode text attribute."""
+
     def parse(self, value):
-        """
-        Parses a value and checks for errors.
-        Override with specialiced behaviour.
-        """
+        """Parse a value as unicode string."""
         return str(value)
 
 
 class PointAttr(Attr):
+    """Point attribute (x, y)."""
+
     def parse(self, value):
+        """Parse a value as an x,y tuple."""
         try:
             x, y = tuple(map(int, str(value).split(",")))
             return x, y
@@ -69,7 +72,10 @@ class PointAttr(Attr):
 
 
 class ColorAttr(Attr):
+    """Color attribute (r, g, b, a)."""
+
     def parse(self, value):
+        """Parse a value as an r,g,b,a color tuple."""
         a = 255
         try:
             try:
@@ -95,7 +101,10 @@ class ColorAttr(Attr):
 
 
 class IntAttr(Attr):
+    """Integer attribute."""
+
     def parse(self, value):
+        """Parse a value as an integer."""
         try:
             return int(value)
         except (TypeError, ValueError):
@@ -103,7 +112,10 @@ class IntAttr(Attr):
 
 
 class BoolAttr(Attr):
+    """Boolean attribute."""
+
     def parse(self, value):
+        """Parse a value as a boolean."""
         # Allow clients to be compatible with old FIFE versions
         if value in ["0", "False", "false"]:
             value = False
@@ -115,7 +127,10 @@ class BoolAttr(Attr):
 
 
 class FloatAttr(Attr):
+    """Float attribute."""
+
     def parse(self, value):
+        """Parse a value as a float."""
         try:
             return float(value)
         except (TypeError, ValueError):
@@ -123,7 +138,10 @@ class FloatAttr(Attr):
 
 
 class ListAttr(Attr):
+    """List attribute (string list)."""
+
     def parse(self, value):
+        """Parse a value as a list."""
         try:
             result = list(map(str, str(value).split(",")))
             return result
@@ -132,7 +150,10 @@ class ListAttr(Attr):
 
 
 class UnicodeListAttr(Attr):
+    """Unicode list attribute."""
+
     def parse(self, value):
+        """Parse a value as a unicode list."""
         try:
             result = list(map(str, str(value).split(",")))
             return result
@@ -141,7 +162,10 @@ class UnicodeListAttr(Attr):
 
 
 class IntListAttr(Attr):
+    """Integer list attribute."""
+
     def parse(self, value):
+        """Parse a value as an integer list."""
         try:
             result = list(map(int, str(value).split(",")))
             return result
@@ -150,7 +174,10 @@ class IntListAttr(Attr):
 
 
 class BoolListAttr(Attr):
+    """Boolean list attribute."""
+
     def parse(self, value):
+        """Parse a value as a boolean list."""
         try:
             result = list(map(bool, str(value).split(",")))
             return result
@@ -159,7 +186,10 @@ class BoolListAttr(Attr):
 
 
 class FloatListAttr(Attr):
+    """Float list attribute."""
+
     def parse(self, value):
+        """Parse a value as a float list."""
         try:
             result = list(map(float, str(value).split(",")))
             return result
@@ -179,7 +209,10 @@ ATTRIBUTE_TYPE = {
 
 
 class MixedListAttr(Attr):
+    """Mixed list attribute (multiple types)."""
+
     def parse(self, value):
+        """Parse a value as a mixed type list."""
         try:
             result = []
             # we use ';' to split, because of point and color attributes

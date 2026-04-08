@@ -1,1 +1,1 @@
-from fife.fifechan import *
+from fife.fifechan import *  # noqa: F403

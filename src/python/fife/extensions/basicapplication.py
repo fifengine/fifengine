@@ -40,6 +40,7 @@ class ExitEventListener(fife.IKeyListener):
 class ApplicationBase:
     """
     ApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
+
     This kind of application base does not offer GUI support.
 
     The unextended application reads in and initializes engine settings, sets up a simple event
@@ -47,7 +48,6 @@ class ApplicationBase:
     modify settings.py to change initial engine settings. They can provide their own event listener
     by overriding L{createListener}. And they can override the L{_pump} method
     to define runtime behavior of the application.
-
     """
 
     def __init__(self, setting=None):
@@ -92,9 +92,9 @@ class ApplicationBase:
     def loadSettings(self):
         """
         Load the settings from a python file and load them into the engine.
+
         Called in the ApplicationBase constructor.
         """
-
         # get finalSetting (from the xml file, or if absent the default value)
         self._finalSetting = self._setting.getSettingsFromFile("FIFE", self._log)
 
@@ -151,10 +151,7 @@ class ApplicationBase:
         engineSetting.setMouseAccelerationEnabled(self._finalSetting["MouseAcceleration"])
 
     def initLogging(self):
-        """
-        Initialize the LogManager.
-        """
-
+        """Initialize the LogManager."""
         engineSetting = self.engine.getSettings()
         if not engineSetting:
             raise RuntimeError(
@@ -178,17 +175,16 @@ class ApplicationBase:
 
     def createListener(self):
         """
-        This creates a default event listener, which will just close the program
-        after pressing ESC.
+        Create a default event listener.
 
-        You should override this method to provide your own event handling.
+        The listener will just close the program after pressing ESC.
+
+        Override this method to provide your own event handling.
         """
         return ExitEventListener(self)
 
     def run(self):
-        """
-        Initialize the event listener and event loop - and start it.
-        """
+        """Initialize the event listener and event loop - and start it."""
         self._eventlistener = self.createListener()
         self.engine.initializePumping()
         retval = self.mainLoop()
@@ -198,7 +194,7 @@ class ApplicationBase:
 
     def mainLoop(self):
         """
-        The programs main loop.
+        Run the program's main loop.
 
         Do not override this, instead provide your own L{_pump} method.
         You can call this recursively, e.g. to provide synchronous
@@ -240,7 +236,5 @@ class ApplicationBase:
         """
 
     def quit(self):
-        """
-        Quit the application. Really!
-        """
+        """Quit the application. Really!"""
         self.quitRequested = True

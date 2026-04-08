@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""\
-Pythonic Fifechan Wrapper - PyChan
+"""
+Pythonic Fifechan Wrapper - PyChan.
 =================================
 
 Pythonic GUI API.
+
 
 Features
 --------
@@ -228,12 +229,18 @@ manager = None
 
 def init(engine, debug=False, compat_layout=False):
     """
-    This has to be called before any other pychan methods can be used.
-    It sets up a manager object which is available under pychan.manager.
+    Initialize PyChan before using any other pychan methods.
 
-    @param engine: The FIFE engine object.
-    @param debug: bool - Enables and disables debugging output. Default is False.
-    @param compat_layout: bool - Enables and disables compat layout. Default is False.
+    This sets up a manager object which is available under pychan.manager.
+
+    Parameters
+    ----------
+    engine : object
+        The FIFE engine object.
+    debug : bool, optional
+        Enables and disables debugging output. Default is False.
+    compat_layout : bool, optional
+        Enables and disables compat layout. Default is False.
     """
     from .compat import _munge_engine_hook
     from .internal import Manager
@@ -248,9 +255,10 @@ def init(engine, debug=False, compat_layout=False):
 
 def traced(f):
     """
-    Simple decorator that prints tracebacks for any exceptions occuring in a
-    function. Useful to avoid the infamous 'finally pops bad exception'
-    that shadows the real cause of the error ...
+    Print tracebacks for any exceptions occurring in a function.
+
+    Useful to avoid the infamous 'finally pops bad exception' that shadows
+    the real cause of the error.
     """
 
     def traced_f(*args, **kwargs):
@@ -340,9 +348,12 @@ class _GuiLoader(__GuiLoaderBase):
 
 def loadXML(filename_or_stream):
     """
-    Loads a PyChan XML file and generates a widget from it.
+    Load a PyChan XML file and generate a widget from it.
 
-    @param filename_or_stream: A filename or a file-like object (for example using StringIO).
+    Parameters
+    ----------
+    filename_or_stream : str or file-like
+        A filename or a file-like object (for example using StringIO).
 
     The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
     depend on the PyChan code.
@@ -385,21 +396,23 @@ def loadXML(filename_or_stream):
 
 def setupModalExecution(mainLoop, breakFromMainLoop):
     """
-    Setup the synchronous dialog execution feature.
+    Set up the synchronous dialog execution feature.
 
     You can enable synchronous dialog execution by
-    passing to functions to this function.
+    passing two functions to this function.
 
-    @param mainLoop: Function - This is regarded as the applications
-    main loop, which should be able to be called recursively.
-    It should not take no arguments and return the argument
-    passed to the second function (breakFromMainLoop).
+    Parameters
+    ----------
+    mainLoop : callable
+        The application's main loop. It should be callable (may be called
+        recursively) and return the value passed to `breakFromMainLoop`.
+    breakFromMainLoop : callable
+        Function that causes `mainLoop` to finish and return the passed argument.
 
-    @param breakFromMainLoop: Function -This function should cause the
-    first function to finish and return the passed argument.
-
-    With these to functions dialogs can be executed synchronously.
-    See L{widgets.Widget.execute}.
+    Notes
+    -----
+    With these two functions dialogs can be executed synchronously. See
+    L{widgets.Widget.execute}.
     """
     if not manager:
         raise InitializationError("PyChan is not initialized yet.")

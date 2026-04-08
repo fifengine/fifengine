@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""submodule for xml map parsing"""
+"""submodule for xml map parsing."""
 
 from fife import fife
 from fife.extensions.serializers import (
@@ -16,37 +16,47 @@ from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 
 class XMLObjectSaver:
-    """The B{XMLObjectSaver} serializes a fife.Object instance by saving
-    it back to its XML file
+    """Serialize a :class:`fife.Object` instance back to its XML file.
 
-    @note:
-            - this code does NOT allow the creation of a new xml file
-            - this code does NOT touch atlas or animation definitions
-            - this code does NOT allow saving to non-well-formed xml files
-            - this code DOES save blocking & static flag, as well as
-              image offsets
+    Notes
+    -----
+    - This code does not allow creation of new XML files.
+    - It does not touch atlas or animation definitions.
+    - It does not allow saving to non-well-formed XML files.
+    - It saves blocking & static flags as well as image offsets.
 
-    @type	engine:	fife
-    @ivar	engine:	pointer to initialized fife engine instance
-    @type	img_manager:	fife.ImageManager
-    @ivar	img_manager:	pointer to fife image manager
-    @type	compat:	bool
-    @ivar	compat:	flag to either use outdated xml definitions or new approach
-    @type	debug:	bool
-    @ivar	debug:	flag to activate/deactivate debug output
-    @type	vfs:	fife.VFS
-    @ivar	vfs:	pointer to fife vfs
-    @type	change:	bool
-    @ivar	change:	flag if object data differs from file data
+    Parameters
+    ----------
+    engine : fife.Engine
+        Pointer to an initialized FIFE engine instance.
+
+    Attributes
+    ----------
+    img_manager : fife.ImageManager
+        Pointer to the FIFE image manager.
+    compat : bool
+        Flag to either use outdated XML definitions or the new approach.
+    debug : bool
+        Flag to activate/deactivate debug output.
+    vfs : fife.VFS
+        Pointer to the FIFE VFS.
+    change : bool
+        Flag indicating if object data differs from file data.
     """
 
     PROCESSING_INSTRUCTION = '<?fife type="object"?>'
 
     def __init__(self, engine, debug=False, compat=True):
-        """
+        """Create an :class:`XMLObjectSaver`.
 
-        @type	engine:	fife
-        @param	engine:	intialized fife engine
+        Parameters
+        ----------
+        engine : fife.Engine
+            Initialized FIFE engine.
+        debug : bool, optional
+            Enable debug output.
+        compat : bool, optional
+            Use compatibility mode for older XML layouts.
         """
         self.compat = compat
         self.debug = debug
@@ -56,12 +66,17 @@ class XMLObjectSaver:
         self.change = False
 
     def save(self, object):
-        """saves the data of a fife.Object to its xml file
+        """Save the data of a :class:`fife.Object` to its XML file.
 
-        @type	object:	fife.Object
-        @param	object:	the object which should be saved
-        @rtype	bool
-        @return	flag whether the saving was successful or not
+        Parameters
+        ----------
+        object : fife.Object
+            The object which should be saved.
+
+        Returns
+        -------
+        bool
+            True if the save was successful, False otherwise.
         """
         self.change = False
         result = False
@@ -171,12 +186,14 @@ class XMLObjectSaver:
         return result
 
     def save_actions(self, actions, object):
-        """save action definitions
+        """Save action definitions.
 
-        @type	actions:	list
-        @param	actions:	list of <action> elements
-        @type	object:	fife.Object
-        @param	object:	the object which should be saved
+        Parameters
+        ----------
+        actions : list
+            List of <action> elements.
+        object : fife.Object
+            The object which should be saved.
         """
         for element in actions:
             # new xml format uses this, we only save the new format
@@ -187,22 +204,26 @@ class XMLObjectSaver:
             self.save_animation(animation_id, object)
 
     def save_animation(self, animation_id, object):
-        """save animation definitions for the given id
+        """Save animation definitions for the given id.
 
-        @type	animation_id:	str
-        @param	animation_id:	id of the animation data structure
-        @type	object:	fife.Object
-        @param	object:	the object which should be saved
+        Parameters
+        ----------
+        animation_id : str
+            ID of the animation data structure.
+        object : fife.Object
+            The object which should be saved.
         """
         pass
 
     def save_images(self, images, object):
-        """save image definitions
+        """Save image definitions.
 
-        @type	images:	list
-        @param	images:	list of <image> elements
-        @type	object:	fife.Object
-        @param	object:	the object which should be saved
+        Parameters
+        ----------
+        images : list
+            List of <image> elements.
+        object : fife.Object
+            The object which should be saved.
         """
         visual = object.get2dGfxVisual()
         angles = visual.getStaticImageAngles()

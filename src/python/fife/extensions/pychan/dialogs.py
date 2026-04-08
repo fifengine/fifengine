@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""
+Dialog utilities for creating common dialog boxes.
+
+This module provides functions for displaying message boxes, yes/no dialogs,
+selection dialogs, and exception handling dialogs.
+"""
 
 from io import StringIO
 
@@ -12,10 +18,35 @@ OK, YES, NO, CANCEL = True, True, False, None
 
 
 def print_event(**kwargs):
+    """
+    Debug function to print event keyword arguments.
+
+    Parameters
+    ----------
+    **kwargs : dict
+        Keyword arguments containing event data.
+    """
     print(kwargs)
 
 
 class XMLDialog:
+    """
+    Base class for dialogs that load and execute XML-defined GUIs.
+
+    Parameters
+    ----------
+    xml : str or file-like
+        The XML definition of the dialog.
+    ok_field : str, optional
+        Name of the field to collect data from when OK is pressed.
+    cancel_field : str, optional
+        Name of the field to collect data from when Cancel is pressed.
+    initial_data : dict, optional
+        Initial data to distribute to widgets.
+    data : dict, optional
+        Data to distribute to widgets.
+    """
+
     def __init__(self, xml, ok_field=None, cancel_field=None, initial_data={}, data={}):
         self.gui = loadXML(xml)
         self.ok_field = ok_field
@@ -28,6 +59,14 @@ class XMLDialog:
     # 		self.gui.capture(print_event,"mouseEntered")
 
     def execute(self):
+        """
+        Execute the dialog synchronously.
+
+        Returns
+        -------
+        object
+            The result of the dialog, typically True/False or collected data.
+        """
         self.gui.distributeInitialData(self.initial_data)
         self.gui.distributeData(self.data)
 
@@ -58,11 +97,27 @@ class XMLDialog:
         return self.getCancelResult()
 
     def getOkResult(self):
+        """
+        Get the result when OK/Yes is selected.
+
+        Returns
+        -------
+        object
+            The collected data or True.
+        """
         if self.ok_field:
             return self.gui.collectData(self.ok_field)
         return True
 
     def getCancelResult(self):
+        """
+        Get the result when Cancel/No is selected.
+
+        Returns
+        -------
+        object
+            The collected data or False.
+        """
         if self.cancel_field:
             return self.gui.collectData(self.cancel_field)
         return False
@@ -148,6 +203,16 @@ def _make_text(message):
 
 
 def message(message="", caption="Message"):
+    """
+    Display a simple message dialog with an OK button.
+
+    Parameters
+    ----------
+    message : str or callable
+        The message to display. Can be a string or a callable returning a string.
+    caption : str
+        The dialog window title.
+    """
     text = _make_text(message)
     dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
     dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
@@ -158,6 +223,21 @@ def message(message="", caption="Message"):
 
 
 def yesNo(message="", caption="Message"):
+    """
+    Display a Yes/No dialog.
+
+    Parameters
+    ----------
+    message : str or callable
+        The message to display. Can be a string or a callable returning a string.
+    caption : str
+        The dialog window title.
+
+    Returns
+    -------
+    bool
+        True if Yes was selected, False if No was selected.
+    """
     text = _make_text(message)
     dialog = XMLDialog(StringIO(YESNO_BOX_XML))
     dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
@@ -168,6 +248,21 @@ def yesNo(message="", caption="Message"):
 
 
 def yesNoCancel(message="", caption="Message"):
+    """
+    Display a Yes/No/Cancel dialog.
+
+    Parameters
+    ----------
+    message : str or callable
+        The message to display. Can be a string or a callable returning a string.
+    caption : str
+        The dialog window title.
+
+    Returns
+    -------
+    bool or None
+        True if Yes was selected, False if No was selected, None if Cancel was selected.
+    """
     text = _make_text(message)
     dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML))
     dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
@@ -178,6 +273,23 @@ def yesNoCancel(message="", caption="Message"):
 
 
 def select(message="", options=[], caption="Message"):
+    """
+    Display a selection dialog with a list of options.
+
+    Parameters
+    ----------
+    message : str or callable
+        The message to display. Can be a string or a callable returning a string.
+    options : list
+        List of options to display in the selection box.
+    caption : str
+        The dialog window title.
+
+    Returns
+    -------
+    object or None
+        The selected item, or None if cancelled.
+    """
     text = _make_text(message)
     dialog = XMLDialog(StringIO(SELECT_BOX_XML))
     dialog.size = screen_width() // 3, (2 * screen_height()) // 3
@@ -193,6 +305,21 @@ def select(message="", options=[], caption="Message"):
 
 
 def trace(f):
+    """
+    Catch exceptions and display a dialog.
+
+    Allows the user to retry, ignore, or reraise the exception.
+
+    Parameters
+    ----------
+    f : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        The wrapped function.
+    """
     import sys
     import traceback
 

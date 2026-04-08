@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Test runner for FIFE engine core, extensions, and SWIG bindings."""
 
 import optparse
 import os
@@ -44,10 +45,12 @@ def resolve_headless_mode(cli_headless):
 
 
 def genpath(somepath):
+    """Convert Unix-style path separators to OS-specific separators."""
     return os.path.sep.join(somepath.split("/"))
 
 
 def has_python_bindings(build_dir):
+    """Check if Python bindings are available in the build directory."""
     if not os.path.isdir(build_dir):
         return False
     if not os.path.exists(os.path.join(build_dir, "fife.py")):
@@ -56,6 +59,7 @@ def has_python_bindings(build_dir):
 
 
 def resolve_build_dir():
+    """Resolve the build directory containing Python bindings."""
     env_build_dir = os.environ.get("FIFE_BUILD_DIR")
     if env_build_dir:
         return env_build_dir
@@ -104,6 +108,7 @@ def _prepend_unique_env_paths(env, key, paths, sep):
 
 
 def candidate_install_python_roots(install_dir):
+    """Get candidate Python package roots from an install directory."""
     roots = [install_dir]
     patterns = (
         os.path.join(install_dir, "lib", "python*", "site-packages"),
@@ -117,6 +122,7 @@ def candidate_install_python_roots(install_dir):
 
 
 def has_installed_fife(install_dir):
+    """Check if FIFE is installed in the given directory."""
     for root in candidate_install_python_roots(install_dir):
         pkg_dir = os.path.join(root, "fife")
         if os.path.exists(os.path.join(pkg_dir, "__init__.py")) and glob(
@@ -127,6 +133,7 @@ def has_installed_fife(install_dir):
 
 
 def resolve_install_dir():
+    """Resolve the install directory containing FIFE."""
     env_install_dir = os.environ.get("FIFE_INSTALL_DIR")
     if env_install_dir:
         return env_install_dir
@@ -150,6 +157,7 @@ def resolve_install_dir():
 
 
 def prepare_install_bindings(install_dir):
+    """Prepare Python bindings from an install directory."""
     python_roots = []
     for root in candidate_install_python_roots(install_dir):
         if os.path.exists(os.path.join(root, "fife", "__init__.py")):
@@ -205,6 +213,7 @@ def resolve_test_progs(build_dir):
 
 
 def resolve_test_modules(directory):
+    """Resolve test modules from a directory."""
     pythonfilenames = [p for p in os.listdir(directory) if len(p) > 3 and p[-3:] == ".py"]
     modname = directory.replace(os.path.sep, ".") + "."
     modules = []
@@ -366,6 +375,7 @@ def prepare_python_bindings(build_dir):
 
 
 def run_core_tests(progs):
+    """Run core C++ tests."""
     build_dir = resolve_build_dir()
     if not os.path.isdir(build_dir):
         return [f"Build directory not found: {build_dir}"], []
@@ -429,6 +439,7 @@ def _build_test_subprocess_env(
 def run_test_modules(
     modules, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
 ):
+    """Run Python test modules."""
     env = _build_test_subprocess_env(
         build_dir,
         extra_pythonpath=extra_pythonpath,
@@ -493,6 +504,8 @@ def run_test_modules(
 def run_all(
     tests, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
 ):
+    """Run all tests."""
+
     def print_errors(txt, errs):
         if errs:
             print(txt + ":")
@@ -549,6 +562,7 @@ def run_all(
 
 
 def quit(dummy):
+    """Quit the test runner."""
     sys.exit(0)
 
 
@@ -599,6 +613,7 @@ def _build_test_menu(
 
 
 def run(automatic, selected_cases, headless=None):
+    """Run the test suite."""
     headless_mode = resolve_headless_mode(headless)
     print("SWIG/extension test mode: %s" % ("headless" if headless_mode else "windowed"))
 
@@ -676,6 +691,7 @@ def run(automatic, selected_cases, headless=None):
 
 
 def main():
+    """Run the test runner."""
     usage = (
         "usage: %prog [options] [args]\n"
         + "This is a test runner.\n"

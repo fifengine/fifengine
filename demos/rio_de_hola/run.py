@@ -11,8 +11,7 @@ import cProfile
 import os
 
 from fife import fife
-
-from fife.extensions import *
+from fife.extensions import *  # noqa: F403
 from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.pychan.fife_pychansettings import FifePychanSettings

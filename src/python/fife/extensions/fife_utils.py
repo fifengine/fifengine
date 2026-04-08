@@ -1,7 +1,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""
+Utility functions for FIFE.
 
-"""This file contains some functions that may be useful"""
+This file contains some functions that may be useful.
+"""
 
 import os
 import re
@@ -12,14 +15,17 @@ _exc_re = re.compile(r"_\[(\w+)\]_")
 
 
 def is_fife_exc(type, original_exc):
-    """Checks if an exception is of given type.
-    Example::
-            try:
-                    obj = self.model.createObject(str(id), str(nspace), parent)
-            except RuntimeError, e:
-                    if is_fife_exc(fife.NameClash, e):
-                            raise NameClash('Tried to create already existing object, ignoring')
-                    raise
+    """
+    Check if an exception is of the given type.
+
+    Example.
+    -------
+    try::
+        obj = self.model.createObject(str(id), str(nspace), parent)
+    except RuntimeError as e:
+        if is_fife_exc(fife.NameClash, e):
+            raise NameClash('Tried to create already existing object, ignoring')
+        raise
     """
     ret = False
     m = _exc_re.search(str(original_exc))
@@ -30,7 +36,10 @@ def is_fife_exc(type, original_exc):
 
 
 def getUserDataDirectory(vendor, appname):
-    """Gets the proper location to save configuration and data files, depending on depending on OS.
+    r"""
+    Get the proper location to save configuration and data files.
+
+    Location depends on the operating system:
 
     Windows: %APPDATA%\vendor\appname
     Mac: ~/Library/Application Support/vendor/appname

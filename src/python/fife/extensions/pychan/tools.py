@@ -1,9 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
-"""
-Functional utilities designed for pychan use cases.
-"""
+"""Functional utilities designed for pychan use cases."""
 
 from . import exceptions
 
@@ -12,6 +9,8 @@ from . import exceptions
 
 def applyOnlySuitable(func, *args, **kwargs):
     """
+    Apply a function to arguments, filtering out unsuitable keyword arguments.
+
     This function takes another function and applies it to a dictionary of
     keyword arguments. If the supplied function does not expect one or more of the
     keyword arguments, these are silently discarded. The result of the application is returned.
@@ -45,8 +44,7 @@ def applyOnlySuitable(func, *args, **kwargs):
 
 def callbackWithArguments(callback, *args, **kwargs):
     """
-    Curries a function with extra arguments to
-    create a suitable callback.
+    Curry a function with extra arguments to create a suitable callback.
 
     If you don't know what this means, don't worry.
     It is designed for the case where you need
@@ -72,8 +70,9 @@ def callbackWithArguments(callback, *args, **kwargs):
 
 def attrSetCallback(**kwargs):
     """
-    Generates an event callback that sets attributes on the widget
-    it is called on. This is especially useful for mouseEntered/Exited
+    Generate an event callback that sets attributes on the widget.
+
+    This is especially useful for mouseEntered/Exited
     events - to create hover effects.
 
     It takes a set of keyword arguments. The keys are treated as attribute names,
@@ -144,6 +143,8 @@ def chainCallbacks(*args):
 
 def repeatALot(n=1000):
     """
+    Profile functions by running them many times.
+
     Internal decorator used to profile some pychan functions.
     Only use with functions without side-effect.
 
@@ -165,6 +166,23 @@ def repeatALot(n=1000):
 
 
 def this_is_deprecated(func, message=None):
+    """
+    Mark a function as deprecated.
+
+    Wraps a function to print a deprecation warning when called.
+
+    Parameters
+    ----------
+    func : callable
+        The function to mark as deprecated.
+    message : str, optional
+        Custom deprecation message.
+
+    Returns
+    -------
+    callable
+        The wrapped function.
+    """
     if message is None:
         message = repr(func)
 

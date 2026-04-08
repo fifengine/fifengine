@@ -2,10 +2,9 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 """
-PychanSettings
-==================================
+PychanSettings.
 
-This module provides gui window that sets basic fife settings through
+This module provides a GUI window for setting basic FIFE settings through
 pychan.
 """
 
@@ -55,6 +54,13 @@ FIFE_MODULE = "FIFE"
 
 
 class FifePychanSettings(Setting):
+    """
+    Settings dialog for FIFE using Pychan GUI.
+
+    This class provides a GUI-based settings dialog for configuring
+    FIFE engine settings.
+    """
+
     def __init__(
         self,
         app_name="",
@@ -93,23 +99,23 @@ class FifePychanSettings(Setting):
         initialdata=None,
         requiresrestart=False,
     ):
-        """ "
-        @param module: The Setting module this Entry belongs to
-        @type module: C{String}
-        @param name: The Setting's name
-        @type name: C{String}
-        @param widgetname: The name of the widget that is used to change this
-        setting
-        @type widgetname: C{String}
-        @param applyfunction: function that makes the changes when the Setting is
-        saved
-        @type applyfunction: C{function}
-        @param initialdata: If the widget supports the setInitialData() function
-        this can be used to set the initial data
-        @type initialdata: C{String} or C{Boolean}
-        @param requiresrestart: Whether or not the changing of this setting
-        requires a restart
-        @type requiresrestart: C{Boolean}
+        """Create and add a new setting entry.
+
+        Parameters
+        ----------
+        module : str
+            The Setting module this entry belongs to.
+        name : str
+            The setting's name.
+        widgetname : str
+            The name of the widget that is used to change this setting.
+        applyfunction : callable, optional
+            Function that makes the changes when the setting is saved.
+        initialdata : str or bool or list or dict, optional
+            Initial data for the widget; if the widget supports
+            ``setInitialData()``, this will be used.
+        requiresrestart : bool, optional
+            Whether changing this setting requires a restart.
         """
         entry = PychanSettingEntry(
             module, name, widgetname, applyfunction, initialdata, requiresrestart
@@ -117,8 +123,11 @@ class FifePychanSettings(Setting):
         self.addEntry(entry)
 
     def _initDefaultSettingEntries(self):
-        """Initializes the default fife setting entries. Not to be called from
-        outside this class."""
+        """
+        Initialize the default fife setting entries.
+
+        Not to be called from outside this class.
+        """
         self.createAndAddEntry(
             FIFE_MODULE, "PlaySounds", "enable_sound", requiresrestart=True
         )
@@ -152,6 +161,14 @@ class FifePychanSettings(Setting):
 
     # sets valid resolution options in the settings->Resolution
     def setValidResolutions(self, options):
+        """
+        Set valid resolution options in the settings.
+
+        Parameters
+        ----------
+        options : list
+            List of valid screen resolutions.
+        """
         if options:
             self._resolutions = options
         self.createAndAddEntry(
@@ -164,6 +181,14 @@ class FifePychanSettings(Setting):
 
     # sets valid display options in the settings->Display
     def setValidDisplays(self, options):
+        """
+        Set valid display options in the settings.
+
+        Parameters
+        ----------
+        options : list
+            List of valid display indices.
+        """
         if options:
             normalized = sorted({int(display) for display in options})
             if len(normalized) <= 1:
@@ -181,16 +206,17 @@ class FifePychanSettings(Setting):
 
     def setGuiStyle(self, style):
         """
-        Set a custom gui style used for the option dialog.
-        @param style: Pychan style to be used
-        @type style: C{string}
+        Set a custom GUI style used for the options dialog.
+
+        Parameters
+        ----------
+        style : str
+            Pychan style to be used.
         """
         self._gui_style = style
 
     def showSettingsDialog(self):
-        """
-        Shows the default settings dialog.
-        """
+        """Show the default settings dialog."""
         self.changesRequireRestart = False
         self.isSetToDefault = False
         if not self._optionsDialog:
@@ -200,9 +226,7 @@ class FifePychanSettings(Setting):
         self._optionsDialog.show()
 
     def _loadSettingsDialog(self):
-        """
-        Loads up the .xml with the default settings dialog.
-        """
+        """Load the XML with the default settings dialog."""
         self._optionsDialog = self._loadWidget(self._settings_gui_xml)
         self._optionsDialog.stylize(self._gui_style)
         self._optionsDialog.mapEvents(
@@ -215,9 +239,7 @@ class FifePychanSettings(Setting):
         return self._optionsDialog
 
     def _loadWidget(self, widget):
-        """
-        Loads a widget
-        """
+        """Load a widget from XML."""
         if os.path.isfile(self._settings_gui_xml):
             return pychan.loadXML(widget)
         else:
@@ -227,6 +249,7 @@ class FifePychanSettings(Setting):
                 return pychan.loadXML(StringIO(widget))
 
     def fillWidgets(self):
+        """Fill the settings dialog widgets with current values."""
         for module in self._entries.values():
             for entry in module.values():
                 widget = self._optionsDialog.findChildByName(entry.settingwidgetname)
@@ -278,8 +301,10 @@ class FifePychanSettings(Setting):
 
     def _applySettings(self):
         """
-        Writes the settings file.  If a change requires a restart of the engine
-        it notifies you with a small dialog box.
+        Write the settings file.
+
+        If a change requires a restart of the engine, notify the user with
+        a small dialog box.
         """
         for module in self._entries.values():
             for entry in module.values():
@@ -315,14 +340,18 @@ class FifePychanSettings(Setting):
             self._showChangeRequireRestartDialog()
 
     def _showChangeRequireRestartDialog(self):
-        """Shows a dialog that informes the user that a restart is required
-        to perform the changes."""
+        """
+        Show a dialog informing the user that a restart is required.
+
+        This dialog is shown when changes require the engine to be restarted.
+        """
         RestartDlg = self._loadWidget(self._changes_gui_xml)
         RestartDlg.stylize(self._gui_style)
         RestartDlg.mapEvents({"closeButton": RestartDlg.hide})
         RestartDlg.show()
 
     def setDefaults(self):
+        """Reset all settings to their default values."""
         super().setDefaults()
 
         # On startup the settings dialog is not yet initialized.  We dont
@@ -332,6 +361,25 @@ class FifePychanSettings(Setting):
 
 
 class PychanSettingEntry(SettingEntry):
+    """
+    A setting entry for Pychan-based settings.
+
+    Parameters
+    ----------
+    module : str
+        The module this setting belongs to.
+    name : str
+        The name of the setting.
+    widgetname : str
+        The name of the widget used to change this setting.
+    applyfunction : callable, optional
+        Function to call when applying the setting.
+    initialdata : object, optional
+        Initial data for the widget.
+    requiresrestart : bool, optional
+        Whether changing this setting requires a restart.
+    """
+
     def __init__(
         self,
         module,
@@ -346,7 +394,7 @@ class PychanSettingEntry(SettingEntry):
         self._settingwidgetname = widgetname
 
     def initializeWidget(self, widget, currentValue):
-        """Initialize the widget with needed data"""
+        """Initialize the widget with needed data."""
         if self._initialdata is not None:
             widget.setInitialData(self._initialdata)
         widget.setData(currentValue)
@@ -360,6 +408,14 @@ class PychanSettingEntry(SettingEntry):
     settingwidgetname = property(_getSettingWidgetName, _setSettingWidgetName)
 
     def __str__(self):
+        """
+        Return a string representation of the setting entry.
+
+        Returns
+        -------
+        str
+            String representation of the entry.
+        """
         return (
             "SettingEntry: "
             + self.name

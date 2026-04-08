@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
 """
-FIFE Backwards Combatibility Layer
-==================================
+FIFE Backwards Compatibility Layer.
 
 This module can be imported if you want to
 run code that wasn't adapted to API changes in FIFE.
@@ -13,8 +11,7 @@ run code that wasn't adapted to API changes in FIFE.
 
  - Animation.addFrame now expects a fife.ResourcePtr instead of an fife.Image
  - Pool.getIndex is just an alias for Pool.addResourceFromFile.
- - EventManager.setNonConsumableKeys is superseeded by EventManager.setKeyFilter
-
+ - EventManager.setNonConsumableKeys is superseded by EventManager.setKeyFilter
 """
 
 from fife import fife

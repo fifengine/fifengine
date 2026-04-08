@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
-
-"""\
-Pythonize FIFE
+"""
+Pythonize FIFE.
 
 Import this extension to get a more
 pythonic interface to FIFE.

@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""PyChan internal module for widget management."""
+
 from fife.extensions import fife_timer as timer
 
 from . import fonts
@@ -19,14 +21,18 @@ def get_manager():
 
 
 def screen_width():
+    """Get the screen width."""
     return get_manager().hook.screen_width
 
 
 def screen_height():
+    """Get the screen height."""
     return get_manager().hook.screen_height
 
 
 class Manager:
+    """Manage PyChan widgets and resources."""
+
     manager = None
 
     def __init__(self, hook, debug=False, compat_layout=False):
@@ -70,6 +76,8 @@ class Manager:
 
     def addWidget(self, widget):
         """
+        Add a widget to the manager.
+
         Adds Widget to the manager. So the manager "owns" the Widget.
         Note: As long as the wiget is in self.allWidgets the Python
         GC can not free it.
@@ -80,6 +88,8 @@ class Manager:
 
     def removeWidget(self, widget):
         """
+        Remove a widget from the manager.
+
         Removes Widget from the manager.
         Note: As long as the wiget is in self.allWidgets the Python
         GC can not free it.
@@ -90,6 +100,8 @@ class Manager:
 
     def setupModalExecution(self, mainLoop, breakFromMainLoop):
         """
+        Set up synchronous execution of dialogs.
+
         Setup synchronous execution of dialogs.
         """
         self.mainLoop = mainLoop
@@ -98,6 +110,8 @@ class Manager:
 
     def addTopWidget(self, widget):
         """
+        Add a top hierarchy widget to Fifechan.
+
         Adds a top hierachy widget to Fifechan and place it on the screen.
         Used by L{Widget.show} - do not use directly.
         """
@@ -109,6 +123,8 @@ class Manager:
 
     def removeTopWidget(self, widget):
         """
+        Remove a top hierarchy widget from Fifechan.
+
         Removes a top hierachy widget from Fifechan.
         Used by L{Widget.hide} - do not use directly.
         """
@@ -119,27 +135,27 @@ class Manager:
             del self.allTopHierachyWidgets[widget]
 
     def getConsole(self):
-        """
-        Gets a reference to the console
-        """
+        """Get a reference to the console."""
         return self.hook.console
 
     def getDefaultFont(self):
-        """
-        Returns the default font
-        """
+        """Get the default font."""
         return self.fonts["default"]
 
     def setDefaultFont(self, name):
+        """Set the default font."""
         self.fonts["default"] = self.getFont(name)
 
     def getFont(self, name):
         """
-        B{pending deprecation}
+        B{pending deprecation}.
 
         Returns a GuiFont identified by its name.
 
-        @param name: A string identifier from the font definitions in pychans config files.
+        Parameters
+        ----------
+        name : str
+            A string identifier from the font definitions in pychans config files.
         """
         if in_fife:
             font = self.fonts.get(name)
@@ -154,17 +170,16 @@ class Manager:
             return self.hook.get_font(name)
 
     def createFont(self, path="", size=0, glyphs=""):
-        """
-        Creates and returns a GuiFont from the GUI Manager
-        """
+        """Create and return a GuiFont from the GUI Manager."""
         return self.hook.create_font(path, size, glyphs)
 
     def releaseFont(self, font):
         """
         Releases a font from memory.  Expects a fifechan.GuiFont.
 
-        @todo: This needs to be tested.  Also should add a way to release
-        a font by name (fonts.Font).
+        Notes
+        -----
+        This needs to be tested. Also should add a way to release a font by name (fonts.Font).
         """
         if not isinstance(font, fifechan.GuiFont):
             raise InitializationError(
@@ -174,13 +189,16 @@ class Manager:
 
     def addFont(self, font):
         """
-        B{deprecated}
+        B{deprecated}.
 
         Add a font to the font registry. It's not necessary to call this directly.
         But it expects a L{fonts.Font} instance and throws an L{InitializationError}
         otherwise.
 
-        @param font: A L{fonts.Font} instance.
+        Parameters
+        ----------
+        font : fonts.Font
+            A fonts.Font instance.
         """
         if not isinstance(font, fonts.Font):
             raise InitializationError(
@@ -189,6 +207,16 @@ class Manager:
         self.fonts[font.name] = font
 
     def addStyle(self, name, style):
+        """
+        Add a style to the style registry.
+
+        Parameters
+        ----------
+        name : str
+            The name of the style.
+        style : dict
+            The style dictionary.
+        """
         style = self._remapStyleKeys(style)
 
         for k, v in list(self.styles.get("default", {}).items()):
@@ -196,6 +224,18 @@ class Manager:
         self.styles[name] = style
 
     def stylize(self, widget, style, **kwargs):
+        """
+        Apply a style to a widget.
+
+        Parameters
+        ----------
+        widget : Widget
+            The widget to stylize.
+        style : str
+            The name of the style to apply.
+        **kwargs : dict
+            Additional keyword arguments to override style values.
+        """
         style = self.styles[style]
         for k, v in list(style.get("default", {}).items()):
             v = kwargs.get(k, v)
@@ -211,9 +251,7 @@ class Manager:
                     setattr(widget, k, v)
 
     def _remapStyleKeys(self, style):
-        """
-        Translate style selectors to tuples of widget classes. (internal)
-        """
+        """Translate style selectors to tuples of widget classes. (internal)."""
 
         # Remap class names, create copy:
         def _toClass(class_):
@@ -242,6 +280,21 @@ class Manager:
         return style_copy
 
     def loadImage(self, filename, gui=True):
+        """
+        Load an image from a file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the image file.
+        gui : bool
+            Whether to load as a GUI image (default True).
+
+        Returns
+        -------
+        Image
+            The loaded image.
+        """
         if not filename:
             raise InitializationError("Empty Image file.")
         return self.hook.load_image(filename, gui)
