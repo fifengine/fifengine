@@ -1,26 +1,41 @@
 %module(directors="1") fifechan
 
+/**
+ * Workaround for SWIG 4.x regression that produces false warnings like:
+ * "swig/python detected a memory leak of type 'fcn::Color *', no destructor found."
+ *
+ * When there are multiple SWIG modules (fife + fifechan), ty->clientdata gets cleared
+ * during module cleanup, causing SWIG to incorrectly report that no destructor was found.
+ * The destructors are existing and properly registered.
+ * This is a known SWIG bug,
+ * see: https://github.com/swig/swig/issues/2154
+*/
+
+%begin %{
+  #define SWIG_PYTHON_SILENT_MEMLEAK
+%}
+
 %include "std_string.i"
 %include "std_vector.i"
 
 @CMAKE_SWIG_IMPORTS_FCHAN@
 
-/* Signed.  */
-typedef signed char		int8_t;
-typedef short int		int16_t;
-typedef int			int32_t;
+/* Signed. */
+typedef signed char		        int8_t;
+typedef short int		        int16_t;
+typedef int			            int32_t;
 #if defined(SWIGWORDSIZE64)
-typedef long int		int64_t;
+typedef long int		        int64_t;
 #else
-typedef long long int		int64_t;
+typedef long long int		    int64_t;
 #endif
 
-/* Unsigned.  */
-typedef unsigned char		uint8_t;
-typedef unsigned short int	uint16_t;
-typedef unsigned int		uint32_t;
+/* Unsigned. */
+typedef unsigned char		    uint8_t;
+typedef unsigned short int	    uint16_t;
+typedef unsigned int		    uint32_t;
 #if defined(SWIGWORDSIZE64)
-typedef unsigned long int	uint64_t;
+typedef unsigned long int	    uint64_t;
 #else
 typedef unsigned long long int	uint64_t;
 #endif
