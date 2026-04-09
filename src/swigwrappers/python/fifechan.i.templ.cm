@@ -18,6 +18,7 @@
 %include "std_string.i"
 %include "std_vector.i"
 
+/* IMPORTS_FCHAN */
 @CMAKE_SWIG_IMPORTS_FCHAN@
 
 /* Signed. */
@@ -61,4 +62,5 @@ typedef unsigned long long int	uint64_t;
 }
 */
 
+/* INCLUSIONS_FCHAN */
 @CMAKE_SWIG_INCLUSIONS_FCHAN@

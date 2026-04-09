@@ -108,16 +108,6 @@ include(GNUInstallDirs)
 # Configure
 #------------------------------------------------------------------------------
 
-# TODO is this still needed?
-# Ensure SWIG python template files are available in the build tree.
-# this allows out-of-source builds and the SWIG invocation to find
-# `engine/swigwrappers/python/extensions.i.templ` without manual copying.
-if(EXISTS "${CMAKE_SOURCE_DIR}/src/swigwrappers/python")
-  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/engine/swigwrappers/python")
-  file(COPY "${CMAKE_SOURCE_DIR}/src/swigwrappers/python/" DESTINATION "${CMAKE_BINARY_DIR}/engine/swigwrappers/python")
-  message(STATUS "Copied SWIG templates to ${CMAKE_BINARY_DIR}/engine/swigwrappers/python")
-endif()
-
 # Create a "Release" build by default.
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
@@ -1061,13 +1051,13 @@ if(BUILD_PYTHON_BINDINGS)
 
   target_include_directories(fife_swig PRIVATE
     ${PROJECT_BINARY_DIR}
-    src/engine
+    ${PROJECT_SOURCE_DIR}/src/engine
     ${PROJECT_SOURCE_DIR}
     ${Python3_INCLUDE_DIRS}
   )
 
   set_target_properties(fife_swig PROPERTIES
-    SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/engine;${CMAKE_SOURCE_DIR}"
+    SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/engine;${PROJECT_SOURCE_DIR}"
   )
 
   if(APPLE)

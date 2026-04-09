@@ -15,7 +15,7 @@ This directory contains SWIG interface templates for generating Python bindings.
 
 - `extensions.i.templ`
  - Extends FIFE types (Point, Rect) with Python methods like `__str__`.
-  - Included by both `fife.i.templ` and `fife.i.templ.cm`.
+  - Included by `fife.i.templ.cm` and so part of `fife.i`.
 
 ## Build Process
 

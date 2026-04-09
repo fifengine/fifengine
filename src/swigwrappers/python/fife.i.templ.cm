@@ -19,6 +19,7 @@
 %include "typemaps.i"
 %include "exception.i"
 
+/* SWIG_IMPORTS */
 @CMAKE_SWIG_IMPORTS@
 
 /**
@@ -41,38 +42,38 @@
 %}
 
 /**
- * Integer definitions (See swigs stdint.i implementation)
- *
+ * Integer definitions
+ * See Swigs stdint.i implementation
  */
 
 /* Signed.  */
-typedef signed char		int8_t;
-typedef short int		int16_t;
-typedef int			int32_t;
+typedef signed char		        int8_t;
+typedef short int		        int16_t;
+typedef int			            int32_t;
 #if defined(SWIGWORDSIZE64)
-typedef long int		int64_t;
+typedef long int		        int64_t;
 #else
-typedef long long int		int64_t;
+typedef long long int		    int64_t;
 #endif
 
 /* Unsigned.  */
-typedef unsigned char		uint8_t;
-typedef unsigned short int	uint16_t;
-typedef unsigned int		uint32_t;
+typedef unsigned char		    uint8_t;
+typedef unsigned short int	    uint16_t;
+typedef unsigned int		    uint32_t;
 #if defined(SWIGWORDSIZE64)
-typedef unsigned long int	uint64_t;
+typedef unsigned long int	    uint64_t;
 #else
 typedef unsigned long long int	uint64_t;
 #endif
 
 %template(StringVector) std::vector<std::string>;
-%template(UintVector) std::vector<uint32_t>;
-%template(IntVector) std::vector<int32_t>;
-%template(FloatVector) std::vector<float>;
+%template(UintVector)   std::vector<uint32_t>;
+%template(IntVector)    std::vector<int32_t>;
+%template(FloatVector)  std::vector<float>;
 %template(DoubleVector) std::vector<double>;
-%template(BoolVector) std::vector<bool>;
+%template(BoolVector)   std::vector<bool>;
 
-%template(Uint16Uint16Pair) std::pair<uint16_t, uint16_t>;
+%template(Uint16Uint16Pair)       std::pair<uint16_t, uint16_t>;
 %template(Uint16Uint16PairVector) std::vector<std::pair<uint16_t, uint16_t> >;
 
 %{
@@ -202,9 +203,11 @@ print(s)\n\
 	_FIFE_EXC_HANDLER(Exception)
 }
 
+/* SWIG_INCLUSIONS */
 @CMAKE_SWIG_INCLUSIONS@
 
-%include engine/swigwrappers/python/extensions.i.templ
+/* Additional includes of SWIG Python templates */
+%include src/swigwrappers/python/extensions.i.templ
 
 %pythoncode %{
 AudioSpaceCoordinate = DoublePoint3D
