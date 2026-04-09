@@ -258,7 +258,6 @@ message(STATUS "----------------------------------------------------------------
 # Source Files
 #------------------------------------------------------------------------------
 
-# Core
 set(
   FIFE_CORE_SRC
   src/engine/audio/actionaudio.cpp
@@ -376,7 +375,6 @@ set(
   src/engine/view/renderers/targetrenderer.cpp
 )
 
-# FIFECHAN
 set(
   FIFE_FCHAN_SRC
   src/engine/gui/fifechan/fifechanmanager.cpp
@@ -407,7 +405,6 @@ source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 # Header Files
 #------------------------------------------------------------------------------
 
-# Core
 set(
   FIFE_CORE_HDR
   src/engine/export.h
@@ -584,7 +581,6 @@ set(
   src/engine/gui/guimanager.h
 )
 
-# Fifechan
 set(
   FIFE_FCHAN_HDR
   src/engine/gui/fifechan/fifechanmanager.h
@@ -629,13 +625,13 @@ add_custom_target(fife.headers SOURCES
 #     These files declare the `%module fifechan` and are included in the seperate fifechan.i template.
 #   - FIFE_FCHAN_SWIG: The SWIG interface files for the FIFE-specific extensions to FIFECHAN library (the actual GUI components).
 #     The files declare the `%module fife` and become part of the main fife.i template.
-# 2. During configure_file(), all files are concatenated into CMAKE_SWIG_INCLUSIONS
-# 3. This is used in fife.i.templ, which is the main SWIG interface file.
-#    It includes CMAKE_SWIG_INCLUSIONS, which means all the .i files are included in the SWIG processing.
-#    This is the single fife.i file that SWIG uses to generate the bindings.
-# 4. Then swig_add_library() is called to generate the Python bindings.
+# 2. We have a double substitution setup for the SWIG interface files:
+#   - The .i.templ.cm files act as both CMake templates and SWIG interface templates.
+#   - configure_file() performs the CMake substitution, replacing @...@ variables,
+#     like CMAKE_SWIG_INCLUSIONS and generating the final fife.i with all .i files included.
+#   - SWIG then processes this generated fife.i, resolving the includes and generating bindings.
+# 3. Then swig_add_library() is called to generate the Python bindings.
 
-# Core
 set(
   FIFE_CORE_SWIG
   version.i
@@ -704,10 +700,12 @@ set(
   gui/guimanager.i
 )
 
-# FIFECHAN
-set(FIFE_FCHAN_SWIG_LIB gui/fifechan/lib/fifechanlistener.i gui/fifechan/lib/widgets.i)
+set(
+  FIFE_FCHAN_SWIG_LIB
+  gui/fifechan/lib/fifechanlistener.i
+  gui/fifechan/lib/widgets.i
+)
 
-# FIFECHAN SWIG
 set(
   FIFE_FCHAN_SWIG
   gui/fifechan/base/gui_font.i
@@ -732,13 +730,10 @@ source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
 # SWIG WRAPPER Files
 #------------------------------------------------------------------------------
 
-# SWIG WRAPPERS FOR PYTHON
 set(
   FIFE_SWIGWRAPPERS_PYTHON
   src/swigwrappers/python/extensions.i.templ
-  src/swigwrappers/python/fife.i.templ
   src/swigwrappers/python/fife.i.templ.cm
-  src/swigwrappers/python/fifechan.i.templ
   src/swigwrappers/python/fifechan.i.templ.cm
 )
 
@@ -964,6 +959,7 @@ if(ENABLE_FIFEGUI)
     configure_file(
       "src/swigwrappers/python/fifechan.i.templ.cm"
       "${PROJECT_BINARY_DIR}/fifechan.i"
+      @ONLY
     )
   endif(BUILD_PYTHON_BINDINGS)
 endif(ENABLE_FIFEGUI)
@@ -972,6 +968,7 @@ if(BUILD_PYTHON_BINDINGS)
   configure_file(
     "src/swigwrappers/python/fife.i.templ.cm"
     "${PROJECT_BINARY_DIR}/fife.i"
+    @ONLY
   )
   find_package(SWIG 4.0.0 REQUIRED)
   include(${SWIG_USE_FILE})

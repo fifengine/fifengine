@@ -1,7 +1,7 @@
 %{
 /**
- * HAVE_SNPRINTF is defined in several places.  This prevents the warning message
- * from appearing when compiling the swig interface.
+ * HAVE_SNPRINTF is defined in several places.
+ * Prevent warning message.
  */
 #ifdef HAVE_SNPRINTF
 #undef HAVE_SNPRINTF
@@ -25,14 +25,13 @@
  * Some materials to understand exception handling:
  *
  * Basics about python exceptions:
- * 	http://docs.python.org/tut/node10.html
+ * 	https://docs.python.org/3/library/exceptions.html
  * Python exception handling in C APIs
- * 	http://docs.python.org/api/exceptions.html
- * 	http://docs.python.org/api/exceptionHandling.html
+ * 	https://docs.python.org/3/c-api/exceptions.html
  * SWIG exception handling
- * 	http://www.swig.org/Doc1.3/Customization.html#exception
- * 	http://www.swig.org/Doc1.3/SWIGPlus.html#SWIGPlus_exception_specifications
- * 	http://www.swig.org/Doc1.3/Python.html#Python_nn36
+ * 	https://www.swig.org/Doc4.4/Customization.html#exception
+ * 	http://www.swig.org/Doc4.4/SWIGPlus.html#SWIGPlus_exception_specifications
+ * 	http://www.swig.org/Doc4.4/Python.html#Python_nn36
  */
 
 %feature("autodoc", "1");  // 0 == no param types, 1 == show param types
