@@ -209,8 +209,13 @@ print(s)\n\
 /* Additional includes of SWIG Python templates */
 %include src/swigwrappers/python/extensions.i.templ
 
+/*
+ The %typedef doesn't automatically create Python aliases for C++ typedefs.
+ We have to create the aliases as %pythoncode.
+*/
 %pythoncode %{
 AudioSpaceCoordinate = DoublePoint3D
 ModelCoordinate = Point3D
 ExactModelCoordinate = DoublePoint3D
+ScreenPoint = Point3D
 %}

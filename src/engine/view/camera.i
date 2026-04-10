@@ -11,7 +11,7 @@
 
 namespace FIFE {
 
-	typedef PointType3D<int32_t> ScreenPoint;
+	%typedef PointType3D<int32_t> ScreenPoint;
 
 	%template(ScreenPoint) PointType3D<int32_t>;
 
