@@ -10,9 +10,11 @@
 %include "view/rendererbase.i"
 
 namespace FIFE {
-	typedef Point3D ScreenPoint;
+
+	typedef PointType3D<int32_t> ScreenPoint;
+
 	%template(ScreenPoint) PointType3D<int32_t>;
-	
+
 	%apply std::list<Instance*> &OUTPUT { std::list<Instance*>& instances };
 	class Camera: public IRendererContainer {
 	public:
@@ -49,13 +51,13 @@ namespace FIFE {
 		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 		void setEnabled(bool enabled);
 		bool isEnabled();
-		
+
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 		void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates=false);
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
-		
+
 		void setLightingColor(float red, float green, float blue);
 		void resetLightingColor();
 		std::vector<float> getLightingColor();
@@ -69,7 +71,7 @@ namespace FIFE {
 		void setOverlayAnimation(AnimationPtr anim, bool fill = false);
 		AnimationPtr getOverlayAnimation();
 		void resetOverlayAnimation();
-	
+
 		void refresh();
 	private:
 		Camera();
