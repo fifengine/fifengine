@@ -564,7 +564,8 @@ namespace fcn {
 	%feature("notabstract") PasswordField;
 	class PasswordField : public TextField {
 	public:
-		PasswordField(const std::string& text = "");
+		PasswordField();
+		PasswordField(const std::string& text);
 		virtual ~PasswordField();
 	};
 
