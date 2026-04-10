@@ -222,6 +222,11 @@ class MultiPathfinderTest(test.Test):
         that a screen point refers to.
 
         @param screenpoint A fife.ScreenPoint
+
+        Returns
+        -------
+        fife.Location
+            Location object representing the map coordinates corresponding to the screen point.
         """
 
         target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)

@@ -70,3 +70,84 @@ class TestSerializersInit:
         captured = capsys.readouterr()
         assert "Warning" in captured.out
         assert "test warning" in captured.out
+
+    def test_all_exported(self):
+        from fife.extensions import serializers
+
+        expected = [
+            "SerializerError",
+            "InvalidFormat",
+            "WrongFileType",
+            "NameClash",
+            "NotFound",
+            "ET",
+            "root_subfile",
+            "reverse_root_subfile",
+        ]
+        for name in expected:
+            assert name in serializers.__all__
+
+    def test_et_module(self):
+        from fife.extensions.serializers import ET
+
+        assert ET is not None
+
+    def test_root_subfile(self):
+        from fife.extensions.serializers import root_subfile
+
+        assert callable(root_subfile)
+
+    def test_reverse_root_subfile(self):
+        from fife.extensions.serializers import reverse_root_subfile
+
+        assert callable(reverse_root_subfile)
+
+
+class TestSerializersExceptions:
+    def test_hierarchy(self):
+        from fife.extensions.serializers import (
+            InvalidFormat,
+            NameClash,
+            NotFound,
+            SerializerError,
+            WrongFileType,
+        )
+
+        assert issubclass(InvalidFormat, SerializerError)
+        assert issubclass(WrongFileType, SerializerError)
+        assert issubclass(NameClash, SerializerError)
+        assert issubclass(NotFound, SerializerError)
+
+
+class TestXmlLoaderTools:
+    def test_norm_path(self):
+        from fife.extensions.serializers.xml_loader_tools import norm_path
+
+        assert callable(norm_path)
+
+    def test_root_subfile(self):
+        from fife.extensions.serializers.xml_loader_tools import root_subfile
+
+        assert callable(root_subfile)
+
+    def test_reverse_root_subfile(self):
+        from fife.extensions.serializers.xml_loader_tools import reverse_root_subfile
+
+        assert callable(reverse_root_subfile)
+
+    def test_frange(self):
+        from fife.extensions.serializers.xml_loader_tools import frange
+
+        assert callable(frange)
+
+
+class TestSimpleXMLSerializer:
+    def test_class_exists(self):
+        from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+
+        assert SimpleXMLSerializer is not None
+
+    def test_simple_serializer_exists(self):
+        from fife.extensions.serializers.simplexml import SimpleSerializer
+
+        assert SimpleSerializer is not None

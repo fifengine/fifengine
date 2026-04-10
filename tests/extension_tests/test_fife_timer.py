@@ -13,3 +13,18 @@ class TestFifeTimer:
         from fife.extensions import fife_timer
 
         assert fife_timer._manager is None
+
+    def test_timer_class_exists(self):
+        from fife.extensions.fife_timer import Timer
+
+        assert Timer is not None
+
+    def test_timer_init(self):
+        from fife.extensions.fife_timer import Timer
+
+        assert hasattr(Timer, "__init__")
+
+    def test_manager_init(self):
+        from fife.extensions.fife_timer import _manager
+
+        assert _manager is None

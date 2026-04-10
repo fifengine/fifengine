@@ -219,6 +219,11 @@ class FifeTestApplication(PychanApplicationBase):
         """
         @note: This function had to be overloaded otherwise the default
         listener would have been created.
+
+        Returns
+        -------
+        ApplicationListener
+            The created application listener instance.
         """
         self._listener = ApplicationListener(self, self._testmanager)
         return self._listener

@@ -40,3 +40,20 @@ class TestFifeUtils:
 
         result = fife_utils.is_fife_exc(FakeType, RuntimeError("Some random error"))
         assert result is False
+
+
+class TestFifeUtilsModule:
+    def test_all_exports(self):
+        from fife.extensions import fife_utils
+
+        expected = ["is_fife_exc", "getUserDataDirectory"]
+        for name in expected:
+            assert name in fife_utils.__all__
+
+    def test_module_docstring(self):
+        from fife.extensions import fife_utils
+
+        assert (
+            "utility" in fife_utils.__doc__.lower()
+            or "function" in fife_utils.__doc__.lower()
+        )

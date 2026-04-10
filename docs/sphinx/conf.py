@@ -1,3 +1,5 @@
+"""Sphinx configuration for the FIFE project documentation."""
+
 import sys
 
 project = "FIFE"

@@ -1,3 +1,5 @@
+"""FIFE Python bindings."""
+
 import ctypes
 import importlib
 import os

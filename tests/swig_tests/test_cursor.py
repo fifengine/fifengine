@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 
-
 def test_animated_cursor(engine):
     engine.getModel()
     img_mgr = engine.getImageManager()

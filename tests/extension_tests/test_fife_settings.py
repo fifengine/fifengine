@@ -170,3 +170,47 @@ class TestFifeSettings:
                 assert 0 in s._displays
                 assert 1 in s._displays
                 assert 2 in s._displays
+
+
+class TestFifeSettingsAdvanced:
+    def test_fife_module_constant(self):
+        from fife.extensions.fife_settings import FIFE_MODULE
+
+        assert FIFE_MODULE == "FIFE"
+
+    def test_create_and_add_entry(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "createAndAddEntry")
+
+    def test_get_all_settings_method(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "getAllSettings")
+
+    def test_get_one_setting_method(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "getOneSetting")
+
+    def test_set_one_setting_method(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "setOneSetting")
+
+    def test_set_valid_resolutions_method(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "setValidResolutions")
+
+    def test_set_valid_displays_method(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert hasattr(Setting, "setValidDisplays")
+
+
+class TestFifeSettingsEntry:
+    def test_entry_class(self):
+        from fife.extensions.fife_settings import SettingEntry
+
+        assert SettingEntry is not None

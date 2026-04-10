@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 
-
 def test_instances(engine_minimized):
     assert engine_minimized.getSoundManager()
     assert engine_minimized.getEventManager()

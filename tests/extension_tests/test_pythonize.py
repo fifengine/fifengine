@@ -11,3 +11,13 @@ class TestPythonize:
 
     def test_all_is_empty(self):
         assert fife.extensions.pythonize.__all__ == ()
+
+    def test_module_docstring_alt(self):
+        from fife.extensions import pythonize
+
+        assert "pythonic" in pythonize.__doc__.lower()
+
+    def test_exception_str_patched(self):
+        from fife import fife
+
+        assert hasattr(fife.Exception, "__str__")

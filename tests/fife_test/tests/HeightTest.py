@@ -173,6 +173,11 @@ class HeightTest(test.Test):
         that a screen point refers to.
 
         @param screenpoint A fife.ScreenPoint
+
+        Returns
+        -------
+        fife.Location
+            Location object representing the map coordinates corresponding to the screen point.
         """
 
         target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
@@ -184,6 +189,11 @@ class HeightTest(test.Test):
     def getInstancesAt(self, screenpoint):
         """
         Query the main camera for instances on our active(agent) layer.
+
+        Returns
+        -------
+        list
+            List of matching instance objects for the provided screen point.
         """
         return self._camera.getMatchingInstances(screenpoint, self._actorlayer)
 
