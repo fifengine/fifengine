@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""World and scene management for the shooter demo."""
 
 import copy
 
@@ -24,15 +25,10 @@ from scripts.scene import Scene
 
 
 class World(EventListenerBase):
-    """
-    The world!
+    """The world.
 
-    This class handles:
-      setup of map view (cameras ...)
-      loading the map
-      handles mouse/key events which aren't handled by the GUI.
-       ( by inheriting from EventlistenerBase )
-
+    This class handles setup of map view (cameras), loading the map, and
+    handling mouse/key events which aren't handled by the GUI.
     """
 
     def __init__(self, app, engine, setting):
@@ -91,42 +87,40 @@ class World(EventListenerBase):
             self._eventmanager.loadGamepadMapping("gamecontrollerdb.txt")
 
     def showMainMenu(self):
+        """Show the main menu (pause if a scene is active)."""
         if self._scene:
             self._paused = True
             cont = True
         else:
             cont = False
-
         self._mainmenu.show(cont)
 
     def showCredits(self):
+        """Show the credits screen."""
         self._credits.show()
 
     def showHighScores(self):
+        """Show the high scores display."""
         self._highscores.show()
 
     def quit(self):
+        """Quit the world and request application shutdown."""
         self.reset()
         self._applictaion.requestQuit()
 
     def reset(self):
+        """Reset the world state and destroy any loaded scene/map."""
         if self._map:
             self._model.deleteMap(self._map)
         self._map = None
-
         self.cameras = {}
-
         if self._scene:
             self._scene.destroyScene()
             self._scene = None
-
         self._gamecomplete = False
 
     def loadLevel(self, filename):
-        """
-        Load a xml map and setup cameras.
-        """
-
+        """Load an XML map and set up cameras for the level."""
         self.resetKeys()
 
         self._filename = filename
@@ -163,10 +157,7 @@ class World(EventListenerBase):
         self._genericrenderer.setEnabled(True)
 
     def renderBoundingBox(self, obj):
-        """
-        Just a hack to render an objects bounding box.
-        """
-
+        """Render an object's bounding box for debugging."""
         bbox = copy.copy(obj.boundingbox)
 
         # apply the object layer scale
@@ -227,51 +218,48 @@ class World(EventListenerBase):
         node_bottomleft.thisown = 0
 
     def gameOver(self):
+        """Handle game over: show the game-over display."""
         self._gameover.show()
         self._hudwindow.hide()
-
         self._gamecomplete = True
 
     def endLevel(self):
+        """End the current level and show the winner screen."""
         self._paused = True
-
         # only one level so the game is over once you complete it.
         self._gamecomplete = True
         self._winner.show()
         self._hudwindow.hide()
 
     def saveScore(self):
+        """Save the player's score if it is a high score."""
         self._gamecomplete = False
-
         if self._highscores.isHighScore(self._scene.player.score):
             score = self._scene.player.score
-
             dlg = pychan.loadXML("gui/highscoredialog.xml")
             dlg.execute({"okay": "Yay!"})
             name = dlg.findChild(name="name").text
-
             self._highscores.addHighScore(HighScore(name, score))
             self._highscores.show()
 
     def newGame(self):
+        """Start a new game by loading the initial level."""
         self.loadLevel("maps/shooter_map1.xml")
         self._mainmenu.hide()
         self._paused = False
 
     def continueGame(self):
+        """Continue a paused game by hiding the menu and unpausing."""
         self._mainmenu.hide()
         self._paused = False
 
     def pauseGame(self):
+        """Pause the game and show the main menu overlay."""
         self._paused = True
         self._mainmenu.show(True)
 
     def initCameras(self):
-        """
-        Before we can actually see something on screen we have to specify the render setup.
-        This is done through Camera objects which offer a viewport on the map.
-        """
-
+        """Initialize camera setup and attach the main camera to the scene."""
         for cam in self._map.getCameras():
             if cam.getId() == "main":
                 self.cameras["main"] = cam
@@ -281,6 +269,7 @@ class World(EventListenerBase):
         self.cameras["main"].setZoom(1.0)
 
     def resetKeys(self):
+        """Reset the keyboard state tracking flags to False."""
         self._keystate["UP"] = False
         self._keystate["DOWN"] = False
         self._keystate["LEFT"] = False
@@ -289,6 +278,7 @@ class World(EventListenerBase):
         self._keystate["CTRL"] = False
 
     def keyPressed(self, evt):
+        """Handle a key press event and update keystate flags."""
         keyval = evt.getKey().getValue()
         if keyval == fife.Key.UP:
             self._keystate["UP"] = True
@@ -307,6 +297,7 @@ class World(EventListenerBase):
             self._keystate["CTRL"] = True
 
     def keyReleased(self, evt):
+        """Handle a key release event and update keystate flags."""
         keyval = evt.getKey().getValue()
         if keyval == fife.Key.UP:
             self._keystate["UP"] = False
@@ -322,10 +313,7 @@ class World(EventListenerBase):
             self._keystate["CTRL"] = False
 
     def pump(self):
-        """
-        Called every frame.
-        """
-
+        """Pump the world each frame (update scene, HUD, and renderer)."""
         if self._genericrenderer:
             self._genericrenderer.removeAll("quads")
 

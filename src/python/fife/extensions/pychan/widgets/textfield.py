@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Textfield class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import UnicodeAttr
 
@@ -11,16 +10,15 @@ from .widget import Widget
 
 
 class TextField(Widget):
-    """
-    An editable B{single line} text edit widget.
+    """An editable B{single line} text edit widget.
 
-    New Attributes
-    ==============
-
-      - text: The text in the TextBox.
+    Attributes
+    ----------
+    text : str
+        The text in the TextBox.
 
     Data
-    ====
+    ----
     The text can be read and set via L{distributeData} and L{collectData}.
     """
 
@@ -100,6 +98,13 @@ class TextField(Widget):
         self._realGetData = self._getText
 
     def clone(self, prefix):
+        """Create a clone of this TextField with a name prefix.
+
+        Returns
+        -------
+        TextField
+            New TextField instance cloned from this one.
+        """
         textfieldClone = TextField(
             None,
             self._createNameWithPrefix(prefix),

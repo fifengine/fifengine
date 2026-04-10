@@ -29,6 +29,10 @@ class ExitEventListener(fife.IKeyListener):
         self.quitRequested = False
 
     def keyPressed(self, evt):
+        """Handle key press events.
+
+        Quits the application on ESC and toggles the pychan console on F10.
+        """
         keyval = evt.getKey().getValue()
         if keyval == fife.Key.ESCAPE:
             self.app.quit()
@@ -38,13 +42,18 @@ class ExitEventListener(fife.IKeyListener):
                 evt.consume()
 
     def keyReleased(self, evt):
+        """Handle key release events.
+
+        Currently no-op; provided for subclasses and API completeness.
+        """
         pass
 
 
 class PychanApplicationBase(ApplicationBase):
-    """
-    PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-    This class should be extended if you 've build fife with fifechan support, in order to use pychan.
+    """PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
+
+    This class should be extended if you 've build fife with fifechan
+    support, in order to use pychan.
     """
 
     def __init__(self, setting=None):
@@ -54,5 +63,14 @@ class PychanApplicationBase(ApplicationBase):
         pychan.setupModalExecution(self.mainLoop, self.breakFromMainLoop)
 
     def createListener(self):
+        """Create and return the default `ExitEventListener`.
+
+        The listener is stored on `self._listener` and returned.
+
+        Returns
+        -------
+        ExitEventListener
+            The created listener instance stored on `self._listener`.
+        """
         self._listener = ExitEventListener(self)
         return self._listener

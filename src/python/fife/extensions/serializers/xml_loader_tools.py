@@ -48,8 +48,7 @@ def loadImportDir(loader, path, engine, debug=False):
 
 
 def loadImportDirRec(loader, path, engine, debug=False):
-    """Recursively call :func:`loadImportFile` for XML files in a directory
-    tree.
+    """Recursively call :func:`loadImportFile` for XML files in a directory tree.
 
     Parameters
     ----------
@@ -78,6 +77,11 @@ def root_subfile(masterfile, subfile):
     -------
     If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
     ``./../foo2/subfoo.xml``, the returned path is ``../foo2/subfoo.xml``.
+
+    Returns
+    -------
+    str
+        Path to the subfile relative to the masterfile directory.
 
     Notes
     -----
@@ -118,6 +122,11 @@ def reverse_root_subfile(masterfile, subfile):
     If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
     ``../foo2/subfoo.xml``, the returned path is ``./../foo2/subfoo.xml``.
 
+    Returns
+    -------
+    str
+        Path to the reconstructed subfile rooted against the provided masterfile.
+
     Notes
     -----
     This is usually used to convert saved paths into engine-relative paths.
@@ -139,6 +148,11 @@ def norm_path(path):
 
     FIFE always uses these delimiters, but some OS-related routines will
     default to ``os.path.sep``.
+
+    Returns
+    -------
+    str
+        The normalized path using forward slashes as separators.
     """
     if os.path.sep == "/":
         return path
@@ -150,16 +164,6 @@ def frange(limit1, limit2=None, increment=1.0):
     """Range function that accepts floats (and integers).
 
     If only one limit is specified, assumes 0 as lower limit.
-
-    Examples
-    --------
-    >>> frange(-2, 2, 0.1)
-    >>> frange(10)
-    >>> frange(10, increment=0.5)
-
-    The returned value is an iterator. Use ``list(frange)`` for a list.
-
-    Source: U{http://code.activestate.com/recipes/66472-frange-a-range-function-with-float-increments/}
 
     Parameters
     ----------
@@ -174,6 +178,16 @@ def frange(limit1, limit2=None, increment=1.0):
     -------
     generator
         iterable over (limit2 - limit1) / increment steps
+
+    Examples
+    --------
+    >>> frange(-2, 2, 0.1)
+    >>> frange(10)
+    >>> frange(10, increment=0.5)
+
+    The returned value is an iterator. Use ``list(frange)`` for a list.
+
+    Source: U{http://code.activestate.com/recipes/66472-frange-a-range-function-with-float-increments/}
     """
     if limit2 is None:
         limit2, limit1 = float(limit1), 0.0

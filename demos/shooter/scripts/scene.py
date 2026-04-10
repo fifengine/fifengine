@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Scene and scene-graph management for the shooter demo."""
+
 from fife import fife
 from fife.fife import FloatRect as Rect  # noqa: F401
 
@@ -30,28 +32,23 @@ from scripts.ships.shipbase import Ship
 
 
 class SoundEmitterListener(fife.SoundEmitterListener):
+    """Listener for sound emitter events used to restart music."""
+
     def __init__(self, emitter, scene):
         fife.SoundEmitterListener.__init__(self)
         emitter.addListener(self)
         self._scene = scene
 
     def onSoundFinished(self, emitterId, soundClipId):
+        """Handle completion of a sound clip (restart music)."""
         self._scene.musicHasFinished()
 
 
 class SceneNode:
-    """
-    A node in the scene graph.
-
-    This represents a node in the scene.  The node stores a list
-    of objects that exist in the node.  This is used by the Scene
-    to reduce the number of collision checks.
-    """
+    """A node in the scene graph storing objects for collision/filtering."""
 
     def __init__(self, spaceobjects=None):
-        """
-        @param spaceobjects A list of spaceobjects that will exist in this node
-        """
+        """Initialize a scene node with optional existing spaceobjects."""
         if not spaceobjects:
             self._spaceobjects = list()
         else:
@@ -67,24 +64,10 @@ class SceneNode:
 
 
 class Scene:
-    """
-    Master game scene.  Keeps track of all game objects.
-
-    This is the meat and potatoes of the game.  This class takes care of the scene graph,
-    updating objects, destroying objects, collision detection, etc etc.
-    """
+    """Master game scene; manages scene graph, objects, and updates."""
 
     def __init__(self, world, engine, objectLayer, soundmanager):
-        """
-        @param world: A reference to the master instance of the World class
-        @type world: L{World}
-        @param engine: A reference to the FIFE engine
-        @type engine: L{fife.Engine}
-        @param objectLayer: The layer that all objects exist on
-        @type objectLayer: L{fife.Layer}
-        @param soundmanager: A reference to the SoundManager
-        @type soundmanager: L{fife.SoundManager}
-        """
+        """Initialize the Scene with world, engine, layer, and soundmanager."""
         self._engine = engine
         self._world = world
         self._model = engine.getModel()
@@ -124,9 +107,7 @@ class Scene:
         self._musiclistener = None
 
     def destroyScene(self):
-        """
-        Removes all objects from the scene and deletes them from the layer.
-        """
+        """Remove all objects from the scene and delete their instances."""
         nodestodelete = list()
         objtodelete = list()
 
@@ -149,15 +130,7 @@ class Scene:
                 self._nodes.remove(node)
 
     def initScene(self, mapobj):
-        """
-        Initializess the scene and scene graph.  This creates game objects for
-        FIFE instances that exist in the map.
-
-        The scene graph is a one dimensional graph.  Each node represents one layer
-        unit.  Objects are added to nodes in the scene graph based on their exact
-        layer coordinates.
-        """
-
+        """Initialize the scene and scene graph from the map object."""
         # initialize our scene array to some arbitrary size
         for i in range(0, self._maxnodes):
             self._nodes.append(SceneNode())
@@ -245,9 +218,7 @@ class Scene:
         self.startCamera()
 
     def musicHasFinished(self):
-        """
-        Sound callback example that gets fired after the music has finished playing.
-        """
+        """Handle music finished callback and restart if necessary."""
         if self._gameover:
             return
         print(
@@ -257,46 +228,66 @@ class Scene:
         self._music.play()
 
     def pause(self, time):
+        """Pause the scene and record the paused time."""
         self._pausedtime = time
         self._paused = True
 
     def unpause(self, time):
+        """Unpause the scene and adjust time modifiers."""
         self._timemod += time - self._pausedtime
         self._paused = False
 
     def playerHit(self, damage):
+        """Apply damage to the player."""
         self._player.applyHit(damage)
 
     def gameOver(self):
+        """Handle game over state and stop music."""
         self._gameover = True
         self._music.stop()
         self._world.gameOver()
 
     def endLevel(self):
+        """Handle end of level and stop music."""
         self._gameover = True
         self._music.stop()
         self._world.endLevel()
 
     def queueObjectForRemoval(self, obj):
-        """
-        You should use this function to remove an object from the scene.
-        The garbage collector is what ultimately deletes the object from memory.
-        DO NOT do this yourself as you may cause issues with segfaults.
-        """
+        """Queue an object for removal; the garbage collector will delete it."""
         self._objectstodelete.append(obj)
 
     def getObjectsInNode(self, nodeindex):
         """
-        @param nodeindex: the index of the node you which to retrieve objects from.
-        @return: The list of objects in the specified node index
+        Get objects stored in a scene node.
+
+        Parameters
+        ----------
+        nodeindex : int
+            The index of the node to retrieve objects from.
+
+        Returns
+        -------
+        list
+            The list of objects in the specified node index.
         """
         return self._nodes[nodeindex].instances
 
     def getObjectsInRange(self, rangeL, rangeR):
         """
-        @param rangeL: the left most node index
-        @param rangeR: the right most node index
-        @return: A combined list of objects in the specified node index range (inclusive)
+        Get objects from a range of scene nodes.
+
+        Parameters
+        ----------
+        rangeL : int
+            The left-most node index (inclusive).
+        rangeR : int
+            The right-most node index (exclusive).
+
+        Returns
+        -------
+        list
+            A combined list of objects in the specified node index range.
         """
         objects = list()
 
@@ -306,12 +297,7 @@ class Scene:
         return objects
 
     def addObjectToScene(self, obj):
-        """
-        Adds an object to the scene in the correct scene node
-
-        @param obj: The object to add to the scene
-        """
-
+        """Add an object to the scene in the correct scene node."""
         # @todo: search to ensure the object isn't already part of the scene
         loc = obj.instance.getLocation().getExactLayerCoordinates()
         nodeindex = int(loc.x * self._xscale)
@@ -324,13 +310,7 @@ class Scene:
             self.queueObjectForRemoval(obj)
 
     def moveObjectInScene(self, obj):
-        """
-        When an object moves in the scene you should call this function to update
-        scene graph.  You MUST do this or the graph will be incorrect.
-
-        @param obj: The object to move in the scene
-        """
-
+        """Update scene graph when an object changes position."""
         loc = obj.instance.getLocation().getExactLayerCoordinates()
         nodeindex = int(loc.x * self._xscale)
 
@@ -346,15 +326,7 @@ class Scene:
             self.queueObjectForRemoval(obj)
 
     def removeObjectFromScene(self, obj):
-        """
-        You would not normally call this function directly.  You should probably
-        call queueObjectForRemoval().
-
-        This function releases any memory allocated for the object by deleting
-        the FIFE instance.
-
-        @param obj: The object to delete
-        """
+        """Remove the object from the scene and free its FIFE instance."""
         for node in self._nodes:
             if obj in node.spaceobjects:
                 if obj.instance:
@@ -364,32 +336,27 @@ class Scene:
                 break
 
     def attachCamera(self, cam):
+        """Attach the camera to the scene and set its initial location."""
         self._camera = cam
         self._camera.setLocation(self._player.location)
 
     def stopCamera(self):
+        """Stop camera movement."""
         self._cameraspeed = 0
 
     def startCamera(self):
-        """
-        Starts the camera moving slowly to the right.
-        """
+        """Start camera movement to the right at a slow speed."""
         self._cameraspeed = 0.001
 
     def collectGarbage(self):
-        """
-        This should be called once a frame.  It removes the object from the scene.
-        """
+        """Remove queued objects from the scene; call once per frame."""
         for obj in self._objectstodelete:
             self.removeObjectFromScene(obj)
 
         self._objectstodelete = list()
 
     def update(self, time, keystate):
-        """
-        This function should be called once a frame.  This is where all the game logic
-        happens.
-        """
+        """Advance the scene state by one frame and run game logic."""
         timedelta = (time - self._timemod) - self._time
         self._timedelta = timedelta
         self._time = time - self._timemod

@@ -31,6 +31,11 @@ def resolve_headless_mode(cli_headless):
     2) FIFE_TEST_HEADLESS env var
     3) CI env defaults to headless
     4) default windowed
+
+    Returns
+    -------
+    bool
+        Resolved headless mode (True for headless, False for windowed).
     """
     if cli_headless is not None:
         return cli_headless
@@ -45,12 +50,24 @@ def resolve_headless_mode(cli_headless):
 
 
 def genpath(somepath):
-    """Convert Unix-style path separators to OS-specific separators."""
+    """Convert Unix-style path separators to OS-specific separators.
+
+    Returns
+    -------
+    str
+        The path with OS-specific separators.
+    """
     return os.path.sep.join(somepath.split("/"))
 
 
 def has_python_bindings(build_dir):
-    """Check if Python bindings are available in the build directory."""
+    """Check if Python bindings are available in the build directory.
+
+    Returns
+    -------
+    bool
+        True if Python bindings exist in the build directory, False otherwise.
+    """
     if not os.path.isdir(build_dir):
         return False
     if not os.path.exists(os.path.join(build_dir, "fife.py")):
@@ -59,7 +76,13 @@ def has_python_bindings(build_dir):
 
 
 def resolve_build_dir():
-    """Resolve the build directory containing Python bindings."""
+    """Resolve the build directory containing Python bindings.
+
+    Returns
+    -------
+    str | None
+        Path to the build directory if found, otherwise None.
+    """
     env_build_dir = os.environ.get("FIFE_BUILD_DIR")
     if env_build_dir:
         return env_build_dir
@@ -108,7 +131,13 @@ def _prepend_unique_env_paths(env, key, paths, sep):
 
 
 def candidate_install_python_roots(install_dir):
-    """Get candidate Python package roots from an install directory."""
+    """Get candidate Python package roots from an install directory.
+
+    Returns
+    -------
+    list[str]
+        Candidate root directories to search for installed Python packages.
+    """
     roots = [install_dir]
     patterns = (
         os.path.join(install_dir, "lib", "python*", "site-packages"),
@@ -122,7 +151,13 @@ def candidate_install_python_roots(install_dir):
 
 
 def has_installed_fife(install_dir):
-    """Check if FIFE is installed in the given directory."""
+    """Check if FIFE is installed in the given directory.
+
+    Returns
+    -------
+    bool
+        True if FIFE appears installed in the directory, False otherwise.
+    """
     for root in candidate_install_python_roots(install_dir):
         pkg_dir = os.path.join(root, "fife")
         if os.path.exists(os.path.join(pkg_dir, "__init__.py")) and glob(
@@ -133,7 +168,13 @@ def has_installed_fife(install_dir):
 
 
 def resolve_install_dir():
-    """Resolve the install directory containing FIFE."""
+    """Resolve the install directory containing FIFE.
+
+    Returns
+    -------
+    str | None
+        Path to the install directory if found, otherwise None.
+    """
     env_install_dir = os.environ.get("FIFE_INSTALL_DIR")
     if env_install_dir:
         return env_install_dir
@@ -157,7 +198,13 @@ def resolve_install_dir():
 
 
 def prepare_install_bindings(install_dir):
-    """Prepare Python bindings from an install directory."""
+    """Prepare Python bindings from an install directory.
+
+    Returns
+    -------
+    dict | None
+        A dictionary of extras to use (pythonpath, library_paths) or None on failure.
+    """
     python_roots = []
     for root in candidate_install_python_roots(install_dir):
         if os.path.exists(os.path.join(root, "fife", "__init__.py")):
@@ -190,7 +237,13 @@ def prepare_install_bindings(install_dir):
 
 
 def resolve_test_progs(build_dir):
-    """Get core C++ test names from CTest registrations in a configured build directory."""
+    """Get core C++ test names from CTest registrations in a configured build directory.
+
+    Returns
+    -------
+    list[str]
+        List of core test program names.
+    """
     ctest_cmd = ["ctest", "--test-dir", build_dir, "-N", "-L", "core"]
     try:
         result = subprocess.run(
@@ -213,7 +266,13 @@ def resolve_test_progs(build_dir):
 
 
 def resolve_test_modules(directory):
-    """Resolve test modules from a directory."""
+    """Resolve test modules from a directory.
+
+    Returns
+    -------
+    list[str]
+        List of python module filenames (without path) representing tests.
+    """
     pythonfilenames = [p for p in os.listdir(directory) if len(p) > 3 and p[-3:] == ".py"]
     modname = directory.replace(os.path.sep, ".") + "."
     modules = []
@@ -375,7 +434,13 @@ def prepare_python_bindings(build_dir):
 
 
 def run_core_tests(progs):
-    """Run core C++ tests."""
+    """Run core C++ tests.
+
+    Returns
+    -------
+    tuple[list[str], list[str]]
+        Tuple of (errors, failures) collected while running core tests.
+    """
     build_dir = resolve_build_dir()
     if not os.path.isdir(build_dir):
         return [f"Build directory not found: {build_dir}"], []
@@ -439,7 +504,13 @@ def _build_test_subprocess_env(
 def run_test_modules(
     modules, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
 ):
-    """Run Python test modules."""
+    """Run Python test modules.
+
+    Returns
+    -------
+    tuple[list[str], list[str]]
+        Tuple of (errors, failures) collected while running python test modules.
+    """
     env = _build_test_subprocess_env(
         build_dir,
         extra_pythonpath=extra_pythonpath,
@@ -504,7 +575,13 @@ def run_test_modules(
 def run_all(
     tests, build_dir, extra_pythonpath=None, extra_library_path=None, headless=False
 ):
-    """Run all tests."""
+    """Run all tests.
+
+    Returns
+    -------
+    bool
+        True if all tests passed, False if any errors or failures occurred.
+    """
 
     def print_errors(txt, errs):
         if errs:
@@ -613,7 +690,18 @@ def _build_test_menu(
 
 
 def run(automatic, selected_cases, headless=None):
-    """Run the test suite."""
+    """Run the test suite.
+
+    Returns
+    -------
+    bool
+        True if the requested tests succeeded, False otherwise.
+
+    Raises
+    ------
+    ValueError
+        If an invalid menu selection or case id is supplied when interacting.
+    """
     headless_mode = resolve_headless_mode(headless)
     print("SWIG/extension test mode: %s" % ("headless" if headless_mode else "windowed"))
 
@@ -691,7 +779,13 @@ def run(automatic, selected_cases, headless=None):
 
 
 def main():
-    """Run the test runner."""
+    """Run the test runner.
+
+    Returns
+    -------
+    int
+        Exit code suitable for returning from the script (0 on success).
+    """
     usage = (
         "usage: %prog [options] [args]\n"
         + "This is a test runner.\n"

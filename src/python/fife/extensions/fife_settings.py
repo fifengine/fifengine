@@ -289,14 +289,27 @@ class Setting:
             self._defaultSetting[module][name] = value
 
     def getAllSettings(self, module, validSetting=True):
-        """Get all settings for a module."""
+        """Get all settings for a module.
+
+        Returns
+        -------
+        dict
+            A mapping of setting names to their valid/default values for the
+            requested module.
+        """
         if validSetting:
             return self._validSetting[module]
         else:
             return self._defaultSetting[module]
 
     def getOneSetting(self, module, name, validSetting=True):
-        """Get a single setting entry."""
+        """Get a single setting entry.
+
+        Returns
+        -------
+        Any
+            The valid or default value for the requested setting.
+        """
         if validSetting:
             return self._validSetting[module][name]
         else:
@@ -423,7 +436,14 @@ class Setting:
                 self._serializer.save(filename)
 
     def getSettingsFromFile(self, module, logger=None):
-        """Get all settings from the file for a module."""
+        """Get all settings from the file for a module.
+
+        Returns
+        -------
+        dict | None
+            A mapping of settings read from the serializer for `module`, or
+            `None` if the module was not present in the serializer input.
+        """
         if self._serializer:
             self._logger = logger
             modules = self._serializer.getModuleNameList()
@@ -633,6 +653,11 @@ class Setting:
         -------
         Any
             The value of the setting or ``defaultValue`` if not present.
+
+        Raises
+        ------
+        Exception
+            If the setting is not present and no default value is available.
         """
         if self._serializer:
             if module == "FIFE":
@@ -821,7 +846,13 @@ class SettingEntry:
     applyfunction = property(_getApplyFunction, _setApplyFunction)
 
     def __str__(self):
-        """Return string representation of the setting entry."""
+        """Return string representation of the setting entry.
+
+        Returns
+        -------
+        str
+            A human-readable summary of the SettingEntry.
+        """
         return (
             "SettingEntry: "
             + self.name

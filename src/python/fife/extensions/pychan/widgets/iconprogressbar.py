@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Iconprogressbar class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
@@ -12,17 +11,20 @@ from .widget import Widget
 
 
 class IconProgressBar(Widget):
-    """
-    An image icon.
+    """Icon progress bar widget.
 
-    New Attributes
-    ==============
-
-      - image: String or GuiImage: The source location of the Image or a direct GuiImage
-      - max_icons: Maximal count of icons
-      - icons: Current count of active icons
-      - orientation: Horizontal (0) or Vertical (1)
-      - opaque: True if the widget is opaque, false otherwise.
+    Attributes
+    ----------
+    image : str or GuiImage
+        The source location of the image or a GuiImage instance.
+    max_icons : int
+        Maximal count of icons.
+    icons : int
+        Current count of active icons.
+    orientation : int
+        Horizontal (0) or Vertical (1).
+    opaque : bool
+        True if the widget is opaque.
     """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
@@ -114,6 +116,13 @@ class IconProgressBar(Widget):
             self.icons = icons
 
     def clone(self, prefix):
+        """Create a clone of this IconProgressBar with a name prefix.
+
+        Returns
+        -------
+        IconProgressBar
+            New IconProgressBar instance cloned from this one.
+        """
         iconClone = IconProgressBar(
             None,
             self._createNameWithPrefix(prefix),
@@ -152,9 +161,11 @@ class IconProgressBar(Widget):
     _image = ImageProperty("Image")
 
     def advance(self):
+        """Advance the progress bar by one step."""
         self.real_widget.advance()
 
     def reset(self):
+        """Reset the progress bar to its initial state."""
         self.real_widget.reset()
 
     def _setImage(self, source):

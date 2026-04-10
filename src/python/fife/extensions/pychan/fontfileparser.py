@@ -31,6 +31,11 @@ class FontFileParser(ContentHandler):
             The element tag name.
         rawAttributes : Attributes
             The element attributes.
+
+        Raises
+        ------
+        ValueError
+            If a <font> element is missing the required "name" attribute.
         """
         attributes = {
             name: rawAttributes.getValue(name) for name in rawAttributes.getNames()

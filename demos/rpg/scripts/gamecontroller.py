@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""RPG demo game controller and input listener implementations."""
 
 import glob
 import os
@@ -24,38 +25,35 @@ from scripts.scene import Scene
 
 
 class KeyState:
-    """
-    Holds the current state of the keys on the keyboard (down or up).
-    False = down, True = up.
-    """
+    """Track keyboard key states (False = down, True = up)."""
 
     def __init__(self):
         self._keystate = {}
 
     def updateKey(self, key, state):
+        """Update the stored state for a keyboard key."""
         self._keystate[key] = state
 
     def checkKey(self, key):
+        """Return the stored state for a key, or False if unknown.
+
+        Returns
+        -------
+        bool
+            The stored key state, or ``False`` if the key is not tracked.
+        """
         if key in self._keystate:
             return self._keystate[key]
         else:
             return False
 
     def reset(self):
-        """
-        Empties the keystate dictionary (assumes all keys are False)
-        """
+        """Reset the keystate dictionary (assumes all keys are False)."""
         self._keystate.clear()
 
 
 class GameListener(fife.IKeyListener, fife.IMouseListener):
-    """
-    Main game listener.  Listens for Mouse and Keyboard events.
-
-    This class also has the ability to attach and detach itself from
-    the event manager in cases where you do not want input processed (i.e. when
-    the main menu is visible).  It is NOT attached by default.
-    """
+    """Main game listener for mouse and keyboard events; attachable to the event manager."""
 
     def __init__(self, gamecontroller):
         self._engine = gamecontroller.engine
@@ -71,9 +69,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
         self._lastmousepos = (0.0, 0.0)
 
     def attach(self):
-        """
-        Attaches to the event manager.
-        """
+        """Attach this listener to the engine event manager."""
         if not self._attached:
             self._gamecontroller.keystate.reset()
             self._eventmanager.addMouseListenerFront(self)
@@ -81,15 +77,14 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             self._attached = True
 
     def detach(self):
-        """
-        Detaches from the event manager.
-        """
+        """Detach this listener from the engine event manager."""
         if self._attached:
             self._eventmanager.removeMouseListener(self)
             self._eventmanager.removeKeyListener(self)
             self._attached = False
 
     def mousePressed(self, event):
+        """Handle mouse press events and dispatch possible game actions."""
         # mouse press was consumed by some pychan widget
         if event.isConsumedByWidgets():
             return
@@ -153,9 +148,11 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
                 )
 
     def mouseReleased(self, event):
+        """Handle mouse release events (no-op by default)."""
         pass
 
     def mouseMoved(self, event):
+        """Handle mouse move events and update instance outlines."""
         renderer = self._gamecontroller.instancerenderer
         if renderer:
             renderer.removeAllOutlines()
@@ -177,21 +174,27 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             renderer.addOutlined(j, 255, 173, 47, 2)
 
     def mouseEntered(self, event):
+        """Handle mouse entered events (no-op)."""
         pass
 
     def mouseExited(self, event):
+        """Handle mouse exited events (no-op)."""
         pass
 
     def mouseClicked(self, event):
+        """Handle mouse click events (no-op by default)."""
         pass
 
     def mouseWheelMovedUp(self, event):
+        """Handle mouse wheel up events (no-op)."""
         pass
 
     def mouseWheelMovedDown(self, event):
+        """Handle mouse wheel down events (no-op)."""
         pass
 
     def mouseDragged(self, event):
+        """Handle mouse drag events by moving the player if dragged enough."""
         if event.isConsumedByWidgets():
             return
 
@@ -210,6 +213,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             self._lastmousepos = (clickpoint.x, clickpoint.y)
 
     def keyPressed(self, event):
+        """Handle key pressed events and update key state bookkeeping."""
         keyval = event.getKey().getValue()
         if keyval == fife.Key.ESCAPE:
             self.detach()
@@ -219,6 +223,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
         self._gamecontroller.keystate.updateKey(keyval, True)
 
     def keyReleased(self, event):
+        """Handle key released events and update key state bookkeeping."""
         keyval = event.getKey().getValue()
 
         self._gamecontroller.keystate.updateKey(keyval, False)
@@ -258,10 +263,13 @@ class GameController:
         self._newmap = None
 
     def onConsoleCommand(self, command):
-        """
-        Parses game related console commands.
-        """
+        """Parse game related console commands.
 
+        Returns
+        -------
+        str
+            A result string describing the outcome or error of the command.
+        """
         result = ""
 
         args = command.split(" ")
@@ -312,10 +320,7 @@ class GameController:
         return result
 
     def newGame(self):
-        """
-        Removes any save games and starts a new game.
-        """
-
+        """Remove any save games and start a new game."""
         self._guicontroller.hideMainMenu()
 
         for filename in glob.glob(os.path.join("saves", "*.xml")):
@@ -328,10 +333,7 @@ class GameController:
         self.loadMap(mapname)
 
     def loadMap(self, mapname):
-        """
-        Creates the scene for the map and attaches the listener.
-        """
-
+        """Create the scene for the map and attach the listener."""
         if self._listener:
             self._listener.detach()
 
@@ -362,10 +364,7 @@ class GameController:
             self._listener.attach()
 
     def switchMap(self, newmapname):
-        """
-        Queues a map switch for next frame.  This must be done next frame to ensure
-        all events pertaining to the current frame have finished being processed.
-        """
+        """Queue a map switch for the next frame to allow current events to finish."""
         self._switchmaprequested = True
         self._newmap = newmapname
 
@@ -373,9 +372,7 @@ class GameController:
         self._scene.serialize()
 
     def endGame(self):
-        """
-        Saves the game state and destroys the scene.
-        """
+        """Save the game state and destroy the scene."""
         if self._scene:
             self._scene.serialize()
 
@@ -388,10 +385,12 @@ class GameController:
             self._floatingtextrenderer = None
 
     def quit(self):
+        """Quit the game and request the application to exit."""
         self.endGame()
         self._application.requestQuit()
 
     def pump(self):
+        """Process pending map switch requests and update the scene."""
         if self._switchmaprequested:
             self.loadMap(self._newmap)
             self._newmap = None

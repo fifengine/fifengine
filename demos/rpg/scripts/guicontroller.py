@@ -3,11 +3,16 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""GUI controller helpers for the RPG demo (menus and dialog windows)."""
+
 from fife.extensions import pychan
 
 
 class Window:
+    """Base window wrapper that holds common GUI references."""
+
     def __init__(self, gamecontroller):
+        """Initialize the window with references to controllers and settings."""
         self._guicontroller = gamecontroller.guicontroller
         self._gamecontroller = gamecontroller
         self._settings = gamecontroller.settings
@@ -15,12 +20,21 @@ class Window:
         self._widget = None
 
     def _getWidget(self):
+        """Return the underlying pychan widget instance.
+
+        Returns
+        -------
+        pychan.Widget | None
+            The underlying widget instance, or None if not initialized.
+        """
         return self._widget
 
     widget = property(_getWidget)
 
 
 class MainMenu(Window):
+    """Main menu window wrapper."""
+
     def __init__(self, gamecontroller):
         super().__init__(gamecontroller)
         self._widget = pychan.loadXML("gui/mainmenu.xml")
@@ -42,6 +56,8 @@ class MainMenu(Window):
 
 
 class Credits(Window):
+    """Credits window wrapper."""
+
     def __init__(self, gamecontroller):
         super().__init__(gamecontroller)
         self._widget = pychan.loadXML("gui/credits.xml")
@@ -54,6 +70,8 @@ class Credits(Window):
 
 
 class QuestDialog(Window):
+    """Quest dialog used to present quest details and accept/decline actions."""
+
     def __init__(self, guicontroller, questgiver):
         super().__init__(guicontroller)
         self._widget = pychan.loadXML("gui/quest.xml")
@@ -74,6 +92,7 @@ class QuestDialog(Window):
         self._widget.mapEvents(eventMap)
 
     def questAccepted(self):
+        """Handle the quest acceptance action from the dialog."""
         self._guicontroller._gamecontroller.logger.log_debug(
             "Quest [" + self._quest.name + "] has been accepted"
         )
@@ -82,6 +101,8 @@ class QuestDialog(Window):
 
 
 class GUIController:
+    """High-level GUI controller exposing menu and dialog helpers."""
+
     def __init__(self, gamecontroller):
         self._gamecontroller = gamecontroller
         self._engine = gamecontroller.engine
@@ -91,6 +112,7 @@ class GUIController:
         self._credits = None
 
     def showMainMenu(self):
+        """Show the main menu, loading it if necessary."""
         if self._mainmenu:
             self._mainmenu.widget.show()
         else:
@@ -99,11 +121,13 @@ class GUIController:
             self._mainmenu.widget.show()
 
     def hideMainMenu(self):
+        """Hide the main menu and release its resources."""
         if self._mainmenu:
             self._mainmenu.widget.hide()
             self._mainmenu = None
 
     def showCredits(self):
+        """Show the credits window, loading it if necessary."""
         if self._credits:
             self._credits.widget.show()
         else:
@@ -111,10 +135,12 @@ class GUIController:
             self._credits.widget.show()
 
     def hideCredits(self):
+        """Hide the credits window and release its resources."""
         if self._credits:
             self._credits.widget.hide()
             self._credits = None
 
     def showQuestDialog(self, questgiver):
+        """Instantiate and show the quest dialog for the given questgiver."""
         questdlg = QuestDialog(self._gamecontroller, questgiver)
         questdlg.widget.show()

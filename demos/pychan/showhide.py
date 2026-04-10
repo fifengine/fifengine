@@ -1,15 +1,20 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Demo for show/hide functionality on widgets."""
+
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
 
 
 class ShowHideExample(PyChanExample):
+    """Demo for show/hide functionality on widgets."""
+
     def __init__(self):
         super().__init__("gui/showhide.xml")
 
     def start(self):
+        """Start the example by loading XML and setting up show/hide callbacks."""
         self.widget = pychan.loadXML(self.xmlFile)
 
         self.text1widget = self.widget.findChild(name="text1")

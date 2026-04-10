@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Basictextwidget class."""
 
-
 from fife.extensions.pychan.attrs import UnicodeAttr
 
 from .common import gui2text, text2gui
@@ -10,18 +9,17 @@ from .widget import Widget
 
 
 class BasicTextWidget(Widget):
-    """
-    The base class for widgets which display a string - L{Label},L{Button}, etc.
+    """Base class for widgets that display a string.
+
     Do not use directly.
 
-    New Attributes
-    ==============
-
-      - text: The text (depends on actual widget)
+    Attributes
+    ----------
+    text : str
+        The text content (depends on actual widget).
 
     Data
-    ====
-
+    ----
     The text can be set via the L{distributeInitialData} method.
     """
 

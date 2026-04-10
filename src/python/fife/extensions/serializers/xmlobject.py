@@ -18,13 +18,6 @@ from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 class XMLObjectSaver:
     """Serialize a :class:`fife.Object` instance back to its XML file.
 
-    Notes
-    -----
-    - This code does not allow creation of new XML files.
-    - It does not touch atlas or animation definitions.
-    - It does not allow saving to non-well-formed XML files.
-    - It saves blocking & static flags as well as image offsets.
-
     Parameters
     ----------
     engine : fife.Engine
@@ -42,6 +35,13 @@ class XMLObjectSaver:
         Pointer to the FIFE VFS.
     change : bool
         Flag indicating if object data differs from file data.
+
+    Notes
+    -----
+    - This code does not allow creation of new XML files.
+    - It does not touch atlas or animation definitions.
+    - It does not allow saving to non-well-formed XML files.
+    - It saves blocking & static flags as well as image offsets.
     """
 
     PROCESSING_INSTRUCTION = '<?fife type="object"?>'
@@ -77,6 +77,13 @@ class XMLObjectSaver:
         -------
         bool
             True if the save was successful, False otherwise.
+
+        Raises
+        ------
+        NotFound
+            If the target file is not present in the VFS.
+        SerializerError
+            If the object has no associated filename or cannot be saved.
         """
         self.change = False
         result = False
@@ -261,10 +268,20 @@ class XMLObjectSaver:
 
 
 class XMLObjectLoader:
-    """ """
+    """Loader for XML object resources.
+
+    Provides helper methods to load and parse object XML files into the
+    FIFE model.
+    """
 
     def __init__(self, engine):
-        """ """
+        """Initialize the XMLObjectLoader.
+
+        Parameters
+        ----------
+        engine : fife.Engine
+            Initialized FIFE engine used to create objects and access managers.
+        """
         self.engine = engine
         self.imgMgr = engine.getImageManager()
         self.anim_pool = None
@@ -274,7 +291,16 @@ class XMLObjectLoader:
         self.filename = ""
 
     def loadResource(self, location):
-        """ """
+        """Load a resource from `location`.
+
+        If `location` contains a pre-parsed node it will be used, otherwise
+        the VFS is consulted to open and detect the object XML file.
+
+        Raises
+        ------
+        WrongFileType
+            If the provided file is not an object XML (detected by its header).
+        """
         self.source = location
         self.filename = self.source
         self.node = None
@@ -309,14 +335,31 @@ class XMLObjectLoader:
         self.do_load_resource(f)
 
     def do_load_resource(self, file):
-        """ """
+        """Parse a file-like object and populate `self.node`.
+
+        Parameters
+        ----------
+        file : file-like or None
+            Open file handle to parse; if `None`, no parsing is performed.
+        """
         if file:
             tree = ET.parse(file)
             self.node = tree.getroot()
         self.parse_object(self.node)
 
     def parse_object(self, object):
-        """ """
+        """Parse an `<object>` element and create the corresponding model object.
+
+        Raises
+        ------
+        InvalidFormat
+            If the provided XML node is not an `<object>` or is missing required
+            attributes.
+        NotFound
+            If a referenced parent object cannot be found in the metamodel.
+        NameClash
+            If multiple parent objects are found for the given identifier.
+        """
         if self.node.tag != "object":
             raise InvalidFormat(f"Expected <object> tag, but found <{self.node.tag}>.")
 
@@ -363,7 +406,13 @@ class XMLObjectLoader:
         self.parse_actions(object, obj)
 
     def parse_images(self, objelt, object):
-        """ """
+        """Parse `<image>` elements and attach static images to the object.
+
+        Raises
+        ------
+        InvalidFormat
+            If an `<image>` element is missing a `source` attribute.
+        """
         for image in objelt.findall("image"):
             source = image.get("source")
             if not source:
@@ -383,7 +432,13 @@ class XMLObjectLoader:
             )
 
     def parse_actions(self, objelt, object):
-        """ """
+        """Parse `<action>` elements and create action objects on `object`.
+
+        Raises
+        ------
+        InvalidFormat
+            If an `<action>` element is missing an `id` attribute.
+        """
         for action in objelt.findall("action"):
             id = action.get("id")
             if not id:
@@ -394,7 +449,13 @@ class XMLObjectLoader:
             self.parse_animations(action, act_obj)
 
     def parse_animations(self, actelt, action):
-        """ """
+        """Parse `<animation>` elements and attach animations to an action.
+
+        Raises
+        ------
+        InvalidFormat
+            If an `<animation>` element is missing a `source` attribute.
+        """
         pass
         for anim in actelt.findall("animation"):
             source = anim.get("source")

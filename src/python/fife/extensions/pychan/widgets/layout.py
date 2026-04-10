@@ -6,4 +6,16 @@ AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = list(range(5))
 
 
 def isLayouted(widget):
+    """Return whether the given widget is layouted.
+
+    Parameters
+    ----------
+    widget : Widget
+        Widget to query.
+
+    Returns
+    -------
+    bool
+        True if the widget is layouted, False otherwise.
+    """
     return widget.real_widget.isLayouted()

@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Demo for dynamic graph plotting with interactive points."""
+
 from fife import fife
 from fife.extensions import pychan
 from fife.fifechan import Point
@@ -8,10 +10,13 @@ from pychan_demo import PyChanExample
 
 
 class DynamicGraphExample(PyChanExample):
+    """Demo for dynamic graph plotting with interactive points."""
+
     def __init__(self):
         super().__init__("gui/dynamicgraph.xml")
 
     def start(self):
+        """Start the example by loading XML and setting up event handlers."""
         self.moved_point = None
         self.widget = pychan.loadXML(self.xmlFile)
         self.graph_container = self.widget.findChild(name="graphContainer")
@@ -32,6 +37,7 @@ class DynamicGraphExample(PyChanExample):
         self.widget.show()
 
     def onMousePressed(self, event):
+        """Handle mouse press events to select or add points."""
         # left button
         if event.getButton() == 1:
             result = self.findPoint(event)
@@ -46,9 +52,11 @@ class DynamicGraphExample(PyChanExample):
                 self.removePoint(result[1])
 
     def onMouseReleased(self, event):
+        """Handle mouse release events."""
         self.moved_point = None
 
     def onMouseDragged(self, event):
+        """Handle mouse drag events to move points."""
         if self.moved_point is None:
             return
 
@@ -72,6 +80,13 @@ class DynamicGraphExample(PyChanExample):
         self.setPoints(points)
 
     def findPoint(self, event):
+        """Find the point at the given event coordinates.
+
+        Returns
+        -------
+        Tuple
+            Tuple of (point, index) or (None, -1) if not found.
+        """
         point = None
         pos = -1
         thickness = self.point_graph.thickness
@@ -90,17 +105,18 @@ class DynamicGraphExample(PyChanExample):
         return (point, pos)
 
     def addPoint(self, event):
-        points = self.point_graph.coordinates
+        """Add a new point at the event coordinates."""
         point = Point(event.getX(), event.getY())
-        points.append(point)
-        self.setPoints(points)
+        self.point_graph.coordinates.append(point)
+        self.setPoints(self.point_graph.coordinates)
 
     def removePoint(self, index):
-        points = self.point_graph.coordinates
-        del points[index]
-        self.setPoints(points)
+        """Remove the point at the given index."""
+        del self.point_graph.coordinates[index]
+        self.setPoints(self.point_graph.coordinates)
 
     def setPoints(self, points):
+        """Update all graph coordinates with the given points."""
         self.point_graph.coordinates = points
         self.line_graph.coordinates = points
         self.curve_graph.coordinates = points

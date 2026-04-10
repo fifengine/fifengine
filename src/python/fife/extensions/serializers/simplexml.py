@@ -87,7 +87,13 @@ class SimpleXMLSerializer(SimpleSerializer):
         self._initialized = False
 
     def load(self, filename=None):
-        """Load settings from a file."""
+        """Load settings from a file.
+
+        Raises
+        ------
+        SerializerError
+            If no filename is specified or the file cannot be created/loaded.
+        """
         if filename:
             self._file = filename
 
@@ -108,7 +114,13 @@ class SimpleXMLSerializer(SimpleSerializer):
         self._initialized = True
 
     def save(self, filename=None):
-        """Save settings to a file."""
+        """Save settings to a file.
+
+        Raises
+        ------
+        SerializerError
+            If no filename is available for saving.
+        """
         if not self._initialized:
             self.load()
 
@@ -121,7 +133,13 @@ class SimpleXMLSerializer(SimpleSerializer):
         self._tree.write(savefile, encoding="UTF-8", xml_declaration=True)
 
     def getValue(self, e_type, e_value):
-        """Convert a value from string to the appropriate type."""
+        """Convert a value from string to the appropriate type.
+
+        Returns
+        -------
+        object
+            The converted value using the type indicated by ``e_type``.
+        """
         if e_type == "int":
             return int(e_value)
         elif e_type == "float":
@@ -138,7 +156,18 @@ class SimpleXMLSerializer(SimpleSerializer):
         return e_value
 
     def get(self, module, name, defaultValue=None):
-        """Get a setting value from the XML file."""
+        """Get a setting value from the XML file.
+
+        Returns
+        -------
+        object
+            Converted setting value or ``defaultValue`` if not found.
+
+        Raises
+        ------
+        AttributeError
+            If ``name`` is not a string.
+        """
         if not self._initialized:
             self.load()
 
@@ -174,7 +203,13 @@ class SimpleXMLSerializer(SimpleSerializer):
         return self.getValue(e_type, e_value)
 
     def set(self, module, name, value, extra_attrs=None):
-        """Set a setting value in the XML file."""
+        """Set a setting value in the XML file.
+
+        Raises
+        ------
+        AttributeError
+            If ``name`` is not a string.
+        """
         if extra_attrs is None:
             extra_attrs = {}
 
@@ -220,7 +255,13 @@ class SimpleXMLSerializer(SimpleSerializer):
             elm.text = str_value
 
     def remove(self, module, name):
-        """Remove a setting from the XML file."""
+        """Remove a setting from the XML file.
+
+        Raises
+        ------
+        AttributeError
+            If ``name`` is not a string.
+        """
         if not self._initialized:
             self.load()
 
@@ -235,7 +276,13 @@ class SimpleXMLSerializer(SimpleSerializer):
                 moduleTree.remove(e)
 
     def getModuleNameList(self):
-        """Get a list of module names in the file."""
+        """Get a list of module names in the file.
+
+        Returns
+        -------
+        list
+            List of module names present in the settings file.
+        """
         if not self._initialized:
             self.load()
 
@@ -247,7 +294,13 @@ class SimpleXMLSerializer(SimpleSerializer):
         return moduleNames
 
     def getAllSettings(self, module):
-        """Get all settings for a module."""
+        """Get all settings for a module.
+
+        Returns
+        -------
+        dict
+            Mapping of setting names to converted values for the given module.
+        """
         settingsFromFile = {}
         if not self._initialized:
             self.load()

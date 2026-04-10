@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Buttons class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr
 from fife.extensions.pychan.properties import ImageProperty
@@ -12,15 +11,16 @@ from .common import get_manager
 
 
 class Button(BasicTextWidget):
-    """
-    A basic push button.
+    """A basic push button.
 
-    New Attributes
-    ==============
-
-      - active: Bool: If false the button is inactiv then it looks gray.
-      - alignment: Int: Sets the alignment of the caption. The alignment is relative to the center of the button.
-      - offset: Point: The offset of the caption when the button is pressed.
+    Attributes
+    ----------
+    active : bool
+        If false the button is inactive and looks gray.
+    alignment : int
+        Alignment of the caption relative to the center.
+    offset : tuple
+        Offset of the caption when the button is pressed.
     """
 
     ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
@@ -122,6 +122,18 @@ class Button(BasicTextWidget):
             self.offset = self.DEFAULT_OFFSET
 
     def clone(self, prefix):
+        """Create a clone of this Button with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        Button
+            A new Button instance with the same properties.
+        """
         btnClone = Button(
             None,
             self._createNameWithPrefix(prefix),
@@ -200,15 +212,20 @@ class ImageButton(Button):
     """
     A basic push button with six different images for the up, down and hover state.
 
-    New Attributes
-    ==============
-
-      - up_image: String: The source location of the Image for the B{unpressed} state.
-      - down_image: String: The source location of the Image for the B{pressed} state.
-      - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
-      - in_up_image: String: The source location of the Image for the B{unpressed} inactive state.
-      - in_down_image: String: The source location of the Image for the B{pressed} inactive state.
-      - in_hover_image: String: The source location of the Image for the B{unpressed hovered} inactive state.
+    Attributes
+    ----------
+    up_image : str
+        Source of the image for the unpressed state.
+    down_image : str
+        Source of the image for the pressed state.
+    hover_image : str
+        Source of the image for the hovered state.
+    in_up_image : str
+        Source of the image for the inactive unpressed state.
+    in_down_image : str
+        Source of the image for the inactive pressed state.
+    in_hover_image : str
+        Source of the image for the inactive hovered state.
     """
 
     ATTRIBUTES = Button.ATTRIBUTES + [
@@ -319,7 +336,18 @@ class ImageButton(Button):
         # if offset is not None: self.offset = offset
 
     def clone(self, prefix):
+        """Create a clone of this ImageButton with a name prefix.
 
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        ImageButton
+            A new ImageButton instance with the same properties.
+        """
         imgButtonClone = ImageButton(
             None,
             self._createNameWithPrefix(prefix),
@@ -371,15 +399,16 @@ class ToggleButton(ImageButton):
     """
     A basic push button that can be toggled.
 
-    New Attributes
-    ==============
-
-      - group: String: The group the button belongs to. Only one button in each group will be toggled at one time.
-      - toggled: Boolean: Whether the button is toggled or not.
+    Attributes
+    ----------
+    group : str
+        The group the button belongs to. Only one button in each group will be toggled at a time.
+    toggled : bool
+        Whether the button is toggled or not.
 
     Data
-    ====
-    The toggled status can be read and set via L{distributeData} and L{collectData}
+    ----
+    The toggled status can be read and set via L{distributeData} and L{collectData}.
     """
 
     ATTRIBUTES = ImageButton.ATTRIBUTES + [Attr("group"), BoolAttr("toggled")]
@@ -485,6 +514,18 @@ class ToggleButton(ImageButton):
         self._realSetData = self._setToggled
 
     def clone(self, prefix):
+        """Create a clone of this ToggleButton with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        ToggleButton
+            A new ToggleButton instance with the same properties.
+        """
         toggleButtonClone = ToggleButton(
             None,
             self._createNameWithPrefix(prefix),

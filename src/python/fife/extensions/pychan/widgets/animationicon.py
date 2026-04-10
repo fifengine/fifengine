@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Animationicon class."""
 
-
 from fife import fife, fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.internal import get_manager
@@ -12,16 +11,22 @@ from .widget import Widget
 
 
 class AnimationIcon(Widget):
-    """
-    An animation icon.
+    """Animation icon widget.
 
-    New Attributes
-    ==============
-
-      - animation: String : The source location of the Animation xml.
-      - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
-      - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
-      - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
+    Attributes
+    ----------
+    animation : str
+        The source location of the animation XML.
+    scale : bool
+        True if the image should be scaled to widget size.
+    tile : bool
+        True if the image should be tiled to widget size.
+    opaque : bool
+        True if the icon background should be drawn.
+    repeating : bool
+        Whether the animation repeats by default.
+    play : bool
+        Whether to start playback automatically.
     """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
@@ -147,6 +152,18 @@ class AnimationIcon(Widget):
             self.size = size
 
     def clone(self, prefix):
+        """Create a clone of this AnimationIcon with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        AnimationIcon
+            A new AnimationIcon instance with the same properties.
+        """
         iconClone = AnimationIcon(
             None,
             self._createNameWithPrefix(prefix),
@@ -231,15 +248,25 @@ class AnimationIcon(Widget):
     repeating = property(_getRepeating, _setRepeating)
 
     def startPlaying(self):
+        """Start playback of the animation."""
         self.real_widget.play()
 
     def isPlaying(self):
+        """Return whether the animation is currently playing.
+
+        Returns
+        -------
+        bool
+            True if the animation is currently playing, False otherwise.
+        """
         return self.real_widget.isPlaying()
 
     def pausePlaying(self):
+        """Pause animation playback."""
         self.real_widget.pause()
 
     def stopPlaying(self):
+        """Stop animation playback."""
         self.real_widget.stop()
 
     def _setPlaying(self, play):

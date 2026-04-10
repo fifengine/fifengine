@@ -1,22 +1,20 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""pychan demo app for testing rgba colors on widgets"""
+"""Pychan demo app for testing RGBA colors on widgets."""
 
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
 
 
 class ColorExample(PyChanExample):
-    """a small app (^^) to show how fifechan uses colors on various widgets"""
+    """Small app to demonstrate how FIFE uses colors on various widgets."""
 
     def __init__(self):
         super().__init__("gui/colortester.xml")
 
     def start(self):
-        """
-        load XML file and setup callbacks
-        """
+        """Load the XML file and set up callbacks."""
         self.widget = pychan.loadXML(self.xmlFile)
         self.widget.mapEvents(
             {
@@ -53,9 +51,7 @@ class ColorExample(PyChanExample):
         self.widget.show()
 
     def update_basecolor(self):
-        """
-        Update rgba base colors of all examples and show the values
-        """
+        """Update RGBA base colors of all examples and show the values."""
         r = int(self.widget.findChild(name="base_rslider").value)
         g = int(self.widget.findChild(name="base_gslider").value)
         b = int(self.widget.findChild(name="base_bslider").value)
@@ -80,9 +76,7 @@ class ColorExample(PyChanExample):
         self.widget.findChild(name="example9").base_color = rgba
 
     def update_background_color(self):
-        """
-        Update rgba background colors of all examples and show the values
-        """
+        """Update RGBA background colors of all examples and show the values."""
         r = int(self.widget.findChild(name="background_rslider").value)
         g = int(self.widget.findChild(name="background_gslider").value)
         b = int(self.widget.findChild(name="background_bslider").value)
@@ -107,9 +101,7 @@ class ColorExample(PyChanExample):
         self.widget.findChild(name="example9").background_color = rgba
 
     def update_selection_color(self):
-        """
-        Update rgba selection colors of all examples and show the values
-        """
+        """Update RGBA selection colors of all examples and show the values."""
         r = int(self.widget.findChild(name="selection_rslider").value)
         g = int(self.widget.findChild(name="selection_gslider").value)
         b = int(self.widget.findChild(name="selection_bslider").value)
@@ -134,9 +126,7 @@ class ColorExample(PyChanExample):
         self.widget.findChild(name="example9").selection_color = rgba
 
     def update_foreground_color(self):
-        """
-        Update rgba foreground colors of all examples and show the values
-        """
+        """Update RGBA foreground colors of all examples and show the values."""
         r = int(self.widget.findChild(name="foreground_rslider").value)
         g = int(self.widget.findChild(name="foreground_gslider").value)
         b = int(self.widget.findChild(name="foreground_bslider").value)

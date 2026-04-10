@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Checkbox class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
@@ -12,19 +11,20 @@ from .common import get_manager
 
 
 class CheckBox(ImageButton):
-    """
-    A basic checkbox.
+    """A basic checkbox widget.
 
-    New Attributes
-    ==============
-
-      - marked: Boolean value, whether the checkbox is checked or not.
-      - marker_style: Integer: The visual style of the marker.
-      - background_image: String: Optional image for the background, the size should also include the caption.
+    Attributes
+    ----------
+    marked : bool
+        Whether the checkbox is checked.
+    marker_style : int
+        Visual style of the marker.
+    background_image : str
+        Optional background image path or GuiImage.
 
     Data
-    ====
-    The marked status can be read and set via L{distributeData} and L{collectData}
+    ----
+    The marked status can be read and set via L{distributeData} and L{collectData}.
     """
 
     ATTRIBUTES = ImageButton.ATTRIBUTES + [
@@ -146,6 +146,18 @@ class CheckBox(ImageButton):
         self._realSetData = self._setMarked
 
     def clone(self, prefix):
+        """Create a clone of this CheckBox with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        CheckBox
+            A new CheckBox instance with the same properties.
+        """
         checkboxClone = CheckBox(
             None,
             self._createNameWithPrefix(prefix),

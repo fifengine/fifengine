@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Spacer class."""
 
-
 from fife import fifechan
 
 from .widget import Widget
@@ -88,6 +87,13 @@ class Spacer(Widget):
             self.vexpand = self.DEFAULT_VEXPAND
 
     def clone(self, prefix):
+        """Create a clone of this Spacer with a name prefix.
+
+        Returns
+        -------
+        Spacer
+            New Spacer instance cloned from this one.
+        """
         spacerClone = Spacer(
             None,
             self._createNameWithPrefix(prefix),

@@ -12,15 +12,15 @@ fileExtensions = {"xml"}
 
 
 def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
-    """Load map file and get (an optional) callback if major stuff is done:
+    """Load map file and get (an optional) callback if major stuff is done.
 
-            - map creation
-            - parsed imports
-            - parsed layers
-            - parsed cameras
+    - map creation
+    - parsed imports
+    - parsed layers
+    - parsed cameras
 
-            the callback will send both a string and a float (which shows
-            the overall process), callback(string, float)
+    the callback will send both a string and a float (which shows
+    the overall process), callback(string, float)
 
     Parameters
     ----------

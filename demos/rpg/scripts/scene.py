@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""Scene handling utilities for the RPG demo."""
 
 import os
 import uuid
@@ -18,7 +19,10 @@ from scripts.objects.items import GoldStack, Portal
 
 
 class Scene(Serializer):
+    """Manage map loading, objects, and scene lifecycle."""
+
     def __init__(self, gamecontroller):
+        """Initialize a Scene with a reference to the GameController."""
         self._gamecontroller = gamecontroller
 
         self._map = None
@@ -44,6 +48,23 @@ class Scene(Serializer):
         )
 
     def loadObject(self, objectname, objectid=None, valuedict=None):
+        """Load an object by template name and return a new instance.
+
+        If `objectid` is provided it will be used; otherwise a new id is generated.
+        If `valuedict` is supplied it overrides the loaded default values.
+
+        Returns
+        -------
+        object or None
+            The created object instance, or ``None`` if the object's type is
+            not recognised.
+
+        Raises
+        ------
+        ObjectNotFoundError
+            If the object template or its model cannot be found in the model
+            settings.
+        """
         if objectid:
             identifier = objectid
         else:
@@ -108,6 +129,7 @@ class Scene(Serializer):
         return newobject
 
     def loadObjects(self, mapfilename):
+        """Load all objects defined in the object settings for the map."""
         for obj in self._objectsettings.get("objects", "objectlist", []):
             try:
                 objdict = self._objectsettings.get("objects", obj, {})
@@ -129,9 +151,7 @@ class Scene(Serializer):
                 continue
 
     def createPlayerObject(self):
-        """
-        @todo: once we have all art assets this should be able to load one of 3 player models
-        """
+        """Create the player object and load saved player state if available."""
         modeldict = self._modelsettings.get("models", "Player", {})
 
         print(f"loading: {modeldict['file']}")
@@ -146,6 +166,7 @@ class Scene(Serializer):
             self._player.deserialize(pvals)
 
     def createScene(self, mapname):
+        """Create and initialize the scene for the given map name."""
         mapfilename = os.path.join("maps", mapname + ".xml")
 
         if self._map:
@@ -188,6 +209,7 @@ class Scene(Serializer):
         self.createPlayerObject()
 
     def destroyScene(self):
+        """Destroy the current scene and clean up loaded resources."""
         for obj in list(self._objectlist.values()):
             obj.destroy()
 
@@ -217,8 +239,12 @@ class Scene(Serializer):
         self._modelsettings = None
 
     def getInstancesAt(self, clickpoint, layer):
-        """
-        Query the main camera for instances on the specified layer.
+        """Return a list of instances on the specified layer at the screen point.
+
+        Returns
+        -------
+        list
+            A list of matching instances at the given screen point and layer.
         """
         screen_point = fife.Point3D(int(clickpoint.x), int(clickpoint.y), 0)
         return self.cameras[self._maincameraname].getMatchingInstances(
@@ -226,9 +252,13 @@ class Scene(Serializer):
         )
 
     def getLocationAt(self, clickpoint):
-        """
-        Query the main camera for the Map location (on the actor layer)
-        that a screen point refers to.
+        """Return the map Location corresponding to a screen point.
+
+        Returns
+        -------
+        fife.Location
+            A `fife.Location` instance corresponding to the given screen
+            coordinates.
         """
         screen_point = fife.Point3D(int(clickpoint.x), int(clickpoint.y), 0)
         target_mapcoord = self._cameras[self._maincameraname].toMapCoordinates(
@@ -240,16 +270,31 @@ class Scene(Serializer):
         return location
 
     def getObject(self, objid):
-        """
-        Throws ObjectNotFoundError when an object cannot be found on the scene
-        """
+        """Get an object by its id.
 
+        Returns
+        -------
+        object
+            The object with the given id.
+
+        Raises
+        ------
+        ObjectNotFoundError
+            If the object with `objid` cannot be found on the scene.
+        """
         try:
             return self._objectlist[objid]
         except KeyError:
             raise ObjectNotFoundError(objid + " was not found on the scene.")
 
     def addObjectToScene(self, obj):
+        """Add `obj` to the scene, raising if it is already present.
+
+        Raises
+        ------
+        ObjectAlreadyInSceneError
+            If an object with the same id already exists in the scene.
+        """
         if obj.id not in self._objectlist:
             self._objectlist[obj.id] = obj
         else:
@@ -257,10 +302,13 @@ class Scene(Serializer):
             raise ObjectAlreadyInSceneError
 
     def removeObjectFromScene(self, obj):
-        """
-        Throws ObjectNotFoundError when an object cannot be found on the scene
-        """
+        """Remove `obj` from the scene.
 
+        Raises
+        ------
+        ObjectNotFoundError
+            If the object to remove is not present in the scene.
+        """
         obj.destroy()
 
         try:
@@ -272,6 +320,7 @@ class Scene(Serializer):
             )
 
     def serialize(self):
+        """Serialize the current scene and player state to save files."""
         filename = os.path.join("saves", self._mapname + "_save.xml")
         playerfilename = os.path.join("saves", "player_save.xml")
         map_settings = SimpleXMLSerializer(filename)
@@ -293,10 +342,12 @@ class Scene(Serializer):
         player_settings.save()
 
     def deserialize(self):
+        """Deserialize scene data; recreate the scene if a map name is set."""
         if self._mapname:
             self.createScene(self._mapname)
 
     def updateScene(self):
+        """Update the scene each frame (placeholder)."""
         pass
 
     def _getActorLayer(self):

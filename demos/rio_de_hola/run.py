@@ -7,6 +7,8 @@
 # This is the rio de hola client for FIFE.
 # -------------------------------------------------------------------------------
 
+"""Rio de Hola demo application."""
+
 import cProfile
 import os
 
@@ -27,22 +29,29 @@ TDS = FifePychanSettings(app_name="rio_de_hola", settings_file="./settings.xml")
 
 
 class KeyFilter(fife.IKeyFilter):
-    """
-    This is the implementation of the fife.IKeyFilter class.
-
-    Prevents any filtered keys from being consumed by fifechan.
-    """
+    """Filter a set of keys from being consumed by the UI."""
 
     def __init__(self, keys):
+        """Initialize the key filter with the provided key values."""
         fife.IKeyFilter.__init__(self)
         self._keys = keys
 
     def isFiltered(self, event):
+        """Return True if the event's key value is in the filter set.
+
+        Returns
+        -------
+        bool
+            True when the event's key value is in the filter set, otherwise False.
+        """
         return event.getKey().getValue() in self._keys
 
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
+    """Application-level event listener that connects UI and world."""
+
     def __init__(self, engine, world):
+        """Create the listener, register key filters and show the root panel."""
         super().__init__(
             engine,
             regKeys=True,
@@ -72,7 +81,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
         self.rootpanel.show()
 
     def keyPressed(self, evt):
-        print(evt)
+        """Handle key pressed events for application shortcuts."""
         keyval = evt.getKey().getValue()
         keystr = evt.getKey().getAsString().lower()
         if keyval == fife.Key.ESCAPE:
@@ -86,11 +95,19 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
             evt.consume()
 
     def onCommand(self, command):
+        """Handle dispatched commands such as quit requests."""
         if command.getCommandType() == fife.CMD_QUIT_GAME:
             self.quit = True
             command.consume()
 
     def onConsoleCommand(self, command):
+        """Execute a console command and return its result string.
+
+        Returns
+        -------
+        str
+            Result or response string from the executed command.
+        """
         result = ""
         if command.lower() in ("quit", "exit"):
             self.quit = True
@@ -110,12 +127,14 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
         return result
 
     def onQuitButtonPress(self):
+        """Dispatch a quit command to the engine when Quit is pressed."""
         cmd = fife.Command()
         cmd.setSource(None)
         cmd.setCommandType(fife.CMD_QUIT_GAME)
         self.engine.getEventManager().dispatchCommand(cmd)
 
     def onAboutButtonPress(self):
+        """Show the About/help window when About is pressed."""
         if not self.aboutWindow:
             self.aboutWindow = pychan.loadXML("gui/help.xml")
             self.aboutWindow.mapEvents({"closeButton": self.aboutWindow.hide})
@@ -126,7 +145,10 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 
 
 class IslandDemo(PychanApplicationBase):
+    """Demo application that hosts the world and application listener."""
+
     def __init__(self):
+        """Initialize application, VFS, world and listener."""
         super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
         self.world = world.World(self.engine)
@@ -134,9 +156,11 @@ class IslandDemo(PychanApplicationBase):
         self.world.load(str(TDS.get("rio", "MapFile")))
 
     def createListener(self):
+        """No-op: listener is created in the constructor."""
         pass  # already created in constructor
 
     def _pump(self):
+        """Run a single pump tick, saving the map on quit requests."""
         if self.listener.quit:
             self.breakRequested = True
 
@@ -154,6 +178,7 @@ class IslandDemo(PychanApplicationBase):
 
 
 def main():
+    """Create and run an `IslandDemo` application."""
     app = IslandDemo()
     app.run()
 

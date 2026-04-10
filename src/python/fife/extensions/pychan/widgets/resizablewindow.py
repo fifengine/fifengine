@@ -13,9 +13,8 @@ class ResizableWindow(Window):
     """
     Window class that supports resizing.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - resizable: Allows resizing with the mouse. If disabled all the side parameters are ignored.
       - top_resizable: If true, the window can be resized at the top side.
       - right_resizable: If true, the window can be resized at the right side.
@@ -172,6 +171,13 @@ class ResizableWindow(Window):
             self.cursors = cursors
 
     def clone(self, prefix):
+        """Create a clone of this ResizableWindow with a name prefix.
+
+        Returns
+        -------
+        ResizableWindow
+            A new ResizableWindow instance cloned from this one.
+        """
         windowClone = ResizableWindow(
             None,
             self._createNameWithPrefix(prefix),
@@ -280,9 +286,17 @@ class ResizableWindow(Window):
             return self.real_widget.getAnimation(direction)
 
     def setCursor(self, direction, cursor):
+        """Set a cursor for the given direction."""
         self._setCursor(direction, cursor)
 
     def getCursor(self, direction):
+        """Get the cursor for the given direction.
+
+        Returns
+        -------
+        object
+            The cursor object (id, image or animation) for the given direction.
+        """
         return self._getCursor(direction)
 
     def _setCursors(self, cursors):

@@ -20,11 +20,19 @@ from fife import fife
 
 
 def deprecated(revision, message):
+    """Print a deprecation warning."""
     print(f"fife_compat: Deprecation warning - See revision {revision} ")
     print(" - ", message)
 
 
 def this_is_deprecated(func, revision=0, message=None):
+    """Wrap a function to print a deprecation warning when called.
+
+    Returns
+    -------
+    callable
+        A wrapper that calls the original function after emitting a deprecation warning.
+    """
     if message is None:
         message = repr(func) + " is deprecated."
 

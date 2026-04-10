@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Power-up objects for the shooter demo."""
+
 from fife import fife  # noqa: F401
 
 from scripts.common.baseobject import SHTR_POWERUP, SpaceObject
@@ -10,6 +12,8 @@ from scripts.weapons import CannonSpread5
 
 
 class PowerUp(SpaceObject):
+    """Base class for power-up objects that affect the player."""
+
     def __init__(self, scene, powerupName, instance, findInstance=True):
         super().__init__(scene, powerupName, findInstance)
 
@@ -20,11 +24,14 @@ class PowerUp(SpaceObject):
         self.height = 0.025
 
     def applyPowerUp(self, ship):
+        """Apply the power-up effect to the given ship and remove it."""
         self.destroy()
         self._scene.queueObjectForRemoval(self)
 
 
 class CannonSpread5PU(PowerUp):
+    """Power-up that grants a cannon spread weapon to the player."""
+
     def __init__(self, scene, powerupName, instance, findInstance=True):
         super().__init__(scene, powerupName, instance, findInstance)
 
@@ -37,12 +44,14 @@ class CannonSpread5PU(PowerUp):
         self._pickupclip.setRelativePositioning(True)
 
     def applyPowerUp(self, ship):
+        """Grant the cannon spread weapon to the ship and remove the power-up."""
         ship.weapon = CannonSpread5(self._scene, ship, 300)
         self._pickupclip.play()
         self.destroy()
         self._scene.queueObjectForRemoval(self)
 
     def update(self):
+        """Update power-up movement and timing."""
         if self._dir == 1:
             self._velocity.y = -0.25
         elif self._dir == 0:
@@ -62,6 +71,8 @@ class CannonSpread5PU(PowerUp):
 
 
 class ExtraLifePU(PowerUp):
+    """Power-up that grants an extra life to the player."""
+
     def __init__(self, scene, powerupName, instance, findInstance=True):
         super().__init__(scene, powerupName, instance, findInstance)
 
@@ -69,6 +80,7 @@ class ExtraLifePU(PowerUp):
         self._pickupclip.setRelativePositioning(True)
 
     def applyPowerUp(self, ship):
+        """Increase the ship's lives and remove the power-up."""
         ship.lives += 1
         self._pickupclip.play()
         self.destroy()

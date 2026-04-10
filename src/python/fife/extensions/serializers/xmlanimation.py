@@ -1,12 +1,32 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""XML animation serializer."""
 
 from fife import fife
 from fife.extensions.serializers import ET, InvalidFormat
 
 
 def loadXMLAnimation(engine, filename):
+    """Load an XML animation file and return an Animation object.
+
+    Parameters
+    ----------
+    engine : fife.Engine
+        FIFE engine instance used to access VFS and managers.
+    filename : str
+        Path to the animation XML file.
+
+    Returns
+    -------
+    animation
+        The created or existing Animation object.
+
+    Raises
+    ------
+    InvalidFormat
+        If the animation XML is missing required elements such as <frame>.
+    """
     f = engine.getVFS().open(filename)
     f.thisown = 1
 

@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Slider class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import FloatAttr, IntAttr
 
@@ -10,21 +9,19 @@ from .widget import Widget
 
 
 class Slider(Widget):
-    """A slider widget
+    """A slider widget.
 
     Use a callback to read out the slider value every time the marker
     is moved.
 
-    New Attributes
-    ==============
+    Attributes
+    ----------
+    - orientation: 1 = horizontal, 0=vertical
+    - scale_start: float: default 0.0
+    - scale_end: float: default 1.0
+    - step_length: float: default scale_end/10
+    - marker_length: int: default 10
 
-      - orientation: 1 = horizontal, 0=vertical
-      - scale_start: float: default 0.0
-      - scale_end: float: default 1.0
-      - step_length: float: default scale_end/10
-      - marker_length: int: default 10
-    FIXME:
-            - update docstrings
     """
 
     HORIZONTAL = fifechan.Slider.Orientation_Horizontal
@@ -134,6 +131,13 @@ class Slider(Widget):
         self._realGetData = self._getValue
 
     def clone(self, prefix):
+        """Create a clone of this Slider with a name prefix.
+
+        Returns
+        -------
+        Slider
+            A new Slider instance cloned from this one.
+        """
         sliderClone = Slider(
             None,
             self._createNameWithPrefix(prefix),
@@ -169,7 +173,13 @@ class Slider(Widget):
         return sliderClone
 
     def _setScale(self, start, end):
-        """setScale(self, double scaleStart, double scaleEnd)"""
+        """setScale(self, double scaleStart, double scaleEnd).
+
+        Raises
+        ------
+        RuntimeError
+            If `start` or `end` is not a float.
+        """
         if type(start) is not float:
             raise RuntimeError("Slider expects float for start scale")
         if type(end) is not float:
@@ -177,11 +187,23 @@ class Slider(Widget):
         self.real_widget.setScale(start, end)
 
     def _getScaleStart(self):
-        """getScaleStart(self) -> double"""
+        """getScaleStart(self) -> double.
+
+        Returns
+        -------
+        float
+            The start value of the scale.
+        """
         return self.real_widget.getScaleStart()
 
     def _setScaleStart(self, start):
-        """setScaleStart(self, double scaleStart)"""
+        """setScaleStart(self, double scaleStart).
+
+        Raises
+        ------
+        RuntimeError
+            If `start` is not a float.
+        """
         if type(start) is not float:
             raise RuntimeError("Slider expects float for start scale")
         self.real_widget.setScaleStart(start)
@@ -189,11 +211,23 @@ class Slider(Widget):
     scale_start = property(_getScaleStart, _setScaleStart)
 
     def _getScaleEnd(self):
-        """getScaleEnd(self) -> double"""
+        """Get the scale end value.
+
+        Returns
+        -------
+        float
+            Scale end value.
+        """
         return self.real_widget.getScaleEnd()
 
     def _setScaleEnd(self, end):
-        """setScaleEnd(self, double scaleEnd)"""
+        """Set the end of the scale.
+
+        Raises
+        ------
+        RuntimeError
+            If ``end`` is not a float.
+        """
         if type(end) is not float:
             raise RuntimeError("Slider expects float for end scale")
         self.real_widget.setScaleEnd(end)
@@ -201,11 +235,23 @@ class Slider(Widget):
     scale_end = property(_getScaleEnd, _setScaleEnd)
 
     def _getValue(self):
-        """getValue(self) -> double"""
+        """Get current slider value.
+
+        Returns
+        -------
+        float
+            Current slider value.
+        """
         return self.real_widget.getValue()
 
     def _setValue(self, value):
-        """setValue(self, double value)"""
+        """Set the slider value.
+
+        Raises
+        ------
+        RuntimeError
+            If ``value`` is not a float.
+        """
         if type(value) is not float:
             raise RuntimeError("Slider only accepts float values")
         self.real_widget.setValue(value)
@@ -213,35 +259,65 @@ class Slider(Widget):
     value = property(_getValue, _setValue)
 
     def _setMarkerLength(self, length):
-        """setMarkerLength(self, int length)"""
+        """Set the marker length.
+
+        Raises
+        ------
+        RuntimeError
+            If ``length`` is not an int.
+        """
         if type(length) is not int:
             raise RuntimeError("Slider only accepts int for Marker length")
         self.real_widget.setMarkerLength(length)
 
     def _getMarkerLength(self):
-        """getMarkerLength(self) -> int"""
+        """Get the marker length.
+
+        Returns
+        -------
+        int
+            Marker length in pixels.
+        """
         return self.real_widget.getMarkerLength()
 
     marker_length = property(_getMarkerLength, _setMarkerLength)
 
     def _setOrientation(self, orientation):
-        """setOrientation(self, Orientation orientation)"""
+        """setOrientation(self, Orientation orientation)."""
         self.real_widget.setOrientation(orientation)
 
     def _getOrientation(self):
-        """getOrientation(self) -> int"""
+        """Get slider orientation.
+
+        Returns
+        -------
+        int
+            Orientation constant from the real widget.
+        """
         return self.real_widget.getOrientation()
 
     orientation = property(_getOrientation, _setOrientation)
 
     def _setStepLength(self, length):
-        """setStepLength(self, double length)"""
+        """Set the step length for the slider.
+
+        Raises
+        ------
+        RuntimeError
+            If ``length`` is not a float.
+        """
         if type(length) is not float:
             raise RuntimeError("Slider only accepts floats for step length")
         self.real_widget.setStepLength(length)
 
     def _getStepLength(self):
-        """getStepLength(self) -> double"""
+        """Get the slider step length.
+
+        Returns
+        -------
+        float
+            Step length value.
+        """
         return self.real_widget.getStepLength()
 
     step_length = property(_getStepLength, _setStepLength)

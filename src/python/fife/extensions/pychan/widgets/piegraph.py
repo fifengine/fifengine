@@ -11,6 +11,8 @@ from .widget import Widget
 
 
 class PieSegment:
+    """Representation of a pie segment used by :class:`PieGraph`."""
+
     def __init__(self, pie, start, stop, color):
         self.pie = weakref.ref(pie)
         self.start = start
@@ -54,11 +56,10 @@ class PieSegment:
 
 
 class PieGraph(Widget):
-    """A pie graph widget
+    """A pie graph widget.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - coordinates: int list: x and y coordinates
       - thickness': int: Line thickness, default 1
       - pie_color: color: Pie color
@@ -153,6 +154,13 @@ class PieGraph(Widget):
             self.segments = segments
 
     def clone(self, prefix):
+        """Create a clone of this PieGraph with a name prefix.
+
+        Returns
+        -------
+        PieGraph
+            A new PieGraph instance cloned from this one.
+        """
         pieGraphClone = PieGraph(
             None,
             self._createNameWithPrefix(prefix),
@@ -187,6 +195,7 @@ class PieGraph(Widget):
         return pieGraphClone
 
     def update(self):
+        """Update the real widget to reflect current segments."""
         self.real_widget.clearSegments()
         for s in self._segments:
             self.real_widget.addSegment(s.start_angle, s.stop_angle, s.color)
@@ -220,6 +229,7 @@ class PieGraph(Widget):
     radius = property(_getRadius, _setRadius)
 
     def addSegment(self, start, stop, color):
+        """Add a pie segment defined by start/stop angles and color."""
         segment = PieSegment(self, start, stop, color)
         self._segments.append(segment)
         self.real_widget.addSegment(
@@ -227,6 +237,7 @@ class PieGraph(Widget):
         )
 
     def removeSegment(self, start, stop, color):
+        """Remove a matching pie segment if present."""
         tmp_color = color
         if isinstance(color, tuple):
             tmp_color = fifechan.Color(*color)
@@ -238,6 +249,7 @@ class PieGraph(Widget):
                 break
 
     def clearSegments(self):
+        """Clear all pie segments from this widget and real widget."""
         self._segments = []
         self.real_widget.clearSegments()
 

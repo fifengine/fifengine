@@ -41,7 +41,13 @@ class Shape:
         self.reflections = self.create_shape_reflections()
 
     def create_shape_reflections(self):
-        """Create reflections of the shape for visualization."""
+        """Create reflections of the shape for visualization.
+
+        Returns
+        -------
+        list[list[tuple]]
+            A list of reflected point lists for the shape.
+        """
         reflections = []
         sides = len(self.shape_pts)
         if sides == 4:
@@ -88,7 +94,18 @@ class Shape:
             self.zoomval = 150
 
     def transform_pts(self, pts):
-        """Transform points by rotation, tilt, and zoom."""
+        """Transform points by rotation, tilt, and zoom.
+
+        Parameters
+        ----------
+        pts : iterable[tuple]
+            Iterable of (x, y, z) tuples to transform.
+
+        Returns
+        -------
+        list[tuple]
+            Transformed (x, y) screen coordinate tuples.
+        """
         rotated_pts = []
         for x, y, z in pts:
             rotated_pts.append(
@@ -119,11 +136,28 @@ class Shape:
         return zoomed_pts
 
     def get_screen_pts(self):
-        """Get transformed shape points for screen rendering."""
+        """Get transformed shape points for screen rendering.
+
+        Returns
+        -------
+        list[tuple]
+            Screen-space points for the current shape.
+        """
         return self.transform_pts(self.shape_pts)
 
     def get_screen_bounding_box(self, screenpts):
-        """Get the bounding box for the given screen points."""
+        """Get the bounding box for the given screen points.
+
+        Parameters
+        ----------
+        screenpts : list[tuple]
+            Sequence of screen-space point tuples.
+
+        Returns
+        -------
+        tuple[tuple,int]
+            ((x1, y1), (x2, y2)) coordinates of the bounding box.
+        """
         x2, y2 = x1, y1 = screenpts[0]
         for pt in screenpts:
             x1, y1 = min(x1, pt[0]), min(y1, pt[1])
@@ -131,15 +165,33 @@ class Shape:
         return (x1, y1), (x2, y2)
 
     def get_reflections(self):
-        """Get transformed reflection points for screen rendering."""
+        """Get transformed reflection points for screen rendering.
+
+        Returns
+        -------
+        list[list[tuple]]
+            Transformed reflections as lists of screen-space point tuples.
+        """
         return [self.transform_pts(reflection) for reflection in self.reflections]
 
     def get_tilting(self):
-        """Get the current tilting angle in degrees."""
+        """Get the current tilting angle in degrees.
+
+        Returns
+        -------
+        float
+            Tilting angle in degrees.
+        """
         return math.degrees(self.tilting)
 
     def get_rotation(self):
-        """Get the current rotation angle in degrees."""
+        """Get the current rotation angle in degrees.
+
+        Returns
+        -------
+        float
+            Rotation angle in degrees.
+        """
         return math.degrees(self.rotation)
 
 
@@ -259,7 +311,18 @@ class Gui:
         )
 
     def flatten_pts(self, pts):
-        """Flatten a list of tuples into a flat list."""
+        """Flatten a list of tuples into a flat list.
+
+        Parameters
+        ----------
+        pts : iterable[tuple]
+            Iterable of tuples to flatten.
+
+        Returns
+        -------
+        list
+            Flattened list of components.
+        """
         return [c for pt in pts for c in pt]
 
     def update_view(self):

@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Label class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr
 
@@ -10,20 +9,7 @@ from .basictextwidget import BasicTextWidget
 
 
 class Label(BasicTextWidget):
-    """
-    A basic label - displaying a string.
-
-    Also allows text wrapping and onMouse hover callbacks.
-
-    New Attributes
-    ==============
-
-     - wrap_text: Boolean: Enable/Disable automatic text wrapping. Disabled by default.
-     Currently to actually see text wrapping you have to explicitly set a max_size with
-     the desired width of the text, as the layout engine is not capable of deriving
-     the maximum width from a parent container.
-
-    """
+    """A basic label widget displaying a string; supports wrapping and hover callbacks."""
 
     ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr("wrap_text")]
 
@@ -95,6 +81,13 @@ class Label(BasicTextWidget):
             self.wrap_text = wrap_text
 
     def clone(self, prefix):
+        """Create a clone of this Label with a name prefix.
+
+        Returns
+        -------
+        Label
+            New Label instance cloned from this one.
+        """
         lblClone = Label(
             None,
             self._createNameWithPrefix(prefix),

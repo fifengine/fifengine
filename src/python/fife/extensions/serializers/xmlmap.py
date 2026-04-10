@@ -347,18 +347,18 @@ class XMLMapLoader:
     def parse_lights(self, layerelt, layer):
         """Create sound emitters for a layer (work in progress).
 
+        Parameters
+        ----------
+        layerelt : ElementTree.Element
+            ElementTree layer branch.
+        layer : object
+            FIFE layer object.
+
         Notes
         -----
         - FIFE has a hard limit of sound emitters; loading strategy is TBD.
         - One approach is to collect sound files & metadata and let the
-            client decide how to create emitters.
-
-        Parameters
-        ----------
-        layerelt : ElementTree.Element
-                ElementTree layer branch.
-        layer : object
-                FIFE layer object.
+          client decide how to create emitters.
         """
         # to be continued
         pass
@@ -489,18 +489,18 @@ class XMLMapLoader:
     def parse_sounds(self, layerelt, layer):
         """Create sound emitters for a layer.
 
-        Notes
-        -----
-        FIFE has a hard limit of sound emitters. This loader collects
-        sound definitions; the client is responsible for deciding how to
-        allocate actual emitters.
-
         Parameters
         ----------
         layerelt : ElementTree.Element
             ElementTree branch for the layer.
         layer : object
             FIFE layer object.
+
+        Notes
+        -----
+        FIFE has a hard limit of sound emitters. This loader collects
+        sound definitions; the client is responsible for deciding how to
+        allocate actual emitters.
         """
         # to be continued
         pass
@@ -613,17 +613,17 @@ class XMLMapLoader:
     def parse_cameras(self, mapelt, map):
         """Create all cameras and activate them.
 
-        Notes
-        -----
-        Clients may prefer to enable cameras during setup; this loader
-        only creates and configures cameras from the XML.
-
         Parameters
         ----------
         mapelt : ElementTree.Element
             ElementTree root containing camera definitions.
         map : object
             FIFE map object.
+
+        Notes
+        -----
+        Clients may prefer to enable cameras during setup; this loader
+        only creates and configures cameras from the XML.
         """
         if self.callback:
             tmplist = mapelt.findall("camera")
@@ -698,8 +698,9 @@ class XMLMapLoader:
                 )
 
     def create_light_nodes(self, map):
-        """Loop through all preloaded lights and create them
-        according to their data.
+        """Loop through all preloaded lights and create them.
+
+        According to their data.
 
         Parameters
         ----------
@@ -822,15 +823,14 @@ class XMLMapLoader:
             )
 
         def create_node(instance=None, point=None, layer=None):
-            """
-            Create a node of one of these types:
+            """Create a node of one of these types.
 
-                    - attached to an instance
-                    - attached to an instance with offset
-                    - attached to a point
+            - attached to an instance
+            - attached to an instance with offset
+            - attached to a point
 
-                    FIXME:
-                            - add location node
+            FIXME:
+                - add location node.
 
             Parameters
             ----------
@@ -840,6 +840,11 @@ class XMLMapLoader:
                 x, y, z tuple.
             layer : object
                 FIFE layer object.
+
+            Returns
+            -------
+            fife.RendererNode or None
+                The created renderer node attached to the given instance/point/layer, or None.
             """
             node = None
             if not layer:

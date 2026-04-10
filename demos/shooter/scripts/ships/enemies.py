@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Enemy ship implementations for the shooter demo."""
+
 from fife import fife
 from fife.extensions import fife_timer
 
@@ -12,31 +14,41 @@ from scripts.weapons import Cannon, FireBall, FireBallBurst, FireBallSpread
 
 
 class EnemyActionListener(ShipActionListener):
+    """Action listener for generic enemy ships."""
+
     def __init__(self, ship):
         super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
+        """Handle completion of a ship instance action."""
         super().onInstanceActionFinished(instance, action)
 
     def onInstanceActionCancelled(self, instance, action):
+        """Handle cancelled ship instance action (no-op)."""
         pass
 
 
 class BossActionListener(ShipActionListener):
+    """Action listener with boss-specific behavior."""
+
     def __init__(self, ship):
         super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
+        """Handle completion of boss-specific instance actions."""
         super().onInstanceActionFinished(instance, action)
 
         if action.getId() == "explode":
             self.delayed = fife_timer.delayCall(5000, self._ship.endLevel())
 
     def onInstanceActionCancelled(self, instance, action):
+        """Handle cancelled boss instance actions (no-op)."""
         pass
 
 
 class Saucer1(Ship):
+    """Simple oscillating saucer enemy."""
+
     def __init__(self, scene, name, instance, findInstance=True):
         super().__init__(scene, name, findInstance)
         self.instance = instance
@@ -56,6 +68,7 @@ class Saucer1(Ship):
         self.scorevalue = 50
 
     def update(self):
+        """Update movement and firing for the saucer."""
         if self._dir == 1:
             self.applyThrust(fife.DoublePoint(0, -0.5))
         elif self._dir == 0:
@@ -77,6 +90,8 @@ class Saucer1(Ship):
 
 
 class Saucer2(Ship):
+    """Larger saucer with more hitpoints and slower movement."""
+
     def __init__(self, scene, name, instance, findInstance=True):
         super().__init__(scene, name, findInstance)
         self.instance = instance
@@ -96,10 +111,12 @@ class Saucer2(Ship):
         self.scorevalue = 100
 
     def applyHit(self, hp):
+        """Apply hit to the saucer and flash effect."""
         self.flash(1)
         super().applyHit(hp)
 
     def update(self):
+        """Update movement and firing for the saucer."""
         if self._dir == 1:
             self.applyThrust(fife.DoublePoint(0, -0.25))
         elif self._dir == 0:
@@ -121,6 +138,8 @@ class Saucer2(Ship):
 
 
 class DiagSaucer(Ship):
+    """Diagonal-moving saucer that thrusts diagonally based on direction."""
+
     def __init__(self, scene, name, direction, instance, findInstance=True):
         super().__init__(scene, name, findInstance)
         self.instance = instance
@@ -142,6 +161,7 @@ class DiagSaucer(Ship):
         self.scorevalue = 50
 
     def update(self):
+        """Update diagonal thrust and firing."""
         self.applyThrust(fife.DoublePoint(-0.25, self._ythrust))
         super().update()
 
@@ -149,6 +169,8 @@ class DiagSaucer(Ship):
 
 
 class Streaker(Ship):
+    """Fast enemy that chases the player and fires accordingly."""
+
     def __init__(self, scene, name, instance, findInstance=True):
         super().__init__(scene, name, findInstance)
         self.instance = instance
@@ -167,10 +189,12 @@ class Streaker(Ship):
         self.scorevalue = 150
 
     def applyHit(self, hp):
+        """Apply hit to the streaker and flash effect."""
         self.flash(1)
         super().applyHit(hp)
 
     def update(self):
+        """Update movement to chase the player and fire."""
         self.applyThrust(fife.DoublePoint(-0.40, 0))
         super().update()
 
@@ -184,6 +208,8 @@ class Streaker(Ship):
 
 
 class Boss(Ship):
+    """Boss ship with multiple attack phases and behaviors."""
+
     def __init__(self, scene, name, instance, findInstance=True):
         super().__init__(scene, name, findInstance)
         self.instance = instance
@@ -206,9 +232,11 @@ class Boss(Ship):
         )
 
     def endLevel(self):
+        """Signal the scene that the boss ended the level."""
         self._scene.endLevel()
 
     def update(self):
+        """Update boss behavior and fire towards the player."""
         super().update()
 
         playerloc = self._scene.player.location.getExactLayerCoordinates()
@@ -220,6 +248,7 @@ class Boss(Ship):
         self.fire(fife.DoublePoint(playerloc.x, playerloc.y))
 
     def applyHit(self, hp):
+        """Apply damage to the boss and change behavior at thresholds."""
         self.flash(2)
         super().applyHit(hp)
 

@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-# ------------------------------------------------------------------------------
-# This is the shooter demo of Fifengine.
-# ------------------------------------------------------------------------------
+"""Shooter demo application using FIFE and Pychan."""
 
 import os
 
@@ -25,6 +23,8 @@ TDS.setAvailableScreenResolutions(["1024x768"])
 
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
+    """Listen for application-level events for the shooter demo."""
+
     def __init__(self, engine, world):
         super().__init__(
             engine,
@@ -39,19 +39,24 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
         self._quit = False
 
     def keyPressed(self, evt):
+        """Handle key press events such as ESC to show the main menu."""
         keyval = evt.getKey().getValue()
         if keyval == fife.Key.ESCAPE:
             self._world.showMainMenu()
             evt.consume()
 
     def onCommand(self, command):
+        """Handle incoming commands such as quit requests."""
         if command.getCommandType() == fife.CMD_QUIT_GAME:
             self._quit = True
             command.consume()
 
 
 class Shooter(PychanApplicationBase):
+    """Main application for the shooter demo."""
+
     def __init__(self):
+        """Initialize the Shooter application and create its world."""
         super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
 
@@ -59,12 +64,14 @@ class Shooter(PychanApplicationBase):
         self._listener = ApplicationListener(self.engine, self._world)
 
     def requestQuit(self):
+        """Request application quit by dispatching a quit command."""
         cmd = fife.Command()
         cmd.setSource(None)
         cmd.setCommandType(fife.CMD_QUIT_GAME)
         self.engine.getEventManager().dispatchCommand(cmd)
 
     def createListener(self):
+        """Return the already-created application listener (no-op)."""
         pass  # already created in constructor
 
     def _pump(self):
@@ -75,6 +82,7 @@ class Shooter(PychanApplicationBase):
 
 
 def main():
+    """Run the shooter demo application."""
     app = Shooter()
     app.run()
 

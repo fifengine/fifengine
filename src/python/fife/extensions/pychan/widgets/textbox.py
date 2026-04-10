@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Textbox class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, UnicodeAttr
 
@@ -11,14 +10,12 @@ from .widget import Widget
 
 
 class TextBox(Widget):
-    """
-    An editable B{multiline} text edit widget.
+    """An editable B{multiline} text edit widget.
 
-    New Attributes
-    ==============
-
-      - text: The text in the TextBox.
-      - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
+    Attributes
+    ----------
+    - text: The text in the TextBox.
+    - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
 
     Data
     ====
@@ -103,6 +100,13 @@ class TextBox(Widget):
         self._realGetData = self._getText
 
     def clone(self, prefix):
+        """Create a clone of this TextBox with a name prefix.
+
+        Returns
+        -------
+        TextBox
+            New TextBox instance cloned from this one.
+        """
         textboxClone = TextBox(
             None,
             self._createNameWithPrefix(prefix),

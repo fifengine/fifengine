@@ -9,13 +9,12 @@ from .widget import Widget
 
 
 class CurveGraph(Widget):
-    """A curve graph widget
+    """A curve graph widget.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - coordinates: int list: x and y coordinates
-      - thickness': int: Line thickness, default 1
+      - thickness: int: Line thickness, default 1
       - controll_points: bool: Adds internal controll points, default True
       - opaque: bool: default False
     """
@@ -109,6 +108,13 @@ class CurveGraph(Widget):
             self.controll_points = controll_points
 
     def clone(self, prefix):
+        """Create a clone of this CurveGraph with a name prefix.
+
+        Returns
+        -------
+        CurveGraph
+            New CurveGraph instance cloned from this one.
+        """
         curveGraphClone = CurveGraph(
             None,
             self._createNameWithPrefix(prefix),

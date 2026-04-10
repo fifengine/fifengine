@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Base classes and utilities for shooter demo space objects."""
+
 from math import sqrt
 
 from fife import fife
@@ -10,6 +12,13 @@ from fife.fife import FloatRect as Rect
 
 
 def old_div(a, b):
+    """Divide a by b, returning 0 when b is zero.
+
+    Returns
+    -------
+    float
+        The result of dividing ``a`` by ``b`` or ``0`` if ``b`` is zero.
+    """
     return a / b if b != 0 else 0
 
 
@@ -22,21 +31,10 @@ SHTR_POWERUP = 5
 
 
 class SpaceObject:
-    """
-    Space Object is the base class for all game objects.
-    """
+    """Base class for all space game objects."""
 
     def __init__(self, scene, name, findInstance=True):
-        """
-        @param scene: A reference to the Scene
-        @type scene: L{Scene}
-        @param name: The name of the space object
-        @type name: C{string}
-        @param findInstance: True if the instance you are looking for is already loaded
-                             False if you want to load the instance yourself
-        @type findInstance: C{boolean}
-
-        """
+        """Initialize the space object."""
         self._scene = scene
         self._model = self._scene.model
         self._layer = self._scene.objectlayer
@@ -58,17 +56,12 @@ class SpaceObject:
             self._instance = None
 
     def start(self):
-        """
-        You must execute this function for the object to be updated
-        """
+        """Start updating the object."""
         if self._instance:
             self._running = True
 
     def update(self):
-        """
-        If the object is running this updates the FIFE instance location based on
-        the objects current velocity and time since last frame
-        """
+        """Update the FIFE instance location based on velocity and elapsed time."""
         if self._running:
             shiploc = self.location
             exactloc = shiploc.getExactLayerCoordinates()
@@ -97,27 +90,15 @@ class SpaceObject:
             self.location = shiploc
 
     def stop(self):
-        """
-        Stops the object from being updated.
-        """
+        """Stop updating the object."""
         self._running = False
 
     def destroy(self):
-        """
-        You are meant to override this function to specify what happens when the object
-        gets destroyed
-        """
+        """Destroy the object (override to implement cleanup)."""
         self._running = False
 
     def applyThrust(self, vector):
-        """
-        Applies a thrust vector to the object.
-
-        @note: Objects do not have mass and therefore no inertia.
-
-        @param vector A vector specifying the direction and intensity of thrust.
-        @type vector: L{fife.DoublePoint}
-        """
+        """Apply a thrust vector to the object."""
         self._velocity.x += old_div(
             (vector.x * (old_div(self._scene.timedelta, 1000.0))), self._xscale
         )
@@ -132,12 +113,7 @@ class SpaceObject:
             self._velocity.y = norm.y * self._maxvelocity
 
     def applyBrake(self, brakingForce):
-        """
-        Applies a braking thrust in the opposite direction of the current velocity
-
-        @param brakingForce: a floating point value specifying how fast the object should decelerate
-        @type brakingForce: C{float}
-        """
+        """Apply braking force opposite to the current velocity."""
         if self._velocity.length() <= 0.01:
             self._velocity.x = 0
             self._velocity.y = 0
@@ -168,10 +144,7 @@ class SpaceObject:
         )
 
     def removeFromScene(self):
-        """
-        Queues this object to be removed from the scene.  The scene will remove the object
-        next time the garbage collection routines are called.
-        """
+        """Queue this object for removal from the scene."""
         self._scene.queueObjectForRemoval(self)
 
     def _isRunning(self):

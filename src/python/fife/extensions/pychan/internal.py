@@ -16,17 +16,34 @@ def get_manager():
 
     To avoid cyclic imports write::
        from internal import get_manager
+
+    Returns
+    -------
+    Manager
+        The global `Manager` instance used by pychan.
     """
     return Manager.manager
 
 
 def screen_width():
-    """Get the screen width."""
+    """Get the screen width.
+
+    Returns
+    -------
+    int
+        The current screen width in pixels.
+    """
     return get_manager().hook.screen_width
 
 
 def screen_height():
-    """Get the screen height."""
+    """Get the screen height.
+
+    Returns
+    -------
+    int
+        The current screen height in pixels.
+    """
     return get_manager().hook.screen_height
 
 
@@ -135,11 +152,23 @@ class Manager:
             del self.allTopHierachyWidgets[widget]
 
     def getConsole(self):
-        """Get a reference to the console."""
+        """Get a reference to the console.
+
+        Returns
+        -------
+        Console
+            The console instance managed by the GUI hook.
+        """
         return self.hook.console
 
     def getDefaultFont(self):
-        """Get the default font."""
+        """Get the default font.
+
+        Returns
+        -------
+        GuiFont
+            The default GUI font object.
+        """
         return self.fonts["default"]
 
     def setDefaultFont(self, name):
@@ -156,6 +185,17 @@ class Manager:
         ----------
         name : str
             A string identifier from the font definitions in pychans config files.
+
+        Returns
+        -------
+        GuiFont
+            The requested GUI font.
+
+        Raises
+        ------
+        InitializationError
+            If the requested font cannot be found or cannot be converted to a
+            `fife.GuiFont`.
         """
         if in_fife:
             font = self.fonts.get(name)
@@ -170,12 +210,24 @@ class Manager:
             return self.hook.get_font(name)
 
     def createFont(self, path="", size=0, glyphs=""):
-        """Create and return a GuiFont from the GUI Manager."""
+        """Create and return a GuiFont from the GUI Manager.
+
+        Returns
+        -------
+        GuiFont
+            A new or existing GUI font object created from the provided
+            resource parameters.
+        """
         return self.hook.create_font(path, size, glyphs)
 
     def releaseFont(self, font):
         """
         Releases a font from memory.  Expects a fifechan.GuiFont.
+
+        Raises
+        ------
+        InitializationError
+            If `font` is not a `fifechan.GuiFont` instance.
 
         Notes
         -----
@@ -199,6 +251,11 @@ class Manager:
         ----------
         font : fonts.Font
             A fonts.Font instance.
+
+        Raises
+        ------
+        InitializationError
+            If `font` is not a `fonts.Font` instance.
         """
         if not isinstance(font, fonts.Font):
             raise InitializationError(
@@ -251,7 +308,13 @@ class Manager:
                     setattr(widget, k, v)
 
     def _remapStyleKeys(self, style):
-        """Translate style selectors to tuples of widget classes. (internal)."""
+        """Translate style selectors to tuples of widget classes. (internal).
+
+        Returns
+        -------
+        dict
+            A copy of `style` with string selectors remapped to widget classes.
+        """
 
         # Remap class names, create copy:
         def _toClass(class_):
@@ -294,6 +357,11 @@ class Manager:
         -------
         Image
             The loaded image.
+
+        Raises
+        ------
+        InitializationError
+            If `filename` is empty or invalid.
         """
         if not filename:
             raise InitializationError("Empty Image file.")

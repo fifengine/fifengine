@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Passwordfield class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import UnicodeAttr
 
@@ -14,9 +13,8 @@ class PasswordField(Widget):
     """
     An editable B{single line} text edit widget.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - text: The text in the TextBox.
 
     Data
@@ -97,6 +95,13 @@ class PasswordField(Widget):
         self._realGetData = self._getText
 
     def clone(self, prefix):
+        """Create a clone of this PasswordField with a name prefix.
+
+        Returns
+        -------
+        PasswordField
+            New PasswordField instance cloned from this one.
+        """
         passwordFieldClone = PasswordField(
             None,
             self._createNameWithPrefix(prefix),

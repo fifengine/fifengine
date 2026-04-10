@@ -1,15 +1,20 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Demo for tabbed area widgets."""
+
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
 
 
 class TabbedAreaExample(PyChanExample):
+    """Demo for tabbed area widgets."""
+
     def __init__(self):
         super().__init__("gui/tabbedarea.xml")
 
     def start(self):
+        """Start the example by loading XML and setting up tab handlers."""
         self.labelCount = 4
         self.widget = pychan.loadXML(self.xmlFile)
         self.tabarea = self.widget.findChild(name="tabarea")
@@ -47,11 +52,13 @@ class TabbedAreaExample(PyChanExample):
         self.widget.show()
 
     def closeTab(self):
+        """Close the currently selected tab."""
         widget = self.tabarea.select_tab
         self.tabarea.removeChild(widget)
         self.tabarea.resizeToContent()
 
     def createTab(self):
+        """Create a new tab."""
         tmp = self.tabarea.select_tab
         self.tabarea.removeChild(tmp)
 

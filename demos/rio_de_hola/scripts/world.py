@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Rio de Hola demo world: map loading, agents, cameras and input handling."""
+
 import random
 
 from fife import fife
@@ -21,11 +23,14 @@ TDS = Setting(app_name="rio_de_hola")
 
 
 class MapListener(fife.MapChangeListener):
+    """Listener for map change events used by the demo."""
+
     def __init__(self, map):
         fife.MapChangeListener.__init__(self)
         map.addChangeListener(self)
 
     def onMapChanged(self, map, changedLayers):
+        """Handle map-changed events (debug; no-op in normal demo)."""
         return
         print("Changes on map ", map.getId())
         for layer in map.getLayers():
@@ -39,22 +44,23 @@ class MapListener(fife.MapChangeListener):
             )
 
     def onLayerCreate(self, map, layer):
+        """Handle layer creation events (no-op)."""
         pass
 
     def onLayerDelete(self, map, layer):
+        """Handle layer deletion events (no-op)."""
         pass
 
 
 class World(EventListenerBase):
-    """
-    The world!
+    """The world.
 
     This class handles:
-      setup of map view (cameras ...)
-      loading the map
-      GUI for right clicks
-      handles mouse/key events which aren't handled by the GUI.
-       ( by inheriting from EventlistenerBase )
+        setup of map view (cameras ...)
+        loading the map
+        GUI for right clicks
+        handles mouse/key events which aren't handled by the GUI.
+         ( by inheriting from EventlistenerBase )
 
     That's obviously too much, and should get factored out.
     """
@@ -80,11 +86,7 @@ class World(EventListenerBase):
         self.music = None
 
     def show_instancemenu(self, clickpoint, instance):
-        """
-        Build and show a popupmenu for an instance that the player
-        clicked on. The available actions are dynamically added to
-        the menu (and mapped to the onXYZ functions).
-        """
+        """Build and show a popup menu for the clicked instance."""
         if instance.getFifeId() == self.hero.agent.getFifeId():
             return
 
@@ -109,11 +111,7 @@ class World(EventListenerBase):
         self.instancemenu.show()
 
     def build_instancemenu(self):
-        """
-        Just loads the menu from an XML file
-        and hooks the events up.
-        The buttons are removed and later re-added if appropiate.
-        """
+        """Load the instance popup menu from XML and hook up events."""
         self.hide_instancemenu()
         dynamicbuttons = ("moveButton", "talkButton", "kickButton", "inspectButton")
         self.instancemenu = pychan.loadXML("gui/instancemenu.xml")
@@ -130,13 +128,12 @@ class World(EventListenerBase):
         self.instancemenu.removeAllChildren()
 
     def hide_instancemenu(self):
+        """Hide the instance popup menu if it is visible."""
         if self.instancemenu:
             self.instancemenu.hide()
 
     def reset(self):
-        """
-        Clear the agent information and reset the moving secondary camera state.
-        """
+        """Clear agent information and reset secondary camera state."""
         if self.music:
             self.music.stop()
 
@@ -148,10 +145,7 @@ class World(EventListenerBase):
         self.instance_to_agent = {}
 
     def load(self, filename):
-        """
-        Load a xml map and setup agents and cameras.
-        """
-
+        """Load an XML map and set up agents and cameras."""
         self.filename = filename
         self.reset()
         loader = fife.MapLoader(
@@ -183,15 +177,7 @@ class World(EventListenerBase):
             self.waves.play()
 
     def initAgents(self):
-        """
-        Setup agents.
-
-        For this techdemo we have a very simple 'active things on the map' model,
-        which is called agents. All rio maps will have a separate layer for them.
-
-        Note that we keep a mapping from map instances (C++ model of stuff on the map)
-        to the python agents for later reference.
-        """
+        """Create and start agents for the map and populate the instance mapping."""
         self.agentlayer = self.map.getLayer("TechdemoMapGroundObjectLayer")
         self.hero = Hero(TDS, self.model, "PC", self.agentlayer)
         self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
@@ -215,13 +201,7 @@ class World(EventListenerBase):
             cloud.start(0.1, 0.05)
 
     def initCameras(self):
-        """
-        Before we can actually see something on screen we have to specify the render setup.
-        This is done through Camera objects which offer a viewport on the map.
-
-        For this techdemo two cameras are used. One follows the hero(!) via 'attach'
-        the other one scrolls around a bit (see the pump function).
-        """
+        """Initialize cameras, renderers, and floating text for the map view."""
         camera_prefix = self.filename.rpartition(".")[0]  # Remove file extension
         camera_prefix = camera_prefix.rpartition("/")[2]  # Remove path
         camera_prefix += "_"
@@ -289,19 +269,28 @@ class World(EventListenerBase):
         self.target_rotation = self.cameras["main"].getRotation()
 
     def save(self, filename):
+        """Save the current map to the given filename."""
         saveMapFile(filename, self.engine, self.map)
 
     def getInstancesAt(self, clickpoint):
         """
         Query the main camera for instances on our active(agent) layer.
+
+        Returns
+        -------
+        list
+            A list of matching instances.
         """
         screen_point = fife.Point3D(int(clickpoint.x), int(clickpoint.y), 0)
         return self.cameras["main"].getMatchingInstances(screen_point, self.agentlayer)
 
     def getLocationAt(self, clickpoint):
-        """
-        Query the main camera for the Map location (on the agent layer)
-        that a screen point refers to.
+        """Return the map Location corresponding to the given screen point.
+
+        Returns
+        -------
+        fife.Location
+            A Location object corresponding to the map coordinates.
         """
         screen_point = fife.Point3D(int(clickpoint.x), int(clickpoint.y), 0)
         target_mapcoord = self.cameras["main"].toMapCoordinates(screen_point, False)
@@ -311,6 +300,7 @@ class World(EventListenerBase):
         return location
 
     def keyPressed(self, evt):
+        """Handle key pressed events for toggles and shortcuts."""
         keyval = evt.getKey().getValue()
         keystr = evt.getKey().getAsString().lower()
         if keystr == "t":
@@ -342,28 +332,29 @@ class World(EventListenerBase):
             self.ctrldown = True
 
     def keyReleased(self, evt):
+        """Handle key released events and update modifier state."""
         keyval = evt.getKey().getValue()
         if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
             self.ctrldown = False
 
     def mouseWheelMovedUp(self, evt):
+        """Zoom in when control is held and the wheel is moved up."""
         if self.ctrldown:
             self.cameras["main"].setZoom(self.cameras["main"].getZoom() * 1.05)
 
     def mouseWheelMovedDown(self, evt):
+        """Zoom out when control is held and the wheel is moved down."""
         if self.ctrldown:
             self.cameras["main"].setZoom(self.cameras["main"].getZoom() / 1.05)
 
     def changeRotation(self):
-        """
-        Smoothly change the main cameras rotation until
-        the current target rotation is reached.
-        """
+        """Smoothly adjust main camera rotation towards the target rotation."""
         currot = self.cameras["main"].getRotation()
         if self.target_rotation != currot:
             self.cameras["main"].setRotation((currot + 5) % 360)
 
     def mousePressed(self, evt):
+        """Handle mouse press: left-click moves, right-click opens instance menu."""
         if evt.isConsumedByWidgets():
             return
 
@@ -382,6 +373,7 @@ class World(EventListenerBase):
                 self.show_instancemenu(clickpoint, instances[0])
 
     def mouseMoved(self, evt):
+        """Handle mouse moved events and update outlines for nearby agents."""
         renderer = fife.InstanceRenderer.getInstance(self.cameras["main"])
         renderer.removeAllOutlines()
 
@@ -392,6 +384,7 @@ class World(EventListenerBase):
                 renderer.addOutlined(i, 173, 255, 47, 2)
 
     def lightIntensity(self, value):
+        """Adjust global light intensity within valid bounds and update renderer."""
         if self.light_intensity + value <= 1 and self.light_intensity + value >= 0:
             self.light_intensity = self.light_intensity + value
 
@@ -401,6 +394,7 @@ class World(EventListenerBase):
                 )
 
     def lightSourceIntensity(self, value):
+        """Adjust per-source light intensity and update simple lights."""
         if self.light_sources + value <= 255 and self.light_sources + value >= 0:
             self.light_sources = self.light_sources + value
             renderer = fife.LightRenderer.getInstance(self.cameras["main"])
@@ -454,6 +448,13 @@ class World(EventListenerBase):
                     )
 
     def onConsoleCommand(self, command):
+        """Execute a console command string and return the result or error.
+
+        Returns
+        -------
+        str
+            Result string or error message produced by executing `command`.
+        """
         result = ""
         try:
             result = str(eval(command))
@@ -463,10 +464,12 @@ class World(EventListenerBase):
 
     # Callbacks from the popupmenu
     def onMoveButtonPress(self):
+        """Handle the Move button press from the instance popup menu."""
         self.hide_instancemenu()
         self.hero.run(self.instancemenu.instance.getLocationRef())
 
     def onTalkButtonPress(self):
+        """Handle the Talk button press and play NPC dialog if applicable."""
         self.hide_instancemenu()
         instance = self.instancemenu.instance
         self.hero.talk(instance.getLocationRef())
@@ -478,11 +481,13 @@ class World(EventListenerBase):
             instance.say(random.choice(girlTexts), 5000)
 
     def onKickButtonPress(self):
+        """Handle the Kick button press from the instance popup menu."""
         self.hide_instancemenu()
         self.hero.kick(self.instancemenu.instance.getLocationRef())
         self.instancemenu.instance.say("Hey!", 1000)
 
     def onInspectButtonPress(self):
+        """Handle the Inspect button press and show instance metadata."""
         self.hide_instancemenu()
         inst = self.instancemenu.instance
         saytext = ["Engine told me that this instance has"]
@@ -493,9 +498,6 @@ class World(EventListenerBase):
         self.hero.agent.say("\n".join(saytext), 3500)
 
     def pump(self):
-        """
-        Called every frame.
-        """
-
+        """Run per-frame updates (rotation and pump counter)."""
         self.changeRotation()
         self.pump_ctr += 1

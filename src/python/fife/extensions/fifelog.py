@@ -103,6 +103,7 @@ class LogManager:
         for k in list(self.mod2name.keys()):
             if self.lm.isVisible(k):
                 mods.append(self.mod2name[k])
+        return mods
 
     def setVisibleModules(self, *names):
         """Set visible modules, clearing previously set modules.
@@ -137,21 +138,45 @@ class LogManager:
         self.lm.setLevelFilter(fltr)
 
     def setLogToPrompt(self, promptlog):
-        """Set whether to log to prompt."""
+        """Set whether to log to prompt.
+
+        Returns
+        -------
+        bool
+            Result of setting the prompt log state as reported by the engine.
+        """
         return self.lm.setLogToPrompt(promptlog)
 
     def getLogToPrompt(self):
-        """Get whether logging to prompt is enabled."""
+        """Get whether logging to prompt is enabled.
+
+        Returns
+        -------
+        bool
+            True if prompt logging is enabled, False otherwise.
+        """
         return self.lm.isLogToPrompt()
 
     logToPrompt = property(getLogToPrompt, setLogToPrompt)
 
     def setLogToFile(self, filelog):
-        """Set whether to log to file."""
+        """Set whether to log to file.
+
+        Returns
+        -------
+        bool
+            Result of setting the file log state as reported by the engine.
+        """
         return self.lm.setLogToFile(filelog)
 
     def getLogToFile(self):
-        """Get whether logging to file is enabled."""
+        """Get whether logging to file is enabled.
+
+        Returns
+        -------
+        bool
+            True if file logging is enabled, False otherwise.
+        """
         return self.lm.isLogToFile()
 
     logToFile = property(getLogToFile, setLogToFile)

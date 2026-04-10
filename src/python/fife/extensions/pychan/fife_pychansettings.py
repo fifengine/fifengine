@@ -226,7 +226,13 @@ class FifePychanSettings(Setting):
         self._optionsDialog.show()
 
     def _loadSettingsDialog(self):
-        """Load the XML with the default settings dialog."""
+        """Load the XML with the default settings dialog.
+
+        Returns
+        -------
+        object
+            The loaded options dialog widget (pychan widget) or None on failure.
+        """
         self._optionsDialog = self._loadWidget(self._settings_gui_xml)
         self._optionsDialog.stylize(self._gui_style)
         self._optionsDialog.mapEvents(
@@ -239,7 +245,18 @@ class FifePychanSettings(Setting):
         return self._optionsDialog
 
     def _loadWidget(self, widget):
-        """Load a widget from XML."""
+        """Load a widget from XML.
+
+        Parameters
+        ----------
+        widget : str or io.BytesIO or io.StringIO
+            XML content or file-like object containing the widget description.
+
+        Returns
+        -------
+        object
+            The loaded pychan widget instance.
+        """
         if os.path.isfile(self._settings_gui_xml):
             return pychan.loadXML(widget)
         else:
@@ -249,7 +266,13 @@ class FifePychanSettings(Setting):
                 return pychan.loadXML(StringIO(widget))
 
     def fillWidgets(self):
-        """Fill the settings dialog widgets with current values."""
+        """Fill the settings dialog widgets with current values.
+
+        Raises
+        ------
+        ValueError
+            If a widget's initialdata does not contain the current value.
+        """
         for module in self._entries.values():
             for entry in module.values():
                 widget = self._optionsDialog.findChildByName(entry.settingwidgetname)

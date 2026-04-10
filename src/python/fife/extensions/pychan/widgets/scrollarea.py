@@ -12,9 +12,8 @@ class ScrollArea(Widget):
     """
     A wrapper around another (content) widget.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - content: The wrapped widget.
       - vertical_scrollbar: Boolean: Set this to False to hide the Vertical scrollbar
       - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
@@ -106,6 +105,13 @@ class ScrollArea(Widget):
             self.horizontal_scroll_amount = horizontal_scroll_amount
 
     def clone(self, prefix):
+        """Create a clone of this ScrollArea with a name prefix.
+
+        Returns
+        -------
+        ScrollArea
+            A new ScrollArea instance cloned from this one.
+        """
         scrollareaClone = ScrollArea(
             None,
             self._createNameWithPrefix(prefix),
@@ -144,10 +150,18 @@ class ScrollArea(Widget):
         return scrollareaClone
 
     def addChild(self, widget):
+        """Set the wrapped content widget for this ScrollArea."""
         self.content = widget
         widget.parent = self
 
     def removeChild(self, widget):
+        """Remove the wrapped content widget if it matches the given widget.
+
+        Raises
+        ------
+        RuntimeError
+            If the provided widget is not the current content widget.
+        """
         if self._content != widget:
             raise RuntimeError(
                 f"{str(self)} does not have {str(widget)} as direct child widget."
@@ -168,6 +182,10 @@ class ScrollArea(Widget):
     content = property(_getContent, _setContent)
 
     def deepApply(self, visitorFunc, leaves_first=True, shown_only=False):
+        """Apply `visitorFunc` to this ScrollArea and optionally its content.
+
+        If `leaves_first` is True the content is visited before this widget.
+        """
         if leaves_first:
             if self._content:
                 self._content.deepApply(
@@ -209,9 +227,23 @@ class ScrollArea(Widget):
         return self._scrollPolicyToVisibility(self.real_widget.getVerticalScrollPolicy())
 
     def getVerticalMaxScroll(self):
+        """Return the vertical maximum scroll value from the real widget.
+
+        Returns
+        -------
+        int
+            The maximum vertical scroll value.
+        """
         return self.real_widget.getVerticalMaxScroll()
 
     def getHorizontalMaxScroll(self):
+        """Return the horizontal maximum scroll value from the real widget.
+
+        Returns
+        -------
+        int
+            The maximum horizontal scroll value.
+        """
         return self.real_widget.getHorizontalMaxScroll()
 
     def _getHorizontalScrollAmount(self):

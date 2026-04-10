@@ -13,15 +13,15 @@ from .resizablewindow import ResizableWindow
 
 
 class Panel(ResizableWindow):
-    """
-    The Panel class can be docked or undocked from Dock Areas.
-    If the Panel is added to a DockArea e.g. by XML loading, then it will automatically docked.
-    By default undock will add the Panel to the parent of the DockArea, that can also be the top widget.
+    """The Panel class can be docked or undocked from Dock Areas.
 
-    New Attributes
-    ==============
+    If the Panel is added to a DockArea (e.g. by XML loading), it will be
+    automatically docked. By default, undock will add the Panel to the parent
+    of the DockArea, which can also be the top widget.
 
-      - dockable: If true, the Panel can be docked/undocked to DockAreas.
+    Attributes
+    ----------
+        - dockable: If true, the Panel can be docked/undocked to DockAreas.
     """
 
     ATTRIBUTES = ResizableWindow.ATTRIBUTES + [
@@ -134,6 +134,13 @@ class Panel(ResizableWindow):
         self.capture(self.mouseDragged, "mouseDragged", "Panel")
 
     def clone(self, prefix):
+        """Create a clone of this Panel with a name prefix.
+
+        Returns
+        -------
+        Panel
+            New Panel instance cloned from this one.
+        """
         panelClone = Panel(
             None,
             self._createNameWithPrefix(prefix),
@@ -196,6 +203,13 @@ class Panel(ResizableWindow):
     dockable = property(_getDockable, _setDockable)
 
     def getDockArea(self):
+        """Return the DockArea this panel intersects with or its parent when docked.
+
+        Returns
+        -------
+        DockArea | None
+            The found DockArea instance or None if none found.
+        """
         if not self.docked:
             dockAreas = []
             # all top widgets are used for the search
@@ -239,7 +253,13 @@ class Panel(ResizableWindow):
         pass
 
     def dockTo(self, widget):
-        # Dock the Panel to the given widget.
+        """Dock the Panel to the given widget.
+
+        Parameters
+        ----------
+        widget : Widget
+            The widget to dock this panel to.
+        """
         if not self.docked and widget is not self.parent and self.dockable:
             widget.real_widget.setHighlighted(False)
             # map coordinates to new parent and remove it from old parent
@@ -261,7 +281,13 @@ class Panel(ResizableWindow):
             self.afterDock()
 
     def undockTo(self, widget):
-        # Undock the Panel to the given widget.
+        """Undock the Panel to the given widget or to the main GUI if None.
+
+        Parameters
+        ----------
+        widget : Widget | None
+            Destination widget to undock to, or `None` to undock to main GUI.
+        """
         if self.docked and widget is not self.parent and self.dockable:
             self.parent.removeChild(self)
             # undock to main gui
@@ -273,6 +299,13 @@ class Panel(ResizableWindow):
             self.afterUndock()
 
     def mousePressed(self, event):
+        """Handle mouse press events relevant to panel dragging/docking.
+
+        Parameters
+        ----------
+        event : Event
+            Mouse event object with `getButton()` and `getY()`.
+        """
         h = (
             self.real_widget.getBorderSize()
             + self.real_widget.getPaddingTop()
@@ -292,6 +325,13 @@ class Panel(ResizableWindow):
         self._barReleasedRight = False
 
     def mouseReleased(self, event):
+        """Handle mouse release events and perform dock/undock actions.
+
+        Parameters
+        ----------
+        event : Event
+            Mouse event object with `getButton()` and `getY()`.
+        """
         h = (
             self.real_widget.getBorderSize()
             + self.real_widget.getPaddingTop()
@@ -322,6 +362,13 @@ class Panel(ResizableWindow):
                 self.undockTo(None)
 
     def mouseDragged(self, event):
+        """Handle mouse drag events to highlight potential DockAreas.
+
+        Parameters
+        ----------
+        event : Event
+            Mouse event object.
+        """
         # disable highlighting
         if self._foundDockArea is not None:
             self._foundDockArea().real_widget.setHighlighted(False)

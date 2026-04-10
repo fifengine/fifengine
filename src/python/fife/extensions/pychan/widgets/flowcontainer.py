@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Flowcontainer class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import IntAttr
 
@@ -10,8 +9,8 @@ from .containers import Container
 
 
 class FlowContainer(Container):
-    """
-    An implementation of a flow container that can contain other widgets.
+    """An implementation of a flow container that can contain other widgets.
+
     The widgets can be sorted vertical per row or horizontal per column.
     If the space in the container is too small to put all the components in one row or column,
     it uses multiple rows or columns.
@@ -104,6 +103,13 @@ class FlowContainer(Container):
             self.alignment = self.DEFAULT_ALIGNMENT
 
     def clone(self, prefix):
+        """Create a clone of this FlowContainer with a name prefix.
+
+        Returns
+        -------
+        FlowContainer
+            New FlowContainer instance cloned from this one.
+        """
         containerClone = FlowContainer(
             None,
             self._createNameWithPrefix(prefix),
@@ -151,4 +157,5 @@ class FlowContainer(Container):
     alignment = property(_getAlignment, _setAlignment)
 
     def adjustContent(self):
+        """Adjust the container content layout."""
         self.real_widget.adjustContent()

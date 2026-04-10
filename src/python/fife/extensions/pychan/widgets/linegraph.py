@@ -9,15 +9,7 @@ from .widget import Widget
 
 
 class LineGraph(Widget):
-    """A line graph widget
-
-    New Attributes
-    ==============
-
-      - coordinates: int list: x and y coordinates
-      - thickness': int: Line thickness, default 1
-      - opaque: bool: default False
-    """
+    """A line graph widget."""
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         IntListAttr("coordinates"),
@@ -102,6 +94,13 @@ class LineGraph(Widget):
             self.thickness = thickness
 
     def clone(self, prefix):
+        """Create a clone of this LineGraph with a name prefix.
+
+        Returns
+        -------
+        LineGraph
+            New LineGraph instance cloned from this one.
+        """
         lineGraphClone = LineGraph(
             None,
             self._createNameWithPrefix(prefix),

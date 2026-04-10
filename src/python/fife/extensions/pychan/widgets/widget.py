@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Common PyChan widget base classes and utilities."""
+
 import weakref
 
 from fife import fife, fifechan
@@ -25,8 +27,7 @@ class Widget:
     Common widget base class providing wrapping functionality.
 
     Attributes
-    ==========
-
+    ----------
     Widgets are manipulated (mostly) through attributes - and these can all be set by XML attributes.
     Derived widgets will have other attributes. Please see their B{New Attributes} sections. The types of the
     attributes are pretty straightforward, but note that Position and Color attribute types will also accept
@@ -272,12 +273,16 @@ class Widget:
         be raised.
 
         Prefix is used to create the name of the cloned widget.
+
+        Raises
+        ------
+        RuntimeError
+            If no concrete implementation exists for this widget.
         """
         raise RuntimeError(f"No implementation of clone method for {self.__class__}")
 
     def execute(self, bind, focus=None):
-        """
-        Execute a dialog synchronously.
+        """Execute a dialog synchronously.
 
         As argument a dictionary mapping widget names to return values
         is expected. Events from these widgets will cause this function
@@ -294,6 +299,15 @@ class Widget:
           # Okay this a very condensed example :-)
           return pychan.loadXML("contents/gui/dialog.xml").execute({ 'okButton' : True, 'closeButton' : False })
 
+        Returns
+        -------
+        object
+            Value returned by the dialog's execution (as provided via `bind`).
+
+        Raises
+        ------
+        RuntimeError
+            If synchronous execution is not enabled or `self` is not a root widget.
         """
         if not get_manager().can_execute:
             raise RuntimeError("Synchronous execution is not set up!")
@@ -328,15 +342,23 @@ class Widget:
             self.real_widget.requestFocus()
 
     def isModalFocusable(self):
-        """
-        Check if a widget is modal focusable.
+        """Check if a widget is modal focusable.
 
-        Returns True if no other widget has modal focus, false otherwise.
+        Returns
+        -------
+        bool
+            True if no other widget has modal focus, False otherwise.
         """
         return self.real_widget.isModalFocusable()
 
     def isModalFocused(self):
-        """Check if the widget or its parent has modal focus."""
+        """Check if the widget or its parent has modal focus.
+
+        Returns
+        -------
+        bool
+            True if this widget or an ancestor has modal focus.
+        """
         return self.real_widget.isModalFocused()
 
     def requestModalFocus(self):
@@ -359,15 +381,23 @@ class Widget:
             self.real_widget.releaseModalFocus()
 
     def isModalMouseInputFocusable(self):
-        """
-        Check if a widget is modal mouse input focusable.
+        """Check if a widget is modal mouse input focusable.
 
-        Returns True if no other widget has modal mouse input focus, false otherwise.
+        Returns
+        -------
+        bool
+            True if no other widget has modal mouse input focus, False otherwise.
         """
         return self.real_widget.isModalMouseInputFocusable()
 
     def isModalMouseInputFocused(self):
-        """Check if the widget or its parent has modal mouse input focus."""
+        """Check if the widget or its parent has modal mouse input focus.
+
+        Returns
+        -------
+        bool
+            True if this widget or an ancestor has modal mouse input focus.
+        """
         return self.real_widget.isModalMouseInputFocused()
 
     def requestModalMouseInputFocus(self):
@@ -392,10 +422,12 @@ class Widget:
             self.real_widget.releaseModalMouseInputFocus()
 
     def match(self, **kwargs):
-        """
-        Match the widget against a list of key-value pairs.
+        """Match the widget against a list of key-value pairs.
 
-        Returns True only if all keys are attributes and their value is the same.
+        Returns
+        -------
+        bool
+            True only if all keys are attributes and their value is the same.
         """
         for k, v in list(kwargs.items()):
             if v != getattr(self, k, None):
@@ -424,16 +456,17 @@ class Widget:
         self.event_mapper.capture(event_name, callback, group_name)
 
     def isCaptured(self):
-        """
-        Check whether this widgets events are captured
-        (a callback is installed) or not.
+        """Check whether this widgets events are captured.
+
+        Returns
+        -------
+        bool
+            True if a callback is installed for this widget.
         """
         return bool(self.event_mapper.getCapturedEvents())
 
     def show(self):
-        """
-        Show the widget and all contained widgets.
-        """
+        """Show the widget and all contained widgets."""
         # add this widget to the manager
         if not self._added:
             get_manager().addWidget(self)
@@ -461,9 +494,7 @@ class Widget:
             get_manager().placeWidget(self, self.position_technique)
 
     def hide(self, free=False):
-        """
-        Hide the widget and all contained widgets.
-        """
+        """Hide the widget and all contained widgets."""
         # remove this widget from the manager
         if self._added:
             get_manager().removeWidget(self)
@@ -493,40 +524,46 @@ class Widget:
         self.afterHide()
 
     def isVisible(self):
-        """
-        Check whether the widget is currently shown,
-        either directly or as part of a container widget.
+        """Check whether the widget is currently shown.
+
+        Returns
+        -------
+        bool
+            True if the widget is visible either directly or via a container.
         """
         return self.real_widget.isVisible()
 
     def isSetVisible(self):
-        """
-        Check the real widget visible flag.
-        It checks not if the widget is currently shown!
-        This is needed e.g. if the parent is already hidden
-        but we want to hide the child too.
+        """Check the real widget visible flag.
+
+        Returns
+        -------
+        bool
+            The real widget visible flag; does not consider parent visibility.
         """
         return self.real_widget.isSetVisible()
 
     def adaptLayout(self, recurse=True):
-        """
-        Execute the Layout engine. Automatically called by L{show}.
-        In case you want to relayout a visible widget.
-        This function will automatically perform the layout adaption
-        from the top-most layouted widget.
+        """Execute the Layout engine.
+
+        Automatically called by L{show}. In case you want to relayout a
+        visible widget. This function will automatically perform the
+        layout adaption from the top-most layouted widget.
 
         To make this clear consider this arrangement::
-                VBox 1
-                        - Container
-                VBox 2
-                        - HBox
-                                - Label
+            VBox 1
+                - Container
+            VBox 2
+                - HBox
+                    - Label
 
         If you call adaptLayout on the Label the layout from the VBox 2
         will get recalculated, while the VBox 1 stays untouched.
 
-        @param recurse: Pass False here to force the layout to start from
-        this widget.
+        Parameters
+        ----------
+        recurse : bool
+            Pass False here to force the layout to start from this widget.
         """
         self.real_widget.adaptLayout(recurse)
 
@@ -550,14 +587,18 @@ class Widget:
         """
 
     def findChildren(self, **kwargs):
-        """
-        Find all contained child widgets by attribute values.
+        """Find all contained child widgets by attribute values.
 
-        Usage::
-          closeButtons = root_widget.findChildren(name='close')
-          buttons = root_widget.findChildren(__class__=pychan.widgets.Button)
-        """
+        Returns
+        -------
+        list
+            List of matching child widgets.
 
+        Usage
+        -----
+        closeButtons = root_widget.findChildren(name='close')
+        buttons = root_widget.findChildren(__class__=pychan.widgets.Button)
+        """
         children = []
 
         def _childCollector(widget):
@@ -568,20 +609,17 @@ class Widget:
         return children
 
     def getNamedChildren(self, include_unnamed=False):
-        """
-        Create a dictionary of child widgets with the keys being
-        their name. This will contain only Widgets which have
-        a name different from "__unnamed__" (which is the default).
+        """Create a dictionary of child widgets keyed by name.
 
-        @param include_unnamed: Defaults to false. If this is true unnamed widgets are added, too.
+        Parameters
+        ----------
+        include_unnamed : bool, optional
+            If True, include widgets without a name.
 
-        The values are lists of widgets, so not only unique names
-        are handled correctly.
-
-        Usage::
-                children = widget.getNamedChildren()
-                for widget in children.get("info",[])
-                        print widget.name , " == info"
+        Returns
+        -------
+        dict
+            Mapping of widget name to list of widgets with that name.
         """
         children = {}
         if include_unnamed:
@@ -599,10 +637,12 @@ class Widget:
         return children
 
     def findChild(self, **kwargs):
-        """Find the first contained child widgets by attribute values.
+        """Find the first contained child widget by attribute values.
 
-        Usage::
-          closeButton = root_widget.findChild(name='close')
+        Returns
+        -------
+        object or None
+            First matching widget or None if no match found.
         """
         if list(kwargs.keys()) == ["name"]:
             return self.findChildByName(kwargs["name"])
@@ -613,12 +653,12 @@ class Widget:
         return None
 
     def findChildByName(self, name):
-        """
-        Find first contained child widget by its name.
+        """Find first contained child widget by its name.
 
-        Note that this is the fast version of findChild(name="...")
-        and that you don't have to call this explicitly, it is used
-        if possible.
+        Returns
+        -------
+        object or None
+            The matching widget or None if not found.
         """
         result = []
 
@@ -634,50 +674,53 @@ class Widget:
         return None
 
     def addChild(self, widget):
-        """
-        Add a widget as child widget.
+        """Add a widget as child widget.
 
-        This function is only implemented in container widgets.
-
-        You'll need to call L{adaptLayout} if the container is already shown,
-        to adapt the layout to the new widget. This doesn't happen
-        automatically.
+        Raises
+        ------
+        RuntimeError
+            If the widget does not support children (not a container).
         """
         raise RuntimeError(
             f"Trying to add a widget to {repr(self)}, which doesn't allow this."
         )
 
     def insertChild(self, widget, position):
-        """
-        Insert a widget at a given index in the child list.
+        """Insert a widget at a given index in the child list.
 
-        See L{addChild} and L{insertChildBefore}
+        Raises
+        ------
+        RuntimeError
+            If the widget does not support insertion of children.
         """
         raise RuntimeError(
             f"Trying to insert a widget to {repr(self)}, which doesn't allow this."
         )
 
     def insertChildBefore(self, widget, before):
-        """
-        Insert a child widget before a given widget.
+        """Insert a child widget before a given widget.
 
         If the widget isn't found, the widget is appended to the children list.
 
-        See L{addChild} and L{insertChild}
+        Raises
+        ------
+        RuntimeError
+            If the widget does not support insertion of children.
         """
         raise RuntimeError(
             f"Trying to insert a widget to {repr(self)}, which doesn't allow this."
         )
 
     def addChildren(self, *widgets):
-        """
-        Add multiple widgets as children.
-        Only implemented for container widgets. See also L{addChild}
+        """Add multiple widgets as children.
 
-        Usage::
-                container.addChildren( widget1, widget2, ... )
-                # or you can use this on a list
-                container.addChildren( [widget1,widget2,...] )
+        Only implemented for container widgets. See also L{addChild}.
+
+        Usage
+        -----
+        container.addChildren(widget1, widget2, ...)
+        or
+        container.addChildren([widget1, widget2, ...])
         """
         if len(widgets) == 1 and not isinstance(widgets[0], Widget):
             widgets = widgets[0]
@@ -685,30 +728,34 @@ class Widget:
             self.addChild(widget)
 
     def removeChild(self, widget):
-        """
-        Remove a direct child widget.
+        """Remove a direct child widget.
 
         This function is only implemented in container widgets.
 
-        You'll need to call L{adaptLayout} if the container is already shown,
+        You'll need to call L{adaptLayout} if the container is already shown
         to adapt the layout to the removed widget. This doesn't happen
         automatically.
+
+        Raises
+        ------
+        RuntimeError
+            If this widget is not a container and cannot remove children.
         """
         raise RuntimeError(
             f"Trying to remove a widget from {repr(self)}, which is not a container widget."
         )
 
     def removeChildren(self, *widgets):
-        """
-        Remove a list of direct child widgets.
-        All widgets have to be direct child widgets.
-        To 'clear' a container take a look at L{removeAllChildren}.
-        See also L{removeChild}.
+        """Remove a list of direct child widgets.
 
-        Usage::
-                container.removeChildren( widget1, widget2, ... )
-                # or you can use this on a list
-                container.removeChildren( [widget1,widget2,...] )
+        All widgets have to be direct child widgets. To 'clear' a container
+        take a look at L{removeAllChildren}. See also L{removeChild}.
+
+        Usage
+        -----
+        container.removeChildren(widget1, widget2, ...)
+        or
+        container.removeChildren([widget1, widget2, ...])
         """
         if len(widgets) == 1 and not isinstance(widgets[0], Widget):
             widgets = widgets[0]
@@ -726,32 +773,26 @@ class Widget:
             self.removeChild(widget)
 
     def mapEvents(self, eventMap, ignoreMissing=False):
-        """
-        Map widget events to functions in a batch.
+        """Map widget events to functions in a batch.
 
         Subsequent calls of mapEvents will merge events with different
-        widget names and override the previously set callback.
-        You can also pass C{None} instead of a callback, which will
-        disable the event completely.
+        widget names and override the previously set callback. You can also
+        pass ``None`` instead of a callback, which will disable the event
+        completely.
 
-        @param eventMap: A dictionary with widget/event names as keys and callbacks as values.
-        @param ignoreMissing: Normally this method raises a RuntimeError, when a widget
-        can not be found - this behaviour can be overriden by passing True here.
+        Parameters
+        ----------
+        eventMap : dict
+            Mapping of "widgetName/eventName[/groupName]" to callbacks.
+        ignoreMissing : bool, optional
+            If False (default) raises ``RuntimeError`` when a widget cannot
+            be found.
 
-        The keys in the dictionary are parsed as C{"widgetName/eventName"} with the slash
-        separating the two. If no slash is found the eventName is assumed to be "action".
-
-        Additionally you can supply a group name or channel C{"widgetName/eventName/groupName"}.
-        Event handlers from one group are not overridden by handlers from another group.
-        The default group name is C{"default"}.
-
-        Example::
-                guiElement.mapEvents({
-                        "button" : guiElement.hide,
-                        "button/mouseEntered" : toggleButtonColorGreen,
-                        "button/mouseExited" :  toggleButtonColorBlue,
-                })
-
+        Raises
+        ------
+        RuntimeError
+            If a widget referenced in ``eventMap`` cannot be found and
+            ``ignoreMissing`` is False.
         """
         children = self.getNamedChildren(include_unnamed=True)
         for descr, func in list(eventMap.items()):
@@ -765,9 +806,15 @@ class Widget:
                 raise RuntimeError(f"No widget with the name: {name}")
 
     def setInitialData(self, data):
-        """
-        Set the initial data on a widget, what this means depends on the Widget.
-        In case the widget does not accept initial data, a L{RuntimeError} is thrown.
+        """Set the initial data on a widget.
+
+        What this means depends on the widget implementation. If the widget
+        does not accept initial data a ``RuntimeError`` is raised.
+
+        Raises
+        ------
+        RuntimeError
+            If the widget does not accept initial data.
         """
         if not self.accepts_initial_data:
             raise RuntimeError(
@@ -776,10 +823,14 @@ class Widget:
         self._realSetInitialData(data)
 
     def setData(self, data):
-        """
-        Set the user-mutable data on a widget, what this means depends on the Widget.
-        In case the widget does not accept data, a L{RuntimeError} is thrown.
-        This is inverse to L{getData}.
+        """Set the user-mutable data on a widget.
+
+        If the widget does not accept data, a ``RuntimeError`` is raised.
+
+        Raises
+        ------
+        RuntimeError
+            If the widget does not accept data.
         """
         if not self.accepts_data:
             raise RuntimeError(
@@ -788,10 +839,17 @@ class Widget:
         self._realSetData(data)
 
     def getData(self):
-        """
-        Get the user-mutable data of a widget, what this means depends on the Widget.
-        In case the widget does not have user mutable data, a L{RuntimeError} is thrown.
-        This is inverse to L{setData}.
+        """Get the user-mutable data of a widget.
+
+        Returns
+        -------
+        object
+            The stored data for this widget.
+
+        Raises
+        ------
+        RuntimeError
+            If the widget does not accept or have user-mutable data.
         """
         if not self.accepts_data:
             raise RuntimeError(
@@ -800,18 +858,19 @@ class Widget:
         return self._realGetData()
 
     def distributeInitialData(self, initialDataMap):
-        """
-        Distribute B{initial} (not mutable by the user) data from a dictionary over the widgets in the hierachy
-        using the keys as names and the values as the data (which is set via L{setInitialData}).
-        If more than one widget matches - the data is set on ALL matching widgets.
-        By default a missing widget is just ignored.
+        """Distribute initial (not user-mutable) data from a dictionary.
 
-        Use it like this::
-          guiElement.distributeInitialData({
-               'myTextField' : 'Hello World!',
-               'myListBox' : ["1","2","3"]
-          })
+        Using the keys as names and the values as the data (which is set via
+        :meth:`setInitialData`). If more than one widget matches the name, the
+        data is set on all matching widgets. By default a missing widget is
+        ignored.
 
+        Example
+        -------
+        guiElement.distributeInitialData({
+             'myTextField': 'Hello World!',
+             'myListBox': ["1", "2", "3"],
+        })
         """
         children = self.getNamedChildren(include_unnamed=True)
         for name, data in list(initialDataMap.items()):
@@ -820,17 +879,22 @@ class Widget:
                 widget.setInitialData(data)
 
     def distributeData(self, dataMap):
-        """
-        Distribute data from a dictionary over the widgets in the hierachy
-        using the keys as names and the values as the data (which is set via L{setData}).
-        This will only accept unique matches.
+        """Distribute data from a dictionary over the widgets in the hierarchy.
 
-        Use it like this::
-          guiElement.distributeData({
-               'myTextField' : 'Hello World!',
-               'myListBox' : ["1","2","3"]
-          })
+        Using the keys as names and the values as the data (which is set via
+        :meth:`setData`). This will only accept unique matches.
 
+        Example
+        -------
+        guiElement.distributeData({
+             'myTextField': 'Hello World!',
+             'myListBox': ["1", "2", "3"],
+        })
+
+        Raises
+        ------
+        RuntimeError
+            If a widget name is not unique in the hierarchy.
         """
         children = self.getNamedChildren(include_unnamed=True)
         for name, data in list(dataMap.items()):
@@ -844,16 +908,26 @@ class Widget:
             widgetList[0].setData(data)
 
     def collectDataAsDict(self, widgetNames):
-        """
-        Collect data from a widget hierachy by names into a dictionary.
-        This can only handle UNIQUE widget names (in the hierachy)
-        and will raise a RuntimeError if the number of matching widgets
-        is not equal to one.
+        """Collect data from a widget hierarchy by names into a dictionary.
 
-        Usage::
-          data = guiElement.collectDataAsDict(['myTextField','myListBox'])
-          print "You entered:",data['myTextField']," and selected ",data['myListBox']
+        This can only handle UNIQUE widget names (in the hierarchy) and will
+        raise a :class:`RuntimeError` if the number of matching widgets is
+        not equal to one.
 
+        Usage
+        -----
+        data = guiElement.collectDataAsDict(['myTextField','myListBox'])
+        print("You entered:", data['myTextField'], " and selected ", data['myListBox'])
+
+        Returns
+        -------
+        dict
+            Mapping from widget name to collected data.
+
+        Raises
+        ------
+        RuntimeError
+            If a widget name does not uniquely identify a single widget.
         """
         children = self.getNamedChildren(include_unnamed=True)
         dataMap = {}
@@ -865,30 +939,29 @@ class Widget:
                 raise RuntimeError(
                     "CollectData can only handle widgets with unique names."
                 )
-
             dataMap[name] = widgetList[0].getData()
         return dataMap
 
     def collectData(self, *widgetNames):
-        """
-        Collect data from a widget hierachy by names.
-        This can only handle UNIQUE widget names (in the hierachy)
-        and will raise a RuntimeError if the number of matching widgets
-        is not equal to one.
+        """Collect data from a widget hierarchy by names.
 
-        This function takes an arbitrary number of widget names and
-        returns a list of the collected data in the same order.
+        This can only handle UNIQUE widget names (in the hierarchy) and will
+        raise a :class:`RuntimeError` if the number of matching widgets is
+        not equal to one.
 
-        In case only one argument is given, it will return just the
-        data, with out putting it into a list.
+        The function accepts an arbitrary number of widget names and returns
+        a list of collected data in the same order. If a single name is
+        provided, the single value is returned instead of a list.
 
-        Usage::
-          # Multiple element extraction:
-          text, selected = guiElement.collectData('myTextField','myListBox')
-          print "You entered:",text," and selected item nr",selected
-          # Single elements are handled gracefully, too:
-          test = guiElement.collectData('testElement')
+        Returns
+        -------
+        list or object
+            List of collected values, or single value if one name was given.
 
+        Raises
+        ------
+        RuntimeError
+            If a widget name does not uniquely identify a single widget.
         """
         children = self.getNamedChildren(include_unnamed=True)
         dataList = []
@@ -923,9 +996,7 @@ class Widget:
         self.deepApply(_printNamedWidget)
 
     def stylize(self, style, **kwargs):
-        """
-        Recursively apply a style to all widgets.
-        """
+        """Recursively apply a style to all widgets."""
 
         def _restyle(widget):
             get_manager().stylize(widget, style, **kwargs)
@@ -933,42 +1004,38 @@ class Widget:
         self.deepApply(_restyle)
 
     def resizeToContent(self, recurse=True):
-        """
-        Try to shrink the widget, so that it fits closely around its content.
+        """Shrink the widget to fit its content.
+
         Do not call directly.
         """
         self.real_widget.resizeToContent(recurse)
 
     def expandContent(self, recurse=True):
-        """
-        Try to expand any spacer in the widget within the current size.
+        """Expand any spacer in the widget within the current size.
+
         Do not call directly.
         """
         self.real_widget.expandContent(recurse)
 
     def _recursiveResizeToContent(self):
-        """
-        Recursively call L{resizeToContent}. Uses L{deepApply}.
-        Do not call directly.
-        """
+        """Recursively call :meth:`resizeToContent` using :meth:`deepApply`."""
         self.real_widget.resizeToContent(True)
 
     def _recursiveExpandContent(self):
-        """
-        Recursively call L{expandContent}. Uses L{deepApply}.
-        Do not call directly.
-        """
+        """Recursively call :meth:`expandContent` using :meth:`deepApply`."""
         self.real_widget.expandContent(True)
 
     def deepApply(self, visitorFunc, leaves_first=True, shown_only=False):
-        """
-        Recursively apply a callable to all contained widgets and then the widget itself.
-        """
+        """Recursively apply a callable to all contained widgets then the widget itself."""
         visitorFunc(self)
 
     def getAbsolutePos(self):
-        """
-        Get absolute position on screen
+        """Get absolute position on screen.
+
+        Returns
+        -------
+        tuple
+            (x, y) absolute coordinates on screen.
         """
         absX = self.x
         absY = self.y
@@ -980,12 +1047,29 @@ class Widget:
         return (absX, absY)
 
     def sizeChanged(self):
-        pass
+        """Handle widget size changes.
+
+        Implementations may override this hook to react to size changes.
+        """
 
     def __str__(self):
+        """Return a short string representation for debugging.
+
+        Returns
+        -------
+        str
+            Short, human-readable representation of the widget.
+        """
         return f"{self.__class__.__name__}(name='{self.name}')"
 
     def __repr__(self):
+        """Return a detailed representation including object id.
+
+        Returns
+        -------
+        str
+            Detailed representation including object id.
+        """
         return f"<{self.__class__.__name__}(name='{self.name}') at {id(self):x}>"
 
     def _setSize(self, size):
@@ -1084,6 +1168,13 @@ class Widget:
         return (size.getWidth(), size.getHeight())
 
     def isFixedSize(self):
+        """Return whether the widget has a fixed size.
+
+        Returns
+        -------
+        bool
+            True if widget reports a fixed size, False otherwise.
+        """
         return self.real_widget.isFixedSize()
 
     def _setFont(self, font):

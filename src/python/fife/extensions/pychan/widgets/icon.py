@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Icon class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
@@ -12,17 +11,7 @@ from .widget import Widget
 
 
 class Icon(Widget):
-    """
-    An image icon.
-
-    New Attributes
-    ==============
-
-      - image: String or GuiImage: The source location of the Image or a direct GuiImage
-      - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
-      - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
-      - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
-    """
+    """An image icon."""
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr("image"),
@@ -131,6 +120,13 @@ class Icon(Widget):
             self.size = size
 
     def clone(self, prefix):
+        """Create a clone of this Icon with a name prefix.
+
+        Returns
+        -------
+        Icon
+            New Icon instance cloned from this one.
+        """
         iconClone = Icon(
             None,
             self._createNameWithPrefix(prefix),

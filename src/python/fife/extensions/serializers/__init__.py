@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Utilities and helpers for serializers used by FIFE."""
 
 import os
 
@@ -25,26 +26,36 @@ except ImportError:
 
 
 class SerializerError(Exception):
-    pass
+    """Base exception for serializer errors."""
 
 
 class InvalidFormat(SerializerError):
-    pass
+    """Raised when a serializer encounters invalid format."""
 
 
 class WrongFileType(SerializerError):
-    pass
+    """Raised when a file has an unexpected type for the serializer."""
 
 
 class NameClash(SerializerError):
-    pass
+    """Raised when a name collision occurs while loading data."""
 
 
 class NotFound(SerializerError):
-    pass
+    """Raised when a requested resource cannot be found."""
+
+
+# Remove duplicate redefinitions that were accidentally introduced above.
 
 
 def warn(self, msg):
+    """Emit a serializer warning message.
+
+    Parameters
+    ----------
+    msg : str
+        Warning message to display.
+    """
     print(f"Warning ({self.filename}): {msg}")
 
 
@@ -55,6 +66,11 @@ def reverse_root_subfile(masterfile, subfile):
     -------
     If ``masterfile`` is ``./../foo/bar.xml`` and ``subfile`` is
     ``../foo2/subfoo.xml``, the returned path is ``./../foo2/subfoo.xml``.
+
+    Returns
+    -------
+    str
+        Path to the reconstructed subfile rooted against the provided masterfile.
 
     Notes
     -----
@@ -77,6 +93,11 @@ def norm_path(path):
 
     FIFE always uses these delimiters, but some OS-related routines will
     default to ``os.path.sep``.
+
+    Returns
+    -------
+    str
+        Path with '/' separators.
     """
     if os.path.sep == "/":
         return path
@@ -125,8 +146,7 @@ def loadImportDir(loader, path, engine, debug=False):
 
 
 def loadImportDirRec(loader, path, engine, debug=False):
-    """Recursively call :func:`loadImportFile` for XML files in a directory
-    tree.
+    """Recursively call :func:`loadImportFile` for XML files in a directory tree.
 
     Parameters
     ----------
@@ -154,6 +174,11 @@ def root_subfile(masterfile, subfile):
     E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
     returned path is ../foo2/subfoo.xml
     NOTE: masterfile is expected to be *file*, not directory. subfile can be either.
+
+    Returns
+    -------
+    str
+        Path to the subfile relative to the masterfile directory.
     """
     s = "/"
 

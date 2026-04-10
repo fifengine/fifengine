@@ -3,9 +3,12 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-# ------------------------------------------------------------------------------
-# This is the RPG demo of Fifengine.
-# ------------------------------------------------------------------------------
+"""Entry point for the RPG demo.
+
+This module provides a `main()` function that starts the RPG demo
+application. It also supports running the profiler when enabled in
+the demo settings.
+"""
 
 import cProfile
 import os
@@ -20,6 +23,7 @@ TDS = FifePychanSettings(app_name="rpg", settings_file="./settings.xml")
 
 
 def main():
+    """Create and run the `RPGApplication` instance."""
     app = RPGApplication(TDS)
     app.run()
 

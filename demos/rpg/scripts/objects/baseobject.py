@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Base game object utilities for the RPG demo."""
 
 from fife import fife
 
@@ -22,7 +23,10 @@ GameObjectTypes = {
 
 
 class ObjectActionListener(fife.InstanceActionListener):
+    """Adapter to attach an action listener to a game object instance."""
+
     def __init__(self, gamecontroller, obj):
+        """Initialize the listener with gamecontroller and target object."""
         fife.InstanceActionListener.__init__(self)
         self._gamecontroller = gamecontroller
         self._object = obj
@@ -30,26 +34,33 @@ class ObjectActionListener(fife.InstanceActionListener):
         self._attached = False
 
     def detachActionListener(self):
+        """Detach the action listener from the object's instance."""
         if self._attached:
             self._object.instance.removeActionListener(self)
             self._attached = False
 
     def attachActionListener(self):
+        """Attach the action listener to the object's instance."""
         if not self._attached:
             self._object.instance.addActionListener(self)
             self._attached = True
 
     def onInstanceActionFinished(self, instance, action):
+        """Handle instance action finished events (no-op by default)."""
         pass
 
     def onInstanceActionCancelled(self, instance, action):
+        """Handle instance action cancelled events (no-op by default)."""
         pass
 
     def onInstanceActionFrame(self, instance, action, frame):
+        """Handle per-frame instance action events (no-op by default)."""
         pass
 
 
 class BaseGameObject(Serializer):
+    """Serializable game object base class for RPG demo objects."""
+
     def __init__(
         self,
         gamecontroller,
@@ -60,16 +71,7 @@ class BaseGameObject(Serializer):
         instanceid=None,
         createInstance=False,
     ):
-        """
-        @param gamecontroller: A reference to the master game controller
-        @param instancename: The name of the object to load.  The object's XML file must
-        be part of the map file or added with fife.extensions.loaders.loadImportFile
-        @param instanceid: used if you want to give a specific ID to the instance to
-        differenciate it from other instances
-        @param createInstance: If this is True it will attempt to be loaded from disk and not
-        use one that has already been loaded from the map file.  See the note about the
-        instancename paramater above.
-        """
+        """Initialize the BaseGameObject with controller, layer, and instance info."""
         self._gamecontroller = gamecontroller
         self._fifeobject = None
 
@@ -98,23 +100,17 @@ class BaseGameObject(Serializer):
         self._activated = True
 
     def hide(self):
-        """
-        Marks the FIFE instance as not visible
-        """
+        """Mark the FIFE instance as not visible."""
         if self._instance:
             self._instance.get2dGfxVisual().setVisible(False)
 
     def show(self):
-        """
-        Marks the FIFE instance as not visible
-        """
+        """Mark the FIFE instance as visible."""
         if self._instance:
             self._instance.get2dGfxVisual().setVisible(True)
 
     def destroy(self):
-        """
-        Deletes the FIFE instance from the actor layer on the map.
-        """
+        """Delete the FIFE instance from the actor layer and cleanup."""
         if self._actionlistener:
             self._actionlistener.detachActionListener()
 
@@ -125,9 +121,7 @@ class BaseGameObject(Serializer):
         self._activated = False
 
     def spawn(self, x, y):
-        """
-        Creates a new FIFE instance and spawns it in the specified x y location
-        """
+        """Spawn or move the object to the specified map coordinates."""
         if self._instance:
             self._setMapPostion(x, y)
             self.show()
@@ -142,6 +136,7 @@ class BaseGameObject(Serializer):
         self._activated = True
 
     def setMapPosition(self, x, y):
+        """Set the object's position on the map to the given coordinates."""
         curloc = self.location
 
         self._position = self.location.getExactLayerCoordinates()
@@ -152,6 +147,13 @@ class BaseGameObject(Serializer):
         self.location = curloc
 
     def serialize(self):
+        """Serialize the object's position and type to a dict.
+
+        Returns
+        -------
+        dict
+            Mapping of serialized object fields (posx, posy, type, objectname).
+        """
         lvars = {}
         x, y = self.position
         lvars["posx"] = x
@@ -162,6 +164,7 @@ class BaseGameObject(Serializer):
         return lvars
 
     def deserialize(self, valuedict=None):
+        """Deserialize position and type information from a dict."""
         if not valuedict:
             return
 
@@ -178,9 +181,7 @@ class BaseGameObject(Serializer):
         self.setMapPosition(x, y)
 
     def _createFIFEInstance(self, layer):
-        """
-        Should not be called directly.  Use the constructor!
-        """
+        """Create the underlying FIFE object and instance on the given layer."""
         mapmodel = self._gamecontroller.engine.getModel()
         self._fifeobject = mapmodel.getObject(
             self._name,
@@ -199,9 +200,14 @@ class BaseGameObject(Serializer):
         self._instance.thisown = 0
 
     def _findFIFEInstance(self, layer):
+        """Locate the FIFE instance on the given layer, raising if not found.
+
+        Raises
+        ------
+        InstanceNotFoundError
+            If the underlying FIFE instance cannot be found on `layer`.
         """
-        Throws InstanceNotFound if the instance was not found on the specified layer.
-        """
+        # Raises InstanceNotFoundError if the instance was not found on the layer.
         self._instance = self._layer.getInstance(self._id)
         if self._instance:
             self._instance.thisown = 0

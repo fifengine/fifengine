@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Radiobutton class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 
@@ -13,9 +12,8 @@ class RadioButton(BasicTextWidget):
     """
     A basic radiobutton (an exclusive checkbox).
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - marked: Boolean: Whether the checkbox is checked or not.
       - group: String: All RadioButtons with the same group name
       can only be checked exclusively.
@@ -102,6 +100,13 @@ class RadioButton(BasicTextWidget):
         # Initial data stuff inherited.
 
     def clone(self, prefix):
+        """Create a clone of this RadioButton with a name prefix.
+
+        Returns
+        -------
+        RadioButton
+            A new RadioButton instance cloned from this one.
+        """
         rbuttonClone = RadioButton(
             None,
             self._createNameWithPrefix(prefix),

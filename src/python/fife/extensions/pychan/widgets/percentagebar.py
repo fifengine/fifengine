@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Percentagebar class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import IntAttr
 
@@ -10,13 +9,14 @@ from .widget import Widget
 
 
 class PercentageBar(Widget):
-    """A percentage bar widget
+    """A percentage bar widget.
 
-    New Attributes
-    ==============
-
-      - orientation: 1 = horizontal, 0=vertical
-      - value: int: default 0
+    Attributes
+    ----------
+    orientation : int
+        1 = horizontal, 0 = vertical
+    value : int
+        Default 0.
 
     """
 
@@ -103,6 +103,13 @@ class PercentageBar(Widget):
         self._realGetData = self._getValue
 
     def clone(self, prefix):
+        """Create a clone of this PercentageBar with a name prefix.
+
+        Returns
+        -------
+        PercentageBar
+            New PercentageBar instance cloned from this one.
+        """
         pbarClone = PercentageBar(
             None,
             self._createNameWithPrefix(prefix),
@@ -135,11 +142,28 @@ class PercentageBar(Widget):
         return pbarClone
 
     def _getValue(self):
-        """getValue(self) -> int"""
+        """Get the current value.
+
+        Returns
+        -------
+        int
+            Current value of the percentage bar.
+        """
         return self.real_widget.getValue()
 
     def _setValue(self, value):
-        """setValue(self, int value)"""
+        """Set the current value.
+
+        Parameters
+        ----------
+        value : int
+            Value to set.
+
+        Raises
+        ------
+        RuntimeError
+            If ``value`` is not an ``int``.
+        """
         if type(value) is not int:
             raise RuntimeError("PercentageBar only accepts integer values")
         self.real_widget.setValue(value)
@@ -147,11 +171,23 @@ class PercentageBar(Widget):
     value = property(_getValue, _setValue)
 
     def _setOrientation(self, orientation):
-        """setOrientation(self, Orientation orientation)"""
+        """Set the orientation.
+
+        Parameters
+        ----------
+        orientation : int
+            Orientation value to set.
+        """
         self.real_widget.setOrientation(orientation)
 
     def _getOrientation(self):
-        """getOrientation(self) -> int"""
+        """Get the current orientation.
+
+        Returns
+        -------
+        int
+            Current orientation value.
+        """
         return self.real_widget.getOrientation()
 
     orientation = property(_getOrientation, _setOrientation)

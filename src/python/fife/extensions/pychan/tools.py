@@ -4,7 +4,7 @@
 
 from . import exceptions
 
-### Functools ###
+# Functools ###
 
 
 def applyOnlySuitable(func, *args, **kwargs):
@@ -15,6 +15,11 @@ def applyOnlySuitable(func, *args, **kwargs):
     keyword arguments. If the supplied function does not expect one or more of the
     keyword arguments, these are silently discarded. The result of the application is returned.
     This is useful to pass information to callbacks without enforcing a particular signature.
+
+    Returns
+    -------
+    Any
+        The return value of `func(*args, **filtered_kwargs)`.
     """
     func_name = "__func__"
     code_name = "__code__"
@@ -51,15 +56,10 @@ def callbackWithArguments(callback, *args, **kwargs):
     different buttons to execute basically the same code
     with different arguments.
 
-    Usage::
-      # The target callback
-      def printStuff(text):
-          print text
-      # Mapping the events
-      gui.mapEvents({
-          'buttonHello' : callbackWithArguments(printStuff,"Hello"),
-          'buttonBye' : callbackWithArguments(printStuff,"Adieu")
-      })
+    Returns
+    -------
+    callable
+        A zero-argument callable that, when invoked, calls `callback(*args, **kwargs)`.
     """
 
     def real_callback():
@@ -75,31 +75,16 @@ def attrSetCallback(**kwargs):
     This is especially useful for mouseEntered/Exited
     events - to create hover effects.
 
-    It takes a set of keyword arguments. The keys are treated as attribute names,
-    which are then set to the corresponding value when the callback is called.
-    Some key names are treated special - see below.
+    Returns
+    -------
+    callable
+        A single-argument callable `callback(widget)` that sets the provided
+        attributes on `widget` and calls any `do__*` methods.
 
-    Usage - Example adapted from demo application::
-            eventMap = {
-                    'creditsLink'  : showCreditsCallback,
-                    'creditsLink/mouseEntered' : attrSetCallback(
-                          text = "Show credits!",
-                          background_color = (255,255,0,255),
-                          do__adaptLayout=True),
-                    'creditsLink/mouseExited'  : attrSetCallback(text = "Credits"),
-            gui.mapEvents(eventMap)
-
-    Now when the mouse enters the creditsLink (a Label in our case), the following code will be executed::
-            #widget is the creditsLink - given to the event callback.
-            widget.text = "Show credits!"
-            widget.background_color = (255,255,0,255)
-            widget.adaptLayout()
-
-    The C{do__adaptLayout} argument causes the method C{adaptLayout} to be called.
-    In fact any key starting with C{do__} results in such a method call. The order
-    of execution of such calls is undefined.
-
-    Keys starting with an underscore raise a L{exceptions.PrivateFunctionalityError}.
+    Raises
+    ------
+    exceptions.PrivateFunctionalityError
+        If any provided kwarg starts with an underscore.
     """
     do_calls = []
 
@@ -124,13 +109,11 @@ def chainCallbacks(*args):
     """
     Chains callbacks to be called one after the other.
 
-    Example Usage::
-        def print_event(event=0):
-          print event
-        def print_widget(widget=0):
-          print widget
-        callback = tools.chainCallbacks(doSomethingUseful, print_event, print_widget)
-        guiElement.capture(callback)
+    Returns
+    -------
+    callable
+        A callable `callback(event=0, widget=0)` that executes each provided
+        callback in order with suitable arguments.
     """
     callbacks = args
 
@@ -145,13 +128,11 @@ def repeatALot(n=1000):
     """
     Profile functions by running them many times.
 
-    Internal decorator used to profile some pychan functions.
-    Only use with functions without side-effect.
-
-    Usage::
-            @repeatALot(n=10000)
-            def findChild(self,**kwargs):
-                    ...
+    Returns
+    -------
+    callable
+        A decorator that replaces the target function with a wrapper that
+        executes it `n` times for profiling and returns the function result.
     """
 
     def wrap_f(f):

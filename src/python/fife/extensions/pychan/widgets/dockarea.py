@@ -13,9 +13,8 @@ class DockArea(ResizableWindow):
     """
     Resizable window class that supports docking Panels.
 
-    New Attributes
-    ==============
-
+    Attributes
+    ----------
       - active: If true, the DockArea is active and Panels can be docked to it.
       - side: Allows to specify the side for expanding.
       - highlight_color: Color that is used if a Panel enters the DockArea.
@@ -143,6 +142,13 @@ class DockArea(ResizableWindow):
             self.highlight_color = self.DEFAULT_HIGHLIGHT_COLOR
 
     def clone(self, prefix):
+        """Create a clone of this DockArea with a name prefix.
+
+        Returns
+        -------
+        DockArea
+            New DockArea instance cloned from this one.
+        """
         dockAreaClone = DockArea(
             None,
             self._createNameWithPrefix(prefix),
@@ -194,6 +200,7 @@ class DockArea(ResizableWindow):
         return dockAreaClone
 
     def addChild(self, widget):
+        """Add a child widget and mark it as docked."""
         super().addChild(widget)
         widget.docked = True
 
@@ -206,27 +213,59 @@ class DockArea(ResizableWindow):
     active = property(_getActiveDockArea, _setActiveDockArea)
 
     def isTopSide(self):
+        """Return whether this dock area is on the top side.
+
+        Returns
+        -------
+        bool
+            True if the dock area is on the top side.
+        """
         return self.real_widget.isTopSide()
 
     def setTopSide(self, side):
+        """Set whether the dock area is on the top side."""
         self.real_widget.setTopSide(side)
 
     def isRightSide(self):
+        """Return whether this dock area is on the right side.
+
+        Returns
+        -------
+        bool
+            True if the dock area is on the right side.
+        """
         return self.real_widget.isRightSide()
 
     def setRightSide(self, side):
+        """Set whether the dock area is on the right side."""
         self.real_widget.setRightSide(side)
 
     def isBottomSide(self):
+        """Return whether this dock area is on the bottom side.
+
+        Returns
+        -------
+        bool
+            True if the dock area is on the bottom side.
+        """
         return self.real_widget.isBottomSide()
 
     def setBottomSide(self, side):
+        """Set whether the dock area is on the bottom side."""
         self.real_widget.setBottomSide(side)
 
     def isLeftSide(self):
+        """Return whether this dock area is on the left side.
+
+        Returns
+        -------
+        bool
+            True if the dock area is on the left side.
+        """
         return self.real_widget.isLeftSide()
 
     def setLeftSide(self, side):
+        """Set whether the dock area is on the left side."""
         self.real_widget.setLeftSide(side)
 
     def _getSide(self):

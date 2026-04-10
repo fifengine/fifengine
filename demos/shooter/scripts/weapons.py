@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Projectile and weapon implementations for the shooter demo."""
+
 from fife import fife
 
 from scripts.common.baseobject import SHTR_PROJECTILE, SpaceObject
@@ -18,17 +20,18 @@ class Projectile(SpaceObject):
     """
 
     def __init__(self, scene, owner, projectileName, timeToLive):
-        """
-        @param scene: The scene
-        @type scene: L{Scene}
-        @param owner: The ship that fired the projectile
-        @type owner: L{Ship}
-        @param projectileName: The name of the FIFE object to load
-        @type projectilName: C{string}
-        @param timeToLive: The length of time in milliseconds the projectile will
-        remain active before destroying itself.
-        @type timeToLive: C{int}
+        """Create a projectile instance.
 
+        Parameters
+        ----------
+        scene : Scene
+            Scene the projectile belongs to.
+        owner : Ship
+            The ship that fired this projectile.
+        projectileName : str
+            Name of the FIFE projectile object.
+        timeToLive : int
+            Time to live in milliseconds.
         """
         super().__init__(scene, projectileName, False)
 
@@ -50,13 +53,12 @@ class Projectile(SpaceObject):
         self._damage = 1
 
     def create(self, location):
-        """
-        Spawns the projectile.
+        """Spawn the projectile at `location`.
 
-        @param location: The location to create the projectile
-        @type location: L{fife.Location}
-
-        @note: This is called by L{Projectile.run}
+        Parameters
+        ----------
+        location : fife.Location
+            Location at which to spawn the projectile.
         """
         self._instance = self._layer.createInstance(
             self._obj, location.getExactLayerCoordinates(), "bullet"
@@ -65,14 +67,14 @@ class Projectile(SpaceObject):
         self._instance.thisown = 0
 
     def run(self, velocity, location):
-        """
-        Start the projectile on it's path.
+        """Start the projectile moving from `location` with `velocity`.
 
-        @param velocity: The starting velocity of the projectile
-        @type velocity: L{fife.DoublePoint}
-        @param location: The location to create the projectile
-        @type location: L{fife.Location}
-
+        Parameters
+        ----------
+        velocity : fife.DoublePoint
+            Starting velocity vector.
+        location : fife.Location
+            Starting location for the projectile.
         """
         if not self._running:
             self._velocity = velocity
@@ -91,6 +93,7 @@ class Projectile(SpaceObject):
         return self._owner
 
     def update(self):
+        """Advance projectile lifetime and destroy when expired."""
         self._totaltime += self._scene.timedelta
         if self._running and self._totaltime < self._ttl:
             super().update()
@@ -109,13 +112,10 @@ class Projectile(SpaceObject):
 
 
 class Weapon:
-    """
-    Weapon
+    """Base weapon class; subclass and implement `fire`.
 
-    This class is a super class and is meant to be inherited and
-    not used directly.  You should implement fire() in the sub-
-    class.  The Weapon class spawns Projectile(s) and fires them
-    in the specified direction at a specified fire rate.
+    Subclasses should implement `fire(direction)` to spawn and launch
+    `Projectile` instances.
     """
 
     def __init__(self, scene, ship, firerate):
@@ -129,11 +129,12 @@ class Weapon:
         self._soundclip = None
 
     def fire(self, direction):
-        """
-        Fires the weapon in the specified direction.
+        """Fire the weapon in `direction`.
 
-        @param direction: A normalized vector specifying the direction to fire the projectile
-        @type direction: L{fife.DoublePoint}
+        Parameters
+        ----------
+        direction : fife.DoublePoint
+            Normalized direction vector to fire towards.
         """
         pass
 
@@ -154,6 +155,8 @@ class Weapon:
 
 
 class Cannon(Weapon):
+    """Cannon weapon that fires fast projectiles."""
+
     def __init__(self, scene, ship, firerate):
         super().__init__(scene, ship, firerate)
 
@@ -162,6 +165,7 @@ class Cannon(Weapon):
         scene.soundmanager.addEmitterToSoundEffect(scene._soundeffect, self._soundclip)
 
     def fire(self, direction):
+        """Fire a cannon projectile in `direction`."""
         velocity = fife.DoublePoint(direction)
         velocity.normalize()
         velocity.x = velocity.x * self._projectileVelocity
@@ -179,6 +183,8 @@ class Cannon(Weapon):
 
 
 class FireBall(Weapon):
+    """Fireball weapon that launches slower, damaging projectiles."""
+
     def __init__(self, scene, ship, firerate):
         super().__init__(scene, ship, firerate)
 
@@ -187,6 +193,7 @@ class FireBall(Weapon):
         scene.soundmanager.addEmitterToSoundEffect(scene._soundeffect, self._soundclip)
 
     def fire(self, direction):
+        """Fire a fireball projectile in `direction`."""
         velocity = fife.DoublePoint(direction)
         velocity.normalize()
         velocity.x = velocity.x * self._projectileVelocity
@@ -204,6 +211,8 @@ class FireBall(Weapon):
 
 
 class FireBallBurst(Weapon):
+    """Burst fire weapon that fires multiple fireballs in quick succession."""
+
     def __init__(self, scene, ship, firerate, burstrate, burstnumber):
         super().__init__(scene, ship, firerate)
 
@@ -218,6 +227,7 @@ class FireBallBurst(Weapon):
         self._lastburstfired = 0
 
     def fire(self, direction):
+        """Fire a burst of fireballs in `direction`."""
         velocity = fife.DoublePoint(direction)
         velocity.normalize()
         velocity.x = velocity.x * self._projectileVelocity
@@ -246,6 +256,8 @@ class FireBallBurst(Weapon):
 
 
 class FireBallSpread(Weapon):
+    """Spread weapon that fires multiple fireballs in a spread pattern."""
+
     def __init__(self, scene, ship, firerate):
         super().__init__(scene, ship, firerate)
 
@@ -254,7 +266,7 @@ class FireBallSpread(Weapon):
         scene.soundmanager.addEmitterToSoundEffect(scene._soundeffect, self._soundclip)
 
     def fire(self, direction):
-
+        """Fire multiple projectiles in a spread around `direction`."""
         if (self._scene.time - self._lastfired) > self._firerate:
             velocity = fife.DoublePoint(direction)
             velocity.normalize()
@@ -316,6 +328,8 @@ class FireBallSpread(Weapon):
 
 
 class CannonSpread5(Weapon):
+    """Cannon variant that fires a five-projectile spread."""
+
     def __init__(self, scene, ship, firerate):
         super().__init__(scene, ship, firerate)
 
@@ -324,7 +338,7 @@ class CannonSpread5(Weapon):
         scene.soundmanager.addEmitterToSoundEffect(scene._soundeffect, self._soundclip)
 
     def fire(self, direction):
-
+        """Fire a 5-projectile cannon spread in `direction`."""
         if (self._scene.time - self._lastfired) > self._firerate:
             velocity = fife.DoublePoint(direction)
             velocity.normalize()

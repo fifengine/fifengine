@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Imageprogressbar class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
@@ -12,18 +11,7 @@ from .widget import Widget
 
 
 class ImageProgressBar(Widget):
-    """
-    An image progress bar.
-
-    New Attributes
-    ==============
-
-      - image: String or GuiImage: The source location of the Image or a direct GuiImage
-      - max_icons: Maximal count of icons
-      - icons: Current count of active icons
-      - orientation: Horizontal (0) or Vertical (1)
-      - opaque: True if the widget is opaque, false otherwise.
-    """
+    """An image progress bar."""
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr("bar_image"),
@@ -117,6 +105,13 @@ class ImageProgressBar(Widget):
             self.value = value
 
     def clone(self, prefix):
+        """Create a clone of this ImageProgressBar with a name prefix.
+
+        Returns
+        -------
+        ImageProgressBar
+            New ImageProgressBar instance cloned from this one.
+        """
         imageClone = ImageProgressBar(
             None,
             self._createNameWithPrefix(prefix),

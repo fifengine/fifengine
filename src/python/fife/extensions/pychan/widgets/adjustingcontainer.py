@@ -9,14 +9,14 @@ from .containers import Container
 
 
 class AdjustingContainer(Container):
-    """
-    Adjusting container class providing space for child widgets positioned via the position attribute.
+    """Adjusting container class providing space for child widgets.
 
-    New Attributes
-    ==============
-
-      - colums - Integer: The number of columns to divide the widgets into.
-      - alignments: The alignment per column.
+    Attributes
+    ----------
+    columns : int
+        The number of columns to divide the widgets into.
+    alignments : list
+        The alignment per column.
     """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
@@ -108,6 +108,18 @@ class AdjustingContainer(Container):
             self.alignments = alignments
 
     def clone(self, prefix):
+        """Create a clone of this AdjustingContainer with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        AdjustingContainer
+            A new AdjustingContainer instance with the same properties.
+        """
         containerClone = AdjustingContainer(
             None,
             self._createNameWithPrefix(prefix),
@@ -162,9 +174,22 @@ class AdjustingContainer(Container):
         return self.real_widget.getColumnAlignment(column)
 
     def setColumnAlignment(self, column, alignment):
+        """Set alignment for the given column."""
         self._setColumnAlignment(column, alignment)
 
     def getColumnAlignment(self, column):
+        """Return alignment for the given column.
+
+        Parameters
+        ----------
+        column : int
+            Index of the column.
+
+        Returns
+        -------
+        int
+            Alignment value for the specified column.
+        """
         return self._getColumnAlignment(column)
 
     def _setColumnAlignments(self, alignments):

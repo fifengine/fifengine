@@ -3,6 +3,7 @@
 
 """
 Pythonic Fifechan Wrapper - PyChan.
+
 =================================
 
 Pythonic GUI API.
@@ -222,7 +223,7 @@ from .fonts import loadFonts
 from .widgets import WIDGETS, Widget
 from .widgets.tabbedarea import Tab
 
-### Initialisation ###
+# Initialisation ###
 
 manager = None
 
@@ -259,6 +260,12 @@ def traced(f):
 
     Useful to avoid the infamous 'finally pops bad exception' that shadows
     the real cause of the error.
+
+    Returns
+    -------
+    callable
+        A wrapper function that calls the original function and prints the
+        traceback on exception before re-raising.
     """
 
     def traced_f(*args, **kwargs):
@@ -293,7 +300,19 @@ class _GuiLoader(__GuiLoaderBase):
             print(self.indent + tag.encode("ascii", "backslashreplace"))
 
     def _resolveTag(self, name):
-        """Resolve a XML Tag to a PyChan GUI class."""
+        """
+        Resolve a XML Tag to a PyChan GUI class.
+
+        Returns
+        -------
+        type
+            The widget class corresponding to the XML tag name.
+
+        Raises
+        ------
+        GuiXMLError
+            If the XML tag name does not correspond to a known widget class.
+        """
         cls = WIDGETS.get(name, None)
         if cls is None:
             raise GuiXMLError(f"Unknown GUI Element: {name}")
@@ -369,23 +388,28 @@ def loadXML(filename_or_stream):
       - border_size,padding - These are assumed to be simple integers.
 
     All other attributes are set verbatim as strings on the generated instance.
-    In case a Widget does not accept an attribute to be set or the attribute can not be parsed
-    correctly, the function will raise a GuiXMLError.
+    If a widget does not accept an attribute or the attribute cannot be parsed,
+    the function will raise a GuiXMLError.
+
+    Returns
+    -------
+    Widget
+        The root widget generated from the XML document.
 
     In short::
-            <VBox>
-                    <Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
-            </VBox>
+        <VBox>
+            <Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
+        </VBox>
 
     This result in the following code executed::
 
-            vbox = VBox(parent=None)
-            button = Button(parent=vbox)
-            button.text = "X"
-            button.min_size = (20,20)
-            button.base_color = (255,0,0)
-            button.border_size = 2
-            vbox.add( button )
+        vbox = VBox(parent=None)
+        button = Button(parent=vbox)
+        button.text = "X"
+        button.min_size = (20,20)
+        button.base_color = (255,0,0)
+        button.border_size = 2
+        vbox.add( button )
     """
     from xml.sax import parse
 
@@ -409,6 +433,11 @@ def setupModalExecution(mainLoop, breakFromMainLoop):
     breakFromMainLoop : callable
         Function that causes `mainLoop` to finish and return the passed argument.
 
+    Raises
+    ------
+    InitializationError
+        If PyChan has not been initialized yet.
+
     Notes
     -----
     With these two functions dialogs can be executed synchronously. See
@@ -431,8 +460,16 @@ def setUnicodePolicy(*policy):
     For further information look at the python documentation,
     especially C{codecs.register_error}.
 
-    Example::
-            pychan.setUnicodePolicy('replace','?')
+    Raises
+    ------
+    InitializationError
+        If PyChan has not been initialized yet.
+
+    Examples
+    --------
+    ::
+
+        pychan.setUnicodePolicy('replace','?')
     """
     if not manager:
         raise InitializationError("PyChan is not initialized yet.")

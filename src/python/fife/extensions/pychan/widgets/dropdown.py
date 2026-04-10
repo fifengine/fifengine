@@ -9,23 +9,7 @@ from .widget import Widget
 
 
 class DropDown(Widget):
-    """
-    A dropdown or combo box widget for selecting lists of strings.
-
-    New Attributes
-    ==============
-
-      - items: A List of strings. This can be treated like an ordinary python list.
-        but only strings are allowed.
-      - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
-        A negative value indicates, that no item is selected.
-      - selected_item: The selected string itself, or C{None} - if no string is selected.
-
-    Data
-    ====
-    The selected attribute can be read and set via L{distributeData} and L{collectData}.
-    The list items can be set via L{distributeInitialData}.
-    """
+    """A dropdown or combo box widget for selecting lists of strings."""
 
     DEFAULT_ITEMS: list[str] = []
 
@@ -115,7 +99,13 @@ class DropDown(Widget):
         self._realGetData = self._getSelected
 
     def clone(self, prefix):
+        """Create a clone of this DropDown with a name prefix.
 
+        Returns
+        -------
+        DropDown
+            New DropDown instance cloned from this one.
+        """
         itemsList = []
 
         for i in range(self.items.getNumberOfElements()):

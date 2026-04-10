@@ -2,12 +2,15 @@
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""Quest giver actor implementations for the RPG demo."""
 
 from scripts.actors.baseactor import Actor
 from scripts.objects.baseobject import GameObjectTypes
 
 
 class QuestGiver(Actor):
+    """Actor that offers quests to players and manages quest lifecycle."""
+
     def __init__(
         self,
         gamecontroller,
@@ -32,32 +35,30 @@ class QuestGiver(Actor):
         self._noquest_dialog = "I've got nothing for you...  leave me alone."
 
     def offerNextQuest(self):
-        """
-        Brings up the quest dialog of there is a quest to be offered to the player.
-        """
+        """Show the quest dialog if there is a quest available for the player."""
         if self._gamecontroller.questmanager.getNextQuest(self.id):
             self._gamecontroller.guicontroller.showQuestDialog(self)
 
     def getNextQuest(self):
-        """
-        Returns the next quest that will be offered by this QuestGiver.
+        """Return the next quest that will be offered by this QuestGiver.
+
+        Returns
+        -------
+        Quest | None
+            The next `Quest` to be offered, or `None` if there is no quest.
         """
         return self._gamecontroller.questmanager.getNextQuest(self.id)
 
     def activateQuest(self, quest):
-        """
-        This is called after the player accepts a quest.  It marks it as active or "in progress".
-        """
+        """Mark the given quest as active (called after player accepts it)."""
         self._gamecontroller.questmanager.activateQuest(quest)
 
     def showNoQuestDialog(self):
+        """Show the default 'no quest available' dialog."""
         self.say(self._noquest_dialog)
 
     def completeQuest(self):
-        """
-        Checks to see if the active quest owned by this QuestGiver is complete and
-        removes the required items or gold from the players inventory.
-        """
+        """Check whether the active quest is complete and process completion."""
         for activequest in self._gamecontroller.questmanager.activequests:
             if activequest.ownerid == self.id:
                 if activequest.checkQuestCompleted(self._gamecontroller.scene.player):
@@ -75,15 +76,25 @@ class QuestGiver(Actor):
                     self.say(activequest._incomplete_dialog)
 
     def haveQuest(self):
-        """
-        Returns True if there is either an active quest or the QuestGiver has a new quest to give
-        the player.  Returns False otherwise.
+        """Return True if there is an active or available quest for this QuestGiver.
+
+        Returns
+        -------
+        bool
+            True when a quest is available or active, otherwise False.
         """
         return bool(self._gamecontroller.questmanager.getNextQuest(self.id)) or bool(
             self._getActiveQuest()
         )
 
     def serialize(self):
+        """Serialize questgiver state to a dictionary.
+
+        Returns
+        -------
+        dict
+            Serialized questgiver state mapping.
+        """
         lvars = super().serialize()
 
         lvars["noquest_dialog"] = self._noquest_dialog
@@ -91,14 +102,18 @@ class QuestGiver(Actor):
         return lvars
 
     def deserialize(self, valuedict):
+        """Deserialize questgiver state from a dictionary."""
         super().deserialize(valuedict)
 
         self._noquest_dialog = valuedict["noquest_dialog"]
 
     def _getActiveQuest(self):
-        """
-        Returns the first active quest in the list.  There should only be one
-        active quest per questgiver anyway.
+        """Return the first active quest owned by this QuestGiver, or None.
+
+        Returns
+        -------
+        Quest | None
+            The first active `Quest` owned by this questgiver, or `None`.
         """
         for quest in self._gamecontroller.questmanager.activequests:
             if quest.ownerid == self.id:

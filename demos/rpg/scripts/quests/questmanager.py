@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Quest manager utilities for the RPG demo."""
+
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
 from scripts.misc.serializer import Serializer
@@ -10,7 +12,10 @@ from scripts.quests.basequest import Quest, ReturnItemQuest
 
 
 class QuestManager(Serializer):
+    """Manage quests for the RPG demo."""
+
     def __init__(self, gamecontroller):
+        """Initialize the QuestManager with a GameController reference."""
         self._gamecontroller = gamecontroller
 
         self._questsettings = None
@@ -20,9 +25,11 @@ class QuestManager(Serializer):
         self._completedquests = []
 
     def serialize(self):
+        """Serialize quest data (not implemented)."""
         pass
 
     def deserialize(self, valuedict=None):
+        """Deserialize quests from configuration and populate the manager."""
         questfile = self._gamecontroller.settings.get(
             "RPG", "QuestFile", "maps/quests.xml"
         )
@@ -58,11 +65,13 @@ class QuestManager(Serializer):
                 self._gamecontroller.questmanager.addQuest(questobj)
 
     def reset(self):
+        """Reset all stored quests and state."""
         self._quests = {}
         self._activequests = []
         self._completedquests = []
 
     def addQuest(self, quest):
+        """Add a quest to the manager, grouping by owner id."""
         if quest.ownerid in self._quests:
             if quest not in self._quests[quest.ownerid]:
                 self._quests[quest.ownerid].append(quest)
@@ -70,6 +79,13 @@ class QuestManager(Serializer):
             self._quests[quest.ownerid] = [quest]
 
     def getQuest(self, questid):
+        """Return the quest with the given id, or None if not found.
+
+        Returns
+        -------
+        Quest or None
+            The matching quest object if found, otherwise ``None``.
+        """
         for owner in self._quests:
             for quest in self._quests[owner]:
                 if quest.id == questid:
@@ -78,6 +94,14 @@ class QuestManager(Serializer):
         return None
 
     def getNextQuest(self, ownerid):
+        """Return the next available quest for the given owner id.
+
+        Returns
+        -------
+        Quest or None
+            The next unstarted quest for the owner, or ``None`` if none are
+            available.
+        """
         if ownerid in self._quests:
             for quest in self._quests[ownerid]:
                 if quest not in self._activequests and quest not in self._completedquests:
@@ -86,19 +110,12 @@ class QuestManager(Serializer):
         return None
 
     def activateQuest(self, quest):
-        """
-        Adds the quest to the "active quests" list.  Note that this does NOT affect
-        the quest in any way.  It's just a way of keeping track of which quests
-        the player has accepted.
-        """
+        """Activate a quest by adding it to the active quests list."""
         if quest not in self._activequests:
             self._activequests.append(quest)
 
     def completeQuest(self, quest):
-        """
-        Marks the quest as completed.  Note that this does NOT modify the quest in
-        any way.  This is just a way to keep track of completed quests.
-        """
+        """Mark a quest as completed and remove it from active quests."""
         if quest not in self._completedquests:
             self._completedquests.append(quest)
 
@@ -106,22 +123,45 @@ class QuestManager(Serializer):
             self._activequests.remove(quest)
 
     def activateQuestById(self, questid):
+        """Activate the quest matching the given id, if present."""
         quest = self.getQuest(questid)
         if quest:
             self.activateQuest(quest)
 
     def completeQuestById(self, questid):
+        """Mark the quest matching the given id as completed, if present."""
         quest = self.getQuest(questid)
         if quest:
             self.completeQuest(quest)
 
     def _getActiveQuests(self):
+        """Return the list of active quests.
+
+        Returns
+        -------
+        list
+            The list of currently active `Quest` objects.
+        """
         return self._activequests
 
     def _getCompletedQuests(self):
+        """Return the list of completed quests.
+
+        Returns
+        -------
+        list
+            The list of completed `Quest` objects.
+        """
         return self._completedquests
 
     def _getAllQuests(self):
+        """Return the mapping of all quests grouped by owner.
+
+        Returns
+        -------
+        dict
+            A mapping from owner id to lists of `Quest` objects.
+        """
         return self._quests
 
     activequests = property(_getActiveQuests)

@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""RPG demo application and helpers for FIFE + Pychan integration."""
+
 import os
 import time
 
@@ -14,31 +16,29 @@ from scripts.gamecontroller import GameController
 
 
 class KeyFilter(fife.IKeyFilter):
-    """
-    This is the implementation of the fife.IKeyFilter class.
-
-    Prevents any filtered keys from being consumed by fifechan.
-    """
+    """Implementation of fife.IKeyFilter that blocks configured keys."""
 
     def __init__(self, keys):
         fife.IKeyFilter.__init__(self)
         self._keys = keys
 
     def isFiltered(self, event):
+        """Return True if the event key value is in the filter set.
+
+        Returns
+        -------
+        bool
+            True when the event's key value is present in the configured
+            filter set, otherwise False.
+        """
         return event.getKey().getValue() in self._keys
 
 
 class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter):
-    """
-    Listens for window commands, console commands and keyboard input.
-
-    Does not process game related input.
-    """
+    """Listen for window commands, console commands, and keyboard input."""
 
     def __init__(self, engine, gamecontroller):
-        """
-        Initializes all listeners and registers itself with the eventmanager.
-        """
+        """Initialize listeners and register with the engine event manager."""
         self._engine = engine
         self._gamecontroller = gamecontroller
         self._eventmanager = self._engine.getEventManager()
@@ -62,9 +62,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         self.quit = False
 
     def keyPressed(self, event):
-        """
-        Processes any non game related keyboar input.
-        """
+        """Process non-game keyboard input such as shortcuts and console toggles."""
         if event.isConsumed():
             return
 
@@ -83,14 +81,23 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
             event.consume()
 
     def keyReleased(self, event):
+        """Handle key release events (no-op)."""
         pass
 
     def onCommand(self, command):
+        """Handle incoming commands such as quit requests."""
         if command.getCommandType() == fife.CMD_QUIT_GAME:
             self.quit = True
             command.consume()
 
     def onConsoleCommand(self, command):
+        """Execute a console command and return its result string.
+
+        Returns
+        -------
+        str
+            A result string produced by handling the console command.
+        """
         result = ""
 
         args = command.split(" ")
@@ -123,6 +130,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         return result
 
     def onToolsClick(self):
+        """Handle tools-button click (not implemented)."""
         print("No tools set up yet")
 
 
@@ -141,19 +149,18 @@ class RPGApplication(PychanApplicationBase):
         self._gamecontroller = GameController(self, self.engine, self._settings)
 
     def createListener(self):
-        """
-        @note: This function had to be overloaded otherwise the default
-        listener would have been created.
+        """Create and return the application's ApplicationListener.
+
+        Returns
+        -------
+        ApplicationListener
+            The created `ApplicationListener` instance attached to the app.
         """
         self._listener = ApplicationListener(self.engine, self._gamecontroller)
         return self._listener
 
     def requestQuit(self):
-        """
-        Sends the quit command to the application's listener.  We could set
-        self.quitRequested to true also but this is a good example on how
-        to build and dispatch a fife.Command.
-        """
+        """Send the quit command to the application's listener."""
         cmd = fife.Command()
         cmd.setSource(None)
         cmd.setCommandType(fife.CMD_QUIT_GAME)

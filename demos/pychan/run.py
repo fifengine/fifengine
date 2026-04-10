@@ -7,6 +7,12 @@
 # This is the pychan demo of Fifengine.
 # ------------------------------------------------------------------------------
 
+"""Pychan demo application and example utilities.
+
+This module contains the Pychan demo application and helper classes used
+by the Pychan examples in the demos/pychan folder.
+"""
+
 import os
 import sys
 
@@ -17,9 +23,7 @@ from fife.extensions.pychan.dialogs import trace
 
 
 class PyChanExample:
-    """
-    Example class.
-    """
+    """Simple example container that loads and runs a pychan XML widget."""
 
     def __init__(self, xmlFile, application=None):
         self.application = application
@@ -27,9 +31,7 @@ class PyChanExample:
         self.widget = None
 
     def start(self):
-        """
-        The Example Protocoll: start
-        """
+        """Start the example by loading and showing its widget."""
         # For simplicity the most basic examples should define
         # a okButton and/or a closeButton. Those are mapped
         # to the stop handler.
@@ -44,9 +46,7 @@ class PyChanExample:
         # pprint(self.widget.getNamedChildren())
 
     def stop(self):
-        """
-        The Example Protocoll: stop
-        """
+        """Stop the example and hide its widget."""
         if self.widget:
             self.widget.hide()
         self.widget = None
@@ -55,37 +55,40 @@ class PyChanExample:
 
 
 class TextSetter:
+    """Callable that sets the `text` attribute on a widget."""
+
     def __init__(self, text):
         self.text = text
 
     def __call__(self, widget):
+        """Set the widget text to the configured value."""
         widget.text = self.text
 
 
 class KeyFilter(fife.IKeyFilter):
-    """
-    This is the implementation of the fife.IKeyFilter class.
-
-    Prevents any filtered keys from being consumed by fifechan.
-    """
+    """Implement a FIFE key filter that blocks a configured set of keys."""
 
     def __init__(self, keys):
+        """Initialize the filter with an iterable of FIFE key values."""
         fife.IKeyFilter.__init__(self)
         self._keys = keys
 
     def isFiltered(self, event):
+        """Return True if the event key value is in the filter set.
+
+        Returns
+        -------
+        bool
+            True when the event's key value is in the filter set, otherwise False.
+        """
         return event.getKey().getValue() in self._keys
 
 
 class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
-    """
-    Listens for window commands.
-    """
+    """Listen for application-level key and command events."""
 
     def __init__(self, engine):
-        """
-        Initializes listener and registers itself with the eventmanager.
-        """
+        """Create and register the listener with the engine event manager."""
         self._engine = engine
         self._eventmanager = self._engine.getEventManager()
 
@@ -103,9 +106,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
         self.quit = False
 
     def keyPressed(self, event):
-        """
-        Processes any non game related keyboard input.
-        """
+        """Process non-game keyboard input (shortcuts)."""
         if event.isConsumed():
             return
 
@@ -116,15 +117,19 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
             event.consume()
 
     def keyReleased(self, event):
+        """Handle key release events (no-op)."""
         pass
 
     def onCommand(self, command):
+        """Handle incoming commands such as quit requests."""
         if command.getCommandType() == fife.CMD_QUIT_GAME:
             self.quit = True
             command.consume()
 
 
 class DemoApplication(pychanbasicapplication.PychanApplicationBase):
+    """Main demo application that exposes a selection of Pychan examples."""
+
     def __init__(self):
         # Let the ApplicationBase initialise FIFE
         super().__init__()
@@ -212,9 +217,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
     # mostly it's for show though :-)
     @trace
     def selectExample(self):
-        """
-        Callback handler for clicking on the example list.
-        """
+        """Handle selection of an example from the example list."""
         if self.demoList.selected_item is None:
             return
         # print "selected",self.demoList.selected_item
@@ -227,9 +230,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         self.currentExample.start()
 
     def loadRuntimeXML(self):
-        """
-        Callback handler for clicking on the XML button.
-        """
+        """Load the XML from the editor and run it as an example."""
         if self.demoList.selected_item is None:
             return
 
@@ -247,36 +248,36 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         self.currentExample.xmlFile = xml_orig
 
     def showCredits(self):
-        """
-        Callback handler from the credits link/label.
-        """
+        """Show the credits popup for the demo application."""
         # We use PyChan's synchronous execution feature here.
         if self.creditsWidget is None:
             self.creditsWidget = pychan.loadXML("gui/credits.xml")
         self.creditsWidget.execute({"okButton": "Yay!"})
 
     def createListener(self):
-        """
-        @note: This function had to be overloaded otherwise the default
-        listener would have been created.
+        """Create and return the application listener used by the demo.
+
+        Note
+        ----
+        This function is overloaded so the demo can provide a custom
+        :class:`ApplicationListener` instance.
+
+        Returns
+        -------
+        ApplicationListener
+            The created ApplicationListener instance.
         """
         self._listener = ApplicationListener(self.engine)
         return self._listener
 
     def _pump(self):
-        """
-        Overloaded this function to check for quit message.  Quit if message
-        is received.
-        """
+        """Pump the demo and quit when the listener requests termination."""
         if self._listener.quit:
             self.quit()
 
 
 class TestXMLApplication(pychanbasicapplication.PychanApplicationBase):
-    """
-    Test Application. Run the pychan_test.py file
-    with the XML file you want to load as argument.
-    """
+    """Test application that loads a single XML file for interactive tests."""
 
     def __init__(self, xmlfile):
         super().__init__()
@@ -285,6 +286,7 @@ class TestXMLApplication(pychanbasicapplication.PychanApplicationBase):
 
     @trace
     def start(self):
+        """Start the test application by loading and showing the widget."""
         self.widget = pychan.loadXML(self.xmlFile)
         self.widget.show()
 

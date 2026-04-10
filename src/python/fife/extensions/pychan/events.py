@@ -81,7 +81,13 @@ MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 
 
 def getEventType(name):
-    """Get the event type for a given event name."""
+    """Get the event type for a given event name.
+
+    Returns
+    -------
+    int
+        One of MOUSE_EVENT, KEY_EVENT, WIDGET_EVENT or ACTION_EVENT.
+    """
     if "mouse" in name:
         return MOUSE_EVENT
     if "key" in name:
@@ -196,7 +202,13 @@ class EventListenerBase:
             self.indent -= 4
 
     def translateEvent(self, event_type, event):
-        """Translate event from fifechan to PyChan format."""
+        """Translate event from fifechan to PyChan format.
+
+        Returns
+        -------
+        object
+            The translated event object suitable for PyChan callbacks.
+        """
         if event_type == MOUSE_EVENT:
             return get_manager().hook.translate_mouse_event(event)
         if event_type == KEY_EVENT:
@@ -346,7 +358,13 @@ class EventMapper:
         self.debug = get_manager().debug
 
     def __repr__(self):
-        """Return string representation."""
+        """Return string representation.
+
+        Returns
+        -------
+        str
+            Human-readable representation of the EventMapper.
+        """
         return f"EventMapper({repr(self.widget_ref())})"
 
     def attach(self):
@@ -360,7 +378,22 @@ class EventMapper:
             listener.detach()
 
     def capture(self, event_name, callback, group_name):
-        """Capture an event with a callback."""
+        """Capture an event with a callback.
+
+        Parameters
+        ----------
+        event_name : str
+            Name of the event to capture.
+        callback : callable or None
+            Callback to call when the event occurs, or `None` to remove.
+        group_name : str
+            Group name for the callback.
+
+        Raises
+        ------
+        RuntimeError
+            If `event_name` is unknown.
+        """
         if event_name not in EVENTS:
             raise exceptions.RuntimeError("Unknown eventname: " + event_name)
 
@@ -373,11 +406,23 @@ class EventMapper:
         self.addEvent(event_name, callback, group_name)
 
     def isCaptured(self, event_name, group_name="default"):
-        """Check if an event is captured."""
+        """Check if an event is captured.
+
+        Returns
+        -------
+        bool
+            True if the event/group is currently captured, False otherwise.
+        """
         return (f"{event_name}/{group_name}") in self.getCapturedEvents()
 
     def getCapturedEvents(self):
-        """Get a list of captured events."""
+        """Get a list of captured events.
+
+        Returns
+        -------
+        list[str]
+            A list of captured event descriptors in the form "name/group".
+        """
         events = []
         for event_type, listener in list(self.listener.items()):
             for event_name, group in list(listener.events.items()):
@@ -386,7 +431,13 @@ class EventMapper:
         return events
 
     def getListener(self, event_name):
-        """Get the listener for an event type."""
+        """Get the listener for an event type.
+
+        Returns
+        -------
+        EventListenerBase
+            The listener instance handling the requested event type.
+        """
         return self.listener[getEventType(event_name)]
 
     def removeEvent(self, event_name, group_name):
@@ -404,7 +455,13 @@ class EventMapper:
             del self.callbacks[group_name]
 
     def addEvent(self, event_name, callback, group_name):
-        """Add an event with a callback."""
+        """Add an event with a callback.
+
+        Raises
+        ------
+        RuntimeError
+            If `callback` is not callable.
+        """
         if not callable(callback):
             raise RuntimeError(
                 f"An event callback must be either a callable or None - not {repr(callback)}"
@@ -440,7 +497,18 @@ class EventMapper:
 
 
 def splitEventDescriptor(name):
-    """Split "widgetName/eventName" descriptions into tuples."""
+    """Split "widgetName/eventName" descriptions into tuples.
+
+    Returns
+    -------
+    tuple
+        A tuple (widgetName, eventName, groupName) parsed from the descriptor.
+
+    Raises
+    ------
+    RuntimeError
+        If the descriptor is malformed or contains an unknown event name.
+    """
     L = name.split("/")
     if len(L) not in (1, 2, 3):
         raise exceptions.RuntimeError(

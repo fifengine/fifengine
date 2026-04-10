@@ -9,46 +9,46 @@ from .widget import Widget
 
 
 class GenericListmodel(fifechan.ListModel, list):
-    """
-    A wrapper for the exported list model to behave more like a Python list.
-    Don't use directly.
-    """
+    """Wrapper for the exported list model to behave like a Python list."""
 
     def __init__(self, *args):
         super().__init__()
         list(map(self.append, args))
 
     def clear(self):
+        """Remove all elements from the list model."""
         while len(self):
             self.pop()
 
     def getNumberOfElements(self):
+        """Return the number of elements in the list model.
+
+        Returns
+        -------
+        int
+            Number of elements.
+        """
         return len(self)
 
     def getElementAt(self, i):
+        """Return the element at the given index as GUI text.
+
+        Parameters
+        ----------
+        i : int
+            Index of the element.
+
+        Returns
+        -------
+        str
+            Element at the index converted to GUI text.
+        """
         i = max(0, min(i, len(self) - 1))
         return text2gui(str(self[i]))
 
 
 class ListBox(Widget):
-    """
-    A basic list box widget for displaying lists of strings. It makes most sense to wrap
-    this into a L{ScrollArea}.
-
-    New Attributes
-    ==============
-
-      - items: A List of strings. This can be treated like an ordinary python list.
-        but only strings are allowed.
-      - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
-        A negative value indicates, that no item is selected.
-      - selected_item: The selected string itself, or C{None} - if no string is selected.
-
-    Data
-    ====
-    The selected attribute can be read and set via L{distributeData} and L{collectData}.
-    The list items can be set via L{distributeInitialData}.
-    """
+    """A basic list box widget for displaying lists of strings."""
 
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = True
@@ -141,7 +141,13 @@ class ListBox(Widget):
         self._realGetData = self._getSelected
 
     def clone(self, prefix):
+        """Create a clone of this ListBox with a name prefix.
 
+        Returns
+        -------
+        ListBox
+            New ListBox instance cloned from this one.
+        """
         itemsList = []
 
         for i in range(self.items.getNumberOfElements()):

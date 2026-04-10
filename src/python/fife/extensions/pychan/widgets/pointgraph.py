@@ -9,14 +9,16 @@ from .widget import Widget
 
 
 class PointGraph(Widget):
-    """A point graph widget
+    """A point graph widget.
 
-    New Attributes
-    ==============
-
-      - coordinates: int list: x and y coordinates
-      - thickness': int: Line thickness, default 1
-      - opaque: bool: default False
+    Attributes
+    ----------
+    coordinates : list[int] | fifechan.FcnPointVector
+        x and y coordinates as a flat int list or a point vector.
+    thickness : int
+        Line thickness, default 1.
+    opaque : bool
+        Default False.
     """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
@@ -102,6 +104,13 @@ class PointGraph(Widget):
             self.thickness = thickness
 
     def clone(self, prefix):
+        """Create a clone of this PointGraph with a name prefix.
+
+        Returns
+        -------
+        PointGraph
+            A new PointGraph instance cloned from this one.
+        """
         pointGraphClone = PointGraph(
             None,
             self._createNameWithPrefix(prefix),

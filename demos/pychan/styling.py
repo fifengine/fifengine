@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Demo for widget styling and theming."""
+
 from fife import fifechan
 from fife.extensions import pychan
 from pychan_demo import PyChanExample
@@ -60,6 +62,8 @@ STYLES = {
 
 
 class StylingExample(PyChanExample):
+    """Demo for widget styling and theming."""
+
     def __init__(self):
         super().__init__("gui/styling.xml")
 
@@ -70,6 +74,7 @@ class StylingExample(PyChanExample):
         pychan.loadFonts("fonts/samanata.xml")
 
     def start(self):
+        """Start the example by loading XML and applying styles."""
         self.styledCredits = pychan.loadXML("gui/all_widgets.xml")
         self.styledCredits.distributeInitialData(
             {"demoList": [x for x in dir(pychan)], "demoText": pychan.__doc__}
@@ -89,12 +94,14 @@ class StylingExample(PyChanExample):
         self.styledCredits.show()
 
     def stop(self):
+        """Stop the example and clean up styled credits."""
         super().stop()
         if self.styledCredits:
             self.styledCredits.hide()
             self.styledCredits = None
 
     def testStyle(self):
+        """Apply the selected style to the styled credits widget."""
         style = self.styles[self.widget.collectData("styleList")]
         self.styledCredits.stylize(style)
         self.styledCredits.show()

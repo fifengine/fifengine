@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""proof-of-concept pychan demo app to test gui animations"""
+"""Proof-of-concept Pychan demo app to test GUI animations."""
 
 import random
 
@@ -19,9 +19,7 @@ DEFAULT_DELAY = 10
 
 
 class PocAnimations(PyChanExample):
-    """a small app (^^) to show how gui animations ~could~ be
-    made by using B{fife.TimeEvent}s
-    """
+    """Small app to demonstrate GUI animations using TimeEvents."""
 
     def __init__(self):
         super().__init__("gui/poc_guianimation.xml")
@@ -32,9 +30,7 @@ class PocAnimations(PyChanExample):
         self._progress_timer = None
 
     def start(self):
-        """
-        load XML file and setup callbacks
-        """
+        """Load the XML file and set up callbacks."""
         self.widget = pychan.loadXML(self.xmlFile)
 
         self.widget.mapEvents(
@@ -77,6 +73,7 @@ class PocAnimations(PyChanExample):
         self.widget.show()
 
     def stop(self):
+        """Stop all animations and hide the widget."""
         # stop all timers
         if self._move_timer:
             self._move_timer.stop()
@@ -92,17 +89,17 @@ class PocAnimations(PyChanExample):
         self.widget = None
 
     def _set_delay_display(self):
-        """set delay display according to slider value"""
+        """Set the delay display according to the slider value."""
         value = self.delay_slider.value
         self.delay_display.text = str(int(value))
 
     def _anim_all(self):
-        """fire all animations"""
+        """Start all animations."""
         for action in ACTIONS:
             self._start_anim(type=action)
 
     def _start_anim(self, type=None):
-        """start the animation of the given type"""
+        """Start the animation for the given type."""
         self._reset_anim(type)
         kwargs = {
             "delay": int(self.delay_slider.value),
@@ -130,7 +127,7 @@ class PocAnimations(PyChanExample):
         self._progress_timer.start()
 
     def _reset_anim(self, type=None):
-        """undo changes made by the animation (but leave alone disco matrix ^^)"""
+        """Reset animation changes while preserving the disco matrix."""
         if type == ACTION_MOVE:
             if self._move_timer:
                 self._move_timer.stop()
@@ -156,7 +153,7 @@ class PocAnimations(PyChanExample):
     # 			self.progressbar2.value = 0
 
     def _move(self):
-        """move the mew widget"""
+        """Move the move-example widget."""
         position = list(self.mew.position)
         if position[0] < 100:
             position[0] += 1
@@ -165,7 +162,7 @@ class PocAnimations(PyChanExample):
             self._reset_anim(ACTION_MOVE)
 
     def _resize(self):
-        """resize the rew widget"""
+        """Resize the resize-example widget."""
         size = list(self.rew.size)
         if size[0] > 0:
             size[0] -= 1
@@ -177,7 +174,7 @@ class PocAnimations(PyChanExample):
             self._reset_anim(ACTION_RESIZE)
 
     def _color(self):
-        """tint the cew widgets"""
+        """Tint the color-example widgets."""
         color = self.cew.base_color
         red = color.r
         if red > 1:
@@ -192,7 +189,7 @@ class PocAnimations(PyChanExample):
             self._reset_anim(ACTION_COLOR)
 
     def _update_progress(self):
-        """ """
+        """Update the progressbar value."""
         if self.progressbar.value < self.progressbar.size[0]:
             value = int(self.progressbar.value) + random.randint(0, DEFAULT_DELAY)
             self.progressbar.value = value

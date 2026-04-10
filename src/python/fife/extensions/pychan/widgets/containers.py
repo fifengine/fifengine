@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Container widgets for PyChan (VBox, HBox, Window, etc.)."""
+
 from fife import fife, fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr, UnicodeAttr
 
@@ -9,21 +11,19 @@ from .widget import Widget
 
 
 class Container(Widget):
-    """
-    Basic container class providing space for child widgets positioned via the position attribute.
+    """Basic container class providing space for child widgets positioned via the position attribute.
 
     If you want to use the layout engine, you have to use derived containers with
     vertical or horizontal orientation (L{VBox} or L{HBox}).
 
-    New Attributes
-    ==============
-
-      - background_image - Set this to a GuiImage or a resource location (simply a filename).
+    Attributes
+    ----------
+    - background_image: Set this to a GuiImage or a resource location (simply a filename).
         The image will be tiled over the background area.
-      - opaque - Boolean: Whether the background should be drawn at all. Set this to False
+    - opaque: Boolean: Whether the background should be drawn at all. Set this to False
         to make the widget transparent.
-      - spacing - Set the vertical and horizontal spacing between the childs.
-      - uniform_size - Boolean: If true, the free space is distributed in a way that the size of the
+    - spacing: Set the vertical and horizontal spacing between the childs.
+    - uniform_size: Boolean: If true, the free space is distributed in a way that the size of the
         childrens will be equal (if possible), otherwise the free space will evenly distributed.
     """
 
@@ -136,6 +136,13 @@ class Container(Widget):
             self.uniform_size = self.DEFAULT_UNIFORM_SIZE
 
     def clone(self, prefix):
+        """Create a clone of this Container with a name prefix.
+
+        Returns
+        -------
+        Container
+            The cloned Container instance.
+        """
         containerClone = Container(
             None,
             self._createNameWithPrefix(prefix),
@@ -175,16 +182,10 @@ class Container(Widget):
         return containerClone
 
     def addChild(self, widget):
-        """
-        Add a child widget to the container.
+        """Add a child widget to the container.
 
-        This makes the child's widgets visible state the same as the containers.
-        i.e. if the container is visible the child will be as well and if the
-        container widget is hidden so will the child.  The child however WILL
-        be shown when you show the container widget.  If you want the child to
-        be hidden when you show the container widget you must call child.hide().
+        This makes the child's visible state follow the container. See docs.
         """
-
         widget.parent = self
 
         if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
@@ -203,6 +204,7 @@ class Container(Widget):
         widget.deepApply(_add)
 
     def insertChild(self, widget, position):
+        """Insert a child widget at the given position."""
         if position > len(self.children) or 0 - position > len(self.children):
             print("insertChild: Warning: Index overflow.", end=" ")
             if position >= 0:
@@ -221,6 +223,13 @@ class Container(Widget):
             self.addChild(child)
 
     def insertChildBefore(self, widget, before):
+        """Insert `widget` before `before` in the children list.
+
+        Raises
+        ------
+        RuntimeError
+            If `before` is not present in the children list.
+        """
         if before not in self.children:
             raise RuntimeError(
                 f"Couldn't find widget {str(widget)} as child of {str(before)} - in insertChildBefore"
@@ -228,6 +237,13 @@ class Container(Widget):
         self.insertChild(widget, self.children.index(before))
 
     def removeChild(self, widget):
+        """Remove `widget` from this container's children.
+
+        Raises
+        ------
+        RuntimeError
+            If `widget` is not a direct child of this container.
+        """
         if widget not in self.children:
             raise RuntimeError(
                 f"{str(self)} does not have {str(widget)} as direct child widget."
@@ -249,6 +265,7 @@ class Container(Widget):
         widget.deepApply(_remove)
 
     def hideChild(self, child, free=False):
+        """Hide and optionally free a child widget."""
         # remove child from the manager
         if child._added:
             get_manager().removeWidget(child)
@@ -271,6 +288,7 @@ class Container(Widget):
         self.afterHide()
 
     def showChild(self, child):
+        """Show a previously hidden child widget."""
         # add child to the manager
         if not child._added:
             get_manager().addWidget(child)
@@ -289,12 +307,20 @@ class Container(Widget):
         self.adaptLayout()
 
     def add(self, *widgets):
+        """Add widgets to this container (deprecated; use addChild/addChildren)."""
         print(
             "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
         )
         self.addChildren(*widgets)
 
     def getMaxChildrenWidth(self):
+        """Return the maximum width among visible child widgets.
+
+        Returns
+        -------
+        int
+            The maximum width among visible child widgets, or 0 if none.
+        """
         if not self.children:
             return 0
         w = 0
@@ -305,6 +331,13 @@ class Container(Widget):
         return w
 
     def getMaxChildrenHeight(self):
+        """Return the maximum height among visible child widgets.
+
+        Returns
+        -------
+        int
+            The maximum height among visible child widgets, or 0 if none.
+        """
         if not self.children:
             return 0
         h = 0
@@ -315,6 +348,10 @@ class Container(Widget):
         return h
 
     def deepApply(self, visitorFunc, leaves_first=True, shown_only=False):
+        """Apply `visitorFunc` to this container and its children.
+
+        If `leaves_first` is True children are visited before this container.
+        """
         if not shown_only:
             children = self.children
         else:
@@ -333,6 +370,8 @@ class Container(Widget):
                 )
 
     def beforeShow(self):
+        """Prepare the container before it is shown."""
+
         # This is required because beforeShow() is NOT called on nested
         # containers or child widgets.  This ensures that background tiled
         # images are shown properly
@@ -363,6 +402,7 @@ class Container(Widget):
         self.real_widget.setBackgroundWidget(icon)
 
     def setBackgroundImage(self, image):
+        """Set the background image for the container."""
         # self._background = getattr(self,'_background',None)
         if image is None:
             self._background_image = None
@@ -377,6 +417,13 @@ class Container(Widget):
         self._background_image = image
 
     def getBackgroundImage(self):
+        """Return the background image for the container.
+
+        Returns
+        -------
+        fife.GuiImage | None
+            The configured background image, or ``None`` if not set.
+        """
         return self._background_image
 
     background_image = property(getBackgroundImage, setBackgroundImage)
@@ -453,8 +500,12 @@ class Container(Widget):
     uniform_size = property(_getUniformSize, _setUniformSize)
 
     def _cloneChildren(self, prefix):
-        """
-        Clones each child and return the clones in a list.
+        """Clone each child and return the clones in a list.
+
+        Returns
+        -------
+        list
+            List of cloned child widgets.
         """
         cloneList = [child.clone(prefix) for child in self.children]
 
@@ -546,6 +597,13 @@ class ABox(Container):
         )
 
     def clone(self, prefix):
+        """Create a clone of this ABox with a name prefix.
+
+        Returns
+        -------
+        ABox
+            The cloned ABox instance.
+        """
         aboxClone = ABox(
             None,
             self._createNameWithPrefix(prefix),
@@ -673,6 +731,13 @@ class VBox(Container):
         )
 
     def clone(self, prefix):
+        """Create a clone of this VBox with a name prefix.
+
+        Returns
+        -------
+        VBox
+            The cloned VBox instance.
+        """
         vboxClone = VBox(
             None,
             self._createNameWithPrefix(prefix),
@@ -793,6 +858,13 @@ class HBox(Container):
         )
 
     def clone(self, prefix):
+        """Create a clone of this HBox with a name prefix.
+
+        Returns
+        -------
+        HBox
+            The cloned HBox instance.
+        """
         hboxClone = HBox(
             None,
             self._createNameWithPrefix(prefix),
@@ -913,6 +985,13 @@ class CBox(Container):
         )
 
     def clone(self, prefix):
+        """Create a clone of this CBox with a name prefix.
+
+        Returns
+        -------
+        CBox
+            The cloned CBox instance.
+        """
         cboxClone = CBox(
             None,
             self._createNameWithPrefix(prefix),
@@ -954,14 +1033,13 @@ class CBox(Container):
 
 class Window(Container):
     """
-    A L{VBox} with a draggable title bar aka a window
+    A L{VBox} with a draggable title bar aka a window.
 
-    New Attributes
-    ==============
-
-      - title: The Caption of the window
-      - titlebar_height: The height of the window title bar
-      - movable: Can the Window be moved with the mouse
+    Attributes
+    ----------
+    - title: The Caption of the window
+    - titlebar_height: The height of the window title bar
+    - movable: Can the Window be moved with the mouse
     """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
@@ -1068,7 +1146,13 @@ class Window(Container):
             self.movable = self.DEFAULT_MOVABLE
 
     def clone(self, prefix):
+        """Create a clone of this Window with a name prefix.
 
+        Returns
+        -------
+        Window
+            The cloned Window instance.
+        """
         windowClone = Window(
             None,
             self._createNameWithPrefix(prefix),

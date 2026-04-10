@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+"""GUI widgets for the shooter demo."""
 
 import os
 from xml.sax.saxutils import XMLGenerator
@@ -12,6 +13,8 @@ from fife.extensions import pychan
 
 
 class MainMenu:
+    """Main menu GUI and event mapping."""
+
     def __init__(self, world, setting):
         self._world = world
         self._setting = setting
@@ -42,6 +45,7 @@ class MainMenu:
         self._continueMaxHeight = self._continue.max_height
 
     def show(self, cont=False):
+        """Show the main menu."""
         if cont:
             self._continue.min_width = self._continueMinWidth
             self._continue.min_height = self._continueMinHeight
@@ -58,13 +62,23 @@ class MainMenu:
         self._widget.show()
 
     def hide(self):
+        """Hide the main menu."""
         self._widget.hide()
 
     def isVisible(self):
+        """Return True if the menu widget is visible.
+
+        Returns
+        -------
+        bool
+            True if the widget is currently visible, otherwise False.
+        """
         return self._widget.isVisible()
 
 
 class HeadsUpDisplay:
+    """Heads-up display widget for showing FPS, position, score, and lives."""
+
     def __init__(self, world):
         self._world = world
         self._widget = pychan.loadXML("gui/hud.xml")
@@ -77,65 +91,81 @@ class HeadsUpDisplay:
         self._widget.position = (0, 0)
 
     def show(self):
+        """Show the HUD widget."""
         self._widget.show()
 
     def hide(self):
+        """Hide the HUD widget."""
         self._widget.hide()
 
     def setFPSText(self, text):
+        """Set the FPS text in the HUD."""
         self._fpstext.text = text
 
     def setPositionText(self, text):
+        """Set the position text in the HUD."""
         self._positiontext.text = text
 
     def setVelocityText(self, text):
+        """Set the velocity text in the HUD."""
         self._velocitytext.text = text
 
     def setScoreText(self, text):
+        """Set the score text in the HUD."""
         self._scoretext.text = text
 
     def setLivesText(self, text):
+        """Set the lives text in the HUD."""
         self._livestext.text = text
 
 
 class GameOverDisplay:
+    """Display shown when the game is over."""
+
     def __init__(self):
         self._widget = pychan.loadXML("gui/gameover.xml")
 
     def show(self):
+        """Show the game-over display."""
         self._widget.show()
 
     def hide(self):
+        """Hide the game-over display."""
         self._widget.hide()
 
 
 class WinnerDisplay:
+    """Display shown when the player wins a level."""
+
     def __init__(self):
         self._widget = pychan.loadXML("gui/winner.xml")
 
     def show(self):
+        """Show the winner display."""
         self._widget.show()
 
     def hide(self):
+        """Hide the winner display."""
         self._widget.hide()
 
 
 class HighScore:
+    """A single high-score entry with name and numeric score."""
+
     def __init__(self, name, score):
         self._name = name
         self._score = int(score)
 
 
 class HighScores:
-    """
-    Handles all the high scores.  It saves and loads the high score file.
-    """
+    """Handle high scores: save, load, and manage top entries."""
 
     def __init__(self, world):
         self._world = world
         self.load()
 
     def load(self):
+        """Load high scores from disk or initialize template."""
         if os.path.exists("gui/highscores.xml"):
             self._widget = pychan.loadXML("gui/highscores.xml")
         else:
@@ -157,6 +187,13 @@ class HighScores:
         self._widget.mapEvents(eventMap)
 
     def isHighScore(self, score):
+        """Return True if the given score qualifies as a high score.
+
+        Returns
+        -------
+        bool
+            True if `score` is higher than at least one existing high score.
+        """
         for highscore in self._scores:
             if score > highscore._score:
                 return True
@@ -164,6 +201,7 @@ class HighScores:
         return False
 
     def addHighScore(self, score):
+        """Insert a new high score and persist the list."""
         if not self.isHighScore(score._score):
             return
 
@@ -183,18 +221,21 @@ class HighScores:
         self.load()
 
     def startElement(self, name, attrs):
+        """Start an XML element when writing high scores."""
         self._file.write(self._indent_level)
         self._xmlout.startElementNS((None, name), name, attrs)
         self._file.write("\n")
         self._indent_level = self._indent_level + "\t"
 
     def endElement(self, name):
+        """End an XML element when writing high scores."""
         self._indent_level = self._indent_level[0 : (len(self._indent_level) - 1)]
         self._file.write(self._indent_level)
         self._xmlout.endElementNS((None, name), name)
         self._file.write("\n")
 
     def saveHighScores(self):
+        """Persist the high scores to the XML file."""
         self._file = open("gui/highscores.xml", "w")
         self._xmlout = XMLGenerator(self._file, "ascii")
         self._xmlout.startDocument()
@@ -349,17 +390,28 @@ class HighScores:
         self._file.close()
 
     def show(self):
+        """Show the high scores widget."""
         self._widget.show()
 
     def hide(self):
+        """Hide the high scores widget and save the list."""
         self.saveHighScores()
         self._widget.hide()
 
     def isVisible(self):
+        """Return True if the high scores widget is visible.
+
+        Returns
+        -------
+        bool
+            True if the high scores widget is currently visible.
+        """
         return self._widget.isVisible()
 
 
 class CreditsDisplay:
+    """Credits display widget for the shooter demo."""
+
     def __init__(self, world):
         self._world = world
         self._widget = pychan.loadXML("gui/credits.xml")
@@ -371,7 +423,9 @@ class CreditsDisplay:
         self._widget.mapEvents(eventMap)
 
     def show(self):
+        """Show the credits widget."""
         self._widget.show()
 
     def hide(self):
+        """Hide the credits widget."""
         self._widget.hide()

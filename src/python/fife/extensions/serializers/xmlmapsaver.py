@@ -157,7 +157,18 @@ class XMLMapSaver:
         self.file.write("\n")
 
     def pathing_val_to_str(self, val):
-        """Convert pathing value to string."""
+        """Convert pathing value to string.
+
+        Parameters
+        ----------
+        val : int
+            Pathing strategy constant.
+
+        Returns
+        -------
+        str
+            Human-readable string representation of the pathing strategy.
+        """
         if val == fife.CELL_EDGES_AND_DIAGONALS:
             return "cell_edges_and_diagonals"
         if val == fife.FREEFORM:
@@ -165,7 +176,18 @@ class XMLMapSaver:
         return "cell_edges_only"
 
     def layer_type_to_str(self, layer):
-        """Convert layer type to string."""
+        """Convert layer type to string.
+
+        Parameters
+        ----------
+        layer : object
+            Layer object implementing `isWalkable()` and `isInteract()`.
+
+        Returns
+        -------
+        str
+            Human-readable string representation of the layer type.
+        """
         if layer.isWalkable():
             return "walkable"
         elif layer.isInteract():

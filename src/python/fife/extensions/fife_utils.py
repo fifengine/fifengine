@@ -18,7 +18,12 @@ def is_fife_exc(type, original_exc):
     """
     Check if an exception is of the given type.
 
-    Example.
+    Returns
+    -------
+    bool
+        True if `original_exc` originates from the given FIFE `type`, False otherwise.
+
+    Example
     -------
     try::
         obj = self.model.createObject(str(id), str(nspace), parent)
@@ -38,6 +43,11 @@ def is_fife_exc(type, original_exc):
 def getUserDataDirectory(vendor, appname):
     r"""
     Get the proper location to save configuration and data files.
+
+    Returns
+    -------
+    str
+        Path to a directory suitable for storing per-user application data.
 
     Location depends on the operating system:
 

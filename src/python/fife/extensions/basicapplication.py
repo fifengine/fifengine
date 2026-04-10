@@ -29,11 +29,25 @@ class ExitEventListener(fife.IKeyListener):
         self.quitRequested = False
 
     def keyPressed(self, evt):
+        """Handle a key press event.
+
+        Parameters
+        ----------
+        evt : fife.KeyEvent
+            The key event that was received.
+        """
         keyval = evt.getKey().getValue()
         if keyval == fife.Key.ESCAPE:
             self.app.quit()
 
     def keyReleased(self, evt):
+        """Handle a key release event.
+
+        Parameters
+        ----------
+        evt : fife.KeyEvent
+            The key event that was released.
+        """
         pass
 
 
@@ -151,7 +165,13 @@ class ApplicationBase:
         engineSetting.setMouseAccelerationEnabled(self._finalSetting["MouseAcceleration"])
 
     def initLogging(self):
-        """Initialize the LogManager."""
+        """Initialize the LogManager.
+
+        Raises
+        ------
+        RuntimeError
+            If engine settings are unavailable during logging initialization.
+        """
         engineSetting = self.engine.getSettings()
         if not engineSetting:
             raise RuntimeError(
@@ -180,11 +200,22 @@ class ApplicationBase:
         The listener will just close the program after pressing ESC.
 
         Override this method to provide your own event handling.
+
+        Returns
+        -------
+        ExitEventListener
+            A default event listener instance that quits on ESC.
         """
         return ExitEventListener(self)
 
     def run(self):
-        """Initialize the event listener and event loop - and start it."""
+        """Initialize the event listener and event loop - and start it.
+
+        Returns
+        -------
+        Any
+            The value returned by `mainLoop`.
+        """
         self._eventlistener = self.createListener()
         self.engine.initializePumping()
         retval = self.mainLoop()
@@ -201,6 +232,12 @@ class ApplicationBase:
         Dialogs :-) and break out of the current mainLoop by calling
         L{breakFromMainLoop}. It will return the argument passed
         to L{breakFromMainLoop}.
+
+        Returns
+        -------
+        Any
+            The value passed to `breakFromMainLoop` and returned when the
+            main loop terminates.
         """
         self.returnValues.append(None)
         while not self.quitRequested:
@@ -236,5 +273,5 @@ class ApplicationBase:
         """
 
     def quit(self):
-        """Quit the application. Really!"""
+        """Quit the application."""
         self.quitRequested = True

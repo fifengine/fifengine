@@ -3,32 +3,28 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Base ship objects and listeners for the shooter demo."""
+
 from fife import fife
 
 from scripts.common.baseobject import SHTR_PLAYER, SpaceObject
 
 
 class ShipActionListener(fife.InstanceActionListener):
-    """
-    This class is an action listener that listens for instance actions
-    that are complete.  It is used in this demo to specify what should happen
-    after the object has completed flashing or exploding.
+    """Action listener for ship instance actions.
 
-    There should be an instance of this listener for every ship that you want
-    to be removed from the scene after exploding.
+    Used to respond to completed instance actions such as flash and explode.
     """
 
     def __init__(self, ship):
-        """
-        @param ship The ship that this actionlistener belongs to.
-        """
-
+        """Initialize the action listener for `ship`."""
         fife.InstanceActionListener.__init__(self)
 
         self._ship = ship
         self._ship.instance.addActionListener(self)
 
     def onInstanceActionFinished(self, instance, action):
+        """Handle a finished action for the instance."""
         if action.getId() == "flash":
             if self._ship._flashing and self._ship._flashnumber > 0:
                 self._ship.instance.actOnce(
@@ -43,31 +39,29 @@ class ShipActionListener(fife.InstanceActionListener):
             self._ship.removeFromScene()
 
     def onInstanceActionCancelled(self, instance, action):
+        """Handle a cancelled action (no-op)."""
         pass
 
 
 class Ship(SpaceObject):
-    """
-    Ship
+    """Base ship object.
 
-    This is the base ship object.  The Player and Enemy ship classes inherit
-    this class.  This class extends SpaceObject by allowing Weapons to
-    be attached to the object as well as hit points.
+    The Player and Enemy ship classes inherit from this class. It extends
+    `SpaceObject` with weapon support and hit point management.
     """
 
     def __init__(self, scene, name, findInstance=True):
+        """Initialize the ship.
+
+        Parameters
+        ----------
+        scene : Scene
+            Scene containing the ship.
+        name : str
+            Name of the ship object.
+        findInstance : bool, optional
+            If True, look up an existing instance; otherwise create one.
         """
-        @param scene: A reference to the Scene
-        @type scene: L{Scene}
-        @param name: The name of the ship
-        @type name: C{string}
-        @param findInstance: True if the instance you are looking for is already loaded
-                             False if you want to load the instance yourself
-
-        @type findInstance: C{boolean}
-
-        """
-
         super().__init__(scene, name, findInstance)
 
         self._weapon = None
@@ -90,21 +84,24 @@ class Ship(SpaceObject):
         return self._weapon
 
     def flash(self, number):
-        """
-        Playes the flash animation (or action) the specified number of times
-
-        @param number: An integer specifying the number of times to play the flash animation
-        """
+        """Play the flash animation the specified number of times."""
         if self._running:
             self._instance.actOnce("flash", self._instance.getFacingLocation())
             self._flashnumber = number
             self._flashing = True
 
     def fire(self, direction):
-        """
-        Fires the current weapon in the specified direction
+        """Fire the current weapon in the specified direction.
 
-        @param direction: A L{fife.DoublePoint()} specifying the direction to fire
+        Parameters
+        ----------
+        direction : fife.DoublePoint
+            The direction to fire the weapon.
+
+        Returns
+        -------
+        Any
+            The result returned by the weapon's `fire` method, or `None`.
         """
         if self._weapon and self._hitpoints > 0:
             return self._weapon.fire(direction)
@@ -112,11 +109,7 @@ class Ship(SpaceObject):
         return None
 
     def applyHit(self, hp):
-        """
-        Removes the specified number of hit points.  Destroys the ship if necessary.
-
-        @param hp: The number of hit points to remove from the ship.
-        """
+        """Remove the specified number of hit points and destroy if needed."""
         self._hitpoints -= hp
         if self._hitpoints <= 0:
             self.destroy()
@@ -126,9 +119,7 @@ class Ship(SpaceObject):
             self._hitclip.play()
 
     def destroy(self):
-        """
-        Plays the explode animation (or action)
-        """
+        """Play the explode animation and associated effects."""
         if self._running:
             self._instance.actOnce("explode", self._instance.getFacingLocation())
             location = self.location.getExactLayerCoordinates()

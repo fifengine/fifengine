@@ -117,6 +117,11 @@ class ImageProperty(WrappedProperty):
             The widget to set the image on.
         image : str or GuiImage or None
             The image to set.
+
+        Raises
+        ------
+        RuntimeError
+            If `image` is not a string or `fife.GuiImage` instance.
         """
         image_info = getattr(obj, self.prop_name, {})
         if not image:

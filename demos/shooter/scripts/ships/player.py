@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+"""Player ship and action listener implementations for the shooter demo."""
+
 from fife import fife
 from fife.fife import FloatRect as Rect
 
@@ -12,24 +14,48 @@ from scripts.weapons import Cannon
 
 
 def cmp(a, b):
+    """Compare two values returning -1, 0 or 1.
+
+    Parameters
+    ----------
+    a, b : comparable
+        Values to compare.
+
+    Returns
+    -------
+    int
+        -1 if a < b, 0 if equal, 1 if a > b.
+    """
     return (a > b) - (a < b)
 
 
 class PlayerActionListener(ShipActionListener):
+    """Action listener that forwards explosion events to the player."""
+
     def __init__(self, ship):
         super().__init__(ship)
 
     def onInstanceActionFinished(self, instance, action):
+        """Handle a finished instance action.
+
+        Respawn the ship if the finished action is an explosion.
+        """
         super().onInstanceActionFinished(instance, action)
 
         if action.getId() == "explode":
             self._ship.respawn()
 
     def onInstanceActionCancelled(self, instance, action):
+        """Handle a cancelled instance action (no-op)."""
         pass
 
 
 class Player(Ship):
+    """Player ship controlled by a human player.
+
+    Implements player-specific behavior and input handling.
+    """
+
     def __init__(self, scene, playerName):
         super().__init__(scene, playerName)
 
@@ -48,6 +74,7 @@ class Player(Ship):
         self.init()
 
     def init(self):
+        """Initialize player runtime state."""
         self._hitpoints = 2
         self._dead = False
         self._invulnerable = False
@@ -59,6 +86,10 @@ class Player(Ship):
         return self._score
 
     def respawn(self):
+        """Respawn the player at a safe location or end the game.
+
+        If no lives remain, mark the instance invisible and trigger game over.
+        """
         if self._lives >= 0:
             self.init()
             self.setInvulnerable(1000)
@@ -77,12 +108,15 @@ class Player(Ship):
             self._scene.gameOver()
 
     def setInvulnerable(self, milliseconds):
-        """
+        """Set temporary invulnerability for the player.
+
         50 is defined in the players "flash" animation file
         2 is the number of frames in the animation
 
-        @todo: read these values somehow from the animation
-
+        Parameters
+        ----------
+        milliseconds : int
+            Duration in milliseconds to remain invulnerable.
         """
         number = int(old_div((old_div(milliseconds, 50)), 2))
 
@@ -93,15 +127,18 @@ class Player(Ship):
         self.flash(number)
 
     def applyScore(self, sc):
+        """Add `sc` points to the player's score."""
         self._score += sc
 
     def applyHit(self, hp):
+        """Apply damage `hp` to the player and flash if still alive."""
         if not self._invulnerable and not self._dead:
             super().applyHit(hp)
             if not self._dead:
                 self.flash(1)
 
     def destroy(self):
+        """Destroy the player: trigger explosion and play sound."""
         if not self._invulnerable and not self._dead:
             self._instance.actOnce("explode", self._instance.getFacingLocation())
             self._explodclip.play()
@@ -110,10 +147,22 @@ class Player(Ship):
             self._lives -= 1
 
     def fire(self, direction):
+        """Fire the currently equipped weapon in `direction`.
+
+        Parameters
+        ----------
+        direction : fife.DoublePoint
+            Direction vector to fire towards.
+
+        Returns
+        -------
+        Any
+            The result of the weapon's `fire` method, or None.
+        """
         return self._weapon.fire(direction)
 
     def update(self):
-
+        """Update per-frame state for the player (movement, input, camera)."""
         NSkey = False
         EWkey = False
 

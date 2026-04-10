@@ -10,8 +10,8 @@ from .containers import Container
 
 
 class Tab(Container):
-    """
-    A tab widget.
+    """A tab widget.
+
     It can be used as a container.
     """
 
@@ -92,6 +92,7 @@ class Tab(Container):
         )
 
     def addTabToWidget(self, widget):
+        """Add a widget to this tab."""
         if widget.tab is self:
             return
         if widget.tab is not None:
@@ -99,10 +100,18 @@ class Tab(Container):
         widget.tab = self
 
     def removeTabFromWidget(self, widget):
+        """Remove a widget from this tab."""
         if widget.tab == self:
             widget.tab = None
 
     def clone(self, prefix):
+        """Create a clone of this Tab with a name prefix.
+
+        Returns
+        -------
+        Tab
+            New Tab instance cloned from this one.
+        """
         tabClone = Tab(
             None,
             self._createNameWithPrefix(prefix),
@@ -139,11 +148,14 @@ class Tab(Container):
 
 
 class TabbedArea(Container):
-    """
-    Tabbed area class for organizing widgets into tabs.
+    """Tabbed area class for organizing widgets into tabs.
 
-    New Attributes
-    ==============
+    Attributes
+    ----------
+    select_tab_index: int
+        Index of the selected tab.
+    select_tab: str
+        Name of the tab to select.
     """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
@@ -233,6 +245,13 @@ class TabbedArea(Container):
             self.select_tab = select_tab
 
     def clone(self, prefix):
+        """Create a clone of this TabbedArea with a name prefix.
+
+        Returns
+        -------
+        TabbedArea
+            New TabbedArea instance.
+        """
         tabbedareaClone = TabbedArea(
             None,
             self._createNameWithPrefix(prefix),
@@ -270,7 +289,6 @@ class TabbedArea(Container):
 
     def addChild(self, widget):
         """Add a child widget to the container."""
-
         # if the widget have no tabwidget, we try to find one
         if widget.tab is None:
             tab = self.getTabDefinition(widget)
@@ -296,6 +314,13 @@ class TabbedArea(Container):
         widget.deepApply(_add)
 
     def removeChild(self, widget):
+        """Remove a child widget from the container.
+
+        Raises
+        ------
+        RuntimeError
+            If `widget` is not a direct child of this TabbedArea.
+        """
         if widget not in self.children:
             raise RuntimeError(
                 f"{str(self)} does not have {str(widget)} as direct tab widget."
@@ -316,14 +341,24 @@ class TabbedArea(Container):
         widget.parent = None
 
     def addTabDefinition(self, widget):
-        # Only needed because of XML loading
+        """Register a Tab definition used during XML loading."""
         # The tab have the content_name that should be equal to
         # the name of the contained widget
         self.tab_definitions[widget.content_name] = widget
 
     def getTabDefinition(self, widget):
-        # Only needed because of XML loading
-        # Check if we have a tab that is associated with the widget
+        """Retrieve the Tab definition associated with a widget.
+
+        Returns
+        -------
+        Tab
+            The Tab definition associated with the given widget.
+
+        Raises
+        ------
+        RuntimeError
+            If no matching definition exists.
+        """
         name = widget.name
         if name in self.tab_definitions:
             widget = self.tab_definitions[name]
@@ -335,9 +370,23 @@ class TabbedArea(Container):
             )
 
     def getNumberOfTabs(self):
+        """Return the number of tabs in this TabbedArea.
+
+        Returns
+        -------
+        int
+            Number of tabs.
+        """
         return self.real_widget.getNumberOfTabs()
 
     def isTabSelected(self, widget):
+        """Return whether the provided widget's tab is selected.
+
+        Returns
+        -------
+        bool
+            True if the widget's tab is selected, False otherwise.
+        """
         i = self.children.index(widget)
         return self.real_widget.isTabSelected(i)
 

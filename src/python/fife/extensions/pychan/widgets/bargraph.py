@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Bargraph class."""
 
-
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr
 
@@ -10,15 +9,18 @@ from .widget import Widget
 
 
 class BarGraph(Widget):
-    """A bar graph widget
+    """A bar graph widget.
 
-    New Attributes
-    ==============
-
-      - bar_position: x and y coordinate
-      - bar_width': int: default 10
-      - bar_height: int: default 10
-      - opaque: bool: default False
+    Attributes
+    ----------
+    bar_position : tuple
+        X and Y coordinates of the bar origin.
+    bar_width : int
+        Width of each bar (default 10).
+    bar_height : int
+        Height of each bar (default 10).
+    opaque : bool
+        Whether the background is opaque.
     """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
@@ -112,6 +114,18 @@ class BarGraph(Widget):
             self.bar_height = bar_height
 
     def clone(self, prefix):
+        """Create a clone of this BarGraph with a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefix to apply to the clone.
+
+        Returns
+        -------
+        BarGraph
+            A new BarGraph instance with the same properties.
+        """
         barGraphClone = BarGraph(
             None,
             self._createNameWithPrefix(prefix),
