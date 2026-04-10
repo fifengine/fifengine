@@ -146,28 +146,32 @@ extend-exclude = [
   "src/python/fife/fifechan.py"
 ]
 
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
 # https://docs.astral.sh/ruff/rules/
 [tool.ruff.lint]
 select = [
-  "E",  # pycodestyle-error
-  "W",  # pycodestyle-warnings
-  "F",  # pyflakes
-  "I",  # isort
-  "U",  # pyupgrade
-  "D",  # pydocstyle
+  "E",    # pycodestyle-error
+  "W",    # pycodestyle-warnings
+  "F",    # pyflakes
+  "I",    # isort
+  "UP",   # pyupgrade
+  "D",    # pydocstyle
+  "DOC",  # pydoclint
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "*.py" = ["E501"]  # line too long
-"tests/*" = ["D"]   # pydocstyle
-"demos/*" = ["D"]    # pydocstyle
+"tests/*" = ["D"]  # pydocstyle
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
+[tool.pydoclint]
+style = "numpy"
+exclude = ["tests/", "docs/"]
 
 [tool.mypy]
 python_version = "3.13"
@@ -176,6 +180,6 @@ ignore_missing_imports = true
 show_error_codes = true
 exclude = "^(tests|build|out|vcpkg_installed)/"
 
-[tool.pydoclint]
-style = "numpy"
-exclude = ["tests/", "docs/"]
+[tool.coverage.run]
+source = ["src/python/fife"]
+omit = ["*/fife.py", "*/fifechan.py"]

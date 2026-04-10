@@ -14,6 +14,8 @@ docs/sphinx/html/
 __pycache__/
 .ruff_cache/
 .mypy_cache/
+.pytest_cache/
+.coverage
 *.pyc
 
 # Python Virtual Envs
@@ -21,3 +23,6 @@ __pycache__/
 .venv-sphinx/
 
 .cache/
+
+
+/demos/unknown-horizons
