@@ -8,9 +8,10 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <stdexcept>
+#include <string>
 
 // 3rd party library includes
 
