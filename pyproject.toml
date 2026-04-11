@@ -132,7 +132,7 @@ ignore = [
 [tool.black]
 line-length = 90
 target-version = ["py313"]
-extend-exclude = "^(src/swigwrappers)/"
+extend-exclude = '^(src/swigwrappers/|src/python/fife/(fife|fifechan)\.py$)'
 
 [tool.ruff]
 line-length = 90
