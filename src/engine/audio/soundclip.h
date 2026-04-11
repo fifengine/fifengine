@@ -8,8 +8,10 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 #include <vector>
+
 // 3rd party library includes
 
 // FIFE includes

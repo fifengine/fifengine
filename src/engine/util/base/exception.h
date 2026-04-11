@@ -107,8 +107,7 @@ namespace FIFE
     FIFE_EXCEPTION_DECL(
         InconsistencyDetected, "An inconsistency in FIFE internals was detected. Please report this is a FIFE Bug.");
 
-    /** @bug The memory allocation in @c std::string might fail, resulting in terminate. */
-    FIFE_EXCEPTION_DECL(OutOfMemory, "Buy more ram ;)");
+    FIFE_EXCEPTION_DECL(OutOfMemory, "Error: out of memory. Buy more RAM ;)");
 
 } // namespace FIFE
 
