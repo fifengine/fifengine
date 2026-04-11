@@ -39,6 +39,8 @@ pygments_dark_style = "monokai"
 
 sys.path.insert(0, "/workspaces/fifengine/src/python")
 
+# Options for autodoc
+
 autodoc_default_options = {
     "members": True,
     "undoc-members": True,
@@ -53,3 +55,8 @@ autodoc_mock_imports = [
 ]
 
 autodoc_typehints = "description"
+
+# Options for Napoleon
+
+napoleon_numpy_docstring = True
+napoleon_google_docstring = False
