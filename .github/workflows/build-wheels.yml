@@ -242,6 +242,34 @@ jobs:
           ls wheelhouse/*.whl
           python -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
 
+      - name: 🚬 Smoke Test (Basic Import)
+        run: |
+          set -euo pipefail
+
+          for whl in wheelhouse/*.whl; do
+            base="$(basename "$whl")"
+
+            case "$base" in
+              *cp313*) py="3.13" ;;
+              *cp314*) py="3.14" ;;
+              *)
+                echo "❌ Unknown Python tag in $base"
+                exit 1
+                ;;
+            esac
+
+            name="${base%.whl}"
+            venv_dir=".venv-$name"
+
+            echo "Testing the $base wheel with Python $py"
+
+            uv venv --python "$py" "$venv_dir"
+            "$venv_dir/bin/python" -m pip install "$whl"
+            "$venv_dir/bin/python" -c "import fife; print('✅ $name OK (py$py)')"
+
+            rm -rf "$venv_dir"
+          done
+
       - uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         with:
           name: ${{ matrix.config.artifact-name }}
