@@ -243,6 +243,7 @@ jobs:
           python -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
 
       - name: 🚬 Smoke Test (Basic Import)
+        shell: bash
         run: |
           set -euo pipefail
 
