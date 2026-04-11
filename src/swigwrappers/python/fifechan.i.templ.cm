@@ -1,3 +1,8 @@
+/**
+ * Fifechan GUI/FifeGUI library SWIG interface for CMake.
+ * Generates `fifechan.i`.
+ */
+
 %module(directors="1") fifechan
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * FIFE engine SWIG interface for CMake.
+ * Generates `fife.i`.
+ */
+
 %{
 /**
  * HAVE_SNPRINTF is defined in several places.
@@ -6,6 +11,9 @@
 #ifdef HAVE_SNPRINTF
 #undef HAVE_SNPRINTF
 #endif
+
+/* Include platform specifc export definitions (FIFE_API) */
+#include "platform.h"
 %}
 
 %module(directors="1") fife
