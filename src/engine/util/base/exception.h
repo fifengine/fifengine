@@ -20,12 +20,13 @@ namespace FIFE
 {
 
     /**
-     * Exception base class.
+     * Base class for all FIFE exceptions.
      *
-     * All other exceptions derived from this merely adjust the error string
-     * to be slightly more specific.
+     * Derived exceptions provide more specific error messages.
+     *
+     * Do not export this class with FIFE_API to avoid DLL export warnings.
      */
-    class FIFE_API Exception : public std::runtime_error
+    class /*FIFE_API*/ Exception : public std::runtime_error
     {
     public:
         /**
