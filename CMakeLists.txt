@@ -1019,6 +1019,7 @@ if(BUILD_PYTHON_BINDINGS)
   # -w511 -w473 -w404 -w314  # Warning suppression flags
   set(
     CMAKE_SWIG_FLAGS
+    -SWIG
     -fastdispatch
     -dirvtable
     -fastproxy
@@ -1027,6 +1028,9 @@ if(BUILD_PYTHON_BINDINGS)
     -w473
     -w404
     -w314
+    # Set a SWIG define so that platform.h can unset FIFE_API during SWIG processing.
+    # This allows SWIG to parse headers containing FIFE_API without syntax errors.
+    -DSWIG
   )
 
   set(FIFE_SOURCES ${FIFE_CORE_SRC})
@@ -1048,10 +1052,6 @@ if(BUILD_PYTHON_BINDINGS)
   endif()
 
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
-
-  # Set a SWIG define so that platform.h can unset FIFE_API during SWIG processing.
-  # This allows SWIG to parse headers containing FIFE_API without syntax errors.
-  target_compile_definitions(fife_swig PRIVATE SWIG)
 
   target_include_directories(fife_swig PRIVATE
     ${PROJECT_BINARY_DIR}
