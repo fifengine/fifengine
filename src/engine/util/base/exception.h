@@ -19,7 +19,9 @@
 namespace FIFE
 {
 
-    /** Exception base class.
+    /**
+     * Exception base class.
+     *
      * All other exceptions derived from this merely adjust the error string
      * to be slightly more specific.
      */

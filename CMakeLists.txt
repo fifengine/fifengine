@@ -1049,6 +1049,10 @@ if(BUILD_PYTHON_BINDINGS)
 
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
 
+  # Set a SWIG define so that platform.h can unset FIFE_API during SWIG processing.
+  # This allows SWIG to parse headers containing FIFE_API without syntax errors.
+  target_compile_definitions(fife_swig PRIVATE SWIG)
+
   target_include_directories(fife_swig PRIVATE
     ${PROJECT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}/src/engine

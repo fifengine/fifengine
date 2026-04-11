@@ -11,9 +11,6 @@
 #ifdef HAVE_SNPRINTF
 #undef HAVE_SNPRINTF
 #endif
-
-/* Include platform specifc export definitions (FIFE_API) */
-#include "platform.h"
 %}
 
 %module(directors="1") fife
