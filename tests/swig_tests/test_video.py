@@ -28,10 +28,10 @@ def test_draw_line(engine):
     y2 = x2 - 150
 
     chimney = [
-        (x1, y1),       # bottom-left (on roof)
+        (x1, y1),  # bottom-left (on roof)
         (x1, y1 - 60),  # top-left (vertical)
         (x2, y1 - 60),  # top-right (horizontal top)
-        (x2, y2),       # bottom-right (on roof)
+        (x2, y2),  # bottom-right (on roof)
         (x1, y1),
     ]
 
