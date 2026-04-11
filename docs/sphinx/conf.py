@@ -8,11 +8,11 @@ author = "FIFE contributors"
 release = "0.5.0"
 
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
-    "myst_parser",
+    "sphinx.ext.autodoc",          # pull docstrings from code
+    "sphinx.ext.viewcode",         # add source code links
+    "sphinx.ext.napoleon",         # parse NumPy-style docstrings
+    "sphinx_autodoc_typehints",    # integrate type hints into docs
+    "myst_parser",                 # enable Markdown support
 ]
 
 templates_path = ["_templates"]
