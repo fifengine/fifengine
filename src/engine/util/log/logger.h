@@ -111,6 +111,9 @@ namespace FIFE
             return *this;
         }
 
+        LMsg(const LMsg&)            = default;
+        LMsg& operator=(const LMsg&) = default;
+
         std::string str;
     };
 
@@ -230,7 +233,7 @@ namespace FIFE
         // current filter level
         LogLevel m_level;
         // used during module description validation to check cycles in hierarchy
-        std::vector<logmodule_t> module_check_stack;
+        std::vector<logmodule_t, std::allocator<logmodule_t>> module_check_stack;
 
         std::ofstream* m_logfile;
 
@@ -260,6 +263,9 @@ namespace FIFE
          * Destructor
          */
         ~Logger() = default;
+
+        Logger(const Logger&)            = default;
+        Logger& operator=(const Logger&) = default;
 
         /**
          * logs given message with given log level

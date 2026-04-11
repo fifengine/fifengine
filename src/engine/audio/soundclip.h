@@ -47,6 +47,9 @@ namespace FIFE
 
         ~SoundClip();
 
+        SoundClip(const SoundClip&)            = delete;
+        SoundClip& operator=(const SoundClip&) = delete;
+
         /** Does this SoundClip require a streaming mechanism?
          *
          * @return Returns true if streaming is required, false if not.
@@ -125,7 +128,7 @@ namespace FIFE
         SoundDecoder* m_decoder;
         // when loadFromDecoder-method is used, decoder shouldn't be deleted
         bool m_deleteDecoder;
-        std::vector<SoundBufferEntry*> m_buffervec;
+        std::vector<SoundBufferEntry*, std::allocator<SoundBufferEntry*>> m_buffervec;
 
         std::string createUniqueClipName();
     };

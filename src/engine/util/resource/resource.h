@@ -48,6 +48,9 @@ namespace FIFE
 
         virtual ~IResource() = default;
 
+        IResource(const IResource&)            = default;
+        IResource& operator=(const IResource&) = default;
+
         virtual const std::string& getName()
         {
             return m_name;
