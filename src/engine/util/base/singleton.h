@@ -6,13 +6,6 @@
 
 #define SINGLEFRIEND(classname) /* NOLINT(cppcoreguidelines-macro-usage) */
 
-// Platform specific includes
-#include "platform.h"
-
-friend class FIFE_API FIFE::StaticSingleton<classname>;
-classname();
-virtual ~classname();
-
 // Standard C++ library includes
 #include <cassert>
 
@@ -24,7 +17,8 @@ virtual ~classname();
 namespace FIFE
 {
 
-    /** The "classic" Singleton.
+    /**
+     * A classic Singleton.
      *
      * @see DynamicSingleton
      */
@@ -55,7 +49,8 @@ namespace FIFE
         }
     };
 
-    /** Another Singleton.
+    /**
+     * Another Singleton.
      *
      * This implementations needs to be created and destroyed explicitly.
      * That way the order of construction and destruction is well defined, so we don't
@@ -64,7 +59,7 @@ namespace FIFE
      * Engine will create all standard FIFE Singletons when created (just call Engine::instance())
      * and destroy them on exit.
      *
-     * Maybe we'll change this one day to use one of those funny NiftyCounter implementations.
+     * Maybe we'll change this to use a Counter implementation.
      *
      * @see StaticSingleton
      * @see Engine
@@ -97,14 +92,14 @@ namespace FIFE
         {
             static_cast<void>(rhs);
         }
-        DynamicSingleton<T&> operator=(const DynamicSingleton<T>& rhs)
+        DynamicSingleton<T>& operator=(const DynamicSingleton<T>& rhs)
         {
             static_cast<void>(rhs);
         }
     };
 
     template <typename T>
-    T* DynamicSingleton<T>::m_instance = 0;
+    T* DynamicSingleton<T>::m_instance = nullptr;
 
 } // namespace FIFE
 
