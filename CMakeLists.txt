@@ -1019,7 +1019,6 @@ if(BUILD_PYTHON_BINDINGS)
   # -w511 -w473 -w404 -w314  # Warning suppression flags
   set(
     CMAKE_SWIG_FLAGS
-    -SWIG
     -fastdispatch
     -dirvtable
     -fastproxy
