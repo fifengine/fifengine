@@ -4,6 +4,9 @@
 #ifndef FIFE_EXCEPTION_H
 #define FIFE_EXCEPTION_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <stdexcept>
 #include <string>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 
 namespace FIFE
@@ -23,7 +23,7 @@ namespace FIFE
      * All other exceptions derived from this merely adjust the error string
      * to be slightly more specific.
      */
-    class Exception : public std::runtime_error
+    class FIFE_API Exception : public std::runtime_error
     {
     public:
         /**
@@ -67,7 +67,7 @@ namespace FIFE
 
 // NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
 #define FIFE_EXCEPTION_DECL(_name, _description)                  \
-    class _name : public Exception                                \
+    class FIFE_API _name : public Exception                       \
     {                                                             \
     public:                                                       \
         explicit _name(const std::string& msg) : Exception((msg)) \

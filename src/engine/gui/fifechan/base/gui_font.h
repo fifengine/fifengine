@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_FONT_H
 #define FIFE_GUI_FONT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,15 +14,12 @@
 #include <fifechan/font.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/fonts/ifont.h"
 
 namespace FIFE
 {
 
-    class GuiFont : public fcn::Font, public IFont
+    class FIFE_API GuiFont : public fcn::Font, public IFont
     {
     public:
         /** Constructor

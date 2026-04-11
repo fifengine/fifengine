@@ -4,6 +4,9 @@
 #ifndef FIFE_STRINGUTILS_H_
 #define FIFE_STRINGUTILS_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>

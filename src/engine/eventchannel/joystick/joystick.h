@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_JOYSTICK_H
 #define FIFE_EVENTCHANNEL_JOYSTICK_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,16 +14,13 @@
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
 
     /** Represents a Joystick and if available the Gamecontroller.
      */
-    class Joystick
+    class FIFE_API Joystick
     {
     public:
         // Hat positions.

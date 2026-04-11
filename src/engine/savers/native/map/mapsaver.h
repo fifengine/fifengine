@@ -4,6 +4,9 @@
 #ifndef FIFE_MAPSAVER_H_
 #define FIFE_MAPSAVER_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "imapsaver.h"
 
 namespace FIFE
@@ -22,7 +22,7 @@ namespace FIFE
 
     /** default map saver class implementing the IMapSaver interface
      */
-    class MapSaver : public IMapSaver
+    class FIFE_API MapSaver : public IMapSaver
     {
     public:
         /** constructor

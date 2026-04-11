@@ -4,6 +4,9 @@
 #ifndef FIFE_VFS_ZIP_ZIPNODE_H
 #define FIFE_VFS_ZIP_ZIPNODE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <ostream>
 #include <string>
@@ -12,15 +15,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 
 namespace FIFE
 {
 
-    struct ZipContentType
+    struct FIFE_API ZipContentType
     {
         enum Enum : uint8_t
         {
@@ -30,7 +30,7 @@ namespace FIFE
         };
     };
 
-    struct ZipEntryData
+    struct FIFE_API ZipEntryData
     {
         /** constructor
          */
@@ -46,7 +46,7 @@ namespace FIFE
     // convenience typedef
     class ZipNode;
     using ZipNodeContainer = std::vector<ZipNode*>;
-    class ZipNode
+    class FIFE_API ZipNode
     {
     public:
         /** constructor for creating a node

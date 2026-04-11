@@ -4,6 +4,9 @@
 #ifndef FIFE_VFS_H_
 #define FIFE_VFS_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <filesystem>
 #include <string>

@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_IKEYFILTER_H
 #define FIFE_EVENTCHANNEL_IKEYFILTER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 //
 
@@ -11,9 +14,6 @@
 //
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 //
 #include "keyevent.h"
 
@@ -22,7 +22,7 @@ namespace FIFE
     /**  Controller provides a way to receive events from the system
      * Using this interface, clients can subscribe themselves to receive events
      */
-    class IKeyFilter
+    class FIFE_API IKeyFilter
     {
     public:
         /** Check whether a keyevent should be filtered out.

@@ -4,21 +4,21 @@
 #ifndef FIFE_IANIMATION_SAVER_H
 #define FIFE_IANIMATION_SAVER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
 namespace FIFE
 {
 
-    class IAnimationSaver
+    class FIFE_API IAnimationSaver
     {
     public:
         virtual ~IAnimationSaver() = default;

@@ -4,17 +4,16 @@
 #ifndef FIFE_GUI_WIDGETS_ANIMATIONICON_H
 #define FIFE_GUI_WIDGETS_ANIMATIONICON_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 #include <fifechan.hpp>
 #include <fifechan/image.hpp>
 #include <fifechan/platform.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "video/animation.h"
 
@@ -29,7 +28,7 @@ namespace fcn
     /**
      * Implements an icon capable of displaying an animation.
      */
-    class AnimationIcon : public Icon
+    class FIFE_API AnimationIcon : public Icon
     {
     public:
         /**

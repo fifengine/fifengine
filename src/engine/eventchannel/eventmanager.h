@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_EVENTMANAGER_H
 #define FIFE_EVENTCHANNEL_EVENTMANAGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <deque>
 #include <list>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "eventchannel/command/command.h"
 #include "eventchannel/command/icommandcontroller.h"
 #include "eventchannel/command/icommandlistener.h"
@@ -57,7 +57,7 @@ namespace FIFE
 
     /**  Event Manager manages all events related to FIFE
      */
-    class EventManager :
+    class FIFE_API EventManager :
         public ICommandController,
         public IKeyController,
         public ITextController,

@@ -4,6 +4,9 @@
 #ifndef FIFE_TRIGGER_H
 #define FIFE_TRIGGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstdint>
 #include <string>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fifeclass.h"
 
 namespace FIFE
@@ -24,7 +24,7 @@ namespace FIFE
     class Instance;
     class TriggerChangeListener;
 
-    class ITriggerListener
+    class FIFE_API ITriggerListener
     {
     public:
         virtual ~ITriggerListener() = default;
@@ -66,7 +66,7 @@ namespace FIFE
      *
      * @see Layer
      */
-    class Trigger : public FifeClass
+    class FIFE_API Trigger : public FifeClass
     {
     public:
         // LIFECYCLE

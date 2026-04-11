@@ -4,6 +4,9 @@
 #ifndef FIFE_FONTS_IMAGEFONTBASE_H
 #define FIFE_FONTS_IMAGEFONTBASE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/point.h"
 
 #include "fontbase.h"
@@ -26,7 +26,7 @@ namespace FIFE
      *  Just set the glyphs/placeholder in any derived class and the rendering
      *  is handled by this class. Also frees all glyph surfaces on destruction.
      */
-    class ImageFontBase : public FontBase
+    class FIFE_API ImageFontBase : public FontBase
     {
     public:
         /**
@@ -48,7 +48,7 @@ namespace FIFE
 
     protected:
         // A glyph (visible character)
-        struct s_glyph
+        struct FIFE_API s_glyph
         {
             // The offset of the glyph relative to the top-left corner.
             Point offset;

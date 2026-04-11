@@ -4,20 +4,18 @@
 #ifndef FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
 #define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
+#include "util/base/fife_stdint.h"
 #include <string>
 #include <vector>
-
-// Platform specific includes
-#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 #include <SDL_video.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/image.h"
 
 #include "fife_opengl.h"
@@ -36,7 +34,7 @@ namespace FIFE
      *       if they are not supported by the hardware (ARB_texture_non_power_of_two).
      * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
      */
-    class GLImage : public Image
+    class FIFE_API GLImage : public Image
     {
     public:
         explicit GLImage(IResourceLoader* loader = nullptr);

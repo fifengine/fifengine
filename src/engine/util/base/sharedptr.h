@@ -4,6 +4,9 @@
 #ifndef FIFE_SHARED_PTR_H_
 #define FIFE_SHARED_PTR_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <functional>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "fife_stdint.h"
 
 namespace FIFE
@@ -24,7 +24,7 @@ namespace FIFE
      * falls out of scope.
      */
     template <typename T>
-    class SharedPtr
+    class FIFE_API SharedPtr
     {
     public:
         /** Constructor

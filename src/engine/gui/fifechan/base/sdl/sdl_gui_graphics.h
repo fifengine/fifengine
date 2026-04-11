@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_SDL_GRAPHICS_H
 #define FIFE_GUI_SDL_GRAPHICS_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,7 +14,6 @@
 #include <fifechan/backends/sdl2/graphics.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
 
 namespace FIFE
@@ -20,7 +22,7 @@ namespace FIFE
 
     /** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
      */
-    class SdlGuiGraphics : public fcn::sdl2::Graphics
+    class FIFE_API SdlGuiGraphics : public fcn::sdl2::Graphics
     {
     public:
         /** Constructor

@@ -4,6 +4,9 @@
 #ifndef FIFE_XML_HELPER_H
 #define FIFE_XML_HELPER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstring>
 #include <string>

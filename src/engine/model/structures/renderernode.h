@@ -4,15 +4,15 @@
 #ifndef FIFE_RENDERERNODE_H
 #define FIFE_RENDERERNODE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 // #include <vector>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -20,7 +20,7 @@ namespace FIFE
     class Camera;
     class InstanceDeleteListener;
 
-    class RendererNode
+    class FIFE_API RendererNode
     {
     public:
         RendererNode(

@@ -4,24 +4,21 @@
 #ifndef FIFE_SOUNDDECODER_OGG_H
 #define FIFE_SOUNDDECODER_OGG_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <memory>
-
-// Platform specific includes
-
 // 3rd party library includes
 #include <vorbis/vorbisfile.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/sounddecoder.h"
 #include "vfs/raw/rawdata.h"
 
 namespace FIFE
 {
-    class SoundDecoderOgg : public SoundDecoder
+    class FIFE_API SoundDecoderOgg : public SoundDecoder
     {
     public:
         explicit SoundDecoderOgg(RawData* rdp);

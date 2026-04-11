@@ -4,15 +4,15 @@
 #ifndef FIFE_UTIL_QUADTREE_H
 #define FIFE_UTIL_QUADTREE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cassert>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "rect.h"
 
 namespace FIFE
@@ -21,7 +21,7 @@ namespace FIFE
     /** QuadTree Node
      */
     template <typename DataType, int32_t MinimumSize = 128>
-    class QuadNode
+    class FIFE_API QuadNode
     {
     protected:
         QuadNode* m_parent;
@@ -160,7 +160,7 @@ namespace FIFE
      *  to any object size put into the data structure.
      */
     template <typename DataType, int32_t MinimumSize = 128>
-    class QuadTree
+    class FIFE_API QuadTree
     {
     public:
         using Node = QuadNode<DataType, MinimumSize>;

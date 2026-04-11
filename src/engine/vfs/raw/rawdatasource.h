@@ -4,17 +4,15 @@
 #ifndef FIFE_VFS_RAW_RAWDATASOURCE_H
 #define FIFE_VFS_RAW_RAWDATASOURCE_H
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -24,7 +22,7 @@ namespace FIFE
      * RawData uses RawDataSources to access the data - if you want to add support for a new archivetype this is one of
      * the classes you need.
      */
-    class RawDataSource
+    class FIFE_API RawDataSource
     {
 
     public:

@@ -4,6 +4,9 @@
 #ifndef FIFE_TRIGGER_CONTROLLER_H
 #define FIFE_TRIGGER_CONTROLLER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "util/base/fifeclass.h"
 #include "util/structures/rect.h"
@@ -34,7 +34,7 @@ namespace FIFE
      *  You should never instantiate this class directly as Map does it
      *  when you create a new map.
      */
-    class TriggerController : public FifeClass
+    class FIFE_API TriggerController : public FifeClass
     {
     public:
         /** Constructor.

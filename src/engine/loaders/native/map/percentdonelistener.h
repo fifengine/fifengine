@@ -4,6 +4,9 @@
 #ifndef FIFE_PERCENT_DONE_LISTENER_H
 #define FIFE_PERCENT_DONE_LISTENER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <vector>
 
@@ -11,20 +14,17 @@
 #include "util/base/fife_stdint.h"
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
-    class PercentDoneListener
+    class FIFE_API PercentDoneListener
     {
     public:
         virtual ~PercentDoneListener();
         virtual void OnEvent(unsigned int percentDone) = 0;
     };
 
-    class PercentDoneCallback
+    class FIFE_API PercentDoneCallback
     {
     public:
         PercentDoneCallback();

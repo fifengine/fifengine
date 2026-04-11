@@ -4,16 +4,13 @@
 #ifndef FIFE_SOUNDSOURCE_H
 #define FIFE_SOUNDSOURCE_H
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -25,7 +22,7 @@ namespace FIFE
 
     /** Interface class between Instance / ActionAudio and SoundEmitter.
      */
-    class SoundSource
+    class FIFE_API SoundSource
     {
     public:
         explicit SoundSource(Instance* instance);

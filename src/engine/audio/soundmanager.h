@@ -4,20 +4,17 @@
 #ifndef FIFE_SOUNDMANAGER_H
 #define FIFE_SOUNDMANAGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <queue>
 #include <string>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "util/base/singleton.h"
 
@@ -55,7 +52,7 @@ namespace FIFE
     class SoundFilter;
     class SoundEmitter;
 
-    class SoundManager : public DynamicSingleton<SoundManager>
+    class FIFE_API SoundManager : public DynamicSingleton<SoundManager>
     {
     public:
         SoundManager();

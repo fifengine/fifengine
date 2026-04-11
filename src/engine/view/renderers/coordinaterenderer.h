@@ -4,15 +4,15 @@
 #ifndef FIFE_COORDINATERENDERER_H
 #define FIFE_COORDINATERENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "view/rendererbase.h"
 
@@ -21,7 +21,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class CoordinateRenderer : public RendererBase
+    class FIFE_API CoordinateRenderer : public RendererBase
     {
     public:
         /** Constructor.

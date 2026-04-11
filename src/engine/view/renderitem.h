@@ -4,15 +4,15 @@
 #ifndef FIFE_VIEW_RENDERITEM_H
 #define FIFE_VIEW_RENDERITEM_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <vector>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 #include "visual.h"
 
@@ -21,7 +21,7 @@ namespace FIFE
 
     class Instance;
 
-    class OverlayData
+    class FIFE_API OverlayData
     {
     public:
         OverlayData();
@@ -35,7 +35,7 @@ namespace FIFE
         std::vector<OverlayColors*>* animationColorOverlays;
     };
 
-    class RenderItem
+    class FIFE_API RenderItem
     {
     public:
         explicit RenderItem(Instance* parent);

@@ -4,18 +4,16 @@
 #ifndef FIFE_SOUNDCLIP_H_
 #define FIFE_SOUNDCLIP_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+
 #include "util/resource/resource.h"
 
 #include "sounddecoder.h"
@@ -32,7 +30,7 @@ namespace FIFE
         SD_BYTE_POS
     };
 
-    struct SoundBufferEntry
+    struct FIFE_API SoundBufferEntry
     {
         ALuint buffers[BUFFER_NUM];
         uint32_t usedbufs;
@@ -41,7 +39,7 @@ namespace FIFE
 
     /**  Class to handle the buffers of an audio file
      */
-    class SoundClip : public IResource
+    class FIFE_API SoundClip : public IResource
     {
     public:
         explicit SoundClip(IResourceLoader* loader = nullptr);

@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_EVENTSOURCETYPES_H
 #define FIFE_EVENTCHANNEL_EVENTSOURCETYPES_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstdint>
 
@@ -11,9 +14,6 @@
 //
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 //
 
 namespace FIFE

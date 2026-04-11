@@ -4,6 +4,9 @@
 #ifndef FIFE_VFS_VFS_H
 #define FIFE_VFS_VFS_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/singleton.h"
 
 namespace FIFE
@@ -36,7 +36,7 @@ namespace FIFE
      * and emit a warning. This is done to avoid problems with filesystems which are not
      * case sensitive.
      */
-    class VFS : public DynamicSingleton<VFS>
+    class FIFE_API VFS : public DynamicSingleton<VFS>
     {
     public:
         /** Constructor

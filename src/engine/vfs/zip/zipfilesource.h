@@ -4,13 +4,16 @@
 #ifndef FIFE_VFS_ZIP_ZIPFILESOURCE_H
 #define FIFE_VFS_ZIP_ZIPFILESOURCE_H
 
+// Platform specific includes
+#include "platform.h"
+
 #include "vfs/raw/rawdatasource.h"
 #include <cstdint>
 
 namespace FIFE
 {
 
-    class ZipFileSource : public RawDataSource
+    class FIFE_API ZipFileSource : public RawDataSource
     {
     public:
         ZipFileSource(uint8_t* data, uint32_t datalen);

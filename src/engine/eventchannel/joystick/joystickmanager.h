@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_JOYSTICKMANAGER_H
 #define FIFE_EVENTCHANNEL_JOYSTICKMANAGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <deque>
 #include <list>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "loaders/native/input/controllermappingloader.h"
 #include "savers/native/input/controllermappingsaver.h"
 #include "util/base/fife_stdint.h"
@@ -31,7 +31,7 @@ namespace FIFE
 
     /**  Joystick Manager manages all events related to Joysticks and Gamecontrollers
      */
-    class JoystickManager : public IJoystickController, public IEventSource
+    class FIFE_API JoystickManager : public IJoystickController, public IEventSource
     {
     public:
         /** Constructor.

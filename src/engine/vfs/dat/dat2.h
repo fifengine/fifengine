@@ -4,21 +4,19 @@
 #ifndef FIFE_MAP_LOADERS_FALLOUT_DAT2_H
 #define FIFE_MAP_LOADERS_FALLOUT_DAT2_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
+#include "util/base/fife_stdint.h"
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
 
-// Platform specific includes
-#include "util/base/fife_stdint.h"
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timer.h"
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
@@ -40,7 +38,7 @@ namespace FIFE
      * @see MFFalloutDAT1
      * @todo @b maybe merge common DAT1/DAT2 code in a common base class
      */
-    class DAT2 : public VFSSource
+    class FIFE_API DAT2 : public VFSSource
     {
 
     public:

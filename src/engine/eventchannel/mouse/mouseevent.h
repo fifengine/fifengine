@@ -4,15 +4,15 @@
 #ifndef FIFE_EVENTCHANNEL_MOUSEEVENT_H
 #define FIFE_EVENTCHANNEL_MOUSEEVENT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "eventchannel/base/inputevent.h"
 
 namespace FIFE
@@ -20,7 +20,7 @@ namespace FIFE
 
     /**  Class for mouse events
      */
-    class MouseEvent : public InputEvent
+    class FIFE_API MouseEvent : public InputEvent
     {
     public:
         /**

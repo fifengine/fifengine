@@ -4,16 +4,15 @@
 #ifndef FIFE_GUI_IMAGE_H
 #define FIFE_GUI_IMAGE_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 #include <fifechan/color.hpp>
 #include <fifechan/image.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
@@ -21,7 +20,7 @@
 namespace FIFE
 {
 
-    class GuiImage : public fcn::Image
+    class FIFE_API GuiImage : public fcn::Image
     {
     public:
         GuiImage();

@@ -4,6 +4,9 @@
 #ifndef FIFE_RENDERERBASE_H
 #define FIFE_RENDERERBASE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <string>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 #include "renderitem.h"
 
@@ -31,7 +31,7 @@ namespace FIFE
      *  Having this implemented via callback mechanism should speed up the rendering a bit
      *  (e.g. no need to sort pipeline order per each frame)
      */
-    class IRendererListener
+    class FIFE_API IRendererListener
     {
     public:
         virtual ~IRendererListener() = default;
@@ -48,7 +48,7 @@ namespace FIFE
     /** Interface to class owning the renderers
      * Used to get correct subclass of renderer in scripting side (via renderer's static method)
      */
-    class IRendererContainer
+    class FIFE_API IRendererContainer
     {
     public:
         virtual ~IRendererContainer() = default;
@@ -61,7 +61,7 @@ namespace FIFE
     /** Base class for all view renderers
      * View renderer renders one aspect of the view shown on screen
      */
-    class RendererBase
+    class FIFE_API RendererBase
     {
     public:
         /** Constructor

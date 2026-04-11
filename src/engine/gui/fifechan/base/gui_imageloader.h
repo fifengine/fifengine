@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_IMAGELOADER_H
 #define FIFE_GUI_IMAGELOADER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -13,9 +16,6 @@
 #include <fifechan/imageloader.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "gui_image.h"
 
 namespace FIFE
@@ -24,7 +24,7 @@ namespace FIFE
 
     /* Image Loader.
      */
-    class GuiImageLoader : public fcn::ImageLoader
+    class FIFE_API GuiImageLoader : public fcn::ImageLoader
     {
     public:
         GuiImageLoader();

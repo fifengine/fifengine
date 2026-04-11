@@ -9,18 +9,15 @@
 #ifndef FIFE_UTIL_MATRIX_H
 #define FIFE_UTIL_MATRIX_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/structures/point.h"
 
@@ -32,7 +29,7 @@ namespace FIFE
     /** Minimal matrix class to assist in view 3d calculations
      */
     template <typename T>
-    class Matrix
+    class FIFE_API Matrix
     {
     public:
         Matrix() = default;

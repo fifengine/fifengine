@@ -4,6 +4,9 @@
 #ifndef FIFE_VIEW_CAMERA_H
 #define FIFE_VIEW_CAMERA_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
@@ -15,9 +18,6 @@
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/location.h"
 #include "util/math/matrix.h"
 #include "util/structures/rect.h"
@@ -40,7 +40,7 @@ namespace FIFE
      *  Different cameras can have different properties, like location
      *  to shoot, zoom or tilt
      */
-    class Camera : public IRendererListener, public IRendererContainer
+    class FIFE_API Camera : public IRendererListener, public IRendererContainer
     {
     public:
         enum TransformType : uint8_t

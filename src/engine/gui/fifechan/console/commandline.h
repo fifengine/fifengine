@@ -4,6 +4,9 @@
 #ifndef FIFE_FIFECHAN_ADDON_COMMANDLINE_H
 #define FIFE_FIFECHAN_ADDON_COMMANDLINE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <functional>
 #include <string>
@@ -13,9 +16,6 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timer.h"
 
 namespace FIFE
@@ -23,7 +23,7 @@ namespace FIFE
 
     /** A Command line widget
      */
-    class CommandLine : public fcn::TextField
+    class FIFE_API CommandLine : public fcn::TextField
     {
     public:
         using type_callback = std::function<void(std::string)>;

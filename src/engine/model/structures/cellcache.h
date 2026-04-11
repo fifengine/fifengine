@@ -4,6 +4,9 @@
 #ifndef FIFE_CELLCACHE_H
 #define FIFE_CELLCACHE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
@@ -17,9 +20,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
 #include "util/base/fifeclass.h"
@@ -33,7 +33,7 @@ namespace FIFE
 
     /** A Zone is an abstract depiction of a CellCache or of a part of it.
      */
-    class Zone
+    class FIFE_API Zone
     {
     public:
         /** Constructor
@@ -96,7 +96,7 @@ namespace FIFE
     /** A CellCache is an abstract depiction of one or a few layers
      *	and contains additional information, such as different cost and speed and so on.
      */
-    class CellCache : public FifeClass
+    class FIFE_API CellCache : public FifeClass
     {
     public:
         /** Constructor

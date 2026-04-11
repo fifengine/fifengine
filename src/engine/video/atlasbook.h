@@ -4,6 +4,9 @@
 #ifndef FIFE_VIDEO_ATLASBOOK_H
 #define FIFE_VIDEO_ATLASBOOK_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,15 +17,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 
 namespace FIFE
 {
 
-    class AtlasBlock
+    class FIFE_API AtlasBlock
     {
     public:
         uint32_t page;
@@ -79,7 +79,7 @@ namespace FIFE
         void merge(AtlasBlock const & rect);
     };
 
-    class AtlasPage
+    class FIFE_API AtlasPage
     {
     public:
         AtlasPage(uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t page) :
@@ -117,7 +117,7 @@ namespace FIFE
         Blocks blocks;
     };
 
-    class AtlasBook
+    class FIFE_API AtlasBook
     {
     public:
         AtlasBook(uint32_t pageWidth, uint32_t pageHeight, uint32_t pixelSize = 4) :

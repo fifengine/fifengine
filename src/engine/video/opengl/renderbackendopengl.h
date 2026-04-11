@@ -4,6 +4,9 @@
 #ifndef FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGL_H
 #define FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/renderbackend.h"
 
 #include "fife_opengl.h"
@@ -25,7 +25,7 @@ namespace FIFE
     /** The main class of the OpenGL-based renderer.
      * @see RenderBackend
      */
-    class RenderBackendOpenGL : public RenderBackend
+    class FIFE_API RenderBackendOpenGL : public RenderBackend
     {
     public:
         explicit RenderBackendOpenGL(const SDL_Color& colorkey);
@@ -206,28 +206,28 @@ namespace FIFE
 
         class RenderObject;
 
-        struct RenderZObject
+        struct FIFE_API RenderZObject
         {
             GLuint texture_id;
             // uint32_t elements;
         };
 
         // for regular primitives with color and alpha
-        struct renderDataP
+        struct FIFE_API renderDataP
         {
             GLfloat vertex[2];
             GLubyte color[4];
         };
 
         // for regular textured quads
-        struct renderDataT
+        struct FIFE_API renderDataT
         {
             GLfloat vertex[2];
             GLfloat texel[2];
         };
 
         // for textured quads with alpha
-        struct renderDataTC
+        struct FIFE_API renderDataTC
         {
             GLfloat vertex[2];
             GLfloat texel[2];
@@ -235,7 +235,7 @@ namespace FIFE
         };
 
         // for multitextured quads
-        struct renderData2TC
+        struct FIFE_API renderData2TC
         {
             GLfloat vertex[2];
             GLfloat texel[2];
@@ -244,14 +244,14 @@ namespace FIFE
         };
 
         // for regular textured quads with z
-        struct renderDataZ
+        struct FIFE_API renderDataZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
         };
 
         // for textured quads with alpha and z
-        struct renderDataColorZ
+        struct FIFE_API renderDataColorZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
@@ -259,7 +259,7 @@ namespace FIFE
         };
 
         // for multitextured quads with z
-        struct renderData2TCZ
+        struct FIFE_API renderData2TCZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
@@ -267,7 +267,7 @@ namespace FIFE
             GLubyte color[4];
         };
 
-        struct RenderZObjectTest
+        struct FIFE_API RenderZObjectTest
         {
             GLuint texture_id;
             uint32_t elements;
@@ -318,7 +318,7 @@ namespace FIFE
         std::vector<renderDataZ> m_renderForcedDatasZ;
         std::vector<RenderObject> m_renderForcedObjectsZ;
 
-        struct currentState
+        struct FIFE_API currentState
         {
             // Textures
             bool tex_enabled[4];

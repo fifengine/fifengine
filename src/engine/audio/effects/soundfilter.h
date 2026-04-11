@@ -4,16 +4,13 @@
 #ifndef FIFE_SOUNDFILTER_H
 #define FIFE_SOUNDFILTER_H
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/fife_openal.h"
 #include "audio/soundconfig.h"
 
@@ -23,7 +20,7 @@ namespace FIFE
     /** The class defines filters. Lowpass, Highpass and Bandpass filters are possible.
      * Note: On Lowpass filter setGainLf have no effect, same with Highpass and setGainHf.
      */
-    class SoundFilter
+    class FIFE_API SoundFilter
     {
     public:
         /** Constructor

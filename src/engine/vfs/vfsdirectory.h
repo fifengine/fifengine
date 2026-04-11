@@ -4,6 +4,9 @@
 #ifndef FIFE_VFS_VFSHOSTSYSTEM_H
 #define FIFE_VFS_VFSHOSTSYSTEM_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfssource.h"
 
 namespace FIFE
@@ -23,7 +23,7 @@ namespace FIFE
      * The most basic VFSSource for "normal" filesystems.
      * For example, '/' or './tests/data'.
      */
-    class VFSDirectory : public VFSSource
+    class FIFE_API VFSDirectory : public VFSSource
     {
     public:
         /** Constructor

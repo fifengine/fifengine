@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_WIDGETS_RESIZABLEWINDOW_H
 #define FIFE_GUI_WIDGETS_RESIZABLEWINDOW_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -12,14 +15,11 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/cursor.h"
 
 namespace fcn
 {
-    class ResizableWindow : public Window, public KeyListener, public FocusListener
+    class FIFE_API ResizableWindow : public Window, public KeyListener, public FocusListener
     {
     public:
         enum CursorDirections : uint8_t
@@ -185,7 +185,7 @@ namespace fcn
         // save cursor so we can restore it later
         void saveCursor();
 
-        // access to fifes cursor class
+        // access to fifes cursor  class FIFE_API
         FIFE::Cursor* m_cursor;
         // distance from the widgets edge that is active for resizing events
         int32_t m_borderDistance;
@@ -210,7 +210,7 @@ namespace fcn
         // is shove allowed
         bool m_shove;
 
-        struct CursorState
+        struct FIFE_API CursorState
         {
             FIFE::MouseCursorType cursorType;
             uint32_t cursorId;

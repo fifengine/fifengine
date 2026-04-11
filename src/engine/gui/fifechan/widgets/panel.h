@@ -4,21 +4,20 @@
 #ifndef FIFE_GUI_WIDGETS_PANEL_H
 #define FIFE_GUI_WIDGETS_PANEL_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "resizablewindow.h"
 
 namespace fcn
 {
     class DockArea;
-    class Panel : public ResizableWindow
+    class FIFE_API Panel : public ResizableWindow
     {
     public:
         Panel();
@@ -78,7 +77,7 @@ namespace fcn
         // is docked
         bool m_docked;
 
-        struct SavedState
+        struct FIFE_API SavedState
         {
             Rectangle dimension;
             uint32_t innerBorder{0};

@@ -4,6 +4,9 @@
 #ifndef FIFE_RESOURE_H
 #define FIFE_RESOURE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <utility>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
 namespace FIFE
@@ -22,7 +22,7 @@ namespace FIFE
     using ResourceHandle = std::size_t;
     class IResource;
 
-    class IResourceLoader
+    class FIFE_API IResourceLoader
     {
     public:
         IResourceLoader()          = default;
@@ -31,7 +31,7 @@ namespace FIFE
         virtual void load(IResource* resource) = 0;
     };
 
-    class IResource
+    class FIFE_API IResource
     {
     public:
         enum ResourceState : uint8_t

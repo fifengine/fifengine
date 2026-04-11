@@ -4,6 +4,9 @@
 #ifndef FIFE_LOGGER_H
 #define FIFE_LOGGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstdint>
 #include <iomanip>
@@ -19,9 +22,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 
 #include "modules.h"
@@ -92,7 +92,7 @@ namespace FIFE
      * Helper class to create log strings out from separate parts
      * Usage: LMsg("some text") << variable << ", " << other variable
      */
-    class LMsg
+    class FIFE_API LMsg
     {
     public:
         explicit LMsg(std::string msg = "") : str(std::move(msg)) { }
@@ -117,7 +117,7 @@ namespace FIFE
     /**
      * Logmanager takes care of log filtering and output direction
      */
-    class LogManager
+    class FIFE_API LogManager
     {
     public:
         /**
@@ -248,7 +248,7 @@ namespace FIFE
      * Common way of doing things is to instantiate a static Logger on
      * top of .cpp file and then use that in .cpp-file's methods
      */
-    class Logger
+    class FIFE_API Logger
     {
     public:
         /**
@@ -294,7 +294,7 @@ namespace FIFE
      * The mechanism is used by calling something like:
      *  somestream << pprint(ptr);
      **/
-    struct pprint
+    struct FIFE_API pprint
     {
         void* p;
         explicit pprint(void* _p) : p(_p) { }

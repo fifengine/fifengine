@@ -4,6 +4,9 @@
 #ifndef FIFE_PROTOTYPE_H
 #define FIFE_PROTOTYPE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/math/angles.h"
 #include "util/resource/resource.h"
 
@@ -33,7 +33,7 @@ namespace FIFE
      * Objects may inherit default values from another object.
      *
      */
-    class Object
+    class FIFE_API Object
     {
     public:
         /** Constructor
@@ -356,7 +356,7 @@ namespace FIFE
         //! pointer to object visual
         IVisual* m_visual;
 
-        class BasicObjectProperty
+        class FIFE_API BasicObjectProperty
         {
         public:
             //! Constructor
@@ -385,7 +385,7 @@ namespace FIFE
             uint8_t m_cellStack;
         };
 
-        class MovableObjectProperty
+        class FIFE_API MovableObjectProperty
         {
         public:
             //! Constructor
@@ -413,7 +413,7 @@ namespace FIFE
             int32_t m_zRange;
         };
 
-        class MultiObjectProperty
+        class FIFE_API MultiObjectProperty
         {
         public:
             //! Constructor

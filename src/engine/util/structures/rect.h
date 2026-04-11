@@ -38,15 +38,15 @@
 #ifndef FIFE_VIDEO_RECT_H
 #define FIFE_VIDEO_RECT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <iostream>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "point.h"
 
 namespace FIFE
@@ -60,7 +60,7 @@ namespace FIFE
      * @see Point
      */
     template <typename T>
-    class RectType
+    class FIFE_API RectType
     {
     public:
         /** The X Coordinate.

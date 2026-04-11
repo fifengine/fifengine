@@ -4,6 +4,9 @@
 #ifndef FIFE_MAP_LOADERS_FALLOUT_DAT1_H
 #define FIFE_MAP_LOADERS_FALLOUT_DAT1_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <memory>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
 
@@ -26,7 +26,7 @@ namespace FIFE
 
     /** VFSource for the Fallout1 DAT file format.
      */
-    class DAT1 : public VFSSource
+    class FIFE_API DAT1 : public VFSSource
     {
     public:
         /** Constructor

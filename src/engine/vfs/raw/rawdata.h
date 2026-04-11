@@ -4,22 +4,20 @@
 #ifndef FIFE_VFS_RAW_RAWDATA_H
 #define FIFE_VFS_RAW_RAWDATA_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
+#include "util/base/fife_stdint.h"
 #include <array>
 #include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
 
-// Platform specific includes
-#include "util/base/fife_stdint.h"
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 #include "rawdatasource.h"
 #include "util/base/exception.h"
@@ -32,7 +30,7 @@ namespace FIFE
      * RawData uses RawDataSource to get the real data - that way the user doesn't have to know where the data comes
      * from (real files, files inside archives etc.)
      */
-    class RawData
+    class FIFE_API RawData
     {
     public:
         explicit RawData(RawDataSource* datasource);
@@ -185,7 +183,7 @@ namespace FIFE
         static bool littleEndian();
     };
     using RawDataPtr = std::shared_ptr<RawData>;
-    class IndexSaver
+    class FIFE_API IndexSaver
     {
     public:
         explicit IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) { }

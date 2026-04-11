@@ -4,6 +4,9 @@
 #ifndef FIFE_VIEW_LAYERCACHE_H
 #define FIFE_VIEW_LAYERCACHE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <deque>
 #include <map>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/location.h"
 #include "util/math/matrix.h"
@@ -31,7 +31,7 @@ namespace FIFE
     class Camera;
     class CacheLayerChangeListener;
 
-    class LayerCache
+    class FIFE_API LayerCache
     {
     public:
         using CacheTree = QuadTree<std::set<int32_t>>;
@@ -58,7 +58,7 @@ namespace FIFE
             EntryFullUpdate     = 0x03
         };
         using RenderEntryUpdate = uint8_t;
-        struct Entry
+        struct FIFE_API Entry
         {
             // Node in m_tree;
             CacheTree::Node* node;

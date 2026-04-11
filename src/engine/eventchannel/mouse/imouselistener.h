@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_IMOUSELISTENER_H
 #define FIFE_EVENTCHANNEL_IMOUSELISTENER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 //
 
@@ -11,9 +14,6 @@
 //
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "eventchannel/base/ilistener.h"
 
 namespace FIFE
@@ -25,7 +25,7 @@ namespace FIFE
      * To be able to listen for mouse events you must make a class which inherits
      * from this class and implements its functions.
      */
-    class IMouseListener : public IListener
+    class FIFE_API IMouseListener : public IListener
     {
     public:
         /**

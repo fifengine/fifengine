@@ -4,6 +4,9 @@
 #ifndef FIFE_ROUTE_H
 #define FIFE_ROUTE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstdint>
 #include <list>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fifeclass.h"
 
 namespace FIFE
@@ -46,7 +46,7 @@ namespace FIFE
     /** A basic route.
      * Holds the path and all related infos.
      */
-    class Route : public FifeClass
+    class FIFE_API Route : public FifeClass
     {
     public:
         /** Constructor

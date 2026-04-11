@@ -4,6 +4,9 @@
 #ifndef FIFE_MODEL_METAMODEL_ACTION_H
 #define FIFE_MODEL_METAMODEL_ACTION_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <string>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fifeclass.h"
 #include "util/math/angles.h"
 
@@ -24,7 +24,7 @@ namespace FIFE
 {
     class ActionAudio;
 
-    class Action : public FifeClass
+    class FIFE_API Action : public FifeClass
     {
     public:
         /** Constructor

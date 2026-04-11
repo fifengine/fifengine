@@ -4,15 +4,15 @@
 #ifndef FIFE_TIMER_H
 #define FIFE_TIMER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <functional>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "timeevent.h"
 
 namespace FIFE
@@ -41,7 +41,7 @@ namespace FIFE
      *
      *  @see Console
      */
-    class Timer : protected TimeEvent
+    class FIFE_API Timer : protected TimeEvent
     {
     public:
         using type_callback = std::function<void()>;

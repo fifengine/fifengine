@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_ILISTENER_H
 #define FIFE_EVENTCHANNEL_ILISTENER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 //
 
@@ -11,16 +14,13 @@
 //
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 //
 
 namespace FIFE
 {
     /**  Base Listener
      */
-    class IListener
+    class FIFE_API IListener
     {
     public:
         /** Indicates if the listener is active.

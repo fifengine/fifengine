@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_WIDGETS_CLICKLABEL_H
 #define FIFE_GUI_WIDGETS_CLICKLABEL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,9 +14,6 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -30,7 +30,7 @@ namespace fcn
      * Or as fallback the maximal size parameter is used.
      * If a label is clicked an action event will be sent to all action listener's of the label.
      */
-    class ClickLabel :
+    class FIFE_API ClickLabel :
         public Widget,
         public MouseListener,
         public KeyListener,

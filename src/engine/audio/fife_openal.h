@@ -6,8 +6,10 @@
 
 #define AL_ALEXT_PROTOTYPES
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>
@@ -16,9 +18,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 // clang-format off
 #ifdef LOG_ENABLED

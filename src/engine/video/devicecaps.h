@@ -4,24 +4,21 @@
 #ifndef FIFE_DEVICECAPS_H
 #define FIFE_DEVICECAPS_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 
 namespace FIFE
 {
 
-    class ScreenMode
+    class FIFE_API ScreenMode
     {
     public:
         /** Default Constructor
@@ -204,7 +201,7 @@ namespace FIFE
         int8_t m_renderDriverIndex;
     }; // ScreenMode
 
-    class DeviceCaps
+    class FIFE_API DeviceCaps
     {
     public:
         /** Constructor.

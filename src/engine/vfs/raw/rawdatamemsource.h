@@ -4,17 +4,15 @@
 #ifndef FIFE_VFS_RAW_RAWDATAMEMSOURE_H
 #define FIFE_VFS_RAW_RAWDATAMEMSOURE_H
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "rawdatasource.h"
 
 namespace FIFE
@@ -28,7 +26,7 @@ namespace FIFE
      *
      * @see RawDataSource
      */
-    class RawDataMemSource : public RawDataSource
+    class FIFE_API RawDataMemSource : public RawDataSource
     {
     public:
         /**

@@ -4,12 +4,13 @@
 #ifndef FIFE_ENGINE_H
 #define FIFE_ENGINE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
 #include <vector>
-
-// Platform specific includes
 #ifdef USE_COCOA
     #include <dlfcn.h>
     #include <objc/message.h>
@@ -20,9 +21,6 @@
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "enginesettings.h"
 #include "video/devicecaps.h"
 
@@ -47,7 +45,7 @@ namespace FIFE
     class OffRenderer;
     class TargetRenderer;
 
-    class IEngineChangeListener
+    class FIFE_API IEngineChangeListener
     {
     public:
         virtual ~IEngineChangeListener() = default;
@@ -63,7 +61,7 @@ namespace FIFE
      *  - Clean-up when the program ends
      *  - Act as an entry point to the engine subsystems
      */
-    class Engine
+    class FIFE_API Engine
     {
     public:
         /** Constructor

@@ -4,10 +4,14 @@
 #ifndef FIFE_SINGLETON_H
 #define FIFE_SINGLETON_H
 
-#define SINGLEFRIEND(classname) /* NOLINT(cppcoreguidelines-macro-usage) */ \
-    friend class FIFE::StaticSingleton<classname>;                          \
-    classname();                                                            \
-    virtual ~classname();
+#define SINGLEFRIEND(classname) /* NOLINT(cppcoreguidelines-macro-usage) */
+
+// Platform specific includes
+#include "platform.h"
+
+friend class FIFE_API FIFE::StaticSingleton<classname>;
+classname();
+virtual ~classname();
 
 // Standard C++ library includes
 #include <cassert>
@@ -15,9 +19,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "fifeclass.h"
 
 namespace FIFE
@@ -28,7 +29,7 @@ namespace FIFE
      * @see DynamicSingleton
      */
     template <typename T>
-    class StaticSingleton
+    class FIFE_API StaticSingleton
     {
     public:
         static T* instance()
@@ -69,7 +70,7 @@ namespace FIFE
      * @see Engine
      */
     template <typename T>
-    class DynamicSingleton
+    class FIFE_API DynamicSingleton
     {
     public:
         static T* instance()

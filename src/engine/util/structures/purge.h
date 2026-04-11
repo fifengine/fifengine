@@ -4,6 +4,9 @@
 // Delete pointers in an STL sequence container
 #ifndef PURGE_H
 #define PURGE_H
+
+// Platform specific includes
+#include "platform.h"
 #include <algorithm>
 
 template <class Seq>

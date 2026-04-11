@@ -397,7 +397,7 @@ source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 
 set(
   FIFE_CORE_HDR
-  src/engine/export.h
+  src/engine/platform.h
   src/engine/modules.h
   src/engine/audio/actionaudio.h
   src/engine/audio/fife_openal.h
@@ -1187,6 +1187,10 @@ endif(BUILD_PYTHON_BINDINGS)
 if(BUILD_LIBRARY)
 
   add_library(fife)
+
+  if(WIN32)
+    target_compile_definitions(fife PUBLIC FIFE_EXPORTING)
+  endif()
 
   target_include_directories(fife PRIVATE
     ${PROJECT_BINARY_DIR}

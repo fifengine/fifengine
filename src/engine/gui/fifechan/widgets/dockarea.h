@@ -4,20 +4,19 @@
 #ifndef FIFE_GUI_WIDGETS_DOCKAREA_H
 #define FIFE_GUI_WIDGETS_DOCKAREA_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "resizablewindow.h"
 
 namespace fcn
 {
-    class DockArea : public ResizableWindow
+    class FIFE_API DockArea : public ResizableWindow
     {
     public:
         DockArea();

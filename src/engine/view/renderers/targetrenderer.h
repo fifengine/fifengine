@@ -4,6 +4,9 @@
 #ifndef FIFE_TARGETRENDERER_H
 #define FIFE_TARGETRENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -12,15 +15,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "view/renderers/offrenderer.h"
 
 namespace FIFE
 {
 
-    class RenderTarget
+    class FIFE_API RenderTarget
     {
         friend class TargetRenderer;
 
@@ -86,7 +86,7 @@ namespace FIFE
         ImagePtr m_target;
     };
     using RenderTargetPtr = SharedPtr<RenderTarget>;
-    class TargetRenderer
+    class FIFE_API TargetRenderer
     {
     public:
         /** Constructor.
@@ -111,7 +111,7 @@ namespace FIFE
         void render();
 
     private:
-        struct RenderJob
+        struct FIFE_API RenderJob
         {
             int32_t ndraws;
             int32_t lasttime_draw;

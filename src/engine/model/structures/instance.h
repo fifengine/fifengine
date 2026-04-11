@@ -4,6 +4,9 @@
 #ifndef FIFE_INSTANCE_H
 #define FIFE_INSTANCE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fifeclass.h"
 
 #include "model/metamodel/ivisual.h"
@@ -36,7 +36,7 @@ namespace FIFE
     class TimeProvider;
     class Route;
 
-    class InstanceActionListener
+    class FIFE_API InstanceActionListener
     {
     public:
         virtual ~InstanceActionListener()                                                     = default;
@@ -62,14 +62,14 @@ namespace FIFE
         ICHANGE_VISUAL          = 0x0800
     };
     using InstanceChangeInfo = uint32_t;
-    class InstanceChangeListener
+    class FIFE_API InstanceChangeListener
     {
     public:
         virtual ~InstanceChangeListener()                                           = default;
         virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
     };
 
-    class InstanceDeleteListener
+    class FIFE_API InstanceDeleteListener
     {
     public:
         virtual ~InstanceDeleteListener()                  = default;
@@ -79,7 +79,7 @@ namespace FIFE
     /** An Instance is an "instantiation" of an Object at a Location.
      *
      */
-    class Instance : public FifeClass, public InstanceDeleteListener
+    class FIFE_API Instance : public FifeClass, public InstanceDeleteListener
     {
     public:
         /** Constructor
@@ -520,7 +520,7 @@ namespace FIFE
          * With this bookkeeping, it is possible to optimize several spots in
          * the engine, basically only reacting to changes instead of polling.
          */
-        class InstanceActivity
+        class FIFE_API InstanceActivity
         {
         public:
             explicit InstanceActivity(Instance& source);

@@ -4,6 +4,9 @@
 #ifndef FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
 #define FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 //
 
@@ -11,9 +14,6 @@
 //
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 //
 #include "icommandlistener.h"
 
@@ -25,7 +25,7 @@ namespace FIFE
      * Using this interface, clients can subscribe themselves to receive events
      * Also command sending is possible
      */
-    class ICommandController
+    class FIFE_API ICommandController
     {
     public:
         /** Adds a listener to the back of the listener deque

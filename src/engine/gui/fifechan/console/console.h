@@ -4,6 +4,9 @@
 #ifndef FIFE_FIFECHAN_ADDON_CONSOLE_H
 #define FIFE_FIFECHAN_ADDON_CONSOLE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,9 +14,6 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timer.h"
 
 namespace FIFE
@@ -25,7 +25,7 @@ namespace FIFE
     /**
      * Console executer is listener interface for console activity
      */
-    class ConsoleExecuter
+    class FIFE_API ConsoleExecuter
     {
     public:
         /** Destructor
@@ -44,7 +44,7 @@ namespace FIFE
 
     /** Ingame Console
      */
-    class Console : public fcn::Container, public fcn::ActionListener, public fcn::FocusListener
+    class FIFE_API Console : public fcn::Container, public fcn::ActionListener, public fcn::FocusListener
     {
     public:
         /** Constructor

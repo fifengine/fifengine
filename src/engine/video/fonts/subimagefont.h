@@ -4,18 +4,16 @@
 #ifndef FIFE_FONTS_SUBIMAGEFONT_H
 #define FIFE_FONTS_SUBIMAGEFONT_H
 
-// Standard C++ library includes
-#include <string>
-
 // Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
 #include "util/base/fife_stdint.h"
+#include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "imagefontbase.h"
 
 namespace FIFE
@@ -24,7 +22,7 @@ namespace FIFE
     /** Imagefont that is able to read glyphs from single image sheet, see e.g.
      *  Fifechan imagefontcollection (google for it)
      */
-    class SubImageFont : public ImageFontBase
+    class FIFE_API SubImageFont : public ImageFontBase
     {
     public:
         /**

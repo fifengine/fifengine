@@ -4,18 +4,15 @@
 #ifndef FIFE_SOUNDEMITTER_H_
 #define FIFE_SOUNDEMITTER_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 
 #include "soundclip.h"
@@ -36,7 +33,7 @@ namespace FIFE
 
     /** Listener interface for SoundEmitter.
      */
-    class SoundEmitterListener
+    class FIFE_API SoundEmitterListener
     {
     public:
         virtual ~SoundEmitterListener() = default;
@@ -54,7 +51,7 @@ namespace FIFE
 
     /** The class for playing audio files
      */
-    class SoundEmitter
+    class FIFE_API SoundEmitter
     {
     public:
         SoundEmitter(SoundManager* manager, uint32_t uid);
@@ -411,7 +408,7 @@ namespace FIFE
         uint32_t m_emitterId;
 
         //! buffers OpenAL data
-        struct internData
+        struct FIFE_API internData
         {
             float volume;
             float maxVolume;

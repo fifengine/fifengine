@@ -4,6 +4,9 @@
 #ifndef FIFE_MODEL_GRIDS_SQUAREGRID_H
 #define FIFE_MODEL_GRIDS_SQUAREGRID_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,16 +14,13 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 
 #include "cellgrid.h"
 
 namespace FIFE
 {
-    class SquareGrid : public CellGrid
+    class FIFE_API SquareGrid : public CellGrid
     {
     public:
         SquareGrid();

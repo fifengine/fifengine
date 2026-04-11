@@ -4,6 +4,9 @@
 #ifndef FIFE_LIGHTRENDERER_H
 #define FIFE_LIGHTRENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/renderernode.h"
 #include "video/animation.h"
 #include "view/rendererbase.h"
@@ -25,7 +25,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class LightRendererElementInfo
+    class FIFE_API LightRendererElementInfo
     {
     public:
         LightRendererElementInfo(const RendererNode& n, int32_t src, int32_t dst);
@@ -80,7 +80,7 @@ namespace FIFE
         uint8_t m_stencil_ref;
     };
 
-    class LightRendererImageInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererImageInfo : public LightRendererElementInfo
     {
     public:
         LightRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst);
@@ -100,7 +100,7 @@ namespace FIFE
         ImagePtr m_image;
     };
 
-    class LightRendererAnimationInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererAnimationInfo : public LightRendererElementInfo
     {
     public:
         LightRendererAnimationInfo(const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst);
@@ -122,7 +122,7 @@ namespace FIFE
         float m_time_scale;
     };
 
-    class LightRendererSimpleLightInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererSimpleLightInfo : public LightRendererElementInfo
     {
     public:
         LightRendererSimpleLightInfo(
@@ -174,7 +174,7 @@ namespace FIFE
         uint8_t m_blue;
     };
 
-    class LightRendererResizeInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererResizeInfo : public LightRendererElementInfo
     {
     public:
         LightRendererResizeInfo(
@@ -198,7 +198,7 @@ namespace FIFE
         int32_t m_height;
     };
 
-    class LightRenderer : public RendererBase
+    class FIFE_API LightRenderer : public RendererBase
     {
     public:
         /** constructor.

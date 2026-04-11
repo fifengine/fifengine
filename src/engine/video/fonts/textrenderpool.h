@@ -4,19 +4,16 @@
 #ifndef FIFE_FONTS_TEXTRENDERPOOL_H
 #define FIFE_FONTS_TEXTRENDERPOOL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <string>
-
-// Platform specific includes
-
 // 3rd party library includes
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timer.h"
 
 struct SDL_Surface;
@@ -33,7 +30,7 @@ namespace FIFE
      *
      *  @todo Should probably use a @c std::map instead of a @c std::list
      */
-    class TextRenderPool
+    class FIFE_API TextRenderPool
     {
     public:
         /** Constructor
@@ -63,7 +60,7 @@ namespace FIFE
         void removeOldEntries();
 
     protected:
-        struct s_pool_entry
+        struct FIFE_API s_pool_entry
         {
             std::string text;
             SDL_Color color;

@@ -4,6 +4,9 @@
 #ifndef FIFE_FONTS_TRUETYPEFONT_H
 #define FIFE_FONTS_TRUETYPEFONT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -12,9 +15,6 @@
 #include <SDL_ttf.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "fontbase.h"
 
 namespace FIFE
@@ -31,7 +31,7 @@ namespace FIFE
      * Original author of this class is Walluce Pinkham. Some modifications
      * made by the Guichan team, and additonal modifications by the FIFE team.
      */
-    class TrueTypeFont : public FontBase
+    class FIFE_API TrueTypeFont : public FontBase
     {
     public:
         /**

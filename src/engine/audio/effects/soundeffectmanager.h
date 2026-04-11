@@ -4,19 +4,16 @@
 #ifndef FIFE_SOUNDEFFECTMANAGER_H
 #define FIFE_SOUNDEFFECTMANAGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <queue>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/fife_openal.h"
 #include "audio/soundconfig.h"
 
@@ -27,7 +24,7 @@ namespace FIFE
     class SoundFilter;
     class SoundEmitter;
 
-    class SoundEffectManager
+    class FIFE_API SoundEffectManager
     {
     public:
         /** Constructor

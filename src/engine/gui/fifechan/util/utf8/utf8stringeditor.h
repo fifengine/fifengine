@@ -4,6 +4,9 @@
 #ifndef FCN_UTF8STRINGEDITOR_HPP
 #define FCN_UTF8STRINGEDITOR_HPP
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,9 +14,6 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace fcn
 {
@@ -26,7 +26,7 @@ namespace fcn
      *
      * @author Przemyslaw Grzywacz
      */
-    class UTF8StringEditor
+    class FIFE_API UTF8StringEditor
     {
     public:
         /**

@@ -4,15 +4,15 @@
 #ifndef FIFE_VIEW_VISUAL_H
 #define FIFE_VIEW_VISUAL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/ivisual.h"
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
@@ -26,7 +26,7 @@ namespace FIFE
     class Action;
     class Image;
 
-    class OverlayColors
+    class FIFE_API OverlayColors
     {
     public:
         /** Constructors
@@ -58,7 +58,7 @@ namespace FIFE
      * The reason why its separated is to keep model view-agnostic, so that we could
      * have e.g. 3d, 2d and character based visualizations to the same data
      */
-    class Visual2DGfx : public IVisual
+    class FIFE_API Visual2DGfx : public IVisual
     {
     public:
         /** Destructor
@@ -73,7 +73,7 @@ namespace FIFE
 
     /** Object visual contains data that is needed for visualizing objects
      */
-    class ObjectVisual : public Visual2DGfx
+    class FIFE_API ObjectVisual : public Visual2DGfx
     {
     public:
         /** Constructs and assigns it to the passed item
@@ -156,7 +156,7 @@ namespace FIFE
 
     /** Instance visual contains data that is needed to visualize the instance on screen
      */
-    class InstanceVisual : public Visual2DGfx
+    class FIFE_API InstanceVisual : public Visual2DGfx
     {
     public:
         /** Constructs and assigns it to the passed item
@@ -211,7 +211,7 @@ namespace FIFE
 
     /** Action visual contains data that is needed to visualize different actions on screen
      */
-    class ActionVisual : public Visual2DGfx
+    class FIFE_API ActionVisual : public Visual2DGfx
     {
     public:
         /** Constructs and assigns it to the passed item

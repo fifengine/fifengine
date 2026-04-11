@@ -4,17 +4,14 @@
 #ifndef FIFE_ACTIONAUDIO_H
 #define FIFE_ACTIONAUDIO_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 
 namespace FIFE
@@ -22,7 +19,7 @@ namespace FIFE
 
     /** The class for holding audio data per Action.
      */
-    class ActionAudio
+    class FIFE_API ActionAudio
     {
     public:
         ActionAudio();

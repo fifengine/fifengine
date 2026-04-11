@@ -4,21 +4,18 @@
 #ifndef FIFE_UTIL_FIFE_MATH_H
 #define FIFE_UTIL_FIFE_MATH_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <limits>
 #include <numbers>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -62,7 +59,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <class numT>
-    struct float_traits
+    struct FIFE_API float_traits
     {
     };
 
@@ -241,7 +238,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <typename T>
-    class Math
+    class FIFE_API Math
     {
     public:
         /**

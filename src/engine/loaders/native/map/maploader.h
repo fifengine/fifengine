@@ -4,6 +4,9 @@
 #ifndef FIFE_MAPLOADER_H_
 #define FIFE_MAPLOADER_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 #include "ianimationloader.h"
 #include "imaploader.h"
@@ -30,7 +30,7 @@ namespace FIFE
     class RenderBackend;
     class PercentDoneListener;
 
-    class MapLoader : public IMapLoader
+    class FIFE_API MapLoader : public IMapLoader
     {
     public:
         MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);

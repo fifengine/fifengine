@@ -4,9 +4,10 @@
 #ifndef FIFE_UTIL_FIFE_STDINT_H
 #define FIFE_UTIL_FIFE_STDINT_H
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
 #if defined(WIN32) && defined(_MSC_VER)
     #ifndef _SDL_H
 typedef signed __int8 int8_t;
@@ -26,9 +27,6 @@ typedef unsigned __int64 uint64_t;
 #include <SDL_endian.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 // SDL masks for SDL_CreateRGBSurface
 namespace FIFE

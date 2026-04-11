@@ -4,14 +4,13 @@
 #ifndef FIFE_TIME_PROVIDER_H
 #define FIFE_TIME_PROVIDER_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/base/fife_stdint.h"
 
@@ -22,7 +21,7 @@ namespace FIFE
      * You can have hierarchy of time providers, whose multiplier can be changed independently.
      * Changing providers upper in the hierarchy, changes also all subproviders with the same ratio
      */
-    class TimeProvider
+    class FIFE_API TimeProvider
     {
     public:
         /** Constructor

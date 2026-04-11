@@ -4,6 +4,9 @@
 #ifndef FIFE_CELLRENDERER_H
 #define FIFE_CELLRENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "view/rendererbase.h"
 
 #include "targetrenderer.h"
@@ -25,7 +25,7 @@ namespace FIFE
     class Cell;
     class IFont;
 
-    class CellRenderer : public RendererBase
+    class FIFE_API CellRenderer : public RendererBase
     {
     public:
         /** Constructor.

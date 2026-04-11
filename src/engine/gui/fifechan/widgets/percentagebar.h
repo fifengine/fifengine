@@ -4,17 +4,16 @@
 #ifndef FCN_PERCENTAGE_BAR_HPP
 #define FCN_PERCENTAGE_BAR_HPP
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 #include <fifechan/image.hpp>
 #include <fifechan/platform.hpp>
 #include <fifechan/widget.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 
 namespace fcn
@@ -24,7 +23,7 @@ namespace fcn
      *
      *
      */
-    class PercentageBar : public Widget
+    class FIFE_API PercentageBar : public Widget
     {
     public:
         enum Orientation : uint8_t

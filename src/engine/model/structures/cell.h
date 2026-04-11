@@ -4,6 +4,9 @@
 #ifndef FIFE_CELL_H
 #define FIFE_CELL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "util/base/fifeclass.h"
 
@@ -48,7 +48,7 @@ namespace FIFE
     using CellTypeInfo = uint8_t;
     /** Simple class to hold the data for transistions.
      */
-    class TransitionInfo
+    class FIFE_API TransitionInfo
     {
     public:
         explicit TransitionInfo(Layer* layer) : m_layer(layer), m_difflayer(false), m_immediate(true) { }
@@ -65,7 +65,7 @@ namespace FIFE
 
     /** Listener interface for deletions happening on a cell, used for transistions.
      */
-    class CellDeleteListener
+    class FIFE_API CellDeleteListener
     {
     public:
         virtual ~CellDeleteListener() = default;
@@ -78,7 +78,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on a cell.
      */
-    class CellChangeListener
+    class FIFE_API CellChangeListener
     {
     public:
         virtual ~CellChangeListener() = default;
@@ -105,7 +105,7 @@ namespace FIFE
 
     /** A basic cell on a CellCache.
      */
-    class Cell : public FifeClass, public CellDeleteListener
+    class FIFE_API Cell : public FifeClass, public CellDeleteListener
     {
     public:
         /** Constructor

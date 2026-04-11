@@ -4,6 +4,9 @@
 #ifndef FIFE_PATHFINDER_ROUTEPATHER
 #define FIFE_PATHFINDER_ROUTEPATHER
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/ipather.h"
 #include "model/structures/location.h"
 #include "util/structures/priorityqueue.h"
@@ -27,7 +27,7 @@ namespace FIFE
     class RoutePatherSearch;
     class Route;
 
-    class RoutePather : public IPather
+    class FIFE_API RoutePather : public IPather
     {
     public:
         /** Constructor.

@@ -4,22 +4,19 @@
 #ifndef FIFE_OGGLOADER_H_
 #define FIFE_OGGLOADER_H_
 
-// Standard C++ library includes
-
 // Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/resource/resource.h"
 
 namespace FIFE
 {
 
-    class OggLoader : public IResourceLoader
+    class FIFE_API OggLoader : public IResourceLoader
     {
     public:
         OggLoader() = default;

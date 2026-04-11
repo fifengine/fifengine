@@ -4,15 +4,15 @@
 #ifndef FIFE_MAP_LOADERS_FALLOUT_RAWDATADAT1_H
 #define FIFE_MAP_LOADERS_FALLOUT_RAWDATADAT1_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs/raw/rawdatamemsource.h"
 #include "vfs/vfs.h"
 
@@ -22,12 +22,12 @@ namespace FIFE
     /** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
      * @see MFFalloutDAT1
      */
-    class RawDataDAT1 : public RawDataMemSource
+    class FIFE_API RawDataDAT1 : public RawDataMemSource
     {
     public:
         /** The needed information for the extraction.
          */
-        struct s_info
+        struct FIFE_API s_info
         {
             std::string name;
             uint32_t packedLength;

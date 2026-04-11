@@ -9,6 +9,9 @@
 #ifndef FIFE_EVENTCHANNEL_EVENT_H
 #define FIFE_EVENTCHANNEL_EVENT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 //
 #include <sstream>
@@ -19,9 +22,6 @@
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 //
 #include "eventchannel/source/ieventsource.h"
 
@@ -29,7 +29,7 @@ namespace FIFE
 {
     /**  Base class for all events
      */
-    class Event
+    class FIFE_API Event
     {
     public:
         /** Constructor.

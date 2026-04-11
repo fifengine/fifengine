@@ -4,6 +4,9 @@
 #ifndef FIFE_VFS_VFSSOURCE_H
 #define FIFE_VFS_VFSSOURCE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs.h"
 
 namespace FIFE
@@ -27,7 +27,7 @@ namespace FIFE
      * @see VFS
      * @see VFSSourceProvider
      */
-    class VFSSource
+    class FIFE_API VFSSource
     {
     public:
         explicit VFSSource(VFS* vfs);

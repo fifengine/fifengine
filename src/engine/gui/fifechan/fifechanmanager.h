@@ -4,6 +4,9 @@
 #ifndef FIFE_GUI_FIFECHANMANAGER_H
 #define FIFE_GUI_FIFECHANMANAGER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -13,9 +16,6 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "eventchannel/sdl/isdleventlistener.h"
 #include "util/base/fife_stdint.h"
 #include "util/base/singleton.h"
@@ -51,7 +51,7 @@ namespace FIFE
      *
      * This class controls the Fifechan GUI system in FIFE.
      */
-    class FifechanManager : public IGUIManager, public DynamicSingleton<FifechanManager>
+    class FIFE_API FifechanManager : public IGUIManager, public DynamicSingleton<FifechanManager>
     {
     public:
         /** Constructor.

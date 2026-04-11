@@ -4,6 +4,9 @@
 #ifndef FIFE_MAP_MAP_H
 #define FIFE_MAP_MAP_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/timeprovider.h"
 #include "util/base/fifeclass.h"
 #include "util/resource/resource.h"
@@ -37,7 +37,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on map
      */
-    class MapChangeListener
+    class FIFE_API MapChangeListener
     {
     public:
         virtual ~MapChangeListener() = default;
@@ -70,7 +70,7 @@ namespace FIFE
      * The actual data is contained in \c Layer objects
      * @see Layer
      */
-    class Map : public FifeClass
+    class FIFE_API Map : public FifeClass
     {
     public:
         /** Construct a map

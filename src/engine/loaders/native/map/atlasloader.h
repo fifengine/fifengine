@@ -4,6 +4,9 @@
 #ifndef FIFE_ATLAS_LOADER_H
 #define FIFE_ATLAS_LOADER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -13,9 +16,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
@@ -33,13 +33,13 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    struct AtlasData
+    struct FIFE_API AtlasData
     {
         Rect rect;
         ImagePtr image;
     };
 
-    class Atlas
+    class FIFE_API Atlas
     {
     public:
         explicit Atlas(std::string name) : m_name(std::move(name))
@@ -89,7 +89,7 @@ namespace FIFE
         std::string m_name;
     };
 
-    class AtlasLoader : public IAtlasLoader
+    class FIFE_API AtlasLoader : public IAtlasLoader
     {
     public:
         AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);

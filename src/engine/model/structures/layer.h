@@ -4,6 +4,9 @@
 #ifndef FIFE_LAYER_H
 #define FIFE_LAYER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
 #include "util/base/fifeclass.h"
@@ -55,7 +55,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on a layer
      */
-    class LayerChangeListener
+    class FIFE_API LayerChangeListener
     {
     public:
         virtual ~LayerChangeListener() = default;
@@ -83,7 +83,7 @@ namespace FIFE
 
     /** A basic layer on a map
      */
-    class Layer : public FifeClass
+    class FIFE_API Layer : public FifeClass
     {
     public:
         /** Constructor

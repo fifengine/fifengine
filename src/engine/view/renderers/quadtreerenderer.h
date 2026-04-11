@@ -4,15 +4,15 @@
 #ifndef FIFE_QUADTREERENDERER_H
 #define FIFE_QUADTREERENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/instancetree.h"
 #include "util/structures/quadtree.h"
 #include "view/rendererbase.h"
@@ -21,7 +21,7 @@ namespace FIFE
 {
     class RenderBackend;
 
-    class RenderVisitor
+    class FIFE_API RenderVisitor
     {
     public:
         int32_t visited;
@@ -34,7 +34,7 @@ namespace FIFE
         bool visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
     };
 
-    class QuadTreeRenderer : public RendererBase
+    class FIFE_API QuadTreeRenderer : public RendererBase
     {
     public:
         /** constructor.

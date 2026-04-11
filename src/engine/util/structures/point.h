@@ -4,19 +4,16 @@
 #ifndef FIFE_VIDEO_POINT_H
 #define FIFE_VIDEO_POINT_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
 #include <vector>
-
-// Platform specific includes
-
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/math/fife_math.h"
 
@@ -29,7 +26,7 @@ namespace FIFE
      * @see Rect
      */
     template <typename T>
-    class PointType2D
+    class FIFE_API PointType2D
     {
     public:
         T x;
@@ -217,7 +214,7 @@ namespace FIFE
      * @see Rect
      */
     template <typename T>
-    class PointType3D
+    class FIFE_API PointType3D
     {
     public:
         T x;

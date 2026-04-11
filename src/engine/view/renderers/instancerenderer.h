@@ -4,6 +4,9 @@
 #ifndef FIFE_INSTANCERENDERER_H
 #define FIFE_INSTANCERENDERER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timer.h"
 #include "view/rendererbase.h"
 
@@ -24,7 +24,7 @@ namespace FIFE
     class RenderBackend;
     class InstanceDeleteListener;
 
-    class InstanceRenderer : public RendererBase
+    class FIFE_API InstanceRenderer : public RendererBase
     {
     public:
         /** constructor.
@@ -162,7 +162,7 @@ namespace FIFE
         };
         using Effect = uint8_t;
         // contains per-instance information for outline drawing
-        class OutlineInfo
+        class FIFE_API OutlineInfo
         {
         public:
             uint8_t r;
@@ -178,7 +178,7 @@ namespace FIFE
             ~OutlineInfo();
         };
         // contains per-instance information for overlay drawing
-        class ColoringInfo
+        class FIFE_API ColoringInfo
         {
         public:
             uint8_t r;
@@ -192,7 +192,7 @@ namespace FIFE
             explicit ColoringInfo(InstanceRenderer* r);
             ~ColoringInfo();
         };
-        class AreaInfo
+        class FIFE_API AreaInfo
         {
         public:
             Instance* instance;
@@ -213,7 +213,7 @@ namespace FIFE
         InstanceToAreas_t m_instance_areas;
 
         // struct to hold the ImagePtr with a timestamp
-        struct s_image_entry
+        struct FIFE_API s_image_entry
         {
             ImagePtr image;
             uint32_t timestamp;

@@ -4,15 +4,15 @@
 #ifndef FIFE_OBJECT_LOADER_H_
 #define FIFE_OBJECT_LOADER_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
 #include "ianimationloader.h"
@@ -27,7 +27,7 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    class ObjectLoader : public IObjectLoader
+    class FIFE_API ObjectLoader : public IObjectLoader
     {
     public:
         ObjectLoader(

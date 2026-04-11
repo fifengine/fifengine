@@ -4,6 +4,9 @@
 #ifndef FIFE_MODEL_IPATHER_H
 #define FIFE_MODEL_IPATHER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <cstdint>
 #include <list>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -31,7 +31,7 @@ namespace FIFE
         LOW_PRIORITY
     };
 
-    class IPather
+    class FIFE_API IPather
     {
     public:
         virtual ~IPather() = default;

@@ -4,8 +4,10 @@
 #ifndef FIFE_LZSSDECODER_H
 #define FIFE_LZSSDECODER_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
@@ -19,7 +21,7 @@ namespace FIFE
      *      see revision 719 for the original one and 795 for the broken optimized one
      * @bug the lzss decoder might very well crash on corrupt data.
      */
-    class LZSSDecoder
+    class FIFE_API LZSSDecoder
     {
     public:
         /** Constructor

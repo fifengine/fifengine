@@ -4,15 +4,15 @@
 #ifndef FIFE_IMAPLOADER_H_
 #define FIFE_IMAPLOADER_H_
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "ianimationloader.h"
 #include "iatlasloader.h"
 #include "iobjectloader.h"
@@ -23,7 +23,7 @@ namespace FIFE
 
     /** Interface class that all map loaders should derive from
      */
-    class IMapLoader
+    class FIFE_API IMapLoader
     {
     public:
         virtual ~IMapLoader() = default;

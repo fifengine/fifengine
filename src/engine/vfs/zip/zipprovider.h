@@ -4,6 +4,9 @@
 #ifndef FIFE_ZIP_PROVIDER_H
 #define FIFE_ZIP_PROVIDER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs/vfssourceprovider.h"
 
 namespace FIFE
@@ -27,7 +27,7 @@ namespace FIFE
      *
      * @see FIFE::VFSSourceProvider
      */
-    class ZipProvider : public VFSSourceProvider
+    class FIFE_API ZipProvider : public VFSSourceProvider
     {
     public:
         ZipProvider() : VFSSourceProvider("ZIP") { }

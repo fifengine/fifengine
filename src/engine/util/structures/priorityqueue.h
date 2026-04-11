@@ -4,6 +4,9 @@
 #ifndef FIFE_SOLVER_INDEXEDPQ_H
 #define FIFE_SOLVER_INDEXEDPQ_H
 
+// Platform specific includes
+#include "platform.h"
+
 #include <cassert>
 #include <list>
 #include <utility>
@@ -17,7 +20,7 @@ namespace FIFE
      * elements that it's storing, namely a special unique index.
      */
     template <typename index_type, typename priority_type>
-    class PriorityQueue
+    class FIFE_API PriorityQueue
     {
     public:
         /** Used for element ordering.

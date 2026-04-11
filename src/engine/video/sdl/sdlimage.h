@@ -4,6 +4,9 @@
 #ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
 #define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -11,9 +14,6 @@
 #include <SDL_video.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/image.h"
 
 namespace FIFE
@@ -21,7 +21,7 @@ namespace FIFE
 
     /** The SDL implementation of the @c Image base class.
      */
-    class SDLImage : public Image
+    class FIFE_API SDLImage : public Image
     {
     public:
         explicit SDLImage(IResourceLoader* loader = nullptr);

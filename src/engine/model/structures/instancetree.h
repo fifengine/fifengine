@@ -4,6 +4,9 @@
 #ifndef FIFE_INSTANCETREE_H
 #define FIFE_INSTANCETREE_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -11,7 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src
 #include "util/base/fifeclass.h"
 
@@ -23,7 +25,7 @@ namespace FIFE
 
     class Instance;
 
-    class InstanceTree : public FifeClass
+    class FIFE_API InstanceTree : public FifeClass
     {
     public:
         static const int32_t MIN_TREE_SIZE = 2;

@@ -4,6 +4,9 @@
 #ifndef FIFE_ANIMATION_LOADER_H
 #define FIFE_ANIMATION_LOADER_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/animation.h"
 
 #include "ianimationloader.h"
@@ -30,7 +30,7 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    class AnimationLoader : public IAnimationLoader
+    class FIFE_API AnimationLoader : public IAnimationLoader
     {
     public:
         AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);

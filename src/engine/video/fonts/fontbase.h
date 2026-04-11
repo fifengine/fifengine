@@ -4,19 +4,17 @@
 #ifndef FIFE_FONTS_FONTBASE_H
 #define FIFE_FONTS_FONTBASE_H
 
-// Standard C++ library includes
-#include <string>
-
 // Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
 #include "util/base/fife_stdint.h"
+#include <string>
 
 // 3rd party library includes
 #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "ifont.h"
 #include "textrenderpool.h"
 
@@ -28,7 +26,7 @@ namespace FIFE
      *  Uses a pool for rendered strings.
      *  @see TextRenderPool
      */
-    class FontBase : public IFont
+    class FIFE_API FontBase : public IFont
     {
     public:
         FontBase();

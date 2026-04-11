@@ -4,24 +4,22 @@
 #ifndef FIFE_VIDEO_ANIMATION_H
 #define FIFE_VIDEO_ANIMATION_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
+#include "util/base/fife_stdint.h"
+#include "util/resource/resource.h"
 #include <cassert>
 #include <map>
 #include <string>
 #include <vector>
-
-// Platform specific includes
-#include "util/base/fife_stdint.h"
-#include "util/resource/resource.h"
 
 #include "image.h"
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 namespace FIFE
 {
@@ -34,7 +32,7 @@ namespace FIFE
      * animation user to query frames based on current timestamp and show
      * returned images on screen.
      */
-    class Animation : public IResource
+    class FIFE_API Animation : public IResource
     {
     public:
         /** Constructor.
@@ -137,7 +135,7 @@ namespace FIFE
     private:
         /** Contains information about one animation frame (duration + frame index + frame pointer)
          */
-        struct FrameInfo
+        struct FIFE_API FrameInfo
         {
             uint32_t index;
             uint32_t duration;

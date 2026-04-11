@@ -4,14 +4,13 @@
 #ifndef FIFE_CURSOR_H
 #define FIFE_CURSOR_H
 
-// Standard C++ library includes
+// Platform specific includes
+#include "platform.h"
 
+// Standard C++ library includes
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 
 #include "animation.h"
 
@@ -55,7 +54,7 @@ namespace FIFE
 
     /**  Cursor class manages mouse cursor handling
      */
-    class Cursor
+    class FIFE_API Cursor
     {
     public:
         /** Constructor.

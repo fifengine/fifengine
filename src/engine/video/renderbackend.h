@@ -4,21 +4,19 @@
 #ifndef FIFE_VIDEO_RENDERBACKEND_H
 #define FIFE_VIDEO_RENDERBACKEND_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
+#include "util/base/fife_stdint.h"
 #include <string>
 #include <vector>
-
-// Platform specific includes
-#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 #include <SDL.h>
 #include <SDL_video.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/singleton.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
@@ -99,7 +97,7 @@ namespace FIFE
         RENDER_DATA_MULTITEXTURE_Z = 3
     };
 
-    class GuiVertex
+    class FIFE_API GuiVertex
     {
     public:
         DoublePoint position;
@@ -108,7 +106,7 @@ namespace FIFE
     };
 
     /** Abstract interface for all the renderbackends. */
-    class RenderBackend : public DynamicSingleton<RenderBackend>
+    class FIFE_API RenderBackend : public DynamicSingleton<RenderBackend>
     {
     public:
         /** Constructor.
@@ -626,7 +624,7 @@ namespace FIFE
          */
         void clearClipArea();
 
-        class ClipInfo
+        class FIFE_API ClipInfo
         {
         public:
             Rect r;

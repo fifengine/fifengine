@@ -4,6 +4,9 @@
 #ifndef FIFE_MODEL_H
 #define FIFE_MODEL_H
 
+// Platform specific includes
+#include "platform.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fifeclass.h"
 
 #include "model/metamodel/timeprovider.h"
@@ -35,7 +35,7 @@ namespace FIFE
     /**
      * A model is a facade for everything in the model.
      */
-    class Model : public FifeClass
+    class FIFE_API Model : public FifeClass
     {
     public:
         /** Constructor
