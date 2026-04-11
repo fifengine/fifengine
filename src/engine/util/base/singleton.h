@@ -4,7 +4,8 @@
 #ifndef FIFE_SINGLETON_H
 #define FIFE_SINGLETON_H
 
-#define SINGLEFRIEND(classname) /* NOLINT(cppcoreguidelines-macro-usage) */
+// Platform specific includes
+#include "platform.h"
 
 // Standard C++ library includes
 #include <cassert>
