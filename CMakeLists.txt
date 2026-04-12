@@ -220,8 +220,14 @@ endif()
 #------------------------------------------------------------------------------
 
 # Add the install location of the non-vcpkg dependencies to CMAKE_PREFIX_PATH
-# to allow find_package to find them. This is needed for SWIG and Fifechan.
+# to allow find_package to find them. This is needed for Fifechan and SWIG
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/install")
+
+if(WIN32)
+  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/build-tools/swig")
+else()
+  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/build-tools/swig/bin")
+endif()
 
 #------------------------------------------------------------------------------
 # Display Status
