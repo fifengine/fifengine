@@ -8,9 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
-#include <algorithm>
-#include <cstddef>
-#include <cstring>
+#include <stdexcept>
 #include <string>
 
 // 3rd party library includes
@@ -21,426 +19,96 @@
 namespace FIFE
 {
 
-    const std::size_t EXCEPTION_BUFFER_SIZE = 512;
-
     /**
      * Base class for all FIFE exceptions.
      *
      * Derived exceptions provide more specific error messages.
+     *
+     * Do not export this class with FIFE_API to avoid DLL export warnings.
      */
-    class /*FIFE_API*/ Exception
+    class /*FIFE_API*/ Exception : public std::runtime_error
     {
     public:
         /**
          * Constructor.
          *
-         * @param msg The error mesage to be stored (c-string).
+         * @param msg The error mesage to be stored.
          */
-        explicit Exception(const char* msg) noexcept
-        {
-            copy(msg);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param msg The error mesage to be stored (std::string).
-         */
-        explicit Exception(const std::string& msg) noexcept
-        {
-            copy(msg.c_str());
-        }
+        explicit Exception(const std::string& msg);
 
         /**
          * Destructor.
          */
-        virtual ~Exception() noexcept = default;
+        virtual ~Exception() noexcept;
 
-        // Copy constructor and assignment operator are defaulted, as the class
-        // manages its own buffer and does not require special handling.
         Exception(const Exception&)            = default;
         Exception& operator=(const Exception&) = default;
 
-        virtual const char* what() const noexcept
-        {
-            return m_buffer;
-        }
+        /**
+         * Returns the error message.
+         *
+         * @return The error message.
+         */
+        virtual const char* what() const noexcept;
 
-        virtual const char* getTypeStr() const noexcept
+        virtual const std::string& getTypeStr() const
         {
-            return "Exception";
+            static const std::string s = "Exception";
+            return s;
         }
-
-        virtual const char* getDescription() const noexcept
+        virtual const std::string& getDescription() const
         {
-            return "Generic FIFE exception";
+            static const std::string s = "Generic FIFE exception";
+            return s;
         }
+        // little helper to change m_what
+        void update();
 
     private:
-        /**
-         * Helper function to copy the error message into the internal buffer.
-         * Makes sure it does not exceed the buffer size and is null-terminated.
-         *
-         * @param msg The error message to be copied.
-         */
-        void copy(const char* msg) noexcept
-        {
-            if (!msg) {
-                m_buffer[0] = '\0';
-                return;
-            }
-            std::strncpy(m_buffer, msg, EXCEPTION_BUFFER_SIZE - 1);
-            m_buffer[EXCEPTION_BUFFER_SIZE - 1] = '\0';
-        }
-
-    protected:
-        char m_buffer[EXCEPTION_BUFFER_SIZE];
+        std::string m_what;
     };
 
-    class /*FIFE_API*/ SDLException : public Exception
-    {
-    public:
-        explicit SDLException(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit SDLException(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "SDLException";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "SDL reported something bad";
-        }
-    };
+// NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
+#define FIFE_EXCEPTION_DECL(_name, _description)                  \
+    class FIFE_API _name : public Exception                       \
+    {                                                             \
+    public:                                                       \
+        explicit _name(const std::string& msg) : Exception((msg)) \
+        {                                                         \
+            Logger _log(LM_EXCEPTION);                            \
+            update();                                             \
+            FL_ERR(_log, what());                                 \
+        }                                                         \
+        const std::string& getTypeStr() const override            \
+        {                                                         \
+            static const std::string s = #_name;                  \
+            return s;                                             \
+        }                                                         \
+        const std::string& getDescription() const override        \
+        {                                                         \
+            static const std::string s = (_description);          \
+            return s;                                             \
+        }                                                         \
+    }
 
-    class /*FIFE_API*/ NotFound : public Exception
-    {
-    public:
-        explicit NotFound(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit NotFound(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "NotFound";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Something was searched, but not found";
-        }
-    };
+    FIFE_EXCEPTION_DECL(SDLException, "SDL reported something bad");
+    FIFE_EXCEPTION_DECL(NotFound, "Something was searched, but not found");
+    FIFE_EXCEPTION_DECL(NotSet, "Something was not set correctly");
+    FIFE_EXCEPTION_DECL(IndexOverflow, "Someone tried to access a non-existing element");
+    FIFE_EXCEPTION_DECL(InvalidFormat, "Found invalid data");
+    FIFE_EXCEPTION_DECL(CannotOpenFile, "File couldn't be opened");
+    FIFE_EXCEPTION_DECL(InvalidConversion, "Tried an invalid conversion");
+    FIFE_EXCEPTION_DECL(NotSupported, "This action was not supported");
+    FIFE_EXCEPTION_DECL(NameClash, "A name or identifier is already in use");
+    FIFE_EXCEPTION_DECL(Duplicate, "A duplicate item was added, where this is not allowed");
+    FIFE_EXCEPTION_DECL(ScriptException, "Error related to scripting functionality");
+    FIFE_EXCEPTION_DECL(EventException, "Error related to event functionality");
+    FIFE_EXCEPTION_DECL(GuiException, "Error related to gui functionality");
+    FIFE_EXCEPTION_DECL(
+        InconsistencyDetected, "An inconsistency in FIFE internals was detected. Please report this is a FIFE Bug.");
 
-    class /*FIFE_API*/ NotSet : public Exception
-    {
-    public:
-        explicit NotSet(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit NotSet(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "NotSet";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Something was not set correctly";
-        }
-    };
-
-    class /*FIFE_API*/ IndexOverflow : public Exception
-    {
-    public:
-        explicit IndexOverflow(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit IndexOverflow(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "IndexOverflow";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Someone tried to access a non-existing element";
-        }
-    };
-
-    class /*FIFE_API*/ InvalidFormat : public Exception
-    {
-    public:
-        explicit InvalidFormat(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit InvalidFormat(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "InvalidFormat";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Found invalid data";
-        }
-    };
-
-    class /*FIFE_API*/ CannotOpenFile : public Exception
-    {
-    public:
-        explicit CannotOpenFile(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit CannotOpenFile(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "CannotOpenFile";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "File couldn't be opened";
-        }
-    };
-
-    class /*FIFE_API*/ InvalidConversion : public Exception
-    {
-    public:
-        explicit InvalidConversion(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit InvalidConversion(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "InvalidConversion";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "tried an invalid conversion";
-        }
-    };
-
-    class /*FIFE_API*/ NotSupported : public Exception
-    {
-    public:
-        explicit NotSupported(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit NotSupported(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "NotSupported";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "This action was not supported";
-        }
-    };
-
-    class /*FIFE_API*/ NameClash : public Exception
-    {
-    public:
-        explicit NameClash(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit NameClash(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "NameClash";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "A name or identifier is already in use";
-        }
-    };
-
-    class /*FIFE_API*/ Duplicate : public Exception
-    {
-    public:
-        explicit Duplicate(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit Duplicate(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "Duplicate";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "A duplicate item was added, where this is not allowed";
-        }
-    };
-
-    class /*FIFE_API*/ ScriptException : public Exception
-    {
-    public:
-        explicit ScriptException(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit ScriptException(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "ScriptException";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Error related to scripting functionality";
-        }
-    };
-
-    class /*FIFE_API*/ EventException : public Exception
-    {
-    public:
-        explicit EventException(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit EventException(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "EventException";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Error related to event functionality";
-        }
-    };
-
-    class /*FIFE_API*/ GuiException : public Exception
-    {
-    public:
-        explicit GuiException(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit GuiException(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "GuiException";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Error related to gui functionality";
-        }
-    };
-
-    class /*FIFE_API*/ InconsistencyDetected : public Exception
-    {
-    public:
-        explicit InconsistencyDetected(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit InconsistencyDetected(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "InconsistencyDetected";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "An inconsistency in FIFE internals was detected. Please report this is a FIFE Bug.";
-        }
-    };
-
-    class /*FIFE_API*/ OutOfMemory : public Exception
-    {
-    public:
-        explicit OutOfMemory(const char* msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        explicit OutOfMemory(const std::string& msg) : Exception(msg)
-        {
-            Logger _log(LM_EXCEPTION);
-            FL_ERR(_log, what());
-        }
-        const char* getTypeStr() const noexcept override
-        {
-            return "OutOfMemory";
-        }
-        const char* getDescription() const noexcept override
-        {
-            return "Error: out of memory. Buy more RAM ;)";
-        }
-    };
+    /** @bug The memory allocation in @c std::string might fail, resulting in terminate. */
+    FIFE_EXCEPTION_DECL(OutOfMemory, "Buy more ram ;)");
 
 } // namespace FIFE
 
