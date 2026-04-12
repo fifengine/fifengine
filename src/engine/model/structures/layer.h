@@ -55,7 +55,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on a layer
      */
-    class FIFE_API LayerChangeListener
+    class /*FIFE_API*/ LayerChangeListener
     {
     public:
         virtual ~LayerChangeListener() = default;
@@ -83,7 +83,7 @@ namespace FIFE
 
     /** A basic layer on a map
      */
-    class FIFE_API Layer : public FifeClass
+    class /*FIFE_API*/ Layer : public FifeClass
     {
     public:
         /** Constructor

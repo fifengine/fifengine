@@ -20,7 +20,7 @@ namespace FIFE
     class Camera;
     class InstanceDeleteListener;
 
-    class FIFE_API RendererNode
+    class /*FIFE_API*/ RendererNode
     {
     public:
         RendererNode(

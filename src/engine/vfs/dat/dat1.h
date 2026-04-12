@@ -26,7 +26,7 @@ namespace FIFE
 
     /** VFSource for the Fallout1 DAT file format.
      */
-    class FIFE_API DAT1 : public VFSSource
+    class /*FIFE_API*/ DAT1 : public VFSSource
     {
     public:
         /** Constructor

@@ -36,7 +36,7 @@ namespace FIFE
     class TimeProvider;
     class Route;
 
-    class FIFE_API InstanceActionListener
+    class /*FIFE_API*/ InstanceActionListener
     {
     public:
         virtual ~InstanceActionListener()                                                     = default;
@@ -62,14 +62,14 @@ namespace FIFE
         ICHANGE_VISUAL          = 0x0800
     };
     using InstanceChangeInfo = uint32_t;
-    class FIFE_API InstanceChangeListener
+    class /*FIFE_API*/ InstanceChangeListener
     {
     public:
         virtual ~InstanceChangeListener()                                           = default;
         virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
     };
 
-    class FIFE_API InstanceDeleteListener
+    class /*FIFE_API*/ InstanceDeleteListener
     {
     public:
         virtual ~InstanceDeleteListener()                  = default;
@@ -79,7 +79,7 @@ namespace FIFE
     /** An Instance is an "instantiation" of an Object at a Location.
      *
      */
-    class FIFE_API Instance : public FifeClass, public InstanceDeleteListener
+    class /*FIFE_API*/ Instance : public FifeClass, public InstanceDeleteListener
     {
     public:
         /** Constructor
@@ -520,7 +520,7 @@ namespace FIFE
          * With this bookkeeping, it is possible to optimize several spots in
          * the engine, basically only reacting to changes instead of polling.
          */
-        class FIFE_API InstanceActivity
+        class /*FIFE_API*/ InstanceActivity
         {
         public:
             explicit InstanceActivity(Instance& source);

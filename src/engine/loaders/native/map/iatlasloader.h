@@ -20,7 +20,7 @@ namespace FIFE
 {
     class Atlas;
     using AtlasPtr = SharedPtr<Atlas>;
-    class FIFE_API IAtlasLoader
+    class /*FIFE_API*/ IAtlasLoader
     {
     public:
         virtual ~IAtlasLoader() = default;

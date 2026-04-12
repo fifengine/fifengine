@@ -21,7 +21,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class FIFE_API CoordinateRenderer : public RendererBase
+    class /*FIFE_API*/ CoordinateRenderer : public RendererBase
     {
     public:
         /** Constructor.

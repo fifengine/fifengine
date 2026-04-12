@@ -20,7 +20,7 @@
 namespace FIFE
 {
 
-    class FIFE_API IGUIManager : public ISdlEventListener
+    class /*FIFE_API*/ IGUIManager : public ISdlEventListener
     {
     public:
         /** Destructor.

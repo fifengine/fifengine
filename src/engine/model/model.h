@@ -35,7 +35,7 @@ namespace FIFE
     /**
      * A model is a facade for everything in the model.
      */
-    class FIFE_API Model : public FifeClass
+    class /*FIFE_API*/ Model : public FifeClass
     {
     public:
         /** Constructor

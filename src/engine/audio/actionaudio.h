@@ -19,7 +19,7 @@ namespace FIFE
 
     /** The class for holding audio data per Action.
      */
-    class FIFE_API ActionAudio
+    class /*FIFE_API*/ ActionAudio
     {
     public:
         ActionAudio();

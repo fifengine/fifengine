@@ -27,7 +27,7 @@ namespace FIFE
      *
      * @see TimeManager
      */
-    class FIFE_API TimeEvent
+    class /*FIFE_API*/ TimeEvent
     {
     public:
         /** Default constructor.

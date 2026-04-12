@@ -33,7 +33,7 @@ namespace FIFE
      * Objects may inherit default values from another object.
      *
      */
-    class FIFE_API Object
+    class /*FIFE_API*/ Object
     {
     public:
         /** Constructor
@@ -356,7 +356,7 @@ namespace FIFE
         //! pointer to object visual
         IVisual* m_visual;
 
-        class FIFE_API BasicObjectProperty
+        class /*FIFE_API*/ BasicObjectProperty
         {
         public:
             //! Constructor
@@ -385,7 +385,7 @@ namespace FIFE
             uint8_t m_cellStack;
         };
 
-        class FIFE_API MovableObjectProperty
+        class /*FIFE_API*/ MovableObjectProperty
         {
         public:
             //! Constructor
@@ -413,7 +413,7 @@ namespace FIFE
             int32_t m_zRange;
         };
 
-        class FIFE_API MultiObjectProperty
+        class /*FIFE_API*/ MultiObjectProperty
         {
         public:
             //! Constructor

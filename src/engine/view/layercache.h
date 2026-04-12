@@ -31,7 +31,7 @@ namespace FIFE
     class Camera;
     class CacheLayerChangeListener;
 
-    class FIFE_API LayerCache
+    class /*FIFE_API*/ LayerCache
     {
     public:
         using CacheTree = QuadTree<std::set<int32_t>>;

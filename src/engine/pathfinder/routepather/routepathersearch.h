@@ -25,7 +25,7 @@ namespace FIFE
     /** RoutePatherSearch using A*
      *
      */
-    class FIFE_API RoutePatherSearch
+    class /*FIFE_API*/ RoutePatherSearch
     {
     public:
         /** Constructor

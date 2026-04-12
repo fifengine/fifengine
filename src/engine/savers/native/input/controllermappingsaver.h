@@ -18,7 +18,7 @@ namespace FIFE
 {
     /** Gamepad mapping saver.
      */
-    class FIFE_API ControllerMappingSaver
+    class /*FIFE_API*/ ControllerMappingSaver
     {
     public:
         ControllerMappingSaver() = default;

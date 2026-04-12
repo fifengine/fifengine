@@ -26,7 +26,7 @@ namespace FIFE
      *  Just set the glyphs/placeholder in any derived class and the rendering
      *  is handled by this class. Also frees all glyph surfaces on destruction.
      */
-    class FIFE_API ImageFontBase : public FontBase
+    class /*FIFE_API*/ ImageFontBase : public FontBase
     {
     public:
         /**

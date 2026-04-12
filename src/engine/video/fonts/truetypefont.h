@@ -31,7 +31,7 @@ namespace FIFE
      * Original author of this class is Walluce Pinkham. Some modifications
      * made by the Guichan team, and additonal modifications by the FIFE team.
      */
-    class FIFE_API TrueTypeFont : public FontBase
+    class /*FIFE_API*/ TrueTypeFont : public FontBase
     {
     public:
         /**

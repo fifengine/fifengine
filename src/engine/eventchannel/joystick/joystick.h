@@ -20,7 +20,7 @@ namespace FIFE
 
     /** Represents a Joystick and if available the Gamecontroller.
      */
-    class FIFE_API Joystick
+    class /*FIFE_API*/ Joystick
     {
     public:
         // Hat positions.

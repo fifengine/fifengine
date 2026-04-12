@@ -25,7 +25,7 @@ namespace FIFE
     /**
      * Console executer is listener interface for console activity
      */
-    class FIFE_API ConsoleExecuter
+    class /*FIFE_API*/ ConsoleExecuter
     {
     public:
         /** Destructor
@@ -44,7 +44,7 @@ namespace FIFE
 
     /** Ingame Console
      */
-    class FIFE_API Console : public fcn::Container, public fcn::ActionListener, public fcn::FocusListener
+    class /*FIFE_API*/ Console : public fcn::Container, public fcn::ActionListener, public fcn::FocusListener
     {
     public:
         /** Constructor

@@ -22,7 +22,7 @@ namespace FIFE
     /** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
      * @see MFFalloutDAT1
      */
-    class FIFE_API RawDataDAT1 : public RawDataMemSource
+    class /*FIFE_API*/ RawDataDAT1 : public RawDataMemSource
     {
     public:
         /** The needed information for the extraction.

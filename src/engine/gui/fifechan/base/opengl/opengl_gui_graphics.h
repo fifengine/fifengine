@@ -22,7 +22,7 @@ namespace FIFE
 
     /** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
      */
-    class FIFE_API OpenGLGuiGraphics : public fcn::opengl::Graphics
+    class /*FIFE_API*/ OpenGLGuiGraphics : public fcn::opengl::Graphics
     {
     public:
         /** Constructor

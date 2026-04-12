@@ -40,7 +40,7 @@ namespace FIFE
      *  Different cameras can have different properties, like location
      *  to shoot, zoom or tilt
      */
-    class FIFE_API Camera : public IRendererListener, public IRendererContainer
+    class /*FIFE_API*/ Camera : public IRendererListener, public IRendererContainer
     {
     public:
         enum TransformType : uint8_t

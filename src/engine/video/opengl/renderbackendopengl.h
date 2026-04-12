@@ -25,7 +25,7 @@ namespace FIFE
     /** The main class of the OpenGL-based renderer.
      * @see RenderBackend
      */
-    class FIFE_API RenderBackendOpenGL : public RenderBackend
+    class /*FIFE_API*/ RenderBackendOpenGL : public RenderBackend
     {
     public:
         explicit RenderBackendOpenGL(const SDL_Color& colorkey);

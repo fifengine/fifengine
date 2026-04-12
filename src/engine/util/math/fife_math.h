@@ -238,7 +238,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <typename T>
-    class FIFE_API Math
+    class /*FIFE_API*/ Math
     {
     public:
         /**

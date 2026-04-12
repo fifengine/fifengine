@@ -29,7 +29,7 @@ namespace FIFE
 {
     /**  Base class for all events
      */
-    class FIFE_API Event
+    class /*FIFE_API*/ Event
     {
     public:
         /** Constructor.

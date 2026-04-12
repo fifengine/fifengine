@@ -38,7 +38,7 @@ namespace FIFE
      * @see MFFalloutDAT1
      * @todo @b maybe merge common DAT1/DAT2 code in a common base class
      */
-    class FIFE_API DAT2 : public VFSSource
+    class /*FIFE_API*/ DAT2 : public VFSSource
     {
 
     public:

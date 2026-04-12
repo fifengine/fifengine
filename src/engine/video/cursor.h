@@ -54,7 +54,7 @@ namespace FIFE
 
     /**  Cursor class manages mouse cursor handling
      */
-    class FIFE_API Cursor
+    class /*FIFE_API*/ Cursor
     {
     public:
         /** Constructor.

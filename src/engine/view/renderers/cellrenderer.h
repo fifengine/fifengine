@@ -25,7 +25,7 @@ namespace FIFE
     class Cell;
     class IFont;
 
-    class FIFE_API CellRenderer : public RendererBase
+    class /*FIFE_API*/ CellRenderer : public RendererBase
     {
     public:
         /** Constructor.

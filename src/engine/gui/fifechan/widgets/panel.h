@@ -17,7 +17,7 @@
 namespace fcn
 {
     class DockArea;
-    class FIFE_API Panel : public ResizableWindow
+    class /*FIFE_API*/ Panel : public ResizableWindow
     {
     public:
         Panel();

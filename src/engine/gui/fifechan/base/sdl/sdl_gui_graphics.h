@@ -22,7 +22,7 @@ namespace FIFE
 
     /** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
      */
-    class FIFE_API SdlGuiGraphics : public fcn::sdl2::Graphics
+    class /*FIFE_API*/ SdlGuiGraphics : public fcn::sdl2::Graphics
     {
     public:
         /** Constructor

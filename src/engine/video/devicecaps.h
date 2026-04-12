@@ -18,7 +18,7 @@
 namespace FIFE
 {
 
-    class FIFE_API ScreenMode
+    class /*FIFE_API*/ ScreenMode
     {
     public:
         /** Default Constructor
@@ -201,7 +201,7 @@ namespace FIFE
         int8_t m_renderDriverIndex;
     }; // ScreenMode
 
-    class FIFE_API DeviceCaps
+    class /*FIFE_API*/ DeviceCaps
     {
     public:
         /** Constructor.

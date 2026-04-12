@@ -18,7 +18,7 @@ namespace FIFE
 {
     /** Gamepad mapping loader.
      */
-    class FIFE_API ControllerMappingLoader
+    class /*FIFE_API*/ ControllerMappingLoader
     {
     public:
         ControllerMappingLoader() = default;

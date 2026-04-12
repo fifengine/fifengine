@@ -22,7 +22,7 @@ namespace FIFE
     /** Class for commands
      * Commands are arbitrary events e.g. send from one subsystem to another
      */
-    class FIFE_API Command : public Event
+    class /*FIFE_API*/ Command : public Event
     {
     public:
         /** Constructor.

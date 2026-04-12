@@ -60,7 +60,7 @@ namespace FIFE
      * @see Point
      */
     template <typename T>
-    class FIFE_API RectType
+    class /*FIFE_API*/ RectType
     {
     public:
         /** The X Coordinate.

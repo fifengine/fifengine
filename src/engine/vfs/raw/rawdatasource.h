@@ -22,7 +22,7 @@ namespace FIFE
      * RawData uses RawDataSources to access the data - if you want to add support for a new archivetype this is one of
      * the classes you need.
      */
-    class FIFE_API RawDataSource
+    class /*FIFE_API*/ RawDataSource
     {
 
     public:

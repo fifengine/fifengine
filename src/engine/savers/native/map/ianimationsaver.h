@@ -18,7 +18,7 @@
 namespace FIFE
 {
 
-    class FIFE_API IAnimationSaver
+    class /*FIFE_API*/ IAnimationSaver
     {
     public:
         virtual ~IAnimationSaver() = default;

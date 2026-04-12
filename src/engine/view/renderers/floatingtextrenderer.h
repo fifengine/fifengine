@@ -20,7 +20,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class FIFE_API FloatingTextRenderer : public RendererBase
+    class /*FIFE_API*/ FloatingTextRenderer : public RendererBase
     {
     public:
         /** Constructor.

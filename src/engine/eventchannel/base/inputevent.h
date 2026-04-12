@@ -20,7 +20,7 @@ namespace FIFE
 
     /**  Base class for input events (like mouse and keyboard)
      */
-    class FIFE_API InputEvent : public Event
+    class /*FIFE_API*/ InputEvent : public Event
     {
     public:
         /** Constructor.

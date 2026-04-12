@@ -46,7 +46,7 @@ namespace FIFE
     /** A basic route.
      * Holds the path and all related infos.
      */
-    class FIFE_API Route : public FifeClass
+    class /*FIFE_API*/ Route : public FifeClass
     {
     public:
         /** Constructor

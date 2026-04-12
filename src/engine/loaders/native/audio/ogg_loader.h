@@ -16,7 +16,7 @@
 namespace FIFE
 {
 
-    class FIFE_API OggLoader : public IResourceLoader
+    class /*FIFE_API*/ OggLoader : public IResourceLoader
     {
     public:
         OggLoader() = default;

@@ -20,7 +20,7 @@ namespace FIFE
 
     class ZipNode;
 
-    class FIFE_API ZipTree
+    class /*FIFE_API*/ ZipTree
     {
     public:
         /** constructor

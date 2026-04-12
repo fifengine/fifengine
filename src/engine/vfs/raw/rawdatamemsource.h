@@ -26,7 +26,7 @@ namespace FIFE
      *
      * @see RawDataSource
      */
-    class FIFE_API RawDataMemSource : public RawDataSource
+    class /*FIFE_API*/ RawDataMemSource : public RawDataSource
     {
     public:
         /**

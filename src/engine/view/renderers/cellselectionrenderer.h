@@ -23,7 +23,7 @@ namespace FIFE
 
     /** CellSelectionRenderer renders a frame around selected cells.
      */
-    class FIFE_API CellSelectionRenderer : public RendererBase
+    class /*FIFE_API*/ CellSelectionRenderer : public RendererBase
     {
     public:
         /** Constructor.

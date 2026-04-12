@@ -21,7 +21,7 @@ namespace FIFE
 {
     class RenderBackend;
 
-    class FIFE_API RenderVisitor
+    class /*FIFE_API*/ RenderVisitor
     {
     public:
         int32_t visited;
@@ -34,7 +34,7 @@ namespace FIFE
         bool visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
     };
 
-    class FIFE_API QuadTreeRenderer : public RendererBase
+    class /*FIFE_API*/ QuadTreeRenderer : public RendererBase
     {
     public:
         /** constructor.

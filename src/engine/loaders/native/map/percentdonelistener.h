@@ -17,14 +17,14 @@
 
 namespace FIFE
 {
-    class FIFE_API PercentDoneListener
+    class /*FIFE_API*/ PercentDoneListener
     {
     public:
         virtual ~PercentDoneListener();
         virtual void OnEvent(unsigned int percentDone) = 0;
     };
 
-    class FIFE_API PercentDoneCallback
+    class /*FIFE_API*/ PercentDoneCallback
     {
     public:
         PercentDoneCallback();

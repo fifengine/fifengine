@@ -20,7 +20,7 @@ namespace FIFE
 
     /**  Class for mouse events
      */
-    class FIFE_API MouseEvent : public InputEvent
+    class /*FIFE_API*/ MouseEvent : public InputEvent
     {
     public:
         /**

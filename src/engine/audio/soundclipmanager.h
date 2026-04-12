@@ -35,7 +35,7 @@ namespace FIFE
      *
      */
 
-    class FIFE_API SoundClipManager : public IResourceManager, public DynamicSingleton<SoundClipManager>
+    class /*FIFE_API*/ SoundClipManager : public IResourceManager, public DynamicSingleton<SoundClipManager>
     {
     public:
         /** Default constructor.

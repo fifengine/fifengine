@@ -19,7 +19,7 @@ namespace FIFE
 {
     class RenderBackend;
 
-    class FIFE_API GridRenderer : public RendererBase
+    class /*FIFE_API*/ GridRenderer : public RendererBase
     {
     public:
         /** constructor.

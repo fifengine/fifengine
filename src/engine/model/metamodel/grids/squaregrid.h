@@ -20,7 +20,7 @@
 
 namespace FIFE
 {
-    class FIFE_API SquareGrid : public CellGrid
+    class /*FIFE_API*/ SquareGrid : public CellGrid
     {
     public:
         SquareGrid();

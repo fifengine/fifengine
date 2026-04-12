@@ -24,7 +24,7 @@ namespace FIFE
      * falls out of scope.
      */
     template <typename T>
-    class FIFE_API SharedPtr
+    class /*FIFE_API*/ SharedPtr
     {
     public:
         /** Constructor

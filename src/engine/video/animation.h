@@ -32,7 +32,7 @@ namespace FIFE
      * animation user to query frames based on current timestamp and show
      * returned images on screen.
      */
-    class FIFE_API Animation : public IResource
+    class /*FIFE_API*/ Animation : public IResource
     {
     public:
         /** Constructor.

@@ -30,7 +30,7 @@ namespace FIFE
     class RenderBackend;
     class PercentDoneListener;
 
-    class FIFE_API MapLoader : public IMapLoader
+    class /*FIFE_API*/ MapLoader : public IMapLoader
     {
     public:
         MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);

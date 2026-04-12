@@ -21,7 +21,7 @@ namespace FIFE
      *      see revision 719 for the original one and 795 for the broken optimized one
      * @bug the lzss decoder might very well crash on corrupt data.
      */
-    class FIFE_API LZSSDecoder
+    class /*FIFE_API*/ LZSSDecoder
     {
     public:
         /** Constructor

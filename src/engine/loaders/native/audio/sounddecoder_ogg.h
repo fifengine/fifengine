@@ -18,7 +18,7 @@
 
 namespace FIFE
 {
-    class FIFE_API SoundDecoderOgg : public SoundDecoder
+    class /*FIFE_API*/ SoundDecoderOgg : public SoundDecoder
     {
     public:
         explicit SoundDecoderOgg(RawData* rdp);

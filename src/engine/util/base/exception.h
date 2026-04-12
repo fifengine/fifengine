@@ -28,7 +28,7 @@ namespace FIFE
      *
      * Derived exceptions provide more specific error messages.
      */
-    class FIFE_API Exception
+    class /*FIFE_API*/ Exception
     {
     public:
         /**
@@ -97,7 +97,7 @@ namespace FIFE
         char m_buffer[EXCEPTION_BUFFER_SIZE];
     };
 
-    class FIFE_API SDLException : public Exception
+    class /*FIFE_API*/ SDLException : public Exception
     {
     public:
         explicit SDLException(const char* msg) : Exception(msg)
@@ -120,7 +120,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API NotFound : public Exception
+    class /*FIFE_API*/ NotFound : public Exception
     {
     public:
         explicit NotFound(const char* msg) : Exception(msg)
@@ -143,7 +143,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API NotSet : public Exception
+    class /*FIFE_API*/ NotSet : public Exception
     {
     public:
         explicit NotSet(const char* msg) : Exception(msg)
@@ -166,7 +166,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API IndexOverflow : public Exception
+    class /*FIFE_API*/ IndexOverflow : public Exception
     {
     public:
         explicit IndexOverflow(const char* msg) : Exception(msg)
@@ -189,7 +189,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API InvalidFormat : public Exception
+    class /*FIFE_API*/ InvalidFormat : public Exception
     {
     public:
         explicit InvalidFormat(const char* msg) : Exception(msg)
@@ -212,7 +212,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API CannotOpenFile : public Exception
+    class /*FIFE_API*/ CannotOpenFile : public Exception
     {
     public:
         explicit CannotOpenFile(const char* msg) : Exception(msg)
@@ -235,7 +235,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API InvalidConversion : public Exception
+    class /*FIFE_API*/ InvalidConversion : public Exception
     {
     public:
         explicit InvalidConversion(const char* msg) : Exception(msg)
@@ -258,7 +258,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API NotSupported : public Exception
+    class /*FIFE_API*/ NotSupported : public Exception
     {
     public:
         explicit NotSupported(const char* msg) : Exception(msg)
@@ -281,7 +281,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API NameClash : public Exception
+    class /*FIFE_API*/ NameClash : public Exception
     {
     public:
         explicit NameClash(const char* msg) : Exception(msg)
@@ -304,7 +304,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API Duplicate : public Exception
+    class /*FIFE_API*/ Duplicate : public Exception
     {
     public:
         explicit Duplicate(const char* msg) : Exception(msg)
@@ -327,7 +327,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API ScriptException : public Exception
+    class /*FIFE_API*/ ScriptException : public Exception
     {
     public:
         explicit ScriptException(const char* msg) : Exception(msg)
@@ -350,7 +350,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API EventException : public Exception
+    class /*FIFE_API*/ EventException : public Exception
     {
     public:
         explicit EventException(const char* msg) : Exception(msg)
@@ -373,7 +373,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API GuiException : public Exception
+    class /*FIFE_API*/ GuiException : public Exception
     {
     public:
         explicit GuiException(const char* msg) : Exception(msg)
@@ -396,7 +396,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API InconsistencyDetected : public Exception
+    class /*FIFE_API*/ InconsistencyDetected : public Exception
     {
     public:
         explicit InconsistencyDetected(const char* msg) : Exception(msg)
@@ -419,7 +419,7 @@ namespace FIFE
         }
     };
 
-    class FIFE_API OutOfMemory : public Exception
+    class /*FIFE_API*/ OutOfMemory : public Exception
     {
     public:
         explicit OutOfMemory(const char* msg) : Exception(msg)

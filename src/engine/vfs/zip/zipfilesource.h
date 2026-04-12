@@ -13,7 +13,7 @@
 namespace FIFE
 {
 
-    class FIFE_API ZipFileSource : public RawDataSource
+    class /*FIFE_API*/ ZipFileSource : public RawDataSource
     {
     public:
         ZipFileSource(uint8_t* data, uint32_t datalen);

@@ -52,7 +52,7 @@ namespace FIFE
     class SoundFilter;
     class SoundEmitter;
 
-    class FIFE_API SoundManager : public DynamicSingleton<SoundManager>
+    class /*FIFE_API*/ SoundManager : public DynamicSingleton<SoundManager>
     {
     public:
         SoundManager();

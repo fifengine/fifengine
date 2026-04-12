@@ -45,7 +45,7 @@ namespace FIFE
     class OffRenderer;
     class TargetRenderer;
 
-    class FIFE_API IEngineChangeListener
+    class /*FIFE_API*/ IEngineChangeListener
     {
     public:
         virtual ~IEngineChangeListener() = default;
@@ -61,7 +61,7 @@ namespace FIFE
      *  - Clean-up when the program ends
      *  - Act as an entry point to the engine subsystems
      */
-    class FIFE_API Engine
+    class /*FIFE_API*/ Engine
     {
     public:
         /** Constructor

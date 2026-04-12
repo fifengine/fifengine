@@ -24,7 +24,7 @@ namespace FIFE
      * To be able to listen for key events you must make a class which inherits
      * from this class and implements its functions.
      */
-    class FIFE_API IKeyListener : public IListener
+    class /*FIFE_API*/ IKeyListener : public IListener
     {
     public:
         /** Called if a key is pressed

@@ -28,7 +28,7 @@ namespace FIFE
     using ImagePtr = SharedPtr<Image>;
     /** Base Class for Images.
      */
-    class FIFE_API Image : public IResource
+    class /*FIFE_API*/ Image : public IResource
     {
     public:
         /** Constructor.

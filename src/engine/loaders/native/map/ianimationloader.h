@@ -19,7 +19,7 @@
 namespace FIFE
 {
 
-    class FIFE_API IAnimationLoader
+    class /*FIFE_API*/ IAnimationLoader
     {
     public:
         virtual ~IAnimationLoader() = default;

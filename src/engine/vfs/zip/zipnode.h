@@ -46,7 +46,7 @@ namespace FIFE
     // convenience typedef
     class ZipNode;
     using ZipNodeContainer = std::vector<ZipNode*>;
-    class FIFE_API ZipNode
+    class /*FIFE_API*/ ZipNode
     {
     public:
         /** constructor for creating a node

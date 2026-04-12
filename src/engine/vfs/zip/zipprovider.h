@@ -27,7 +27,7 @@ namespace FIFE
      *
      * @see FIFE::VFSSourceProvider
      */
-    class FIFE_API ZipProvider : public VFSSourceProvider
+    class /*FIFE_API*/ ZipProvider : public VFSSourceProvider
     {
     public:
         ZipProvider() : VFSSourceProvider("ZIP") { }

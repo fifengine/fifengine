@@ -30,7 +30,7 @@ namespace FIFE
      *
      *  @todo Should probably use a @c std::map instead of a @c std::list
      */
-    class FIFE_API TextRenderPool
+    class /*FIFE_API*/ TextRenderPool
     {
     public:
         /** Constructor

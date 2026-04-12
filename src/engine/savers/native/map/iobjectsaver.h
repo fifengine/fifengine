@@ -22,7 +22,7 @@ namespace FIFE
 
     /** Interface class that all object savers should derive from
      */
-    class FIFE_API IObjectSaver
+    class /*FIFE_API*/ IObjectSaver
     {
     public:
         virtual ~IObjectSaver() = default;

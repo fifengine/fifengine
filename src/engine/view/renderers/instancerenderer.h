@@ -24,7 +24,7 @@ namespace FIFE
     class RenderBackend;
     class InstanceDeleteListener;
 
-    class FIFE_API InstanceRenderer : public RendererBase
+    class /*FIFE_API*/ InstanceRenderer : public RendererBase
     {
     public:
         /** constructor.
@@ -162,7 +162,7 @@ namespace FIFE
         };
         using Effect = uint8_t;
         // contains per-instance information for outline drawing
-        class FIFE_API OutlineInfo
+        class /*FIFE_API*/ OutlineInfo
         {
         public:
             uint8_t r;
@@ -178,7 +178,7 @@ namespace FIFE
             ~OutlineInfo();
         };
         // contains per-instance information for overlay drawing
-        class FIFE_API ColoringInfo
+        class /*FIFE_API*/ ColoringInfo
         {
         public:
             uint8_t r;
@@ -192,7 +192,7 @@ namespace FIFE
             explicit ColoringInfo(InstanceRenderer* r);
             ~ColoringInfo();
         };
-        class FIFE_API AreaInfo
+        class /*FIFE_API*/ AreaInfo
         {
         public:
             Instance* instance;

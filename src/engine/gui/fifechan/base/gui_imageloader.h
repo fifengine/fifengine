@@ -24,7 +24,7 @@ namespace FIFE
 
     /* Image Loader.
      */
-    class FIFE_API GuiImageLoader : public fcn::ImageLoader
+    class /*FIFE_API*/ GuiImageLoader : public fcn::ImageLoader
     {
     public:
         GuiImageLoader();

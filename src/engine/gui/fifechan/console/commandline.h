@@ -23,7 +23,7 @@ namespace FIFE
 
     /** A Command line widget
      */
-    class FIFE_API CommandLine : public fcn::TextField
+    class /*FIFE_API*/ CommandLine : public fcn::TextField
     {
     public:
         using type_callback = std::function<void(std::string)>;

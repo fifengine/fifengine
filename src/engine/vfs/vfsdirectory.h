@@ -23,7 +23,7 @@ namespace FIFE
      * The most basic VFSSource for "normal" filesystems.
      * For example, '/' or './tests/data'.
      */
-    class FIFE_API VFSDirectory : public VFSSource
+    class /*FIFE_API*/ VFSDirectory : public VFSSource
     {
     public:
         /** Constructor

@@ -57,7 +57,7 @@ namespace FIFE
 
     /**  Event Manager manages all events related to FIFE
      */
-    class FIFE_API EventManager :
+    class /*FIFE_API*/ EventManager :
         public ICommandController,
         public IKeyController,
         public ITextController,

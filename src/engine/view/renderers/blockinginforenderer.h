@@ -19,7 +19,7 @@ namespace FIFE
 {
     class RenderBackend;
 
-    class FIFE_API BlockingInfoRenderer : public RendererBase
+    class /*FIFE_API*/ BlockingInfoRenderer : public RendererBase
     {
     public:
         /** Constructor.

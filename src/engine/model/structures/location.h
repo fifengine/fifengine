@@ -21,7 +21,7 @@ namespace FIFE
     class Map;
     class Layer;
 
-    class FIFE_API Location
+    class /*FIFE_API*/ Location
     {
     public:
         /** Default constructor

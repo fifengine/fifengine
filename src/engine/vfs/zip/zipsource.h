@@ -32,7 +32,7 @@ namespace FIFE
      *
      * @see FIFE::VFSSource
      */
-    class FIFE_API ZipSource : public VFSSource
+    class /*FIFE_API*/ ZipSource : public VFSSource
     {
     public:
         ZipSource(VFS* vfs, const std::string& zip_file);

@@ -39,7 +39,7 @@ namespace FIFE
         ImagePtr image;
     };
 
-    class FIFE_API Atlas
+    class /*FIFE_API*/ Atlas
     {
     public:
         explicit Atlas(std::string name) : m_name(std::move(name))
@@ -89,7 +89,7 @@ namespace FIFE
         std::string m_name;
     };
 
-    class FIFE_API AtlasLoader : public IAtlasLoader
+    class /*FIFE_API*/ AtlasLoader : public IAtlasLoader
     {
     public:
         AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);

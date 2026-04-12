@@ -25,7 +25,7 @@ namespace FIFE
 
     /** SingleLayerSearch using A*
      */
-    class FIFE_API SingleLayerSearch : public RoutePatherSearch
+    class /*FIFE_API*/ SingleLayerSearch : public RoutePatherSearch
     {
     public:
         /** Constructor

@@ -31,7 +31,7 @@ namespace FIFE
         LOW_PRIORITY
     };
 
-    class FIFE_API IPather
+    class /*FIFE_API*/ IPather
     {
     public:
         virtual ~IPather() = default;

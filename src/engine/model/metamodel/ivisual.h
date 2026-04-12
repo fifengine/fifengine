@@ -14,7 +14,7 @@
 
 namespace FIFE
 {
-    class FIFE_API IVisual
+    class /*FIFE_API*/ IVisual
     {
     public:
         virtual ~IVisual() = default;

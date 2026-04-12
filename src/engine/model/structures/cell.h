@@ -48,7 +48,7 @@ namespace FIFE
     using CellTypeInfo = uint8_t;
     /** Simple class to hold the data for transistions.
      */
-    class FIFE_API TransitionInfo
+    class /*FIFE_API*/ TransitionInfo
     {
     public:
         explicit TransitionInfo(Layer* layer) : m_layer(layer), m_difflayer(false), m_immediate(true) { }
@@ -65,7 +65,7 @@ namespace FIFE
 
     /** Listener interface for deletions happening on a cell, used for transistions.
      */
-    class FIFE_API CellDeleteListener
+    class /*FIFE_API*/ CellDeleteListener
     {
     public:
         virtual ~CellDeleteListener() = default;
@@ -78,7 +78,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on a cell.
      */
-    class FIFE_API CellChangeListener
+    class /*FIFE_API*/ CellChangeListener
     {
     public:
         virtual ~CellChangeListener() = default;
@@ -105,7 +105,7 @@ namespace FIFE
 
     /** A basic cell on a CellCache.
      */
-    class FIFE_API Cell : public FifeClass, public CellDeleteListener
+    class /*FIFE_API*/ Cell : public FifeClass, public CellDeleteListener
     {
     public:
         /** Constructor

@@ -21,7 +21,7 @@ namespace FIFE
 
     /** The SDL implementation of the @c Image base class.
      */
-    class FIFE_API SDLImage : public Image
+    class /*FIFE_API*/ SDLImage : public Image
     {
     public:
         explicit SDLImage(IResourceLoader* loader = nullptr);

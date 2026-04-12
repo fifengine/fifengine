@@ -30,7 +30,7 @@ namespace FIFE
      *
      * @see TimeEvent
      */
-    class FIFE_API TimeManager : public DynamicSingleton<TimeManager>
+    class /*FIFE_API*/ TimeManager : public DynamicSingleton<TimeManager>
     {
     public:
         /** Default constructor.

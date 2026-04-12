@@ -22,7 +22,7 @@ namespace FIFE
 
     /** default map saver class implementing the IMapSaver interface
      */
-    class FIFE_API MapSaver : public IMapSaver
+    class /*FIFE_API*/ MapSaver : public IMapSaver
     {
     public:
         /** constructor

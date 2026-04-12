@@ -25,7 +25,7 @@ namespace FIFE
      *
      * @see RenderBackend
      */
-    class FIFE_API RenderBackendSDL : public RenderBackend
+    class /*FIFE_API*/ RenderBackendSDL : public RenderBackend
     {
     public:
         explicit RenderBackendSDL(const SDL_Color& colorkey);

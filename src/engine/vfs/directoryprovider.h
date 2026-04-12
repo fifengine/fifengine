@@ -23,7 +23,7 @@ namespace FIFE
 
     /** Provider for OS directories.
      */
-    class FIFE_API DirectoryProvider : public VFSSourceProvider
+    class /*FIFE_API*/ DirectoryProvider : public VFSSourceProvider
     {
     public:
         DirectoryProvider() : VFSSourceProvider("OS Directory") { }

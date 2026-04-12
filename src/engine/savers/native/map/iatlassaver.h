@@ -16,7 +16,7 @@
 
 namespace FIFE
 {
-    class FIFE_API IAtlasSaver
+    class /*FIFE_API*/ IAtlasSaver
     {
     public:
         virtual ~IAtlasSaver() = default;

@@ -30,7 +30,7 @@ namespace FIFE
      * RawData uses RawDataSource to get the real data - that way the user doesn't have to know where the data comes
      * from (real files, files inside archives etc.)
      */
-    class FIFE_API RawData
+    class /*FIFE_API*/ RawData
     {
     public:
         explicit RawData(RawDataSource* datasource);
@@ -183,7 +183,7 @@ namespace FIFE
         static bool littleEndian();
     };
     using RawDataPtr = std::shared_ptr<RawData>;
-    class FIFE_API IndexSaver
+    class /*FIFE_API*/ IndexSaver
     {
     public:
         explicit IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) { }

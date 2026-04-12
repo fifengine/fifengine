@@ -19,7 +19,7 @@
 
 namespace fcn
 {
-    class FIFE_API ResizableWindow : public Window, public KeyListener, public FocusListener
+    class /*FIFE_API*/ ResizableWindow : public Window, public KeyListener, public FocusListener
     {
     public:
         enum CursorDirections : uint8_t
@@ -185,7 +185,7 @@ namespace fcn
         // save cursor so we can restore it later
         void saveCursor();
 
-        // access to fifes cursor  class FIFE_API
+        // access to fifes cursor  class /*FIFE_API*/
         FIFE::Cursor* m_cursor;
         // distance from the widgets edge that is active for resizing events
         int32_t m_borderDistance;

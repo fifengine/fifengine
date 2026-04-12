@@ -21,7 +21,7 @@ namespace FIFE
     /** Base class for all fife classes
      * Used e.g. to track instances over swig conversion
      */
-    class FIFE_API FifeClass
+    class /*FIFE_API*/ FifeClass
     {
     public:
         FifeClass() : m_fifeid(m_curid++) { }

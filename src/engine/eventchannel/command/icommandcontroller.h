@@ -25,7 +25,7 @@ namespace FIFE
      * Using this interface, clients can subscribe themselves to receive events
      * Also command sending is possible
      */
-    class FIFE_API ICommandController
+    class /*FIFE_API*/ ICommandController
     {
     public:
         /** Adds a listener to the back of the listener deque

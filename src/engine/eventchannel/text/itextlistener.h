@@ -24,7 +24,7 @@ namespace FIFE
      * To be able to listen for text events you must make a class which inherits
      * from this class and implements its functions.
      */
-    class FIFE_API ITextListener : public IListener
+    class /*FIFE_API*/ ITextListener : public IListener
     {
     public:
         /** Called on a text input event.

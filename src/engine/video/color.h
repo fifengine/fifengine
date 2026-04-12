@@ -18,7 +18,7 @@
 
 namespace FIFE
 {
-    class FIFE_API Color
+    class /*FIFE_API*/ Color
     {
     public:
         /** Constructor.
