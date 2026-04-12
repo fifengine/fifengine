@@ -152,6 +152,7 @@ if(MSVC)
   add_compile_options(/permissive-)     # enforce C++ standard conformance
   add_compile_options(/Zc:__cplusplus)  # report correct C++ standard in __cplusplus macro
   add_compile_options(/Zc:preprocessor) # use the C++20 compliant preprocessor
+  add_compile_options(/EHsc)            # Enable structured C++ exceptions
 
   # avoid "C1128: number of sections exceeded object file format limit
   add_compile_options(/bigobj)
@@ -169,35 +170,40 @@ if(MSVC)
 
   elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 
-    add_compile_options(/Wall) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/W4) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/O2)
 
   elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
     # Just My Code debugging (disable stepping into system headers and external code)
     add_compile_options(/JMC)
 
-    add_compile_options(/Wall) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/W4) # warning level: /W<level 0 to 4> or /Wall
     add_compile_options(/Od) # disable optimizations
 
   endif()
 
   # ignore warnings from external headers
   # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+  # /external:W0             turn off compiler warnings on external headers
+  # /external:anglebrackets  let any file included with angle brackets be external
   add_compile_options(
-    /external:W0 /external:anglebrackets
+    "/experimental:external"
+    "/external:W0"
+    "/external:anglebrackets"
     "/external:IC:\\Program Files\\Microsoft Visual Studio"
     "/external:IC:\\Program Files (x86)\\Windows Kits"
   )
-
   # Disable MSVC warnings
   add_compile_options(/wd4514) # unreferenced inline function has been removed
   add_compile_options(/wd4710) # function not inlined
   add_compile_options(/wd4820) # Disable warning about padding added to structures for alignment
   add_compile_options(/wd5045) # Compiler will insert Spectre mitigation
   add_compile_options(/wd4191) # Disable warning about unsafe type casting. 6k+ warnings. Could be UB though ;)
+  add_compile_options(/wd4251) # needs to have dll-interface to be used by clients of class
+  add_compile_options(/wd4275) # non dll-interface class used as base for dll-interface class
 
 endif()
-
 
 # GCC and Clang compiler options
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -1191,8 +1197,22 @@ if(BUILD_LIBRARY)
   add_library(fife)
 
   if(WIN32)
-    target_compile_definitions(fife PUBLIC FIFE_EXPORTING)
+    # Define FIFE_EXPORTING only when built as a shared library.
+    # See platform.h for visibility macros and symbol export handling.
+    target_compile_definitions(fife PRIVATE
+      $<$<STREQUAL:$<TARGET_PROPERTY:fife,TYPE>,SHARED_LIBRARY>:FIFE_EXPORTING>
+    )
   endif()
+
+  # These visibility and export settings are ignored on STATIC builds.
+  set_target_properties(fife PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+    # Windows fallback: exports all symbols not explicitly hidden.
+    # TODO: remove once all FIFE_API annotations are verified.
+    #       Verify with: dumpbin /exports path\\to\\fife.dll
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+  )
 
   target_include_directories(fife PRIVATE
     ${PROJECT_BINARY_DIR}
