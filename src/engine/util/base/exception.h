@@ -70,7 +70,7 @@ namespace FIFE
 
 // NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
 #define FIFE_EXCEPTION_DECL(_name, _description)                  \
-    class FIFE_API _name : public Exception                       \
+    class /*FIFE_API*/ _name : public Exception                       \
     {                                                             \
     public:                                                       \
         explicit _name(const std::string& msg) : Exception((msg)) \
