@@ -86,12 +86,6 @@ if(WIN32)
     WINVER=0x0A00
     _WIN32_WINNT=0x0A00
   )
-  # TODO this is only a workaround to get the RDI CI builds working.
-  # We want to distribute the PDBs alongside the dlls, which is "ProgramDatabase".
-  # set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
-  set_target_properties(fife_options PROPERTIES
-     MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
-  )
 endif()
 
 if(ENABLE_LOGGING)
@@ -1280,11 +1274,13 @@ if(BUILD_LIBRARY)
   )
 
   # Create unique compile PDB per-target to avoid MSVC C1041 conflicts
+  # TODO install step is still missing
   if(MSVC)
     set_target_properties(fife PROPERTIES
-      COMPILE_PDB_NAME "fife_compile"
+      MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>"
+      COMPILE_PDB_NAME "fife_compile_%p"
       COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/compile_pdbs/$<CONFIG>"
-    )
+  )
   endif()
 
   show_build_target_properties(fife)

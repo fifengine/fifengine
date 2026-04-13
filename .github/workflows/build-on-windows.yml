@@ -194,6 +194,7 @@ jobs:
       #   If SWIG_DIR is not set, SWIG_LIB will be the system one (C:/ProgramData/chocolatey/lib/swig/tools/install/swigwin-4.3.1/Lib)
       # - CMAKE_CXX_COMPILER_LAUNCHER=sccache must be set manually, can not be set via presets.
       #   As local developer might not have sccache installed, but on CI we want to use it for caching.
+      #   sccache is only used for release builds, because it conflicts with PDB generation.
       - name: 🛠️ 3.1 Configure fifengine
         run: |
           cmake ^
@@ -207,7 +208,7 @@ jobs:
             -DVCPKG_MANIFEST_MODE=OFF ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+            ${{ matrix.config.preset == 'vc18-x64-windows-rel' && '-DCMAKE_CXX_COMPILER_LAUNCHER=sccache' || '' }}
 
         #    -DSWIG_EXECUTABLE="%DEPS_DIR%\build-tools\swig\swig.exe" ^
         #    -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
