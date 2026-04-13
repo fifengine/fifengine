@@ -83,7 +83,7 @@ namespace FIFE
 
     private:
         ResourceHandle m_handle;
-        inline static ResourceHandle m_curhandle;
+        static ResourceHandle m_curhandle;
     };
 
     using ResourcePtr = SharedPtr<IResource>;
