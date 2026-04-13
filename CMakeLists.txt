@@ -310,6 +310,7 @@ set(
   src/engine/pathfinder/routepather/singlelayersearch.cpp
   src/engine/savers/native/input/controllermappingsaver.cpp
   src/engine/savers/native/map/mapsaver.cpp
+  src/engine/util/base/exception.cpp
   src/engine/util/base/fifeclass.cpp
   src/engine/util/base/stringutils.cpp
   src/engine/util/log/logger.cpp
