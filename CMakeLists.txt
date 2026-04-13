@@ -972,7 +972,8 @@ if(BUILD_PYTHON_BINDINGS)
     "${PROJECT_BINARY_DIR}/fife.i"
     @ONLY
   )
-  find_package(SWIG 4.0.0 REQUIRED)
+  find_package(SWIG 4.2.1...4.4.1 REQUIRED)
+  message(STATUS "SWIG version found: ${SWIG_VERSION}")
   include(${SWIG_USE_FILE})
 endif()
 
