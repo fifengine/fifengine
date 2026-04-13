@@ -135,7 +135,7 @@ namespace FIFE
     private:
         /** Contains information about one animation frame (duration + frame index + frame pointer)
          */
-        struct FIFE_API FrameInfo
+        struct /*FIFE_API*/ FrameInfo
         {
             uint32_t index;
             uint32_t duration;

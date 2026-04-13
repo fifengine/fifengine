@@ -46,7 +46,7 @@ namespace FIFE
         StaticSingleton<T>& operator=(const StaticSingleton<T>& rhs)
         {
             static_cast<void>(rhs);
-            return this;
+            return *this;
         }
     };
 
@@ -96,6 +96,7 @@ namespace FIFE
         DynamicSingleton<T>& operator=(const DynamicSingleton<T>& rhs)
         {
             static_cast<void>(rhs);
+            return *this;
         }
     };
 

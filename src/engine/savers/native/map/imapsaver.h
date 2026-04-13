@@ -22,7 +22,8 @@ namespace FIFE
 {
     class Map;
 
-    /** Interface class that all map savers should derive from
+    /**
+     * Interface class that all map savers should derive from
      */
     class /*FIFE_API*/ IMapSaver
     {

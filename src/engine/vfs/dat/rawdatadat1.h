@@ -27,7 +27,7 @@ namespace FIFE
     public:
         /** The needed information for the extraction.
          */
-        struct FIFE_API s_info
+        struct /*FIFE_API*/ s_info
         {
             std::string name;
             uint32_t packedLength;

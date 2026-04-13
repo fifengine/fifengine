@@ -24,7 +24,8 @@ namespace FIFE
      *
      * Derived exceptions provide more specific error messages.
      *
-     * Do not export this class with FIFE_API to avoid DLL export warnings.
+     * Exporting the Exception class is required for SWIG Python bindings
+     * to properly handle exception type info.
      */
     class /*FIFE_API*/ Exception : public std::runtime_error
     {
@@ -70,7 +71,7 @@ namespace FIFE
 
 // NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
 #define FIFE_EXCEPTION_DECL(_name, _description)                  \
-    class /*FIFE_API*/ _name : public Exception                       \
+    class /*FIFE_API*/ _name : public Exception                   \
     {                                                             \
     public:                                                       \
         explicit _name(const std::string& msg) : Exception((msg)) \

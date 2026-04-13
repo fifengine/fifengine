@@ -2,6 +2,10 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#if defined(_WIN32) && !defined(FIFE_EXPORTING)
+    #define FIFE_EXPORTING
+#endif
+
 #include <algorithm>
 
 // Platform specific includes

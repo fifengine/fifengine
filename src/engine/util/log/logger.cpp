@@ -62,7 +62,7 @@ static ModuleInfo moduleInfos[] = {
 
 namespace FIFE
 {
-    LogManager* LogManager::m_instance = nullptr;
+    // `m_instance` is now inline-initialized in the header.
 
     Logger::Logger(logmodule_t module) : m_module(module) { }
 

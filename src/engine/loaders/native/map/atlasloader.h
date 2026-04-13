@@ -33,7 +33,7 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    struct FIFE_API AtlasData
+    struct /*FIFE_API*/ AtlasData
     {
         Rect rect;
         ImagePtr image;

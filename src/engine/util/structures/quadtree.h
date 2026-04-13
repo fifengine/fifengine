@@ -18,7 +18,8 @@
 namespace FIFE
 {
 
-    /** QuadTree Node
+    /**
+     * QuadTree Node
      */
     template <typename DataType, int32_t MinimumSize = 128>
     class /*FIFE_API*/ QuadNode
@@ -155,9 +156,11 @@ namespace FIFE
         int32_t subnode(int32_t x, int32_t y, int32_t w, int32_t h) const;
     };
 
-    /** Dynamic QuadTree
-     *  A space partitioning tree automatically expanding to adjust
-     *  to any object size put into the data structure.
+    /**
+     * Dynamic QuadTree
+     *
+     * A space partitioning tree automatically expanding to adjust
+     * to any object size put into the data structure.
      */
     template <typename DataType, int32_t MinimumSize = 128>
     class /*FIFE_API*/ QuadTree

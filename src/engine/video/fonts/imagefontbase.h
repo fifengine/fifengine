@@ -48,7 +48,7 @@ namespace FIFE
 
     protected:
         // A glyph (visible character)
-        struct FIFE_API s_glyph
+        struct /*FIFE_API*/ s_glyph
         {
             // The offset of the glyph relative to the top-left corner.
             Point offset;

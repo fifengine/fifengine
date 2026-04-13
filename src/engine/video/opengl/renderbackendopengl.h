@@ -206,28 +206,28 @@ namespace FIFE
 
         class RenderObject;
 
-        struct FIFE_API RenderZObject
+        struct /*FIFE_API*/ RenderZObject
         {
             GLuint texture_id;
             // uint32_t elements;
         };
 
         // for regular primitives with color and alpha
-        struct FIFE_API renderDataP
+        struct /*FIFE_API*/ renderDataP
         {
             GLfloat vertex[2];
             GLubyte color[4];
         };
 
         // for regular textured quads
-        struct FIFE_API renderDataT
+        struct /*FIFE_API*/ renderDataT
         {
             GLfloat vertex[2];
             GLfloat texel[2];
         };
 
         // for textured quads with alpha
-        struct FIFE_API renderDataTC
+        struct /*FIFE_API*/ renderDataTC
         {
             GLfloat vertex[2];
             GLfloat texel[2];
@@ -235,7 +235,7 @@ namespace FIFE
         };
 
         // for multitextured quads
-        struct FIFE_API renderData2TC
+        struct /*FIFE_API*/ renderData2TC
         {
             GLfloat vertex[2];
             GLfloat texel[2];
@@ -244,14 +244,14 @@ namespace FIFE
         };
 
         // for regular textured quads with z
-        struct FIFE_API renderDataZ
+        struct /*FIFE_API*/ renderDataZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
         };
 
         // for textured quads with alpha and z
-        struct FIFE_API renderDataColorZ
+        struct /*FIFE_API*/ renderDataColorZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
@@ -259,7 +259,7 @@ namespace FIFE
         };
 
         // for multitextured quads with z
-        struct FIFE_API renderData2TCZ
+        struct /*FIFE_API*/ renderData2TCZ
         {
             GLfloat vertex[3];
             GLfloat texel[2];
@@ -267,7 +267,7 @@ namespace FIFE
             GLubyte color[4];
         };
 
-        struct FIFE_API RenderZObjectTest
+        struct /*FIFE_API*/ RenderZObjectTest
         {
             GLuint texture_id;
             uint32_t elements;
@@ -318,7 +318,7 @@ namespace FIFE
         std::vector<renderDataZ> m_renderForcedDatasZ;
         std::vector<RenderObject> m_renderForcedObjectsZ;
 
-        struct FIFE_API currentState
+        struct /*FIFE_API*/ currentState
         {
             // Textures
             bool tex_enabled[4];

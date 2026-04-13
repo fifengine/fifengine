@@ -43,19 +43,25 @@ namespace FIFE
     using RouteStatusInfo = std::uint8_t;
     //! A path is a list with locations. Each location holds the coordinate for one cell.
     using Path = std::list<Location>;
-    /** A basic route.
+
+    /**
+     * A basic route.
+     *
      * Holds the path and all related infos.
      */
     class /*FIFE_API*/ Route : public FifeClass
     {
     public:
-        /** Constructor
+        /**
+         * Constructor
+         *
          * @param start A const reference to the start location.
          * @param end A const reference to the end/target location.
          */
         Route(const Location& start, const Location& end);
 
-        /** Destructor
+        /**
+         * Destructor
          */
         ~Route();
 

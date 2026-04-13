@@ -53,7 +53,9 @@ namespace FIFE
         AnimationPtr m_animation;
     };
 
-    /** Base class for all 2 dimensional visual classes
+    /**
+     * Base class for all 2 dimensional visual classes
+     *
      * Visual classes are extensions to visualize the stuff in model (e.g. instances)
      * The reason why its separated is to keep model view-agnostic, so that we could
      * have e.g. 3d, 2d and character based visualizations to the same data
@@ -61,7 +63,8 @@ namespace FIFE
     class /*FIFE_API*/ Visual2DGfx : public IVisual
     {
     public:
-        /** Destructor
+        /**
+         * Destructor
          */
         virtual ~Visual2DGfx();
 
@@ -71,7 +74,8 @@ namespace FIFE
         Visual2DGfx();
     };
 
-    /** Object visual contains data that is needed for visualizing objects
+    /**
+     * Object visual contains data that is needed for visualizing objects
      */
     class /*FIFE_API*/ ObjectVisual : public Visual2DGfx
     {
@@ -117,7 +121,9 @@ namespace FIFE
          */
         void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
 
-        /** Returns closest matching static color overlay for given angle
+        /**
+         * Returns closest matching static color overlay for given angle
+         *
          * @return pointer to OverlayColor class
          */
         OverlayColors* getStaticColorOverlay(int32_t angle);
@@ -154,7 +160,8 @@ namespace FIFE
         type_angle2id m_map;
     };
 
-    /** Instance visual contains data that is needed to visualize the instance on screen
+    /**
+     * Instance visual contains data that is needed to visualize the instance on screen
      */
     class /*FIFE_API*/ InstanceVisual : public Visual2DGfx
     {
@@ -209,7 +216,8 @@ namespace FIFE
         bool m_visible;
     };
 
-    /** Action visual contains data that is needed to visualize different actions on screen
+    /**
+     * Action visual contains data that is needed to visualize different actions on screen
      */
     class /*FIFE_API*/ ActionVisual : public Visual2DGfx
     {

@@ -19,6 +19,9 @@
 namespace FIFE
 {
 
+    /**
+     * Interface class that all animation loaders should derive from
+     */
     class /*FIFE_API*/ IAnimationLoader
     {
     public:

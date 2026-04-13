@@ -3,6 +3,10 @@
 
 // Standard C++ library includes
 
+#if defined(_WIN32) && !defined(FIFE_EXPORTING)
+    #define FIFE_EXPORTING
+#endif
+
 #include <cassert>
 
 // Platform specific includes
@@ -27,6 +31,8 @@
 
 namespace FIFE
 {
+    // Use `FIFE_API` from platform.h on declarations; don't define local FIFE_API_IMPL here.
+
     static Logger _log(LM_AUDIO);
 
     namespace

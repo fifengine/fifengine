@@ -138,7 +138,7 @@ namespace FIFE
         fcn::ScrollArea* m_outputscrollarea;
         fcn::Label* m_status;
         fcn::Button* m_toolsbutton;
-        static const unsigned m_maxOutputRows;
+        inline static const unsigned m_maxOutputRows = 50;
 
         std::string m_prompt;
 

@@ -24,7 +24,6 @@
 
 namespace FIFE
 {
-    const unsigned Console::m_maxOutputRows = 50;
     static Logger _log(LM_CONSOLE);
 
     Console::Console() :

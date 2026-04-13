@@ -37,7 +37,7 @@ namespace FIFE
 
     private:
         fifeid_t m_fifeid;
-        static fifeid_t m_curid;
+        static inline fifeid_t m_curid = 0;
     };
 } // namespace FIFE
 

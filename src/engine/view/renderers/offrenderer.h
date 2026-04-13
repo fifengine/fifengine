@@ -169,6 +169,7 @@ namespace FIFE
         int32_t m_width;
         int32_t m_height;
     };
+
     class /*FIFE_API*/ OffRenderer
     {
     public:

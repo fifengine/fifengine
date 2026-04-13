@@ -111,7 +111,7 @@ namespace FIFE
         void render();
 
     private:
-        struct FIFE_API RenderJob
+        struct /*FIFE_API*/ RenderJob
         {
             int32_t ndraws;
             int32_t lasttime_draw;

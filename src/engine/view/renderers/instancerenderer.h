@@ -213,7 +213,7 @@ namespace FIFE
         InstanceToAreas_t m_instance_areas;
 
         // struct to hold the ImagePtr with a timestamp
-        struct FIFE_API s_image_entry
+        struct /*FIFE_API*/ s_image_entry
         {
             ImagePtr image;
             uint32_t timestamp;

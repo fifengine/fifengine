@@ -21,7 +21,8 @@ namespace FIFE
 {
     class Map;
 
-    /** Interface class that all map loaders should derive from
+    /**
+     * Interface class that all map loaders should derive from
      */
     class /*FIFE_API*/ IMapLoader
     {

@@ -20,6 +20,10 @@ namespace FIFE
 {
     class Atlas;
     using AtlasPtr = SharedPtr<Atlas>;
+
+    /**
+     * Interface class that all atlas loaders should derive from
+     */
     class /*FIFE_API*/ IAtlasLoader
     {
     public:

@@ -58,7 +58,7 @@ namespace FIFE
             EntryFullUpdate     = 0x03
         };
         using RenderEntryUpdate = uint8_t;
-        struct FIFE_API Entry
+        struct /*FIFE_API*/ Entry
         {
             // Node in m_tree;
             CacheTree::Node* node;

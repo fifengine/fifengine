@@ -20,16 +20,19 @@ namespace FIFE
 {
     class Map;
 
-    /** default map saver class implementing the IMapSaver interface
+    /**
+     * Default map saver class implementing the IMapSaver interface
      */
     class /*FIFE_API*/ MapSaver : public IMapSaver
     {
     public:
-        /** constructor
+        /**
+         * Constructor
          */
         MapSaver();
 
-        /** destructor
+        /**
+         * Destructor
          */
         ~MapSaver() override;
 

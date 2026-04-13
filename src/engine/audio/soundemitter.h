@@ -408,7 +408,7 @@ namespace FIFE
         uint32_t m_emitterId;
 
         //! buffers OpenAL data
-        struct FIFE_API internData
+        struct /*FIFE_API*/ internData
         {
             float volume;
             float maxVolume;

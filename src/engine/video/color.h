@@ -34,6 +34,11 @@ namespace FIFE
          */
         ~Color() = default;
 
+        Color(const Color&)            = default;
+        Color& operator=(const Color&) = default;
+        Color(Color&&)                 = default;
+        Color& operator=(Color&&)      = default;
+
         /** Compares equality of two colors
          */
         bool operator==(const Color& color) const

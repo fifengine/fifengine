@@ -36,7 +36,9 @@ namespace FIFE
     class /*FIFE_API*/ Object
     {
     public:
-        /** Constructor
+        /**
+         * Constructor
+         *
          * An object may optionally inherit default attributes
          * from another object. This object may override these
          * defaults, but it may not CHANGE the inherited values.

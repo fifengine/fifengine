@@ -229,8 +229,8 @@ namespace FIFE
         // validates if definitions in module.h are valid
         void validateModuleDescription(logmodule_t module);
 
-        // singleton instance
-        static LogManager* m_instance;
+        // singleton instance (inline to avoid separate definition across TUs)
+        static inline LogManager* m_instance = nullptr;
         // current filter level
         LogLevel m_level;
         // used during module description validation to check cycles in hierarchy
@@ -301,7 +301,7 @@ namespace FIFE
      * The mechanism is used by calling something like:
      *  somestream << pprint(ptr);
      **/
-    struct FIFE_API pprint
+    struct /*FIFE_API*/ pprint
     {
         void* p;
         explicit pprint(void* _p) : p(_p) { }

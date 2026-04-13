@@ -32,7 +32,7 @@ namespace FIFE
         SD_BYTE_POS
     };
 
-    struct FIFE_API SoundBufferEntry
+    struct /*FIFE_API*/ SoundBufferEntry
     {
         ALuint buffers[BUFFER_NUM];
         uint32_t usedbufs;

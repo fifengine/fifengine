@@ -41,6 +41,7 @@ namespace FIFE
             RES_LOADED
         };
 
+        // TODO m_handle(m_curhandle++)
         explicit IResource(std::string name, IResourceLoader* loader = nullptr) :
             m_name(std::move(name)), m_loader(loader), m_state(RES_NOT_LOADED), m_handle(m_curhandle++)
         {
@@ -82,7 +83,7 @@ namespace FIFE
 
     private:
         ResourceHandle m_handle;
-        static ResourceHandle m_curhandle;
+        inline static ResourceHandle m_curhandle;
     };
 
     using ResourcePtr = SharedPtr<IResource>;

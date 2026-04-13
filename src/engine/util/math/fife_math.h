@@ -59,7 +59,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <class numT>
-    struct FIFE_API float_traits
+    struct // /*FIFE_API*/ float_traits
     {
     };
 

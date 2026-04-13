@@ -52,12 +52,14 @@ namespace FIFE
 
         void load(const std::string& filename) override;
 
-        /** used to load an object, atlas or animation file
+        /**
+         * Used to load an object, atlas or animation file
          * if directory is provided then file is assumed relative to directory
          */
         void loadImportFile(const std::string& file, const std::string& directory = "");
 
-        /** used to load a directory of object, atlas or animation  files recursively
+        /**
+         * Used to load a directory of object, atlas or animation  files recursively
          */
         void loadImportDirectory(const std::string& directory);
 

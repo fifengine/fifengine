@@ -26,6 +26,7 @@
 
 namespace FIFE
 {
+
     /** Logger to use for this source file.
      *  @relates Logger
      */

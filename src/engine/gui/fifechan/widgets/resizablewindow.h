@@ -210,7 +210,7 @@ namespace fcn
         // is shove allowed
         bool m_shove;
 
-        struct FIFE_API CursorState
+        struct /*FIFE_API*/ CursorState
         {
             FIFE::MouseCursorType cursorType;
             uint32_t cursorId;

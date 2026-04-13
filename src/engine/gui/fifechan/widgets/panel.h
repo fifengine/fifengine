@@ -77,7 +77,7 @@ namespace fcn
         // is docked
         bool m_docked;
 
-        struct FIFE_API SavedState
+        struct /*FIFE_API*/ SavedState
         {
             Rectangle dimension;
             uint32_t innerBorder{0};

@@ -20,7 +20,7 @@
 namespace FIFE
 {
 
-    struct FIFE_API ZipContentType
+    struct /*FIFE_API*/ ZipContentType
     {
         enum Enum : uint8_t
         {
@@ -30,7 +30,7 @@ namespace FIFE
         };
     };
 
-    struct FIFE_API ZipEntryData
+    struct /*FIFE_API*/ ZipEntryData
     {
         /** constructor
          */

@@ -13,5 +13,5 @@
 
 namespace FIFE
 {
-    fifeid_t FifeClass::m_curid = 0;
+    // `m_curid` is now inline-initialized in the header.
 } // namespace FIFE
