@@ -60,7 +60,7 @@ namespace FIFE
         void removeOldEntries();
 
     protected:
-        struct FIFE_API s_pool_entry
+        struct /*FIFE_API*/ s_pool_entry
         {
             std::string text;
             SDL_Color color;
