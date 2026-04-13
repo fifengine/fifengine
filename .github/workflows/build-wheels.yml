@@ -247,6 +247,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          pip install uv
+
           for whl in wheelhouse/*.whl; do
             base="$(basename "$whl")"
 
