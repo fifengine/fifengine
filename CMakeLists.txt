@@ -78,7 +78,20 @@ option(BUILD_TESTS            "Build C++ tests"                             OFF)
 add_library(fife_options INTERFACE)
 
 if(WIN32)
-  target_compile_definitions(fife_options INTERFACE WIN32_LEAN_AND_MEAN NOMINMAX)
+  target_compile_definitions(fife_options INTERFACE
+    _UNICODE
+    UNICODE
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+    WINVER=0x0A00
+    _WIN32_WINNT=0x0A00
+  )
+  # TODO this is only a workaround to get the RDI CI builds working.
+  # We want to distribute the PDBs alongside the dlls, which is "ProgramDatabase".
+  # set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
+  set_target_properties(fife_options PROPERTIES
+     MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+  )
 endif()
 
 if(ENABLE_LOGGING)
@@ -158,6 +171,7 @@ if(MSVC)
   add_compile_options(/bigobj)
 
   add_compile_options(/diagnostics:caret) # Show the source line for warnings and errors
+  add_compile_options(/diagnostics:color)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_options(/W0) # Disable warnings
@@ -931,11 +945,14 @@ if(ENABLE_FIFEGUI)
     endif()
 
     if(FIFECHAN_IMPORTED_LIB MATCHES "\\.a$")
-      message(FATAL_ERROR
-        "Your decided for a build with BUILD_SHARED_LIBS=ON.
-        This requires a shared fifechan, but we found only a static one '${FIFECHAN_IMPORTED_LIB}'.
-        Please reconfigure fifechan -DBUILD_SHARED_LIBS=OFF or provide shared fifechan libs."
-      )
+        message(FATAL_ERROR
+          "Library type mismatch:\n"
+          "BUILD_SHARED_LIBS=ON requires fifechan to be built as a shared library.\n"
+          "However, only a static library was found: '${FIFECHAN_IMPORTED_LIB}'.\n\n"
+          "To fix this:\n"
+          "  1. Rebuild fifechan with -DBUILD_SHARED_LIBS=ON.\n"
+          "  2. Or configure this project with -DBUILD_SHARED_LIBS=OFF.\n"
+        )
     endif()
   endif()
 
