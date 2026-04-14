@@ -262,20 +262,25 @@ jobs:
 
           for whl in wheelhouse/*.whl; do
             base="$(basename "$whl")"
-            py="$(get_py_version_from_wheel_filename "$base")"
+            py_version="$(get_py_version_from_wheel_filename "$base")"
             name="${base%.whl}"
             venv_dir=".venv-$name"
 
-            echo "== Testing the $base wheel with Python $py"
+            echo "== Testing the $base wheel with Python $py_version"
 
             echo "1. Create isolated virtual environment..."
-            uv venv --python "$py" "$venv_dir"
+            uv venv --python "$py_version" "$venv_dir"
 
             echo "2. Install the wheel..."
             uv pip install --python "$venv_dir" "$whl"
 
             echo "3. Running basic import test..."
-            uv run --python "$venv_dir" python -c "import fife; print('✅ $name OK (py$py)')"
+            if [[ -f "$venv_dir/Scripts/python.exe" ]]; then
+              py="$venv_dir/Scripts/python.exe"
+            else
+              py="$venv_dir/bin/python"
+            fi
+            "$py" -c "import libfife; print('OK: $name (py$py_version) imported successfully')"
 
             rm -rf "$venv_dir"
           done
