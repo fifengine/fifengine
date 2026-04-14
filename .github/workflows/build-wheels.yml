@@ -280,7 +280,7 @@ jobs:
             else
               py="$venv_dir/bin/python"
             fi
-            "$py" -c "import libfife; print('OK: $name (py$py_version) imported successfully')"
+            "$py" -c "import fife; print('OK: $name (py$py_version) imported successfully')"
 
             rm -rf "$venv_dir"
           done
