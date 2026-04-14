@@ -247,28 +247,35 @@ jobs:
         run: |
           set -euo pipefail
 
-          pip install uv
+          pip install --quiet uv
 
-          for whl in wheelhouse/*.whl; do
-            base="$(basename "$whl")"
-
-            case "$base" in
-              *cp313*) py="3.13" ;;
-              *cp314*) py="3.14" ;;
+          get_py_version_from_wheel_filename() {
+            case "$1" in
+              *cp313*) echo "3.13" ;;
+              *cp314*) echo "3.14" ;;
               *)
-                echo "❌ Unknown Python tag in $base"
+                echo "❌ Unknown Python tag in $1" >&2
                 exit 1
                 ;;
             esac
+          }
 
+          for whl in wheelhouse/*.whl; do
+            base="$(basename "$whl")"
+            py="$(get_py_version_from_wheel_filename "$base")"
             name="${base%.whl}"
             venv_dir=".venv-$name"
 
-            echo "Testing the $base wheel with Python $py"
+            echo "== Testing the $base wheel with Python $py"
 
+            echo "1. Create isolated virtual environment..."
             uv venv --python "$py" "$venv_dir"
-            "$venv_dir/bin/python" -m pip install "$whl"
-            "$venv_dir/bin/python" -c "import fife; print('✅ $name OK (py$py)')"
+
+            echo "2. Install the wheel..."
+            uv pip install --python "$venv_dir" "$whl"
+
+            echo "3. Running basic import test..."
+            uv run --python "$venv_dir" python -c "import fife; print('✅ $name OK (py$py)')"
 
             rm -rf "$venv_dir"
           done
