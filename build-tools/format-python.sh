@@ -55,7 +55,10 @@ PATHS=(
   run_tests.py
 )
 
-EXISTING=(${PATHS[@]/#\/workspaces\/fifengine\/})
+EXISTING=()
+for p in "${PATHS[@]}"; do
+  EXISTING+=( "${p#/workspaces/fifengine/}" )
+done
 
 [[ "$run_ruff" == true ]] && uv run --group dev ruff check "${EXISTING[@]}"
 [[ "$run_black" == true ]] && uv run --group dev black "${EXISTING[@]}"

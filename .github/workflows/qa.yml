@@ -68,7 +68,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     steps:
 
@@ -105,7 +105,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     steps:
 
@@ -135,7 +135,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     strategy:
       fail-fast: false
@@ -168,3 +168,57 @@ jobs:
         run: |
           uv tool run mypy src/python/fife
         #continue-on-error: true
+
+# ---------------------------------------------------------------------------------------
+
+  shellcheck:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-slim
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔽 Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: 🛠️ Run ShellCheck
+        run: |
+          find ./build-tools -type f -name "*.sh" -print0 | xargs -0 shellcheck
+        #continue-on-error: true
+
+# ---------------------------------------------------------------------------------------
+
+  comments-check:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-slim
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔽 Install ripgrep
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: 🛠️ Check for TODO, FIXME comments (src)
+        run: |
+          rg -i '\b(?:TODO|FIXME)\b' src
+
+      - name: 🛠️ Check for MAYBE, PROBABLY, BROKEN comments (src)
+        run: |
+          rg -i '\b(?:MAYBE|PROBABLY|BROKEN)\b' src
+
+      - name: 🛠️ Check SWIG interface files for comments (src/**/*.i)
+        run: |
+          # Get all comments, then filter out SPDX comment lines
+          rg -n -g '*.i' '^\s*(//|/\*|\*|\*/)' src | rg -v '//\s*SPDX'
