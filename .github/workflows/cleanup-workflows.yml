@@ -68,7 +68,8 @@ jobs:
             const pages = 5;
             // list the workflows runs to remove here
             const workflows = [
-              'build.yml',
+              'build-on-windows.yml',
+              'build-on-linux.yml',
               'build-wheels.yml',
               'qa.yml'
             ]
