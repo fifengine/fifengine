@@ -1,8 +1,8 @@
 #
 # ShowBuildTargetProperties.cmake
-# Copyright 2026 Jens A. Koch.
+# Copyright 2024 Jens A. Koch.
 # SPDX-License-Identifier: MIT
-# This file is part of fifeengine/fifengine.
+# This file is part of fifeengine/fifechan.
 #
 
 #
@@ -21,8 +21,21 @@ function(show_build_target_property target property)
 
   get_target_property(values ${target} ${property})
   if(values)
-    if(NOT "${values}" STREQUAL "${property}-NOTFOUND")
-      message(STATUS "[${target}] ${property} -> '${values}'")
+    # split INCLUDE_DIRECTORIES into multiple lines for better readability
+    if(property STREQUAL "INCLUDE_DIRECTORIES")
+        message(STATUS "[${target}] ${property}:")
+        foreach(dir IN LISTS values)
+            message(STATUS "[${target}]  · ${dir}")
+        endforeach()
+        # split LINK_LIBRARIES into multiple lines for better readability
+    elseif(property STREQUAL "LINK_LIBRARIES")
+        message(STATUS "[${target}] ${property}:")
+        foreach(lib IN LISTS values)
+            message(STATUS "[${target}]  · ${lib}")
+        endforeach()
+    else()
+        # all other properties are printed as a single line
+        message(STATUS "[${target}] ${property} -> '${values}'")
     endif()
   endif()
 endfunction()
@@ -33,6 +46,7 @@ function(show_build_target_properties target)
   set(properties
     SOURCE_DIR
     BINARY_DIR
+    INSTALL_DIR
     INCLUDE_DIRECTORIES
     LINK_LIBRARIES
     LINK_FLAGS
