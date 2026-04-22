@@ -61,20 +61,26 @@ else()
     CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig
     ${CMAKE_COMMAND} -E env
-        # Ensure no auto-detection interferes
-        PCRE_CFLAGS= PCRE_LIBS=
+    # Ensure no auto-detection interferes
+    PCRE_CFLAGS= PCRE_LIBS=
     ./configure
         --prefix=${_SWIG_INSTALL_DIR}
-        --without-pcre
-        --without-javascript
-        --without-java
+        --without-c
         --without-csharp
+        --without-d
         --without-go
+        --without-guile
+        --without-java
+        --without-javascript
         --without-lua
+        --without-ocaml
+        --without-octave
+        --without-pcre
         --without-perl5
         --without-php
         --without-r
         --without-ruby
+        --without-scilab
         --without-tcl
     BUILD_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig make
     INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig make install
