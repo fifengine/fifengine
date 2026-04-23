@@ -138,8 +138,13 @@ jobs:
         run: |
           set -euo pipefail
           "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
+
+      - name: ❔ CHECK important folders, to see if everything is present (after vcpkg install)
+        run: |
+          set -euo pipefail
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
+          ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/include" || true
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -154,7 +159,7 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: 🏗️ 2.2 Install non-vcpkg dependencies
+      - name: 🏗️ 2.2 Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
@@ -319,7 +324,15 @@ jobs:
 
       - name: 📦 1.2 Install VCPKG dependencies
         run: |
-          "${VCPKG_ROOT}/vcpkg" install --triplet x64-linux --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
+          set -euo pipefail
+          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
+
+      - name: ❔ CHECK important folders, to see if everything is present (after vcpkg install)
+        run: |
+          set -euo pipefail
+          ls -lahr "${{ env.VCPKG_ROOT }}" || true
+          ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
+          ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/include" || true
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
