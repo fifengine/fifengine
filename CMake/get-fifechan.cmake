@@ -59,24 +59,14 @@ else()
 
   set(_FIFECHAN_PREFIX_ARGS)
 
-  # Prepare CMAKE_PREFIX_PATH arguments for ExternalProject; pass each entry
-  # as its own -DCMAKE_PREFIX_PATH argument.
+  # Prepare CMAKE_PREFIX_PATH arguments for ExternalProject
   if(DEFINED CMAKE_PREFIX_PATH)
+  # Quote the entire -D argument to preserve paths with spaces
   foreach(_p ${CMAKE_PREFIX_PATH})
-    # Quote the entire -D argument to preserve paths with spaces
     list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${_p}")
   endforeach()
-  elseif(DEFINED VCPKG_INSTALLED_DIR)
-    list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}")
-    # if we have a vcpkg triplet, use it, else define hardcoded fallbacks for x64-windows and x64-linux
-    # TODO: other triplets unhandled
-    if(DEFINED VCPKG_TARGET_TRIPLET)
-      list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include")
-    elseif(WIN32)
-      list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}/vcpkg_installed/x64-windows/include")
-    elseif(LINUX)
-      list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}/vcpkg_installed/x64-linux/include")
-    endif()
+  if(DEFINED VCPKG_INSTALLED_DIR)
+    list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include")
   endif()
 
   set(_FIFECHAN_VCPKG_ARGS)
