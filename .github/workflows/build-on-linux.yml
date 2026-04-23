@@ -158,6 +158,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+            -DFIFECHAN_BUILD_FROM_SOURCE=ON
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'

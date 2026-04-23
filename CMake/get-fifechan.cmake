@@ -58,15 +58,16 @@ else()
   endif()
 
   set(_FIFECHAN_PREFIX_ARGS)
+  # add the Vcpkg include directory to CMAKE_PREFIX_PATH so <utf8cpp/utf8.h> can be found
+  if(DEFINED VCPKG_INSTALLED_DIR)
+    list(APPEND CMAKE_PREFIX_PATH "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include")
+  endif()
   # Prepare CMAKE_PREFIX_PATH arguments for ExternalProject
   if(DEFINED CMAKE_PREFIX_PATH)
     # Quote the entire -D argument to preserve paths with spaces
     foreach(_p ${CMAKE_PREFIX_PATH})
       list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${_p}")
     endforeach()
-    if(DEFINED VCPKG_INSTALLED_DIR)
-      list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${VCPKG_INSTALLED_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include")
-    endif()
   endif()
 
   set(_FIFECHAN_VCPKG_ARGS)
