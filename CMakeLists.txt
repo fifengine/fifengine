@@ -64,7 +64,7 @@ option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
 option(ENABLE_FIFEGUI         "Enable Fifechan GUI subsystem"                ON)
 option(ENABLE_LOGGING         "Enable logging"                               ON)
-option(BUILD_PYTHON_BINDINGS  "Build python extension module"               OFF)
+option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                       OFF)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
 option(BUILD_TESTS            "Build C++ tests"                             OFF)
 

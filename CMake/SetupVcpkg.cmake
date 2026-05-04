@@ -137,6 +137,26 @@ if(NOT DEFINED VCPKG_APPLOCAL_DEPS)
 endif()
 
 #
+# VCPKG_MANIFEST_INSTALL
+#
+# We set VCPKG_MANIFEST_INSTALL to ON if the vcpkg.json file has changed since the last CMake configuration.
+#
+# 1. Get the timestamp of the vcpkg.json file
+# 2. Check the old timestamp first and toggle accordingly.
+#    If the old timestamp is not defined, we assume it's the first run and enable manifest install.
+# 3. Update timestamp for the next run
+
+file(TIMESTAMP "${CMAKE_CURRENT_LIST_DIR}/vcpkg.json" vcpkg_json_timestamp)
+
+if(VCPKG_JSON_TIMESTAMP_OLD STREQUAL vcpkg_json_timestamp)
+    set(VCPKG_MANIFEST_INSTALL OFF CACHE STRING "" FORCE)
+else()
+    set(VCPKG_MANIFEST_INSTALL ON CACHE STRING "" FORCE)
+endif()
+
+set(VCPKG_JSON_TIMESTAMP_OLD "${vcpkg_json_timestamp}" CACHE STRING "" FORCE)
+
+#
 # Print VCPKG configuration overview
 #
 
@@ -147,7 +167,9 @@ message(STATUS "")
 message(STATUS "[INFO]   ENV.VCPKG_ROOT                -> '$ENV{VCPKG_ROOT}'")
 message(STATUS "[INFO]   BUILD_SHARED_LIBS             -> '${BUILD_SHARED_LIBS}'")
 message(STATUS "[INFO]   CMAKE_TOOLCHAIN_FILE          -> '${CMAKE_TOOLCHAIN_FILE}'")
-
+message(STATUS "")
+message(STATUS "[VCPKG]  VCPKG_MANIFEST_INSTALL        -> '${VCPKG_MANIFEST_INSTALL}'")
+message(STATUS "[VCPKG]  VCPKG_JSON_TIMESTAMP_OLD      -> '${VCPKG_JSON_TIMESTAMP_OLD}'")
 message(STATUS "")
 message(STATUS "[VCPKG]  VCPKG_VERBOSE                 -> '${VCPKG_VERBOSE}'")
 message(STATUS "[VCPKG]  VCPKG_INSTALL_OPTIONS         -> '${VCPKG_INSTALL_OPTIONS}'")

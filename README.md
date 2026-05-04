@@ -64,7 +64,7 @@ The build process requires several dependencies that can be installed as system 
 
 #### Prerequisites
 
-- CMake 3.15 or newer
+- CMake 3.25 or newer
 - C++20 compatible compiler (GCC, Clang, MSVC 17 or 18)
 - vcpkg package manager (optional)
 
@@ -148,6 +148,21 @@ Target                | Description                     | CMake Options Required
 4. fife_swig          | Python extension for FIFE       | -DBUILD_PYTHON_BINDINGS=ON
 5. fifechan_swig      | Python extension for fifechan   | -DBUILD_PYTHON_BINDINGS=ON -DENABLE_FIFEGUI=ON
 6. test_*             | Various C++ tests               | -DBUILD_LIBRARY=ON -DBUILD_TESTS=ON
+
+#### How to build using vcpkg and VSCode
+
+1. The vcpkg setup and environment bootstrap script can be found in:
+
+> ./build-tools/setup-vcpkg.sh
+
+The devcontainer postStartCommand will automatically run the script and set up the environment for you.
+
+2. Then install the dependencies for fifengine:
+
+> ./dependencies/build.sh
+
+3. Then use VSCode to build the project with the appropriate preset.
+   The initial build can take a while as all dependencies are built from source.
 
 #### Build commands (example):
 

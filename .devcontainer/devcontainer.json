@@ -1,7 +1,7 @@
 {
     "name": "Fife DevBox",
-    // By default we use a pre-built cpp-devbox image
-    "image": "ghcr.io/jakoch/cpp-devbox:trixie-latest",
+    //"image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-latest",
+    "image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-20260426",
     // To use the arch based Dockerfile uncomment the following section:
     //"build": {
     //    "dockerfile": "arch/Dockerfile",
@@ -27,5 +27,6 @@
                 "hbenl.vscode-test-explorer"
             ]
         }
-    }
+    },
+    "postStartCommand": "chmod +x ./build-tools/setup-vcpkg.sh && ./build-tools/setup-vcpkg.sh"
 }
