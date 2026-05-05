@@ -54,6 +54,8 @@ endif()
 option(FIFE_DEPENDENCY_FIFECHAN "Build and install dependency: FIFECHAN"     ON)
 option(FIFE_DEPENDENCY_SWIG     "Build and install dependency: SWIG"         ON)
 
+option(FIFE_DEPENDENCY_BUILD_FROM_SOURCE "Build FifeChan from source instead of using pre-built binaries (Windows)" OFF)
+
 #------------------------------------------------------------------------------
 # Display Status
 #------------------------------------------------------------------------------

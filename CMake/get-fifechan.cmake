@@ -5,8 +5,6 @@
 
 include(ExternalProject)
 
-option(FIFECHAN_BUILD_FROM_SOURCE "Build FifeChan from source instead of using pre-built binaries (Windows)" OFF)
-
 # For development use "orgin/main" to always get the latest code.
 # For release use the specific tag, e.g. "v0.2.0".
 set(FIFECHAN_VERSION "v0.2.0" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
@@ -24,11 +22,10 @@ if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
   message(FATAL_ERROR "DEPENDENCY_DOWNLOAD_DIR must be defined before including get-fifechan.cmake")
 endif()
 
-if(WIN32 AND MSVC AND NOT FIFECHAN_BUILD_FROM_SOURCE)
+if(WIN32 AND MSVC AND NOT FIFE_DEPENDENCY_BUILD_FROM_SOURCE)
 
     # === On Windows download the pre-compiled development binaries ===
 
-    # Disabled until FifeGUI Release v0.2.0 to force usage of FIFECHAN_BUILD_FROM_SOURCE
     # ExternalProject_Add(
     #   fifechan
     #   PREFIX ${DEPENDENCY_EXTRACT_DIR}
