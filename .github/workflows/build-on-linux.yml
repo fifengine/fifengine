@@ -118,7 +118,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev
+            libglu1-mesa-dev alsa-topology-conf
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -166,12 +166,12 @@ jobs:
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
           "${VCPKG_ROOT}/vcpkg" integrate install
 
       - name: 📦 1.3 Install VCPKG dependencies
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
@@ -307,7 +307,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev
+            libglu1-mesa-dev alsa-topology-conf
 
       # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
@@ -351,12 +351,12 @@ jobs:
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
           "${VCPKG_ROOT}/vcpkg" integrate install
 
       - name: 📦 1.3 Install VCPKG dependencies
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
