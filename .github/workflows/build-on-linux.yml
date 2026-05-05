@@ -103,8 +103,6 @@ jobs:
 
       - name: ℹ Show Tool Versions
         run: |
-          ${CC} --version
-          ${CXX} --version
           cmake --version
           ninja --version
 
