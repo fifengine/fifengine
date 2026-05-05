@@ -155,9 +155,9 @@ jobs:
 
       - name: 🔽 1.1 VCPKG - Update registry to latest tag
         run: |
-          cd "${{ env.VCPKG_ROOT }}"
+          cd /d "%VCPKG_ROOT%"
           git fetch --tags --force
-          set LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
+          for /f "delims=" %%i in ('git describe --tags --abbrev=0') do set LATEST_VCPKG_TAG=%%i
           git checkout %LATEST_VCPKG_TAG%
 
       - name: 🛠️ 1.2 VCPKG - Bootstrap and integrate with system

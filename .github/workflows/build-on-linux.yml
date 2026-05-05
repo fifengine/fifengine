@@ -161,7 +161,7 @@ jobs:
         run: |
           cd ${{ env.VCPKG_ROOT }}
           git fetch --tags --force
-          LATEST_VCPKG_TAG="$(git tag --sort=-creatordate | head -n 1)"
+          LATEST_VCPKG_TAG="$(git describe --tags --abbrev=0)"
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
@@ -343,7 +343,7 @@ jobs:
         run: |
           cd ${{ env.VCPKG_ROOT }}
           git fetch --tags --force
-          LATEST_VCPKG_TAG="$(git tag --sort=-creatordate | head -n 1)"
+          LATEST_VCPKG_TAG="$(git describe --tags --abbrev=0)"
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
