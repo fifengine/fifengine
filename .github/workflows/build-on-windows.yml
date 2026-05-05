@@ -153,11 +153,26 @@ jobs:
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
             cache-deps-${{ matrix.config.preset }}
 
-      - name: 🔽 1.1 VCPKG - Update registry to latest tag
+      - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
           cd /d "%VCPKG_ROOT%"
-          git fetch --tags --force
-          for /f "delims=" %%i in ('git describe --tags --abbrev=0') do set LATEST_VCPKG_TAG=%%i
+
+          rem GitHub-hosted runner vcpkg can contain local edits; reset everything.
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+
+          for /f "delims=" %%i in ('git tag --sort=-v:refname') do (
+            set LATEST_VCPKG_TAG=%%i
+            goto :tag_found
+          )
+          :tag_found
+          if "%LATEST_VCPKG_TAG%"=="" (
+            echo Failed to resolve latest vcpkg tag
+            exit /b 1
+          )
+
           git checkout %LATEST_VCPKG_TAG%
 
       - name: 🛠️ 1.2 VCPKG - Bootstrap and integrate with system

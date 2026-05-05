@@ -158,8 +158,11 @@ jobs:
       - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
           cd ${{ env.VCPKG_ROOT }}
-          git fetch --tags --force
-          LATEST_VCPKG_TAG="$(git describe --tags --abbrev=0)"
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+          LATEST_VCPKG_TAG="$(git tag --sort=-v:refname | head -n 1)"
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
@@ -340,8 +343,11 @@ jobs:
       - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
           cd ${{ env.VCPKG_ROOT }}
-          git fetch --tags --force
-          LATEST_VCPKG_TAG="$(git describe --tags --abbrev=0)"
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+          LATEST_VCPKG_TAG="$(git tag --sort=-v:refname | head -n 1)"
           git checkout "$LATEST_VCPKG_TAG"
 
       - name: 🛠️ 1.2 Setup VCPKG
