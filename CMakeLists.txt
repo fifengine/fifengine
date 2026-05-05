@@ -1235,13 +1235,12 @@ if(BUILD_LIBRARY)
   endif()
 
   # Set compile definitions based on library type
-  # When shared: define FIFE_EXPORTING (for Windows dllexport)
+  # When shared: define FIFE_BUILD (for Windows dllexport)
   # When static: define FIFE_STATIC
-  if(BUILD_SHARED_LIBS)
-    target_compile_definitions(fife PRIVATE FIFE_EXPORTING)
-  else()
-    target_compile_definitions(fife PUBLIC FIFE_STATIC)
-  endif()
+  target_compile_definitions(fifengine_lib PUBLIC
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:FIFE_STATIC>
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
+  )
 
   # Link dependencies (objects already included via $<TARGET_OBJECTS:fifengine_lib>)
   target_link_libraries(fife PRIVATE
@@ -1303,13 +1302,6 @@ if(BUILD_LIBRARY)
     WINDOWS_EXPORT_ALL_SYMBOLS ON
   )
 
-  if(WIN32)
-    # Define FIFE_EXPORTING only when built as a shared library.
-    # See platform.h for visibility macros and symbol export handling.
-    target_compile_definitions(fife PRIVATE
-      $<$<STREQUAL:$<TARGET_PROPERTY:fife,TYPE>,SHARED_LIBRARY>:FIFE_EXPORTING>
-    )
-  endif()
 
   # These visibility and export settings are ignored on STATIC builds.
   set_target_properties(fife PROPERTIES
