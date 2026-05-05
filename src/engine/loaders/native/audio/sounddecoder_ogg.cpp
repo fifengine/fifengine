@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "sounddecoder_ogg.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <limits>
@@ -10,13 +13,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "sounddecoder_ogg.h"
 
 namespace FIFE
 {
@@ -32,8 +30,8 @@ namespace FIFE
         static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
             auto* rdp            = static_cast<RawData*>(datasource);
-            const size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
-            const size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
+            size_t const restlen = rdp->getDataLength() - rdp->getCurrentIndex();
+            size_t const len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
             if (len != 0U) {
                 rdp->readInto(static_cast<uint8_t*>(ptr), len);
             }
@@ -43,7 +41,7 @@ namespace FIFE
         static int seek(void* datasource, ogg_int64_t offset, int whence)
         {
             auto* rdp                 = static_cast<RawData*>(datasource);
-            const int64_t data_length = static_cast<int64_t>(rdp->getDataLength());
+            int64_t const data_length = static_cast<int64_t>(rdp->getDataLength());
 
             switch (whence) {
             case SEEK_SET: {
@@ -61,7 +59,7 @@ namespace FIFE
                 rdp->moveIndex(static_cast<int32_t>(offset));
                 return 0;
             case SEEK_END: {
-                const int64_t target_index = data_length - 1 + static_cast<int64_t>(offset);
+                int64_t const target_index = data_length - 1 + static_cast<int64_t>(offset);
                 if (target_index < 0 || target_index >= data_length) {
                     return -1;
                 }
@@ -90,13 +88,13 @@ namespace FIFE
     SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp), m_ovf{}
     {
 
-        const ov_callbacks ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
+        ov_callbacks const ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
 
         if (0 > ov_open_callbacks(m_file.get(), &m_ovf, nullptr, 0, ocb)) {
             throw InvalidFormat("Error opening OggVorbis file");
         }
 
-        const vorbis_info* vi = ov_info(&m_ovf, -1);
+        vorbis_info const * vi = ov_info(&m_ovf, -1);
         if (vi == nullptr) {
             throw InvalidFormat("Error fetching OggVorbis info");
         }
@@ -112,7 +110,7 @@ namespace FIFE
         m_isstereo                  = vi->channels == 2;
         m_samplerate                = static_cast<uint64_t>(vi->rate);
         m_is8bit                    = false;
-        const ogg_int64_t pcm_total = ov_pcm_total(&m_ovf, -1);
+        ogg_int64_t const pcm_total = ov_pcm_total(&m_ovf, -1);
         if (pcm_total < 0) {
             throw InvalidFormat("Error fetching decoded OggVorbis length");
         }
@@ -141,8 +139,8 @@ namespace FIFE
         m_datasize = 0;
 
         while (length - m_datasize > 0) {
-            const uint64_t remaining_bytes = length - m_datasize;
-            const int chunk_size           = static_cast<int>(
+            uint64_t const remaining_bytes = length - m_datasize;
+            int const chunk_size           = static_cast<int>(
                 std::min<uint64_t>(remaining_bytes, static_cast<uint64_t>(std::numeric_limits<int>::max())));
 
             ret = ov_read(&m_ovf, m_data + m_datasize, chunk_size, 0, 2, 1, &stream);
@@ -161,7 +159,7 @@ namespace FIFE
 
     bool SoundDecoderOgg::setCursor(uint64_t pos)
     {
-        const uint64_t sample_position = pos / ((m_isstereo ? 2ULL : 1ULL) * 2ULL);
+        uint64_t const sample_position = pos / ((m_isstereo ? 2ULL : 1ULL) * 2ULL);
         if (sample_position > static_cast<uint64_t>(std::numeric_limits<ogg_int64_t>::max())) {
             return false;
         }

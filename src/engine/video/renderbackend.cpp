@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "renderbackend.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -10,15 +13,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "renderbackend.h"
 #include "video/devicecaps.h"
 
 namespace FIFE
 {
-    RenderBackend::RenderBackend(const SDL_Color& colorkey) :
+    RenderBackend::RenderBackend(SDL_Color const & colorkey) :
         m_window(nullptr),
         m_screen(nullptr),
         m_target(nullptr),
@@ -64,14 +63,14 @@ namespace FIFE
     {
         if (m_isframelimit) {
             uint16_t const frame_time = SDL_GetTicks() - m_frame_start;
-            const float frame_limit   = 1000.0F / m_framelimit;
+            float const frame_limit   = 1000.0F / m_framelimit;
             if (frame_time < frame_limit) {
                 SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
             }
         }
     }
 
-    const ScreenMode& RenderBackend::getCurrentScreenMode() const
+    ScreenMode const & RenderBackend::getCurrentScreenMode() const
     {
         return m_screenMode;
     }
@@ -88,7 +87,7 @@ namespace FIFE
         return static_cast<uint32_t>(m_screen->h);
     }
 
-    const Rect& RenderBackend::getArea() const
+    Rect const & RenderBackend::getArea() const
     {
         assert(m_screen->w >= 0);
         assert(m_screen->h >= 0);
@@ -96,7 +95,7 @@ namespace FIFE
         return r;
     }
 
-    void RenderBackend::pushClipArea(const Rect& cliparea, bool clear)
+    void RenderBackend::pushClipArea(Rect const & cliparea, bool clear)
     {
         ClipInfo ci;
         ci.r        = cliparea;
@@ -119,7 +118,7 @@ namespace FIFE
         }
     }
 
-    const Rect& RenderBackend::getClipArea() const
+    Rect const & RenderBackend::getClipArea() const
     {
         if (!m_clipstack.empty()) {
             return m_clipstack.top().r;
@@ -197,12 +196,12 @@ namespace FIFE
         return m_iscolorkeyenabled;
     }
 
-    void RenderBackend::setColorKey(const SDL_Color& colorkey)
+    void RenderBackend::setColorKey(SDL_Color const & colorkey)
     {
         m_colorkey = colorkey;
     }
 
-    const SDL_Color& RenderBackend::getColorKey() const
+    SDL_Color const & RenderBackend::getColorKey() const
     {
         return m_colorkey;
     }
@@ -222,9 +221,9 @@ namespace FIFE
         setBackgroundColor(0, 0, 0);
     }
 
-    const SDL_PixelFormat& RenderBackend::getPixelFormat() const
+    SDL_PixelFormat RenderBackend::getPixelFormat() const
     {
-        return m_rgba_format;
+        return m_rgba_format.format;
     }
 
     void RenderBackend::setVSyncEnabled(bool vsync)
@@ -267,7 +266,7 @@ namespace FIFE
         return m_target;
     }
 
-    Point RenderBackend::getBezierPoint(const std::vector<Point>& points, int32_t elements, float t)
+    Point RenderBackend::getBezierPoint(std::vector<Point> const & points, int32_t elements, float t)
     {
         if (t < 0.0) {
             return points[0];
@@ -284,7 +283,7 @@ namespace FIFE
         double const mu = static_cast<double>(t) / static_cast<double>(elements);
         double munk     = Mathd::Pow(1.0 - mu, static_cast<double>(n));
         for (size_t pointIndex = 0; std::cmp_less_equal(pointIndex, n); ++pointIndex) {
-            const int32_t i = static_cast<int32_t>(pointIndex);
+            int32_t const i = static_cast<int32_t>(pointIndex);
             int32_t tmpn    = n;
             int32_t tmpi    = i;
             int32_t diffn   = n - i;
@@ -310,15 +309,15 @@ namespace FIFE
         return Point(static_cast<int32_t>(px), static_cast<int32_t>(py));
     }
 
-    void RenderBackend::addControlPoints(const std::vector<Point>& points, std::vector<Point>& newPoints)
+    void RenderBackend::addControlPoints(std::vector<Point> const & points, std::vector<Point>& newPoints)
     {
         if (points.empty()) {
             return;
         }
 
-        const size_t segmentCount = points.size() - 1;
+        size_t const segmentCount = points.size() - 1;
         assert(segmentCount <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
-        const int32_t n = static_cast<int32_t>(segmentCount);
+        int32_t const n = static_cast<int32_t>(segmentCount);
         // min 2 points
         if (n < 1) {
             return;
@@ -372,7 +371,7 @@ namespace FIFE
         }
         // Backward substitution
         for (size_t i = 1; i < segmentCount; ++i) {
-            const size_t backIndex = segmentCount - i;
+            size_t const backIndex = segmentCount - i;
             x[backIndex - 1] -= xtmp[backIndex] * x[backIndex];
             y[backIndex - 1] -= ytmp[backIndex] * y[backIndex];
         }

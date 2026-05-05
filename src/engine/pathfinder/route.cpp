@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "route.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -12,22 +15,17 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/object.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 #include "util/log/logger.h"
-
-#include "route.h"
 
 namespace FIFE
 {
 
     static Logger _log(LM_STRUCTURES);
 
-    Route::Route(const Location& start, const Location& end) :
+    Route::Route(Location const & start, Location const & end) :
         m_status(ROUTE_CREATED),
         m_startNode(start),
         m_endNode(end),
@@ -55,7 +53,7 @@ namespace FIFE
         return m_status;
     }
 
-    void Route::setStartNode(const Location& node)
+    void Route::setStartNode(Location const & node)
     {
         m_startNode = node;
         if (m_status != ROUTE_CREATED) {
@@ -67,12 +65,12 @@ namespace FIFE
         }
     }
 
-    const Location& Route::getStartNode()
+    Location const & Route::getStartNode()
     {
         return m_startNode;
     }
 
-    void Route::setEndNode(const Location& node)
+    void Route::setEndNode(Location const & node)
     {
         if (m_status != ROUTE_CREATED) {
             m_status = ROUTE_CREATED;
@@ -85,12 +83,12 @@ namespace FIFE
         m_endNode = node;
     }
 
-    const Location& Route::getEndNode()
+    Location const & Route::getEndNode()
     {
         return m_endNode;
     }
 
-    const Location& Route::getCurrentNode()
+    Location const & Route::getCurrentNode()
     {
         if (m_path.empty()) {
             return m_startNode;
@@ -101,21 +99,21 @@ namespace FIFE
         return *m_current;
     }
 
-    const Location& Route::getPreviousNode()
+    Location const & Route::getPreviousNode()
     {
         if (m_path.empty()) {
             return m_startNode;
         }
         if (m_current != m_path.begin()) {
             --m_current;
-            const Location& loc = *m_current;
+            Location const & loc = *m_current;
             ++m_current;
             return loc;
         }
         return *m_current;
     }
 
-    const Location& Route::getNextNode()
+    Location const & Route::getNextNode()
     {
         if (m_path.empty()) {
             return m_startNode;
@@ -123,7 +121,7 @@ namespace FIFE
         if (m_current != m_path.end()) {
             ++m_current;
             if (m_current != m_path.end()) {
-                const Location& loc = *m_current;
+                Location const & loc = *m_current;
                 --m_current;
                 return loc;
             }
@@ -138,7 +136,7 @@ namespace FIFE
             return false;
         }
 
-        const int32_t pos = static_cast<int32_t>(m_walked) + step;
+        int32_t const pos = static_cast<int32_t>(m_walked) + step;
         if (pos < 0 || static_cast<size_t>(pos) >= m_path.size()) {
             return false;
         }
@@ -164,7 +162,7 @@ namespace FIFE
         return m_current == m_path.end();
     }
 
-    void Route::setPath(const Path& path)
+    void Route::setPath(Path const & path)
     {
         m_path = path;
         if (!m_path.empty()) {
@@ -179,7 +177,7 @@ namespace FIFE
         m_walked = 1;
     }
 
-    const Path& Route::getPath()
+    Path const & Route::getPath()
     {
         return m_path;
     }
@@ -202,7 +200,7 @@ namespace FIFE
             return;
         }
 
-        const uint32_t newend = m_walked + length - 1;
+        uint32_t const newend = m_walked + length - 1;
         if (newend > m_path.size()) {
             return;
         }
@@ -253,12 +251,12 @@ namespace FIFE
         return m_rotation;
     }
 
-    void Route::setCostId(const std::string& cost)
+    void Route::setCostId(std::string const & cost)
     {
         m_costId = cost;
     }
 
-    const std::string& Route::getCostId()
+    std::string const & Route::getCostId()
     {
         return m_costId;
     }
@@ -271,12 +269,12 @@ namespace FIFE
         return false;
     }
 
-    void Route::setOccupiedArea(const std::vector<ModelCoordinate>& area)
+    void Route::setOccupiedArea(std::vector<ModelCoordinate> const & area)
     {
         m_area = area;
     }
 
-    const std::vector<ModelCoordinate>& Route::getOccupiedArea()
+    std::vector<ModelCoordinate> const & Route::getOccupiedArea()
     {
         return m_area;
     }

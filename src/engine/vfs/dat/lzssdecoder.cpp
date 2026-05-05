@@ -8,26 +8,27 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "lzssdecoder.h"
 #include "util/base/exception.h"
 #include "vfs/raw/rawdata.h"
-
-#include "lzssdecoder.h"
 
 // just a quick&dirty wrapper around anchorites implementation - needs to be replaced with our own LZSS implementation
 namespace FIFE
 {
 
-    LZSSDecoder::LZSSDecoder() : m_outlen(0), m_outindex(0) { }
+    LZSSDecoder::LZSSDecoder() : m_outlen(0), m_outindex(0)
+    {
+    }
 
-    void LZSSDecoder::decode(RawData* input, uint8_t* output, const uint32_t outputsize)
+    void LZSSDecoder::decode(RawData* input, uint8_t* output, uint32_t const outputsize)
     {
 
         m_outindex = 0;
         m_outlen   = outputsize;
 
         while (m_outindex < outputsize) {
-            const uint16_t blockdesc   = input->read16Big();
-            const uint16_t bytesToRead = static_cast<uint16_t>(blockdesc & 0x7fffU);
+            uint16_t const blockdesc   = input->read16Big();
+            uint16_t const bytesToRead = static_cast<uint16_t>(blockdesc & 0x7fffU);
 
             if ((blockdesc & 0x8000) != 0) { // uncompressed
                 input->readInto(output + m_outindex, bytesToRead);
@@ -43,7 +44,7 @@ namespace FIFE
         }
     }
 
-    void LZSSDecoder::LZSSDecode(const uint8_t* in, int64_t len, uint8_t* out)
+    void LZSSDecoder::LZSSDecode(uint8_t const * in, int64_t len, uint8_t* out)
     {
         constexpr int64_t kRingBufferSize        = 4096;
         constexpr int64_t kMatchLengthUpperLimit = 18;

@@ -14,9 +14,8 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "video/animation.h"
-
 #include "ianimationloader.h"
+#include "video/animation.h"
 
 namespace tinyxml2
 {
@@ -32,24 +31,24 @@ namespace FIFE
 
     class /*FIFE_API*/ AnimationLoader : public IAnimationLoader
     {
-    public:
-        AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
+        public:
+            AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 
-        /**
-         * @see IAnimationLoader::isLoadable
-         */
-        bool isLoadable(const std::string& filename) override;
+            /**
+             * @see IAnimationLoader::isLoadable
+             */
+            bool isLoadable(std::string const & filename) override;
 
-        AnimationPtr load(const std::string& filename) override;
+            AnimationPtr load(std::string const & filename) override;
 
-        std::vector<AnimationPtr> loadMultiple(const std::string& filename) override;
+            std::vector<AnimationPtr> loadMultiple(std::string const & filename) override;
 
-    private:
-        AnimationPtr loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem);
+        private:
+            AnimationPtr loadAnimation(std::string const & filename, tinyxml2::XMLElement* animationElem);
 
-        VFS* m_vfs;
-        ImageManager* m_imageManager;
-        AnimationManager* m_animationManager;
+            VFS* m_vfs;
+            ImageManager* m_imageManager;
+            AnimationManager* m_animationManager;
     };
 } // namespace FIFE
 

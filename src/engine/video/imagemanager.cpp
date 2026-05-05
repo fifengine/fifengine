@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "imagemanager.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -8,16 +11,11 @@
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "imagemanager.h"
 
 namespace FIFE
 {
@@ -83,7 +81,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    ImagePtr ImageManager::create(const std::string& name, IResourceLoader* loader)
+    ImagePtr ImageManager::create(std::string const & name, IResourceLoader* loader)
     {
         if (exists(name)) {
             FL_WARN(
@@ -97,7 +95,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    ImagePtr ImageManager::load(const std::string& name, IResourceLoader* loader)
+    ImagePtr ImageManager::load(std::string const & name, IResourceLoader* loader)
     {
         auto nit = m_imgNameMap.find(name);
 
@@ -126,7 +124,7 @@ namespace FIFE
 
     ImagePtr ImageManager::loadBlank(uint32_t width, uint32_t height)
     {
-        const size_t pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
+        size_t const pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
 
         auto* pixdata = new uint8_t[pixelBufferSize];
 
@@ -137,13 +135,13 @@ namespace FIFE
         return add(ptr);
     }
 
-    ImagePtr ImageManager::loadBlank(const std::string& name, uint32_t width, uint32_t height)
+    ImagePtr ImageManager::loadBlank(std::string const & name, uint32_t width, uint32_t height)
     {
         auto nit = m_imgNameMap.find(name);
         if (nit != m_imgNameMap.end()) {
             remove(nit->second);
         }
-        const size_t pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
+        size_t const pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
         auto* pixdata                = new uint8_t[pixelBufferSize];
         memset(pixdata, 0, pixelBufferSize);
         Image* ptr = RenderBackend::instance()->createImage(name, pixdata, width, height);
@@ -174,7 +172,7 @@ namespace FIFE
         return returnValue.first->second;
     }
 
-    bool ImageManager::exists(const std::string& name)
+    bool ImageManager::exists(std::string const & name)
     {
         auto it = m_imgNameMap.find(name);
         return it != m_imgNameMap.end();
@@ -186,7 +184,7 @@ namespace FIFE
         return it != m_imgHandleMap.end();
     }
 
-    void ImageManager::reload(const std::string& name)
+    void ImageManager::reload(std::string const & name)
     {
         auto nit = m_imgNameMap.find(name);
 
@@ -244,7 +242,7 @@ namespace FIFE
         FL_DBG(_log, LMsg("ImageManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
     }
 
-    void ImageManager::free(const std::string& name)
+    void ImageManager::free(std::string const & name)
     {
         auto nit = m_imgNameMap.find(name);
 
@@ -324,7 +322,7 @@ namespace FIFE
             LMsg("ImageManager::remove(ResourcePtr&) - ") << "Resource " << resource->getName() << " was not found.");
     }
 
-    void ImageManager::remove(const std::string& name)
+    void ImageManager::remove(std::string const & name)
     {
         std::size_t handle = 0;
 
@@ -407,7 +405,7 @@ namespace FIFE
             _log, LMsg("ImageManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
     }
 
-    ImagePtr ImageManager::get(const std::string& name)
+    ImagePtr ImageManager::get(std::string const & name)
     {
         auto nit = m_imgNameMap.find(name);
 
@@ -440,7 +438,7 @@ namespace FIFE
         return {};
     }
 
-    ImagePtr ImageManager::getPtr(const std::string& name)
+    ImagePtr ImageManager::getPtr(std::string const & name)
     {
         auto nit = m_imgNameMap.find(name);
 
@@ -466,7 +464,7 @@ namespace FIFE
         return {};
     }
 
-    ResourceHandle ImageManager::getResourceHandle(const std::string& name)
+    ResourceHandle ImageManager::getResourceHandle(std::string const & name)
     {
         auto nit = m_imgNameMap.find(name);
         if (nit != m_imgNameMap.end()) {
@@ -479,7 +477,7 @@ namespace FIFE
         return 0;
     }
 
-    void ImageManager::invalidate(const std::string& name)
+    void ImageManager::invalidate(std::string const & name)
     {
         auto it = m_imgNameMap.find(name);
         if (it != m_imgNameMap.end()) {

@@ -21,29 +21,29 @@ namespace FIFE
     /** Returns id for given angle from angle2id map
      * in case there are no elements in the map, negative value is returned
      */
-    int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle);
+    int32_t getIndexByAngle(int32_t angle, type_angle2id const & angle2id, int32_t& closestMatchingAngle);
 
     /** Gets angle of vector defined by given locations
      *  @return angle in polar coordinates between the line
      *  defined by the two locations and the horizontal axis (East <-> West)
      */
-    int32_t getAngleBetween(const Location& loc1, const Location& loc2);
+    int32_t getAngleBetween(Location const & loc1, Location const & loc2);
 
     /** Gets facing location defined by given angle and location
      *  @return facing location
      */
-    Location getFacing(const Location& loc, int32_t angle);
+    Location getFacing(Location const & loc, int32_t angle);
 
     /** Gets angle of vector defined by given map coordinates
      *  @return angle in polar coordinates between the line
      *  defined by the two map coordinates and the horizontal axis (East <-> West)
      */
-    int32_t getAngleBetween(const ExactModelCoordinate& emc1, const ExactModelCoordinate& emc2);
+    int32_t getAngleBetween(ExactModelCoordinate const & emc1, ExactModelCoordinate const & emc2);
 
     /** Gets facing map coordinate defined by given angle and map coordinate
      *  @return facing map coordinate
      */
-    ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, int32_t angle);
+    ExactModelCoordinate getFacing(ExactModelCoordinate const & emc, int32_t angle);
 } // namespace FIFE
 
 #endif

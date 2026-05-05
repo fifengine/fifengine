@@ -25,29 +25,30 @@ namespace FIFE
      */
     class /*FIFE_API*/ MapSaver : public IMapSaver
     {
-    public:
-        /**
-         * Constructor
-         */
-        MapSaver();
+        public:
+            /**
+             * Constructor
+             */
+            MapSaver();
 
-        /**
-         * Destructor
-         */
-        ~MapSaver() override;
+            /**
+             * Destructor
+             */
+            ~MapSaver() override;
 
-        void setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver) override;
+            void setObjectSaver(FIFE::ObjectSaverPtr const & objectSaver) override;
 
-        void setAnimationSaver(const FIFE::AnimationSaverPtr& animationSaver) override;
+            void setAnimationSaver(FIFE::AnimationSaverPtr const & animationSaver) override;
 
-        void setAtlasSaver(const FIFE::AtlasSaverPtr& atlasSaver) override;
+            void setAtlasSaver(FIFE::AtlasSaverPtr const & atlasSaver) override;
 
-        void save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles) override;
+            void save(
+                Map const & map, std::string const & filename, std::vector<std::string> const & importFiles) override;
 
-    private:
-        ObjectSaverPtr m_objectSaver;
-        AnimationSaverPtr m_animationSaver;
-        AtlasSaverPtr m_atlasSaver;
+        private:
+            ObjectSaverPtr m_objectSaver;
+            AnimationSaverPtr m_animationSaver;
+            AtlasSaverPtr m_atlasSaver;
     };
 } // namespace FIFE
 

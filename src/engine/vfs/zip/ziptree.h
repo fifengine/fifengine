@@ -22,41 +22,41 @@ namespace FIFE
 
     class /*FIFE_API*/ ZipTree
     {
-    public:
-        /** constructor
-         */
-        ZipTree();
+        public:
+            /** constructor
+             */
+            ZipTree();
 
-        ZipTree(const ZipTree&)            = delete;
-        ZipTree& operator=(const ZipTree&) = delete;
+            ZipTree(ZipTree const &)            = delete;
+            ZipTree& operator=(ZipTree const &) = delete;
 
-        /** destructor
-         */
-        ~ZipTree();
+            /** destructor
+             */
+            ~ZipTree();
 
-        /** adds a node to the proper place in the tree
-         *  based on the node path name
-         *  @param nodePath the node description
-         *  @return ZipNode of the most derived path added
-                    (value after the last path separator)
-                    or NULL if the path could not be added
-         */
-        ZipNode* addNode(const std::string& nodePath);
+            /** adds a node to the proper place in the tree
+             *  based on the node path name
+             *  @param nodePath the node description
+             *  @return ZipNode of the most derived path added
+                        (value after the last path separator)
+                        or NULL if the path could not be added
+             */
+            ZipNode* addNode(std::string const & nodePath);
 
-        /** accessor for getting a node by name
-         *  @param name the name to search for
-         *  @ param ZipNode pointer, or NULL if not found
-         */
-        ZipNode* getNode(const std::string& name) const;
+            /** accessor for getting a node by name
+             *  @param name the name to search for
+             *  @ param ZipNode pointer, or NULL if not found
+             */
+            ZipNode* getNode(std::string const & name) const;
 
-        /** accessor for the root node of the tree
-         *  mostly used for debugging purposes
-         *  @return ZipNode pointer to the root node
-         */
-        ZipNode* getRootNode() const;
+            /** accessor for the root node of the tree
+             *  mostly used for debugging purposes
+             *  @return ZipNode pointer to the root node
+             */
+            ZipNode* getRootNode() const;
 
-    private:
-        ZipNode* m_rootNode;
+        private:
+            ZipNode* m_rootNode;
     };
 } // namespace FIFE
 
@@ -66,6 +66,6 @@ namespace FIFE
  *  @param zipTree the ZipTree to output
  *  @return os output stream to allow for chaining
  */
-std::ostream& operator<<(std::ostream& os, const FIFE::ZipTree& zipTree);
+std::ostream& operator<<(std::ostream& os, FIFE::ZipTree const & zipTree);
 
 #endif

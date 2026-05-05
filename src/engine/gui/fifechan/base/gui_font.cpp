@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "gui_font.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -8,14 +11,9 @@
 #include <fifechan.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "gui_font.h"
 
 namespace FIFE
 {
@@ -29,12 +27,12 @@ namespace FIFE
         delete m_font;
     }
 
-    int32_t GuiFont::getStringIndexAt(const std::string& text, int32_t x) const
+    int32_t GuiFont::getStringIndexAt(std::string const & text, int32_t x) const
     {
         return m_font->getStringIndexAt(text, x);
     }
 
-    void GuiFont::drawString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
+    void GuiFont::drawString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y)
     {
         if (text.empty()) {
             return;
@@ -42,7 +40,7 @@ namespace FIFE
 
         int32_t const yoffset = getRowSpacing() / 2;
 
-        const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+        fcn::ClipRectangle const & clip = graphics->getCurrentClipArea();
         FIFE::Rect rect;
         rect.x = x + clip.xOffset;
         rect.y = y + clip.yOffset + yoffset;
@@ -65,19 +63,19 @@ namespace FIFE
         image->render(rect);
     }
 
-    void GuiFont::drawMultiLineString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
+    void GuiFont::drawMultiLineString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y)
     {
         if (text.empty()) {
             return;
         }
 
-        const int32_t yoffset = getRowSpacing() / 2;
+        int32_t const yoffset = getRowSpacing() / 2;
 
-        const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+        fcn::ClipRectangle const & clip = graphics->getCurrentClipArea();
 
         Image* image = nullptr;
         if (isDynamicColoring()) {
-            const SDL_Color color = getColor();
+            SDL_Color const color = getColor();
             setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
             image = getAsImageMultiline(text);
             setColor(color.r, color.g, color.b, color.a);
@@ -176,17 +174,17 @@ namespace FIFE
         return m_font->isDynamicColoring();
     }
 
-    Image* GuiFont::getAsImage(const std::string& text)
+    Image* GuiFont::getAsImage(std::string const & text)
     {
         return m_font->getAsImage(text);
     }
 
-    Image* GuiFont::getAsImageMultiline(const std::string& text)
+    Image* GuiFont::getAsImageMultiline(std::string const & text)
     {
         return m_font->getAsImageMultiline(text);
     }
 
-    std::string GuiFont::splitTextToWidth(const std::string& text, int32_t render_width)
+    std::string GuiFont::splitTextToWidth(std::string const & text, int32_t render_width)
     {
         return m_font->splitTextToWidth(text, render_width);
     }
@@ -201,7 +199,7 @@ namespace FIFE
         return m_font->getColor();
     }
 
-    int32_t GuiFont::getWidth(const std::string& text) const
+    int32_t GuiFont::getWidth(std::string const & text) const
     {
         return m_font->getWidth(text);
     }

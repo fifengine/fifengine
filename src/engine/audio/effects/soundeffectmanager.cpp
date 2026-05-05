@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundeffectmanager.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <map>
@@ -12,16 +15,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/soundemitter.h"
+#include "soundeffect.h"
+#include "soundfilter.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "soundeffect.h"
-#include "soundeffectmanager.h"
-#include "soundfilter.h"
 
 namespace FIFE
 {
@@ -539,14 +537,14 @@ namespace FIFE
         }
     }
 
-    void SoundEffectManager::activateFilter(const SoundFilter* filter, const SoundEmitter* emitter)
+    void SoundEffectManager::activateFilter(SoundFilter const * filter, SoundEmitter const * emitter)
     {
         if (filter->isEnabled()) {
             alSourcei(emitter->getSource(), AL_DIRECT_FILTER, filter->getFilterId());
         }
     }
 
-    void SoundEffectManager::deactivateFilter(const SoundFilter* filter, const SoundEmitter* emitter)
+    void SoundEffectManager::deactivateFilter(SoundFilter const * filter, SoundEmitter const * emitter)
     {
         if (filter->isEnabled()) {
             alSourcei(emitter->getSource(), AL_DIRECT_FILTER, AL_FILTER_NULL);

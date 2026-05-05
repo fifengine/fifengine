@@ -26,14 +26,14 @@ namespace FIFE
      */
     class /*FIFE_API*/ GuiImageLoader : public fcn::ImageLoader
     {
-    public:
-        GuiImageLoader();
-        virtual ~GuiImageLoader();
-        virtual fcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
+        public:
+            GuiImageLoader();
+            virtual ~GuiImageLoader();
+            virtual fcn::Image* load(std::string const & filename, bool convertToDisplayFormat = true);
 
-    private:
-        AtlasBook* m_atlasbook;
-        std::vector<ImagePtr> m_atlases;
+        private:
+            AtlasBook* m_atlasbook;
+            std::vector<ImagePtr> m_atlases;
     };
 
 } // namespace FIFE

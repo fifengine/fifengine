@@ -8,8 +8,9 @@
 #include "platform.h"
 
 // Standard C++ library includes
-#include "util/base/fife_stdint.h"
 #include <string>
+
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 
@@ -24,18 +25,18 @@ namespace FIFE
      */
     class /*FIFE_API*/ SubImageFont : public ImageFontBase
     {
-    public:
-        /**
-         * Constructor.
-         *
-         * @param filename the filename of the Image Font.
-         * @param glyphs the glyphs for Fifechan format.
-         */
-        SubImageFont(const std::string& filename, const std::string& glyphs);
-        ~SubImageFont() override = default;
+        public:
+            /**
+             * Constructor.
+             *
+             * @param filename the filename of the Image Font.
+             * @param glyphs the glyphs for Fifechan format.
+             */
+            SubImageFont(std::string const & filename, std::string const & glyphs);
+            ~SubImageFont() override = default;
 
-    private:
-        SDL_Color m_colorkey;
+        private:
+            SDL_Color m_colorkey;
     };
 
 } // namespace FIFE

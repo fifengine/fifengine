@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundclip.h"
+
 // Standard C++ library includes
 
 #if defined(_WIN32) && !defined(FIFE_EXPORTING)
@@ -20,14 +23,9 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "loaders/native/audio/ogg_loader.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "soundclip.h"
 
 namespace FIFE
 {
@@ -37,19 +35,19 @@ namespace FIFE
 
     namespace
     {
-        [[nodiscard]] ALsizei toOpenALSize(const uint64_t value)
+        [[nodiscard]] ALsizei toOpenALSize(uint64_t const value)
         {
             assert(value <= static_cast<uint64_t>(std::numeric_limits<ALsizei>::max()));
             return static_cast<ALsizei>(value);
         }
 
-        [[nodiscard]] uint32_t toStreamId(const std::size_t value)
+        [[nodiscard]] uint32_t toStreamId(std::size_t const value)
         {
             assert(value <= static_cast<std::size_t>(std::numeric_limits<uint32_t>::max()));
             return static_cast<uint32_t>(value);
         }
 
-        [[nodiscard]] double bytesPerSampleFrame(const SoundDecoder* decoder)
+        [[nodiscard]] double bytesPerSampleFrame(SoundDecoder const * decoder)
         {
             return (static_cast<double>(decoder->getBitResolution()) / 8.0) * (decoder->isStereo() ? 2.0 : 1.0);
         }
@@ -60,7 +58,7 @@ namespace FIFE
     {
     }
 
-    SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
+    SoundClip::SoundClip(std::string const & name, IResourceLoader* loader) :
         IResource(name, loader), m_isStream(false), m_decoder(nullptr), m_deleteDecoder(false)
     {
     }
@@ -231,7 +229,7 @@ namespace FIFE
 
     float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const
     {
-        const uint64_t pos = m_buffervec.at(streamid)->deccursor;
+        uint64_t const pos = m_buffervec.at(streamid)->deccursor;
         switch (type) {
         case SD_BYTE_POS:
             return static_cast<float>(pos);
@@ -247,9 +245,9 @@ namespace FIFE
 
     void SoundClip::acquireStream(uint32_t streamid)
     {
-        const SoundBufferEntry* ptr = m_buffervec.at(streamid);
+        SoundBufferEntry const * ptr = m_buffervec.at(streamid);
 
-        const bool reachedEOF = std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
+        bool const reachedEOF = std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
             return getStream(streamid, buffer);
         });
         (void)reachedEOF;
@@ -333,12 +331,12 @@ namespace FIFE
     {
         // automated counting for name generation, in case the user doesn't provide a name
         static uint32_t uniqueNumber      = 0;
-        static const std::string baseName = "soundclip";
+        static std::string const baseName = "soundclip";
 
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
 
-        const std::string name = oss.str();
+        std::string const name = oss.str();
         ++uniqueNumber;
 
         return name;

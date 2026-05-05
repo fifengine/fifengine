@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "logger.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <fstream>
@@ -9,22 +12,18 @@
 #include <string>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "logger.h"
 #include "modules.h"
 #include "util/base/exception.h"
 
 // define the module info relationships structure here, begin
 struct ModuleInfo
 {
-    logmodule_t module;
-    logmodule_t parent;
-    std::string name;
+        logmodule_t module;
+        logmodule_t parent;
+        std::string name;
 };
 
 static ModuleInfo moduleInfos[] = {
@@ -64,14 +63,16 @@ namespace FIFE
 {
     // `m_instance` is now inline-initialized in the header.
 
-    Logger::Logger(logmodule_t module) : m_module(module) { }
+    Logger::Logger(logmodule_t module) : m_module(module)
+    {
+    }
 
-    void Logger::log(LogManager::LogLevel level, const std::string& msg)
+    void Logger::log(LogManager::LogLevel level, std::string const & msg)
     {
         LogManager::instance()->log(level, m_module, msg);
     }
 
-    void Logger::log(LogManager::LogLevel level, const LMsg& msg)
+    void Logger::log(LogManager::LogLevel level, LMsg const & msg)
     {
         LogManager::instance()->log(level, m_module, msg.str);
     }
@@ -89,7 +90,7 @@ namespace FIFE
         delete m_instance;
     }
 
-    void LogManager::log(LogLevel level, logmodule_t module, const std::string& msg)
+    void LogManager::log(LogLevel level, logmodule_t module, std::string const & msg)
     {
         if (level < m_level) {
             return;
@@ -241,7 +242,7 @@ namespace FIFE
         }
     }
 
-    const std::string& LogManager::getModuleName(logmodule_t module)
+    std::string const & LogManager::getModuleName(logmodule_t module)
     {
         return moduleInfos[module].name;
     }

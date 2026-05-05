@@ -93,12 +93,32 @@
       }
     },
     {
+      "name": "compiler-gcc14-static-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-14",
+        "CMAKE_CXX_COMPILER": "g++-14",
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
       "name": "compiler-gcc15-linux",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc-15",
         "CMAKE_CXX_COMPILER": "g++-15"
       }
+    },
+    {
+      "name": "gcc14-x64-linux-static",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc14-static-linux"
+      ]
     },
     {
       "name": "gcc15-x64-linux",
@@ -279,11 +299,39 @@
       }
     },
     {
+      "name": "compiler-clang18-static-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-18",
+        "CMAKE_CXX_COMPILER": "clang++-18",
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
       "name": "clang22-x64-linux",
       "hidden": true,
       "inherits": [
         "clang-x64-linux-base",
         "compiler-clang22-linux"
+      ]
+    },
+    {
+      "name": "clang22-x64-linux-cov",
+      "hidden": true,
+      "inherits": [
+        "clang22-x64-linux",
+        "coverage-using-clang"
+      ]
+    },
+{
+      "name": "clang18-x64-linux-static",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang18-static-linux"
       ]
     },
     {

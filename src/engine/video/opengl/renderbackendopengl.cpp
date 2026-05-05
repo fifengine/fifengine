@@ -14,15 +14,15 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
+#include <SDL3_image/SDL_image.h>
+
+#include "glimage.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "video/devicecaps.h"
-
-#include "SDL_image.h"
-#include "glimage.h"
 
 namespace FIFE
 {
@@ -96,44 +96,44 @@ namespace FIFE
 
     class RenderBackendOpenGL::RenderObject
     {
-    public:
-        RenderObject(GLenum m, uint16_t s, uint32_t t1 = 0, uint32_t t2 = 0) :
-            mode(m),
-            texture_id(t1),
-            overlay_id(t2),
-            src(4),
-            dst(5),
-            overlay_type(OVERLAY_TYPE_NONE),
-            stencil_op(0),
-            stencil_func(0),
-            size(s),
-            stencil_ref(0),
-            light(true),
-            stencil_test(false),
-            color(true),
-            rgba{0}
+        public:
+            RenderObject(GLenum m, uint16_t s, uint32_t t1 = 0, uint32_t t2 = 0) :
+                mode(m),
+                texture_id(t1),
+                overlay_id(t2),
+                src(4),
+                dst(5),
+                overlay_type(OVERLAY_TYPE_NONE),
+                stencil_op(0),
+                stencil_func(0),
+                size(s),
+                stencil_ref(0),
+                light(true),
+                stencil_test(false),
+                color(true),
+                rgba{0}
 
-        {
-        }
+            {
+            }
 
-        GLenum mode;
-        uint32_t texture_id;
-        uint32_t overlay_id;
-        int32_t src;
-        int32_t dst;
-        OverlayType overlay_type;
-        GLenum stencil_op;
-        GLenum stencil_func;
-        uint16_t size;
-        uint8_t stencil_ref;
-        bool light;
-        bool stencil_test;
-        bool color;
-        uint8_t rgba[4];
-        uint8_t reserved[2]{0, 0};
+            GLenum mode;
+            uint32_t texture_id;
+            uint32_t overlay_id;
+            int32_t src;
+            int32_t dst;
+            OverlayType overlay_type;
+            GLenum stencil_op;
+            GLenum stencil_func;
+            uint16_t size;
+            uint8_t stencil_ref;
+            bool light;
+            bool stencil_test;
+            bool color;
+            uint8_t rgba[4];
+            uint8_t reserved[2]{0, 0};
     };
 
-    RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) :
+    RenderBackendOpenGL::RenderBackendOpenGL(SDL_Color const & colorkey) :
         RenderBackend(colorkey),
         m_maskOverlay(0),
         m_state{},
@@ -188,27 +188,25 @@ namespace FIFE
         if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
             glDeleteFramebuffers(1, &m_fbo_id);
         }
-        SDL_GL_DeleteContext(m_context);
+        SDL_GL_DestroyContext(m_context);
         SDL_DestroyWindow(m_window);
         deinit();
     }
 
-    const std::string& RenderBackendOpenGL::getName() const
+    std::string const & RenderBackendOpenGL::getName() const
     {
         static std::string const backend_name = "OpenGL";
         return backend_name;
     }
 
-    void RenderBackendOpenGL::init(const std::string& driver)
+    void RenderBackendOpenGL::init(std::string const & driver)
     {
         Uint32 const flags = SDL_INIT_VIDEO;
-        if (SDL_InitSubSystem(flags) < 0) {
+        if (!SDL_InitSubSystem(flags)) {
             throw SDLException(SDL_GetError());
         }
         if (!driver.empty()) {
-            if (SDL_VideoInit(driver.c_str()) < 0) {
-                throw SDLException(SDL_GetError());
-            }
+            SDL_SetHint(SDL_HINT_VIDEO_DRIVER, driver.c_str());
         }
 
         // setup OpenGL
@@ -234,7 +232,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::createMainScreen(
-        const ScreenMode& mode, const std::string& title, const std::string& icon)
+        ScreenMode const & mode, std::string const & title, std::string const & icon)
     {
         setScreenMode(mode);
         if (m_window != nullptr) {
@@ -242,14 +240,14 @@ namespace FIFE
                 SDL_Surface* img = IMG_Load(icon.c_str());
                 if (img != nullptr) {
                     SDL_SetWindowIcon(m_window, img);
-                    SDL_FreeSurface(img);
+                    SDL_DestroySurface(img);
                 }
             }
             SDL_SetWindowTitle(m_window, title.c_str());
         }
     }
 
-    void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode)
+    void RenderBackendOpenGL::setScreenMode(ScreenMode const & mode)
     {
         bool const recreate         = m_window != nullptr;
         uint16_t const width        = mode.getWidth();
@@ -271,7 +269,9 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        int const displayCount      = SDL_GetNumVideoDisplays();
+        int displayCount            = 0;
+        SDL_DisplayID* displays     = SDL_GetDisplays(&displayCount);
+        SDL_DisplayID displayId     = (displayIndex < displayCount) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
         uint16_t createHeight       = height;
@@ -287,7 +287,7 @@ namespace FIFE
             yPos = toDisplayWindowPos(displayIndex, false);
         } else {
             SDL_Rect displayBounds;
-            if (SDL_GetDisplayBounds(displayIndex, &displayBounds) != 0) {
+            if (SDL_GetDisplayBounds(displayId, &displayBounds) != 0) {
                 throw SDLException(SDL_GetError());
             }
 
@@ -315,42 +315,48 @@ namespace FIFE
                 yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
             }
         }
+        SDL_free(displays);
 
         if (mode.isFullScreen() && !pseudoFullscreen) {
-            m_window = SDL_CreateWindow(
-                "",
-                toDisplayWindowPos(displayIndex, false),
-                toDisplayWindowPos(displayIndex, false),
-                createWidth,
-                createHeight,
-                flags | SDL_WINDOW_SHOWN);
+            m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
         } else {
-            m_window = SDL_CreateWindow("", xPos, yPos, createWidth, createHeight, flags | SDL_WINDOW_SHOWN);
+            m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
         }
 
         if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
         }
+
+        // Set window position if not fullscreen
+        if (!mode.isFullScreen() || pseudoFullscreen) {
+            SDL_SetWindowPosition(m_window, xPos, yPos);
+        } else {
+            SDL_SetWindowPosition(
+                m_window, toDisplayWindowPos(displayIndex, false), toDisplayWindowPos(displayIndex, false));
+        }
         // make sure the window have the right settings
         SDL_DisplayMode displayMode;
-        displayMode.format       = mode.getFormat();
+        SDL_zero(displayMode);
+        displayMode.format       = static_cast<SDL_PixelFormat>(mode.getFormat());
         displayMode.w            = createWidth;
         displayMode.h            = createHeight;
-        displayMode.refresh_rate = mode.getRefreshRate();
-        if (SDL_SetWindowDisplayMode(m_window, &displayMode) != 0) {
+        displayMode.refresh_rate = static_cast<float>(mode.getRefreshRate());
+        if (mode.isFullScreen() && SDL_SetWindowFullscreenMode(m_window, &displayMode) != 0) {
             throw SDLException(SDL_GetError());
         }
 
         // create render context or use the old with new window
         if (recreate) {
-            if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
+            if (!SDL_GL_MakeCurrent(m_window, m_context)) {
                 throw SDLException(SDL_GetError());
             }
         } else {
             m_context = SDL_GL_CreateContext(m_window);
         }
         // set the window surface as main surface, not really needed anymore
-        m_screen = SDL_GetWindowSurface(m_window);
+        // For OpenGL windows, SDL_GetWindowSurface returns NULL in SDL3
+        // Create a dummy surface to maintain compatibility with existing code
+        m_screen = SDL_CreateSurface(createWidth, createHeight, SDL_PIXELFORMAT_RGBA8888);
         m_target = m_screen;
         if (m_screen == nullptr) {
             throw SDLException(SDL_GetError());
@@ -370,18 +376,11 @@ namespace FIFE
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
         // our texture generation. 32 bit surfaces to BitsPerPixel texturen.
-        m_rgba_format = *(m_screen->format);
         if (bitsPerPixel != 16) {
-            m_rgba_format.format       = SDL_PIXELFORMAT_RGBA8888;
-            m_rgba_format.BitsPerPixel = 32;
+            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA8888);
         } else {
-            m_rgba_format.format       = SDL_PIXELFORMAT_RGBA4444;
-            m_rgba_format.BitsPerPixel = 16;
+            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA4444);
         }
-        m_rgba_format.Rmask = RMASK;
-        m_rgba_format.Gmask = GMASK;
-        m_rgba_format.Bmask = BMASK;
-        m_rgba_format.Amask = AMASK;
 
         // update the screen mode with the actual flags used
         m_screenMode = mode;
@@ -389,10 +388,10 @@ namespace FIFE
         glViewport(0, 0, toGLsizei(width), toGLsizei(height));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        const GLdouble left   = 0.0;
-        const GLdouble right  = static_cast<GLdouble>(width);
-        const GLdouble bottom = static_cast<GLdouble>(height);
-        const GLdouble top    = 0.0;
+        GLdouble const left   = 0.0;
+        GLdouble const right  = static_cast<GLdouble>(width);
+        GLdouble const bottom = static_cast<GLdouble>(height);
+        GLdouble const top    = 0.0;
         glOrtho(left, right, bottom, top, -100.0, 100.0);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -490,7 +489,7 @@ namespace FIFE
         return new GLImage(loader);
     }
 
-    Image* RenderBackendOpenGL::createImage(const std::string& name, IResourceLoader* loader)
+    Image* RenderBackendOpenGL::createImage(std::string const & name, IResourceLoader* loader)
     {
         return new GLImage(name, loader);
     }
@@ -500,66 +499,40 @@ namespace FIFE
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // It's easiest to let SDL do this for us.
 
-        // Uh. Gotta love this :-)
-        // Check for colorkey too?
-        // Leave out the loss/shift checks?
-        if (32 == surface->format->BitsPerPixel && m_rgba_format.Rmask == surface->format->Rmask &&
-            m_rgba_format.Gmask == surface->format->Gmask && m_rgba_format.Bmask == surface->format->Bmask &&
-            m_rgba_format.Amask == surface->format->Amask && m_rgba_format.Rshift == surface->format->Rshift &&
-            m_rgba_format.Gshift == surface->format->Gshift && m_rgba_format.Bshift == surface->format->Bshift &&
-            m_rgba_format.Ashift == surface->format->Ashift && m_rgba_format.Rloss == surface->format->Rloss &&
-            m_rgba_format.Gloss == surface->format->Gloss && m_rgba_format.Bloss == surface->format->Bloss &&
-            m_rgba_format.Aloss == surface->format->Aloss) {
-
+        if (surface->format == m_rgba_format.format) {
             return new GLImage(surface);
         }
 
-        uint8_t const bpp          = m_rgba_format.BitsPerPixel;
-        m_rgba_format.BitsPerPixel = 32;
-        SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
-        m_rgba_format.BitsPerPixel = bpp;
-        auto* image                = new GLImage(conv);
+        SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+        auto* image       = new GLImage(conv);
 
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendOpenGL::createImage(const std::string& name, SDL_Surface* surface)
+    Image* RenderBackendOpenGL::createImage(std::string const & name, SDL_Surface* surface)
     {
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // It's easiest to let SDL do this for us.
 
-        // Uh. Gotta love this :-)
-        // Check for colorkey too?
-        // Leave out the loss/shift checks?
-        if (32 == surface->format->BitsPerPixel && m_rgba_format.Rmask == surface->format->Rmask &&
-            m_rgba_format.Gmask == surface->format->Gmask && m_rgba_format.Bmask == surface->format->Bmask &&
-            m_rgba_format.Amask == surface->format->Amask && m_rgba_format.Rshift == surface->format->Rshift &&
-            m_rgba_format.Gshift == surface->format->Gshift && m_rgba_format.Bshift == surface->format->Bshift &&
-            m_rgba_format.Ashift == surface->format->Ashift && m_rgba_format.Rloss == surface->format->Rloss &&
-            m_rgba_format.Gloss == surface->format->Gloss && m_rgba_format.Bloss == surface->format->Bloss &&
-            m_rgba_format.Aloss == surface->format->Aloss) {
-
+        if (surface->format == m_rgba_format.format) {
             return new GLImage(name, surface);
         }
 
-        uint8_t const bpp          = m_rgba_format.BitsPerPixel;
-        m_rgba_format.BitsPerPixel = 32;
-        SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
-        m_rgba_format.BitsPerPixel = bpp;
-        auto* image                = new GLImage(name, conv);
+        SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+        auto* image       = new GLImage(name, conv);
 
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendOpenGL::createImage(const uint8_t* data, uint32_t width, uint32_t height)
+    Image* RenderBackendOpenGL::createImage(uint8_t const * data, uint32_t width, uint32_t height)
     {
         return new GLImage(data, width, height);
     }
 
     Image* RenderBackendOpenGL::createImage(
-        const std::string& name, const uint8_t* data, uint32_t width, uint32_t height)
+        std::string const & name, uint8_t const * data, uint32_t width, uint32_t height)
     {
         return new GLImage(name, data, width, height);
     }
@@ -783,7 +756,7 @@ namespace FIFE
         }
     }
 
-    void RenderBackendOpenGL::setEnvironmentalColor(uint32_t texUnit, const uint8_t* rgba)
+    void RenderBackendOpenGL::setEnvironmentalColor(uint32_t texUnit, uint8_t const * rgba)
     {
         if ((memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4) != 0) || m_state.active_tex != texUnit) {
 
@@ -805,7 +778,7 @@ namespace FIFE
         }
     }
 
-    void RenderBackendOpenGL::setVertexPointer(GLint size, GLsizei stride, const GLvoid* ptr)
+    void RenderBackendOpenGL::setVertexPointer(GLint size, GLsizei stride, GLvoid const * ptr)
     {
         if (m_state.vertex_pointer != ptr || m_state.vertex_pointer_size != size) {
             m_state.vertex_pointer      = ptr;
@@ -814,7 +787,7 @@ namespace FIFE
         }
     }
 
-    void RenderBackendOpenGL::setColorPointer(GLsizei stride, const GLvoid* ptr)
+    void RenderBackendOpenGL::setColorPointer(GLsizei stride, GLvoid const * ptr)
     {
         if (m_state.color_pointer != ptr) {
             m_state.color_pointer = ptr;
@@ -822,7 +795,7 @@ namespace FIFE
         }
     }
 
-    void RenderBackendOpenGL::setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr)
+    void RenderBackendOpenGL::setTexCoordPointer(uint32_t texUnit, GLsizei stride, GLvoid const * ptr)
     {
         if (m_state.tex_pointer[texUnit] != ptr) {
             if (m_state.active_tex != texUnit) {
@@ -944,7 +917,7 @@ namespace FIFE
         uint16_t count = 0;
         switch (type) {
         case RENDER_DATA_WITHOUT_Z: {
-            const std::size_t size = m_renderObjects.size();
+            std::size_t const size = m_renderObjects.size();
             while (count != elements) {
                 ++count;
                 RenderObject& r = m_renderObjects.at(size - count);
@@ -966,7 +939,7 @@ namespace FIFE
             // not needed currently
         } break;
         case RENDER_DATA_MULTITEXTURE_Z: {
-            const std::size_t size = m_renderMultitextureObjectsZ.size();
+            std::size_t const size = m_renderMultitextureObjectsZ.size();
             while (count != elements) {
                 ++count;
                 RenderObject& r = m_renderMultitextureObjectsZ.at(size - count);
@@ -1033,10 +1006,10 @@ namespace FIFE
         uint32_t* indexBuffer = nullptr;
 
         // stride
-        const uint32_t strideP   = sizeof(renderDataP);
-        const uint32_t strideT   = sizeof(renderDataT);
-        const uint32_t strideTC  = sizeof(renderDataTC);
-        const uint32_t stride2TC = sizeof(renderData2TC);
+        uint32_t const strideP   = sizeof(renderDataP);
+        uint32_t const strideT   = sizeof(renderDataT);
+        uint32_t const strideTC  = sizeof(renderDataTC);
+        uint32_t const stride2TC = sizeof(renderData2TC);
 
         // disable alpha and depth tests
         disableAlphaTest();
@@ -1372,7 +1345,7 @@ namespace FIFE
     void RenderBackendOpenGL::renderWithZ()
     {
         // stride
-        const uint32_t stride = sizeof(renderDataZ);
+        uint32_t const stride = sizeof(renderDataZ);
 
         // set pointer
         setVertexPointer(3, stride, &m_renderTextureDatasZ[0].vertex);
@@ -1441,7 +1414,7 @@ namespace FIFE
     void RenderBackendOpenGL::renderWithZTest()
     {
         // stride
-        const uint32_t stride = sizeof(renderDataZ);
+        uint32_t const stride = sizeof(renderDataZ);
 
         // set pointer
         setVertexPointer(3, stride, &m_renderZ_datas[0].vertex);
@@ -1471,7 +1444,7 @@ namespace FIFE
     void RenderBackendOpenGL::renderWithColorAndZ()
     {
         // stride
-        const uint32_t stride = sizeof(renderDataColorZ);
+        uint32_t const stride = sizeof(renderDataColorZ);
 
         // set pointer
         setVertexPointer(3, stride, &m_renderTextureColorDatasZ[0].vertex);
@@ -1546,7 +1519,7 @@ namespace FIFE
         bool mt      = false;
 
         // stride
-        const uint32_t stride = sizeof(renderData2TCZ);
+        uint32_t const stride = sizeof(renderData2TCZ);
 
         // set pointer
         setVertexPointer(3, stride, &m_renderMultitextureDatasZ[0].vertex);
@@ -1728,7 +1701,7 @@ namespace FIFE
         return true;
     }
 
-    void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderBackendOpenGL::drawLine(Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p1.x) + 0.375F;
@@ -1751,11 +1724,11 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawThickLine(
-        const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p1, Point const & p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        const float xDiff = static_cast<float>(p2.x - p1.x);
-        const float yDiff = static_cast<float>(p2.y - p1.y);
-        const float halfW = static_cast<float>(width) / 2.0F;
+        float const xDiff = static_cast<float>(p2.x - p1.x);
+        float const yDiff = static_cast<float>(p2.y - p1.y);
+        float const halfW = static_cast<float>(width) / 2.0F;
         float angle       = (Mathf::ATan2(yDiff, xDiff) * (180.0F / Mathf::pi())) + 90.0F;
         if (angle < 0.0F) {
             angle += 360.0F;
@@ -1763,8 +1736,8 @@ namespace FIFE
             angle -= 360.0F;
         }
         angle *= Mathf::pi() / 180.0F;
-        const float cornerX = halfW * Mathf::Cos(angle);
-        const float cornerY = halfW * Mathf::Sin(angle);
+        float const cornerX = halfW * Mathf::Cos(angle);
+        float const cornerY = halfW * Mathf::Sin(angle);
 
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
@@ -1793,14 +1766,14 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawPolyLine(
-        const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::vector<Point> const & points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         if (points.size() < 2) {
             return;
         }
         auto it = points.begin();
         if (width > 1) {
-            const uint32_t capRadius = static_cast<uint32_t>(width / 2U);
+            uint32_t const capRadius = static_cast<uint32_t>(width / 2U);
             Point old                = *it;
             ++it;
             for (; it != points.end(); ++it) {
@@ -1827,22 +1800,22 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawBezier(
-        const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::vector<Point> const & points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         if (points.size() < 2) {
             return;
         }
-        const int32_t elements = toInt32Dimension(static_cast<uint32_t>(points.size()));
+        int32_t const elements = toInt32Dimension(static_cast<uint32_t>(points.size()));
         if (elements < 3 || steps < 2) {
             return;
         }
 
         bool const thick = width > 1;
-        const float step = 1.0F / static_cast<float>(steps - 1);
+        float const step = 1.0F / static_cast<float>(steps - 1);
         float t          = 0.0F;
         Point old        = getBezierPoint(points, elements + 1, t);
         if (thick) {
-            const uint32_t capRadius = static_cast<uint32_t>(width / 2U);
+            uint32_t const capRadius = static_cast<uint32_t>(width / 2U);
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
                 Point const next = getBezierPoint(points, elements, t);
@@ -1872,7 +1845,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawTriangle(
-        const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p1.x);
@@ -1900,7 +1873,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawRectangle(
-        const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p.x);
@@ -1929,7 +1902,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::fillRectangle(
-        const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p.x);
@@ -1958,7 +1931,14 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawQuad(
-        const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p1,
+        Point const & p2,
+        Point const & p3,
+        Point const & p4,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p1.x);
@@ -1989,7 +1969,8 @@ namespace FIFE
         m_renderObjects.push_back(ro);
     }
 
-    void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderBackendOpenGL::drawVertex(
+        Point const & p, uint8_t const size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
         rd.vertex[0] = static_cast<float>(p.x - size);
@@ -2017,13 +1998,13 @@ namespace FIFE
         m_renderObjects.push_back(ro);
     }
 
-    void RenderBackendOpenGL::drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderBackendOpenGL::drawCircle(Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(round(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        const float radiusF  = static_cast<float>(radius);
-        const float step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float const radiusF  = static_cast<float>(radius);
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         float angle          = 0.0F;
 
         renderDataP rd{};
@@ -2044,13 +2025,13 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawFillCircle(
-        const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(round(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        const float radiusF  = static_cast<float>(radius);
-        const float step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float const radiusF  = static_cast<float>(radius);
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         float angle          = Mathf::twoPi();
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
@@ -2079,10 +2060,10 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawCircleSegment(
-        const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        const float radiusF = static_cast<float>(radius);
-        const float step    = Mathf::twoPi() / 360.0F;
+        float const radiusF = static_cast<float>(radius);
+        float const step    = Mathf::twoPi() / 360.0F;
         int32_t elements    = 0;
         int32_t s           = (sangle + 360) % 360;
         int32_t e           = (eangle + 360) % 360;
@@ -2111,10 +2092,10 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawFillCircleSegment(
-        const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        const float radiusF = static_cast<float>(radius);
-        const float step    = Mathf::twoPi() / 360.0F;
+        float const radiusF = static_cast<float>(radius);
+        float const step    = Mathf::twoPi() / 360.0F;
         int32_t s           = (sangle + 360) % 360;
         int32_t e           = (eangle + 360) % 360;
         if (e == 0) {
@@ -2153,7 +2134,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::drawLightPrimitive(
-        const Point& p,
+        Point const & p,
         uint8_t intensity,
         float radius,
         int32_t subdivisions,
@@ -2163,7 +2144,7 @@ namespace FIFE
         uint8_t green,
         uint8_t blue)
     {
-        const float step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         uint32_t elements    = 0;
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
@@ -2197,7 +2178,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::addImageToArray(
-        uint32_t id, const Rect& rect, float const * st, uint8_t alpha, uint8_t const * rgba)
+        uint32_t id, Rect const & rect, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
         RenderObject ro(GL_TRIANGLES, 6, id);
 
@@ -2312,7 +2293,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::addImageToArray(
-        const Rect& rect,
+        Rect const & rect,
         uint32_t id1,
         float const * st1,
         uint32_t id2,
@@ -2392,7 +2373,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::addImageToArrayZ(
-        uint32_t id, const Rect& rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
+        uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
         // texture quad without alpha and coloring
         if (alpha == 255 && (rgba == nullptr)) {
@@ -2535,7 +2516,7 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::addImageToArrayZ(
-        const Rect& rect,
+        Rect const & rect,
         float vertexZ,
         uint32_t id1,
         float const * st1,
@@ -2704,14 +2685,14 @@ namespace FIFE
         // glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    void RenderBackendOpenGL::captureScreen(const std::string& filename)
+    void RenderBackendOpenGL::captureScreen(std::string const & filename)
     {
-        const uint32_t swidth  = getWidth();
-        const uint32_t sheight = getHeight();
+        uint32_t const swidth  = getWidth();
+        uint32_t const sheight = getHeight();
 
-        uint8_t* pixels      = nullptr;
-        SDL_Surface* surface = SDL_CreateRGBSurface(
-            0, toInt32Dimension(swidth), toInt32Dimension(sheight), 24, RMASK, GMASK, BMASK, NULLMASK);
+        uint8_t* pixels = nullptr;
+        SDL_Surface* surface =
+            SDL_CreateSurface(toInt32Dimension(swidth), toInt32Dimension(sheight), SDL_PIXELFORMAT_RGB24);
 
         if (surface == nullptr) {
             return;
@@ -2735,15 +2716,15 @@ namespace FIFE
         SDL_UnlockSurface(surface);
         Image::saveAsPng(filename, *surface);
 
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
         delete[] pixels;
     }
 
-    void RenderBackendOpenGL::captureScreen(const std::string& filename, uint32_t width, uint32_t height)
+    void RenderBackendOpenGL::captureScreen(std::string const & filename, uint32_t width, uint32_t height)
     {
-        const uint32_t swidth  = getWidth();
-        const uint32_t sheight = getHeight();
-        const bool same_size   = (width == swidth && height == sheight);
+        uint32_t const swidth  = getWidth();
+        uint32_t const sheight = getHeight();
+        bool const same_size   = (width == swidth && height == sheight);
 
         if (width < 1 || height < 1) {
             return;
@@ -2756,8 +2737,8 @@ namespace FIFE
 
         uint8_t* pixels = nullptr;
         // create source surface
-        SDL_Surface* src = SDL_CreateRGBSurface(
-            0, toInt32Dimension(swidth), toInt32Dimension(sheight), 32, RMASK, GMASK, BMASK, AMASK);
+        SDL_Surface* src =
+            SDL_CreateSurface(toInt32Dimension(swidth), toInt32Dimension(sheight), SDL_PIXELFORMAT_RGBA8888);
 
         if (src == nullptr) {
             return;
@@ -2783,7 +2764,7 @@ namespace FIFE
 
         // create destination surface
         SDL_Surface* dst =
-            SDL_CreateRGBSurface(0, toInt32Dimension(width), toInt32Dimension(height), 32, RMASK, GMASK, BMASK, AMASK);
+            SDL_CreateSurface(toInt32Dimension(width), toInt32Dimension(height), SDL_PIXELFORMAT_RGBA8888);
 
         auto* src_pointer          = static_cast<uint32_t*>(src->pixels);
         uint32_t* src_help_pointer = src_pointer;
@@ -2835,7 +2816,7 @@ namespace FIFE
             }
             sy_ca++;
             auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
-            const size_t srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
+            size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
             src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
         }
 
@@ -2849,14 +2830,14 @@ namespace FIFE
         Image::saveAsPng(filename, *dst);
 
         // Free memory
-        SDL_FreeSurface(src);
-        SDL_FreeSurface(dst);
+        SDL_DestroySurface(src);
+        SDL_DestroySurface(dst);
         delete[] sx_a;
         delete[] sy_a;
         delete[] pixels;
     }
 
-    void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear)
+    void RenderBackendOpenGL::setClipArea(Rect const & cliparea, bool clear)
     {
         glScissor(
             cliparea.x,
@@ -2970,9 +2951,9 @@ namespace FIFE
     }
 
     void RenderBackendOpenGL::renderGuiGeometry(
-        const std::vector<GuiVertex>& vertices,
-        const std::vector<int>& indices,
-        const DoublePoint& translation,
+        std::vector<GuiVertex> const & vertices,
+        std::vector<int> const & indices,
+        DoublePoint const & translation,
         ImagePtr texture)
     {
 

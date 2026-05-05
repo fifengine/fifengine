@@ -1,45 +1,46 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "imagefontbase.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
 
 // 3rd party library includes
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+
 #include <utf8.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
-#include "imagefontbase.h"
-
 namespace FIFE
 {
 
-    ImageFontBase::ImageFontBase() : m_placeholder(), m_height(0) { }
+    ImageFontBase::ImageFontBase() : m_placeholder(), m_height(0)
+    {
+    }
 
     ImageFontBase::~ImageFontBase()
     {
         auto i = m_glyphs.begin();
         for (; i != m_glyphs.end(); ++i) {
-            SDL_FreeSurface(i->second.surface);
+            SDL_DestroySurface(i->second.surface);
         }
     }
 
-    int32_t ImageFontBase::getWidth(const std::string& text) const
+    int32_t ImageFontBase::getWidth(std::string const & text) const
     {
         int32_t w                           = 0;
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
-            const uint32_t codepoint = utf8::next(text_it, text.end());
+            uint32_t const codepoint = utf8::next(text_it, text.end());
             auto it                  = m_glyphs.find(codepoint);
 
             if (it != m_glyphs.end()) {
@@ -59,11 +60,11 @@ namespace FIFE
         return m_height;
     }
 
-    SDL_Surface* ImageFontBase::renderString(const std::string& text)
+    SDL_Surface* ImageFontBase::renderString(std::string const & text)
     {
-        SDL_Surface* surface = SDL_CreateRGBSurface(0, getWidth(text), getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
+        SDL_Surface* surface = SDL_CreateSurface(getWidth(text), getHeight(), SDL_PIXELFORMAT_RGBA8888);
 
-        SDL_FillRect(surface, nullptr, 0x00000000);
+        SDL_FillSurfaceRect(surface, nullptr, 0x00000000);
 
         SDL_Rect dst;
         dst.x = dst.y  = 0;
@@ -71,7 +72,7 @@ namespace FIFE
 
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
-            const uint32_t codepoint = utf8::next(text_it, text.end());
+            uint32_t const codepoint = utf8::next(text_it, text.end());
             auto it                  = m_glyphs.find(codepoint);
 
             if (it == m_glyphs.end()) {
@@ -92,5 +93,7 @@ namespace FIFE
         return surface;
     }
 
-    void ImageFontBase::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) { }
+    void ImageFontBase::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    {
+    }
 } // namespace FIFE

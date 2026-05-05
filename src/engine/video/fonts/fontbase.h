@@ -8,11 +8,12 @@
 #include "platform.h"
 
 // Standard C++ library includes
-#include "util/base/fife_stdint.h"
 #include <string>
 
+#include "util/base/fife_stdint.h"
+
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
 #include "ifont.h"
@@ -28,54 +29,54 @@ namespace FIFE
      */
     class /*FIFE_API*/ FontBase : public IFont
     {
-    public:
-        FontBase();
-        ~FontBase() override;
+        public:
+            FontBase();
+            ~FontBase() override;
 
-        void invalidate() override;
-        void setRowSpacing(int32_t spacing) override;
-        int32_t getRowSpacing() const override;
-        void setGlyphSpacing(int32_t spacing) override;
-        int32_t getGlyphSpacing() const override;
+            void invalidate() override;
+            void setRowSpacing(int32_t spacing) override;
+            int32_t getRowSpacing() const override;
+            void setGlyphSpacing(int32_t spacing) override;
+            int32_t getGlyphSpacing() const override;
 
-        void setAntiAlias(bool antiAlias) override;
-        bool isAntiAlias() const override;
-        void setBoldStyle(bool style) override;
-        bool isBoldStyle() const override;
-        void setItalicStyle(bool style) override;
-        bool isItalicStyle() const override;
-        void setUnderlineStyle(bool style) override;
-        bool isUnderlineStyle() const override;
-        void setStrikethroughStyle(bool style) override;
-        bool isStrikethroughStyle() const override;
+            void setAntiAlias(bool antiAlias) override;
+            bool isAntiAlias() const override;
+            void setBoldStyle(bool style) override;
+            bool isBoldStyle() const override;
+            void setItalicStyle(bool style) override;
+            bool isItalicStyle() const override;
+            void setUnderlineStyle(bool style) override;
+            bool isUnderlineStyle() const override;
+            void setStrikethroughStyle(bool style) override;
+            bool isStrikethroughStyle() const override;
 
-        void setDynamicColoring(bool coloring) override;
-        bool isDynamicColoring() const override;
+            void setDynamicColoring(bool coloring) override;
+            bool isDynamicColoring() const override;
 
-        int32_t getStringIndexAt(const std::string& text, int32_t x) const override;
+            int32_t getStringIndexAt(std::string const & text, int32_t x) const override;
 
-        Image* getAsImage(const std::string& text) override;
-        Image* getAsImageMultiline(const std::string& text) override;
-        std::string splitTextToWidth(const std::string& text, int32_t render_width) override;
+            Image* getAsImage(std::string const & text) override;
+            Image* getAsImageMultiline(std::string const & text) override;
+            std::string splitTextToWidth(std::string const & text, int32_t render_width) override;
 
-        SDL_Color getColor() const override;
+            SDL_Color getColor() const override;
 
-        virtual SDL_Surface* renderString(const std::string& text) = 0;
+            virtual SDL_Surface* renderString(std::string const & text) = 0;
 
-    protected:
-        TextRenderPool m_pool;
+        protected:
+            TextRenderPool m_pool;
 
-        SDL_Color mColor;
-        int32_t mGlyphSpacing;
-        int32_t mRowSpacing;
+            SDL_Color mColor;
+            int32_t mGlyphSpacing;
+            int32_t mRowSpacing;
 
-        std::string mFilename;
-        bool m_antiAlias;
-        bool m_boldStyle;
-        bool m_italicStyle;
-        bool m_underlineStyle;
-        bool m_strikeStyle;
-        bool m_coloring;
+            std::string mFilename;
+            bool m_antiAlias;
+            bool m_boldStyle;
+            bool m_italicStyle;
+            bool m_underlineStyle;
+            bool m_strikeStyle;
+            bool m_coloring;
     };
 
 } // namespace FIFE

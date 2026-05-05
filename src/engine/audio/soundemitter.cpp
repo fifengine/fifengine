@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundemitter.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -13,16 +16,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "soundclipmanager.h"
+#include "soundmanager.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
-
-#include "soundclipmanager.h"
-#include "soundemitter.h"
-#include "soundmanager.h"
 
 namespace FIFE
 {
@@ -30,19 +28,19 @@ namespace FIFE
 
     namespace
     {
-        [[nodiscard]] ALsizei toOpenALSize(const uint32_t value)
+        [[nodiscard]] ALsizei toOpenALSize(uint32_t const value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<ALsizei>::max()));
             return static_cast<ALsizei>(value);
         }
 
-        [[nodiscard]] uint32_t toTimestampMillis(const uint64_t value)
+        [[nodiscard]] uint32_t toTimestampMillis(uint64_t const value)
         {
             assert(value <= static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
             return static_cast<uint32_t>(value);
         }
 
-        [[nodiscard]] uint32_t toResourceHandle(const std::size_t value)
+        [[nodiscard]] uint32_t toResourceHandle(std::size_t const value)
         {
             assert(value <= static_cast<std::size_t>(std::numeric_limits<uint32_t>::max()));
             return static_cast<uint32_t>(value);
@@ -193,7 +191,7 @@ namespace FIFE
         return m_internData.relative;
     }
 
-    void SoundEmitter::setDirection(const AudioSpaceCoordinate& direction)
+    void SoundEmitter::setDirection(AudioSpaceCoordinate const & direction)
     {
         if (isActive()) {
             ALfloat const vec[3] = {
@@ -245,7 +243,7 @@ namespace FIFE
             m_manager->deactivateFilter(m_directFilter, this);
         }
         std::vector<SoundEffect*> const effects = m_effects;
-        for (const auto& effect : effects) {
+        for (auto const & effect : effects) {
             if (effect != nullptr) {
                 m_manager->removeEmitterFromSoundEffect(effect, this);
             }
@@ -292,7 +290,7 @@ namespace FIFE
         m_manager->releaseEmitter(m_emitterId);
     }
 
-    void SoundEmitter::setSoundClip(const SoundClipPtr& soundClip)
+    void SoundEmitter::setSoundClip(SoundClipPtr const & soundClip)
     {
         // equal clip
         if (m_soundClipId == soundClip->getHandle()) {
@@ -311,7 +309,7 @@ namespace FIFE
         return m_soundClip;
     }
 
-    void SoundEmitter::setSoundClip(const std::string& name)
+    void SoundEmitter::setSoundClip(std::string const & name)
     {
         SoundClipPtr const clip = SoundClipManager::instance()->get(name);
         setSoundClip(clip);
@@ -661,7 +659,7 @@ namespace FIFE
         return pos;
     }
 
-    void SoundEmitter::setPosition(const AudioSpaceCoordinate& position)
+    void SoundEmitter::setPosition(AudioSpaceCoordinate const & position)
     {
         if (isActive()) {
             alSource3f(
@@ -713,7 +711,7 @@ namespace FIFE
         return m_internData.maxDistance;
     }
 
-    void SoundEmitter::setVelocity(const AudioSpaceCoordinate& velocity)
+    void SoundEmitter::setVelocity(AudioSpaceCoordinate const & velocity)
     {
         if (isActive()) {
             alSource3f(
@@ -796,7 +794,7 @@ namespace FIFE
         }
     }
 
-    void SoundEmitter::setGroup(const std::string& group)
+    void SoundEmitter::setGroup(std::string const & group)
     {
         if (group != m_group) {
             if (!m_group.empty()) {
@@ -809,7 +807,7 @@ namespace FIFE
         }
     }
 
-    const std::string& SoundEmitter::getGroup()
+    std::string const & SoundEmitter::getGroup()
     {
         return m_group;
     }
@@ -898,7 +896,7 @@ namespace FIFE
     {
         bool added = false;
 
-        auto it = std::ranges::find_if(m_effects, [](const SoundEffect* e) {
+        auto it = std::ranges::find_if(m_effects, [](SoundEffect const * e) {
             return e == nullptr;
         });
         if (it != m_effects.end()) {
@@ -912,7 +910,7 @@ namespace FIFE
 
     void SoundEmitter::removeEffect(SoundEffect* effect)
     {
-        auto it = std::ranges::find_if(m_effects, [effect](const SoundEffect* e) {
+        auto it = std::ranges::find_if(m_effects, [effect](SoundEffect const * e) {
             return e == effect;
         });
         if (it != m_effects.end()) {
@@ -922,12 +920,12 @@ namespace FIFE
 
     uint8_t SoundEmitter::getEffectCount()
     {
-        return static_cast<uint8_t>(std::count_if(m_effects.begin(), m_effects.end(), [](const auto& effect) {
+        return static_cast<uint8_t>(std::count_if(m_effects.begin(), m_effects.end(), [](auto const & effect) {
             return effect != nullptr;
         }));
     }
 
-    uint8_t SoundEmitter::getEffectNumber(const SoundEffect* effect)
+    uint8_t SoundEmitter::getEffectNumber(SoundEffect const * effect)
     {
         uint8_t number = 0;
         for (auto& m_effect : m_effects) {
@@ -985,7 +983,7 @@ namespace FIFE
         m_listeners.push_back(listener);
     }
 
-    void SoundEmitter::removeListener(const SoundEmitterListener* listener)
+    void SoundEmitter::removeListener(SoundEmitterListener const * listener)
     {
         auto i = m_listeners.begin();
         while (i != m_listeners.end()) {

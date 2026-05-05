@@ -23,21 +23,23 @@ namespace FIFE
      */
     class /*FIFE_API*/ FifeClass
     {
-    public:
-        FifeClass() : m_fifeid(m_curid++) { }
+        public:
+            FifeClass() : m_fifeid(m_curid++)
+            {
+            }
 
-        virtual ~FifeClass() = default;
+            virtual ~FifeClass() = default;
 
-        /** Gets unique id of this instance inside the engine
-         */
-        fifeid_t getFifeId() const
-        {
-            return m_fifeid;
-        }
+            /** Gets unique id of this instance inside the engine
+             */
+            fifeid_t getFifeId() const
+            {
+                return m_fifeid;
+            }
 
-    private:
-        fifeid_t m_fifeid;
-        static inline fifeid_t m_curid = 0;
+        private:
+            fifeid_t m_fifeid;
+            static inline fifeid_t m_curid = 0;
     };
 } // namespace FIFE
 

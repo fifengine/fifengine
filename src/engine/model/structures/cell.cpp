@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cell.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
@@ -11,23 +14,18 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "util/log/logger.h"
-#include "view/visual.h"
-
-#include "cell.h"
 #include "cellcache.h"
 #include "instance.h"
 #include "layer.h"
+#include "util/log/logger.h"
+#include "view/visual.h"
 
 namespace FIFE
 {
 
     static Logger _log(LM_STRUCTURES);
 
-    Cell::Cell(int32_t coordint, const ModelCoordinate& coordinate, Layer* layer) :
+    Cell::Cell(int32_t coordint, ModelCoordinate const & coordinate, Layer* layer) :
         m_coordId(coordint),
         m_coordinate(coordinate),
         m_layer(layer),
@@ -62,7 +60,7 @@ namespace FIFE
         m_layer->getCellCache()->removeCell(this);
     }
 
-    void Cell::addInstances(const std::list<Instance*>& instances)
+    void Cell::addInstances(std::list<Instance*> const & instances)
     {
         CellCache* cache = m_layer->getCellCache();
         for (auto* instance : instances) {
@@ -307,7 +305,7 @@ namespace FIFE
         m_type = type;
     }
 
-    const std::set<Instance*>& Cell::getInstances()
+    std::set<Instance*> const & Cell::getInstances()
     {
         return m_instances;
     }
@@ -332,7 +330,7 @@ namespace FIFE
         m_neighbors.push_back(cell);
     }
 
-    const std::vector<Cell*>& Cell::getNeighbors()
+    std::vector<Cell*> const & Cell::getNeighbors()
     {
         return m_neighbors;
     }
@@ -356,7 +354,7 @@ namespace FIFE
         return m_layer;
     }
 
-    void Cell::createTransition(Layer* layer, const ModelCoordinate& mc, bool immediate)
+    void Cell::createTransition(Layer* layer, ModelCoordinate const & mc, bool immediate)
     {
         auto* trans = new TransitionInfo(layer);
         // if layers are the same then it's a portal

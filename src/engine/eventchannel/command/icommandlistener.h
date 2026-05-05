@@ -26,13 +26,13 @@ namespace FIFE
      */
     class /*FIFE_API*/ ICommandListener : public IListener
     {
-    public:
-        /** Called when a command is received from a command source
-         * @param command command coming from command source
-         */
-        virtual void onCommand(Command& command) = 0;
+        public:
+            /** Called when a command is received from a command source
+             * @param command command coming from command source
+             */
+            virtual void onCommand(Command& command) = 0;
 
-        virtual ~ICommandListener() = default;
+            virtual ~ICommandListener() = default;
     };
 
 } // namespace FIFE

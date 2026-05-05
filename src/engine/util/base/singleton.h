@@ -26,28 +26,28 @@ namespace FIFE
     template <typename T>
     class /*FIFE_API*/ StaticSingleton
     {
-    public:
-        static T* instance()
-        {
-            static T inst;
-            return &inst;
-        }
+        public:
+            static T* instance()
+            {
+                static T inst;
+                return &inst;
+            }
 
-    protected:
-        StaticSingleton() = default;
+        protected:
+            StaticSingleton() = default;
 
-        virtual ~StaticSingleton() = default;
+            virtual ~StaticSingleton() = default;
 
-    private:
-        StaticSingleton(const StaticSingleton<T>& rhs)
-        {
-            static_cast<void>(rhs);
-        }
-        StaticSingleton<T>& operator=(const StaticSingleton<T>& rhs)
-        {
-            static_cast<void>(rhs);
-            return *this;
-        }
+        private:
+            StaticSingleton(StaticSingleton<T> const & rhs)
+            {
+                static_cast<void>(rhs);
+            }
+            StaticSingleton<T>& operator=(StaticSingleton<T> const & rhs)
+            {
+                static_cast<void>(rhs);
+                return *this;
+            }
     };
 
     /**
@@ -68,36 +68,36 @@ namespace FIFE
     template <typename T>
     class /*FIFE_API*/ DynamicSingleton
     {
-    public:
-        static T* instance()
-        {
-            assert(m_instance);
-            return m_instance;
-        }
+        public:
+            static T* instance()
+            {
+                assert(m_instance);
+                return m_instance;
+            }
 
-        DynamicSingleton()
-        {
-            assert(!m_instance);
-            m_instance = static_cast<T*>(this);
-        }
+            DynamicSingleton()
+            {
+                assert(!m_instance);
+                m_instance = static_cast<T*>(this);
+            }
 
-        ~DynamicSingleton()
-        {
-            m_instance = 0;
-        }
+            ~DynamicSingleton()
+            {
+                m_instance = 0;
+            }
 
-    private:
-        static T* m_instance;
+        private:
+            static T* m_instance;
 
-        DynamicSingleton(const DynamicSingleton<T>& rhs)
-        {
-            static_cast<void>(rhs);
-        }
-        DynamicSingleton<T>& operator=(const DynamicSingleton<T>& rhs)
-        {
-            static_cast<void>(rhs);
-            return *this;
-        }
+            DynamicSingleton(DynamicSingleton<T> const & rhs)
+            {
+                static_cast<void>(rhs);
+            }
+            DynamicSingleton<T>& operator=(DynamicSingleton<T> const & rhs)
+            {
+                static_cast<void>(rhs);
+                return *this;
+            }
     };
 
     template <typename T>

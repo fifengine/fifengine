@@ -1,37 +1,35 @@
 {
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "fifengine",
   "version-string": "0.5.0",
   "description": "Fifengine is a multi-platform isometric game engine written in C++.",
   "homepage": "https://github.com/fifengine/fifengine",
   "license": "LGPL-2.1",
-  "supports": "windows,linux,osx",
-  "builtin-baseline": "c3867e714dd3a51c272826eea77267876517ed99",
+  "supports": "windows, linux, osx",
+  "builtin-baseline": "56bb2411609227288b70117ead2c47585ba07713",
   "dependencies": [
-    {
-      "name": "sdl2",
-      "default-features": false,
-      "platform": "linux",
-      "features": [
-        "x11"
-      ]
-    },
-    {
-      "name": "sdl2",
-      "default-features": false,
-      "platform": "windows",
-      "features": []
-    },
-    "sdl2-ttf",
-    "sdl2-image",
+    "catch2",
     "glew",
     "libogg",
     "libpng",
     "libvorbis",
     "openal-soft",
+    {
+      "name": "sdl3",
+      "default-features": false,
+      "features": [
+        "x11"
+      ],
+      "platform": "linux"
+    },
+    {
+      "name": "sdl3",
+      "platform": "windows"
+    },
+    "sdl3-image",
+    "sdl3-ttf",
     "tinyxml2",
-    "zlib",
     "utfcpp",
-    "catch2"
-  ],
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json"
+    "zlib"
+  ]
 }

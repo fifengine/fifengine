@@ -141,6 +141,46 @@
       }
     },
     {
+      "name": "clang22-x64-linux-dbg",
+      "displayName": "Clang22 Debug",
+      "inherits": "clang22-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clang22-x64-linux-dbg-cov",
+      "displayName": "Clang22 Debug (Coverage)",
+      "inherits": "clang22-x64-linux-cov",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clang21-x64-linux-dbg",
+      "displayName": "Clang21 Debug",
+      "inherits": "clang21-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clang20-x64-linux-dbg",
+      "displayName": "Clang20 Debug",
+      "inherits": "clang20-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clang18-x64-linux-static-rel",
+      "displayName": "Clang18 Static Release",
+      "inherits": "clang18-x64-linux-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "gcc12-x64-linux-rel",
       "displayName": "GCC12 Release",
       "inherits": "gcc12-x64-linux",
@@ -155,6 +195,35 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "gcc14-x64-linux-dbg",
+      "displayName": "GCC14 Debug",
+      "inherits": "gcc14-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "gcc14-x64-linux-static-rel",
+      "displayName": "GCC14 Static Release",
+      "inherits": "gcc14-x64-linux-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc14-x64-linux-static-dbg",
+      "displayName": "GCC14 Static Debug",
+      "inherits": "gcc14-x64-linux-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "gcc14-x64-linux-dbg-asan",
+      "displayName": "GCC14 Debug ASAN",
+      "inherits": ["gcc14-x64-linux-dbg", "address-sanitizer"]
     }
   ],
   "buildPresets": [
@@ -282,6 +351,105 @@
     {
       "name": "gcc14-x64-linux-rel",
       "configurePreset": "gcc14-x64-linux-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "clang22-x64-linux-dbg",
+      "configurePreset": "clang22-x64-linux-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "clang22-x64-linux-dbg-cov",
+      "configurePreset": "clang22-x64-linux-dbg-cov",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "clang21-x64-linux-dbg",
+      "configurePreset": "clang21-x64-linux-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "clang20-x64-linux-dbg",
+      "configurePreset": "clang20-x64-linux-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "clang18-x64-linux-static-rel",
+      "configurePreset": "clang18-x64-linux-static-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-dbg",
+      "configurePreset": "gcc14-x64-linux-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-static-rel",
+      "configurePreset": "gcc14-x64-linux-static-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-static-dbg",
+      "configurePreset": "gcc14-x64-linux-static-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-dbg-asan",
+      "configurePreset": "gcc14-x64-linux-dbg-asan",
       "targets": [
         "fife",
         "fife_swig",

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "ziptree.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <filesystem>
@@ -9,25 +12,22 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs/filesystem.h"
-
 #include "zipnode.h"
-#include "ziptree.h"
 
 namespace FIFE
 {
 
-    ZipTree::ZipTree() : m_rootNode(new ZipNode("/")) { }
+    ZipTree::ZipTree() : m_rootNode(new ZipNode("/"))
+    {
+    }
 
     ZipTree::~ZipTree()
     {
         delete m_rootNode;
     }
 
-    ZipNode* ZipTree::addNode(const std::string& nodePath)
+    ZipNode* ZipTree::addNode(std::string const & nodePath)
     {
         fs::path filePath(nodePath);
         std::string filename = filePath.string();
@@ -67,14 +67,14 @@ namespace FIFE
         return returnNode;
     }
 
-    ZipNode* ZipTree::getNode(const std::string& name) const
+    ZipNode* ZipTree::getNode(std::string const & name) const
     {
-        const fs::path filePath(name);
+        fs::path const filePath(name);
         ZipNode* returnNode = nullptr;
         ZipNode* tempNode   = nullptr;
         ZipNode* node       = getRootNode();
         for (fs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
-            const std::string pathString = GetPathIteratorAsString(iter);
+            std::string const pathString = GetPathIteratorAsString(iter);
 
             if (pathString == ".." && (node != getRootNode())) {
                 // handle ".." path case by setting the node back to the parent
@@ -102,7 +102,7 @@ namespace FIFE
     }
 } // namespace FIFE
 
-std::ostream& operator<<(std::ostream& os, const FIFE::ZipTree& zipTree)
+std::ostream& operator<<(std::ostream& os, FIFE::ZipTree const & zipTree)
 {
     assert(zipTree.getRootNode() != 0);
 

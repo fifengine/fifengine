@@ -26,26 +26,26 @@ namespace FIFE
     class /*FIFE_API*/ RawDataFile : public RawDataSource
     {
 
-    public:
-        /** Constructor
-         * Constructs a RawDataSource for file.
-         * @param file The path to the file to load.
-         * @throw CannotOpenFile
-         */
-        explicit RawDataFile(std::string file);
-        ~RawDataFile() override;
+        public:
+            /** Constructor
+             * Constructs a RawDataSource for file.
+             * @param file The path to the file to load.
+             * @throw CannotOpenFile
+             */
+            explicit RawDataFile(std::string file);
+            ~RawDataFile() override;
 
-        RawDataFile(const RawDataFile&)            = delete;
-        RawDataFile& operator=(const RawDataFile&) = delete;
+            RawDataFile(RawDataFile const &)            = delete;
+            RawDataFile& operator=(RawDataFile const &) = delete;
 
-        uint32_t getSize() const override;
-        void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
+            uint32_t getSize() const override;
+            void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
 
-    private:
-        std::string m_file;
-        std::ifstream m_stream;
+        private:
+            std::string m_file;
+            std::ifstream m_stream;
 
-        uint32_t m_filesize;
+            uint32_t m_filesize;
     };
 
 } // namespace FIFE

@@ -14,9 +14,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/time/timemanager.h"
 #include "vfs/dat/dat2.h"
@@ -31,8 +28,8 @@ using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
-static const std::string RAW_FILE        = "tests/data/test.map";
+static std::string const COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
+static std::string const RAW_FILE        = "tests/data/test.map";
 TEST_CASE("DAT2_test")
 {
 

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "dat2.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <set>
@@ -10,14 +13,9 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/raw/rawdata.h"
-
-#include "dat2.h"
 
 namespace FIFE
 {
@@ -26,7 +24,7 @@ namespace FIFE
      */
     static Logger _log(LM_FO_LOADERS);
 
-    DAT2::DAT2(VFS* vfs, const std::string& file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
+    DAT2::DAT2(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
 
         FL_LOG(_log, LMsg("MFFalloutDAT2") << "loading: " << file << " filesize: " << m_data->getDataLength());
@@ -92,18 +90,18 @@ namespace FIFE
         }
     }
 
-    RawData* DAT2::open(const std::string& file) const
+    RawData* DAT2::open(std::string const & file) const
     {
-        const RawDataDAT2::s_info& info = getInfo(file);
+        RawDataDAT2::s_info const & info = getInfo(file);
         return new RawData(new RawDataDAT2(getVFS(), m_datpath, info));
     }
 
-    bool DAT2::fileExists(const std::string& name) const
+    bool DAT2::fileExists(std::string const & name) const
     {
         return findFileEntry(name) != m_filelist.end();
     }
 
-    const RawDataDAT2::s_info& DAT2::getInfo(const std::string& name) const
+    RawDataDAT2::s_info const & DAT2::getInfo(std::string const & name) const
     {
         auto i = findFileEntry(name);
         if (i == m_filelist.end()) {
@@ -112,7 +110,7 @@ namespace FIFE
         return i->second;
     }
 
-    DAT2::type_filelist::const_iterator DAT2::findFileEntry(const std::string& path) const
+    DAT2::type_filelist::const_iterator DAT2::findFileEntry(std::string const & path) const
     {
 
         // Either the normalization is bogus, or we have to do
@@ -143,17 +141,17 @@ namespace FIFE
         return i;
     }
 
-    std::set<std::string> DAT2::listFiles(const std::string& pathstr) const
+    std::set<std::string> DAT2::listFiles(std::string const & pathstr) const
     {
         return list(pathstr, false);
     }
 
-    std::set<std::string> DAT2::listDirectories(const std::string& pathstr) const
+    std::set<std::string> DAT2::listDirectories(std::string const & pathstr) const
     {
         return list(pathstr, true);
     }
 
-    std::set<std::string> DAT2::list(const std::string& pathstr, bool dirs) const
+    std::set<std::string> DAT2::list(std::string const & pathstr, bool dirs) const
     {
         std::set<std::string> list;
         std::string path = pathstr;
@@ -177,7 +175,7 @@ namespace FIFE
 
         auto end = m_filelist.end();
         for (auto i = m_filelist.begin(); i != end; ++i) {
-            const std::string& file = i->first;
+            std::string const & file = i->first;
             if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
                 bool const isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir

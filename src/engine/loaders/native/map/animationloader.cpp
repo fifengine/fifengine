@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "animationloader.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <string>
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
@@ -23,8 +23,6 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 
-#include "animationloader.h"
-
 namespace FIFE
 {
     /** Logger to use for this source file.
@@ -37,7 +35,7 @@ namespace FIFE
     {
     }
 
-    bool AnimationLoader::isLoadable(const std::string& filename)
+    bool AnimationLoader::isLoadable(std::string const & filename)
     {
         fs::path const animPath(filename);
 
@@ -50,7 +48,7 @@ namespace FIFE
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     // TODO - this could be expanded to do more checks
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(animFile, xml)) {
                         delete data;
@@ -78,7 +76,7 @@ namespace FIFE
         return false;
     }
 
-    AnimationPtr AnimationLoader::load(const std::string& filename)
+    AnimationPtr AnimationLoader::load(std::string const & filename)
     {
         fs::path const animPath(filename);
 
@@ -93,7 +91,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
                         delete data;
@@ -126,7 +124,7 @@ namespace FIFE
         return animation;
     }
 
-    std::vector<AnimationPtr> AnimationLoader::loadMultiple(const std::string& filename)
+    std::vector<AnimationPtr> AnimationLoader::loadMultiple(std::string const & filename)
     {
         fs::path const animPath(filename);
 
@@ -141,7 +139,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
                         delete data;
@@ -180,7 +178,7 @@ namespace FIFE
         return animationVector;
     }
 
-    AnimationPtr AnimationLoader::loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem)
+    AnimationPtr AnimationLoader::loadAnimation(std::string const & filename, tinyxml2::XMLElement* animationElem)
     {
         AnimationPtr animation;
         if (animationElem == nullptr) {
@@ -192,7 +190,7 @@ namespace FIFE
 
         bool alreadyLoaded = false;
         // first try to use the id, if no id exists it use the filename as fallback
-        const char* animationId = XML::Attribute(animationElem, "id");
+        char const * animationId = XML::Attribute(animationElem, "id");
         if (animationId != nullptr) {
             if (!m_animationManager->exists(animationId)) {
                 animation = m_animationManager->create(animationId);
@@ -239,7 +237,7 @@ namespace FIFE
 
         for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement != nullptr;
              frameElement               = frameElement->NextSiblingElement("frame")) {
-            const char* sourceId = XML::Attribute(frameElement, "source");
+            char const * sourceId = XML::Attribute(frameElement, "source");
             if (sourceId != nullptr) {
                 fs::path framePath(filename);
 

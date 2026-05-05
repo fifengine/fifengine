@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "camera.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cmath>
@@ -15,10 +18,7 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
+#include "layercache.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/timeprovider.h"
@@ -35,9 +35,6 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
-
-#include "camera.h"
-#include "layercache.h"
 #include "visual.h"
 
 namespace FIFE
@@ -45,30 +42,34 @@ namespace FIFE
     static Logger _log(LM_CAMERA);
 
     // to avoid std::bad_alloc errors, we determine the maximum size of batches
-    const uint32_t MAX_BATCH_SIZE = 100000;
+    uint32_t const MAX_BATCH_SIZE = 100000;
 
     class MapObserver : public MapChangeListener
     {
-        Camera* m_camera;
+            Camera* m_camera;
 
-    public:
-        explicit MapObserver(Camera* camera) : m_camera(camera) { }
-        ~MapObserver() override = default;
+        public:
+            explicit MapObserver(Camera* camera) : m_camera(camera)
+            {
+            }
+            ~MapObserver() override = default;
 
-        void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override { }
+            void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override
+            {
+            }
 
-        void onLayerCreate([[maybe_unused]] Map* map, Layer* layer) override
-        {
-            m_camera->addLayer(layer);
-        }
+            void onLayerCreate([[maybe_unused]] Map* map, Layer* layer) override
+            {
+                m_camera->addLayer(layer);
+            }
 
-        void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
-        {
-            m_camera->removeLayer(layer);
-        }
+            void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
+            {
+                m_camera->removeLayer(layer);
+            }
     };
 
-    Camera::Camera(std::string id, Map* map, const Rect& viewport, RenderBackend* renderbackend) :
+    Camera::Camera(std::string id, Map* map, Rect const & viewport, RenderBackend* renderbackend) :
         m_id(std::move(id)),
         m_map(map),
         m_viewport(viewport),
@@ -123,7 +124,7 @@ namespace FIFE
         // Trigger removal of LayerCaches and MapObserver
         if (m_map != nullptr) {
             m_map->removeChangeListener(m_map_observer);
-            const std::list<Layer*>& layers = m_map->getLayers();
+            std::list<Layer*> const & layers = m_map->getLayers();
             for (auto* layer : layers) {
                 removeLayer(layer);
             }
@@ -147,7 +148,7 @@ namespace FIFE
 
         // Trigger addition of LayerCaches and MapObserver
         m_map->addChangeListener(m_map_observer);
-        const std::list<Layer*>& layers = m_map->getLayers();
+        std::list<Layer*> const & layers = m_map->getLayers();
         for (auto* layer : layers) {
             addLayer(layer);
         }
@@ -203,7 +204,7 @@ namespace FIFE
         DoubleMatrix matrix;
         matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
         if (m_location.getLayer() != nullptr) {
-            const CellGrid* cg = m_location.getLayer()->getCellGrid();
+            CellGrid const * cg = m_location.getLayer()->getCellGrid();
             if (cg != nullptr) {
                 ExactModelCoordinate const pt = m_location.getMapCoordinates();
                 matrix.applyTranslate(-pt.x * m_referenceScaleX, -pt.y * m_referenceScaleY, -pt.z * m_referenceScaleX);
@@ -248,13 +249,13 @@ namespace FIFE
         m_transform |= PositionTransform;
     }
 
-    void Camera::setLocation(const Location& location)
+    void Camera::setLocation(Location const & location)
     {
         if (m_location == location) {
             return;
         }
 
-        const CellGrid* cell_grid = nullptr;
+        CellGrid const * cell_grid = nullptr;
         if (location.getLayer() != nullptr) {
             cell_grid = location.getLayer()->getCellGrid();
             if (cell_grid == nullptr) {
@@ -299,18 +300,18 @@ namespace FIFE
         return loc;
     }
 
-    void Camera::setViewPort(const Rect& viewport)
+    void Camera::setViewPort(Rect const & viewport)
     {
         m_viewport = viewport;
         refresh();
     }
 
-    const Rect& Camera::getViewPort() const
+    Rect const & Camera::getViewPort() const
     {
         return m_viewport;
     }
 
-    const Rect& Camera::getMapViewPort()
+    Rect const & Camera::getMapViewPort()
     {
         if (!m_mapViewPortUpdated) {
             // Screenpoints
@@ -320,10 +321,10 @@ namespace FIFE
             ScreenPoint const sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
 
             // Convert viewport corners to map coordinates
-            const ExactModelCoordinate p0 = toMapCoordinates(sp1, false);
-            const ExactModelCoordinate p1 = toMapCoordinates(sp2, false);
-            const ExactModelCoordinate p2 = toMapCoordinates(sp3, false);
-            const ExactModelCoordinate p3 = toMapCoordinates(sp4, false);
+            ExactModelCoordinate const p0 = toMapCoordinates(sp1, false);
+            ExactModelCoordinate const p1 = toMapCoordinates(sp2, false);
+            ExactModelCoordinate const p2 = toMapCoordinates(sp3, false);
+            ExactModelCoordinate const p3 = toMapCoordinates(sp4, false);
 
             // TODO move into utils or anon namespace for reuse
             auto toFloor = [](double v) -> int32_t {
@@ -334,10 +335,10 @@ namespace FIFE
             };
 
             // Compute bounds
-            const int32_t minX = std::min({toFloor(p0.x), toFloor(p1.x), toFloor(p2.x), toFloor(p3.x)});
-            const int32_t minY = std::min({toFloor(p0.y), toFloor(p1.y), toFloor(p2.y), toFloor(p3.y)});
-            const int32_t maxX = std::max({toCeil(p0.x), toCeil(p1.x), toCeil(p2.x), toCeil(p3.x)});
-            const int32_t maxY = std::max({toCeil(p0.y), toCeil(p1.y), toCeil(p2.y), toCeil(p3.y)});
+            int32_t const minX = std::min({toFloor(p0.x), toFloor(p1.x), toFloor(p2.x), toFloor(p3.x)});
+            int32_t const minY = std::min({toFloor(p0.y), toFloor(p1.y), toFloor(p2.y), toFloor(p3.y)});
+            int32_t const maxX = std::max({toCeil(p0.x), toCeil(p1.x), toCeil(p2.x), toCeil(p3.x)});
+            int32_t const maxY = std::max({toCeil(p0.y), toCeil(p1.y), toCeil(p2.y), toCeil(p3.y)});
 
             // Optional padding (makes the viewport a bit larger)
             constexpr int32_t padding = 1;
@@ -380,7 +381,7 @@ namespace FIFE
         return m_enabled;
     }
 
-    void Camera::setPosition(const ExactModelCoordinate& position)
+    void Camera::setPosition(ExactModelCoordinate const & position)
     {
         if (Mathd::Equal(m_position.x, position.x) && Mathd::Equal(m_position.y, position.y)) {
             return;
@@ -432,7 +433,7 @@ namespace FIFE
         // NOTE: mult4by4 is an in-place modification.
         m_vscreen_2_screen.mult4by4(m_vs_inverse_matrix);
         // set the z transformation to unity
-        const int32_t N = 4;
+        int32_t const N = 4;
         for (int32_t i = 0; i != N; ++i) {
             m_vscreen_2_screen[(2 * N) + i] = 0;
             m_vscreen_2_screen[(i * N) + 2] = 0;
@@ -452,7 +453,7 @@ namespace FIFE
         screen_coords.z  = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
     }
 
-    ExactModelCoordinate Camera::toMapCoordinates(const ScreenPoint& screen_coords, bool z_calculated)
+    ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint const & screen_coords, bool z_calculated)
     {
         DoublePoint3D double_screen_coords = intPt2doublePt(screen_coords);
         if (!z_calculated) {
@@ -461,24 +462,24 @@ namespace FIFE
         return m_inverse_matrix * double_screen_coords;
     }
 
-    ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords)
+    ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate const & elevation_coords)
     {
         ScreenPoint const pt = doublePt2intPt(m_matrix * elevation_coords);
         return pt;
     }
 
-    DoublePoint3D Camera::toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords)
+    DoublePoint3D Camera::toVirtualScreenCoordinates(ExactModelCoordinate const & elevation_coords)
     {
         DoublePoint3D const pt = (m_vs_matrix * elevation_coords);
         return pt;
     }
 
-    ScreenPoint Camera::virtualScreenToScreen(const DoublePoint3D& p)
+    ScreenPoint Camera::virtualScreenToScreen(DoublePoint3D const & p)
     {
         return doublePt2intPt(m_vscreen_2_screen * p);
     }
 
-    DoublePoint3D Camera::screenToVirtualScreen(const ScreenPoint& p)
+    DoublePoint3D Camera::screenToVirtualScreen(ScreenPoint const & p)
     {
         return m_screen_2_vscreen * intPt2doublePt(p);
     }
@@ -570,18 +571,18 @@ namespace FIFE
     }
 
     void Camera::getMatchingInstances(
-        const ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
+        ScreenPoint const & screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
         bool const zoomed        = !Mathd::Equal(m_zoom, 1.0);
         bool const special_alpha = alpha != 0;
 
-        const RenderList& layer_instances = m_layerToInstances[&layer];
-        auto instance_it                  = layer_instances.end();
+        RenderList const & layer_instances = m_layerToInstances[&layer];
+        auto instance_it                   = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
-            Instance* i          = (*instance_it)->instance;
-            const RenderItem& vc = **instance_it;
+            Instance* i           = (*instance_it)->instance;
+            RenderItem const & vc = **instance_it;
             if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
@@ -630,19 +631,19 @@ namespace FIFE
     }
 
     void Camera::getMatchingInstances(
-        const Rect& screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
+        Rect const & screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
         bool const zoomed        = !Mathd::Equal(m_zoom, 1.0);
         bool const special_alpha = alpha != 0;
 
-        const RenderList& layer_instances = m_layerToInstances[&layer];
-        auto instance_it                  = layer_instances.end();
+        RenderList const & layer_instances = m_layerToInstances[&layer];
+        auto instance_it                   = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
             ;
-            const RenderItem& vc = **instance_it;
+            RenderItem const & vc = **instance_it;
             if ((vc.dimensions.intersects(screen_rect))) {
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
@@ -709,8 +710,8 @@ found_non_transparent_pixel:;
             return;
         }
 
-        const RenderList& layer_instances = m_layerToInstances[layer];
-        auto instance_it                  = layer_instances.end();
+        RenderList const & layer_instances = m_layerToInstances[layer];
+        auto instance_it                   = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
@@ -766,7 +767,7 @@ found_non_transparent_pixel:;
         m_transform = NoneTransform;
     }
 
-    static bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs)
+    static bool pipelineSort(RendererBase const * lhs, RendererBase const * rhs)
     {
         return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
     }
@@ -798,7 +799,7 @@ found_non_transparent_pixel:;
         }
     }
 
-    RendererBase* Camera::getRenderer(const std::string& name)
+    RendererBase* Camera::getRenderer(std::string const & name)
     {
         return m_renderers[name];
     }
@@ -907,7 +908,7 @@ found_non_transparent_pixel:;
         m_img_id      = -1;
     }
 
-    void Camera::setOverlayAnimation(const AnimationPtr& anim, bool fill)
+    void Camera::setOverlayAnimation(AnimationPtr const & anim, bool fill)
     {
         m_ani_overlay = true;
         m_ani_ptr     = anim;
@@ -1049,8 +1050,8 @@ found_non_transparent_pixel:;
             return;
         }
 
-        const std::list<Layer*>& layers = m_map->getLayers();
-        auto layer_it                   = layers.begin();
+        std::list<Layer*> const & layers = m_map->getLayers();
+        auto layer_it                    = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             LayerCache* cache = m_cache[*layer_it];
             if (cache == nullptr) {
@@ -1083,8 +1084,8 @@ found_non_transparent_pixel:;
             }
         }
 
-        const std::list<Layer*>& layers = m_map->getLayers();
-        auto layer_it                   = layers.begin();
+        std::list<Layer*> const & layers = m_map->getLayers();
+        auto layer_it                    = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             // layer with static flag will rendered as one texture
             if ((*layer_it)->isStatic()) {

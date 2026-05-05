@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "squaregrid.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -13,13 +16,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-
-#include "squaregrid.h"
 
 namespace FIFE
 {
@@ -43,13 +41,13 @@ namespace FIFE
 
     SquareGrid::~SquareGrid() = default;
 
-    bool SquareGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    bool SquareGrid::isAccessible(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         if (curpos == target) {
             return true;
         }
-        const int32_t x = std::abs(target.x - curpos.x);
-        const int32_t y = std::abs(target.y - curpos.y);
+        int32_t const x = std::abs(target.x - curpos.x);
+        int32_t const y = std::abs(target.y - curpos.y);
         if ((x <= 1) && (y <= 1)) {
             if (m_allow_diagonals || ((x ^ y) != 0)) {
                 return true;
@@ -59,7 +57,7 @@ namespace FIFE
         return false;
     }
 
-    double SquareGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    double SquareGrid::getAdjacentCost(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         if (curpos == target) {
             return 0.0;
@@ -70,41 +68,41 @@ namespace FIFE
         return 1.4;
     }
 
-    double SquareGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    double SquareGrid::getHeuristicCost(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         return static_cast<double>(std::abs(target.x - curpos.x) + std::abs(target.y - curpos.y));
     }
 
-    const std::string& SquareGrid::getType() const
+    std::string const & SquareGrid::getType() const
     {
         static std::string const type("square");
         return type;
     }
 
-    const std::string& SquareGrid::getName() const
+    std::string const & SquareGrid::getName() const
     {
         static std::string const squareGrid("Square Grid");
         return squareGrid;
     }
 
-    ExactModelCoordinate SquareGrid::toMapCoordinates(const ExactModelCoordinate& layer_coords)
+    ExactModelCoordinate SquareGrid::toMapCoordinates(ExactModelCoordinate const & layer_coords)
     {
         return m_matrix * layer_coords;
     }
 
-    ExactModelCoordinate SquareGrid::toExactLayerCoordinates(const ExactModelCoordinate& map_coord)
+    ExactModelCoordinate SquareGrid::toExactLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
         return m_inverse_matrix * map_coord;
     }
 
-    ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord)
+    ModelCoordinate SquareGrid::toLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
         ExactModelCoordinate const dblpt = toExactLayerCoordinates(map_coord);
         return toLayerCoordinatesFromExactLayerCoordinates(dblpt);
     }
 
     ModelCoordinate SquareGrid::toLayerCoordinatesFromExactLayerCoordinates(
-        const ExactModelCoordinate& exact_layer_coords)
+        ExactModelCoordinate const & exact_layer_coords)
     {
         ModelCoordinate const result(
             static_cast<int32_t>(round(exact_layer_coords.x)),
@@ -113,7 +111,7 @@ namespace FIFE
         return result;
     }
 
-    void SquareGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell)
+    void SquareGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, ModelCoordinate const & cell)
     {
         vtx.clear();
         auto x = static_cast<double>(cell.x);
@@ -125,7 +123,7 @@ namespace FIFE
     }
 
     std::vector<ModelCoordinate> SquareGrid::toMultiCoordinates(
-        const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse)
+        ModelCoordinate const & position, std::vector<ModelCoordinate> const & orig, bool reverse)
     {
         std::vector<ModelCoordinate> coords;
         auto it = orig.begin();
@@ -148,7 +146,7 @@ namespace FIFE
     }
 
     std::vector<ModelCoordinate> SquareGrid::getCoordinatesInLine(
-        const ModelCoordinate& start, const ModelCoordinate& end)
+        ModelCoordinate const & start, ModelCoordinate const & end)
     {
         std::vector<ModelCoordinate> coords;
         int32_t const dx = std::abs(end.x - start.x);

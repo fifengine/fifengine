@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "layercache.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -13,10 +16,7 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
+#include "camera.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
@@ -30,9 +30,6 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
-
-#include "camera.h"
-#include "layercache.h"
 #include "visual.h"
 
 namespace FIFE
@@ -44,29 +41,31 @@ namespace FIFE
 
     class CacheLayerChangeListener : public LayerChangeListener
     {
-    public:
-        explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache) { }
-        ~CacheLayerChangeListener() override = default;
-
-        void onLayerChanged([[maybe_unused]] Layer* layer, std::vector<Instance*>& instances) override
-        {
-            for (auto& instance : instances) {
-                m_cache->updateInstance(instance);
+        public:
+            explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache)
+            {
             }
-        }
+            ~CacheLayerChangeListener() override = default;
 
-        void onInstanceCreate([[maybe_unused]] Layer* layer, Instance* instance) override
-        {
-            m_cache->addInstance(instance);
-        }
+            void onLayerChanged([[maybe_unused]] Layer* layer, std::vector<Instance*>& instances) override
+            {
+                for (auto& instance : instances) {
+                    m_cache->updateInstance(instance);
+                }
+            }
 
-        void onInstanceDelete([[maybe_unused]] Layer* layer, Instance* instance) override
-        {
-            m_cache->removeInstance(instance);
-        }
+            void onInstanceCreate([[maybe_unused]] Layer* layer, Instance* instance) override
+            {
+                m_cache->addInstance(instance);
+            }
 
-    private:
-        LayerCache* m_cache;
+            void onInstanceDelete([[maybe_unused]] Layer* layer, Instance* instance) override
+            {
+                m_cache->removeInstance(instance);
+            }
+
+        private:
+            LayerCache* m_cache;
     };
 
     /** Comparison functions for sorting
@@ -74,101 +73,101 @@ namespace FIFE
     // used screenpoint z for sorting, calculated from camera
     class InstanceDistanceSortCamera
     {
-    public:
-        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
-        {
-            if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
-                auto* liv = lhs->instance->getVisual<InstanceVisual>();
-                auto* riv = rhs->instance->getVisual<InstanceVisual>();
-                return liv->getStackPosition() < riv->getStackPosition();
-            }
-            return lhs->screenpoint.z < rhs->screenpoint.z;
-        }
-    };
-    // used instance location and camera rotation for sorting
-    class InstanceDistanceSortLocation
-    {
-    public:
-        explicit InstanceDistanceSortLocation(double rotation)
-        {
-            if ((rotation >= 0) && (rotation <= 60)) { // 30 deg
-                xtox = 0;
-                xtoy = -1;
-                ytox = 1;
-                ytoy = 0.5;
-            } else if ((rotation >= 60) && (rotation <= 120)) { // 90 deg
-                xtox = -1;
-                xtoy = -1;
-                ytox = 0.5;
-                ytoy = -0.5;
-            } else if ((rotation >= 120) && (rotation <= 180)) { // 150 deg
-                xtox = 0;
-                xtoy = -1;
-                ytox = -1;
-                ytoy = -0.5;
-            } else if ((rotation >= 180) && (rotation <= 240)) { // 210 deg
-                xtox = 0;
-                xtoy = 1;
-                ytox = -1;
-                ytoy = -0.5;
-            } else if ((rotation >= 240) && (rotation <= 300)) { // 270 deg
-                xtox = 1;
-                xtoy = 1;
-                ytox = -0.5;
-                ytoy = 0.5;
-            } else if ((rotation >= 300) && (rotation <= 360)) { // 330 deg
-                xtox = 0;
-                xtoy = 1;
-                ytox = 1;
-                ytoy = 0.5;
-            }
-        }
-
-        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) const
-        {
-            ExactModelCoordinate lpos = lhs->instance->getLocationRef().getExactLayerCoordinates();
-            ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
-            lpos.x += lpos.y / 2;
-            rpos.x += rpos.y / 2;
-            auto* liv         = lhs->instance->getVisual<InstanceVisual>();
-            auto* riv         = rhs->instance->getVisual<InstanceVisual>();
-            int32_t const lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
-                                liv->getStackPosition();
-            int32_t const rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
-                                riv->getStackPosition();
-            if (lvc == rvc) {
-                if (Mathd::Equal(lpos.z, rpos.z)) {
-                    return liv->getStackPosition() < riv->getStackPosition();
-                }
-                return lpos.z < rpos.z;
-            }
-            return lvc < rvc;
-        }
-
-    private:
-        double xtox;
-        double xtoy;
-        double ytox;
-        double ytoy;
-    };
-    // used screenpoint z for sorting and as fallback first the instance location z and then the stack position
-    class InstanceDistanceSortCameraAndLocation
-    {
-    public:
-        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
-        {
-            if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
-                const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
-                const ExactModelCoordinate& rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
-                if (Mathd::Equal(lpos.z, rpos.z)) {
+        public:
+            bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+            {
+                if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
                     auto* liv = lhs->instance->getVisual<InstanceVisual>();
                     auto* riv = rhs->instance->getVisual<InstanceVisual>();
                     return liv->getStackPosition() < riv->getStackPosition();
                 }
-                return lpos.z < rpos.z;
+                return lhs->screenpoint.z < rhs->screenpoint.z;
             }
-            return lhs->screenpoint.z < rhs->screenpoint.z;
-        }
+    };
+    // used instance location and camera rotation for sorting
+    class InstanceDistanceSortLocation
+    {
+        public:
+            explicit InstanceDistanceSortLocation(double rotation)
+            {
+                if ((rotation >= 0) && (rotation <= 60)) { // 30 deg
+                    xtox = 0;
+                    xtoy = -1;
+                    ytox = 1;
+                    ytoy = 0.5;
+                } else if ((rotation >= 60) && (rotation <= 120)) { // 90 deg
+                    xtox = -1;
+                    xtoy = -1;
+                    ytox = 0.5;
+                    ytoy = -0.5;
+                } else if ((rotation >= 120) && (rotation <= 180)) { // 150 deg
+                    xtox = 0;
+                    xtoy = -1;
+                    ytox = -1;
+                    ytoy = -0.5;
+                } else if ((rotation >= 180) && (rotation <= 240)) { // 210 deg
+                    xtox = 0;
+                    xtoy = 1;
+                    ytox = -1;
+                    ytoy = -0.5;
+                } else if ((rotation >= 240) && (rotation <= 300)) { // 270 deg
+                    xtox = 1;
+                    xtoy = 1;
+                    ytox = -0.5;
+                    ytoy = 0.5;
+                } else if ((rotation >= 300) && (rotation <= 360)) { // 330 deg
+                    xtox = 0;
+                    xtoy = 1;
+                    ytox = 1;
+                    ytoy = 0.5;
+                }
+            }
+
+            bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) const
+            {
+                ExactModelCoordinate lpos = lhs->instance->getLocationRef().getExactLayerCoordinates();
+                ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
+                lpos.x += lpos.y / 2;
+                rpos.x += rpos.y / 2;
+                auto* liv         = lhs->instance->getVisual<InstanceVisual>();
+                auto* riv         = rhs->instance->getVisual<InstanceVisual>();
+                int32_t const lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
+                                    liv->getStackPosition();
+                int32_t const rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
+                                    riv->getStackPosition();
+                if (lvc == rvc) {
+                    if (Mathd::Equal(lpos.z, rpos.z)) {
+                        return liv->getStackPosition() < riv->getStackPosition();
+                    }
+                    return lpos.z < rpos.z;
+                }
+                return lvc < rvc;
+            }
+
+        private:
+            double xtox;
+            double xtoy;
+            double ytox;
+            double ytoy;
+    };
+    // used screenpoint z for sorting and as fallback first the instance location z and then the stack position
+    class InstanceDistanceSortCameraAndLocation
+    {
+        public:
+            bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+            {
+                if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
+                    ExactModelCoordinate const & lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
+                    ExactModelCoordinate const & rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
+                    if (Mathd::Equal(lpos.z, rpos.z)) {
+                        auto* liv = lhs->instance->getVisual<InstanceVisual>();
+                        auto* riv = rhs->instance->getVisual<InstanceVisual>();
+                        return liv->getStackPosition() < riv->getStackPosition();
+                    }
+                    return lpos.z < rpos.z;
+                }
+                return lhs->screenpoint.z < rhs->screenpoint.z;
+            }
     };
 
     LayerCache::LayerCache(Camera* camera) :
@@ -233,8 +232,8 @@ namespace FIFE
         m_cacheImage.reset();
 
         delete m_tree;
-        m_tree                                  = new CacheTree;
-        const std::vector<Instance*>& instances = m_layer->getInstances();
+        m_tree                                   = new CacheTree;
+        std::vector<Instance*> const & instances = m_layer->getInstances();
         for (auto* instance : instances) {
             addInstance(instance);
         }
@@ -250,14 +249,14 @@ namespace FIFE
             // creates new RenderItem
             item = new RenderItem(instance);
             m_renderItems.push_back(item);
-            const size_t renderItemIndex = m_renderItems.size() - 1;
+            size_t const renderItemIndex = m_renderItems.size() - 1;
             assert(renderItemIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
             m_instance_map[instance] = static_cast<int32_t>(renderItemIndex);
             // creates new Entry
             entry = new Entry();
             m_entries.push_back(entry);
             entry->instanceIndex    = static_cast<int32_t>(renderItemIndex);
-            const size_t entryIndex = m_entries.size() - 1;
+            size_t const entryIndex = m_entries.size() - 1;
             assert(entryIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
             entry->entryIndex = static_cast<int32_t>(entryIndex);
         } else {
@@ -305,7 +304,7 @@ namespace FIFE
         // removes instance from RenderList
         RenderList& renderList = m_camera->getRenderListRef(m_layer);
 
-        auto itRenderList = std::ranges::find_if(renderList, [instance](const auto& item) {
+        auto itRenderList = std::ranges::find_if(renderList, [instance](auto const & item) {
             return item->instance == instance;
         });
 
@@ -326,7 +325,7 @@ namespace FIFE
         }
 
         // convert necessary instance update flags to entry update flags
-        const InstanceChangeInfo ici = instance->getChangeInfo();
+        InstanceChangeInfo const ici = instance->getChangeInfo();
         if ((ici & ICHANGE_LOC) == ICHANGE_LOC) {
             entry->updateInfo |= EntryPositionUpdate;
         }
@@ -345,15 +344,15 @@ namespace FIFE
 
     class CacheTreeCollector
     {
-        std::vector<int32_t>* m_indices;
-        Rect m_viewport;
+            std::vector<int32_t>* m_indices;
+            Rect m_viewport;
 
-    public:
-        CacheTreeCollector(std::vector<int32_t>* indices, const Rect& viewport) :
-            m_indices(indices), m_viewport(viewport)
-        {
-        }
-        bool visit(LayerCache::CacheTree::Node* node, int32_t d = -1);
+        public:
+            CacheTreeCollector(std::vector<int32_t>* indices, Rect const & viewport) :
+                m_indices(indices), m_viewport(viewport)
+            {
+            }
+            bool visit(LayerCache::CacheTree::Node* node, int32_t d = -1);
     };
 
     bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, [[maybe_unused]] int32_t d)
@@ -365,7 +364,7 @@ namespace FIFE
         return true;
     }
 
-    void LayerCache::collect(const Rect& viewport, std::vector<int32_t>& index_list)
+    void LayerCache::collect(Rect const & viewport, std::vector<int32_t>& index_list)
     {
         CacheTree::Node* node = m_tree->find_container(viewport);
         CacheTreeCollector collector(&index_list, viewport);
@@ -544,7 +543,7 @@ namespace FIFE
                     needSorting.push_back(item);
                 } else {
                     // remove from renderlist
-                    auto it = std::ranges::find_if(renderlist, [&](const auto& element) {
+                    auto it = std::ranges::find_if(renderlist, [&](auto const & element) {
                         return element->instance == item->instance;
                     });
 
@@ -779,8 +778,8 @@ namespace FIFE
             // if (!m_needSorting) {
             float const det = m_zMin - m_zMax;
             if (fabs(det) > FLT_EPSILON) {
-                static const float globalrange = 200.0;
-                static const float stackdelta  = (FLT_EPSILON * 100.0);
+                static float const globalrange = 200.0;
+                static float const stackdelta  = (FLT_EPSILON * 100.0);
                 int32_t const numlayers        = m_layer->getLayerCount();
                 float const lmin               = m_layer->getZOffset();
                 float const lmax               = lmin + (globalrange / numlayers);
@@ -822,7 +821,7 @@ namespace FIFE
         return m_cacheImage;
     }
 
-    void LayerCache::setCacheImage(const ImagePtr& image)
+    void LayerCache::setCacheImage(ImagePtr const & image)
     {
         m_cacheImage = image;
     }

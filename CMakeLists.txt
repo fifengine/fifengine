@@ -64,9 +64,9 @@ option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
 option(ENABLE_FIFEGUI         "Enable Fifechan GUI subsystem"                ON)
 option(ENABLE_LOGGING         "Enable logging"                               ON)
-option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                       OFF)
+option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
-option(BUILD_TESTS            "Build C++ tests"                             OFF)
+option(BUILD_TESTS            "Build C++ tests"                              ON)
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
 # It is not a build option, because it must be set before project().
@@ -759,9 +759,9 @@ add_custom_target(fife.swig.wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 # Find Packages
 #------------------------------------------------------------------------------
 
-find_package(SDL2 CONFIG REQUIRED)
-find_package(SDL2_image CONFIG REQUIRED)
-find_package(SDL2_ttf CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3_image CONFIG REQUIRED)
+find_package(SDL3_ttf CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
@@ -1010,7 +1010,7 @@ endif()
 #    and its dependencies, but not with the main fife engine sources.
 #    fife_swig requires fifechan_swig, because the main fife.i imports the
 #    fifechan.i module. The dependencies need to be shipped: fifechan.so/dll
-#    (optionally: fifechan_sdl2.so/dll, fifechan_opengl.so/dll).
+#    (optionally: fifechan_sdl3.so/dll, fifechan_opengl.so/dll).
 #
 # Relevant CMake docs:
 #   - https://cmake.org/cmake/help/latest/module/FindPython3.html
@@ -1074,7 +1074,7 @@ if(BUILD_PYTHON_BINDINGS)
     )
   endif()
 
-  swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
+  swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i")
 
   target_include_directories(fife_swig PRIVATE
     ${PROJECT_BINARY_DIR}
@@ -1096,10 +1096,11 @@ if(BUILD_PYTHON_BINDINGS)
   target_link_libraries(
     fife_swig
     PRIVATE
+      fife
       fife_options
-      SDL2::SDL2
-      $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-      $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+      SDL3::SDL3
+      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
       OpenAL::OpenAL
       PNG::PNG
       Vorbis::vorbis
@@ -1149,9 +1150,9 @@ if(BUILD_PYTHON_BINDINGS)
     target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan)
     target_link_libraries(fife_swig PRIVATE fifechan::fifechan)
 
-    if(TARGET fifechan::fifechan_sdl2)
-      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_sdl2)
-      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_sdl2)
+    if(TARGET fifechan::fifechan_sdl3)
+      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_sdl3)
+      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_sdl3)
     endif()
 
     if(TARGET fifechan::fifechan_opengl)
@@ -1213,7 +1214,87 @@ endif(BUILD_PYTHON_BINDINGS)
 
 if(BUILD_LIBRARY)
 
-  add_library(fife)
+  # Create object library with all sources
+  add_library(fifengine_lib OBJECT ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  add_library(fife::fifengine_lib ALIAS fifengine_lib)
+  set_target_properties(fifengine_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+  # Now fife just wraps the object library
+  # Respects BUILD_SHARED_LIBS (ON=SHARED, OFF=STATIC)
+  if(BUILD_SHARED_LIBS)
+    add_library(fife SHARED $<TARGET_OBJECTS:fifengine_lib>)
+  else()
+    add_library(fife STATIC $<TARGET_OBJECTS:fifengine_lib>)
+  endif()
+
+  # Set compile definitions based on library type
+  # When shared: define FIFE_EXPORTING (for Windows dllexport)
+  # When static: define FIFE_STATIC
+  if(BUILD_SHARED_LIBS)
+    target_compile_definitions(fife PRIVATE FIFE_EXPORTING)
+  else()
+    target_compile_definitions(fife PUBLIC FIFE_STATIC)
+  endif()
+
+  # Link dependencies (objects already included via $<TARGET_OBJECTS:fifengine_lib>)
+  target_link_libraries(fife PRIVATE
+    fife_options
+    ZLIB::ZLIB
+    PNG::PNG
+    $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
+    $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
+    Ogg::ogg
+    Vorbis::vorbis
+    Vorbis::vorbisfile
+    Vorbis::vorbisenc
+    OpenAL::OpenAL
+    tinyxml2::tinyxml2
+    utf8cpp::utf8cpp
+    SDL3::SDL3
+    $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+    $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
+  )
+
+  # Apply settings
+  target_include_directories(fifengine_lib PRIVATE
+    ${PROJECT_BINARY_DIR}
+    src/engine
+    ${PROJECT_SOURCE_DIR}
+  )
+
+  target_link_libraries(fifengine_lib PRIVATE
+    fife_options
+    SDL3::SDL3
+    $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+    $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
+    OpenAL::OpenAL
+    ZLIB::ZLIB
+    PNG::PNG
+    $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
+    $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
+    Ogg::ogg
+    Vorbis::vorbis
+    Vorbis::vorbisfile
+    Vorbis::vorbisenc
+    tinyxml2::tinyxml2
+    utf8cpp::utf8cpp
+    $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
+  )
+
+  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
+    target_link_libraries(fifengine_lib PRIVATE fifechan::fifechan_opengl)
+  endif()
+
+  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
+    target_link_libraries(fifengine_lib PRIVATE fifechan::fifechan_sdl3)
+  endif()
+
+  # Visibility settings for object library
+  set_target_properties(fifengine_lib PROPERTIES
+    CXX_VISIBILITY_PRESET "hidden"
+    VISIBILITY_INLINE_NEW ON
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+  )
 
   if(WIN32)
     # Define FIFE_EXPORTING only when built as a shared library.
@@ -1248,24 +1329,13 @@ if(BUILD_LIBRARY)
     list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_FCHAN_HDR})
   endif()
 
-  set(FIFE_PRIVATE_SOURCES ${FIFE_CORE_SRC})
-  if(ENABLE_FIFEGUI)
-    list(APPEND FIFE_PRIVATE_SOURCES ${FIFE_FCHAN_SRC})
-  endif()
-
   # define public interface for the library
   target_sources(fife
     PUBLIC
-    FILE_SET fife_public_headers TYPE HEADERS
-    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
-    FILES
-      ${FIFE_PUBLIC_HEADERS}
-  )
-
-  # define private sources for the library
-  target_sources(fife
-    PRIVATE
-      ${FIFE_PRIVATE_SOURCES}
+      FILE_SET fife_public_headers TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
+      FILES
+        ${FIFE_PUBLIC_HEADERS}
   )
 
   set_target_properties(fife PROPERTIES
@@ -1303,10 +1373,10 @@ if(BUILD_LIBRARY)
       OpenAL::OpenAL
       tinyxml2::tinyxml2
       utf8cpp::utf8cpp
-      $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-      $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
-      $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-      $<TARGET_NAME_IF_EXISTS:SDL2_ttf::SDL2_ttf>
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
+      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+      $<TARGET_NAME_IF_EXISTS:SDL3_ttf::SDL3_ttf>
   )
 
   target_link_libraries(fife
@@ -1326,8 +1396,8 @@ if(BUILD_LIBRARY)
   endif()
 
   if(ENABLE_FIFEGUI)
-    if(TARGET fifechan::fifechan_sdl2)
-      target_link_libraries(fife PRIVATE fifechan::fifechan_sdl2)
+    if(TARGET fifechan::fifechan_sdl3)
+      target_link_libraries(fife PRIVATE fifechan::fifechan_sdl3)
     endif()
   endif()
 

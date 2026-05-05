@@ -34,28 +34,28 @@ namespace FIFE
      */
     class /*FIFE_API*/ ZipSource : public VFSSource
     {
-    public:
-        ZipSource(VFS* vfs, const std::string& zip_file);
-        ~ZipSource();
+        public:
+            ZipSource(VFS* vfs, std::string const & zip_file);
+            ~ZipSource();
 
-        ZipSource(const ZipSource&)            = delete;
-        ZipSource& operator=(const ZipSource&) = delete;
+            ZipSource(ZipSource const &)            = delete;
+            ZipSource& operator=(ZipSource const &) = delete;
 
-        /// WARNING: fileExists, listFiles and listDirectories are not
-        // thread-safe, and will probably break if called from multiple
-        // threads at the same time.
-        bool fileExists(const std::string& file) const;
-        std::set<std::string> listFiles(const std::string& path) const;
-        std::set<std::string> listDirectories(const std::string& path) const;
+            /// WARNING: fileExists, listFiles and listDirectories are not
+            // thread-safe, and will probably break if called from multiple
+            // threads at the same time.
+            bool fileExists(std::string const & file) const;
+            std::set<std::string> listFiles(std::string const & path) const;
+            std::set<std::string> listDirectories(std::string const & path) const;
 
-        virtual RawData* open(const std::string& path) const;
+            virtual RawData* open(std::string const & path) const;
 
-    private:
-        void readIndex();
-        bool readFileToIndex();
+        private:
+            void readIndex();
+            bool readFileToIndex();
 
-        ZipTree m_zipTree;
-        RawData* m_zipfile;
+            ZipTree m_zipTree;
+            RawData* m_zipfile;
     };
 
 } // namespace FIFE

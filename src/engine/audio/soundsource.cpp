@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundsource.h"
+
 // Standard C++ library includes
 
 // Platform specific includes
@@ -8,17 +11,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "model/structures/instance.h"
-#include "util/base/exception.h"
-#include "util/log/logger.h"
-
 #include "actionaudio.h"
+#include "model/structures/instance.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
-#include "soundsource.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 namespace FIFE
 {
@@ -26,22 +24,24 @@ namespace FIFE
 
     class SoundChangeListener : public InstanceChangeListener
     {
-    public:
-        explicit SoundChangeListener(SoundSource* source) : m_source(source) { }
-        ~SoundChangeListener() override = default;
-
-        void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
-        {
-            static_cast<void>(instance);
-            if ((info & ICHANGE_LOC) == ICHANGE_LOC) {
-                m_source->setPosition();
-            } else if ((info & ICHANGE_ROTATION) == ICHANGE_ROTATION) {
-                m_source->setDirection();
+        public:
+            explicit SoundChangeListener(SoundSource* source) : m_source(source)
+            {
             }
-        }
+            ~SoundChangeListener() override = default;
 
-    private:
-        SoundSource* m_source;
+            void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
+            {
+                static_cast<void>(instance);
+                if ((info & ICHANGE_LOC) == ICHANGE_LOC) {
+                    m_source->setPosition();
+                } else if ((info & ICHANGE_ROTATION) == ICHANGE_ROTATION) {
+                    m_source->setDirection();
+                }
+            }
+
+        private:
+            SoundSource* m_source;
     };
 
     SoundSource::SoundSource(Instance* instance) :

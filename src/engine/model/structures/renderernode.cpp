@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "renderernode.h"
+
 // Standard C++ library includes
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -17,32 +17,32 @@
 #include "video/renderbackend.h"
 #include "view/camera.h"
 
-#include "renderernode.h"
-
 namespace FIFE
 {
     static Logger _log(LM_VIEWVIEW);
 
     class NodeInstanceDeleteListener : public InstanceDeleteListener
     {
-    public:
-        explicit NodeInstanceDeleteListener(RendererNode* node) : m_node(node) { }
-        ~NodeInstanceDeleteListener() override = default;
+        public:
+            explicit NodeInstanceDeleteListener(RendererNode* node) : m_node(node)
+            {
+            }
+            ~NodeInstanceDeleteListener() override = default;
 
-        void onInstanceDeleted(Instance* instance) override
-        {
-            m_node->removeInstance(instance, false);
-        }
+            void onInstanceDeleted(Instance* instance) override
+            {
+                m_node->removeInstance(instance, false);
+            }
 
-    private:
-        RendererNode* m_node;
+        private:
+            RendererNode* m_node;
     };
 
     RendererNode::RendererNode(
         Instance* attached_instance,
-        const Location& relative_location,
+        Location const & relative_location,
         Layer* relative_layer,
-        const Point& relative_point) :
+        Point const & relative_point) :
         m_instance(nullptr),
         m_location(relative_location),
         m_layer(relative_layer),
@@ -52,7 +52,7 @@ namespace FIFE
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(
-        Instance* attached_instance, const Location& relative_location, const Point& relative_point) :
+        Instance* attached_instance, Location const & relative_location, Point const & relative_point) :
         m_instance(nullptr),
         m_location(relative_location),
         m_layer(nullptr),
@@ -61,17 +61,18 @@ namespace FIFE
     {
         addInstance(attached_instance);
     }
-    RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point) :
+    RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, Point const & relative_point) :
         m_instance(nullptr), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
-    RendererNode::RendererNode(Instance* attached_instance, const Point& relative_point) :
+    RendererNode::RendererNode(Instance* attached_instance, Point const & relative_point) :
         m_instance(nullptr), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
-    RendererNode::RendererNode(const Location& attached_location, Layer* relative_layer, const Point& relative_point) :
+    RendererNode::RendererNode(
+        Location const & attached_location, Layer* relative_layer, Point const & relative_point) :
         m_instance(nullptr),
         m_location(attached_location),
         m_layer(relative_layer),
@@ -79,7 +80,7 @@ namespace FIFE
         m_listener(nullptr)
     {
     }
-    RendererNode::RendererNode(const Location& attached_location, const Point& relative_point) :
+    RendererNode::RendererNode(Location const & attached_location, Point const & relative_point) :
         m_instance(nullptr),
         m_location(attached_location),
         m_layer(nullptr),
@@ -87,20 +88,20 @@ namespace FIFE
         m_listener(nullptr)
     {
     }
-    RendererNode::RendererNode(Layer* attached_layer, const Point& relative_point) :
+    RendererNode::RendererNode(Layer* attached_layer, Point const & relative_point) :
         m_instance(nullptr), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
     {
     }
-    RendererNode::RendererNode(const Point& attached_point) :
+    RendererNode::RendererNode(Point const & attached_point) :
         m_instance(nullptr), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
     {
     }
-    RendererNode::RendererNode(const RendererNode& old) :
+    RendererNode::RendererNode(RendererNode const & old) :
         m_instance(nullptr), m_location(old.m_location), m_layer(old.m_layer), m_point(old.m_point), m_listener(nullptr)
     {
         addInstance(old.m_instance);
     }
-    RendererNode& RendererNode::operator=(const RendererNode& source)
+    RendererNode& RendererNode::operator=(RendererNode const & source)
     {
         if (this != &source) {
             changeInstance(source.m_instance);
@@ -118,18 +119,18 @@ namespace FIFE
     }
 
     void RendererNode::setAttached(
-        Instance* attached_instance, const Location& relative_location, const Point& relative_point)
+        Instance* attached_instance, Location const & relative_location, Point const & relative_point)
     {
         changeInstance(attached_instance);
         m_location = relative_location;
         m_point    = relative_point;
     }
-    void RendererNode::setAttached(Instance* attached_instance, const Location& relative_location)
+    void RendererNode::setAttached(Instance* attached_instance, Location const & relative_location)
     {
         changeInstance(attached_instance);
         m_location = relative_location;
     }
-    void RendererNode::setAttached(Instance* attached_instance, const Point& relative_point)
+    void RendererNode::setAttached(Instance* attached_instance, Point const & relative_point)
     {
         changeInstance(attached_instance);
         m_point = relative_point;
@@ -138,13 +139,13 @@ namespace FIFE
     {
         changeInstance(attached_instance);
     }
-    void RendererNode::setAttached(const Location& attached_location, const Point& relative_point)
+    void RendererNode::setAttached(Location const & attached_location, Point const & relative_point)
     {
         changeInstance(nullptr);
         m_location = attached_location;
         m_point    = relative_point;
     }
-    void RendererNode::setAttached(const Location& attached_location)
+    void RendererNode::setAttached(Location const & attached_location)
     {
         changeInstance(nullptr);
         m_location = attached_location;
@@ -153,21 +154,21 @@ namespace FIFE
     {
         m_layer = attached_layer;
     }
-    void RendererNode::setAttached(const Point& attached_point)
+    void RendererNode::setAttached(Point const & attached_point)
     {
         changeInstance(nullptr);
         m_location.reset();
         m_point = attached_point;
     }
 
-    void RendererNode::setRelative(const Location& relative_location)
+    void RendererNode::setRelative(Location const & relative_location)
     {
         if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Location) - ") << "No instance attached.");
         }
         m_location = relative_location;
     }
-    void RendererNode::setRelative(const Location& relative_location, const Point& relative_point)
+    void RendererNode::setRelative(Location const & relative_location, Point const & relative_point)
     {
         if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Location, Point) - ") << "No instance attached.");
@@ -175,7 +176,7 @@ namespace FIFE
         m_location = relative_location;
         m_point    = relative_point;
     }
-    void RendererNode::setRelative(const Point& relative_point)
+    void RendererNode::setRelative(Point const & relative_point)
     {
         if (m_instance == nullptr || !m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Point) - ") << "No instance or location attached.");
@@ -235,7 +236,7 @@ namespace FIFE
     {
         return m_location;
     }
-    const Location& RendererNode::getLocationRef()
+    Location const & RendererNode::getLocationRef()
     {
         return m_location;
     }
@@ -247,7 +248,7 @@ namespace FIFE
     {
         return m_point;
     }
-    const Point& RendererNode::getPointRef()
+    Point const & RendererNode::getPointRef()
     {
         return m_point;
     }
@@ -276,7 +277,7 @@ namespace FIFE
         }
     }
 
-    void RendererNode::removeInstance(const Instance* instance, bool listener)
+    void RendererNode::removeInstance(Instance const * instance, bool listener)
     {
         if (m_instance == instance && (instance != nullptr)) {
             if (listener) {
@@ -294,7 +295,7 @@ namespace FIFE
         m_listener = new NodeInstanceDeleteListener(this);
     }
 
-    Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, const bool zoomed)
+    Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, bool const zoomed)
     {
         ScreenPoint p;
         if (m_instance != nullptr) {

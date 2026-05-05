@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "trigger.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
@@ -10,16 +13,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
 #include "cell.h"
 #include "cellcache.h"
 #include "instance.h"
 #include "layer.h"
 #include "location.h"
-#include "trigger.h"
 
 namespace FIFE
 {
@@ -29,87 +27,92 @@ namespace FIFE
         public InstanceChangeListener,
         public InstanceDeleteListener
     {
-    public:
-        explicit TriggerChangeListener(Trigger* trigger) : m_trigger(trigger) { }
-        ~TriggerChangeListener() override = default;
-
-        // InstanceDeleteListener callback
-        void onInstanceDeleted([[maybe_unused]] Instance* instance) override
-        {
-            const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::ranges::find(types, INSTANCE_TRIGGER_DELETE) != types.end()) {
-                m_trigger->setTriggered();
+        public:
+            explicit TriggerChangeListener(Trigger* trigger) : m_trigger(trigger)
+            {
             }
-            m_trigger->detach();
-        }
+            ~TriggerChangeListener() override = default;
 
-        // CellChangeListener callback
-        void onInstanceEnteredCell([[maybe_unused]] Cell* cell, Instance* instance) override
-        {
-            const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::ranges::find(types, CELL_TRIGGER_ENTER) != types.end()) {
-                const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
-                if (m_trigger->isEnabledForAllInstances() || std::ranges::find(restrict, instance) != restrict.end()) {
+            // InstanceDeleteListener callback
+            void onInstanceDeleted([[maybe_unused]] Instance* instance) override
+            {
+                std::vector<TriggerCondition> const & types = m_trigger->getTriggerConditions();
+                if (std::ranges::find(types, INSTANCE_TRIGGER_DELETE) != types.end()) {
+                    m_trigger->setTriggered();
+                }
+                m_trigger->detach();
+            }
+
+            // CellChangeListener callback
+            void onInstanceEnteredCell([[maybe_unused]] Cell* cell, Instance* instance) override
+            {
+                std::vector<TriggerCondition> const & types = m_trigger->getTriggerConditions();
+                if (std::ranges::find(types, CELL_TRIGGER_ENTER) != types.end()) {
+                    std::vector<Instance*> const & restrict = m_trigger->getEnabledInstances();
+                    if (m_trigger->isEnabledForAllInstances() ||
+                        std::ranges::find(restrict, instance) != restrict.end()) {
+                        m_trigger->setTriggered();
+                    }
+                }
+            }
+
+            // CellChangeListener callback
+            void onInstanceExitedCell([[maybe_unused]] Cell* cell, Instance* instance) override
+            {
+                std::vector<TriggerCondition> const & types = m_trigger->getTriggerConditions();
+                if (std::ranges::find(types, CELL_TRIGGER_EXIT) != types.end()) {
+                    std::vector<Instance*> const & restrict = m_trigger->getEnabledInstances();
+                    if (m_trigger->isEnabledForAllInstances() ||
+                        std::ranges::find(restrict, instance) != restrict.end()) {
+                        m_trigger->setTriggered();
+                    }
+                }
+            }
+
+            // CellChangeListener callback
+            void onBlockingChangedCell(
+                [[maybe_unused]] Cell* cell, [[maybe_unused]] CellTypeInfo type, [[maybe_unused]] bool blocks) override
+            {
+                std::vector<TriggerCondition> const & types = m_trigger->getTriggerConditions();
+                if (std::ranges::find(types, CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
                     m_trigger->setTriggered();
                 }
             }
-        }
 
-        // CellChangeListener callback
-        void onInstanceExitedCell([[maybe_unused]] Cell* cell, Instance* instance) override
-        {
-            const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::ranges::find(types, CELL_TRIGGER_EXIT) != types.end()) {
-                const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
-                if (m_trigger->isEnabledForAllInstances() || std::ranges::find(restrict, instance) != restrict.end()) {
+            // InstanceChangeListener callback
+            void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
+            {
+                std::vector<TriggerCondition> const & types = m_trigger->getTriggerConditions();
+                if (m_trigger->getAttached() == instance && (info & ICHANGE_CELL) == ICHANGE_CELL) {
+                    m_trigger->move();
+                }
+
+                if (types.empty()) {
+                    return;
+                }
+
+                auto const hasTrigger = [&](InstanceChangeInfo change, TriggerCondition condition) {
+                    return (info & change) == change && std::ranges::find(types, condition) != types.end();
+                };
+
+                if (hasTrigger(ICHANGE_LOC, INSTANCE_TRIGGER_LOCATION) ||
+                    hasTrigger(ICHANGE_ROTATION, INSTANCE_TRIGGER_ROTATION) ||
+                    hasTrigger(ICHANGE_SPEED, INSTANCE_TRIGGER_SPEED) ||
+                    hasTrigger(ICHANGE_ACTION, INSTANCE_TRIGGER_ACTION) ||
+                    hasTrigger(ICHANGE_TIME_MULTIPLIER, INSTANCE_TRIGGER_TIME_MULTIPLIER) ||
+                    hasTrigger(ICHANGE_SAYTEXT, INSTANCE_TRIGGER_SAYTEXT) ||
+                    hasTrigger(ICHANGE_BLOCK, INSTANCE_TRIGGER_BLOCK) ||
+                    hasTrigger(ICHANGE_CELL, INSTANCE_TRIGGER_CELL) ||
+                    hasTrigger(ICHANGE_TRANSPARENCY, INSTANCE_TRIGGER_TRANSPARENCY) ||
+                    hasTrigger(ICHANGE_VISIBLE, INSTANCE_TRIGGER_VISIBLE) ||
+                    hasTrigger(ICHANGE_STACKPOS, INSTANCE_TRIGGER_STACKPOS) ||
+                    hasTrigger(ICHANGE_VISUAL, INSTANCE_TRIGGER_VISUAL)) {
                     m_trigger->setTriggered();
                 }
             }
-        }
 
-        // CellChangeListener callback
-        void onBlockingChangedCell(
-            [[maybe_unused]] Cell* cell, [[maybe_unused]] CellTypeInfo type, [[maybe_unused]] bool blocks) override
-        {
-            const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::ranges::find(types, CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
-                m_trigger->setTriggered();
-            }
-        }
-
-        // InstanceChangeListener callback
-        void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
-        {
-            const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (m_trigger->getAttached() == instance && (info & ICHANGE_CELL) == ICHANGE_CELL) {
-                m_trigger->move();
-            }
-
-            if (types.empty()) {
-                return;
-            }
-
-            const auto hasTrigger = [&](InstanceChangeInfo change, TriggerCondition condition) {
-                return (info & change) == change && std::ranges::find(types, condition) != types.end();
-            };
-
-            if (hasTrigger(ICHANGE_LOC, INSTANCE_TRIGGER_LOCATION) ||
-                hasTrigger(ICHANGE_ROTATION, INSTANCE_TRIGGER_ROTATION) ||
-                hasTrigger(ICHANGE_SPEED, INSTANCE_TRIGGER_SPEED) ||
-                hasTrigger(ICHANGE_ACTION, INSTANCE_TRIGGER_ACTION) ||
-                hasTrigger(ICHANGE_TIME_MULTIPLIER, INSTANCE_TRIGGER_TIME_MULTIPLIER) ||
-                hasTrigger(ICHANGE_SAYTEXT, INSTANCE_TRIGGER_SAYTEXT) ||
-                hasTrigger(ICHANGE_BLOCK, INSTANCE_TRIGGER_BLOCK) || hasTrigger(ICHANGE_CELL, INSTANCE_TRIGGER_CELL) ||
-                hasTrigger(ICHANGE_TRANSPARENCY, INSTANCE_TRIGGER_TRANSPARENCY) ||
-                hasTrigger(ICHANGE_VISIBLE, INSTANCE_TRIGGER_VISIBLE) ||
-                hasTrigger(ICHANGE_STACKPOS, INSTANCE_TRIGGER_STACKPOS) ||
-                hasTrigger(ICHANGE_VISUAL, INSTANCE_TRIGGER_VISUAL)) {
-                m_trigger->setTriggered();
-            }
-        }
-
-    private:
-        Trigger* m_trigger;
+        private:
+            Trigger* m_trigger;
     };
 
     Trigger::Trigger() : m_triggered(false), m_enabledAll(false), m_changeListener(nullptr), m_attached(nullptr)
@@ -183,7 +186,7 @@ namespace FIFE
         }
     }
 
-    const std::vector<TriggerCondition>& Trigger::getTriggerConditions()
+    std::vector<TriggerCondition> const & Trigger::getTriggerConditions()
     {
         return m_triggerConditions;
     }
@@ -204,7 +207,7 @@ namespace FIFE
         }
     }
 
-    const std::vector<Instance*>& Trigger::getEnabledInstances()
+    std::vector<Instance*> const & Trigger::getEnabledInstances()
     {
         return m_enabledInstances;
     }
@@ -232,7 +235,7 @@ namespace FIFE
         m_enabledAll = false;
     }
 
-    void Trigger::assign(Layer* layer, const ModelCoordinate& pt)
+    void Trigger::assign(Layer* layer, ModelCoordinate const & pt)
     {
         Cell* cell = layer->getCellCache()->getCell(pt);
         if (cell == nullptr) {
@@ -245,7 +248,7 @@ namespace FIFE
         }
     }
 
-    void Trigger::remove(Layer* layer, const ModelCoordinate& pt)
+    void Trigger::remove(Layer* layer, ModelCoordinate const & pt)
     {
         Cell* cell = layer->getCellCache()->getCell(pt);
         if (cell == nullptr) {
@@ -276,7 +279,7 @@ namespace FIFE
         }
     }
 
-    const std::vector<Cell*>& Trigger::getAssignedCells()
+    std::vector<Cell*> const & Trigger::getAssignedCells()
     {
         return m_assigned;
     }
@@ -309,14 +312,14 @@ namespace FIFE
         if (m_assigned.empty()) {
             return;
         }
-        const ModelCoordinate newPos = m_attached->getLocationRef().getLayerCoordinates();
-        const ModelCoordinate oldPos = m_attached->getOldLocationRef().getLayerCoordinates();
+        ModelCoordinate const newPos = m_attached->getLocationRef().getLayerCoordinates();
+        ModelCoordinate const oldPos = m_attached->getOldLocationRef().getLayerCoordinates();
         moveTo(newPos, oldPos);
     }
 
-    void Trigger::moveTo(const ModelCoordinate& newPos, const ModelCoordinate& oldPos)
+    void Trigger::moveTo(ModelCoordinate const & newPos, ModelCoordinate const & oldPos)
     {
-        const ModelCoordinate mc(newPos.x - oldPos.x, newPos.y - oldPos.y);
+        ModelCoordinate const mc(newPos.x - oldPos.x, newPos.y - oldPos.y);
 
         CellCache* cache = m_attached->getLocationRef().getLayer()->getCellCache();
         std::vector<Cell*> newCells;

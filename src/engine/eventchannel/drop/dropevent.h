@@ -23,102 +23,102 @@ namespace FIFE
      */
     class /*FIFE_API*/ DropEvent : public InputEvent
     {
-    public:
-        /** Constructor
-         */
-        DropEvent() = default;
+        public:
+            /** Constructor
+             */
+            DropEvent() = default;
 
-        /** Destructor.
-         */
-        virtual ~DropEvent() = default;
+            /** Destructor.
+             */
+            virtual ~DropEvent() = default;
 
-        /** Gets the path for the file that is droped.
-         */
-        const std::string& getPath() const
-        {
-            return m_path;
-        }
+            /** Gets the path for the file that is droped.
+             */
+            std::string const & getPath() const
+            {
+                return m_path;
+            }
 
-        /** Sets the path for the file that is droped.
-         */
-        void setPath(const std::string& path)
-        {
-            m_path = path;
-        }
+            /** Sets the path for the file that is droped.
+             */
+            void setPath(std::string const & path)
+            {
+                m_path = path;
+            }
 
-        /** Marks events as consumed.
-         */
-        virtual void consume()
-        {
-            InputEvent::consume();
-        }
+            /** Marks events as consumed.
+             */
+            virtual void consume()
+            {
+                InputEvent::consume();
+            }
 
-        /** Checks whether event is consumed.
-         */
-        virtual bool isConsumed() const
-        {
-            return InputEvent::isConsumed();
-        }
+            /** Checks whether event is consumed.
+             */
+            virtual bool isConsumed() const
+            {
+                return InputEvent::isConsumed();
+            }
 
-        /** Marks events as consumed by widget library.
-         */
-        virtual void consumedByWidgets()
-        {
-            InputEvent::consumedByWidgets();
-        }
+            /** Marks events as consumed by widget library.
+             */
+            virtual void consumedByWidgets()
+            {
+                InputEvent::consumedByWidgets();
+            }
 
-        /** Checks whether event is consumed by widget library.
-         */
-        virtual bool isConsumedByWidgets() const
-        {
-            return InputEvent::isConsumedByWidgets();
-        }
+            /** Checks whether event is consumed by widget library.
+             */
+            virtual bool isConsumedByWidgets() const
+            {
+                return InputEvent::isConsumedByWidgets();
+            }
 
-        /** Gets the source of the event.
-         */
-        virtual IEventSource* getSource() const
-        {
-            return InputEvent::getSource();
-        }
+            /** Gets the source of the event.
+             */
+            virtual IEventSource* getSource() const
+            {
+                return InputEvent::getSource();
+            }
 
-        /** Sets the source of the event.
-         */
-        virtual void setSource(IEventSource* source)
-        {
-            InputEvent::setSource(source);
-        }
+            /** Sets the source of the event.
+             */
+            virtual void setSource(IEventSource* source)
+            {
+                InputEvent::setSource(source);
+            }
 
-        /** Gets the timestamp of the event.
-         */
-        virtual int32_t getTimeStamp() const
-        {
-            return InputEvent::getTimeStamp();
-        }
+            /** Gets the timestamp of the event.
+             */
+            virtual int32_t getTimeStamp() const
+            {
+                return InputEvent::getTimeStamp();
+            }
 
-        /** Sets the timestamp of the event.
-         */
-        virtual void setTimeStamp(int32_t timestamp)
-        {
-            InputEvent::setTimeStamp(timestamp);
-        }
+            /** Sets the timestamp of the event.
+             */
+            virtual void setTimeStamp(int32_t timestamp)
+            {
+                InputEvent::setTimeStamp(timestamp);
+            }
 
-        /** Gets the name of the event.
-         */
-        virtual const std::string& getName() const
-        {
-            static const std::string eventName("DropEvent");
-            return eventName;
-        }
+            /** Gets the name of the event.
+             */
+            virtual std::string const & getName() const
+            {
+                static std::string const eventName("DropEvent");
+                return eventName;
+            }
 
-        /** Gets the debugstring of the event.
-         */
-        virtual std::string getDebugString() const
-        {
-            return InputEvent::getDebugString();
-        }
+            /** Gets the debugstring of the event.
+             */
+            virtual std::string getDebugString() const
+            {
+                return InputEvent::getDebugString();
+            }
 
-    private:
-        std::string m_path;
+        private:
+            std::string m_path;
     };
 
 } // namespace FIFE

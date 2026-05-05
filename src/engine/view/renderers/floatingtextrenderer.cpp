@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "floatingtextrenderer.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -10,9 +13,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -21,8 +21,6 @@
 #include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "floatingtextrenderer.h"
 #include "view/camera.h"
 #include "view/visual.h"
 
@@ -30,13 +28,13 @@ namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        [[nodiscard]] int32_t toScreenSize(uint32_t const value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             return static_cast<int32_t>(value);
         }
 
-        [[nodiscard]] uint16_t toRectExtent(const int32_t value)
+        [[nodiscard]] uint16_t toRectExtent(int32_t const value)
         {
             assert(value >= 0);
             assert(value <= std::numeric_limits<uint16_t>::max());
@@ -63,7 +61,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old) :
+    FloatingTextRenderer::FloatingTextRenderer(FloatingTextRenderer const & old) :
         RendererBase(old),
         m_renderbackend(old.m_renderbackend),
         m_font(old.m_font),
@@ -94,19 +92,19 @@ namespace FIFE
         }
 
         auto instance_it          = instances.begin();
-        const uint32_t lm         = m_renderbackend->getLightingModel();
-        const SDL_Color old_color = m_font->getColor();
+        uint32_t const lm         = m_renderbackend->getLightingModel();
+        SDL_Color const old_color = m_font->getColor();
         if (m_font_color) {
             m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
         }
         for (; instance_it != instances.end(); ++instance_it) {
-            Instance* instance         = (*instance_it)->instance;
-            const std::string* saytext = instance->getSayText();
+            Instance* instance          = (*instance_it)->instance;
+            std::string const * saytext = instance->getSayText();
             if (saytext != nullptr) {
-                const Rect& ir            = (*instance_it)->dimensions;
+                Rect const & ir           = (*instance_it)->dimensions;
                 Image* img                = m_font->getAsImageMultiline(*saytext);
-                const int32_t imageWidth  = toScreenSize(img->getWidth());
-                const int32_t imageHeight = toScreenSize(img->getHeight());
+                int32_t const imageWidth  = toScreenSize(img->getWidth());
+                int32_t const imageHeight = toScreenSize(img->getHeight());
                 Rect r;
                 r.x = (ir.x + ir.w / 2) - imageWidth / 2; /// the center of the text rect is always aligned to the
                                                           /// instance's rect center.
@@ -121,9 +119,9 @@ namespace FIFE
                     continue;
                 }
                 if (m_background || m_backborder) {
-                    const int32_t overdraw = 5;
+                    int32_t const overdraw = 5;
 
-                    const Point p = Point(r.x - overdraw, r.y - overdraw);
+                    Point const p = Point(r.x - overdraw, r.y - overdraw);
 
                     if (m_background) {
                         m_renderbackend->fillRectangle(

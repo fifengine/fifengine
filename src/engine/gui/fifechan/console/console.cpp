@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "console.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <string>
@@ -9,18 +12,13 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "commandline.h"
 #include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "video/renderbackend.h"
-
-#include "commandline.h"
-#include "console.h"
 
 namespace FIFE
 {
@@ -49,7 +47,7 @@ namespace FIFE
 
         setOpaque(true);
 
-        m_input->setCallback([this](const std::string& command) {
+        m_input->setCallback([this](std::string const & command) {
             execute(command);
         });
 
@@ -222,7 +220,7 @@ namespace FIFE
         m_animationTimer.start();
     }
 
-    void Console::execute(const std::string& cmd)
+    void Console::execute(std::string const & cmd)
     {
         FL_DBG(_log, LMsg("in execute with command ") << cmd);
         if (cmd.empty()) {
@@ -240,13 +238,13 @@ namespace FIFE
             } else {
                 FL_WARN(_log, LMsg("ConsoleExecuter not bind, but command received: ") << cmd.c_str());
             }
-        } catch (const FIFE::Exception& e) {
+        } catch (FIFE::Exception const & e) {
             FL_WARN(_log, LMsg("Console caught exception: ") << e.what());
             println(e.what());
         }
     }
 
-    void Console::println(const std::string& s)
+    void Console::println(std::string const & s)
     {
         assert(m_output);
 
@@ -259,14 +257,14 @@ namespace FIFE
 
         // Assure the maximum number of rows
         if (m_output->getNumberOfRows() > m_maxOutputRows) {
-            const unsigned rows     = m_output->getNumberOfRows();
-            const unsigned firstRow = rows - m_maxOutputRows;
+            unsigned const rows     = m_output->getNumberOfRows();
+            unsigned const firstRow = rows - m_maxOutputRows;
             std::vector<std::string> rows_text;
             for (unsigned i = firstRow; i < rows; ++i) {
                 rows_text.push_back(m_output->getTextRow(i));
             }
             m_output->setText("");
-            for (const auto& i : rows_text) {
+            for (auto const & i : rows_text) {
                 m_output->addRow(i);
             }
         }
@@ -276,7 +274,7 @@ namespace FIFE
         m_outputscrollarea->showWidgetPart(m_output, rect);
     }
 
-    void Console::action([[maybe_unused]] const fcn::ActionEvent& event)
+    void Console::action([[maybe_unused]] fcn::ActionEvent const & event)
     {
         if (m_consoleexec != nullptr) {
             m_consoleexec->onToolsClick();
@@ -301,7 +299,7 @@ namespace FIFE
         m_output->setFont(font);
     }
 
-    void Console::focusLost(const fcn::Event& event)
+    void Console::focusLost(fcn::Event const & event)
     {
         static_cast<void>(event);
         hide();

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "targetrenderer.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -10,15 +13,10 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #include "view/camera.h"
-
-#include "targetrenderer.h"
 
 namespace FIFE
 {
@@ -27,33 +25,35 @@ namespace FIFE
      */
     static Logger _log(LM_VIEWVIEW);
 
-    RenderTarget::RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height) :
+    RenderTarget::RenderTarget(RenderBackend* rb, std::string const & name, uint32_t width, uint32_t height) :
         m_renderbackend(rb), m_target(ImageManager::instance()->loadBlank(name, width, height))
     {
     }
 
-    RenderTarget::RenderTarget(RenderBackend* rb, ImagePtr& image) : m_renderbackend(rb), m_target(image) { }
+    RenderTarget::RenderTarget(RenderBackend* rb, ImagePtr& image) : m_renderbackend(rb), m_target(image)
+    {
+    }
 
     RenderTarget::~RenderTarget() = default;
 
     void RenderTarget::addLine(
-        const std::string& group, const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::string const & group, Point const & n1, Point const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererLineInfo(n1, n2, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addPoint(const std::string& group, const Point& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderTarget::addPoint(std::string const & group, Point const & n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererPointInfo(n, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
     void RenderTarget::addTriangle(
-        const std::string& group,
-        const Point& n1,
-        const Point& n2,
-        const Point& n3,
+        std::string const & group,
+        Point const & n1,
+        Point const & n2,
+        Point const & n3,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -64,11 +64,11 @@ namespace FIFE
     }
 
     void RenderTarget::addQuad(
-        const std::string& group,
-        const Point& n1,
-        const Point& n2,
-        const Point& n3,
-        const Point& n4,
+        std::string const & group,
+        Point const & n1,
+        Point const & n2,
+        Point const & n3,
+        Point const & n4,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -79,38 +79,38 @@ namespace FIFE
     }
 
     void RenderTarget::addVertex(
-        const std::string& group, const Point& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::string const & group, Point const & n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addText(const std::string& group, const Point& n, IFont* font, const std::string& text)
+    void RenderTarget::addText(std::string const & group, Point const & n, IFont* font, std::string const & text)
     {
         OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addImage(const std::string& group, const Point& n, const ImagePtr& image)
+    void RenderTarget::addImage(std::string const & group, Point const & n, ImagePtr const & image)
     {
         OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addAnimation(const std::string& group, const Point& n, const AnimationPtr& animation)
+    void RenderTarget::addAnimation(std::string const & group, Point const & n, AnimationPtr const & animation)
     {
         OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
         m_groups[group].push_back(info);
     }
 
     void RenderTarget::resizeImage(
-        const std::string& group, const Point& n, const ImagePtr& image, int32_t width, int32_t height)
+        std::string const & group, Point const & n, ImagePtr const & image, int32_t width, int32_t height)
     {
         OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::removeAll(const std::string& group)
+    void RenderTarget::removeAll(std::string const & group)
     {
         auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
@@ -136,11 +136,13 @@ namespace FIFE
         }
     }
 
-    TargetRenderer::TargetRenderer(RenderBackend* renderbackend) : m_renderbackend(renderbackend) { }
+    TargetRenderer::TargetRenderer(RenderBackend* renderbackend) : m_renderbackend(renderbackend)
+    {
+    }
 
     TargetRenderer::~TargetRenderer() = default;
 
-    RenderTargetPtr TargetRenderer::createRenderTarget(const std::string& name, uint32_t width, uint32_t height)
+    RenderTargetPtr TargetRenderer::createRenderTarget(std::string const & name, uint32_t width, uint32_t height)
     {
         RenderJob rj;
         rj.ndraws        = -1;
@@ -148,7 +150,7 @@ namespace FIFE
         rj.target        = RenderTargetPtr(new RenderTarget(m_renderbackend, name, width, height));
         rj.discard       = false;
 
-        const std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(name, rj));
+        std::pair<RenderJobMap::iterator, bool> const ret = m_targets.insert(std::make_pair(name, rj));
 
         return ret.first->second.target;
     }
@@ -161,12 +163,12 @@ namespace FIFE
         rj.target        = RenderTargetPtr(new RenderTarget(m_renderbackend, image));
         rj.discard       = false;
 
-        const std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(image->getName(), rj));
+        std::pair<RenderJobMap::iterator, bool> const ret = m_targets.insert(std::make_pair(image->getName(), rj));
 
         return ret.first->second.target;
     }
 
-    void TargetRenderer::setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws)
+    void TargetRenderer::setRenderTarget(std::string const & targetname, bool discard, int32_t ndraws)
     {
         auto it = m_targets.find(targetname);
         if (it != m_targets.end()) {
@@ -181,7 +183,7 @@ namespace FIFE
             for (auto& m_target : m_targets) {
                 if (m_target.second.ndraws != -1) {
                     if (m_target.second.ndraws <= m_target.second.lasttime_draw) {
-                        const RenderTargetPtr rt = m_target.second.target;
+                        RenderTargetPtr const rt = m_target.second.target;
                         m_renderbackend->attachRenderTarget(rt->m_target, m_target.second.discard);
                         rt->render();
                         m_renderbackend->detachRenderTarget();

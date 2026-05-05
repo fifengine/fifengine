@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "routepather.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <list>
@@ -10,20 +13,15 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cellcache.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
-#include "pathfinder/route.h"
-#include "util/math/angles.h"
-
 #include "multilayersearch.h"
-#include "routepather.h"
+#include "pathfinder/route.h"
 #include "routepathersearch.h"
 #include "singlelayersearch.h"
+#include "util/math/angles.h"
 
 namespace FIFE
 {
@@ -33,11 +31,11 @@ namespace FIFE
         return m_nextFreeSessionId++;
     }
 
-    bool RoutePather::locationsEqual(const Location& a, const Location& b)
+    bool RoutePather::locationsEqual(Location const & a, Location const & b)
     {
         bool const sameLayer          = a.getLayer() == b.getLayer();
-        const ModelCoordinate a_coord = a.getLayerCoordinates();
-        const ModelCoordinate b_coord = b.getLayerCoordinates();
+        ModelCoordinate const a_coord = a.getLayerCoordinates();
+        ModelCoordinate const b_coord = b.getLayerCoordinates();
 
         return (a_coord.x == b_coord.x) && (a_coord.y == b_coord.y) && sameLayer;
     }
@@ -57,7 +55,7 @@ namespace FIFE
             }
             prioritySession->updateSearch();
             if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_complete) {
-                const int32_t sessionId = prioritySession->getSessionId();
+                int32_t const sessionId = prioritySession->getSessionId();
                 prioritySession->calcPath();
                 Route* route = prioritySession->getRoute();
                 if (route->getRouteStatus() == ROUTE_SOLVED) {
@@ -66,7 +64,7 @@ namespace FIFE
                     m_sessions.popElement();
                 }
             } else if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_failed) {
-                const int32_t sessionId = prioritySession->getSessionId();
+                int32_t const sessionId = prioritySession->getSessionId();
                 invalidateSessionId(sessionId);
                 delete prioritySession;
                 m_sessions.popElement();
@@ -75,7 +73,7 @@ namespace FIFE
         }
     }
 
-    bool RoutePather::cancelSession(const int32_t sessionId)
+    bool RoutePather::cancelSession(int32_t const sessionId)
     {
         if (sessionId >= 0) {
             return invalidateSessionId(sessionId);
@@ -83,19 +81,19 @@ namespace FIFE
         return false;
     }
 
-    void RoutePather::addSessionId(const int32_t sessionId)
+    void RoutePather::addSessionId(int32_t const sessionId)
     {
         m_registeredSessionIds.push_back(sessionId);
     }
 
-    bool RoutePather::sessionIdValid(const int32_t sessionId)
+    bool RoutePather::sessionIdValid(int32_t const sessionId)
     {
         return std::ranges::any_of(m_registeredSessionIds, [sessionId](int id) {
             return id == sessionId;
         });
     }
 
-    bool RoutePather::invalidateSessionId(const int32_t sessionId)
+    bool RoutePather::invalidateSessionId(int32_t const sessionId)
     {
         auto it = std::ranges::find(m_registeredSessionIds, sessionId);
         if (it != m_registeredSessionIds.end()) {
@@ -106,7 +104,7 @@ namespace FIFE
     }
 
     Route* RoutePather::createRoute(
-        const Location& start, const Location& end, bool immediate, const std::string& costId)
+        Location const & start, Location const & end, bool immediate, std::string const & costId)
     {
         auto* route = new Route(start, end);
         if (!costId.empty()) {
@@ -127,8 +125,8 @@ namespace FIFE
             return false;
         }
 
-        const Location& start = route->getStartNode();
-        const Location& end   = route->getEndNode();
+        Location const & start = route->getStartNode();
+        Location const & end   = route->getEndNode();
 
         if (locationsEqual(start, end)) {
             return false;
@@ -150,15 +148,15 @@ namespace FIFE
 
         bool multilayer = startCache != endCache;
         if (!multilayer) {
-            const Zone* startZone = startCell->getZone();
-            const Zone* endZone   = endCell->getZone();
+            Zone const * startZone = startCell->getZone();
+            Zone const * endZone   = endCell->getZone();
             if (startZone != endZone) {
                 // look for special cases (start is zone border or end is static blocker)
                 if ((endZone == nullptr) || startCell->isZoneProtected()) {
-                    bool found                          = false;
-                    const std::vector<Cell*>& neighbors = endCell->getNeighbors();
+                    bool found                           = false;
+                    std::vector<Cell*> const & neighbors = endCell->getNeighbors();
                     for (auto* neighbor : neighbors) {
-                        const Zone* tmpZone = neighbor->getZone();
+                        Zone const * tmpZone = neighbor->getZone();
                         if (tmpZone != nullptr) {
                             endZone = tmpZone;
                             if (tmpZone == startZone) {
@@ -168,7 +166,7 @@ namespace FIFE
                         }
                     }
                     if (!found && startCell->isZoneProtected()) {
-                        const std::vector<Cell*>& startNeighbors = startCell->getNeighbors();
+                        std::vector<Cell*> const & startNeighbors = startCell->getNeighbors();
                         for (auto* neighbor : startNeighbors) {
                             Zone* tmpZone = neighbor->getZone();
                             if (tmpZone != nullptr) {
@@ -194,7 +192,7 @@ namespace FIFE
         if (route->isAreaLimited()) {
             // check if target or neighbors are on one of the areas
             bool sameAreas                     = false;
-            const std::list<std::string> areas = route->getLimitedAreas();
+            std::list<std::string> const areas = route->getLimitedAreas();
             auto area_it                       = areas.begin();
             for (; area_it != areas.end(); ++area_it) {
                 if (endCache->isCellInArea(*area_it, endCell)) {
@@ -203,7 +201,7 @@ namespace FIFE
                 }
             }
             if (!sameAreas) {
-                const std::vector<Cell*>& neighbors = endCell->getNeighbors();
+                std::vector<Cell*> const & neighbors = endCell->getNeighbors();
                 if (neighbors.empty()) {
                     return false;
                 }
@@ -256,7 +254,7 @@ namespace FIFE
         return true;
     }
 
-    bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation)
+    bool RoutePather::followRoute(Location const & current, Route* route, double speed, Location& nextLocation)
     {
         Path const path = route->getPath();
         if (path.empty()) {

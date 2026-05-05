@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "color.h"
+
 // Standard C++ library includes
 
 // Platform specific includes
@@ -9,15 +12,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
-#include "color.h"
 
 namespace FIFE
 {
-    Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha) : m_r(r), m_g(g), m_b(b), m_a(alpha) { }
+    Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha) : m_r(r), m_g(g), m_b(b), m_a(alpha)
+    {
+    }
 
     void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
     {

@@ -15,15 +15,14 @@
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
 #include "model/structures/location.h"
+#include "rendererbase.h"
 #include "util/math/matrix.h"
 #include "util/structures/rect.h"
 #include "video/animation.h"
-
-#include "rendererbase.h"
 
 namespace FIFE
 {
@@ -42,487 +41,489 @@ namespace FIFE
      */
     class /*FIFE_API*/ Camera : public IRendererListener, public IRendererContainer
     {
-    public:
-        enum TransformType : uint8_t
-        {
-            NoneTransform     = 0x00,
-            TiltTransform     = 0x01,
-            RotationTransform = 0x02,
-            ZoomTransform     = 0x04,
-            PositionTransform = 0x08,
-            ZTransform        = 0x10
-        };
-        using Transform = uint32_t;
-        /** Constructor
-         * Camera needs to be added to the view. If not done so, it is not rendered.
-         * @param id identifier for the camera
-         * @param map map where camera is bound
-         * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
-         * @param renderbackend to use with rendering
-         */
-        Camera(std::string id, Map* map, const Rect& viewport, RenderBackend* renderbackend);
-
-        /** Destructor
-         */
-        ~Camera() override;
-
-        Camera(const Camera&)            = delete;
-        Camera& operator=(const Camera&) = delete;
-
-        /** Gets the identifier for this camera.
-         */
-        const std::string& getId() const
-        {
-            return m_id;
-        }
-
-        /** Sets the identifier for this camera.
-         */
-        void setId(const std::string& id)
-        {
-            m_id = id;
-        }
-
-        /** Gets the map where camera is bound.
-         * @return The associated map for this camera.
-         */
-        Map* getMap()
-        {
-            return m_map;
-        }
-
-        /** Sets tilt for the camera.
-         * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
-         * @param tilt tilt for the camera
-         */
-        void setTilt(double tilt);
-
-        /** Gets camera tilt
-         * @return tilt of camera
-         */
-        double getTilt() const;
-
-        /** Sets rotation for the camera.
-         * Rotation can be visualized by thinking camera that rotates around an object
-         * that it is rendering
-         * @param rotation rotation for the camera
-         */
-        void setRotation(double rotation);
-
-        /** Gets camera rotation
-         * @return rotation of the camera
-         */
-        double getRotation() const;
-
-        /** Sets zoom for the camera.
-         * @param zoom zoom for the camera
-         */
-        void setZoom(double zoom);
-
-        /** Gets camera zoom
-         * @return zoom of the camera
-         */
-        double getZoom() const;
-
-        /** Gets original zToY transformation value.
-         * @return zToY value of the camera.
-         */
-        double getOriginalZToY() const;
-
-        /** Sets zToY value for the camera and enables their use.
-         * This means the factor which influenced the z to y transformation,
-         * so if you set zToY=32 then 1z corresponds to 32 pixels in y direction.
-         * @param zToY influenced the z to y transformation of the camera.
-         */
-        void setZToY(double zToY);
-
-        /** Gets zToY value.
-         * @return zToY value of the camera.
-         */
-        double getZToY() const;
-
-        /** Sets z to y manipulation enabled / disabled.
-         * @param enabled If true then the zToY value is used instead of the original matrix value.
-         */
-        void setZToYEnabled(bool enabled);
-
-        /** Gets if z to y manipulation is enabled / disabled.
-         * @return true if z to y manipulation is enabled, otherwise false.
-         */
-        bool isZToYEnabled() const;
-
-        /** Sets screen cell image dimensions.
-         * Cell image dimension is basically width and height of a bitmap, that covers
-         * one cell in the layer where camera is bind
-         * @param width The width of the cell image in pixels.
-         * @param height The height of the cell image in pixels.
-         */
-        void setCellImageDimensions(uint32_t width, uint32_t height);
-
-        /** Gets screen cell image dimensions.
-         * @see setCellImageDimensions
-         * @return Point containing x=width and y=height
-         */
-        Point getCellImageDimensions() const;
-
-        /** Gets screen cell image dimensions for given layer.
-         * @return Point containing x=width and y=height
-         */
-        Point getCellImageDimensions(Layer* layer) const;
-
-        /** Gets x reference scale for cell image dimensions
-         */
-        double getReferenceScaleX() const
-        {
-            return m_referenceScaleX;
-        }
-
-        /** Gets y reference scale for cell image dimensions
-         */
-        double getReferenceScaleY() const
-        {
-            return m_referenceScaleY;
-        }
-
-        /** Sets the location for camera
-         * @param location location (center point) to render
-         */
-        void setLocation(const Location& location);
-
-        /** Gets the location camera is rendering. If no location was set, the camera creates a location.
-         * The top layer of the map together with current camera position are used for that.
-         * @return camera location
-         */
-        Location getLocation();
-
-        /** Sets map point for the camera
-         * @param position The camera position on the map
-         */
-        void setPosition(const ExactModelCoordinate& position);
-
-        /** Gets map point of the camera
-         * @return The camera position on the map
-         */
-        ExactModelCoordinate getPosition() const;
-
-        /** Gets screen point of the camera
-         * @return camera screen point
-         */
-        Point3D getOrigin() const;
-
-        /** Attaches the camera to an instance.
-         * @param instance Instance to which the camera shall be attached
-         * @note The camera can only be attached to an instance at the same layer!
-         */
-        void attach(Instance* instance);
-
-        /** Detaches the camera from an instance.
-         */
-        void detach();
-
-        /** Returns instance where camera is attached. NULL if not attached
-         */
-        Instance* getAttached() const
-        {
-            return m_attachedTo;
-        }
-
-        /** Sets the viewport for camera
-         * viewport is rectangle inside the view where camera renders
-         * @param viewport area for camera render
-         */
-        void setViewPort(const Rect& viewport);
-
-        /** Gets the viewport for camera in pixel coordinates
-         * @return camera viewport
-         */
-        const Rect& getViewPort() const;
-
-        /** Gets the viewport for camera in map coordinates
-         * @return camera viewport
-         */
-        const Rect& getMapViewPort();
-
-        /** Gets the viewport for camera in layer coordinates
-         * @param layer A pointer to the layer whose geometry is used for the conversion
-         * @return camera viewport
-         */
-        Rect getLayerViewPort(Layer* layer);
-
-        /** Transforms given point from screen coordinates to map coordinates
-         * @param screen_coords screen coordinates to transform
-         * @param z_calculated if true, z-value (depth cut point) is pre-calculated. If false, camera calculates it
-         * @return point in map coordinates
-         */
-        ExactModelCoordinate toMapCoordinates(const ScreenPoint& screen_coords, bool z_calculated = true);
-
-        /** Transforms given point from map coordinates to screen coordinates
-         *  @return point in screen coordinates
-         */
-        ScreenPoint toScreenCoordinates(const ExactModelCoordinate& elevation_coords);
-
-        /** Transforms given point from map coordinates to virtual screen coordinates
-         *  @return point in virtual screen coordinates
-         */
-        DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords);
-
-        /** Transforms given point from virtual screen coordinates to screen coordinates
-         *  @return point in screen coordinates
-         */
-        ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
-
-        /** Transforms given point from screen coordinates to virtual screen coordinates
-         *  @return point in virtual screen coordinates
-         */
-        DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
-
-        /** Sets camera enabled / disabled
-         */
-        void setEnabled(bool enabled);
-
-        /** Gets if camera is enabled / disabled
-         */
-        bool isEnabled() const;
-
-        /** Returns reference to RenderList.
-         */
-        RenderList& getRenderListRef(Layer* layer);
-
-        /** Returns instances that match given screen coordinate
-         * @param screen_coords screen coordinates to be used for hit search
-         * @param layer layer to use for search
-         * @param instances list of instances that is filled based on hit test results
-         * @param alpha the alpha to use to filter the matching instances.  Pixels
-         *        that have an alpha value higher than what is specified here are
-         *        considered a hit.
-         */
-        void getMatchingInstances(
-            const ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
-
-        /** Returns instances that match given screen coordinate
-         * @param screen_rect rect that contains screen coordinates to be used for search
-         * @param layer layer to use for search
-         * @param instances list of instances that is filled based on hit test results
-         * @param alpha the alpha to use to filter the matching instances.  Pixels
-         *        that have an alpha value higher than what is specified here are
-         *        considered a hit.
-         */
-        void getMatchingInstances(
-            const Rect& screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
-
-        /** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
-         * instance is first in returned list
-         * @param loc location where to fetch instances from
-         * @param instances list of instances that is filled based on hit test results
-         * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are
-         * used
-         */
-        void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates = false);
-
-        /** General update routine.
-         * In this function, the camera's position gets updated when its attached
-         * to another instance.
-         * @note call this only once in engine update cycle, so that tracking between
-         *  current position and previous position keeps in sync. This information
-         *  is used e.g. by view to fix the pixel wobbling problem
-         */
-        void update();
-
-        /** Refreshes camera view in case e.g. location is updated directly (not via setLocation)
-         * @note calling this function marks camera as "warped", therefore it causes all instance
-         * positions to be recalculated. If you constantly call this, you end up with pixel wobbling
-         * effect when camera is moved.
-         */
-        void refresh();
-
-        /** Resets temporary values from last update round, like warped flag
-         */
-        void resetUpdates();
-
-        /** Returns true if camera view has been updated, otherwise false
-         */
-        bool isUpdated() const
-        {
-            return m_updated;
-        }
-
-        /** Adds new renderer on the view. Ownership is transferred to the camera.
-         */
-        void addRenderer(RendererBase* renderer);
-
-        /** Gets renderer with given name
-         */
-        RendererBase* getRenderer(const std::string& name) override;
-
-        /** resets active layer information on all renderers.
-         */
-        void resetRenderers();
-
-        /** calculates z-value for given screenpoint
-         */
-        void calculateZValue(DoublePoint3D& screen_coords);
-
-        void onRendererPipelinePositionChanged(RendererBase* renderer) override;
-
-        void onRendererEnabledChanged(RendererBase* renderer) override;
-
-        /** Sets lighting color
-         */
-        void setLightingColor(float red, float green, float blue);
-
-        /** Resets lighting color
-         */
-        void resetLightingColor();
-
-        /** Returns a vector that contain the light color
-         */
-        std::vector<float> getLightingColor();
-
-        /** Sets a color as overlay
-         */
-        void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-
-        /** Returns a vector that contain the overlay color
-         */
-        std::vector<uint8_t> getOverlayColor() const;
-
-        /** Resets the color overlay
-         */
-        void resetOverlayColor();
-
-        /** Sets a image as overlay,
-         *  if fill is true the image gets the viewport size.
-         */
-        void setOverlayImage(int32_t id, bool fill = false);
-
-        /** Returns the pool id of the overlay image
-         */
-        int32_t getOverlayImage() const;
-
-        /** Resets the image overlay
-         */
-        void resetOverlayImage();
-
-        /** Sets a animation as overlay,
-         *  if fill is true the animation gets the viewport size.
-         */
-        void setOverlayAnimation(const AnimationPtr& anim, bool fill = false);
-
-        /** Returns an AnimationPtr to the overlay animation
-         */
-        AnimationPtr getOverlayAnimation();
-
-        /** Resets the animation overlay
-         */
-        void resetOverlayAnimation();
-
-        /** Renders camera
-         */
-        void render();
-
-    private:
-        friend class MapObserver;
-        void addLayer(Layer* layer);
-        void removeLayer(Layer* layer);
-
-        void init();
-        std::string m_id;
-        Map* m_map;
-        Rect m_viewport;
-        RenderBackend* m_renderbackend;
-
-        ExactModelCoordinate m_position;
-
-        /** Updates the camera transformation matrix T with requested values.
-         * The requests are done using these functions :
-         * - setLocation
-         * - setRotation
-         * - setTilt
-         */
-        void updateMatrices();
-
-        /** Updates camera reference scale
-         * Reference scale is in a sense an internal zooming factor,
-         * which adjusts cell dimensions in logical space to ones shown on
-         * screen. Calculation is based on current camera properties (e.g. rotation)
-         */
-        void updateReferenceScale();
-
-        /** Updates camera RenderLists
-         */
-        void updateRenderLists();
-
-        /** Gets logical cell image dimensions for given layer
-         */
-        DoublePoint getLogicalCellDimensions(Layer* layer) const;
-
-        /** Gets logical cell image dimensions and ignores the layer and cellgrid
-         */
-        DoublePoint getLogicalCellDimensions() const;
-
-        /** Renders the overlay(color, image, animation) for the camera.
-         */
-        void renderOverlay();
-
-        /** Renders the layer part that is on screen as one image.
-         */
-        void renderStaticLayer(Layer* layer, bool update);
-
-        DoubleMatrix m_matrix;
-        DoubleMatrix m_inverse_matrix;
-
-        DoubleMatrix m_vs_matrix;
-        DoubleMatrix m_vs_inverse_matrix;
-        DoubleMatrix m_vscreen_2_screen;
-        DoubleMatrix m_screen_2_vscreen;
-
-        double m_tilt;
-        double m_rotation;
-        double m_zoom;
-        double m_zToY;
-        bool m_enabledZToY;
-        Location m_location;
-        ScreenPoint m_curOrigin;
-
-        Rect m_mapViewPort;
-        bool m_mapViewPortUpdated;
-        uint32_t m_screenCellWidth;
-        uint32_t m_screenCellHeight;
-        double m_referenceScaleX;
-        double m_referenceScaleY;
-        bool m_enabled;
-        Instance* m_attachedTo;
-
-        // contains the geometry changes
-        Transform m_transform;
-
-        // list of renderers managed by the view
-        std::map<std::string, RendererBase*> m_renderers;
-        std::list<RendererBase*> m_pipeline;
-        // false, if view has not been updated
-        bool m_updated;
-
-        // caches layer -> instances structure between renders e.g. to fast query of mouse picking order
-        t_layer_to_instances m_layerToInstances;
-
-        std::map<Layer*, LayerCache*> m_cache;
-        MapObserver* m_map_observer;
-
-        // is lighting enable
-        bool m_lighting;
-        // caches the light color for the camera
-        std::vector<float> m_light_colors;
-
-        // overlay stuff
-        bool m_col_overlay;
-        bool m_img_overlay;
-        bool m_ani_overlay;
-        SDL_Color m_overlay_color;
-        int32_t m_img_id;
-        AnimationPtr m_ani_ptr;
-        bool m_img_fill;
-        bool m_ani_fill;
-        uint32_t m_start_time;
+        public:
+            enum TransformType : uint8_t
+            {
+                NoneTransform     = 0x00,
+                TiltTransform     = 0x01,
+                RotationTransform = 0x02,
+                ZoomTransform     = 0x04,
+                PositionTransform = 0x08,
+                ZTransform        = 0x10
+            };
+            using Transform = uint32_t;
+            /** Constructor
+             * Camera needs to be added to the view. If not done so, it is not rendered.
+             * @param id identifier for the camera
+             * @param map map where camera is bound
+             * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main
+             * screen
+             * @param renderbackend to use with rendering
+             */
+            Camera(std::string id, Map* map, Rect const & viewport, RenderBackend* renderbackend);
+
+            /** Destructor
+             */
+            ~Camera() override;
+
+            Camera(Camera const &)            = delete;
+            Camera& operator=(Camera const &) = delete;
+
+            /** Gets the identifier for this camera.
+             */
+            std::string const & getId() const
+            {
+                return m_id;
+            }
+
+            /** Sets the identifier for this camera.
+             */
+            void setId(std::string const & id)
+            {
+                m_id = id;
+            }
+
+            /** Gets the map where camera is bound.
+             * @return The associated map for this camera.
+             */
+            Map* getMap()
+            {
+                return m_map;
+            }
+
+            /** Sets tilt for the camera.
+             * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
+             * @param tilt tilt for the camera
+             */
+            void setTilt(double tilt);
+
+            /** Gets camera tilt
+             * @return tilt of camera
+             */
+            double getTilt() const;
+
+            /** Sets rotation for the camera.
+             * Rotation can be visualized by thinking camera that rotates around an object
+             * that it is rendering
+             * @param rotation rotation for the camera
+             */
+            void setRotation(double rotation);
+
+            /** Gets camera rotation
+             * @return rotation of the camera
+             */
+            double getRotation() const;
+
+            /** Sets zoom for the camera.
+             * @param zoom zoom for the camera
+             */
+            void setZoom(double zoom);
+
+            /** Gets camera zoom
+             * @return zoom of the camera
+             */
+            double getZoom() const;
+
+            /** Gets original zToY transformation value.
+             * @return zToY value of the camera.
+             */
+            double getOriginalZToY() const;
+
+            /** Sets zToY value for the camera and enables their use.
+             * This means the factor which influenced the z to y transformation,
+             * so if you set zToY=32 then 1z corresponds to 32 pixels in y direction.
+             * @param zToY influenced the z to y transformation of the camera.
+             */
+            void setZToY(double zToY);
+
+            /** Gets zToY value.
+             * @return zToY value of the camera.
+             */
+            double getZToY() const;
+
+            /** Sets z to y manipulation enabled / disabled.
+             * @param enabled If true then the zToY value is used instead of the original matrix value.
+             */
+            void setZToYEnabled(bool enabled);
+
+            /** Gets if z to y manipulation is enabled / disabled.
+             * @return true if z to y manipulation is enabled, otherwise false.
+             */
+            bool isZToYEnabled() const;
+
+            /** Sets screen cell image dimensions.
+             * Cell image dimension is basically width and height of a bitmap, that covers
+             * one cell in the layer where camera is bind
+             * @param width The width of the cell image in pixels.
+             * @param height The height of the cell image in pixels.
+             */
+            void setCellImageDimensions(uint32_t width, uint32_t height);
+
+            /** Gets screen cell image dimensions.
+             * @see setCellImageDimensions
+             * @return Point containing x=width and y=height
+             */
+            Point getCellImageDimensions() const;
+
+            /** Gets screen cell image dimensions for given layer.
+             * @return Point containing x=width and y=height
+             */
+            Point getCellImageDimensions(Layer* layer) const;
+
+            /** Gets x reference scale for cell image dimensions
+             */
+            double getReferenceScaleX() const
+            {
+                return m_referenceScaleX;
+            }
+
+            /** Gets y reference scale for cell image dimensions
+             */
+            double getReferenceScaleY() const
+            {
+                return m_referenceScaleY;
+            }
+
+            /** Sets the location for camera
+             * @param location location (center point) to render
+             */
+            void setLocation(Location const & location);
+
+            /** Gets the location camera is rendering. If no location was set, the camera creates a location.
+             * The top layer of the map together with current camera position are used for that.
+             * @return camera location
+             */
+            Location getLocation();
+
+            /** Sets map point for the camera
+             * @param position The camera position on the map
+             */
+            void setPosition(ExactModelCoordinate const & position);
+
+            /** Gets map point of the camera
+             * @return The camera position on the map
+             */
+            ExactModelCoordinate getPosition() const;
+
+            /** Gets screen point of the camera
+             * @return camera screen point
+             */
+            Point3D getOrigin() const;
+
+            /** Attaches the camera to an instance.
+             * @param instance Instance to which the camera shall be attached
+             * @note The camera can only be attached to an instance at the same layer!
+             */
+            void attach(Instance* instance);
+
+            /** Detaches the camera from an instance.
+             */
+            void detach();
+
+            /** Returns instance where camera is attached. NULL if not attached
+             */
+            Instance* getAttached() const
+            {
+                return m_attachedTo;
+            }
+
+            /** Sets the viewport for camera
+             * viewport is rectangle inside the view where camera renders
+             * @param viewport area for camera render
+             */
+            void setViewPort(Rect const & viewport);
+
+            /** Gets the viewport for camera in pixel coordinates
+             * @return camera viewport
+             */
+            Rect const & getViewPort() const;
+
+            /** Gets the viewport for camera in map coordinates
+             * @return camera viewport
+             */
+            Rect const & getMapViewPort();
+
+            /** Gets the viewport for camera in layer coordinates
+             * @param layer A pointer to the layer whose geometry is used for the conversion
+             * @return camera viewport
+             */
+            Rect getLayerViewPort(Layer* layer);
+
+            /** Transforms given point from screen coordinates to map coordinates
+             * @param screen_coords screen coordinates to transform
+             * @param z_calculated if true, z-value (depth cut point) is pre-calculated. If false, camera calculates it
+             * @return point in map coordinates
+             */
+            ExactModelCoordinate toMapCoordinates(ScreenPoint const & screen_coords, bool z_calculated = true);
+
+            /** Transforms given point from map coordinates to screen coordinates
+             *  @return point in screen coordinates
+             */
+            ScreenPoint toScreenCoordinates(ExactModelCoordinate const & elevation_coords);
+
+            /** Transforms given point from map coordinates to virtual screen coordinates
+             *  @return point in virtual screen coordinates
+             */
+            DoublePoint3D toVirtualScreenCoordinates(ExactModelCoordinate const & elevation_coords);
+
+            /** Transforms given point from virtual screen coordinates to screen coordinates
+             *  @return point in screen coordinates
+             */
+            ScreenPoint virtualScreenToScreen(DoublePoint3D const & p);
+
+            /** Transforms given point from screen coordinates to virtual screen coordinates
+             *  @return point in virtual screen coordinates
+             */
+            DoublePoint3D screenToVirtualScreen(ScreenPoint const & p);
+
+            /** Sets camera enabled / disabled
+             */
+            void setEnabled(bool enabled);
+
+            /** Gets if camera is enabled / disabled
+             */
+            bool isEnabled() const;
+
+            /** Returns reference to RenderList.
+             */
+            RenderList& getRenderListRef(Layer* layer);
+
+            /** Returns instances that match given screen coordinate
+             * @param screen_coords screen coordinates to be used for hit search
+             * @param layer layer to use for search
+             * @param instances list of instances that is filled based on hit test results
+             * @param alpha the alpha to use to filter the matching instances.  Pixels
+             *        that have an alpha value higher than what is specified here are
+             *        considered a hit.
+             */
+            void getMatchingInstances(
+                ScreenPoint const & screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
+
+            /** Returns instances that match given screen coordinate
+             * @param screen_rect rect that contains screen coordinates to be used for search
+             * @param layer layer to use for search
+             * @param instances list of instances that is filled based on hit test results
+             * @param alpha the alpha to use to filter the matching instances.  Pixels
+             *        that have an alpha value higher than what is specified here are
+             *        considered a hit.
+             */
+            void getMatchingInstances(
+                Rect const & screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
+
+            /** Returns instances that match given location. Instances are sorted based on camera view, so that
+             * "topmost" instance is first in returned list
+             * @param loc location where to fetch instances from
+             * @param instances list of instances that is filled based on hit test results
+             * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates
+             * are used
+             */
+            void getMatchingInstances(
+                Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates = false);
+
+            /** General update routine.
+             * In this function, the camera's position gets updated when its attached
+             * to another instance.
+             * @note call this only once in engine update cycle, so that tracking between
+             *  current position and previous position keeps in sync. This information
+             *  is used e.g. by view to fix the pixel wobbling problem
+             */
+            void update();
+
+            /** Refreshes camera view in case e.g. location is updated directly (not via setLocation)
+             * @note calling this function marks camera as "warped", therefore it causes all instance
+             * positions to be recalculated. If you constantly call this, you end up with pixel wobbling
+             * effect when camera is moved.
+             */
+            void refresh();
+
+            /** Resets temporary values from last update round, like warped flag
+             */
+            void resetUpdates();
+
+            /** Returns true if camera view has been updated, otherwise false
+             */
+            bool isUpdated() const
+            {
+                return m_updated;
+            }
+
+            /** Adds new renderer on the view. Ownership is transferred to the camera.
+             */
+            void addRenderer(RendererBase* renderer);
+
+            /** Gets renderer with given name
+             */
+            RendererBase* getRenderer(std::string const & name) override;
+
+            /** resets active layer information on all renderers.
+             */
+            void resetRenderers();
+
+            /** calculates z-value for given screenpoint
+             */
+            void calculateZValue(DoublePoint3D& screen_coords);
+
+            void onRendererPipelinePositionChanged(RendererBase* renderer) override;
+
+            void onRendererEnabledChanged(RendererBase* renderer) override;
+
+            /** Sets lighting color
+             */
+            void setLightingColor(float red, float green, float blue);
+
+            /** Resets lighting color
+             */
+            void resetLightingColor();
+
+            /** Returns a vector that contain the light color
+             */
+            std::vector<float> getLightingColor();
+
+            /** Sets a color as overlay
+             */
+            void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+
+            /** Returns a vector that contain the overlay color
+             */
+            std::vector<uint8_t> getOverlayColor() const;
+
+            /** Resets the color overlay
+             */
+            void resetOverlayColor();
+
+            /** Sets a image as overlay,
+             *  if fill is true the image gets the viewport size.
+             */
+            void setOverlayImage(int32_t id, bool fill = false);
+
+            /** Returns the pool id of the overlay image
+             */
+            int32_t getOverlayImage() const;
+
+            /** Resets the image overlay
+             */
+            void resetOverlayImage();
+
+            /** Sets a animation as overlay,
+             *  if fill is true the animation gets the viewport size.
+             */
+            void setOverlayAnimation(AnimationPtr const & anim, bool fill = false);
+
+            /** Returns an AnimationPtr to the overlay animation
+             */
+            AnimationPtr getOverlayAnimation();
+
+            /** Resets the animation overlay
+             */
+            void resetOverlayAnimation();
+
+            /** Renders camera
+             */
+            void render();
+
+        private:
+            friend class MapObserver;
+            void addLayer(Layer* layer);
+            void removeLayer(Layer* layer);
+
+            void init();
+            std::string m_id;
+            Map* m_map;
+            Rect m_viewport;
+            RenderBackend* m_renderbackend;
+
+            ExactModelCoordinate m_position;
+
+            /** Updates the camera transformation matrix T with requested values.
+             * The requests are done using these functions :
+             * - setLocation
+             * - setRotation
+             * - setTilt
+             */
+            void updateMatrices();
+
+            /** Updates camera reference scale
+             * Reference scale is in a sense an internal zooming factor,
+             * which adjusts cell dimensions in logical space to ones shown on
+             * screen. Calculation is based on current camera properties (e.g. rotation)
+             */
+            void updateReferenceScale();
+
+            /** Updates camera RenderLists
+             */
+            void updateRenderLists();
+
+            /** Gets logical cell image dimensions for given layer
+             */
+            DoublePoint getLogicalCellDimensions(Layer* layer) const;
+
+            /** Gets logical cell image dimensions and ignores the layer and cellgrid
+             */
+            DoublePoint getLogicalCellDimensions() const;
+
+            /** Renders the overlay(color, image, animation) for the camera.
+             */
+            void renderOverlay();
+
+            /** Renders the layer part that is on screen as one image.
+             */
+            void renderStaticLayer(Layer* layer, bool update);
+
+            DoubleMatrix m_matrix;
+            DoubleMatrix m_inverse_matrix;
+
+            DoubleMatrix m_vs_matrix;
+            DoubleMatrix m_vs_inverse_matrix;
+            DoubleMatrix m_vscreen_2_screen;
+            DoubleMatrix m_screen_2_vscreen;
+
+            double m_tilt;
+            double m_rotation;
+            double m_zoom;
+            double m_zToY;
+            bool m_enabledZToY;
+            Location m_location;
+            ScreenPoint m_curOrigin;
+
+            Rect m_mapViewPort;
+            bool m_mapViewPortUpdated;
+            uint32_t m_screenCellWidth;
+            uint32_t m_screenCellHeight;
+            double m_referenceScaleX;
+            double m_referenceScaleY;
+            bool m_enabled;
+            Instance* m_attachedTo;
+
+            // contains the geometry changes
+            Transform m_transform;
+
+            // list of renderers managed by the view
+            std::map<std::string, RendererBase*> m_renderers;
+            std::list<RendererBase*> m_pipeline;
+            // false, if view has not been updated
+            bool m_updated;
+
+            // caches layer -> instances structure between renders e.g. to fast query of mouse picking order
+            t_layer_to_instances m_layerToInstances;
+
+            std::map<Layer*, LayerCache*> m_cache;
+            MapObserver* m_map_observer;
+
+            // is lighting enable
+            bool m_lighting;
+            // caches the light color for the camera
+            std::vector<float> m_light_colors;
+
+            // overlay stuff
+            bool m_col_overlay;
+            bool m_img_overlay;
+            bool m_ani_overlay;
+            SDL_Color m_overlay_color;
+            int32_t m_img_id;
+            AnimationPtr m_ani_ptr;
+            bool m_img_fill;
+            bool m_ani_fill;
+            uint32_t m_start_time;
     };
 } // namespace FIFE
 #endif

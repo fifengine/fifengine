@@ -12,7 +12,7 @@
 #include <string>
 
 // 3rd party library includes
-#include <SDL_ttf.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 // FIFE includes
 #include "fontbase.h"
@@ -33,38 +33,38 @@ namespace FIFE
      */
     class /*FIFE_API*/ TrueTypeFont : public FontBase
     {
-    public:
-        /**
-         * Constructor.
-         *
-         * @param filename the filename of the True Type Font.
-         * @param size the size the font should be in.
-         */
-        TrueTypeFont(const std::string& filename, int32_t size);
+        public:
+            /**
+             * Constructor.
+             *
+             * @param filename the filename of the True Type Font.
+             * @param size the size the font should be in.
+             */
+            TrueTypeFont(std::string const & filename, int32_t size);
 
-        /**
-         * Destructor.
-         */
-        ~TrueTypeFont() override;
+            /**
+             * Destructor.
+             */
+            ~TrueTypeFont() override;
 
-        int32_t getWidth(const std::string& text) const override;
+            int32_t getWidth(std::string const & text) const override;
 
-        int32_t getHeight() const override;
+            int32_t getHeight() const override;
 
-        void setBoldStyle(bool style) override;
-        void setItalicStyle(bool style) override;
-        void setUnderlineStyle(bool style) override;
-        void setStrikethroughStyle(bool style) override;
-        int32_t getFontStyleMask() const;
+            void setBoldStyle(bool style) override;
+            void setItalicStyle(bool style) override;
+            void setUnderlineStyle(bool style) override;
+            void setStrikethroughStyle(bool style) override;
+            int32_t getFontStyleMask() const;
 
-        SDL_Surface* renderString(const std::string& text) override;
+            SDL_Surface* renderString(std::string const & text) override;
 
-        void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
+            void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
 
-    protected:
-        TTF_Font* mFont;
+        protected:
+            TTF_Font* mFont;
 
-        int32_t mFontStyle;
+            int32_t mFontStyle;
     };
 } // namespace FIFE
 

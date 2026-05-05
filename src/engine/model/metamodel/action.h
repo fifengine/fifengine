@@ -15,10 +15,9 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "ivisual.h"
 #include "util/base/fifeclass.h"
 #include "util/math/angles.h"
-
-#include "ivisual.h"
 
 namespace FIFE
 {
@@ -26,78 +25,78 @@ namespace FIFE
 
     class /*FIFE_API*/ Action : public FifeClass
     {
-    public:
-        /** Constructor
-         * Actions are created by calling addAction from object, thus
-         * this method should really be called only by object or test code
-         */
-        explicit Action(std::string identifier);
+        public:
+            /** Constructor
+             * Actions are created by calling addAction from object, thus
+             * this method should really be called only by object or test code
+             */
+            explicit Action(std::string identifier);
 
-        /** Destructor
-         */
-        virtual ~Action();
+            /** Destructor
+             */
+            virtual ~Action();
 
-        /** Get the identifier for this action.
-         */
-        const std::string& getId()
-        {
-            return m_id;
-        }
+            /** Get the identifier for this action.
+             */
+            std::string const & getId()
+            {
+                return m_id;
+            }
 
-        /** Sets the duration for this action
-         */
-        void setDuration(uint32_t duration)
-        {
-            m_duration = duration;
-        }
+            /** Sets the duration for this action
+             */
+            void setDuration(uint32_t duration)
+            {
+                m_duration = duration;
+            }
 
-        /** Gets the duration of this action
-         */
-        uint32_t getDuration() const
-        {
-            return m_duration;
-        }
+            /** Gets the duration of this action
+             */
+            uint32_t getDuration() const
+            {
+                return m_duration;
+            }
 
-        /** Sets visualization to be used. Transfers ownership.
-         */
-        void adoptVisual(IVisual* visual)
-        {
-            m_visual = visual;
-        }
+            /** Sets visualization to be used. Transfers ownership.
+             */
+            void adoptVisual(IVisual* visual)
+            {
+                m_visual = visual;
+            }
 
-        /** Gets used visualization
-         */
-        template <typename T>
-        T* getVisual() const
-        {
-            // Use dynamic_cast to safely downcast across polymorphic types.
-            // This avoids unsafe reinterpret_cast and preserves runtime checks.
-            return dynamic_cast<T*>(m_visual);
-        }
+            /** Gets used visualization
+             */
+            template <typename T>
+            T* getVisual() const
+            {
+                // Use dynamic_cast to safely downcast across polymorphic types.
+                // This avoids unsafe reinterpret_cast and preserves runtime checks.
+                return dynamic_cast<T*>(m_visual);
+            }
 
-        /** Sets audio to be used. Transfers ownership.
-         */
-        void adoptAudio(ActionAudio* audio)
-        {
-            m_audio = audio;
-        }
+            /** Sets audio to be used. Transfers ownership.
+             */
+            void adoptAudio(ActionAudio* audio)
+            {
+                m_audio = audio;
+            }
 
-        /** Gets used audio
-         */
-        ActionAudio* getAudio() const
-        {
-            return m_audio;
-        }
+            /** Gets used audio
+             */
+            ActionAudio* getAudio() const
+            {
+                return m_audio;
+            }
 
-    private:
-        std::string m_id;
+        private:
+            std::string m_id;
 
-        // duration of the action
-        uint32_t m_duration;
-        // visualization for action
-        IVisual* m_visual;
-        // audio for action
-        ActionAudio* m_audio;
+            // duration of the action
+            uint32_t m_duration;
+            // visualization for action
+            IVisual* m_visual;
+            // audio for action
+            ActionAudio* m_audio;
     };
 
 } // namespace FIFE

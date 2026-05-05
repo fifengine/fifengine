@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "coordinaterenderer.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -9,9 +12,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
@@ -22,8 +22,6 @@
 #include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "coordinaterenderer.h"
 #include "view/camera.h"
 #include "view/visual.h"
 
@@ -31,7 +29,7 @@ namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        [[nodiscard]] int32_t toScreenSize(uint32_t const value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             return static_cast<int32_t>(value);
@@ -54,7 +52,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old) :
+    CoordinateRenderer::CoordinateRenderer(CoordinateRenderer const & old) :
         RendererBase(old),
 
         m_font(old.m_font),
@@ -87,8 +85,8 @@ namespace FIFE
         m_layer_area.h          = std::max(c.y, m_layer_area.h);
     }
 
-    const int32_t MIN_COORD = -9999999;
-    const int32_t MAX_COORD = 9999999;
+    int32_t const MIN_COORD = -9999999;
+    int32_t const MAX_COORD = 9999999;
     void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         static_cast<void>(instances);
@@ -97,7 +95,7 @@ namespace FIFE
             return;
         }
         Rect r            = Rect();
-        const bool zoomed = (!Mathd::Equal(1.0, cam->getZoom()) && m_zoom);
+        bool const zoomed = (!Mathd::Equal(1.0, cam->getZoom()) && m_zoom);
         Rect const cv     = cam->getViewPort();
 
         m_tmploc.setLayer(layer);
@@ -139,13 +137,13 @@ namespace FIFE
                 sts.str("");
                 sts << mc.y;
                 Image* imgy              = m_font->getAsImage(sts.str());
-                const int32_t widthX     = toScreenSize(imgx->getWidth());
-                const int32_t widthComma = toScreenSize(imgc->getWidth());
-                const int32_t widthY     = toScreenSize(imgy->getWidth());
-                const int32_t heightX    = toScreenSize(imgx->getHeight());
+                int32_t const widthX     = toScreenSize(imgx->getWidth());
+                int32_t const widthComma = toScreenSize(imgc->getWidth());
+                int32_t const widthY     = toScreenSize(imgy->getWidth());
+                int32_t const heightX    = toScreenSize(imgx->getHeight());
 
                 if (zoomed) {
-                    const double zoom = cam->getZoom();
+                    double const zoom = cam->getZoom();
                     r.x = static_cast<int32_t>(round(drawpt.x - (((widthX + widthComma + widthY) / 2.0) * zoom)));
                     r.y = static_cast<int32_t>(round(drawpt.y - ((heightX / 2.0) * zoom)));
                     r.w = static_cast<int32_t>(round(widthX * zoom));

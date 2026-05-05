@@ -32,61 +32,61 @@ namespace FIFE
      */
     class /*FIFE_API*/ VFSSourceProvider
     {
-    public:
-        explicit VFSSourceProvider(std::string name);
-        virtual ~VFSSourceProvider();
+        public:
+            explicit VFSSourceProvider(std::string name);
+            virtual ~VFSSourceProvider();
 
-        /** Returns the name of this VFSSourceProvider
-         *
-         * @return name
-         */
-        const std::string& getName() const;
+            /** Returns the name of this VFSSourceProvider
+             *
+             * @return name
+             */
+            std::string const & getName() const;
 
-        /** Get the VFS this provider is using. Providers will not be able to locate
-         * sources before a VFS is set. VFS::addProvider sets this automatically.
-         */
-        void setVFS(VFS* vfs);
+            /** Get the VFS this provider is using. Providers will not be able to locate
+             * sources before a VFS is set. VFS::addProvider sets this automatically.
+             */
+            void setVFS(VFS* vfs);
 
-        VFS* getVFS() const
-        {
-            if (m_vfs == nullptr) {
-                throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
+            VFS* getVFS() const
+            {
+                if (m_vfs == nullptr) {
+                    throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
+                }
+                return m_vfs;
             }
-            return m_vfs;
-        }
 
-        /** Check if a given file is readable for this VFSSource
-         *
-         *
-         * @param file the filename to check
-         * @return true if readable, false otherwise
-         */
-        virtual bool isReadable(const std::string& file) const = 0;
+            /** Check if a given file is readable for this VFSSource
+             *
+             *
+             * @param file the filename to check
+             * @return true if readable, false otherwise
+             */
+            virtual bool isReadable(std::string const & file) const = 0;
 
-        /** Create a new instance of a VFSSource initialized with the given file
-         *
-         * @param file the filename to open (the archive-file)
-         * @return the new VFSSource
-         */
-        virtual VFSSource* createSource(const std::string& file) = 0;
+            /** Create a new instance of a VFSSource initialized with the given file
+             *
+             * @param file the filename to open (the archive-file)
+             * @return the new VFSSource
+             */
+            virtual VFSSource* createSource(std::string const & file) = 0;
 
-        /** Get the source instance of the path
-         *
-         * @param path The source path
-         * @return A VFSSource or NULL of none is present
-         */
-        virtual VFSSource* getSource(const std::string& path) const = 0;
+            /** Get the source instance of the path
+             *
+             * @param path The source path
+             * @return A VFSSource or NULL of none is present
+             */
+            virtual VFSSource* getSource(std::string const & path) const = 0;
 
-        /** Check whether the provider already has created a source with that path
-         *
-         * @param path The path to the source
-         * @return true if the provider has already created a source with that path, false if not
-         */
-        virtual bool hasSource(const std::string& path) const = 0;
+            /** Check whether the provider already has created a source with that path
+             *
+             * @param path The path to the source
+             * @return true if the provider has already created a source with that path, false if not
+             */
+            virtual bool hasSource(std::string const & path) const = 0;
 
-    private:
-        VFS* m_vfs;
-        std::string m_name;
+        private:
+            VFS* m_vfs;
+            std::string m_name;
     };
 } // namespace FIFE
 

@@ -29,67 +29,67 @@ namespace FIFE
      */
     class /*FIFE_API*/ Exception : public std::runtime_error
     {
-    public:
-        /**
-         * Constructor.
-         *
-         * @param msg The error mesage to be stored.
-         */
-        explicit Exception(const std::string& msg);
+        public:
+            /**
+             * Constructor.
+             *
+             * @param msg The error mesage to be stored.
+             */
+            explicit Exception(std::string const & msg);
 
-        /**
-         * Destructor.
-         */
-        virtual ~Exception() noexcept;
+            /**
+             * Destructor.
+             */
+            virtual ~Exception() noexcept;
 
-        Exception(const Exception&)            = default;
-        Exception& operator=(const Exception&) = default;
+            Exception(Exception const &)            = default;
+            Exception& operator=(Exception const &) = default;
 
-        /**
-         * Returns the error message.
-         *
-         * @return The error message.
-         */
-        virtual const char* what() const noexcept;
+            /**
+             * Returns the error message.
+             *
+             * @return The error message.
+             */
+            virtual char const * what() const noexcept;
 
-        virtual const std::string& getTypeStr() const
-        {
-            static const std::string s = "Exception";
-            return s;
-        }
-        virtual const std::string& getDescription() const
-        {
-            static const std::string s = "Generic FIFE exception";
-            return s;
-        }
-        // little helper to change m_what
-        void update();
+            virtual std::string const & getTypeStr() const
+            {
+                static std::string const s = "Exception";
+                return s;
+            }
+            virtual std::string const & getDescription() const
+            {
+                static std::string const s = "Generic FIFE exception";
+                return s;
+            }
+            // little helper to change m_what
+            void update();
 
-    private:
-        std::string m_what;
+        private:
+            std::string m_what;
     };
 
 // NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
-#define FIFE_EXCEPTION_DECL(_name, _description)                  \
-    class /*FIFE_API*/ _name : public Exception                   \
-    {                                                             \
-    public:                                                       \
-        explicit _name(const std::string& msg) : Exception((msg)) \
-        {                                                         \
-            Logger _log(LM_EXCEPTION);                            \
-            update();                                             \
-            FL_ERR(_log, what());                                 \
-        }                                                         \
-        const std::string& getTypeStr() const override            \
-        {                                                         \
-            static const std::string s = #_name;                  \
-            return s;                                             \
-        }                                                         \
-        const std::string& getDescription() const override        \
-        {                                                         \
-            static const std::string s = (_description);          \
-            return s;                                             \
-        }                                                         \
+#define FIFE_EXCEPTION_DECL(_name, _description)                      \
+    class /*FIFE_API*/ _name : public Exception                       \
+    {                                                                 \
+        public:                                                       \
+            explicit _name(const std::string& msg) : Exception((msg)) \
+            {                                                         \
+                Logger _log(LM_EXCEPTION);                            \
+                update();                                             \
+                FL_ERR(_log, what());                                 \
+            }                                                         \
+            const std::string& getTypeStr() const override            \
+            {                                                         \
+                static const std::string s = #_name;                  \
+                return s;                                             \
+            }                                                         \
+            const std::string& getDescription() const override        \
+            {                                                         \
+                static const std::string s = (_description);          \
+                return s;                                             \
+            }                                                         \
     }
 
     FIFE_EXCEPTION_DECL(SDLException, "SDL reported something bad");

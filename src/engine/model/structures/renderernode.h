@@ -13,76 +13,85 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "model/structures/location.h"
+#include "util/structures/point.h"
 
 namespace FIFE
 {
 
     class Camera;
+    class Instance;
     class InstanceDeleteListener;
+    class Layer;
+    class Location;
 
     class /*FIFE_API*/ RendererNode
     {
-    public:
-        RendererNode(
-            Instance* attached_instance,
-            const Location& relative_location,
-            Layer* relative_layer,
-            const Point& relative_point = Point(0, 0));
-        RendererNode(
-            Instance* attached_instance, const Location& relative_location, const Point& relative_point = Point(0, 0));
-        RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point = Point(0, 0));
-        explicit RendererNode(Instance* attached_instance, const Point& relative_point = Point(0, 0));
-        RendererNode(
-            const Location& attached_location, Layer* relative_layer, const Point& relative_point = Point(0, 0));
-        explicit RendererNode(const Location& attached_location, const Point& relative_point = Point(0, 0));
-        explicit RendererNode(Layer* attached_layer, const Point& relative_point = Point(0, 0));
-        explicit RendererNode(const Point& attached_point);
-        RendererNode(const RendererNode& old);
-        RendererNode& operator=(const RendererNode& source);
-        ~RendererNode();
+        public:
+            RendererNode(
+                Instance* attached_instance,
+                Location const & relative_location,
+                Layer* relative_layer,
+                Point const & relative_point = Point(0, 0));
+            RendererNode(
+                Instance* attached_instance,
+                Location const & relative_location,
+                Point const & relative_point = Point(0, 0));
+            RendererNode(
+                Instance* attached_instance, Layer* relative_layer, Point const & relative_point = Point(0, 0));
+            explicit RendererNode(Instance* attached_instance, Point const & relative_point = Point(0, 0));
+            RendererNode(
+                Location const & attached_location, Layer* relative_layer, Point const & relative_point = Point(0, 0));
+            explicit RendererNode(Location const & attached_location, Point const & relative_point = Point(0, 0));
+            explicit RendererNode(Layer* attached_layer, Point const & relative_point = Point(0, 0));
+            explicit RendererNode(Point const & attached_point);
+            RendererNode(RendererNode const & old);
+            RendererNode& operator=(RendererNode const & source);
+            ~RendererNode();
 
-        void setAttached(Instance* attached_instance, const Location& relative_location, const Point& relative_point);
-        void setAttached(Instance* attached_instance, const Location& relative_location);
-        void setAttached(Instance* attached_instance, const Point& relative_point);
-        void setAttached(Instance* attached_instance);
-        void setAttached(const Location& attached_location, const Point& relative_point);
-        void setAttached(const Location& attached_location);
-        void setAttached(Layer* attached_layer);
-        void setAttached(const Point& attached_point);
+            void setAttached(
+                Instance* attached_instance, Location const & relative_location, Point const & relative_point);
+            void setAttached(Instance* attached_instance, Location const & relative_location);
+            void setAttached(Instance* attached_instance, Point const & relative_point);
+            void setAttached(Instance* attached_instance);
+            void setAttached(Location const & attached_location, Point const & relative_point);
+            void setAttached(Location const & attached_location);
+            void setAttached(Layer* attached_layer);
+            void setAttached(Point const & attached_point);
 
-        void setRelative(const Location& relative_location);
-        void setRelative(const Location& relative_location, const Point& relative_point);
-        void setRelative(const Point& relative_point);
+            void setRelative(Location const & relative_location);
+            void setRelative(Location const & relative_location, Point const & relative_point);
+            void setRelative(Point const & relative_point);
 
-        Instance* getAttachedInstance();
-        Location getAttachedLocation();
-        Layer* getAttachedLayer();
-        Point getAttachedPoint();
+            Instance* getAttachedInstance();
+            Location getAttachedLocation();
+            Layer* getAttachedLayer();
+            Point getAttachedPoint();
 
-        Location getOffsetLocation();
-        Point getOffsetPoint();
+            Location getOffsetLocation();
+            Point getOffsetPoint();
 
-        Instance* getInstance();
-        Location getLocation();
-        const Location& getLocationRef();
-        Layer* getLayer();
-        Point getPoint();
-        const Point& getPointRef();
+            Instance* getInstance();
+            Location getLocation();
+            Location const & getLocationRef();
+            Layer* getLayer();
+            Point getPoint();
+            Point const & getPointRef();
 
-        void addInstance(Instance* instance);
-        void changeInstance(Instance* instance);
-        void removeInstance(const Instance* instance, bool listener = true);
+            void addInstance(Instance* instance);
+            void changeInstance(Instance* instance);
+            void removeInstance(Instance const * instance, bool listener = true);
 
-        Point getCalculatedPoint(Camera* cam, Layer* layer, bool zoomed = false);
+            Point getCalculatedPoint(Camera* cam, Layer* layer, bool zoomed = false);
 
-    private:
-        void checkDeleteListener();
+        private:
+            void checkDeleteListener();
 
-        Instance* m_instance;
-        Location m_location;
-        Layer* m_layer;
-        Point m_point;
-        InstanceDeleteListener* m_listener;
+            Instance* m_instance;
+            Location m_location;
+            Layer* m_layer;
+            Point m_point;
+            InstanceDeleteListener* m_listener;
     };
 } // namespace FIFE
 

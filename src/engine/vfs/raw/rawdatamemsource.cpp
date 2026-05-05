@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "rawdatamemsource.h"
+
 // Standard C++ library includes
 #include <algorithm>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "rawdatamemsource.h"
-
 namespace FIFE
 {
 
-    RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len) { }
+    RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len)
+    {
+    }
 
     RawDataMemSource::~RawDataMemSource()
     {

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "instancerenderer.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cell.h"
@@ -34,8 +34,6 @@
 #include "video/opengl/fife_opengl.h"
 #include "video/renderbackend.h"
 #include "video/sdl/sdlimage.h"
-
-#include "instancerenderer.h"
 #include "view/camera.h"
 #include "view/visual.h"
 
@@ -76,17 +74,19 @@ namespace FIFE
 
     class InstanceRendererDeleteListener : public InstanceDeleteListener
     {
-    public:
-        explicit InstanceRendererDeleteListener(InstanceRenderer* r) : m_renderer(r) { }
-        ~InstanceRendererDeleteListener() override = default;
+        public:
+            explicit InstanceRendererDeleteListener(InstanceRenderer* r) : m_renderer(r)
+            {
+            }
+            ~InstanceRendererDeleteListener() override = default;
 
-        void onInstanceDeleted(Instance* instance) override
-        {
-            m_renderer->removeInstance(instance);
-        }
+            void onInstanceDeleted(Instance* instance) override
+            {
+                m_renderer->removeInstance(instance);
+            }
 
-    private:
-        InstanceRenderer* m_renderer;
+        private:
+            InstanceRenderer* m_renderer;
     };
 
     InstanceRenderer::OutlineInfo::OutlineInfo(InstanceRenderer* r) :
@@ -98,7 +98,9 @@ namespace FIFE
     {
     }
 
-    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), w(1), h(1), trans(0), front(true), z(0) { }
+    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), w(1), h(1), trans(0), front(true), z(0)
+    {
+    }
 
     InstanceRenderer::OutlineInfo::~OutlineInfo()
     {
@@ -139,7 +141,7 @@ namespace FIFE
         m_delete_listener = new InstanceRendererDeleteListener(this);
     }
 
-    InstanceRenderer::InstanceRenderer(const InstanceRenderer& old) :
+    InstanceRenderer::InstanceRenderer(InstanceRenderer const & old) :
         RendererBase(old), m_area_layer(false), m_interval(old.m_interval), m_timer_enabled(false)
     {
         setEnabled(true);
@@ -177,7 +179,7 @@ namespace FIFE
     void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         //		FL_DBG(_log, "Iterating layer...");
-        const CellGrid* cg = layer->getCellGrid();
+        CellGrid const * cg = layer->getCellGrid();
         if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
             return;
@@ -193,7 +195,7 @@ namespace FIFE
     void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
     {
         // FIXME: Unlit is currently broken, maybe it would be the best to change Lightsystem
-        const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+        bool const any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
         uint32_t const lm      = m_renderbackend->getLightingModel();
         // thanks to multimap, we will have transparent instances already sorted by their z value (key)
         std::multimap<float, RenderItem*> transparentInstances;
@@ -237,8 +239,8 @@ namespace FIFE
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
                             Rect rec;
-                            const int32_t areaWidth  = toInt32Dimension(infoa.w);
-                            const int32_t areaHeight = toInt32Dimension(infoa.h);
+                            int32_t const areaWidth  = toInt32Dimension(infoa.w);
+                            int32_t const areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
                             rec.x = p.x - areaWidth / 2;
                             rec.y = p.y - areaHeight / 2;
@@ -268,7 +270,7 @@ namespace FIFE
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
-                const bool coloring = coloring_it != m_instance_colorings.end();
+                bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -278,7 +280,7 @@ namespace FIFE
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
-                const bool outline = outline_it != m_instance_outlines.end();
+                bool const outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -342,7 +344,7 @@ namespace FIFE
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
-                const bool coloring = coloring_it != m_instance_colorings.end();
+                bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -352,7 +354,7 @@ namespace FIFE
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
-                const bool outline = outline_it != m_instance_outlines.end();
+                bool const outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -381,8 +383,8 @@ namespace FIFE
 
     void InstanceRenderer::renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances)
     {
-        const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
-        const bool unlit       = !m_unlit_groups.empty();
+        bool const any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+        bool const unlit       = !m_unlit_groups.empty();
         uint32_t const lm      = m_renderbackend->getLightingModel();
 
         m_area_layer = false;
@@ -423,8 +425,8 @@ namespace FIFE
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
                             Rect rec;
-                            const int32_t areaWidth  = toInt32Dimension(infoa.w);
-                            const int32_t areaHeight = toInt32Dimension(infoa.h);
+                            int32_t const areaWidth  = toInt32Dimension(infoa.w);
+                            int32_t const areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
                             rec.x = p.x - areaWidth / 2;
                             rec.y = p.y - areaHeight / 2;
@@ -451,7 +453,7 @@ namespace FIFE
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
-                const bool coloring = coloring_it != m_instance_colorings.end();
+                bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring && !m_need_bind_coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -461,7 +463,7 @@ namespace FIFE
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
-                const bool outline = outline_it != m_instance_outlines.end();
+                bool const outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -581,14 +583,14 @@ namespace FIFE
                         ImagePtr multiColorOverlay;
                         if (recoloring) {
                             // create temp OverlayColors
-                            auto* temp                                  = new OverlayColors(oc->getColorOverlayImage());
-                            auto alphaFactor1                           = static_cast<float>(coloringColor[3] / 255.0);
-                            const std::map<Color, Color>& defaultColors = oc->getColors();
-                            for (const auto& defaultColor : defaultColors) {
+                            auto* temp        = new OverlayColors(oc->getColorOverlayImage());
+                            auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                            std::map<Color, Color> const & defaultColors = oc->getColors();
+                            for (auto const & defaultColor : defaultColors) {
                                 if (defaultColor.second.getAlpha() == 0) {
                                     continue;
                                 }
-                                const float alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
+                                float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                                 Color const c(
                                     toUint8Channel(
                                         (coloringColor[0] * (1.0F - alphaFactor1)) +
@@ -632,8 +634,8 @@ namespace FIFE
                     bool const noOverlay = rgba[3] == 255;
                     if (recoloring) {
                         if (!noOverlay) {
-                            const float alphaFactor1 = alphaFraction(coloringColor[3]);
-                            const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                            float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                            float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
                             rgba[0]                  = toUint8Channel(
                                 (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
                             rgba[1] = toUint8Channel(
@@ -671,13 +673,13 @@ namespace FIFE
                 if (recoloring) {
                     // create temp OverlayColors
                     auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
-                    const float alphaFactor1 = alphaFraction(coloringColor[3]);
-                    const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
-                    for (const auto& defaultColor : defaultColors) {
+                    float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                    std::map<Color, Color> const & defaultColors = colorOverlay->getColors();
+                    for (auto const & defaultColor : defaultColors) {
                         if (defaultColor.second.getAlpha() == 0) {
                             continue;
                         }
-                        const float alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
+                        float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                         Color const c(
                             toUint8Channel(
                                 (coloringColor[0] * (1.0F - alphaFactor1)) +
@@ -720,8 +722,8 @@ namespace FIFE
                 bool const noOverlay = rgba[3] == 255;
                 if (recoloring) {
                     if (!noOverlay) {
-                        const float alphaFactor1 = alphaFraction(coloringColor[3]);
-                        const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                        float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                        float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
                         rgba[0]                  = toUint8Channel(
                             (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
                         rgba[1] = toUint8Channel(
@@ -805,9 +807,9 @@ namespace FIFE
             vc.image->forceLoadInternal();
         }
 
-        const int32_t imageWidth     = toInt32Dimension(vc.image->getWidth());
-        const int32_t imageHeight    = toInt32Dimension(vc.image->getHeight());
-        SDL_Surface* outline_surface = SDL_CreateRGBSurface(0, imageWidth, imageHeight, 32, RMASK, GMASK, BMASK, AMASK);
+        int32_t const imageWidth     = toInt32Dimension(vc.image->getWidth());
+        int32_t const imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* outline_surface = SDL_CreateSurface(imageWidth, imageHeight, SDL_PIXELFORMAT_RGBA8888);
 
         // TODO: optimize...
         uint8_t r = 0;
@@ -912,10 +914,9 @@ namespace FIFE
             found = true;
         }
 
-        const int32_t outlineWidth  = toInt32Dimension(mw);
-        const int32_t outlineHeight = toInt32Dimension(mh);
-        SDL_Surface* outline_surface =
-            SDL_CreateRGBSurface(0, outlineWidth, outlineHeight, 32, RMASK, GMASK, BMASK, AMASK);
+        int32_t const outlineWidth   = toInt32Dimension(mw);
+        int32_t const outlineHeight  = toInt32Dimension(mh);
+        SDL_Surface* outline_surface = SDL_CreateSurface(outlineWidth, outlineHeight, SDL_PIXELFORMAT_RGBA8888);
 
         // TODO: optimize...
         uint8_t r = 0;
@@ -925,8 +926,8 @@ namespace FIFE
 
         it = animationOverlays->begin();
         for (; it != animationOverlays->end(); ++it) {
-            const int32_t overlayWidth  = toInt32Dimension((*it)->getWidth());
-            const int32_t overlayHeight = toInt32Dimension((*it)->getHeight());
+            int32_t const overlayWidth  = toInt32Dimension((*it)->getWidth());
+            int32_t const overlayHeight = toInt32Dimension((*it)->getHeight());
             // vertical sweep
             for (int32_t x = 0; x < overlayWidth; x++) {
                 int32_t prev_a = 0;
@@ -1037,15 +1038,15 @@ namespace FIFE
         }
 
         // not found so we create it
-        const int32_t imageWidth     = toInt32Dimension(vc.image->getWidth());
-        const int32_t imageHeight    = toInt32Dimension(vc.image->getHeight());
-        SDL_Surface* overlay_surface = SDL_CreateRGBSurface(0, imageWidth, imageHeight, 32, RMASK, GMASK, BMASK, AMASK);
+        int32_t const imageWidth     = toInt32Dimension(vc.image->getWidth());
+        int32_t const imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* overlay_surface = SDL_CreateSurface(imageWidth, imageHeight, SDL_PIXELFORMAT_RGBA8888);
 
         uint8_t r               = 0;
         uint8_t g               = 0;
         uint8_t b               = 0;
         uint8_t a               = 0;
-        const float alphaFactor = alphaFraction(info.a);
+        float const alphaFactor = alphaFraction(info.a);
         for (int32_t x = 0; x < overlay_surface->w; x++) {
             for (int32_t y = 0; y < overlay_surface->h; y++) {
                 vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
@@ -1082,10 +1083,10 @@ namespace FIFE
         return info.overlay.get();
     }
 
-    ImagePtr InstanceRenderer::getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors)
+    ImagePtr InstanceRenderer::getMultiColorOverlay(RenderItem const & vc, OverlayColors* colors)
     {
         // multi color overlay
-        const std::map<Color, Color>& colorMap =
+        std::map<Color, Color> const & colorMap =
             (colors != nullptr) ? colors->getColors() : vc.getColorOverlay()->getColors();
         auto it = colorMap.begin();
         ImagePtr const colorOverlayImage =
@@ -1119,10 +1120,9 @@ namespace FIFE
             }
 
             // not found so we create it
-            const int32_t overlayWidth  = toInt32Dimension(colorOverlayImage->getWidth());
-            const int32_t overlayHeight = toInt32Dimension(colorOverlayImage->getHeight());
-            SDL_Surface* overlay_surface =
-                SDL_CreateRGBSurface(0, overlayWidth, overlayHeight, 32, RMASK, GMASK, BMASK, AMASK);
+            int32_t const overlayWidth   = toInt32Dimension(colorOverlayImage->getWidth());
+            int32_t const overlayHeight  = toInt32Dimension(colorOverlayImage->getHeight());
+            SDL_Surface* overlay_surface = SDL_CreateSurface(overlayWidth, overlayHeight, SDL_PIXELFORMAT_RGBA8888);
 
             uint8_t r = 0;
             uint8_t g = 0;
@@ -1260,7 +1260,7 @@ namespace FIFE
     }
 
     void InstanceRenderer::addTransparentArea(
-        Instance* instance, const std::list<std::string>& groups, uint32_t w, uint32_t h, uint8_t trans, bool front)
+        Instance* instance, std::list<std::string> const & groups, uint32_t w, uint32_t h, uint8_t trans, bool front)
     {
         AreaInfo newinfo;
         newinfo.instance = instance;
@@ -1403,7 +1403,7 @@ namespace FIFE
         }
     }
 
-    void InstanceRenderer::addIgnoreLight(const std::list<std::string>& groups)
+    void InstanceRenderer::addIgnoreLight(std::list<std::string> const & groups)
     {
         auto group_it = groups.begin();
         for (; group_it != groups.end(); ++group_it) {
@@ -1413,7 +1413,7 @@ namespace FIFE
         m_unlit_groups.unique();
     }
 
-    void InstanceRenderer::removeIgnoreLight(const std::list<std::string>& groups)
+    void InstanceRenderer::removeIgnoreLight(std::list<std::string> const & groups)
     {
         auto group_it = groups.begin();
         for (; group_it != groups.end(); ++group_it) {
@@ -1460,7 +1460,7 @@ namespace FIFE
         return m_interval / 1000;
     }
 
-    void InstanceRenderer::addToCheck(const ImagePtr& image)
+    void InstanceRenderer::addToCheck(ImagePtr const & image)
     {
         if (isValidImage(image)) {
             // if image is already inserted then return
@@ -1504,7 +1504,7 @@ namespace FIFE
         }
     }
 
-    void InstanceRenderer::removeFromCheck(const ImagePtr& image)
+    void InstanceRenderer::removeFromCheck(ImagePtr const & image)
     {
         if (isValidImage(image)) {
             // if the image is used then remove it here
@@ -1535,7 +1535,7 @@ namespace FIFE
         }
     }
 
-    bool InstanceRenderer::isValidImage(const ImagePtr& image)
+    bool InstanceRenderer::isValidImage(ImagePtr const & image)
     {
         if (image.get() != nullptr) {
             if (image.get()->getState() == IResource::RES_LOADED) {

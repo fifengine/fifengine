@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "map.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,9 +17,10 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "cellcache.h"
+#include "instance.h"
+#include "layer.h"
+#include "triggercontroller.h"
 #include "util/base/exception.h"
 #include "util/structures/purge.h"
 #include "util/structures/rect.h"
@@ -24,19 +28,13 @@
 #include "view/camera.h"
 #include "view/rendererbase.h"
 
-#include "cellcache.h"
-#include "instance.h"
-#include "layer.h"
-#include "map.h"
-#include "triggercontroller.h"
-
 namespace FIFE
 {
 
     Map::Map(
         std::string identifier,
         RenderBackend* renderBackend,
-        const std::vector<RendererBase*>& renderers,
+        std::vector<RendererBase*> const & renderers,
         TimeProvider* tp_master) :
         m_id(std::move(identifier)),
 
@@ -63,7 +61,7 @@ namespace FIFE
         deleteLayers();
     }
 
-    Layer* Map::getLayer(const std::string& id)
+    Layer* Map::getLayer(std::string const & id)
     {
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
@@ -80,7 +78,7 @@ namespace FIFE
         return static_cast<uint32_t>(m_layers.size());
     }
 
-    Layer* Map::createLayer(const std::string& identifier, CellGrid* grid)
+    Layer* Map::createLayer(std::string const & identifier, CellGrid* grid)
     {
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
@@ -174,7 +172,7 @@ namespace FIFE
             auto it = m_transferInstances.begin();
             for (; it != m_transferInstances.end(); ++it) {
                 Instance* inst            = (*it).first;
-                const Location target_loc = (*it).second;
+                Location const target_loc = (*it).second;
                 Layer* source             = inst->getOldLocationRef().getLayer();
                 Layer* target             = target_loc.getLayer();
                 if (source != target) {
@@ -217,7 +215,7 @@ namespace FIFE
             }
         }
 
-        const bool retval = m_changed;
+        bool const retval = m_changed;
         m_changed         = false;
         return retval;
     }
@@ -239,10 +237,10 @@ namespace FIFE
         }
     }
 
-    Camera* Map::addCamera(const std::string& id, const Rect& viewport)
+    Camera* Map::addCamera(std::string const & id, Rect const & viewport)
     {
         if (getCamera(id) != nullptr) {
-            const std::string errorStr = "Camera: " + id + " already exists";
+            std::string const errorStr = "Camera: " + id + " already exists";
             throw NameClash(errorStr);
         }
 
@@ -258,7 +256,7 @@ namespace FIFE
         return camera;
     }
 
-    void Map::removeCamera(const std::string& id)
+    void Map::removeCamera(std::string const & id)
     {
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
@@ -276,7 +274,7 @@ namespace FIFE
         }
     }
 
-    Camera* Map::getCamera(const std::string& id)
+    Camera* Map::getCamera(std::string const & id)
     {
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
@@ -288,7 +286,7 @@ namespace FIFE
         return nullptr;
     }
 
-    const std::vector<Camera*>& Map::getCameras() const
+    std::vector<Camera*> const & Map::getCameras() const
     {
         return m_cameras;
     }
@@ -305,9 +303,9 @@ namespace FIFE
         return count;
     }
 
-    void Map::addInstanceForTransfer(Instance* instance, const Location& target)
+    void Map::addInstanceForTransfer(Instance* instance, Location const & target)
     {
-        const std::pair<std::map<Instance*, Location>::iterator, bool> insertiter =
+        std::pair<std::map<Instance*, Location>::iterator, bool> const insertiter =
             m_transferInstances.insert(std::make_pair(instance, target));
         if (!insertiter.second) {
             Location& loc = insertiter.first->second;

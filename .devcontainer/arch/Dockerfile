@@ -36,10 +36,10 @@ RUN echo "[Status]" && \
 RUN echo "[FIFEGUI] Dependencies" &&
     pacman -Su --noconfirm \
     # For building FifeGUI we need the following dependencies
-    extra/sdl2 \
-    extra/sdl2_image \
-    extra/sdl2_mixer \
-    extra/sdl2_ttf \
+    extra/sdl3 \
+    extra/sdl3_image \
+    extra/sdl3_mixer \
+    extra/sdl3_ttf \
     extra/freetype2 \
     extra/utf8cpp \
     extra/catch2

@@ -1,30 +1,28 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "directoryprovider.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "util/base/exception.h"
-
-#include "directoryprovider.h"
 #include "filesystem.h"
+#include "util/base/exception.h"
 #include "vfs.h"
 #include "vfsdirectory.h"
 
 namespace FIFE
 {
-    bool DirectoryProvider::isReadable(const std::string& path) const
+    bool DirectoryProvider::isReadable(std::string const & path) const
     {
         return fs::is_directory(fs::path(path));
     }
 
-    FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path)
+    FIFE::VFSSource* DirectoryProvider::createSource(std::string const & path)
     {
         if (isReadable(path)) {
             VFSSource* source = nullptr;
@@ -39,7 +37,7 @@ namespace FIFE
         throw Exception("Path " + path + " is not readable.");
     }
 
-    VFSSource* DirectoryProvider::getSource(const std::string& path) const
+    VFSSource* DirectoryProvider::getSource(std::string const & path) const
     {
         VFSSource* source = nullptr;
         if (hasSource(path)) {
@@ -48,7 +46,7 @@ namespace FIFE
         return source;
     }
 
-    bool DirectoryProvider::hasSource(const std::string& path) const
+    bool DirectoryProvider::hasSource(std::string const & path) const
     {
         return m_sources.contains(path);
     }

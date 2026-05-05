@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "zipprovider.h"
+
 // Standard C++ library includes
 #include <cstddef>
 #include <string>
@@ -9,18 +12,13 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "vfs/vfs.h"
-
-#include "zipprovider.h"
 #include "zipsource.h"
 
 namespace FIFE
 {
-    bool ZipProvider::isReadable(const std::string& file) const
+    bool ZipProvider::isReadable(std::string const & file) const
     {
         // File name must have a .zip extension:
         // TODO: Case sensitive?
@@ -39,7 +37,7 @@ namespace FIFE
         return true;
     }
 
-    FIFE::VFSSource* ZipProvider::createSource(const std::string& file)
+    FIFE::VFSSource* ZipProvider::createSource(std::string const & file)
     {
         if (isReadable(file)) {
             VFSSource* source = nullptr;
@@ -54,7 +52,7 @@ namespace FIFE
         throw Exception("File " + file + " is not readable.");
     }
 
-    VFSSource* ZipProvider::getSource(const std::string& path) const
+    VFSSource* ZipProvider::getSource(std::string const & path) const
     {
         VFSSource* source = nullptr;
         if (hasSource(path)) {
@@ -63,7 +61,7 @@ namespace FIFE
         return source;
     }
 
-    bool ZipProvider::hasSource(const std::string& path) const
+    bool ZipProvider::hasSource(std::string const & path) const
     {
         return m_sources.contains(path);
     }

@@ -20,12 +20,12 @@ namespace FIFE
 
     class /*FIFE_API*/ IAnimationSaver
     {
-    public:
-        virtual ~IAnimationSaver() = default;
+        public:
+            virtual ~IAnimationSaver() = default;
 
-        /** responsible for saving the animation
-         */
-        virtual void save(const std::string& filename) = 0;
+            /** responsible for saving the animation
+             */
+            virtual void save(std::string const & filename) = 0;
     };
 
     using AnimationSaverPtr = SharedPtr<IAnimationSaver>;

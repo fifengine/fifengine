@@ -22,27 +22,27 @@ namespace FIFE
 
     class /*FIFE_API*/ GuiImage : public fcn::Image
     {
-    public:
-        GuiImage();
-        explicit GuiImage(const ImagePtr& img);
-        ~GuiImage();
+        public:
+            GuiImage();
+            explicit GuiImage(ImagePtr const & img);
+            ~GuiImage();
 
-        GuiImage(const GuiImage&)            = delete;
-        GuiImage& operator=(const GuiImage&) = delete;
+            GuiImage(GuiImage const &)            = delete;
+            GuiImage& operator=(GuiImage const &) = delete;
 
-        void free();
-        int32_t getWidth() const;
-        int32_t getHeight() const;
-        fcn::Color getPixel(int32_t x, int32_t y);
-        void putPixel(int32_t x, int32_t y, const fcn::Color& color);
-        void convertToDisplayFormat();
-        ImagePtr getFIFEImage() const
-        {
-            return m_imgPtr;
-        }
+            void free();
+            int32_t getWidth() const;
+            int32_t getHeight() const;
+            fcn::Color getPixel(int32_t x, int32_t y);
+            void putPixel(int32_t x, int32_t y, fcn::Color const & color);
+            void convertToDisplayFormat();
+            ImagePtr getFIFEImage() const
+            {
+                return m_imgPtr;
+            }
 
-    protected:
-        ImagePtr m_imgPtr;
+        protected:
+            ImagePtr m_imgPtr;
     };
 } // namespace FIFE
 

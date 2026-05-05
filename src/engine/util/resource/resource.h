@@ -24,66 +24,66 @@ namespace FIFE
 
     class /*FIFE_API*/ IResourceLoader
     {
-    public:
-        IResourceLoader()          = default;
-        virtual ~IResourceLoader() = default;
+        public:
+            IResourceLoader()          = default;
+            virtual ~IResourceLoader() = default;
 
-        virtual void load(IResource* resource) = 0;
+            virtual void load(IResource* resource) = 0;
     };
 
     class /*FIFE_API*/ IResource
     {
-    public:
-        enum ResourceState : uint8_t
-        {
-            RES_INVALID = 0,
-            RES_NOT_LOADED,
-            RES_LOADED
-        };
+        public:
+            enum ResourceState : uint8_t
+            {
+                RES_INVALID = 0,
+                RES_NOT_LOADED,
+                RES_LOADED
+            };
 
-        // TODO m_handle(m_curhandle++)
-        explicit IResource(std::string name, IResourceLoader* loader = nullptr) :
-            m_name(std::move(name)), m_loader(loader), m_state(RES_NOT_LOADED), m_handle(m_curhandle++)
-        {
-        }
+            // TODO m_handle(m_curhandle++)
+            explicit IResource(std::string name, IResourceLoader* loader = nullptr) :
+                m_name(std::move(name)), m_loader(loader), m_state(RES_NOT_LOADED), m_handle(m_curhandle++)
+            {
+            }
 
-        virtual ~IResource() = default;
+            virtual ~IResource() = default;
 
-        IResource(const IResource&)            = default;
-        IResource& operator=(const IResource&) = default;
+            IResource(IResource const &)            = default;
+            IResource& operator=(IResource const &) = default;
 
-        virtual const std::string& getName()
-        {
-            return m_name;
-        }
+            virtual std::string const & getName()
+            {
+                return m_name;
+            }
 
-        ResourceHandle getHandle() const
-        {
-            return m_handle;
-        }
+            ResourceHandle getHandle() const
+            {
+                return m_handle;
+            }
 
-        virtual ResourceState getState()
-        {
-            return m_state;
-        }
-        virtual void setState(const ResourceState& state)
-        {
-            m_state = state;
-        }
+            virtual ResourceState getState()
+            {
+                return m_state;
+            }
+            virtual void setState(ResourceState const & state)
+            {
+                m_state = state;
+            }
 
-        virtual size_t getSize() = 0;
+            virtual size_t getSize() = 0;
 
-        virtual void load() = 0;
-        virtual void free() = 0;
+            virtual void load() = 0;
+            virtual void free() = 0;
 
-    protected:
-        std::string m_name;
-        IResourceLoader* m_loader;
-        ResourceState m_state;
+        protected:
+            std::string m_name;
+            IResourceLoader* m_loader;
+            ResourceState m_state;
 
-    private:
-        ResourceHandle m_handle;
-        static ResourceHandle m_curhandle;
+        private:
+            ResourceHandle m_handle;
+            static ResourceHandle m_curhandle;
     };
 
     using ResourcePtr = SharedPtr<IResource>;

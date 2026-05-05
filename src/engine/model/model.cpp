@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "model.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/ipather.h"
 #include "model/metamodel/object.h"
@@ -27,31 +27,35 @@
 #include "video/renderbackend.h"
 #include "view/rendererbase.h"
 
-#include "model.h"
-
 namespace FIFE
 {
     static Logger _log(LM_MODEL);
 
     class ModelMapObserver : public MapChangeListener
     {
-        Model* m_model;
+            Model* m_model;
 
-    public:
-        explicit ModelMapObserver(Model* model) : m_model(model) { }
-        ~ModelMapObserver() override = default;
+        public:
+            explicit ModelMapObserver(Model* model) : m_model(model)
+            {
+            }
+            ~ModelMapObserver() override = default;
 
-        void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override { }
+            void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override
+            {
+            }
 
-        void onLayerCreate([[maybe_unused]] Map* map, [[maybe_unused]] Layer* layer) override { }
+            void onLayerCreate([[maybe_unused]] Map* map, [[maybe_unused]] Layer* layer) override
+            {
+            }
 
-        void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
-        {
-            m_model->removeCellGrid(layer->getCellGrid());
-        }
+            void onLayerDelete([[maybe_unused]] Map* map, Layer* layer) override
+            {
+                m_model->removeCellGrid(layer->getCellGrid());
+            }
     };
 
-    Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers) :
+    Model::Model(RenderBackend* renderbackend, std::vector<RendererBase*> const & renderers) :
         m_mapObserver(nullptr),
         m_lastNamespace(nullptr),
         m_timeprovider(nullptr),
@@ -78,7 +82,7 @@ namespace FIFE
         purge(m_adoptedGrids);
     }
 
-    Map* Model::createMap(const std::string& identifier)
+    Map* Model::createMap(std::string const & identifier)
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
@@ -98,7 +102,7 @@ namespace FIFE
         m_pathers.push_back(pather);
     }
 
-    IPather* Model::getPather(const std::string& pathername)
+    IPather* Model::getPather(std::string const & pathername)
     {
         auto it = m_pathers.begin();
         for (; it != m_pathers.end(); ++it) {
@@ -115,7 +119,7 @@ namespace FIFE
         m_adoptedGrids.push_back(grid);
     }
 
-    CellGrid* Model::getCellGrid(const std::string& gridtype)
+    CellGrid* Model::getCellGrid(std::string const & gridtype)
     {
         auto it = m_adoptedGrids.begin();
         for (; it != m_adoptedGrids.end(); ++it) {
@@ -143,7 +147,7 @@ namespace FIFE
         }
     }
 
-    Map* Model::getMap(const std::string& identifier) const
+    Map* Model::getMap(std::string const & identifier) const
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
@@ -205,7 +209,7 @@ namespace FIFE
         return namespace_list;
     }
 
-    Object* Model::createObject(const std::string& identifier, const std::string& name_space, Object* parent)
+    Object* Model::createObject(std::string const & identifier, std::string const & name_space, Object* parent)
     {
         // Find or create namespace
         namespace_t* nspace = selectNamespace(name_space);
@@ -236,7 +240,7 @@ namespace FIFE
         for (auto& m_map : m_maps) {
             for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
-                    const Object* o = (*kt)->getObject();
+                    Object const * o = (*kt)->getObject();
                     if (o == object) {
                         return false;
                     }
@@ -265,7 +269,7 @@ namespace FIFE
         // If we have layers with instances - bail out.
         std::list<Layer*>::const_iterator jt;
         for (auto& m_map : m_maps) {
-            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](const Layer* layer) {
+            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](Layer const * layer) {
                 return layer->hasInstances();
             });
             if (jt != m_map->getLayers().end()) {
@@ -286,7 +290,7 @@ namespace FIFE
         return true;
     }
 
-    Object* Model::getObject(const std::string& id, const std::string& name_space)
+    Object* Model::getObject(std::string const & id, std::string const & name_space)
     {
         namespace_t* nspace = selectNamespace(name_space);
         if (nspace != nullptr) {
@@ -298,10 +302,10 @@ namespace FIFE
         return nullptr;
     }
 
-    std::list<Object*> Model::getObjects(const std::string& name_space) const
+    std::list<Object*> Model::getObjects(std::string const & name_space) const
     {
         std::list<Object*> object_list;
-        const namespace_t* nspace = selectNamespace(name_space);
+        namespace_t const * nspace = selectNamespace(name_space);
         if (nspace != nullptr) {
             auto it = nspace->second.begin();
             for (; it != nspace->second.end(); ++it) {
@@ -312,7 +316,7 @@ namespace FIFE
         return object_list;
     }
 
-    const Model::namespace_t* Model::selectNamespace(const std::string& name_space) const
+    Model::namespace_t const * Model::selectNamespace(std::string const & name_space) const
     {
         auto nspace = m_namespaces.begin();
         for (; nspace != m_namespaces.end(); ++nspace) {
@@ -324,7 +328,7 @@ namespace FIFE
         return nullptr;
     }
 
-    Model::namespace_t* Model::selectNamespace(const std::string& name_space)
+    Model::namespace_t* Model::selectNamespace(std::string const & name_space)
     {
         if ((m_lastNamespace != nullptr) && m_lastNamespace->first == name_space) {
             return m_lastNamespace;

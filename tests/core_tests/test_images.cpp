@@ -13,12 +13,9 @@
 #include "fife_unittest.h"
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
@@ -43,30 +40,30 @@ using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-static const std::string IMAGE_FILE       = "tests/data/beach_e1.png";
-static const std::string ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
-static const std::string SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
+static std::string const IMAGE_FILE       = "tests/data/beach_e1.png";
+static std::string const ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
+static std::string const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
 
 // Environment
 struct environment
 {
-    std::shared_ptr<TimeManager> timemanager;
-    std::shared_ptr<VFS> vfs;
-    std::shared_ptr<ImageManager> imageManager;
+        std::shared_ptr<TimeManager> timemanager;
+        std::shared_ptr<VFS> vfs;
+        std::shared_ptr<ImageManager> imageManager;
 
-    environment() :
-        timemanager(std::make_shared<TimeManager>()),
-        vfs(std::make_shared<VFS>()),
-        imageManager(std::make_shared<ImageManager>())
-    {
-        vfs->addSource(new VFSDirectory(vfs.get()));
-        if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-            throw SDLException(SDL_GetError());
+        environment() :
+            timemanager(std::make_shared<TimeManager>()),
+            vfs(std::make_shared<VFS>()),
+            imageManager(std::make_shared<ImageManager>())
+        {
+            vfs->addSource(new VFSDirectory(vfs.get()));
+            if (!SDL_Init(SDL_INIT_TIMER)) {
+                throw SDLException(SDL_GetError());
+            }
         }
-    }
 };
 
-void test_image(RenderBackend& renderbackend, const ScreenMode& mode)
+void test_image(RenderBackend& renderbackend, ScreenMode const & mode)
 {
     renderbackend.init("");
     renderbackend.createMainScreen(mode, "FIFE", "");
@@ -91,7 +88,7 @@ void test_image(RenderBackend& renderbackend, const ScreenMode& mode)
         }
     }
 }
-void test_subimage(RenderBackend& renderbackend, const ScreenMode& mode)
+void test_subimage(RenderBackend& renderbackend, ScreenMode const & mode)
 {
     renderbackend.init("");
     renderbackend.createMainScreen(mode, "FIFE", "");
@@ -148,7 +145,7 @@ TEST_CASE("test_sdl_alphaoptimize")
     }
 
     CHECK_NE(img.get()->getSurface(), nullptr);
-    CHECK_NE(alpha_img.get()->getSurface()->format->Amask, 0);
+    CHECK_NE(SDL_GetPixelFormatDetails(alpha_img.get()->getSurface()->format)->Amask, 0);
 }
 
 TEST_CASE("test_sdl_image")

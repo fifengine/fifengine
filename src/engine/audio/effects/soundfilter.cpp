@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundfilter.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <array>
@@ -10,13 +13,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "soundfilter.h"
 
 namespace FIFE
 {
@@ -89,7 +87,7 @@ namespace FIFE
             std::pair{SF_FILTER_HIGHPASS, AL_HIGHPASS_GAIN},
             std::pair{SF_FILTER_BANDPASS, AL_BANDPASS_GAIN},
         };
-        for (const auto& [filterType, param] : gainParams) {
+        for (auto const& [filterType, param] : gainParams) {
             if (m_type == filterType) {
                 gainParam = param;
                 break;
@@ -135,7 +133,7 @@ namespace FIFE
             std::pair{SF_FILTER_HIGHPASS, AL_HIGHPASS_GAINLF},
             std::pair{SF_FILTER_BANDPASS, AL_BANDPASS_GAINLF},
         };
-        for (const auto& [filterType, param] : gainLfParams) {
+        for (auto const& [filterType, param] : gainLfParams) {
             if (m_type == filterType) {
                 gainLfParam = param;
                 break;

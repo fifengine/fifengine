@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "commandline.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -8,13 +11,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/time/timeevent.h"
 #include "util/time/timemanager.h"
-
-#include "commandline.h"
 
 namespace FIFE
 {
@@ -57,9 +55,9 @@ namespace FIFE
 
     void CommandLine::keyPressed(fcn::KeyEvent& keyEvent)
     {
-        const fcn::Key key      = keyEvent.getKey();
-        const int32_t keyType   = key.getValue();
-        const bool editInBounds = (keyType == Key::Left && getCaretPosition() > 0) ||
+        fcn::Key const key      = keyEvent.getKey();
+        int32_t const keyType   = key.getValue();
+        bool const editInBounds = (keyType == Key::Left && getCaretPosition() > 0) ||
                                   (keyType == Key::Right && getCaretPosition() < getText().size()) ||
                                   (keyType == Key::Delete && getCaretPosition() < getText().size()) ||
                                   (keyType == Key::Backspace && getCaretPosition() > 0) || key.isCharacter() ||
@@ -114,7 +112,7 @@ namespace FIFE
         graphics->drawLine(x + 1, getHeight() - 2, x + 1, 1);
     }
 
-    void CommandLine::setCallback(const type_callback& cb)
+    void CommandLine::setCallback(type_callback const & cb)
     {
         m_callback = cb;
     }

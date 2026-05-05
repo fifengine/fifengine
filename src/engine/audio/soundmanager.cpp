@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundmanager.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -15,17 +18,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/effects/soundeffectmanager.h"
+#include "soundclipmanager.h"
+#include "soundemitter.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/vfs.h"
-
-#include "soundclipmanager.h"
-#include "soundemitter.h"
-#include "soundmanager.h"
 
 namespace FIFE
 {
@@ -248,7 +246,7 @@ namespace FIFE
         return m_distanceModel;
     }
 
-    void SoundManager::setListenerPosition(const AudioSpaceCoordinate& position) const
+    void SoundManager::setListenerPosition(AudioSpaceCoordinate const & position) const
     {
         if (isActive()) {
             alListener3f(
@@ -269,7 +267,7 @@ namespace FIFE
         return AudioSpaceCoordinate();
     }
 
-    void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation) const
+    void SoundManager::setListenerOrientation(AudioSpaceCoordinate const & orientation) const
     {
         if (isActive()) {
             ALfloat const vec[6] = {
@@ -293,7 +291,7 @@ namespace FIFE
         return AudioSpaceCoordinate();
     }
 
-    void SoundManager::setListenerVelocity(const AudioSpaceCoordinate& velocity) const
+    void SoundManager::setListenerVelocity(AudioSpaceCoordinate const & velocity) const
     {
         if (isActive()) {
             alListener3f(
@@ -404,7 +402,7 @@ namespace FIFE
         for (size_t index = 0; index < m_emitterVec.size(); ++index) {
             if (m_emitterVec.at(index) == nullptr) {
                 assert(index <= std::numeric_limits<uint32_t>::max());
-                const uint32_t emitterIndex = static_cast<uint32_t>(index);
+                uint32_t const emitterIndex = static_cast<uint32_t>(index);
                 ptr                         = new SoundEmitter(this, emitterIndex);
                 m_emitterVec.at(index)      = ptr;
                 break;
@@ -418,7 +416,7 @@ namespace FIFE
         return ptr;
     }
 
-    SoundEmitter* SoundManager::createEmitter(const std::string& name)
+    SoundEmitter* SoundManager::createEmitter(std::string const & name)
     {
         SoundEmitter* emitter = createEmitter();
         emitter->setSoundClip(SoundClipManager::instance()->get(name));
@@ -603,7 +601,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::removeGroup(const std::string& group)
+    void SoundManager::removeGroup(std::string const & group)
     {
         if (group.empty()) {
             return;
@@ -627,18 +625,18 @@ namespace FIFE
         std::vector<std::string> groups;
         groups.reserve(m_groups.size());
 
-        std::ranges::transform(m_groups, std::back_inserter(groups), [](const auto& groupPair) -> const std::string& {
+        std::ranges::transform(m_groups, std::back_inserter(groups), [](auto const & groupPair) -> std::string const & {
             return groupPair.first;
         });
 
-        for (const auto& group : groups) {
+        for (auto const & group : groups) {
             removeGroup(group);
         }
 
         m_groups.clear();
     }
 
-    void SoundManager::play(const std::string& group)
+    void SoundManager::play(std::string const & group)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -653,7 +651,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::pause(const std::string& group)
+    void SoundManager::pause(std::string const & group)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -668,7 +666,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::stop(const std::string& group)
+    void SoundManager::stop(std::string const & group)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -683,7 +681,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::rewind(const std::string& group)
+    void SoundManager::rewind(std::string const & group)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -698,7 +696,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::setGain(const std::string& group, float gain)
+    void SoundManager::setGain(std::string const & group, float gain)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -713,7 +711,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::setMaxGain(const std::string& group, float gain)
+    void SoundManager::setMaxGain(std::string const & group, float gain)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
@@ -728,7 +726,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::setMinGain(const std::string& group, float gain)
+    void SoundManager::setMinGain(std::string const & group, float gain)
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {

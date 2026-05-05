@@ -13,9 +13,8 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/base/sharedptr.h"
-
 #include "ianimationsaver.h"
+#include "util/base/sharedptr.h"
 
 namespace FIFE
 {
@@ -24,17 +23,17 @@ namespace FIFE
      */
     class /*FIFE_API*/ IObjectSaver
     {
-    public:
-        virtual ~IObjectSaver() = default;
+        public:
+            virtual ~IObjectSaver() = default;
 
-        /** allows setting which animation saver will be
-         * used to save animation files
-         */
-        virtual void setAnimationSaver(const AnimationSaverPtr& animationSaver) = 0;
+            /** allows setting which animation saver will be
+             * used to save animation files
+             */
+            virtual void setAnimationSaver(AnimationSaverPtr const & animationSaver) = 0;
 
-        /** responsible for saving the object resource
-         */
-        virtual void save(const std::string& filename) = 0;
+            /** responsible for saving the object resource
+             */
+            virtual void save(std::string const & filename) = 0;
     };
 
     using ObjectSaverPtr = SharedPtr<FIFE::IObjectSaver>;

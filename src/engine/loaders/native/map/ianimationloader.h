@@ -24,23 +24,23 @@ namespace FIFE
      */
     class /*FIFE_API*/ IAnimationLoader
     {
-    public:
-        virtual ~IAnimationLoader() = default;
+        public:
+            virtual ~IAnimationLoader() = default;
 
-        /** determines whether the resource is in
-         *	the correct format for this loader
-         */
-        virtual bool isLoadable(const std::string& filename) = 0;
+            /** determines whether the resource is in
+             *	the correct format for this loader
+             */
+            virtual bool isLoadable(std::string const & filename) = 0;
 
-        /** responsible for loading the animation
-         * returns a shared pointer to an animation resource
-         */
-        virtual AnimationPtr load(const std::string& filename) = 0;
+            /** responsible for loading the animation
+             * returns a shared pointer to an animation resource
+             */
+            virtual AnimationPtr load(std::string const & filename) = 0;
 
-        /** responsible for loading all animations
-         * returns a vector of shared pointer to an animation resource
-         */
-        virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
+            /** responsible for loading all animations
+             * returns a vector of shared pointer to an animation resource
+             */
+            virtual std::vector<AnimationPtr> loadMultiple(std::string const & filename) = 0;
     };
 
     using AnimationLoaderPtr = SharedPtr<IAnimationLoader>;

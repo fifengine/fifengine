@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "atlasloader.h"
+
 // Standard C++ library includes
 #include <cstdio>
 #include <format>
@@ -8,9 +11,6 @@
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/model.h"
 #include "model/structures/layer.h"
 #include "util/base/exception.h"
@@ -23,8 +23,6 @@
 #include "vfs/vfs.h"
 #include "video/animationmanager.h"
 #include "view/visual.h"
-
-#include "atlasloader.h"
 
 namespace FIFE
 {
@@ -43,7 +41,7 @@ namespace FIFE
         return m_image;
     }
 
-    ImagePtr Atlas::getImage(const std::string& id)
+    ImagePtr Atlas::getImage(std::string const & id)
     {
         auto iter = m_subimages.find(id);
         if (iter == m_subimages.end()) {
@@ -65,17 +63,17 @@ namespace FIFE
         return iter->second.image;
     }
 
-    bool Atlas::addImage(const std::string& imagename, const AtlasData& data)
+    bool Atlas::addImage(std::string const & imagename, AtlasData const & data)
     {
         return m_subimages.insert(std::pair<std::string, AtlasData>(imagename, data)).second;
     }
 
-    void Atlas::setPackedImage(const ImagePtr& image)
+    void Atlas::setPackedImage(ImagePtr const & image)
     {
         m_image = image;
     }
 
-    const std::string& Atlas::getName() const
+    std::string const & Atlas::getName() const
     {
         return m_name;
     }
@@ -87,7 +85,7 @@ namespace FIFE
 
     AtlasLoader::~AtlasLoader() = default;
 
-    bool AtlasLoader::isLoadable(const std::string& filename)
+    bool AtlasLoader::isLoadable(std::string const & filename)
     {
         fs::path const atlasPath(filename);
         std::string const atlasFilename = atlasPath.string();
@@ -98,7 +96,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(atlasFile, xml)) {
                         delete data;
@@ -129,7 +127,7 @@ namespace FIFE
         return false;
     }
 
-    AtlasPtr AtlasLoader::load(const std::string& filename)
+    AtlasPtr AtlasLoader::load(std::string const & filename)
     {
         fs::path const atlasPath(filename);
         fs::path atlasPathDirectory;
@@ -148,7 +146,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
                         delete data;
@@ -181,7 +179,7 @@ namespace FIFE
         return atlas;
     }
 
-    std::vector<AtlasPtr> AtlasLoader::loadMultiple(const std::string& filename)
+    std::vector<AtlasPtr> AtlasLoader::loadMultiple(std::string const & filename)
     {
         fs::path const atlasPath(filename);
         fs::path atlasPathDirectory;
@@ -200,7 +198,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
                         delete data;
@@ -239,16 +237,16 @@ namespace FIFE
         return atlasVector;
     }
 
-    AtlasPtr AtlasLoader::loadAtlas(const std::string& filename, tinyxml2::XMLElement* atlasElem)
+    AtlasPtr AtlasLoader::loadAtlas(std::string const & filename, tinyxml2::XMLElement* atlasElem)
     {
         AtlasPtr atlas;
         if (atlasElem == nullptr) {
             return atlas;
         }
 
-        const char* atlasSource = XML::Attribute(atlasElem, "source");
+        char const * atlasSource = XML::Attribute(atlasElem, "source");
         if (atlasSource != nullptr) {
-            const char* atlasId = XML::Attribute(atlasElem, "id");
+            char const * atlasId = XML::Attribute(atlasElem, "id");
 
             fs::path const atlasPath(filename);
             fs::path atlasPathDirectory;
@@ -274,7 +272,7 @@ namespace FIFE
                 for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != nullptr;
                      imageElem               = imageElem->NextSiblingElement("subimage")) {
 
-                    const char* subimageId = XML::Attribute(imageElem, "id");
+                    char const * subimageId = XML::Attribute(imageElem, "id");
                     if (subimageId != nullptr) {
                         Rect region;
                         XML::QueryAttribute(imageElem, "xpos", &region.x);

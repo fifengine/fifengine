@@ -6,8 +6,9 @@
 #define PURGE_H
 
 // Platform specific includes
-#include "platform.h"
 #include <algorithm>
+
+#include "platform.h"
 
 template <class Seq>
 void purge(Seq& c)

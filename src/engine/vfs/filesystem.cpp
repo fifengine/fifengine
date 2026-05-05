@@ -14,22 +14,22 @@ namespace fs = std::filesystem;
 namespace FIFE
 {
 
-    bool HasParentPath(const fs::path& path)
+    bool HasParentPath(fs::path const & path)
     {
         return path.has_parent_path();
     }
 
-    fs::path GetParentPath(const fs::path& path)
+    fs::path GetParentPath(fs::path const & path)
     {
         return path.parent_path();
     }
 
-    std::string GetFilenameFromPath(const fs::path& path)
+    std::string GetFilenameFromPath(fs::path const & path)
     {
         return path.filename().string();
     }
 
-    std::string GetFilenameFromDirectoryIterator(const fs::directory_iterator& iter)
+    std::string GetFilenameFromDirectoryIterator(fs::directory_iterator const & iter)
     {
         if (iter == fs::end(iter)) {
             return "";
@@ -37,43 +37,43 @@ namespace FIFE
         return iter->path().filename().string();
     }
 
-    std::string GetPathIteratorAsString(const fs::path::iterator& pathIter)
+    std::string GetPathIteratorAsString(fs::path::iterator const & pathIter)
     {
         return (*pathIter).string();
     }
 
-    fs::path GetAbsolutePath(const fs::path& path)
+    fs::path GetAbsolutePath(fs::path const & path)
     {
         return fs::absolute(path);
     }
 
-    fs::path GetAbsolutePath(const std::string& path)
+    fs::path GetAbsolutePath(std::string const & path)
     {
         return fs::absolute(fs::path(path));
     }
 
-    std::string GetExtension(const fs::path& path)
+    std::string GetExtension(fs::path const & path)
     {
         return path.extension().string();
     }
 
-    std::string GetExtension(const std::string& path)
+    std::string GetExtension(std::string const & path)
     {
         return GetExtension(fs::path(path));
     }
 
-    bool HasExtension(const fs::path& path)
+    bool HasExtension(fs::path const & path)
     {
-        const std::string extension = GetExtension(path);
+        std::string const extension = GetExtension(path);
         return !(extension.empty() || extension == ".");
     }
 
-    bool HasExtension(const std::string& path)
+    bool HasExtension(std::string const & path)
     {
         return HasExtension(fs::path(path));
     }
 
-    std::string GetStem(const fs::path& path)
+    std::string GetStem(fs::path const & path)
     {
         if (!HasExtension(path)) {
             return "";
@@ -81,7 +81,7 @@ namespace FIFE
         return path.stem().string();
     }
 
-    std::string GetStem(const std::string& path)
+    std::string GetStem(std::string const & path)
     {
         return GetStem(fs::path(path));
     }

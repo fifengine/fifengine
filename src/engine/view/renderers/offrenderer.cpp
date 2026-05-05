@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "offrenderer.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/timeprovider.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
@@ -24,25 +24,23 @@
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 
-#include "offrenderer.h"
-
 namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        [[nodiscard]] int32_t toScreenSize(uint32_t const value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             return static_cast<int32_t>(value);
         }
 
-        [[nodiscard]] uint32_t toAnimationTimestamp(const int32_t value)
+        [[nodiscard]] uint32_t toAnimationTimestamp(int32_t const value)
         {
             assert(value >= 0);
             return static_cast<uint32_t>(value);
         }
 
-        [[nodiscard]] uint8_t toVertexSize(const int32_t value)
+        [[nodiscard]] uint8_t toVertexSize(int32_t const value)
         {
             assert(value >= 0);
             assert(value <= std::numeric_limits<uint8_t>::max());
@@ -56,7 +54,7 @@ namespace FIFE
     static Logger _log(LM_VIEWVIEW);
 
     OffRendererLineInfo::OffRendererLineInfo(
-        const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        Point const & n1, Point const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -68,7 +66,7 @@ namespace FIFE
         renderbackend->drawLine(m_edge1, m_edge2, m_red, m_green, m_blue, m_alpha);
     }
 
-    OffRendererPointInfo::OffRendererPointInfo(const Point& anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+    OffRendererPointInfo::OffRendererPointInfo(Point const & anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_anchor(anchor), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -81,7 +79,7 @@ namespace FIFE
     }
 
     OffRendererTriangleInfo::OffRendererTriangleInfo(
-        const Point& n1, const Point& n2, const Point& n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        Point const & n1, Point const & n2, Point const & n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_edge3(n3), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -94,10 +92,10 @@ namespace FIFE
     }
 
     OffRendererQuadInfo::OffRendererQuadInfo(
-        const Point& n1,
-        const Point& n2,
-        const Point& n3,
-        const Point& n4,
+        Point const & n1,
+        Point const & n2,
+        Point const & n3,
+        Point const & n4,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -122,7 +120,7 @@ namespace FIFE
     }
 
     OffRendererVertexInfo::OffRendererVertexInfo(
-        const Point& center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        Point const & center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_center(center), m_size(size), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -134,7 +132,7 @@ namespace FIFE
         renderbackend->drawVertex(m_center, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
     }
 
-    OffRendererImageInfo::OffRendererImageInfo(const Point& anchor, const ImagePtr& image) :
+    OffRendererImageInfo::OffRendererImageInfo(Point const & anchor, ImagePtr const & image) :
         OffRendererElementInfo(), m_anchor(anchor), m_image(image)
     {
     }
@@ -145,8 +143,8 @@ namespace FIFE
     {
         static_cast<void>(renderbackend);
         Rect r;
-        const int32_t width  = toScreenSize(m_image->getWidth());
-        const int32_t height = toScreenSize(m_image->getHeight());
+        int32_t const width  = toScreenSize(m_image->getWidth());
+        int32_t const height = toScreenSize(m_image->getHeight());
         r.x                  = m_anchor.x - width / 2;
         r.y                  = m_anchor.y - height / 2;
         r.w                  = width;
@@ -155,7 +153,7 @@ namespace FIFE
         m_image->render(r);
     }
 
-    OffRendererAnimationInfo::OffRendererAnimationInfo(const Point& anchor, const AnimationPtr& animation) :
+    OffRendererAnimationInfo::OffRendererAnimationInfo(Point const & anchor, AnimationPtr const & animation) :
         OffRendererElementInfo(),
         m_anchor(anchor),
         m_animation(animation),
@@ -169,13 +167,13 @@ namespace FIFE
     void OffRendererAnimationInfo::render(RenderBackend* renderbackend)
     {
         static_cast<void>(renderbackend);
-        const uint32_t duration = toAnimationTimestamp(m_animation->getDuration());
-        const uint32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
+        uint32_t const duration = toAnimationTimestamp(m_animation->getDuration());
+        uint32_t const animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
         ImagePtr const img      = m_animation->getFrameByTimestamp(animtime);
 
         Rect r;
-        const int32_t width  = toScreenSize(img->getWidth());
-        const int32_t height = toScreenSize(img->getHeight());
+        int32_t const width  = toScreenSize(img->getWidth());
+        int32_t const height = toScreenSize(img->getHeight());
         r.x                  = m_anchor.x - width / 2;
         r.y                  = m_anchor.y - height / 2;
         r.w                  = width;
@@ -184,7 +182,7 @@ namespace FIFE
         img->render(r);
     }
 
-    OffRendererTextInfo::OffRendererTextInfo(const Point& anchor, IFont* font, std::string text) :
+    OffRendererTextInfo::OffRendererTextInfo(Point const & anchor, IFont* font, std::string text) :
         OffRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text))
     {
     }
@@ -197,8 +195,8 @@ namespace FIFE
         Image* img = m_font->getAsImageMultiline(m_text);
 
         Rect r;
-        const int32_t width  = toScreenSize(img->getWidth());
-        const int32_t height = toScreenSize(img->getHeight());
+        int32_t const width  = toScreenSize(img->getWidth());
+        int32_t const height = toScreenSize(img->getHeight());
         r.x                  = m_anchor.x - width / 2;
         r.y                  = m_anchor.y - height / 2;
         r.w                  = width;
@@ -208,7 +206,7 @@ namespace FIFE
     }
 
     OffRendererResizeInfo::OffRendererResizeInfo(
-        const Point& anchor, const ImagePtr& image, int32_t width, int32_t height) :
+        Point const & anchor, ImagePtr const & image, int32_t width, int32_t height) :
         OffRendererElementInfo(), m_anchor(anchor), m_image(image), m_width(width), m_height(height)
     {
     }
@@ -219,8 +217,8 @@ namespace FIFE
     {
         static_cast<void>(renderbackend);
         Rect r;
-        const int32_t width  = m_width;
-        const int32_t height = m_height;
+        int32_t const width  = m_width;
+        int32_t const height = m_height;
         r.x                  = m_anchor.x - width / 2;
         r.y                  = m_anchor.y - height / 2;
         r.w                  = width;
@@ -254,27 +252,27 @@ namespace FIFE
         m_area = area;
     }
 
-    const Rect& OffRenderer::getClipArea() const
+    Rect const & OffRenderer::getClipArea() const
     {
         return m_area;
     }
 
     void OffRenderer::addLine(
-        const std::string& group, const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::string const & group, Point const & n1, Point const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererLineInfo(n1, n2, r, g, b, a);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addPoint(const std::string& group, const Point& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void OffRenderer::addPoint(std::string const & group, Point const & n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererPointInfo(n, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void OffRenderer::addTriangle(
-        const std::string& group,
-        const Point& n1,
-        const Point& n2,
-        const Point& n3,
+        std::string const & group,
+        Point const & n1,
+        Point const & n2,
+        Point const & n3,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -284,11 +282,11 @@ namespace FIFE
         m_groups[group].push_back(info);
     }
     void OffRenderer::addQuad(
-        const std::string& group,
-        const Point& n1,
-        const Point& n2,
-        const Point& n3,
-        const Point& n4,
+        std::string const & group,
+        Point const & n1,
+        Point const & n2,
+        Point const & n3,
+        Point const & n4,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -298,33 +296,33 @@ namespace FIFE
         m_groups[group].push_back(info);
     }
     void OffRenderer::addVertex(
-        const std::string& group, const Point& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::string const & group, Point const & n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addText(const std::string& group, const Point& n, IFont* font, const std::string& text)
+    void OffRenderer::addText(std::string const & group, Point const & n, IFont* font, std::string const & text)
     {
         OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addImage(const std::string& group, const Point& n, const ImagePtr& image)
+    void OffRenderer::addImage(std::string const & group, Point const & n, ImagePtr const & image)
     {
         OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addAnimation(const std::string& group, const Point& n, const AnimationPtr& animation)
+    void OffRenderer::addAnimation(std::string const & group, Point const & n, AnimationPtr const & animation)
     {
         OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
         m_groups[group].push_back(info);
     }
     void OffRenderer::resizeImage(
-        const std::string& group, const Point& n, const ImagePtr& image, int32_t width, int32_t height)
+        std::string const & group, Point const & n, ImagePtr const & image, int32_t width, int32_t height)
     {
         OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::removeAll(const std::string& group)
+    void OffRenderer::removeAll(std::string const & group)
     {
         auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {

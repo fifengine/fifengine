@@ -26,43 +26,45 @@ namespace FIFE
      */
     class /*FIFE_API*/ IKeyListener : public IListener
     {
-    public:
-        /** Called if a key is pressed
-         * If a key is held down the multiple key presses are generated.
-         * @param evt KeyEvent that describes the event.
-         */
-        virtual void keyPressed(KeyEvent& evt) = 0;
+        public:
+            /** Called if a key is pressed
+             * If a key is held down the multiple key presses are generated.
+             * @param evt KeyEvent that describes the event.
+             */
+            virtual void keyPressed(KeyEvent& evt) = 0;
 
-        /** Called if a key is released
-         * @param evt KeyEvent that describes the event.
-         */
-        virtual void keyReleased(KeyEvent& evt) = 0;
+            /** Called if a key is released
+             * @param evt KeyEvent that describes the event.
+             */
+            virtual void keyReleased(KeyEvent& evt) = 0;
 
-        /** Indicates if this is a global listener
-         * Global listener can also receive events that are consumed by widgets / gui.
-         * Default value is false.
-         */
-        virtual bool isGlobalListener() const
-        {
-            return m_global;
-        }
+            /** Indicates if this is a global listener
+             * Global listener can also receive events that are consumed by widgets / gui.
+             * Default value is false.
+             */
+            virtual bool isGlobalListener() const
+            {
+                return m_global;
+            }
 
-        /** Changes the behaviour of the listener to be global or not.
-         * Global listener can also receive events that are consumed by widgets / gui.
-         * @param global The value to change the behaviour of this listener.
-         */
-        virtual void setGlobalListener(bool global)
-        {
-            m_global = global;
-        }
+            /** Changes the behaviour of the listener to be global or not.
+             * Global listener can also receive events that are consumed by widgets / gui.
+             * @param global The value to change the behaviour of this listener.
+             */
+            virtual void setGlobalListener(bool global)
+            {
+                m_global = global;
+            }
 
-        virtual ~IKeyListener() = default;
+            virtual ~IKeyListener() = default;
 
-    protected:
-        IKeyListener() : m_global(false) { }
+        protected:
+            IKeyListener() : m_global(false)
+            {
+            }
 
-    private:
-        bool m_global;
+        private:
+            bool m_global;
     };
 
 } // namespace FIFE

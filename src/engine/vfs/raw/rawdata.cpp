@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "rawdata.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -11,19 +14,16 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "rawdata.h"
 
 namespace FIFE
 {
     static Logger _log(LM_VFS);
 
-    RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0) { }
+    RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0)
+    {
+    }
 
     RawData::~RawData()
     {
@@ -33,7 +33,7 @@ namespace FIFE
     std::vector<uint8_t> RawData::getDataInBytes()
     {
         // get the total file size
-        const uint32_t size = getDataLength();
+        uint32_t const size = getDataLength();
 
         // create output vector
         std::vector<uint8_t> target;
@@ -60,7 +60,7 @@ namespace FIFE
 
     uint32_t RawData::getDataLength() const
     {
-        const size_t dataLength = m_datasource->getSize();
+        size_t const dataLength = m_datasource->getSize();
         assert(dataLength <= std::numeric_limits<uint32_t>::max());
         return static_cast<uint32_t>(dataLength);
     }
@@ -87,7 +87,7 @@ namespace FIFE
     void RawData::readInto(uint8_t* buffer, size_t len)
     {
         assert(len <= std::numeric_limits<uint32_t>::max());
-        const uint32_t checkedLen = static_cast<uint32_t>(len);
+        uint32_t const checkedLen = static_cast<uint32_t>(len);
 
         if (m_index_current + checkedLen > getDataLength()) {
             FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << checkedLen << " : " << getDataLength());
@@ -141,7 +141,7 @@ namespace FIFE
     void RawData::read(std::string& outbuffer, int32_t size)
     {
         if ((size < 0) || ((size + m_index_current) > getDataLength())) {
-            const int32_t remaining = static_cast<int32_t>(getDataLength() - m_index_current);
+            int32_t const remaining = static_cast<int32_t>(getDataLength() - m_index_current);
             size                    = remaining;
         }
         if (size == 0) {

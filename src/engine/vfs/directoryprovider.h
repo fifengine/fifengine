@@ -25,27 +25,29 @@ namespace FIFE
      */
     class /*FIFE_API*/ DirectoryProvider : public VFSSourceProvider
     {
-    public:
-        DirectoryProvider() : VFSSourceProvider("OS Directory") { }
+        public:
+            DirectoryProvider() : VFSSourceProvider("OS Directory")
+            {
+            }
 
-        /** Check if a given directory is readable.
-         * The path must either be an absolute path or relative
-         * to the current working directory where the client was launched
-         *
-         * @param path the filename to check
-         * @return true if readable, false otherwise
-         */
-        bool isReadable(const std::string& path) const override;
+            /** Check if a given directory is readable.
+             * The path must either be an absolute path or relative
+             * to the current working directory where the client was launched
+             *
+             * @param path the filename to check
+             * @return true if readable, false otherwise
+             */
+            bool isReadable(std::string const & path) const override;
 
-        VFSSource* createSource(const std::string& path) override;
+            VFSSource* createSource(std::string const & path) override;
 
-        VFSSource* getSource(const std::string& path) const override;
+            VFSSource* getSource(std::string const & path) const override;
 
-        bool hasSource(const std::string& path) const override;
+            bool hasSource(std::string const & path) const override;
 
-    private:
-        std::string m_name;
-        std::map<std::string, VFSSource*> m_sources;
+        private:
+            std::string m_name;
+            std::map<std::string, VFSSource*> m_sources;
     };
 } // namespace FIFE
 

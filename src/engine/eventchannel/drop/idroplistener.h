@@ -26,13 +26,13 @@ namespace FIFE
      */
     class /*FIFE_API*/ IDropListener : public IListener
     {
-    public:
-        /** Called on a file drop event.
-         * @param evt DropEvent that describes the event.
-         */
-        virtual void fileDropped(DropEvent& evt) = 0;
+        public:
+            /** Called on a file drop event.
+             * @param evt DropEvent that describes the event.
+             */
+            virtual void fileDropped(DropEvent& evt) = 0;
 
-        virtual ~IDropListener() = default;
+            virtual ~IDropListener() = default;
     };
 
 } // namespace FIFE

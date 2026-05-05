@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "renderitem.h"
+
 // Standard C++ library includes
 #include <utility>
 #include <vector>
@@ -8,19 +11,14 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/action.h"
 #include "model/metamodel/object.h"
 #include "model/structures/instance.h"
-
-#include "renderitem.h"
 #include "visual.h"
 
 namespace FIFE
 {
-    const int32_t STATIC_IMAGE_NOT_INITIALIZED = -1;
+    int32_t const STATIC_IMAGE_NOT_INITIALIZED = -1;
 
     OverlayData::OverlayData() : colorOverlay(nullptr), animationOverlayImages(nullptr), animationColorOverlays(nullptr)
     {

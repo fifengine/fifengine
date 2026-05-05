@@ -26,18 +26,18 @@ namespace FIFE
      */
     class /*FIFE_API*/ ITextListener : public IListener
     {
-    public:
-        /** Called on a text input event.
-         * @param evt TextEvent that describes the event.
-         */
-        virtual void textInput(TextEvent& evt) = 0;
+        public:
+            /** Called on a text input event.
+             * @param evt TextEvent that describes the event.
+             */
+            virtual void textInput(TextEvent& evt) = 0;
 
-        /** Called on a text edit event.
-         * @param evt TextEvent that describes the event.
-         */
-        virtual void textEdit(TextEvent& evt) = 0;
+            /** Called on a text edit event.
+             * @param evt TextEvent that describes the event.
+             */
+            virtual void textEdit(TextEvent& evt) = 0;
 
-        virtual ~ITextListener() = default;
+            virtual ~ITextListener() = default;
     };
 
 } // namespace FIFE

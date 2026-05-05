@@ -19,9 +19,9 @@ namespace FIFE
      */
     class /*FIFE_API*/ ImageLoader : public IResourceLoader
     {
-    public:
-        ImageLoader() = default;
-        virtual void load(IResource* res);
+        public:
+            ImageLoader() = default;
+            virtual void load(IResource* res);
     };
 } // namespace FIFE
 #endif

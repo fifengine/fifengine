@@ -16,8 +16,8 @@
 namespace FIFE
 {
     using IntVector = std::vector<int32_t>;
-    int makeInt32(const std::string& str);
-    IntVector tokenize(const std::string& str, char delim, char group = 0);
+    int makeInt32(std::string const & str);
+    IntVector tokenize(std::string const & str, char delim, char group = 0);
 } // namespace FIFE
 
 #endif

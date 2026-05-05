@@ -19,34 +19,34 @@ namespace FIFE
 {
     class /*FIFE_API*/ PercentDoneListener
     {
-    public:
-        virtual ~PercentDoneListener();
-        virtual void OnEvent(unsigned int percentDone) = 0;
+        public:
+            virtual ~PercentDoneListener();
+            virtual void OnEvent(unsigned int percentDone) = 0;
     };
 
     class /*FIFE_API*/ PercentDoneCallback
     {
-    public:
-        PercentDoneCallback();
-        virtual ~PercentDoneCallback();
+        public:
+            PercentDoneCallback();
+            virtual ~PercentDoneCallback();
 
-        void setTotalNumberOfElements(unsigned int totalElements);
-        void setPercentDoneInterval(unsigned int percent);
-        void incrementCount();
-        void reset();
-        void addListener(PercentDoneListener* listener);
-        void removeListener(const PercentDoneListener* listener);
+            void setTotalNumberOfElements(unsigned int totalElements);
+            void setPercentDoneInterval(unsigned int percent);
+            void incrementCount();
+            void reset();
+            void addListener(PercentDoneListener* listener);
+            void removeListener(PercentDoneListener const * listener);
 
-    private:
-        void fireEvent(uint32_t percent);
+        private:
+            void fireEvent(uint32_t percent);
 
-        uint32_t m_totalElements;
-        uint32_t m_percent;
-        uint32_t m_numberOfEvents;
-        uint32_t m_count;
+            uint32_t m_totalElements;
+            uint32_t m_percent;
+            uint32_t m_numberOfEvents;
+            uint32_t m_count;
 
-        using ListenerContainer = std::vector<PercentDoneListener*>;
-        ListenerContainer m_listeners;
+            using ListenerContainer = std::vector<PercentDoneListener*>;
+            ListenerContainer m_listeners;
     };
 } // namespace FIFE
 

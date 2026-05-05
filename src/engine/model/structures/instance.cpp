@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "instance.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <iostream>
@@ -14,9 +17,6 @@
 // #include <SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/soundsource.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -32,65 +32,66 @@
 #include "util/time/timemanager.h"
 #include "view/visual.h"
 
-#include "instance.h"
-
 namespace FIFE
 {
     static Logger _log(LM_INSTANCE);
 
     class ActionInfo
     {
-    public:
-        ActionInfo(IPather* pather, [[maybe_unused]] const Location& curloc) :
+        public:
+            ActionInfo(IPather* pather, [[maybe_unused]] Location const & curloc) :
 
-            m_pather(pather)
+                m_pather(pather)
 
-        {
-        }
-
-        ~ActionInfo()
-        {
-            if ((m_route != nullptr) && m_delete_route) {
-                int32_t const sessionId = m_route->getSessionId();
-                if (sessionId != -1) {
-                    m_pather->cancelSession(sessionId);
-                }
-                delete m_route;
+            {
             }
-            delete m_target;
-        }
 
-        // Current action, owned by object
-        Action* m_action{nullptr};
-        // target location for ongoing movement
-        Location* m_target{nullptr};
-        // current movement speed
-        double m_speed{0};
-        // should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
-        bool m_repeating{false};
-        // action start time (ticks)
-        uint32_t m_action_start_time{0};
-        // action offset time (ticks) for resuming an action
-        uint32_t m_action_offset_time{0};
-        // ticks since last call
-        uint32_t m_prev_call_time{0};
-        // pather
-        IPather* m_pather;
-        // leader for follow activity
-        Instance* m_leader{nullptr};
-        // pointer to route that contain path and additional information
-        Route* m_route{nullptr};
-        bool m_delete_route{true};
+            ~ActionInfo()
+            {
+                if ((m_route != nullptr) && m_delete_route) {
+                    int32_t const sessionId = m_route->getSessionId();
+                    if (sessionId != -1) {
+                        m_pather->cancelSession(sessionId);
+                    }
+                    delete m_route;
+                }
+                delete m_target;
+            }
+
+            // Current action, owned by object
+            Action* m_action{nullptr};
+            // target location for ongoing movement
+            Location* m_target{nullptr};
+            // current movement speed
+            double m_speed{0};
+            // should action be repeated? used only for non-moving actions, moving ones repeat until movement is
+            // finished
+            bool m_repeating{false};
+            // action start time (ticks)
+            uint32_t m_action_start_time{0};
+            // action offset time (ticks) for resuming an action
+            uint32_t m_action_offset_time{0};
+            // ticks since last call
+            uint32_t m_prev_call_time{0};
+            // pather
+            IPather* m_pather;
+            // leader for follow activity
+            Instance* m_leader{nullptr};
+            // pointer to route that contain path and additional information
+            Route* m_route{nullptr};
+            bool m_delete_route{true};
     };
 
     class SayInfo
     {
-    public:
-        SayInfo(std::string txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration) { }
+        public:
+            SayInfo(std::string txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration)
+            {
+            }
 
-        std::string m_txt;
-        uint32_t m_duration;
-        uint32_t m_start_time{0};
+            std::string m_txt;
+            uint32_t m_duration;
+            uint32_t m_start_time{0};
     };
 
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
@@ -173,7 +174,7 @@ namespace FIFE
         }
     }
 
-    Instance::Instance(Object* object, const Location& location, const std::string& identifier) :
+    Instance::Instance(Object* object, Location const & location, std::string const & identifier) :
         m_id(identifier),
         m_rotation(0),
         m_location(location),
@@ -193,12 +194,12 @@ namespace FIFE
     {
         // create multi object instances
         if (object->isMultiObject()) {
-            m_mainMultiInstance             = this;
-            uint32_t count                  = 0;
-            Layer* layer                    = m_location.getLayer();
-            const ExactModelCoordinate& emc = m_location.getExactLayerCoordinatesRef();
-            const std::set<Object*>& multis = object->getMultiParts();
-            auto it                         = multis.begin();
+            m_mainMultiInstance              = this;
+            uint32_t count                   = 0;
+            Layer* layer                     = m_location.getLayer();
+            ExactModelCoordinate const & emc = m_location.getExactLayerCoordinatesRef();
+            std::set<Object*> const & multis = object->getMultiParts();
+            auto it                          = multis.begin();
             for (; it != multis.end(); ++it, ++count) {
                 if (*it == m_object) {
                     continue;
@@ -280,7 +281,7 @@ namespace FIFE
         return m_object;
     }
 
-    void Instance::setLocation(const Location& loc)
+    void Instance::setLocation(Location const & loc)
     {
         // ToDo: Handle the case when the layers are different
         if (m_location != loc) {
@@ -323,12 +324,12 @@ namespace FIFE
         return m_rotation;
     }
 
-    void Instance::setId(const std::string& identifier)
+    void Instance::setId(std::string const & identifier)
     {
         m_id = identifier;
     }
 
-    const std::string& Instance::getId()
+    std::string const & Instance::getId()
     {
         return m_id;
     }
@@ -415,12 +416,13 @@ namespace FIFE
         FL_WARN(_log, "Cannot remove unknown listener");
     }
 
-    void Instance::initializeAction(const std::string& actionName)
+    void Instance::initializeAction(std::string const & actionName)
     {
         assert(m_object);
 
         initializeChanges();
-        const Action* old_action = (m_activity->m_actionInfo != nullptr) ? m_activity->m_actionInfo->m_action : nullptr;
+        Action const * old_action =
+            (m_activity->m_actionInfo != nullptr) ? m_activity->m_actionInfo->m_action : nullptr;
         if (m_activity->m_actionInfo != nullptr) {
             cancelAction();
         }
@@ -454,7 +456,7 @@ namespace FIFE
     }
 
     void Instance::move(
-        const std::string& actionName, const Location& target, const double speed, const std::string& costId)
+        std::string const & actionName, Location const & target, double const speed, std::string const & costId)
     {
         // if new move is identical with the old then return
         if (m_activity != nullptr) {
@@ -500,7 +502,7 @@ namespace FIFE
         }
     }
 
-    void Instance::follow(const std::string& actionName, Instance* leader, const double speed)
+    void Instance::follow(std::string const & actionName, Instance* leader, double const speed)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_target = new Location(leader->getLocationRef());
@@ -513,7 +515,7 @@ namespace FIFE
                                      << *m_activity->m_actionInfo->m_target << " with speed " << speed);
     }
 
-    void Instance::follow(const std::string& actionName, Route* route, const double speed)
+    void Instance::follow(std::string const & actionName, Route* route, double const speed)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_target       = new Location(route->getEndNode());
@@ -572,7 +574,7 @@ namespace FIFE
         return m_specialCost;
     }
 
-    const std::vector<Instance*>& Instance::getMultiInstances()
+    std::vector<Instance*> const & Instance::getMultiInstances()
     {
         return m_multiInstances;
     }
@@ -587,47 +589,47 @@ namespace FIFE
         return m_mainMultiInstance;
     }
 
-    void Instance::actOnce(const std::string& actionName, const Location& direction)
+    void Instance::actOnce(std::string const & actionName, Location const & direction)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = false;
         setFacingLocation(direction);
     }
 
-    void Instance::actOnce(const std::string& actionName, int32_t rotation)
+    void Instance::actOnce(std::string const & actionName, int32_t rotation)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = false;
         setRotation(rotation);
     }
 
-    void Instance::actOnce(const std::string& actionName)
+    void Instance::actOnce(std::string const & actionName)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = false;
     }
 
-    void Instance::actRepeat(const std::string& actionName, const Location& direction)
+    void Instance::actRepeat(std::string const & actionName, Location const & direction)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = true;
         setFacingLocation(direction);
     }
 
-    void Instance::actRepeat(const std::string& actionName, int32_t rotation)
+    void Instance::actRepeat(std::string const & actionName, int32_t rotation)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = true;
         setRotation(rotation);
     }
 
-    void Instance::actRepeat(const std::string& actionName)
+    void Instance::actRepeat(std::string const & actionName)
     {
         initializeAction(actionName);
         m_activity->m_actionInfo->m_repeating = true;
     }
 
-    void Instance::say(const std::string& text, uint32_t duration)
+    void Instance::say(std::string const & text, uint32_t duration)
     {
         initializeChanges();
         delete m_activity->m_sayInfo;
@@ -639,7 +641,7 @@ namespace FIFE
         }
     }
 
-    const std::string* Instance::getSayText() const
+    std::string const * Instance::getSayText() const
     {
         if ((m_activity != nullptr) && (m_activity->m_sayInfo != nullptr)) {
             return &m_activity->m_sayInfo->m_txt;
@@ -925,7 +927,7 @@ namespace FIFE
         return 0;
     }
 
-    void Instance::setFacingLocation(const Location& loc)
+    void Instance::setFacingLocation(Location const & loc)
     {
         setRotation(getAngleBetween(m_location, loc));
     }
@@ -1069,7 +1071,7 @@ namespace FIFE
         return TimeManager::instance()->getTime();
     }
 
-    void Instance::setCost(const std::string& id, double cost)
+    void Instance::setCost(std::string const & id, double cost)
     {
         m_specialCost = true;
         m_costId      = id;
@@ -1122,11 +1124,11 @@ namespace FIFE
         if (!m_multiInstances.empty()) {
             // use map coords for rotation and movement
             // instances are changed on InstanceTree but not on CellCache
-            Location loc                       = m_location;
-            const ExactModelCoordinate anchor  = m_location.getMapCoordinates();
-            const ExactModelCoordinate& offset = m_object->getRotationAnchor();
+            Location loc                        = m_location;
+            ExactModelCoordinate const anchor   = m_location.getMapCoordinates();
+            ExactModelCoordinate const & offset = m_object->getRotationAnchor();
             loc.setExactLayerCoordinates(offset);
-            const ExactModelCoordinate anchor_offset = loc.getMapCoordinates();
+            ExactModelCoordinate const anchor_offset = loc.getMapCoordinates();
             int32_t rot                              = m_rotation;
             if (m_object->isRestrictedRotation()) {
                 rot = m_object->getRestrictedRotation(m_rotation);
@@ -1149,7 +1151,7 @@ namespace FIFE
         }
     }
 
-    void Instance::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors)
+    void Instance::addStaticColorOverlay(uint32_t angle, OverlayColors const & colors)
     {
         if (!m_ownObject) {
             createOwnObject();
@@ -1188,7 +1190,7 @@ namespace FIFE
         return objVis->isColorOverlay();
     }
 
-    void Instance::addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors)
+    void Instance::addColorOverlay(std::string const & actionName, uint32_t angle, OverlayColors const & colors)
     {
         ActionVisual* visual = getActionVisual(actionName, true);
         if (visual != nullptr) {
@@ -1198,7 +1200,7 @@ namespace FIFE
         }
     }
 
-    OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle)
+    OverlayColors* Instance::getColorOverlay(std::string const & actionName, uint32_t angle)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1207,7 +1209,7 @@ namespace FIFE
         return nullptr;
     }
 
-    void Instance::removeColorOverlay(const std::string& actionName, int32_t angle)
+    void Instance::removeColorOverlay(std::string const & actionName, int32_t angle)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1218,7 +1220,7 @@ namespace FIFE
     }
 
     void Instance::addAnimationOverlay(
-        const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr)
+        std::string const & actionName, uint32_t angle, int32_t order, AnimationPtr const & animationptr)
     {
         ActionVisual* visual = getActionVisual(actionName, true);
         if (visual != nullptr) {
@@ -1228,7 +1230,7 @@ namespace FIFE
         }
     }
 
-    std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(const std::string& actionName, int32_t angle)
+    std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(std::string const & actionName, int32_t angle)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1237,7 +1239,7 @@ namespace FIFE
         return {};
     }
 
-    void Instance::removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order)
+    void Instance::removeAnimationOverlay(std::string const & actionName, uint32_t angle, int32_t order)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1248,7 +1250,7 @@ namespace FIFE
     }
 
     void Instance::addColorOverlay(
-        const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors)
+        std::string const & actionName, uint32_t angle, int32_t order, OverlayColors const & colors)
     {
         ActionVisual* visual = getActionVisual(actionName, true);
         if (visual != nullptr) {
@@ -1258,7 +1260,7 @@ namespace FIFE
         }
     }
 
-    OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order)
+    OverlayColors* Instance::getColorOverlay(std::string const & actionName, uint32_t angle, int32_t order)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1267,7 +1269,7 @@ namespace FIFE
         return nullptr;
     }
 
-    void Instance::removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order)
+    void Instance::removeColorOverlay(std::string const & actionName, int32_t angle, int32_t order)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1277,7 +1279,7 @@ namespace FIFE
         }
     }
 
-    bool Instance::isAnimationOverlay(const std::string& actionName)
+    bool Instance::isAnimationOverlay(std::string const & actionName)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1286,7 +1288,7 @@ namespace FIFE
         return false;
     }
 
-    bool Instance::isColorOverlay(const std::string& actionName)
+    bool Instance::isColorOverlay(std::string const & actionName)
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
@@ -1295,7 +1297,7 @@ namespace FIFE
         return false;
     }
 
-    void Instance::convertToOverlays(const std::string& actionName, bool color)
+    void Instance::convertToOverlays(std::string const & actionName, bool color)
     {
         ActionVisual* visual = getActionVisual(actionName, true);
         visual->convertToOverlays(color);
@@ -1317,7 +1319,7 @@ namespace FIFE
         }
     }
 
-    ActionVisual* Instance::getActionVisual(const std::string& actionName, bool create)
+    ActionVisual* Instance::getActionVisual(std::string const & actionName, bool create)
     {
         ActionVisual* nav = nullptr;
         if (!m_ownObject) {

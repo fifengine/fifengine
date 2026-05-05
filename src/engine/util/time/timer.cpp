@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "timer.h"
+
 // Standard C++ library includes
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "timer.h"
 #include "timemanager.h"
 
 namespace FIFE
 {
 
     // Remember TimeEvent(-1) means that even a registered event won't be called
-    Timer::Timer() : TimeEvent(-1), m_active(false) { }
+    Timer::Timer() : TimeEvent(-1), m_active(false)
+    {
+    }
 
     Timer::~Timer()
     {
@@ -47,7 +48,7 @@ namespace FIFE
         setPeriod(msec);
         stop();
     }
-    void Timer::setCallback(const type_callback& cb)
+    void Timer::setCallback(type_callback const & cb)
     {
         m_callback = cb;
     }

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "animation.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,15 +17,10 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "image.h"
 #include "loaders/native/video/resourceanimationloader.h"
 #include "util/base/exception.h"
 #include "util/time/timemanager.h"
-
-#include "animation.h"
-#include "image.h"
 
 namespace FIFE
 {
@@ -32,7 +30,7 @@ namespace FIFE
     {
     }
 
-    Animation::Animation(const std::string& name, IResourceLoader* loader) :
+    Animation::Animation(std::string const & name, IResourceLoader* loader) :
         IResource(name, loader), m_direction(0), m_action_frame(-1), m_animation_endtime(-1)
     {
     }
@@ -78,18 +76,18 @@ namespace FIFE
     {
         // automated counting for name generation, in case the user doesn't provide a name
         static uint32_t uniqueNumber      = 0;
-        static const std::string baseName = "animation";
+        static std::string const baseName = "animation";
 
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
 
-        const std::string name = oss.str();
+        std::string const name = oss.str();
         ++uniqueNumber;
 
         return name;
     }
 
-    void Animation::addFrame(const ImagePtr& image, uint32_t duration)
+    void Animation::addFrame(ImagePtr const & image, uint32_t duration)
     {
         FrameInfo info;
         assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());
@@ -105,9 +103,9 @@ namespace FIFE
             m_animation_endtime = static_cast<int32_t>(duration);
         } else {
             --i;
-            const uint32_t frametime        = i->first + i->second.duration;
+            uint32_t const frametime        = i->first + i->second.duration;
             m_framemap[frametime]           = info;
-            const uint32_t animationEndTime = frametime + duration;
+            uint32_t const animationEndTime = frametime + duration;
             assert(animationEndTime <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             m_animation_endtime = static_cast<int32_t>(animationEndTime);
         }
@@ -128,7 +126,7 @@ namespace FIFE
     bool Animation::isValidIndex(int32_t index) const
     {
         assert(m_frames.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
-        const int32_t size = static_cast<int32_t>(m_frames.size());
+        int32_t const size = static_cast<int32_t>(m_frames.size());
         return size > 0 && index >= 0 && index < size;
     }
 
@@ -163,7 +161,7 @@ namespace FIFE
         std::vector<ImagePtr> frames;
         frames.reserve(m_frames.size());
 
-        std::ranges::transform(m_frames, std::back_inserter(frames), [](const auto& frame) {
+        std::ranges::transform(m_frames, std::back_inserter(frames), [](auto const & frame) {
             return frame.image;
         });
 

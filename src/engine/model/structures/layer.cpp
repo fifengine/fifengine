@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "layer.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,20 +17,15 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "model/metamodel/grids/cellgrid.h"
-#include "util/log/logger.h"
-#include "util/structures/purge.h"
-
 #include "cell.h"
 #include "cellcache.h"
 #include "instance.h"
 #include "instancetree.h"
-#include "layer.h"
 #include "map.h"
+#include "model/metamodel/grids/cellgrid.h"
 #include "trigger.h"
+#include "util/log/logger.h"
+#include "util/structures/purge.h"
 
 namespace FIFE
 {
@@ -69,12 +67,12 @@ namespace FIFE
         delete m_instanceTree;
     }
 
-    const std::string& Layer::getId() const
+    std::string const & Layer::getId() const
     {
         return m_id;
     }
 
-    void Layer::setId(const std::string& id)
+    void Layer::setId(std::string const & id)
     {
         m_id = id;
     }
@@ -104,13 +102,13 @@ namespace FIFE
         return !m_instances.empty();
     }
 
-    Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id)
+    Instance* Layer::createInstance(Object* object, ModelCoordinate const & p, std::string const & id)
     {
         ExactModelCoordinate const emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
         return createInstance(object, emc, id);
     }
 
-    Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id)
+    Instance* Layer::createInstance(Object* object, ExactModelCoordinate const & p, std::string const & id)
     {
         Location location(this);
         location.setExactLayerCoordinates(p);
@@ -131,7 +129,7 @@ namespace FIFE
         return instance;
     }
 
-    bool Layer::addInstance(Instance* instance, const ExactModelCoordinate& p)
+    bool Layer::addInstance(Instance* instance, ExactModelCoordinate const & p)
     {
         if (instance == nullptr) {
             FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
@@ -229,7 +227,7 @@ namespace FIFE
         m_changed = true;
     }
 
-    const std::vector<Instance*>& Layer::getInstances() const
+    std::vector<Instance*> const & Layer::getInstances() const
     {
         return m_instances;
     }
@@ -243,7 +241,7 @@ namespace FIFE
         }
     }
 
-    Instance* Layer::getInstance(const std::string& id)
+    Instance* Layer::getInstance(std::string const & id)
     {
         auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
@@ -255,7 +253,7 @@ namespace FIFE
         return nullptr;
     }
 
-    std::vector<Instance*> Layer::getInstances(const std::string& id)
+    std::vector<Instance*> Layer::getInstances(std::string const & id)
     {
         std::vector<Instance*> matching_instances;
         auto it = m_instances.begin();
@@ -296,12 +294,12 @@ namespace FIFE
         return matching_instances;
     }
 
-    std::vector<Instance*> Layer::getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2)
+    std::vector<Instance*> Layer::getInstancesInLine(ModelCoordinate const & pt1, ModelCoordinate const & pt2)
     {
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         std::vector<ModelCoordinate> const coords = m_grid->getCoordinatesInLine(pt1, pt2);
-        for (const auto& coord : coords) {
+        for (auto const & coord : coords) {
             m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
             if (!matchingInstances.empty()) {
                 instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
@@ -310,21 +308,21 @@ namespace FIFE
         return instances;
     }
 
-    std::vector<Instance*> Layer::getInstancesInCircle(const ModelCoordinate& center, uint16_t radius)
+    std::vector<Instance*> Layer::getInstancesInCircle(ModelCoordinate const & center, uint16_t radius)
     {
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         // radius power 2
-        const int32_t radiusp2 = static_cast<int32_t>(radius + 1) * static_cast<int32_t>(radius);
+        int32_t const radiusp2 = static_cast<int32_t>(radius + 1) * static_cast<int32_t>(radius);
 
         ModelCoordinate current(center.x - radius, center.y - radius);
         ModelCoordinate const target(center.x + radius, center.y + radius);
         for (; current.y < center.y; current.y++) {
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
-                const int32_t dx       = center.x - current.x;
-                const int32_t dy       = center.y - current.y;
-                const int32_t distance = (dx * dx) + (dy * dy);
+                int32_t const dx       = center.x - current.x;
+                int32_t const dy       = center.y - current.y;
+                int32_t const distance = (dx * dx) + (dy * dy);
                 if (distance <= radiusp2) {
                     m_instanceTree->findInstances(current, 0, 0, matchingInstances);
                     if (!matchingInstances.empty()) {
@@ -374,7 +372,7 @@ namespace FIFE
     }
 
     std::vector<Instance*> Layer::getInstancesInCircleSegment(
-        const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle)
+        ModelCoordinate const & center, uint16_t radius, int32_t sangle, int32_t eangle)
     {
         std::vector<Instance*> instances;
         ExactModelCoordinate const exactCenter(center.x, center.y);
@@ -398,7 +396,7 @@ namespace FIFE
         return instances;
     }
 
-    void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const
+    void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, Layer const * layer) const
     {
         if (layer == nullptr) {
             layer = this;
@@ -423,24 +421,24 @@ namespace FIFE
 
     float Layer::getZOffset() const
     {
-        static const float globalmax   = 100.0;
-        static const float globalrange = 200.0;
-        const uint32_t mapLayerCount   = m_map->getLayerCount();
+        static float const globalmax   = 100.0;
+        static float const globalrange = 200.0;
+        uint32_t const mapLayerCount   = m_map->getLayerCount();
         assert(mapLayerCount > 0);
         assert(mapLayerCount <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-        const int32_t numlayers = static_cast<int32_t>(mapLayerCount);
+        int32_t const numlayers = static_cast<int32_t>(mapLayerCount);
         int32_t thislayer       = 1; // we don't need 0 indexed
 
-        const std::list<Layer*>& layers = m_map->getLayers();
-        auto iter                       = layers.begin();
+        std::list<Layer*> const & layers = m_map->getLayers();
+        auto iter                        = layers.begin();
         for (; iter != layers.end(); ++iter, ++thislayer) {
             if (*iter == this) {
                 break;
             }
         }
 
-        const float layerSpan   = globalrange / static_cast<float>(numlayers);
-        const float layerOffset = static_cast<float>(numlayers - (thislayer - 1));
+        float const layerSpan   = globalrange / static_cast<float>(numlayers);
+        float const layerOffset = static_cast<float>(numlayers - (thislayer - 1));
         float const offset      = globalmax - (layerOffset * layerSpan);
         return offset;
     }
@@ -487,7 +485,7 @@ namespace FIFE
         return m_instancesVisibility;
     }
 
-    bool Layer::cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate)
+    bool Layer::cellContainsBlockingInstance(ModelCoordinate const & cellCoordinate)
     {
         bool blockingInstance = false;
         if (m_cellCache != nullptr) {
@@ -507,14 +505,14 @@ namespace FIFE
         return blockingInstance;
     }
 
-    std::vector<Instance*> Layer::getBlockingInstances(const ModelCoordinate& cellCoordinate)
+    std::vector<Instance*> Layer::getBlockingInstances(ModelCoordinate const & cellCoordinate)
     {
         std::vector<Instance*> blockingInstances;
         if (m_cellCache != nullptr) {
             Cell* cell = m_cellCache->getCell(cellCoordinate);
             if (cell != nullptr) {
-                const std::set<Instance*>& blocker = cell->getInstances();
-                std::ranges::copy_if(blocker, std::back_inserter(blockingInstances), [](const Instance* inst) {
+                std::set<Instance*> const & blocker = cell->getInstances();
+                std::ranges::copy_if(blocker, std::back_inserter(blockingInstances), [](Instance const * inst) {
                     return inst->isBlocking();
                 });
             }
@@ -561,7 +559,7 @@ namespace FIFE
         return m_walkable;
     }
 
-    void Layer::setInteract(bool interact, const std::string& id)
+    void Layer::setInteract(bool interact, std::string const & id)
     {
         m_interact   = interact;
         m_walkableId = id;
@@ -572,7 +570,7 @@ namespace FIFE
         return m_interact;
     }
 
-    const std::string& Layer::getWalkableId()
+    std::string const & Layer::getWalkableId()
     {
         return m_walkableId;
     }
@@ -584,7 +582,7 @@ namespace FIFE
         }
     }
 
-    const std::vector<Layer*>& Layer::getInteractLayers()
+    std::vector<Layer*> const & Layer::getInteractLayers()
     {
         return m_interacts;
     }

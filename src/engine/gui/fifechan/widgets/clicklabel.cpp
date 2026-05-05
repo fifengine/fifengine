@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "clicklabel.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -9,14 +12,9 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "gui/fifechan/base/gui_font.h"
 #include "util/base/exception.h"
 #include "video/image.h"
-
-#include "clicklabel.h"
 
 namespace fcn
 {
@@ -34,7 +32,7 @@ namespace fcn
         addWidgetListener(this);
     }
 
-    ClickLabel::ClickLabel(const std::string& caption) :
+    ClickLabel::ClickLabel(std::string const & caption) :
         mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
         setCaption(caption);
@@ -52,14 +50,14 @@ namespace fcn
 
     ClickLabel::~ClickLabel() = default;
 
-    void ClickLabel::setCaption(const std::string& caption)
+    void ClickLabel::setCaption(std::string const & caption)
     {
         mCaption = caption;
         mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         wrapText();
     }
 
-    const std::string& ClickLabel::getCaption() const
+    std::string const & ClickLabel::getCaption() const
     {
         return mCaption;
     }
@@ -106,7 +104,7 @@ namespace fcn
         }
     }
 
-    void ClickLabel::setDimension(const Rectangle& dimension)
+    void ClickLabel::setDimension(Rectangle const & dimension)
     {
         int32_t const w = getWidth();
         Widget::setDimension(dimension);
@@ -143,9 +141,9 @@ namespace fcn
                 FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
                 w                  = image->getWidth() + 2 * getBorderSize() + getPaddingLeft() + getPaddingRight();
             }
-            const std::string& text = isTextWrapping() ? mWrappedText : mCaption;
-            FIFE::Image* image      = mGuiFont->getAsImageMultiline(text);
-            h                       = 2 * getBorderSize() + getPaddingTop() + getPaddingBottom() + image->getHeight();
+            std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
+            FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
+            h                        = 2 * getBorderSize() + getPaddingTop() + getPaddingBottom() + image->getHeight();
             setSize(w, h);
         }
     }
@@ -157,7 +155,7 @@ namespace fcn
 
         if (isOpaque()) {
             Color faceColor          = getBackgroundColor();
-            const auto selectionMode = static_cast<uint8_t>(getSelectionMode());
+            auto const selectionMode = static_cast<uint8_t>(getSelectionMode());
             if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Background)) != 0)) {
                 faceColor = getSelectionColor();
             }
@@ -167,7 +165,7 @@ namespace fcn
         }
 
         if (getBorderSize() > 0) {
-            const auto selectionMode = static_cast<uint8_t>(getSelectionMode());
+            auto const selectionMode = static_cast<uint8_t>(getSelectionMode());
             if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Border)) != 0)) {
                 drawSelectionFrame(graphics);
             } else {
@@ -177,8 +175,8 @@ namespace fcn
 
         if (mGuiFont != nullptr) {
             graphics->setColor(getForegroundColor());
-            const std::string& text = isTextWrapping() ? mWrappedText : mCaption;
-            FIFE::Image* image      = mGuiFont->getAsImageMultiline(text);
+            std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
+            FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
 
             int32_t textX = 0;
             int32_t const textY =
@@ -266,14 +264,14 @@ namespace fcn
         }
     }
 
-    void ClickLabel::focusLost([[maybe_unused]] const Event& event)
+    void ClickLabel::focusLost([[maybe_unused]] Event const & event)
     {
         mMousePressed = false;
         mKeyPressed   = false;
         mHasMouse     = false;
     }
 
-    void ClickLabel::ancestorHidden([[maybe_unused]] const Event& event)
+    void ClickLabel::ancestorHidden([[maybe_unused]] Event const & event)
     {
         mMousePressed = false;
         mKeyPressed   = false;

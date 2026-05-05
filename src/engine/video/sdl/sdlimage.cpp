@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "sdlimage.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
@@ -9,17 +12,12 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "renderbackendsdl.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
-
-#include "renderbackendsdl.h"
-#include "sdlimage.h"
 
 namespace FIFE
 {
@@ -33,7 +31,7 @@ namespace FIFE
         resetSdlimage();
     }
 
-    SDLImage::SDLImage(const std::string& name, IResourceLoader* loader) : Image(name, loader)
+    SDLImage::SDLImage(std::string const & name, IResourceLoader* loader) : Image(name, loader)
     {
         resetSdlimage();
     }
@@ -43,17 +41,17 @@ namespace FIFE
         resetSdlimage();
     }
 
-    SDLImage::SDLImage(const std::string& name, SDL_Surface* surface) : Image(name, surface)
+    SDLImage::SDLImage(std::string const & name, SDL_Surface* surface) : Image(name, surface)
     {
         resetSdlimage();
     }
 
-    SDLImage::SDLImage(const uint8_t* data, uint32_t width, uint32_t height) : Image(data, width, height)
+    SDLImage::SDLImage(uint8_t const * data, uint32_t width, uint32_t height) : Image(data, width, height)
     {
         resetSdlimage();
     }
 
-    SDLImage::SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
+    SDLImage::SDLImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) :
         Image(name, data, width, height)
     {
         resetSdlimage();
@@ -85,13 +83,13 @@ namespace FIFE
         resetSdlimage();
     }
 
-    void SDLImage::render(const Rect& rect, uint8_t alpha, uint8_t const * rgb)
+    void SDLImage::render(Rect const & rect, uint8_t alpha, uint8_t const * rgb)
     {
         if (alpha == 0) {
             return;
         }
 
-        const SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
+        SDL_Surface const * target = RenderBackend::instance()->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || rect.bottom() < 0 ||
@@ -99,18 +97,18 @@ namespace FIFE
             return;
         }
 
-        SDL_Rect tarRect;
-        tarRect.x = rect.x;
-        tarRect.y = rect.y;
-        tarRect.w = rect.w;
-        tarRect.h = rect.h;
+        SDL_FRect tarRect;
+        tarRect.x = static_cast<float>(rect.x);
+        tarRect.y = static_cast<float>(rect.y);
+        tarRect.w = static_cast<float>(rect.w);
+        tarRect.h = static_cast<float>(rect.h);
 
-        const Rect tmpRect = m_shared ? getSubImageRect() : getArea();
-        SDL_Rect srcRect;
-        srcRect.x = tmpRect.x;
-        srcRect.y = tmpRect.y;
-        srcRect.w = tmpRect.w;
-        srcRect.h = tmpRect.h;
+        Rect const tmpRect = m_shared ? getSubImageRect() : getArea();
+        SDL_FRect srcRect;
+        srcRect.x = static_cast<float>(tmpRect.x);
+        srcRect.y = static_cast<float>(tmpRect.y);
+        srcRect.w = static_cast<float>(tmpRect.w);
+        srcRect.h = static_cast<float>(tmpRect.h);
 
         RenderBackendSDL* backend = dynamic_cast<RenderBackendSDL*>(RenderBackend::instance());
         if (backend == nullptr) {
@@ -137,7 +135,7 @@ namespace FIFE
         // set render color
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, alpha);
 
-        if (SDL_RenderCopy(renderer, m_texture, &srcRect, &tarRect) != 0) {
+        if (SDL_RenderTexture(renderer, m_texture, &srcRect, &tarRect) != 0) {
             throw SDLException(SDL_GetError());
         }
     }
@@ -152,7 +150,7 @@ namespace FIFE
         return size;
     }
 
-    void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region)
+    void SDLImage::useSharedImage(ImagePtr const & shared, Rect const & region)
     {
         if (shared->getState() != IResource::RES_LOADED) {
             shared->load();
@@ -200,7 +198,7 @@ namespace FIFE
             // check atlas image
             // if it does not exist, it is created.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
-                const ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
+                ImagePtr const newAtlas = ImageManager::instance()->create(m_atlas_name);
                 m_atlas_img             = newAtlas;
             }
             useSharedImage(m_atlas_img, m_subimagerect);
@@ -212,8 +210,8 @@ namespace FIFE
     void SDLImage::free()
     {
         // save the image offsets
-        const int32_t xshift = m_xshift;
-        const int32_t yshift = m_yshift;
+        int32_t const xshift = m_xshift;
+        int32_t const yshift = m_yshift;
         setSurface(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;

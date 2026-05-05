@@ -25,20 +25,20 @@ namespace FIFE
     class /*FIFE_API*/ RawDataSource
     {
 
-    public:
-        RawDataSource();
-        virtual ~RawDataSource();
+        public:
+            RawDataSource();
+            virtual ~RawDataSource();
 
-        /** get the complete datasize */
-        virtual uint32_t getSize() const = 0;
+            /** get the complete datasize */
+            virtual uint32_t getSize() const = 0;
 
-        /** read data from the source
-         *
-         * @param buffer the data will be written into buffer
-         * @param start the startindex inside the source
-         * @param length length bytes will be written into buffer
-         */
-        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
+            /** read data from the source
+             *
+             * @param buffer the data will be written into buffer
+             * @param start the startindex inside the source
+             * @param length length bytes will be written into buffer
+             */
+            virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
     };
 
 } // namespace FIFE

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "fontbase.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -16,15 +19,10 @@
 #include <utf8.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "fontbase.h"
 
 namespace FIFE
 {
@@ -136,7 +134,7 @@ namespace FIFE
         return mColor;
     }
 
-    int32_t FontBase::getStringIndexAt(const std::string& text, int32_t x) const
+    int32_t FontBase::getStringIndexAt(std::string const & text, int32_t x) const
     {
         assert(utf8::is_valid(text.begin(), text.end()));
 
@@ -171,7 +169,7 @@ namespace FIFE
         return static_cast<int32_t>(buff.size());
     }
 
-    Image* FontBase::getAsImage(const std::string& text)
+    Image* FontBase::getAsImage(std::string const & text)
     {
         Image* image = m_pool.getRenderedText(this, text);
         if (image == nullptr) {
@@ -183,7 +181,7 @@ namespace FIFE
         return image;
     }
 
-    Image* FontBase::getAsImageMultiline(const std::string& text)
+    Image* FontBase::getAsImageMultiline(std::string const & text)
     {
         Image* image = m_pool.getRenderedText(this, text);
         if (image != nullptr) {
@@ -199,7 +197,7 @@ namespace FIFE
 
         using Utf8Iter = utf8::iterator<std::string::const_iterator>;
         Utf8Iter it(text.begin(), text.begin(), text.end());
-        const Utf8Iter end(text.end(), text.begin(), text.end());
+        Utf8Iter const end(text.end(), text.begin(), text.end());
 
         while (it != end) {
             std::string line;
@@ -229,20 +227,19 @@ namespace FIFE
             lines.emplace_back(text_surface);
         }
 
-        const int32_t row_height    = getRowSpacing() + getHeight();
-        const int32_t render_height = row_height * static_cast<int32_t>(lines.size());
+        int32_t const row_height    = getRowSpacing() + getHeight();
+        int32_t const render_height = row_height * static_cast<int32_t>(lines.size());
 
-        SDL_Surface* final_surface =
-            SDL_CreateRGBSurface(0, render_width, render_height, 32, RMASK, GMASK, BMASK, AMASK);
+        SDL_Surface* final_surface = SDL_CreateSurface(render_width, render_height, SDL_PIXELFORMAT_RGBA8888);
 
         if (final_surface == nullptr) {
             for (auto* surf : lines) {
-                SDL_FreeSurface(surf);
+                SDL_DestroySurface(surf);
             }
             throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
         }
 
-        SDL_FillRect(final_surface, nullptr, 0x00000000);
+        SDL_FillSurfaceRect(final_surface, nullptr, 0x00000000);
 
         int32_t ypos = 0;
         for (auto* line_surf : lines) {
@@ -254,7 +251,7 @@ namespace FIFE
             SDL_BlitSurface(line_surf, nullptr, final_surface, &dst_rect);
 
             ypos += row_height;
-            SDL_FreeSurface(line_surf);
+            SDL_DestroySurface(line_surf);
         }
 
         image = RenderBackend::instance()->createImage(final_surface);
@@ -263,10 +260,10 @@ namespace FIFE
         return image;
     }
 
-    std::string FontBase::splitTextToWidth(const std::string& text, int32_t render_width)
+    std::string FontBase::splitTextToWidth(std::string const & text, int32_t render_width)
     {
-        const uint32_t whitespace  = ' ';
-        const uint8_t newline_utf8 = '\n';
+        uint32_t const whitespace  = ' ';
+        uint8_t const newline_utf8 = '\n';
         uint32_t newline           = 0;
         utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
         if (render_width <= 0 || text.empty()) {
@@ -288,7 +285,7 @@ namespace FIFE
 
             bool haveNewLine = false;
             while (getWidth(line) < render_width && pos != text.end()) {
-                const uint32_t codepoint = utf8::next(pos, text.end());
+                uint32_t const codepoint = utf8::next(pos, text.end());
                 if (codepoint == whitespace && !line.empty()) {
                     break_pos.emplace_back(line.length(), pos);
                 }

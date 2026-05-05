@@ -27,31 +27,31 @@ namespace FIFE
      */
     class /*FIFE_API*/ ICommandController
     {
-    public:
-        /** Adds a listener to the back of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addCommandListener(ICommandListener* listener) = 0;
+        public:
+            /** Adds a listener to the back of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addCommandListener(ICommandListener* listener) = 0;
 
-        /** Adds a listener to the front of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addCommandListenerFront(ICommandListener* listener) = 0;
+            /** Adds a listener to the front of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addCommandListenerFront(ICommandListener* listener) = 0;
 
-        /** Removes an added listener from the controller.
-         * Listener will not be notified anymore via the corresponding events
-         * @param listener listener to remove
-         */
-        virtual void removeCommandListener(ICommandListener* listener) = 0;
+            /** Removes an added listener from the controller.
+             * Listener will not be notified anymore via the corresponding events
+             * @param listener listener to remove
+             */
+            virtual void removeCommandListener(ICommandListener* listener) = 0;
 
-        /** Use this method to send command to command listeners
-         * @param command command to dispatch
-         */
-        virtual void dispatchCommand(Command& command) = 0;
+            /** Use this method to send command to command listeners
+             * @param command command to dispatch
+             */
+            virtual void dispatchCommand(Command& command) = 0;
 
-        virtual ~ICommandController() = default;
+            virtual ~ICommandController() = default;
     };
 
 } // namespace FIFE

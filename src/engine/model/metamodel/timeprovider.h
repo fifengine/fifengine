@@ -23,39 +23,39 @@ namespace FIFE
      */
     class /*FIFE_API*/ TimeProvider
     {
-    public:
-        /** Constructor
-         * In case there there is no provider master, you can use NULL
-         */
-        explicit TimeProvider(TimeProvider* master);
-        ~TimeProvider() = default;
+        public:
+            /** Constructor
+             * In case there there is no provider master, you can use NULL
+             */
+            explicit TimeProvider(TimeProvider* master);
+            ~TimeProvider() = default;
 
-        /** With multiplier, you can adjust the time speed. 0.5 means time runs half as slow,
-         * while 2.0 means it runs twice as fast
-         */
-        void setMultiplier(float multiplier);
+            /** With multiplier, you can adjust the time speed. 0.5 means time runs half as slow,
+             * while 2.0 means it runs twice as fast
+             */
+            void setMultiplier(float multiplier);
 
-        /** @see setMultiplier. Returns mutliplier for this single provider
-         */
-        float getMultiplier() const;
+            /** @see setMultiplier. Returns mutliplier for this single provider
+             */
+            float getMultiplier() const;
 
-        /** @see setMultiplier. Returns mutliplier for whole chain of timeproviders
-         * E.g. if master has multiplier 2.0 and this has 0.5, end result = 1.0
-         */
-        float getTotalMultiplier() const;
+            /** @see setMultiplier. Returns mutliplier for whole chain of timeproviders
+             * E.g. if master has multiplier 2.0 and this has 0.5, end result = 1.0
+             */
+            float getTotalMultiplier() const;
 
-        /** Returns current game ticks, already scaled.
-         */
-        uint32_t getGameTime() const;
+            /** Returns current game ticks, already scaled.
+             */
+            uint32_t getGameTime() const;
 
-    private:
-        TimeProvider* m_master;
-        float m_multiplier;
-        double m_time_static, m_time_scaled;
+        private:
+            TimeProvider* m_master;
+            float m_multiplier;
+            double m_time_static, m_time_scaled;
 
-        /** Returns current game ticks, already scaled, more precise.
-         */
-        double getPreciseGameTime() const;
+            /** Returns current game ticks, already scaled, more precise.
+             */
+            double getPreciseGameTime() const;
     };
 
     /** Utility function to calculate time scaling. Mostly done to avoid littering other code

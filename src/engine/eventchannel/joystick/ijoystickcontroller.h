@@ -25,26 +25,26 @@ namespace FIFE
      */
     class /*FIFE_API*/ IJoystickController
     {
-    public:
-        /** Adds a listener to the back of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addJoystickListener(IJoystickListener* listener) = 0;
+        public:
+            /** Adds a listener to the back of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addJoystickListener(IJoystickListener* listener) = 0;
 
-        /** Adds a listener to the front of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addJoystickListenerFront(IJoystickListener* listener) = 0;
+            /** Adds a listener to the front of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addJoystickListenerFront(IJoystickListener* listener) = 0;
 
-        /** Removes an added listener from the controller.
-         * Listener will not be notified anymore via the corresponding events
-         * @param listener listener to remove
-         */
-        virtual void removeJoystickListener(IJoystickListener* listener) = 0;
+            /** Removes an added listener from the controller.
+             * Listener will not be notified anymore via the corresponding events
+             * @param listener listener to remove
+             */
+            virtual void removeJoystickListener(IJoystickListener* listener) = 0;
 
-        virtual ~IJoystickController() = default;
+            virtual ~IJoystickController() = default;
     };
 
 } // namespace FIFE

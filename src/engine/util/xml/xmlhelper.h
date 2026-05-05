@@ -22,32 +22,32 @@ namespace FIFE::XML
 
     constexpr Error SUCCESS = tinyxml2::XML_SUCCESS;
 
-    inline bool Parse(Document& document, const std::string& xml)
+    inline bool Parse(Document& document, std::string const & xml)
     {
         return document.Parse(xml.c_str(), xml.size()) == SUCCESS;
     }
 
-    inline const char* Attribute(const Element* element, const char* name)
+    inline char const * Attribute(Element const * element, char const * name)
     {
         return element != nullptr ? element->Attribute(name) : nullptr;
     }
 
-    inline bool HasName(const Element* element, const char* expectedName)
+    inline bool HasName(Element const * element, char const * expectedName)
     {
         return element != nullptr && std::strcmp(element->Name(), expectedName) == 0;
     }
 
-    inline Error QueryAttribute(const Element* element, const char* name, int* value)
+    inline Error QueryAttribute(Element const * element, char const * name, int* value)
     {
         return element != nullptr ? element->QueryIntAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
     }
 
-    inline Error QueryAttribute(const Element* element, const char* name, double* value)
+    inline Error QueryAttribute(Element const * element, char const * name, double* value)
     {
         return element != nullptr ? element->QueryDoubleAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
     }
 
-    inline Error QueryAttribute(const Element* element, const char* name, float* value)
+    inline Error QueryAttribute(Element const * element, char const * name, float* value)
     {
         return element != nullptr ? element->QueryFloatAttribute(name, value) : tinyxml2::XML_NO_ATTRIBUTE;
     }

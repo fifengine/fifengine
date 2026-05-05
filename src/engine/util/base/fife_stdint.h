@@ -24,25 +24,25 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // 3rd party library includes
-#include <SDL_endian.h>
+#include <SDL3/SDL_endian.h>
 
 // FIFE includes
 
-// SDL masks for SDL_CreateRGBSurface
+// SDL masks for SDL_CreateSurface
 namespace FIFE
 {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    const uint32_t RMASK = 0xff000000;
-    const uint32_t GMASK = 0x00ff0000;
-    const uint32_t BMASK = 0x0000ff00;
-    const uint32_t AMASK = 0x000000ff;
+    uint32_t const RMASK = 0xff000000;
+    uint32_t const GMASK = 0x00ff0000;
+    uint32_t const BMASK = 0x0000ff00;
+    uint32_t const AMASK = 0x000000ff;
 #else
-    const uint32_t RMASK = 0x000000ff;
-    const uint32_t GMASK = 0x0000ff00;
-    const uint32_t BMASK = 0x00ff0000;
-    const uint32_t AMASK = 0xff000000;
+    uint32_t const RMASK = 0x000000ff;
+    uint32_t const GMASK = 0x0000ff00;
+    uint32_t const BMASK = 0x00ff0000;
+    uint32_t const AMASK = 0xff000000;
 #endif
-    const uint32_t NULLMASK = 0x00000000;
+    uint32_t const NULLMASK = 0x00000000;
 } // namespace FIFE
 
 #endif // FIFEINT_H

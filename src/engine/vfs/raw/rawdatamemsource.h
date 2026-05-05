@@ -28,24 +28,24 @@ namespace FIFE
      */
     class /*FIFE_API*/ RawDataMemSource : public RawDataSource
     {
-    public:
-        /**
-         *	Create a new RawDataMemSource that allocates datalen bytes.
-         * @param datalen the datalen to allocate
-         */
-        explicit RawDataMemSource(uint32_t datalen);
-        ~RawDataMemSource() override;
+        public:
+            /**
+             *	Create a new RawDataMemSource that allocates datalen bytes.
+             * @param datalen the datalen to allocate
+             */
+            explicit RawDataMemSource(uint32_t datalen);
+            ~RawDataMemSource() override;
 
-        RawDataMemSource(const RawDataMemSource&)            = delete;
-        RawDataMemSource& operator=(const RawDataMemSource&) = delete;
+            RawDataMemSource(RawDataMemSource const &)            = delete;
+            RawDataMemSource& operator=(RawDataMemSource const &) = delete;
 
-        uint32_t getSize() const override;
-        void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
-        uint8_t* getRawData() const;
+            uint32_t getSize() const override;
+            void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
+            uint8_t* getRawData() const;
 
-    private:
-        uint8_t* m_data;
-        uint32_t m_datalen;
+        private:
+            uint8_t* m_data;
+            uint32_t m_datalen;
     };
 
 } // namespace FIFE

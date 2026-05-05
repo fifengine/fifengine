@@ -27,7 +27,7 @@ namespace FIFE
     class Cell;
     class Zone;
 
-    static const double MIN_CELL_Z = -9999999;
+    static double const MIN_CELL_Z = -9999999;
 
     /** Defines different blocker types.
      *
@@ -50,329 +50,331 @@ namespace FIFE
      */
     class /*FIFE_API*/ TransitionInfo
     {
-    public:
-        explicit TransitionInfo(Layer* layer) : m_layer(layer), m_difflayer(false), m_immediate(true) { }
-        ~TransitionInfo() = default;
-        //! target layer
-        Layer* m_layer;
-        //! target coordinates
-        ModelCoordinate m_mc;
-        //! is target on another layer
-        bool m_difflayer;
-        //! use immediate
-        bool m_immediate;
+        public:
+            explicit TransitionInfo(Layer* layer) : m_layer(layer), m_difflayer(false), m_immediate(true)
+            {
+            }
+            ~TransitionInfo() = default;
+            //! target layer
+            Layer* m_layer;
+            //! target coordinates
+            ModelCoordinate m_mc;
+            //! is target on another layer
+            bool m_difflayer;
+            //! use immediate
+            bool m_immediate;
     };
 
     /** Listener interface for deletions happening on a cell, used for transistions.
      */
     class /*FIFE_API*/ CellDeleteListener
     {
-    public:
-        virtual ~CellDeleteListener() = default;
+        public:
+            virtual ~CellDeleteListener() = default;
 
-        /** Called when a cell gets deleted.
-         * @param cell which will be deleted.
-         */
-        virtual void onCellDeleted(Cell* cell) = 0;
+            /** Called when a cell gets deleted.
+             * @param cell which will be deleted.
+             */
+            virtual void onCellDeleted(Cell* cell) = 0;
     };
 
     /** Listener interface for changes happening on a cell.
      */
     class /*FIFE_API*/ CellChangeListener
     {
-    public:
-        virtual ~CellChangeListener() = default;
+        public:
+            virtual ~CellChangeListener() = default;
 
-        /** Called when some instance entered the cell.
-         * @param cell where enter occurred.
-         * @param instance which enter the cell.
-         */
-        virtual void onInstanceEnteredCell(Cell* cell, Instance* instance) = 0;
+            /** Called when some instance entered the cell.
+             * @param cell where enter occurred.
+             * @param instance which enter the cell.
+             */
+            virtual void onInstanceEnteredCell(Cell* cell, Instance* instance) = 0;
 
-        /** Called when some instance exited the cell.
-         * @param cell where exit occurred.
-         * @param instance which exit the cell.
-         */
-        virtual void onInstanceExitedCell(Cell* cell, Instance* instance) = 0;
+            /** Called when some instance exited the cell.
+             * @param cell where exit occurred.
+             * @param instance which exit the cell.
+             */
+            virtual void onInstanceExitedCell(Cell* cell, Instance* instance) = 0;
 
-        /** Called when some instance changed its blocking property.
-         * @param cell where exit occurred.
-         * @param type blocking type @see CellType.
-         * @param blocks true if the CellType indicates the cell as a blocker, otherwise false.
-         */
-        virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) = 0;
+            /** Called when some instance changed its blocking property.
+             * @param cell where exit occurred.
+             * @param type blocking type @see CellType.
+             * @param blocks true if the CellType indicates the cell as a blocker, otherwise false.
+             */
+            virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) = 0;
     };
 
     /** A basic cell on a CellCache.
      */
     class /*FIFE_API*/ Cell : public FifeClass, public CellDeleteListener
     {
-    public:
-        /** Constructor
-         * @param coordint A integer value that represents the cell identifier. Based on coordinates.
-         * @param coordinate A ModelCoordinate that specifies the coordinates of the cell.
-         * @param layer A pointer to the layer which is associated with the cell.
-         */
-        Cell(int32_t coordint, const ModelCoordinate& coordinate, Layer* layer);
+        public:
+            /** Constructor
+             * @param coordint A integer value that represents the cell identifier. Based on coordinates.
+             * @param coordinate A ModelCoordinate that specifies the coordinates of the cell.
+             * @param layer A pointer to the layer which is associated with the cell.
+             */
+            Cell(int32_t coordint, ModelCoordinate const & coordinate, Layer* layer);
 
-        /** Destructor
-         */
-        ~Cell() override;
+            /** Destructor
+             */
+            ~Cell() override;
 
-        /** Adds instances to this cell.
-         * @param instances A const reference to list that contains instances.
-         */
-        void addInstances(const std::list<Instance*>& instances);
+            /** Adds instances to this cell.
+             * @param instances A const reference to list that contains instances.
+             */
+            void addInstances(std::list<Instance*> const & instances);
 
-        /** Adds a instance to this cell.
-         * @param instance A pointer to the instance.
-         */
-        void addInstance(Instance* instance);
+            /** Adds a instance to this cell.
+             * @param instance A pointer to the instance.
+             */
+            void addInstance(Instance* instance);
 
-        /** Changes a instance on this cell.
-         * @param instance A pointer to the instance.
-         */
-        void changeInstance(Instance* instance);
+            /** Changes a instance on this cell.
+             * @param instance A pointer to the instance.
+             */
+            void changeInstance(Instance* instance);
 
-        /** Removes a instance from this cell.
-         * @param instance A pointer to the instance.
-         */
-        void removeInstance(Instance* instance);
+            /** Removes a instance from this cell.
+             * @param instance A pointer to the instance.
+             */
+            void removeInstance(Instance* instance);
 
-        /** Called to check if given cell is a neighbor.
-         * @param cell A pointer to cell.
-         * @return True if cell is a neighbor, otherwise false.
-         */
-        bool isNeighbor(Cell* cell);
+            /** Called to check if given cell is a neighbor.
+             * @param cell A pointer to cell.
+             * @return True if cell is a neighbor, otherwise false.
+             */
+            bool isNeighbor(Cell* cell);
 
-        /** Called to update cell data.
-         * This function updates internal cell data and notifies listeners as needed.
-         */
-        void updateCellInfo();
+            /** Called to update cell data.
+             * This function updates internal cell data and notifies listeners as needed.
+             */
+            void updateCellInfo();
 
-        /** Returns if cell use default cost.
-         * @return True if the cell use the default cost, otherwise false.
-         */
-        bool defaultCost();
+            /** Returns if cell use default cost.
+             * @return True if the cell use the default cost, otherwise false.
+             */
+            bool defaultCost();
 
-        /** Changes the cell cost.
-         * @param multi A double its value is used instead of the default cost.
-         */
-        void setCostMultiplier(double multi);
+            /** Changes the cell cost.
+             * @param multi A double its value is used instead of the default cost.
+             */
+            void setCostMultiplier(double multi);
 
-        /** Returns the current cell cost.
-         * @return The currently used cost value as a double.
-         */
-        double getCostMultiplier();
+            /** Returns the current cell cost.
+             * @return The currently used cost value as a double.
+             */
+            double getCostMultiplier();
 
-        /** Resets the cell cost to default, 1.0.
-         */
-        void resetCostMultiplier();
+            /** Resets the cell cost to default, 1.0.
+             */
+            void resetCostMultiplier();
 
-        /** Returns if cell use default speed.
-         * @return True if the cell use the default speed, otherwise false.
-         */
-        bool defaultSpeed();
+            /** Returns if cell use default speed.
+             * @return True if the cell use the default speed, otherwise false.
+             */
+            bool defaultSpeed();
 
-        /** Changes the cell speed.
-         * @param multi A double its value is used instead of the default speed.
-         */
-        void setSpeedMultiplier(double multi);
+            /** Changes the cell speed.
+             * @param multi A double its value is used instead of the default speed.
+             */
+            void setSpeedMultiplier(double multi);
 
-        /** Returns the current cell speed.
-         * @return The currently used speed value as a double.
-         */
-        double getSpeedMultiplier();
+            /** Returns the current cell speed.
+             * @return The currently used speed value as a double.
+             */
+            double getSpeedMultiplier();
 
-        /** Resets the cell speed to default, 1.0.
-         */
-        void resetSpeedMultiplier();
+            /** Resets the cell speed to default, 1.0.
+             */
+            void resetSpeedMultiplier();
 
-        /** Returns zone.
-         * @return A pointer to the zone.
-         */
-        Zone* getZone();
+            /** Returns zone.
+             * @return A pointer to the zone.
+             */
+            Zone* getZone();
 
-        /** Sets zone.
-         * @param zone A pointer to the zone.
-         */
-        void setZone(Zone* zone);
+            /** Sets zone.
+             * @param zone A pointer to the zone.
+             */
+            void setZone(Zone* zone);
 
-        /** Resets zone.
-         * Zone pointer is NULL and isInserted() returns false.
-         */
-        void resetZone();
+            /** Resets zone.
+             * Zone pointer is NULL and isInserted() returns false.
+             */
+            void resetZone();
 
-        /** Returns whether the cell is part of a zone.
-         * @return True if the cell is inserted into a zone, otherwise false.
-         */
-        bool isInserted() const;
+            /** Returns whether the cell is part of a zone.
+             * @return True if the cell is inserted into a zone, otherwise false.
+             */
+            bool isInserted() const;
 
-        /** Mark cell as inserted.
-         * @param inserted A boolean, true marks the cell as inserted, false as not inserted.
-         */
-        void setInserted(bool inserted);
+            /** Mark cell as inserted.
+             * @param inserted A boolean, true marks the cell as inserted, false as not inserted.
+             */
+            void setInserted(bool inserted);
 
-        /** Returns whether the zone on this cell is protected.
-         * @return True if the zone is protected, otherwise false.
-         */
-        bool isZoneProtected() const;
+            /** Returns whether the zone on this cell is protected.
+             * @return True if the zone is protected, otherwise false.
+             */
+            bool isZoneProtected() const;
 
-        /** Mark zone on this cell as protected.
-         * @param protect A boolean, true marks the cell as inserted.
-         */
-        void setZoneProtected(bool protect);
+            /** Mark zone on this cell as protected.
+             * @param protect A boolean, true marks the cell as inserted.
+             */
+            void setZoneProtected(bool protect);
 
-        /** Returns blocker type.
-         * @see CellType
-         */
-        CellTypeInfo getCellType() const;
+            /** Returns blocker type.
+             * @see CellType
+             */
+            CellTypeInfo getCellType() const;
 
-        /** Sets blocker type.
-         * @see CellType
-         */
-        void setCellType(CellTypeInfo type);
+            /** Sets blocker type.
+             * @see CellType
+             */
+            void setCellType(CellTypeInfo type);
 
-        /** Returns all instances on this cell.
-         * @return A const reference to a set that refer to the instances on this cell.
-         */
-        const std::set<Instance*>& getInstances();
+            /** Returns all instances on this cell.
+             * @return A const reference to a set that refer to the instances on this cell.
+             */
+            std::set<Instance*> const & getInstances();
 
-        /** Sets the cell identifier.
-         * @param id A unique int value that is used as identifier. Based on the cell position.
-         */
-        void setCellId(int32_t id);
+            /** Sets the cell identifier.
+             * @param id A unique int value that is used as identifier. Based on the cell position.
+             */
+            void setCellId(int32_t id);
 
-        /** Returns the cell identifier.
-         * @return A unique int value that is used as identifier. Based on the cell position.
-         */
-        int32_t getCellId() const;
+            /** Returns the cell identifier.
+             * @return A unique int value that is used as identifier. Based on the cell position.
+             */
+            int32_t getCellId() const;
 
-        /** Returns the layer coordinates of this cell.
-         * @return A const reference to a ModelCoordinate.
-         */
-        ModelCoordinate getLayerCoordinates() const;
+            /** Returns the layer coordinates of this cell.
+             * @return A const reference to a ModelCoordinate.
+             */
+            ModelCoordinate getLayerCoordinates() const;
 
-        /** Adds a neighbor cell to this cell.
-         * @param cell A pointer to the cell that should added as neighbor.
-         */
-        void addNeighbor(Cell* cell);
+            /** Adds a neighbor cell to this cell.
+             * @param cell A pointer to the cell that should added as neighbor.
+             */
+            void addNeighbor(Cell* cell);
 
-        /** Returns the layer coordinates of this cell.
-         * @return A const reference to a set of all neighbor cells.
-         */
-        const std::vector<Cell*>& getNeighbors();
+            /** Returns the layer coordinates of this cell.
+             * @return A const reference to a set of all neighbor cells.
+             */
+            std::vector<Cell*> const & getNeighbors();
 
-        /** Removes all neighbors from cell.
-         */
-        void resetNeighbors();
+            /** Removes all neighbors from cell.
+             */
+            void resetNeighbors();
 
-        /** Returns the current layer.
-         * @return A pointer to the currently used layer.
-         */
-        Layer* getLayer();
+            /** Returns the current layer.
+             * @return A pointer to the currently used layer.
+             */
+            Layer* getLayer();
 
-        /** Creates a transistion from this cell to the given layer and coordinates.
-         * @param layer A pointer to the layer whereto the transition takes.
-         * @param mc A const reference to a ModelCoordinate whereto the transition takes.
-         * @param immediate A boolean, true means the transition is always used,
-                if false the transistion is only used if it is a part of the path e.g. as an abbreviation.
-         */
-        void createTransition(Layer* layer, const ModelCoordinate& mc, bool immediate = false);
+            /** Creates a transistion from this cell to the given layer and coordinates.
+             * @param layer A pointer to the layer whereto the transition takes.
+             * @param mc A const reference to a ModelCoordinate whereto the transition takes.
+             * @param immediate A boolean, true means the transition is always used,
+                    if false the transistion is only used if it is a part of the path e.g. as an abbreviation.
+             */
+            void createTransition(Layer* layer, ModelCoordinate const & mc, bool immediate = false);
 
-        /** Removes the transistion from Cell and CellCache.
-         */
-        void deleteTransition();
+            /** Removes the transistion from Cell and CellCache.
+             */
+            void deleteTransition();
 
-        /** Returns the transition.
-         * @return A pointer to the transition.
-         */
-        TransitionInfo* getTransition();
+            /** Returns the transition.
+             * @return A pointer to the transition.
+             */
+            TransitionInfo* getTransition();
 
-        /** Adds new cell delete listener.
-         * @param listener A pointer to the listener.
-         */
-        void addDeleteListener(CellDeleteListener* listener);
+            /** Adds new cell delete listener.
+             * @param listener A pointer to the listener.
+             */
+            void addDeleteListener(CellDeleteListener* listener);
 
-        /** Removes cell delete listener.
-         * @param listener A pointer to the listener.
-         */
-        void removeDeleteListener(CellDeleteListener* listener);
+            /** Removes cell delete listener.
+             * @param listener A pointer to the listener.
+             */
+            void removeDeleteListener(CellDeleteListener* listener);
 
-        /** Called when a cell gets deleted on this cell. If a delete listener was added.
-         * @param cell A pointer to the cell which will be deleted.
-         * @see CellDeleteListener
-         */
-        void onCellDeleted(Cell* cell) override;
+            /** Called when a cell gets deleted on this cell. If a delete listener was added.
+             * @param cell A pointer to the cell which will be deleted.
+             * @see CellDeleteListener
+             */
+            void onCellDeleted(Cell* cell) override;
 
-        /** Adds new cell change listener.
-         * @param listener A pointer to the listener.
-         * @see CellChangeListener
-         */
-        void addChangeListener(CellChangeListener* listener);
+            /** Adds new cell change listener.
+             * @param listener A pointer to the listener.
+             * @see CellChangeListener
+             */
+            void addChangeListener(CellChangeListener* listener);
 
-        /** Removes cell change listener.
-         * @param listener A pointer to the listener.
-         * @see CellChangeListener
-         */
-        void removeChangeListener(CellChangeListener* listener);
+            /** Removes cell change listener.
+             * @param listener A pointer to the listener.
+             * @see CellChangeListener
+             */
+            void removeChangeListener(CellChangeListener* listener);
 
-        /** Called when a instance entered this cell.
-         * @param instance A pointer to the instance which will be entered.
-         * @see CellChangeListener
-         */
-        void callOnInstanceEntered(Instance* instance);
+            /** Called when a instance entered this cell.
+             * @param instance A pointer to the instance which will be entered.
+             * @see CellChangeListener
+             */
+            void callOnInstanceEntered(Instance* instance);
 
-        /** Called when a instance exited this cell.
-         * @param instance A pointer to the instance which will be exited.
-         * @see CellChangeListener
-         */
-        void callOnInstanceExited(Instance* instance);
+            /** Called when a instance exited this cell.
+             * @param instance A pointer to the instance which will be exited.
+             * @see CellChangeListener
+             */
+            void callOnInstanceExited(Instance* instance);
 
-        /** Called when the blocking property of this cell changed.
-         * @param blocks A boolean, true mark the cell as blocker.
-         * @see CellChangeListener
-         */
-        void callOnBlockingChanged(bool blocks);
+            /** Called when the blocking property of this cell changed.
+             * @param blocks A boolean, true mark the cell as blocker.
+             * @see CellChangeListener
+             */
+            void callOnBlockingChanged(bool blocks);
 
-    private:
-        void updateCellBlockingInfo();
+        private:
+            void updateCellBlockingInfo();
 
-        //! holds coordinate as a unique integer id
-        int32_t m_coordId;
+            //! holds coordinate as a unique integer id
+            int32_t m_coordId;
 
-        //! holds coordinate
-        ModelCoordinate m_coordinate;
+            //! holds coordinate
+            ModelCoordinate m_coordinate;
 
-        //! parent layer
-        Layer* m_layer;
+            //! parent layer
+            Layer* m_layer;
 
-        //! parent Zone
-        Zone* m_zone;
+            //! parent Zone
+            Zone* m_zone;
 
-        //! Pointer to Transistion
-        TransitionInfo* m_transition;
+            //! Pointer to Transistion
+            TransitionInfo* m_transition;
 
-        //! already inserted
-        bool m_inserted;
+            //! already inserted
+            bool m_inserted;
 
-        //! protected
-        bool m_protect;
+            //! protected
+            bool m_protect;
 
-        //! CellType
-        CellTypeInfo m_type;
+            //! CellType
+            CellTypeInfo m_type;
 
-        // contained Instances
-        std::set<Instance*> m_instances;
+            // contained Instances
+            std::set<Instance*> m_instances;
 
-        //! neighbor cells
-        std::vector<Cell*> m_neighbors;
+            //! neighbor cells
+            std::vector<Cell*> m_neighbors;
 
-        //! delete listener
-        std::vector<CellDeleteListener*> m_deleteListeners;
+            //! delete listener
+            std::vector<CellDeleteListener*> m_deleteListeners;
 
-        //! change listener
-        std::vector<CellChangeListener*> m_changeListeners;
+            //! change listener
+            std::vector<CellChangeListener*> m_changeListeners;
     };
 
 } // namespace FIFE

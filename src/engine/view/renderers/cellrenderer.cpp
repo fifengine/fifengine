@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cellrenderer.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -12,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
@@ -28,8 +28,6 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
-
-#include "cellrenderer.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -47,7 +45,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    CellRenderer::CellRenderer(const CellRenderer& old) :
+    CellRenderer::CellRenderer(CellRenderer const & old) :
         RendererBase(old),
         m_blockerColor(old.m_blockerColor),
         m_pathColor(old.m_pathColor),
@@ -88,8 +86,8 @@ namespace FIFE
             return;
         }
 
-        const bool render_costs = (!m_visualCosts.empty() && (m_font != nullptr));
-        const bool zoomed       = !Mathd::Equal(1.0, cam->getZoom());
+        bool const render_costs = (!m_visualCosts.empty() && (m_font != nullptr));
+        bool const zoomed       = !Mathd::Equal(1.0, cam->getZoom());
 
         Rect const layerView     = cam->getLayerViewPort(layer);
         std::vector<Cell*> cells = cache->getCellsInRect(layerView);
@@ -100,7 +98,7 @@ namespace FIFE
                     std::vector<ExactModelCoordinate> vertices;
                     cg->getVertices(vertices, (*cit)->getLayerCoordinates());
                     auto it                      = vertices.begin();
-                    const size_t halfVertexIndex = vertices.size() / 2;
+                    size_t const halfVertexIndex = vertices.size() / 2;
                     assert(halfVertexIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
                     int32_t const halfind     = static_cast<int32_t>(halfVertexIndex);
                     ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
@@ -262,7 +260,7 @@ namespace FIFE
         }
     }
 
-    void CellRenderer::setEnabledCost(const std::string& costId, bool enabled)
+    void CellRenderer::setEnabledCost(std::string const & costId, bool enabled)
     {
         if (enabled) {
             m_visualCosts.insert(costId);
@@ -271,7 +269,7 @@ namespace FIFE
         }
     }
 
-    bool CellRenderer::isEnabledCost(const std::string& costId)
+    bool CellRenderer::isEnabledCost(std::string const & costId)
     {
         auto it = m_visualCosts.find(costId);
         return it != m_visualCosts.end();

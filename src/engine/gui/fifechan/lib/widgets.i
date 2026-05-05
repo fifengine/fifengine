@@ -181,12 +181,6 @@ namespace fcn {
 		virtual void setTabOutEnabled(bool enabled);
 		virtual bool isModalFocusable() const;
 		virtual bool isModalMouseInputFocusable() const;
-		virtual void requestModalFocus();
-		virtual void requestModalMouseInputFocus();
-		virtual void releaseModalFocus();
-		virtual void releaseModalMouseInputFocus();
-		virtual bool isModalFocused() const;
-		virtual bool isModalMouseInputFocused() const;
 		virtual Widget *getWidgetAt(int32_t x, int32_t y);
 		virtual void moveToTop(Widget* widget) { }
 		virtual void moveToBottom(Widget* widget) { }

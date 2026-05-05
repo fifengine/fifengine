@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "rawdatafile.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
@@ -10,12 +13,7 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
-
-#include "rawdatafile.h"
 
 namespace FIFE
 {
@@ -28,7 +26,7 @@ namespace FIFE
         }
 
         m_stream.seekg(0, std::ios::end);
-        const std::streamoff streamSize = m_stream.tellg();
+        std::streamoff const streamSize = m_stream.tellg();
         assert(streamSize >= 0);
         assert(streamSize <= static_cast<std::streamoff>(std::numeric_limits<uint32_t>::max()));
         m_filesize = static_cast<uint32_t>(streamSize);

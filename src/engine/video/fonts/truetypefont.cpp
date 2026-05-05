@@ -1,35 +1,34 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "truetypefont.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <string>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
+
 #include <utf8.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
-#include "truetypefont.h"
-
 namespace FIFE
 {
 
-    TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size) :
+    TrueTypeFont::TrueTypeFont(std::string const & filename, int32_t size) :
         mFont(TTF_OpenFont(filename.c_str(), size)), mFontStyle(TTF_STYLE_NORMAL)
     {
         mFilename = filename;
 
         if (mFont == nullptr) {
-            throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
+            throw FIFE::CannotOpenFile(filename + " (" + SDL_GetError() + ")");
         }
 
         mColor.r = mColor.g = mColor.b = mColor.a = 255;
@@ -47,18 +46,18 @@ namespace FIFE
         TTF_CloseFont(mFont);
     }
 
-    int32_t TrueTypeFont::getWidth(const std::string& text) const
+    int32_t TrueTypeFont::getWidth(std::string const & text) const
     {
         int32_t w = 0;
         int32_t h = 0;
         assert(utf8::is_valid(text.begin(), text.end()));
-        TTF_SizeUTF8(mFont, text.c_str(), &w, &h);
+        TTF_GetStringSize(mFont, text.c_str(), text.length(), &w, &h);
         return w;
     }
 
     int32_t TrueTypeFont::getHeight() const
     {
-        return TTF_FontHeight(mFont) + getRowSpacing();
+        return TTF_GetFontHeight(mFont) + getRowSpacing();
     }
 
     void TrueTypeFont::setBoldStyle(bool style)
@@ -113,28 +112,28 @@ namespace FIFE
         return mFontStyle;
     }
 
-    SDL_Surface* TrueTypeFont::renderString(const std::string& text)
+    SDL_Surface* TrueTypeFont::renderString(std::string const & text)
     {
         if (text.empty()) {
-            SDL_Surface* surface = SDL_CreateRGBSurface(0, 1, getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
-            SDL_FillRect(surface, nullptr, 0x00000000);
+            SDL_Surface* surface = SDL_CreateSurface(1, getHeight(), SDL_PIXELFORMAT_RGBA8888);
+            SDL_FillSurfaceRect(surface, nullptr, 0x00000000);
             return surface;
         }
 
         SDL_Surface* renderedText = nullptr;
         if (m_antiAlias) {
-            renderedText = TTF_RenderUTF8_Blended(mFont, text.c_str(), mColor);
+            renderedText = TTF_RenderText_Blended(mFont, text.c_str(), text.length(), mColor);
         } else {
-            renderedText = TTF_RenderUTF8_Solid(mFont, text.c_str(), mColor);
+            renderedText = TTF_RenderText_Solid(mFont, text.c_str(), text.length(), mColor);
         }
         // Workaround for a freetype bug, see here:
         // http://www.nabble.com/SDL_ttf-and-DPMSDisable-bug-is-back-or-still-there-to9578884.html
         if (renderedText == nullptr && !m_antiAlias) {
-            renderedText = TTF_RenderUTF8_Blended(mFont, text.c_str(), mColor);
+            renderedText = TTF_RenderText_Blended(mFont, text.c_str(), text.length(), mColor);
         }
         // Still could not render? Something went horribly wrong!
         if (renderedText == nullptr) {
-            throw FIFE::SDLException(TTF_GetError());
+            throw FIFE::SDLException(SDL_GetError());
         }
         return renderedText;
     }

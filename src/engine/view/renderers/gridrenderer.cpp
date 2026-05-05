@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "gridrenderer.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <vector>
@@ -8,9 +11,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -18,8 +18,6 @@
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "video/renderbackend.h"
-
-#include "gridrenderer.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -35,7 +33,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    GridRenderer::GridRenderer(const GridRenderer& old) : RendererBase(old), m_color(old.m_color)
+    GridRenderer::GridRenderer(GridRenderer const & old) : RendererBase(old), m_color(old.m_color)
     {
         setEnabled(false);
     }
@@ -129,8 +127,8 @@ namespace FIFE
 
         // make the viewport 25% larger
         Rect cv            = cam->getViewPort();
-        const int32_t cvx2 = round((cv.x + cv.w) * 1.25);
-        const int32_t cvy2 = round((cv.y + cv.h) * 1.25);
+        int32_t const cvx2 = round((cv.x + cv.w) * 1.25);
+        int32_t const cvy2 = round((cv.y + cv.h) * 1.25);
         cv.x -= round((cv.x + cv.w) * 0.125);
         cv.y -= round((cv.y + cv.h) * 0.125);
         auto instance_it = instances.begin();
@@ -139,12 +137,12 @@ namespace FIFE
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
             auto it                   = vertices.begin();
-            const ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+            ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;
             ++it;
             for (; it != vertices.end(); it++) {
-                const ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                 pt2.x                 = pts.x;
                 pt2.y                 = pts.y;
                 Point cpt1            = pt1;

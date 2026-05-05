@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "routepathersearch.h"
+
 // Standard C++ library includes
 #include <algorithm>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include <vector>
+
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
@@ -17,12 +19,9 @@
 #include "pathfinder/route.h"
 #include "util/math/fife_math.h"
 
-#include "routepathersearch.h"
-#include <vector>
-
 namespace FIFE
 {
-    RoutePatherSearch::RoutePatherSearch(Route* route, const int32_t sessionId) :
+    RoutePatherSearch::RoutePatherSearch(Route* route, int32_t const sessionId) :
         m_route(route),
         m_specialCost(!route->getCostId().empty()),
         m_multicell(route->isMultiCell()),
@@ -32,7 +31,7 @@ namespace FIFE
     {
         m_route->setRouteStatus(ROUTE_SEARCHING);
         if (m_multicell) {
-            const Location loc                  = route->getStartNode();
+            Location const loc                  = route->getStartNode();
             std::vector<ModelCoordinate> coords = route->getOccupiedArea();
             auto co_it                          = coords.begin();
             for (; co_it != coords.end(); ++co_it) {
@@ -61,7 +60,7 @@ namespace FIFE
         return m_route;
     }
 
-    void RoutePatherSearch::setSearchStatus(const SearchStatus status)
+    void RoutePatherSearch::setSearchStatus(SearchStatus const status)
     {
         m_status = status;
     }

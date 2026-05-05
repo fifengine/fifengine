@@ -18,88 +18,88 @@ namespace fcn
 {
     class /*FIFE_API*/ DockArea : public ResizableWindow
     {
-    public:
-        DockArea();
-        explicit DockArea(bool active);
-        ~DockArea() override;
+        public:
+            DockArea();
+            explicit DockArea(bool active);
+            ~DockArea() override;
 
-        DockArea(const DockArea&)            = delete;
-        DockArea& operator=(const DockArea&) = delete;
+            DockArea(DockArea const &)            = delete;
+            DockArea& operator=(DockArea const &) = delete;
 
-        void setActiveDockArea(bool active);
-        bool isActiveDockArea() const;
+            void setActiveDockArea(bool active);
+            bool isActiveDockArea() const;
 
-        void setTopSide(bool side);
-        bool isTopSide() const;
-        void setRightSide(bool side);
-        bool isRightSide() const;
-        void setBottomSide(bool side);
-        bool isBottomSide() const;
-        void setLeftSide(bool side);
-        bool isLeftSide() const;
+            void setTopSide(bool side);
+            bool isTopSide() const;
+            void setRightSide(bool side);
+            bool isRightSide() const;
+            void setBottomSide(bool side);
+            bool isBottomSide() const;
+            void setLeftSide(bool side);
+            bool isLeftSide() const;
 
-        void dockWidget(Widget* widget);
-        void undockWidget(Widget* widget);
-        void setHighlighted(bool highlighted);
-        bool isHighlighted() const;
+            void dockWidget(Widget* widget);
+            void undockWidget(Widget* widget);
+            void setHighlighted(bool highlighted);
+            bool isHighlighted() const;
 
-        /**
-         * Sets the highlight color of the widget.
-         *
-         * @param color The highlight color.
-         * @see getHighlightColor
-         */
-        void setHighlightColor(const Color& color);
+            /**
+             * Sets the highlight color of the widget.
+             *
+             * @param color The highlight color.
+             * @see getHighlightColor
+             */
+            void setHighlightColor(Color const & color);
 
-        /**
-         * Gets the highlight color.
-         *
-         * @return The highlight color.
-         * @see setHighlightColor
-         */
-        const Color& getHighlightColor() const;
+            /**
+             * Gets the highlight color.
+             *
+             * @return The highlight color.
+             * @see setHighlightColor
+             */
+            Color const & getHighlightColor() const;
 
-        void repositionWidget(Widget* widget);
+            void repositionWidget(Widget* widget);
 
-        // Inherited from ResizableWindow
+            // Inherited from ResizableWindow
 
-        void add(Widget* widget) override;
+            void add(Widget* widget) override;
 
-        void remove(Widget* widget) override;
+            void remove(Widget* widget) override;
 
-        void resizeToContent(bool recursiv = true) override;
+            void resizeToContent(bool recursiv = true) override;
 
-        void expandContent(bool recursiv = true) override;
+            void expandContent(bool recursiv = true) override;
 
-        // Inherited from ResizableWindow / MouseListener
+            // Inherited from ResizableWindow / MouseListener
 
-        void mouseEntered(MouseEvent& mouseEvent) override;
+            void mouseEntered(MouseEvent& mouseEvent) override;
 
-        void mouseExited(MouseEvent& mouseEvent) override;
+            void mouseExited(MouseEvent& mouseEvent) override;
 
-        void mousePressed(MouseEvent& mouseEvent) override;
+            void mousePressed(MouseEvent& mouseEvent) override;
 
-        void mouseReleased(MouseEvent& mouseEvent) override;
+            void mouseReleased(MouseEvent& mouseEvent) override;
 
-        void mouseMoved(MouseEvent& mouseEvent) override;
+            void mouseMoved(MouseEvent& mouseEvent) override;
 
-        void mouseDragged(MouseEvent& mouseEvent) override;
+            void mouseDragged(MouseEvent& mouseEvent) override;
 
-    protected:
-        void repositionDockAreas();
-        void keepInBounds();
+        protected:
+            void repositionDockAreas();
+            void keepInBounds();
 
-        bool m_activeDockArea;
+            bool m_activeDockArea;
 
-        bool m_topSide;
-        bool m_rightSide;
-        bool m_bottomSide;
-        bool m_leftSide;
+            bool m_topSide;
+            bool m_rightSide;
+            bool m_bottomSide;
+            bool m_leftSide;
 
-        bool m_highlighted;
+            bool m_highlighted;
 
-        Color m_highlightColor;
-        Color m_savedColor;
+            Color m_highlightColor;
+            Color m_savedColor;
     };
 } // namespace fcn
 

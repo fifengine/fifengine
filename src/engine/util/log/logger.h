@@ -23,9 +23,8 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/base/fife_stdint.h"
-
 #include "modules.h"
+#include "util/base/fife_stdint.h"
 
 #ifdef LOG_ENABLED
 
@@ -95,27 +94,29 @@ namespace FIFE
      */
     class /*FIFE_API*/ LMsg
     {
-    public:
-        explicit LMsg(std::string msg = "") : str(std::move(msg)) { }
-        ~LMsg() = default;
-
-        template <typename T>
-        LMsg& operator<<(const T& t)
-        {
-            std::ostringstream stream;
-            if constexpr (std::is_enum_v<T>) {
-                stream << static_cast<std::underlying_type_t<T>>(t);
-            } else {
-                stream << t;
+        public:
+            explicit LMsg(std::string msg = "") : str(std::move(msg))
+            {
             }
-            str += stream.str();
-            return *this;
-        }
+            ~LMsg() = default;
 
-        LMsg(const LMsg&)            = default;
-        LMsg& operator=(const LMsg&) = default;
+            template <typename T>
+            LMsg& operator<<(T const & t)
+            {
+                std::ostringstream stream;
+                if constexpr (std::is_enum_v<T>) {
+                    stream << static_cast<std::underlying_type_t<T>>(t);
+                } else {
+                    stream << t;
+                }
+                str += stream.str();
+                return *this;
+            }
 
-        std::string str;
+            LMsg(LMsg const &)            = default;
+            LMsg& operator=(LMsg const &) = default;
+
+            std::string str;
     };
 
     /**
@@ -123,126 +124,126 @@ namespace FIFE
      */
     class /*FIFE_API*/ LogManager
     {
-    public:
-        /**
-         * Loglevel is used to set a treshold for output messages + related filter
-         * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
-         * log message is not outputted
-         */
-        enum LogLevel : uint8_t
-        {
-            LEVEL_DEBUG = 0,
-            LEVEL_LOG   = 1,
-            LEVEL_WARN  = 2,
-            LEVEL_ERROR = 3,
-            LEVEL_PANIC = 4
-        };
+        public:
+            /**
+             * Loglevel is used to set a treshold for output messages + related filter
+             * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
+             * log message is not outputted
+             */
+            enum LogLevel : uint8_t
+            {
+                LEVEL_DEBUG = 0,
+                LEVEL_LOG   = 1,
+                LEVEL_WARN  = 2,
+                LEVEL_ERROR = 3,
+                LEVEL_PANIC = 4
+            };
 
-        /**
-         * Returns instance to log manager. Log manager is a singleton class
-         */
-        static LogManager* instance();
+            /**
+             * Returns instance to log manager. Log manager is a singleton class
+             */
+            static LogManager* instance();
 
-        /**
-         * Destructor
-         */
-        ~LogManager();
+            /**
+             * Destructor
+             */
+            ~LogManager();
 
-        /**
-         * Logs given message
-         * @param level level of this log (e.g. warning)
-         * @param module module where this log message is coming from. Modules are defined in modules.h-file
-         * @param msg message to log
-         * @note do not use this method directly, instead use FL_WARN (or any other FL_XXX) macro
-         */
-        void log(LogLevel level, logmodule_t module, const std::string& msg);
+            /**
+             * Logs given message
+             * @param level level of this log (e.g. warning)
+             * @param module module where this log message is coming from. Modules are defined in modules.h-file
+             * @param msg message to log
+             * @note do not use this method directly, instead use FL_WARN (or any other FL_XXX) macro
+             */
+            void log(LogLevel level, logmodule_t module, std::string const & msg);
 
-        /**
-         * Sets currently used level filter.
-         * For usage, @see LogManager::LogLevel
-         */
-        void setLevelFilter(LogLevel level);
+            /**
+             * Sets currently used level filter.
+             * For usage, @see LogManager::LogLevel
+             */
+            void setLevelFilter(LogLevel level);
 
-        /**
-         * Gets currently used level filter.
-         * @see LogManager::LogLevel
-         */
-        LogLevel getLevelFilter();
+            /**
+             * Gets currently used level filter.
+             * @see LogManager::LogLevel
+             */
+            LogLevel getLevelFilter();
 
-        /**
-         * Adds visible module into logmanager
-         * Module corresponds some module in the engine. Modules may contain other modules.
-         * Modules and their structure is defined in file modules.h.
-         * In case module is not visible, LogManager filters corresponding log messages
-         * from output. In case some lower-level module is set visible, it also sets
-         * all upper level modules visible
-         * @param module module to set visible
-         */
-        void addVisibleModule(logmodule_t module);
+            /**
+             * Adds visible module into logmanager
+             * Module corresponds some module in the engine. Modules may contain other modules.
+             * Modules and their structure is defined in file modules.h.
+             * In case module is not visible, LogManager filters corresponding log messages
+             * from output. In case some lower-level module is set visible, it also sets
+             * all upper level modules visible
+             * @param module module to set visible
+             */
+            void addVisibleModule(logmodule_t module);
 
-        /**
-         * Removes visible module, @see addVisibleModule
-         */
-        void removeVisibleModule(logmodule_t module);
+            /**
+             * Removes visible module, @see addVisibleModule
+             */
+            void removeVisibleModule(logmodule_t module);
 
-        /**
-         * Removes all visible modules, @see addVisibleModule
-         */
-        void clearVisibleModules();
+            /**
+             * Removes all visible modules, @see addVisibleModule
+             */
+            void clearVisibleModules();
 
-        /**
-         * Tells if given module is visible
-         */
-        bool isVisible(logmodule_t module);
+            /**
+             * Tells if given module is visible
+             */
+            bool isVisible(logmodule_t module);
 
-        /**
-         * Sets LogManager to log to prompt
-         */
-        void setLogToPrompt(bool logtoprompt);
+            /**
+             * Sets LogManager to log to prompt
+             */
+            void setLogToPrompt(bool logtoprompt);
 
-        /**
-        Returns if LogManager is set to log to prompt
-         */
-        bool isLogToPrompt() const;
+            /**
+            Returns if LogManager is set to log to prompt
+             */
+            bool isLogToPrompt() const;
 
-        /**
-         * Sets LogManager to log to a file
-         */
-        void setLogToFile(bool logtofile);
+            /**
+             * Sets LogManager to log to a file
+             */
+            void setLogToFile(bool logtofile);
 
-        /**
-         * Returns if LogManager is set to log to a file
-         */
-        bool isLogToFile() const;
+            /**
+             * Returns if LogManager is set to log to a file
+             */
+            bool isLogToFile() const;
 
-        /**
-         * Gets display name for given module id
-         * E.g. LM_AUDIO -> "Audio"
-         */
-        const std::string& getModuleName(logmodule_t module);
+            /**
+             * Gets display name for given module id
+             * E.g. LM_AUDIO -> "Audio"
+             */
+            std::string const & getModuleName(logmodule_t module);
 
-    private:
-        void validateModule(logmodule_t m);
+        private:
+            void validateModule(logmodule_t m);
 
-        // hidden constructor for singleton
-        LogManager();
-        // validates if definitions in module.h are valid
-        void validateModuleDescription(logmodule_t module);
+            // hidden constructor for singleton
+            LogManager();
+            // validates if definitions in module.h are valid
+            void validateModuleDescription(logmodule_t module);
 
-        // singleton instance (inline to avoid separate definition across TUs)
-        static inline LogManager* m_instance = nullptr;
-        // current filter level
-        LogLevel m_level;
-        // used during module description validation to check cycles in hierarchy
-        std::vector<logmodule_t, std::allocator<logmodule_t>> module_check_stack;
+            // singleton instance (inline to avoid separate definition across TUs)
+            static inline LogManager* m_instance = nullptr;
+            // current filter level
+            LogLevel m_level;
+            // used during module description validation to check cycles in hierarchy
+            std::vector<logmodule_t, std::allocator<logmodule_t>> module_check_stack;
 
-        std::ofstream* m_logfile;
+            std::ofstream* m_logfile;
 
-        // visibility array for modules
-        bool m_modules[LM_MODULE_MAX];
+            // visibility array for modules
+            bool m_modules[LM_MODULE_MAX];
 
-        bool m_logtofile;
-        bool m_logtoprompt;
+            bool m_logtofile;
+            bool m_logtoprompt;
     };
 
     /**
@@ -254,41 +255,41 @@ namespace FIFE
      */
     class /*FIFE_API*/ Logger
     {
-    public:
-        /**
-         * Creates new logger and associates it with given module
-         */
-        explicit Logger(logmodule_t module);
+        public:
+            /**
+             * Creates new logger and associates it with given module
+             */
+            explicit Logger(logmodule_t module);
 
-        /**
-         * Destructor
-         */
-        ~Logger() = default;
+            /**
+             * Destructor
+             */
+            ~Logger() = default;
 
-        Logger(const Logger&)            = default;
-        Logger& operator=(const Logger&) = default;
+            Logger(Logger const &)            = default;
+            Logger& operator=(Logger const &) = default;
 
-        /**
-         * logs given message with given log level
-         */
-        void log(LogManager::LogLevel level, const std::string& msg);
+            /**
+             * logs given message with given log level
+             */
+            void log(LogManager::LogLevel level, std::string const & msg);
 
-        /**
-         * logs given message with given log level.
-         * Message is wrapped into LMsg instance for easy formatting
-         */
-        void log(LogManager::LogLevel level, const LMsg& msg);
+            /**
+             * logs given message with given log level.
+             * Message is wrapped into LMsg instance for easy formatting
+             */
+            void log(LogManager::LogLevel level, LMsg const & msg);
 
-        /**
-         * gets module where this logger is associated to
-         */
-        logmodule_t getModule() const
-        {
-            return m_module;
-        }
+            /**
+             * gets module where this logger is associated to
+             */
+            logmodule_t getModule() const
+            {
+                return m_module;
+            }
 
-    private:
-        logmodule_t m_module;
+        private:
+            logmodule_t m_module;
     };
 
     /**
@@ -303,8 +304,10 @@ namespace FIFE
      **/
     struct /*FIFE_API*/ pprint
     {
-        void* p;
-        explicit pprint(void* _p) : p(_p) { }
+            void* p;
+            explicit pprint(void* _p) : p(_p)
+            {
+            }
     };
 } // namespace FIFE
 
@@ -321,7 +324,7 @@ namespace std
      * \return reference to the modified stream
      * */
     template <class Ch, class Tr>
-    basic_ostream<Ch, Tr>& operator<<(basic_ostream<Ch, Tr>& s, const FIFE::pprint& p)
+    basic_ostream<Ch, Tr>& operator<<(basic_ostream<Ch, Tr>& s, FIFE::pprint const & p)
     {
         s << "0x" << hex << setw(2 * sizeof(void*)) << setfill('0')
           << reinterpret_cast<std::uintptr_t>(p.p); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)

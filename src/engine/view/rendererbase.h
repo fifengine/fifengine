@@ -33,16 +33,16 @@ namespace FIFE
      */
     class /*FIFE_API*/ IRendererListener
     {
-    public:
-        virtual ~IRendererListener() = default;
+        public:
+            virtual ~IRendererListener() = default;
 
-        /** Renderer's pipeline position has been changed
-         */
-        virtual void onRendererPipelinePositionChanged(RendererBase* renderer) = 0;
+            /** Renderer's pipeline position has been changed
+             */
+            virtual void onRendererPipelinePositionChanged(RendererBase* renderer) = 0;
 
-        /** Renderer is enabled / disabled
-         */
-        virtual void onRendererEnabledChanged(RendererBase* renderer) = 0;
+            /** Renderer is enabled / disabled
+             */
+            virtual void onRendererEnabledChanged(RendererBase* renderer) = 0;
     };
 
     /** Interface to class owning the renderers
@@ -50,12 +50,12 @@ namespace FIFE
      */
     class /*FIFE_API*/ IRendererContainer
     {
-    public:
-        virtual ~IRendererContainer() = default;
+        public:
+            virtual ~IRendererContainer() = default;
 
-        /** Returns renderer with given name
-         */
-        virtual RendererBase* getRenderer(const std::string& renderername) = 0;
+            /** Returns renderer with given name
+             */
+            virtual RendererBase* getRenderer(std::string const & renderername) = 0;
     };
 
     /** Base class for all view renderers
@@ -63,115 +63,117 @@ namespace FIFE
      */
     class /*FIFE_API*/ RendererBase
     {
-    public:
-        /** Constructor
-         * @param renderbackend to use
-         * @param position position for this renderer in rendering pipeline
-         */
-        RendererBase(RenderBackend* renderbackend, int32_t position);
+        public:
+            /** Constructor
+             * @param renderbackend to use
+             * @param position position for this renderer in rendering pipeline
+             */
+            RendererBase(RenderBackend* renderbackend, int32_t position);
 
-        /** Copy Constructor
-         */
-        RendererBase(const RendererBase& old);
+            /** Copy Constructor
+             */
+            RendererBase(RendererBase const & old);
 
-        /** Makes copy of this renderer
-         */
-        virtual RendererBase* clone() = 0;
+            /** Makes copy of this renderer
+             */
+            virtual RendererBase* clone() = 0;
 
-        /** Destructor
-         */
-        virtual ~RendererBase() = default;
+            /** Destructor
+             */
+            virtual ~RendererBase() = default;
 
-        /** This method is called by the view to ask renderer to draw its rendering aspect based on
-         * given parameters. Renderers receive non-clipped instance stack since there is no
-         * way to know which information is relevant for the renderer. E.g. effect renderer
-         * might need to know offscreen instance locations to be able to draw radiation coming from
-         * some instance not visible on the screen.
-         *
-         * @param cam camera view to draw
-         * @param layer current layer to be rendered
-         * @param instances instances on the current layer
-         * @ see setPipelinePosition
-         */
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances) = 0;
+            /** This method is called by the view to ask renderer to draw its rendering aspect based on
+             * given parameters. Renderers receive non-clipped instance stack since there is no
+             * way to know which information is relevant for the renderer. E.g. effect renderer
+             * might need to know offscreen instance locations to be able to draw radiation coming from
+             * some instance not visible on the screen.
+             *
+             * @param cam camera view to draw
+             * @param layer current layer to be rendered
+             * @param instances instances on the current layer
+             * @ see setPipelinePosition
+             */
+            virtual void render(Camera* cam, Layer* layer, RenderList& instances) = 0;
 
-        /** Name of the renderer
-         */
-        virtual std::string getName() = 0;
+            /** Name of the renderer
+             */
+            virtual std::string getName() = 0;
 
-        /** Gets renderer position in the rendering pipeline
-         */
-        int32_t getPipelinePosition() const
-        {
-            return m_pipeline_position;
-        }
+            /** Gets renderer position in the rendering pipeline
+             */
+            int32_t getPipelinePosition() const
+            {
+                return m_pipeline_position;
+            }
 
-        /** Sets renderer position in the rendering pipeline
-         *  Pipeline position defines in which order view calls the renderers when update occurs
-         *  Note that renderers are called once per rendered layer, thus to update the
-         *  whole screen, renderer might receive multiple calls
-         */
-        void setPipelinePosition(int32_t position);
+            /** Sets renderer position in the rendering pipeline
+             *  Pipeline position defines in which order view calls the renderers when update occurs
+             *  Note that renderers are called once per rendered layer, thus to update the
+             *  whole screen, renderer might receive multiple calls
+             */
+            void setPipelinePosition(int32_t position);
 
-        /** Enables renderer
-         */
-        virtual void setEnabled(bool enabled);
+            /** Enables renderer
+             */
+            virtual void setEnabled(bool enabled);
 
-        /** Resets information in the renderer
-         */
-        virtual void reset() { }
+            /** Resets information in the renderer
+             */
+            virtual void reset()
+            {
+            }
 
-        /** Is renderer enabled
-         */
-        bool isEnabled() const
-        {
-            return m_enabled;
-        }
+            /** Is renderer enabled
+             */
+            bool isEnabled() const
+            {
+                return m_enabled;
+            }
 
-        /** Sets listener for renderer
-         */
-        void setRendererListener(IRendererListener* listener)
-        {
-            m_listener = listener;
-        }
+            /** Sets listener for renderer
+             */
+            void setRendererListener(IRendererListener* listener)
+            {
+                m_listener = listener;
+            }
 
-        /** Adds active layer to renderer. Only active layers are rendered
-         */
-        void addActiveLayer(Layer* layer);
+            /** Adds active layer to renderer. Only active layers are rendered
+             */
+            void addActiveLayer(Layer* layer);
 
-        /** Removes active layer from renderer.
-         */
-        void removeActiveLayer(Layer* layer);
+            /** Removes active layer from renderer.
+             */
+            void removeActiveLayer(Layer* layer);
 
-        /** Clears all active layers from renderer
-         */
-        void clearActiveLayers();
+            /** Clears all active layers from renderer
+             */
+            void clearActiveLayers();
 
-        /** Activates all layers from given elevation
-         */
-        void activateAllLayers(Map* map);
+            /** Activates all layers from given elevation
+             */
+            void activateAllLayers(Map* map);
 
-        /** Returns if given layer is currently activated
-         */
-        bool isActivedLayer(Layer* layer);
+            /** Returns if given layer is currently activated
+             */
+            bool isActivedLayer(Layer* layer);
 
-        /** Returns list of activated layer
-         */
-        const std::list<Layer*>& getActiveLayers() const
-        {
-            return m_active_layers;
-        }
+            /** Returns list of activated layer
+             */
+            std::list<Layer*> const & getActiveLayers() const
+            {
+                return m_active_layers;
+            }
 
-    protected:
-        RendererBase();
+        protected:
+            RendererBase();
 
-        std::list<Layer*> m_active_layers;
-        RenderBackend* m_renderbackend;
+            std::list<Layer*> m_active_layers;
+            RenderBackend* m_renderbackend;
 
-    private:
-        bool m_enabled;
-        int32_t m_pipeline_position;
-        IRendererListener* m_listener;
+        private:
+            bool m_enabled;
+            int32_t m_pipeline_position;
+            IRendererListener* m_listener;
     };
 } // namespace FIFE
 

@@ -214,7 +214,7 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
 		const SDL_Color& getColorKey() const;
-		const SDL_PixelFormat& getPixelFormat() const;
+		SDL_PixelFormat getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
 		void setVSyncEnabled(bool vsync);

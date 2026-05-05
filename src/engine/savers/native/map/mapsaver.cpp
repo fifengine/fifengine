@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "mapsaver.h"
+
 // Standard C++ library includes
 #include <list>
 #include <set>
@@ -8,9 +11,6 @@
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/object.h"
 #include "model/structures/cell.h"
@@ -26,8 +26,6 @@
 #include "view/camera.h"
 #include "view/visual.h"
 
-#include "mapsaver.h"
-
 namespace FIFE
 {
     static Logger _log(LM_NATIVE_SAVERS);
@@ -36,22 +34,22 @@ namespace FIFE
 
     MapSaver::~MapSaver() = default;
 
-    void MapSaver::setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver)
+    void MapSaver::setObjectSaver(FIFE::ObjectSaverPtr const & objectSaver)
     {
         m_objectSaver = objectSaver;
     }
 
-    void MapSaver::setAnimationSaver(const FIFE::AnimationSaverPtr& animationSaver)
+    void MapSaver::setAnimationSaver(FIFE::AnimationSaverPtr const & animationSaver)
     {
         m_animationSaver = animationSaver;
     }
 
-    void MapSaver::setAtlasSaver(const FIFE::AtlasSaverPtr& atlasSaver)
+    void MapSaver::setAtlasSaver(FIFE::AtlasSaverPtr const & atlasSaver)
     {
         m_atlasSaver = atlasSaver;
     }
 
-    void MapSaver::save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles)
+    void MapSaver::save(Map const & map, std::string const & filename, std::vector<std::string> const & importFiles)
     {
         XML::Document doc;
         auto* declaration = doc.NewDeclaration(R"(xml version="1.0" encoding="ascii")");
@@ -63,7 +61,7 @@ namespace FIFE
         mapElement->SetAttribute("format", "1.0");
         doc.InsertEndChild(mapElement);
 
-        for (const auto& importFile : importFiles) {
+        for (auto const & importFile : importFiles) {
             XML::Element* importElement = doc.NewElement("import");
             importElement->SetAttribute("file", importFile.c_str());
 
@@ -198,11 +196,11 @@ namespace FIFE
             cellcacheElement->SetAttribute("default_speed", cache->getDefaultSpeedMultiplier());
             cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
 
-            const std::set<Cell*>& narrowCells = cache->getNarrowCells();
-            bool const saveNarrows             = !cache->isSearchNarrowCells() && !narrowCells.empty();
+            std::set<Cell*> const & narrowCells = cache->getNarrowCells();
+            bool const saveNarrows              = !cache->isSearchNarrowCells() && !narrowCells.empty();
 
-            const std::vector<std::vector<Cell*>>& cells = cache->getCells();
-            auto it                                      = cells.begin();
+            std::vector<std::vector<Cell*>> const & cells = cache->getCells();
+            auto it                                       = cells.begin();
             for (; it != cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
@@ -217,7 +215,7 @@ namespace FIFE
                     std::vector<std::string> cellAreaIds;
                     bool areasEmpty = areaIds.empty();
                     if (!areasEmpty) {
-                        const std::set<Instance*>& cellInstances = cell->getInstances();
+                        std::set<Instance*> const & cellInstances = cell->getInstances();
                         if (!cellInstances.empty()) {
                             auto area_it = areaIds.begin();
                             for (; area_it != areaIds.end(); ++area_it) {
@@ -335,7 +333,7 @@ namespace FIFE
                     triggerElement->SetAttribute(
                         "attached_layer", trigger->getAttached()->getLocationRef().getLayer()->getId().c_str());
                 }
-                const std::vector<Cell*>& cells = trigger->getAssignedCells();
+                std::vector<Cell*> const & cells = trigger->getAssignedCells();
                 if (!cells.empty()) {
                     for (auto* cell : cells) {
                         XML::Element* cellElement = doc.NewElement("assign");
@@ -345,7 +343,7 @@ namespace FIFE
                         triggerElement->InsertEndChild(cellElement);
                     }
                 }
-                const std::vector<Instance*>& instances = trigger->getEnabledInstances();
+                std::vector<Instance*> const & instances = trigger->getEnabledInstances();
                 if (!instances.empty()) {
                     for (auto* instance : instances) {
                         XML::Element* instanceElement = doc.NewElement("enabled");
@@ -355,7 +353,7 @@ namespace FIFE
                         triggerElement->InsertEndChild(instanceElement);
                     }
                 }
-                const std::vector<TriggerCondition>& conditions = trigger->getTriggerConditions();
+                std::vector<TriggerCondition> const & conditions = trigger->getTriggerConditions();
                 if (!conditions.empty()) {
                     for (auto condition : conditions) {
                         XML::Element* conditionElement = doc.NewElement("condition");

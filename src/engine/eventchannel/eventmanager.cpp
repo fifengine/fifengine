@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "eventmanager.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <deque>
@@ -10,9 +13,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "eventchannel/command/command.h"
 #include "eventchannel/joystick/joystickmanager.h"
 #include "eventchannel/key/ikeyfilter.h"
@@ -23,8 +23,6 @@
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "video/renderbackend.h"
-
-#include "eventmanager.h"
 
 namespace FIFE
 {
@@ -76,7 +74,7 @@ namespace FIFE
         if (listener->isActive()) {
             listener->setActive(false);
 
-            auto it = std::find_if(vec.begin(), vec.end(), [&](const T& item) {
+            auto it = std::find_if(vec.begin(), vec.end(), [&](T const & item) {
                 return item == listener;
             });
 
@@ -346,11 +344,11 @@ namespace FIFE
         }
     }
 
-    bool EventManager::combineEvents(SDL_Event& event1, const SDL_Event& event2)
+    bool EventManager::combineEvents(SDL_Event& event1, SDL_Event const & event2)
     {
         if (event1.type == event2.type) {
             switch (event1.type) {
-            case SDL_MOUSEMOTION:
+            case SDL_EVENT_MOUSE_MOTION:
                 if (event1.motion.state == event2.motion.state) {
                     event1.motion.x = event2.motion.x;
                     event1.motion.y = event2.motion.y;
@@ -372,59 +370,73 @@ namespace FIFE
         // but try to combine (mouse motion) events.
         SDL_Event event;
         SDL_Event next_event;
-        bool has_next_event = (SDL_PollEvent(&event) != 0);
+        bool has_next_event = SDL_PollEvent(&event);
         while (has_next_event) {
-            has_next_event = (SDL_PollEvent(&next_event) != 0);
+            has_next_event = SDL_PollEvent(&next_event);
             if (has_next_event && combineEvents(event, next_event)) {
                 continue;
             }
             switch (event.type) {
-            case SDL_QUIT: {
+            case SDL_EVENT_QUIT: {
                 Command cmd;
                 cmd.setSource(this);
                 cmd.setCommandType(CMD_QUIT_GAME);
                 dispatchCommand(cmd);
             } break;
 
-            case SDL_WINDOWEVENT:
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+            case SDL_EVENT_WINDOW_MOVED:
+            case SDL_EVENT_WINDOW_RESIZED:
+            case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+            case SDL_EVENT_WINDOW_MINIMIZED:
+            case SDL_EVENT_WINDOW_RESTORED:
+            case SDL_EVENT_WINDOW_MAXIMIZED:
+            case SDL_EVENT_WINDOW_SHOWN:
+            case SDL_EVENT_WINDOW_HIDDEN:
+            case SDL_EVENT_WINDOW_EXPOSED:
+            case SDL_EVENT_WINDOW_MOUSE_ENTER:
+            case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
                 processWindowEvent(event);
                 break;
 
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP:
                 processKeyEvent(event);
                 break;
 
-            // case SDL_TEXTEDITING: // is buggy with SDL 2.0.1
-            case SDL_TEXTINPUT:
+            // case SDL_EVENT_TEXT_EDITING: // is buggy with SDL 2.0.1
+            case SDL_EVENT_TEXT_INPUT:
                 processTextEvent(event);
                 break;
 
-            case SDL_MOUSEWHEEL:
-            case SDL_MOUSEBUTTONUP:
-            case SDL_MOUSEMOTION:
-            case SDL_MOUSEBUTTONDOWN:
+            case SDL_EVENT_MOUSE_WHEEL:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+            case SDL_EVENT_MOUSE_MOTION:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 processMouseEvent(event);
                 break;
 
-            case SDL_DROPFILE:
+            case SDL_EVENT_DROP_FILE:
                 processDropEvent(event);
                 break;
 
-            case SDL_JOYBUTTONDOWN:
-            case SDL_JOYBUTTONUP:
-            case SDL_JOYAXISMOTION:
-            case SDL_JOYHATMOTION:
-            case SDL_JOYDEVICEADDED:
-            case SDL_JOYDEVICEREMOVED: {
+            case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
+            case SDL_EVENT_JOYSTICK_BUTTON_UP:
+            case SDL_EVENT_JOYSTICK_AXIS_MOTION:
+            case SDL_EVENT_JOYSTICK_HAT_MOTION:
+            case SDL_EVENT_JOYSTICK_ADDED:
+            case SDL_EVENT_JOYSTICK_REMOVED: {
                 if (m_joystickManager != nullptr) {
                     m_joystickManager->processJoystickEvent(event);
                 }
                 break;
             }
-            case SDL_CONTROLLERBUTTONDOWN:
-            case SDL_CONTROLLERBUTTONUP:
-            case SDL_CONTROLLERAXISMOTION: {
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+            case SDL_EVENT_GAMEPAD_BUTTON_UP:
+            case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
                 if (m_joystickManager != nullptr) {
                     m_joystickManager->processControllerEvent(event);
                 }
@@ -446,33 +458,33 @@ namespace FIFE
         }
 
         CommandType ct = CMD_UNKNOWN;
-        switch (event.window.event) {
-        case SDL_WINDOWEVENT_CLOSE:
+        switch (event.type) {
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             ct = CMD_QUIT_GAME;
             break;
 
-        case SDL_WINDOWEVENT_ENTER:
+        case SDL_EVENT_WINDOW_MOUSE_ENTER:
             ct = CMD_MOUSE_FOCUS_GAINED;
             break;
 
-        case SDL_WINDOWEVENT_LEAVE:
+        case SDL_EVENT_WINDOW_MOUSE_LEAVE:
             ct = CMD_MOUSE_FOCUS_LOST;
             break;
 
-        case SDL_WINDOWEVENT_FOCUS_GAINED:
+        case SDL_EVENT_WINDOW_FOCUS_GAINED:
             ct = CMD_INPUT_FOCUS_GAINED;
             break;
 
-        case SDL_WINDOWEVENT_FOCUS_LOST:
+        case SDL_EVENT_WINDOW_FOCUS_LOST:
             ct = CMD_INPUT_FOCUS_LOST;
             break;
 
-        case SDL_WINDOWEVENT_SHOWN:
+        case SDL_EVENT_WINDOW_SHOWN:
             ct = CMD_APP_RESTORED;
             break;
 
-        case SDL_WINDOWEVENT_MINIMIZED:
-        case SDL_WINDOWEVENT_HIDDEN:
+        case SDL_EVENT_WINDOW_MINIMIZED:
+        case SDL_EVENT_WINDOW_HIDDEN:
             ct = CMD_APP_ICONIFIED;
             break;
 
@@ -516,9 +528,9 @@ namespace FIFE
 
     void EventManager::processMouseEvent(SDL_Event event)
     {
-        if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
-            int32_t tmp_x = event.motion.x;
-            int32_t tmp_y = event.motion.y;
+        if (event.type == SDL_EVENT_MOUSE_MOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
+            int32_t tmp_x = static_cast<int32_t>(event.motion.x);
+            int32_t tmp_y = static_cast<int32_t>(event.motion.y);
             if (m_enter) {
                 m_oldX        = tmp_x;
                 m_oldY        = tmp_y;
@@ -543,12 +555,12 @@ namespace FIFE
                 modifier = m_mouseSensitivity;
             }
 
-            const int32_t tmp_xrel = tmp_x - m_oldX;
-            const int32_t tmp_yrel = tmp_y - m_oldY;
+            int32_t const tmp_xrel = tmp_x - m_oldX;
+            int32_t const tmp_yrel = tmp_y - m_oldY;
             if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
                 Rect const screen    = RenderBackend::instance()->getArea();
-                const int32_t x_fact = static_cast<int32_t>(round(static_cast<float>(tmp_xrel) * modifier));
-                const int32_t y_fact = static_cast<int32_t>(round(static_cast<float>(tmp_yrel) * modifier));
+                int32_t const x_fact = static_cast<int32_t>(round(static_cast<float>(tmp_xrel) * modifier));
+                int32_t const y_fact = static_cast<int32_t>(round(static_cast<float>(tmp_yrel) * modifier));
                 if ((tmp_x + x_fact) > screen.w) {
                     tmp_x = screen.w;
                 } else if ((tmp_x + x_fact) < screen.x) {
@@ -566,8 +578,8 @@ namespace FIFE
                 }
                 m_oldX         = tmp_x;
                 m_oldY         = tmp_y;
-                event.motion.x = tmp_x;
-                event.motion.y = tmp_y;
+                event.motion.x = static_cast<float>(tmp_x);
+                event.motion.y = static_cast<float>(tmp_y);
                 m_warp         = true; // don't trigger an event handler when warping
                 SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), tmp_x, tmp_y);
                 m_warp = false;
@@ -578,10 +590,10 @@ namespace FIFE
         mouseevt.setSource(this);
         fillMouseEvent(event, mouseevt);
         fillModifiers(mouseevt);
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
+        if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
             m_mousestate |= static_cast<int32_t>(mouseevt.getButton());
             m_mostrecentbtn = mouseevt.getButton();
-        } else if (event.type == SDL_MOUSEBUTTONUP) {
+        } else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
             m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
         }
 
@@ -599,9 +611,7 @@ namespace FIFE
         //	return;
         //}
 
-        char* tmp = event.drop.file;
-        std::string const path(tmp);
-        SDL_free(tmp);
+        std::string const path(event.drop.data);
 
         DropEvent drop;
         drop.setPath(path);
@@ -609,18 +619,18 @@ namespace FIFE
         dispatchDropEvent(drop);
     }
 
-    void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt)
+    void EventManager::fillMouseEvent(SDL_Event const & sdlevt, MouseEvent& mouseevt)
     {
         if (m_warp) {
             return;
         }
 
-        mouseevt.setX(sdlevt.button.x);
-        mouseevt.setY(sdlevt.button.y);
+        mouseevt.setX(static_cast<int32_t>(sdlevt.button.x));
+        mouseevt.setY(static_cast<int32_t>(sdlevt.button.y));
 
         mouseevt.setButton(MouseEvent::EMPTY);
         mouseevt.setType(MouseEvent::MOVED);
-        if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
+        if ((sdlevt.type == SDL_EVENT_MOUSE_BUTTON_UP) || (sdlevt.type == SDL_EVENT_MOUSE_BUTTON_DOWN)) {
             switch (sdlevt.button.button) {
             case SDL_BUTTON_LEFT:
                 mouseevt.setButton(MouseEvent::LEFT);
@@ -642,25 +652,13 @@ namespace FIFE
                 break;
             }
 
-            if (sdlevt.button.state == SDL_RELEASED) {
+            if (sdlevt.type == SDL_EVENT_MOUSE_BUTTON_UP) {
                 mouseevt.setType(MouseEvent::RELEASED);
             } else {
                 mouseevt.setType(MouseEvent::PRESSED);
             }
         }
-        if (sdlevt.type == SDL_MOUSEWHEEL) {
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-            if (sdlevt.wheel.y > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y < 0)) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-            } else if (sdlevt.wheel.y < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y > 0)) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
-            }
-            if (sdlevt.wheel.x > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x < 0)) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
-            } else if (sdlevt.wheel.x < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x > 0)) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
-            }
-#else
+        if (sdlevt.type == SDL_EVENT_MOUSE_WHEEL) {
             if (sdlevt.wheel.y > 0) {
                 mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
             } else if (sdlevt.wheel.y < 0) {
@@ -671,7 +669,6 @@ namespace FIFE
             } else if (sdlevt.wheel.x < 0) {
                 mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
             }
-#endif
         }
 
         if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {
@@ -680,11 +677,11 @@ namespace FIFE
         }
     }
 
-    void EventManager::fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt)
+    void EventManager::fillKeyEvent(SDL_Event const & sdlevt, KeyEvent& keyevt)
     {
-        if (sdlevt.type == SDL_KEYDOWN) {
+        if (sdlevt.type == SDL_EVENT_KEY_DOWN) {
             keyevt.setType(KeyEvent::PRESSED);
-        } else if (sdlevt.type == SDL_KEYUP) {
+        } else if (sdlevt.type == SDL_EVENT_KEY_UP) {
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(
@@ -692,22 +689,21 @@ namespace FIFE
             return;
         }
 
-        SDL_Keysym const keysym = sdlevt.key.keysym;
-        keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
-        keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
-        keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
-        keyevt.setMetaPressed((keysym.mod & KMOD_GUI) != 0); // currently gui/super keys
-        keyevt.setNumericPad((keysym.mod & KMOD_NUM) != 0);
-        keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym)));
+        keyevt.setShiftPressed((sdlevt.key.mod & SDL_KMOD_SHIFT) != 0);
+        keyevt.setControlPressed((sdlevt.key.mod & SDL_KMOD_CTRL) != 0);
+        keyevt.setAltPressed((sdlevt.key.mod & SDL_KMOD_ALT) != 0);
+        keyevt.setMetaPressed((sdlevt.key.mod & SDL_KMOD_GUI) != 0); // currently gui/super keys
+        keyevt.setNumericPad((sdlevt.key.mod & SDL_KMOD_NUM) != 0);
+        keyevt.setKey(Key(static_cast<Key::KeyType>(sdlevt.key.key)));
     }
 
-    void EventManager::fillTextEvent(const SDL_Event& sdlevt, TextEvent& txtevt)
+    void EventManager::fillTextEvent(SDL_Event const & sdlevt, TextEvent& txtevt)
     {
-        if (sdlevt.type == SDL_TEXTINPUT) {
+        if (sdlevt.type == SDL_EVENT_TEXT_INPUT) {
             txtevt.setType(TextEvent::INPUT);
             Text const t(&sdlevt.text.text[0]);
             txtevt.setText(t);
-        } else if (sdlevt.type == SDL_TEXTEDITING) {
+        } else if (sdlevt.type == SDL_EVENT_TEXT_EDITING) {
             txtevt.setType(TextEvent::EDIT);
             Text const t(&sdlevt.edit.text[0], sdlevt.edit.start, sdlevt.edit.length);
             txtevt.setText(t);
@@ -767,19 +763,23 @@ namespace FIFE
 
     bool EventManager::isClipboardText() const
     {
-        return SDL_HasClipboardText() != 0U;
+        return SDL_HasClipboardText();
     }
 
     std::string EventManager::getClipboardText() const
     {
         std::string text;
-        if (SDL_HasClipboardText() != 0U) {
-            text = std::string(SDL_GetClipboardText());
+        if (SDL_HasClipboardText()) {
+            char* clipboard = SDL_GetClipboardText();
+            if (clipboard) {
+                text = std::string(clipboard);
+                SDL_free(clipboard);
+            }
         }
         return text;
     }
 
-    void EventManager::setClipboardText(const std::string& text)
+    void EventManager::setClipboardText(std::string const & text)
     {
         SDL_SetClipboardText(text.c_str());
     }
@@ -810,28 +810,28 @@ namespace FIFE
         return 0;
     }
 
-    void EventManager::loadGamepadMapping(const std::string& file)
+    void EventManager::loadGamepadMapping(std::string const & file)
     {
         if (m_joystickManager != nullptr) {
             m_joystickManager->loadMapping(file);
         }
     }
 
-    void EventManager::saveGamepadMapping(const std::string& guid, const std::string& file)
+    void EventManager::saveGamepadMapping(std::string const & guid, std::string const & file)
     {
         if (m_joystickManager != nullptr) {
             m_joystickManager->saveMapping(guid, file);
         }
     }
 
-    void EventManager::saveGamepadMappings(const std::string& file)
+    void EventManager::saveGamepadMappings(std::string const & file)
     {
         if (m_joystickManager != nullptr) {
             m_joystickManager->saveMappings(file);
         }
     }
 
-    std::string EventManager::getGamepadStringMapping(const std::string& guid)
+    std::string EventManager::getGamepadStringMapping(std::string const & guid)
     {
         std::string mapping;
         if (m_joystickManager != nullptr) {
@@ -840,7 +840,7 @@ namespace FIFE
         return mapping;
     }
 
-    void EventManager::setGamepadStringMapping(const std::string& mapping)
+    void EventManager::setGamepadStringMapping(std::string const & mapping)
     {
         if (m_joystickManager != nullptr) {
             m_joystickManager->setStringMapping(mapping);

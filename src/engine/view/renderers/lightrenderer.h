@@ -27,242 +27,252 @@ namespace FIFE
 
     class /*FIFE_API*/ LightRendererElementInfo
     {
-    public:
-        LightRendererElementInfo(const RendererNode& n, int32_t src, int32_t dst);
-        virtual ~LightRendererElementInfo() = default;
+        public:
+            LightRendererElementInfo(RendererNode const & n, int32_t src, int32_t dst);
+            virtual ~LightRendererElementInfo() = default;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
-        virtual std::string getName()                                                                       = 0;
+            virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
+            virtual std::string getName()                                                                       = 0;
 
-        RendererNode* getNode()
-        {
-            return &m_anchor;
-        }
-        int32_t getSrcBlend() const
-        {
-            return m_src;
-        }
-        int32_t getDstBlend() const
-        {
-            return m_dst;
-        }
+            RendererNode* getNode()
+            {
+                return &m_anchor;
+            }
+            int32_t getSrcBlend() const
+            {
+                return m_src;
+            }
+            int32_t getDstBlend() const
+            {
+                return m_dst;
+            }
 
-        void setStencil(uint8_t stencil_ref);
-        int32_t getStencil() const;
-        void removeStencil();
+            void setStencil(uint8_t stencil_ref);
+            int32_t getStencil() const;
+            void removeStencil();
 
-        virtual std::vector<uint8_t> getColor()
-        {
-            return std::vector<uint8_t>();
-        }
-        virtual float getRadius()
-        {
-            return 0;
-        }
-        virtual int32_t getSubdivisions()
-        {
-            return 0;
-        }
-        virtual float getXStretch()
-        {
-            return 0;
-        }
-        virtual float getYStretch()
-        {
-            return 0;
-        }
+            virtual std::vector<uint8_t> getColor()
+            {
+                return std::vector<uint8_t>();
+            }
+            virtual float getRadius()
+            {
+                return 0;
+            }
+            virtual int32_t getSubdivisions()
+            {
+                return 0;
+            }
+            virtual float getXStretch()
+            {
+                return 0;
+            }
+            virtual float getYStretch()
+            {
+                return 0;
+            }
 
-    protected:
-        RendererNode m_anchor;
-        int32_t m_src;
-        int32_t m_dst;
-        bool m_stencil;
-        uint8_t m_stencil_ref;
+        protected:
+            RendererNode m_anchor;
+            int32_t m_src;
+            int32_t m_dst;
+            bool m_stencil;
+            uint8_t m_stencil_ref;
     };
 
     class /*FIFE_API*/ LightRendererImageInfo : public LightRendererElementInfo
     {
-    public:
-        LightRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst);
-        ~LightRendererImageInfo() override;
+        public:
+            LightRendererImageInfo(RendererNode const & anchor, ImagePtr const & image, int32_t src, int32_t dst);
+            ~LightRendererImageInfo() override;
 
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        std::string getName() override
-        {
-            return "image";
-        }
-        ImagePtr getImage()
-        {
-            return m_image;
-        }
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            std::string getName() override
+            {
+                return "image";
+            }
+            ImagePtr getImage()
+            {
+                return m_image;
+            }
 
-    private:
-        ImagePtr m_image;
+        private:
+            ImagePtr m_image;
     };
 
     class /*FIFE_API*/ LightRendererAnimationInfo : public LightRendererElementInfo
     {
-    public:
-        LightRendererAnimationInfo(const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst);
-        ~LightRendererAnimationInfo() override;
+        public:
+            LightRendererAnimationInfo(
+                RendererNode const & anchor, AnimationPtr const & animation, int32_t src, int32_t dst);
+            ~LightRendererAnimationInfo() override;
 
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        std::string getName() override
-        {
-            return "animation";
-        }
-        AnimationPtr getAnimation()
-        {
-            return m_animation;
-        }
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            std::string getName() override
+            {
+                return "animation";
+            }
+            AnimationPtr getAnimation()
+            {
+                return m_animation;
+            }
 
-    private:
-        AnimationPtr m_animation;
-        uint32_t m_start_time;
-        float m_time_scale;
+        private:
+            AnimationPtr m_animation;
+            uint32_t m_start_time;
+            float m_time_scale;
     };
 
     class /*FIFE_API*/ LightRendererSimpleLightInfo : public LightRendererElementInfo
     {
-    public:
-        LightRendererSimpleLightInfo(
-            const RendererNode& anchor,
-            uint8_t intensity,
-            float radius,
-            int32_t subdivisions,
-            float xstretch,
-            float ystretch,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            int32_t src,
-            int32_t dst);
-        ~LightRendererSimpleLightInfo() override;
+        public:
+            LightRendererSimpleLightInfo(
+                RendererNode const & anchor,
+                uint8_t intensity,
+                float radius,
+                int32_t subdivisions,
+                float xstretch,
+                float ystretch,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                int32_t src,
+                int32_t dst);
+            ~LightRendererSimpleLightInfo() override;
 
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        std::string getName() override
-        {
-            return "simple";
-        }
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            std::string getName() override
+            {
+                return "simple";
+            }
 
-        std::vector<uint8_t> getColor() override;
-        float getRadius() override
-        {
-            return m_radius;
-        }
-        int32_t getSubdivisions() override
-        {
-            return m_subdivisions;
-        }
-        float getXStretch() override
-        {
-            return m_xstretch;
-        }
-        float getYStretch() override
-        {
-            return m_ystretch;
-        }
+            std::vector<uint8_t> getColor() override;
+            float getRadius() override
+            {
+                return m_radius;
+            }
+            int32_t getSubdivisions() override
+            {
+                return m_subdivisions;
+            }
+            float getXStretch() override
+            {
+                return m_xstretch;
+            }
+            float getYStretch() override
+            {
+                return m_ystretch;
+            }
 
-    private:
-        uint8_t m_intensity;
-        float m_radius;
-        int32_t m_subdivisions;
-        float m_xstretch;
-        float m_ystretch;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
+        private:
+            uint8_t m_intensity;
+            float m_radius;
+            int32_t m_subdivisions;
+            float m_xstretch;
+            float m_ystretch;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
     };
 
     class /*FIFE_API*/ LightRendererResizeInfo : public LightRendererElementInfo
     {
-    public:
-        LightRendererResizeInfo(
-            const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, int32_t src, int32_t dst);
-        ~LightRendererResizeInfo() override;
+        public:
+            LightRendererResizeInfo(
+                RendererNode const & anchor,
+                ImagePtr const & image,
+                int32_t width,
+                int32_t height,
+                int32_t src,
+                int32_t dst);
+            ~LightRendererResizeInfo() override;
 
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        std::string getName() override
-        {
-            return "resize";
-        }
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            std::string getName() override
+            {
+                return "resize";
+            }
 
-        ImagePtr getImage()
-        {
-            return m_image;
-        }
+            ImagePtr getImage()
+            {
+                return m_image;
+            }
 
-    private:
-        ImagePtr m_image;
-        int32_t m_width;
-        int32_t m_height;
+        private:
+            ImagePtr m_image;
+            int32_t m_width;
+            int32_t m_height;
     };
 
     class /*FIFE_API*/ LightRenderer : public RendererBase
     {
-    public:
-        /** constructor.
-         * @param renderbackend to use
-         * @param position position for this renderer in rendering pipeline
-         */
-        LightRenderer(RenderBackend* renderbackend, int32_t position);
+        public:
+            /** constructor.
+             * @param renderbackend to use
+             * @param position position for this renderer in rendering pipeline
+             */
+            LightRenderer(RenderBackend* renderbackend, int32_t position);
 
-        LightRenderer(const LightRenderer& old);
+            LightRenderer(LightRenderer const & old);
 
-        RendererBase* clone();
+            RendererBase* clone();
 
-        /** Destructor.
-         */
-        virtual ~LightRenderer();
-        void render(Camera* cam, Layer* layer, RenderList& instances);
-        std::string getName()
-        {
-            return "LightRenderer";
-        }
+            /** Destructor.
+             */
+            virtual ~LightRenderer();
+            void render(Camera* cam, Layer* layer, RenderList& instances);
+            std::string getName()
+            {
+                return "LightRenderer";
+            }
 
-        /** Gets instance for interface access
-         */
-        static LightRenderer* getInstance(IRendererContainer* cnt);
+            /** Gets instance for interface access
+             */
+            static LightRenderer* getInstance(IRendererContainer* cnt);
 
-        void addImage(
-            const std::string& group, const RendererNode& n, const ImagePtr& image, int32_t src = -1, int32_t dst = -1);
-        void addAnimation(
-            const std::string& group,
-            const RendererNode& n,
-            const AnimationPtr& animation,
-            int32_t src = -1,
-            int32_t dst = -1);
-        void addSimpleLight(
-            const std::string& group,
-            const RendererNode& n,
-            uint8_t intensity,
-            float radius,
-            int32_t subdivisions,
-            float xstretch,
-            float ystretch,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            int32_t src = -1,
-            int32_t dst = -1);
-        void resizeImage(
-            const std::string& group,
-            const RendererNode& n,
-            const ImagePtr& image,
-            int32_t width,
-            int32_t height,
-            int32_t src = -1,
-            int32_t dst = -1);
-        void addStencilTest(const std::string& group, uint8_t stencil_ref = 0);
-        void removeStencilTest(const std::string& group);
-        std::list<std::string> getGroups();
-        std::vector<LightRendererElementInfo*> getLightInfo(const std::string& group);
-        void removeAll(const std::string& group);
-        void removeAll();
-        void reset();
+            void addImage(
+                std::string const & group,
+                RendererNode const & n,
+                ImagePtr const & image,
+                int32_t src = -1,
+                int32_t dst = -1);
+            void addAnimation(
+                std::string const & group,
+                RendererNode const & n,
+                AnimationPtr const & animation,
+                int32_t src = -1,
+                int32_t dst = -1);
+            void addSimpleLight(
+                std::string const & group,
+                RendererNode const & n,
+                uint8_t intensity,
+                float radius,
+                int32_t subdivisions,
+                float xstretch,
+                float ystretch,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                int32_t src = -1,
+                int32_t dst = -1);
+            void resizeImage(
+                std::string const & group,
+                RendererNode const & n,
+                ImagePtr const & image,
+                int32_t width,
+                int32_t height,
+                int32_t src = -1,
+                int32_t dst = -1);
+            void addStencilTest(std::string const & group, uint8_t stencil_ref = 0);
+            void removeStencilTest(std::string const & group);
+            std::list<std::string> getGroups();
+            std::vector<LightRendererElementInfo*> getLightInfo(std::string const & group);
+            void removeAll(std::string const & group);
+            void removeAll();
+            void reset();
 
-    private:
-        std::map<std::string, std::vector<LightRendererElementInfo*>> m_groups;
+        private:
+            std::map<std::string, std::vector<LightRendererElementInfo*>> m_groups;
     };
 
 } // namespace FIFE

@@ -51,10 +51,10 @@ foreach(test_source ${FIFE_CORE_TEST_SOURCES})
         Vorbis::vorbisenc
         OpenAL::OpenAL
         tinyxml2::tinyxml2
-        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
-        $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-        $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+        $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
+        $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
+        $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+        $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
   )
 
   if(ENABLE_OPENGL)

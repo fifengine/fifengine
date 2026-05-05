@@ -261,6 +261,23 @@
       "cacheVariables": {
         "CMAKE_LINKER_TYPE": "LD"
       }
+    },
+    {
+      "name": "coverage-using-clang",
+      "hidden": true,
+      "description": "Set Clang coverage instrumentation flags (for Debug builds)",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_C_FLAGS": "-fprofile-instr-generate -fcoverage-mapping",
+        "CMAKE_CXX_FLAGS": "-fprofile-instr-generate -fcoverage-mapping",
+        "CMAKE_EXE_LINKER_FLAGS": "-fprofile-instr-generate",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fprofile-instr-generate",
+        "CMAKE_MODULE_LINKER_FLAGS": "-fprofile-instr-generate"
+      }
     }
   ]
 }

@@ -1,26 +1,24 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cursor.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "animation.h"
+#include "image.h"
+#include "renderbackend.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "video/imagemanager.h"
-
-#include "animation.h"
-#include "cursor.h"
-#include "image.h"
-#include "renderbackend.h"
 
 namespace FIFE
 {
@@ -53,7 +51,7 @@ namespace FIFE
     {
         m_cursor_type = CURSOR_NATIVE;
 
-        if (SDL_ShowCursor(1) == 0) {
+        if (!SDL_ShowCursor()) {
             SDL_PumpEvents();
         }
         setNativeCursor(cursor_id);
@@ -62,7 +60,7 @@ namespace FIFE
         m_cursor_animation.reset();
     }
 
-    void Cursor::set(const ImagePtr& image)
+    void Cursor::set(ImagePtr const & image)
     {
         assert(image);
 
@@ -73,10 +71,10 @@ namespace FIFE
             if (!setNativeImageCursor(image)) {
                 return;
             }
-            if (SDL_ShowCursor(1) == 0) {
+            if (!SDL_ShowCursor()) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor(0) != 0) {
+        } else if (SDL_ShowCursor()) {
             SDL_PumpEvents();
         }
 
@@ -84,7 +82,7 @@ namespace FIFE
         m_cursor_animation.reset();
     }
 
-    void Cursor::set(const AnimationPtr& anim)
+    void Cursor::set(AnimationPtr const & anim)
     {
         assert(anim);
 
@@ -95,10 +93,10 @@ namespace FIFE
             if (!setNativeImageCursor(anim->getFrameByTimestamp(0))) {
                 return;
             }
-            if (SDL_ShowCursor(1) == 0) {
+            if (!SDL_ShowCursor()) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor(0) != 0) {
+        } else if (SDL_ShowCursor()) {
             SDL_PumpEvents();
         }
         m_animtime = m_timemanager->getTime();
@@ -107,7 +105,7 @@ namespace FIFE
         m_cursor_image.reset();
     }
 
-    void Cursor::setDrag(const ImagePtr& image, int32_t drag_offset_x, int32_t drag_offset_y)
+    void Cursor::setDrag(ImagePtr const & image, int32_t drag_offset_x, int32_t drag_offset_y)
     {
         assert(image);
 
@@ -119,7 +117,7 @@ namespace FIFE
         m_cursor_drag_animation.reset();
     }
 
-    void Cursor::setDrag(const AnimationPtr& anim, int32_t drag_offset_x, int32_t drag_offset_y)
+    void Cursor::setDrag(AnimationPtr const & anim, int32_t drag_offset_x, int32_t drag_offset_y)
     {
         assert(anim);
 
@@ -163,7 +161,7 @@ namespace FIFE
     void Cursor::invalidate()
     {
         if (m_native_cursor != nullptr) {
-            SDL_FreeCursor(m_native_cursor);
+            SDL_DestroyCursor(m_native_cursor);
             m_native_cursor = nullptr;
             m_native_cursor_image.reset();
 
@@ -187,7 +185,10 @@ namespace FIFE
             m_invalidated = false;
         }
 
-        SDL_GetMouseState(&m_mx, &m_my);
+        float mx_float, my_float;
+        SDL_GetMouseState(&mx_float, &my_float);
+        m_mx = static_cast<int32_t>(mx_float);
+        m_my = static_cast<int32_t>(my_float);
         if ((m_cursor_type == CURSOR_NATIVE) && (m_drag_type == CURSOR_NONE)) {
             return;
         }
@@ -197,17 +198,17 @@ namespace FIFE
         if (m_drag_type == CURSOR_IMAGE) {
             img = m_cursor_drag_image;
         } else if (m_drag_type == CURSOR_ANIMATION) {
-            const int32_t animtime =
+            int32_t const animtime =
                 (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
             img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
         }
 
         if (img) {
-            const uint32_t dragWidth  = img->getWidth();
-            const uint32_t dragHeight = img->getHeight();
+            uint32_t const dragWidth  = img->getWidth();
+            uint32_t const dragHeight = img->getHeight();
             assert(dragWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             assert(dragHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-            const Rect area(
+            Rect const area(
                 m_mx + m_drag_offset_x + img->getXShift(),
                 m_my + m_drag_offset_y + img->getYShift(),
                 static_cast<int32_t>(dragWidth),
@@ -223,7 +224,7 @@ namespace FIFE
         if (m_cursor_type == CURSOR_IMAGE) {
             img2 = m_cursor_image;
         } else if (m_cursor_type == CURSOR_ANIMATION) {
-            const int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
+            int32_t const animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
             img2                   = m_cursor_animation->getFrameByTimestamp(animtime);
         }
 
@@ -231,8 +232,8 @@ namespace FIFE
             if (m_native_image_cursor_enabled) {
                 setNativeImageCursor(img2);
             } else {
-                const uint32_t cursorWidth  = img2->getWidth();
-                const uint32_t cursorHeight = img2->getHeight();
+                uint32_t const cursorWidth  = img2->getWidth();
+                uint32_t const cursorHeight = img2->getHeight();
                 assert(cursorWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
                 assert(cursorHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
                 Rect const area(
@@ -252,29 +253,29 @@ namespace FIFE
     {
         switch (cursor_id) {
         case NC_ARROW:
-            return SDL_SYSTEM_CURSOR_ARROW;
+            return SDL_SYSTEM_CURSOR_DEFAULT;
         case NC_IBEAM:
-            return SDL_SYSTEM_CURSOR_IBEAM;
+            return SDL_SYSTEM_CURSOR_TEXT;
         case NC_WAIT:
             return SDL_SYSTEM_CURSOR_WAIT;
         case NC_CROSS:
             return SDL_SYSTEM_CURSOR_CROSSHAIR;
         case NC_WAITARROW:
-            return SDL_SYSTEM_CURSOR_WAITARROW;
+            return SDL_SYSTEM_CURSOR_PROGRESS;
         case NC_RESIZENWSE:
-            return SDL_SYSTEM_CURSOR_SIZENWSE;
+            return SDL_SYSTEM_CURSOR_NWSE_RESIZE;
         case NC_RESIZENESW:
-            return SDL_SYSTEM_CURSOR_SIZENESW;
+            return SDL_SYSTEM_CURSOR_NESW_RESIZE;
         case NC_RESIZEWE:
-            return SDL_SYSTEM_CURSOR_SIZEWE;
+            return SDL_SYSTEM_CURSOR_EW_RESIZE;
         case NC_RESIZENS:
-            return SDL_SYSTEM_CURSOR_SIZENS;
+            return SDL_SYSTEM_CURSOR_NS_RESIZE;
         case NC_RESIZEALL:
-            return SDL_SYSTEM_CURSOR_SIZEALL;
+            return SDL_SYSTEM_CURSOR_MOVE;
         case NC_NO:
-            return SDL_SYSTEM_CURSOR_NO;
+            return SDL_SYSTEM_CURSOR_NOT_ALLOWED;
         case NC_HAND:
-            return SDL_SYSTEM_CURSOR_HAND;
+            return SDL_SYSTEM_CURSOR_POINTER;
         default:
             return cursor_id;
         }
@@ -290,12 +291,12 @@ namespace FIFE
         }
         SDL_SetCursor(cursor);
         if (m_native_cursor != nullptr) {
-            SDL_FreeCursor(m_native_cursor);
+            SDL_DestroyCursor(m_native_cursor);
         }
         m_native_cursor = cursor;
     }
 
-    bool Cursor::setNativeImageCursor(const ImagePtr& image)
+    bool Cursor::setNativeImageCursor(ImagePtr const & image)
     {
         if (image == m_native_cursor_image) {
             // we're already using this image
@@ -330,7 +331,7 @@ namespace FIFE
             ImageManager::instance()->remove(temp_image);
         }
         if (m_native_cursor != nullptr) {
-            SDL_FreeCursor(m_native_cursor);
+            SDL_DestroyCursor(m_native_cursor);
         }
         m_native_cursor = cursor;
         return true;

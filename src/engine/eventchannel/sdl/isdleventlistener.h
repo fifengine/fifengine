@@ -26,13 +26,13 @@ namespace FIFE
      */
     class /*FIFE_API*/ ISdlEventListener : public IListener
     {
-    public:
-        /** Called when an SDL event is received from SDL
-         * @param evt SDL event
-         */
-        virtual bool onSdlEvent(SDL_Event& evt) = 0;
+        public:
+            /** Called when an SDL event is received from SDL
+             * @param evt SDL event
+             */
+            virtual bool onSdlEvent(SDL_Event& evt) = 0;
 
-        virtual ~ISdlEventListener() = default;
+            virtual ~ISdlEventListener() = default;
     };
 
 } // namespace FIFE

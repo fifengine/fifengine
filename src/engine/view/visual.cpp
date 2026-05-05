@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "visual.h"
+
 // Standard C++ library includes
 #include <map>
 #include <utility>
@@ -8,17 +11,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "util/base/exception.h"
-#include "util/log/logger.h"
-
 #include "model/metamodel/action.h"
 #include "model/metamodel/object.h"
 #include "model/structures/instance.h"
-
-#include "visual.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 namespace FIFE
 {
@@ -27,11 +24,15 @@ namespace FIFE
      */
     static Logger _log(LM_VIEW);
 
-    OverlayColors::OverlayColors(const ImagePtr& image) : m_image(image) { }
+    OverlayColors::OverlayColors(ImagePtr const & image) : m_image(image)
+    {
+    }
 
-    OverlayColors::OverlayColors(const AnimationPtr& animation) : m_animation(animation) { }
+    OverlayColors::OverlayColors(AnimationPtr const & animation) : m_animation(animation)
+    {
+    }
 
-    void OverlayColors::setColorOverlayImage(const ImagePtr& image)
+    void OverlayColors::setColorOverlayImage(ImagePtr const & image)
     {
         m_image = image;
     }
@@ -41,7 +42,7 @@ namespace FIFE
         return m_image;
     }
 
-    void OverlayColors::setColorOverlayAnimation(const AnimationPtr& animation)
+    void OverlayColors::setColorOverlayAnimation(AnimationPtr const & animation)
     {
         m_animation = animation;
     }
@@ -51,7 +52,7 @@ namespace FIFE
         return m_animation;
     }
 
-    void OverlayColors::changeColor(const Color& source, const Color& target)
+    void OverlayColors::changeColor(Color const & source, Color const & target)
     {
         std::pair<std::map<Color, Color>::iterator, bool> const inserter =
             m_colorMap.insert(std::make_pair(source, target));
@@ -61,7 +62,7 @@ namespace FIFE
         }
     }
 
-    const std::map<Color, Color>& OverlayColors::getColors()
+    std::map<Color, Color> const & OverlayColors::getColors()
     {
         return m_colorMap;
     }
@@ -98,7 +99,7 @@ namespace FIFE
         return getIndexByAngle(angle, m_angle2img, closestMatch);
     }
 
-    void ObjectVisual::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors)
+    void ObjectVisual::addStaticColorOverlay(uint32_t angle, OverlayColors const & colors)
     {
         m_map[angle % 360] = angle % 360;
         std::pair<AngleColorOverlayMap::iterator, bool> const inserter =
@@ -108,8 +109,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayImage(tmp.getColorOverlayImage());
 
-            const std::map<Color, Color>& colorMap = tmp.getColors();
-            auto it                                = colorMap.begin();
+            std::map<Color, Color> const & colorMap = tmp.getColors();
+            auto it                                 = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -162,7 +163,9 @@ namespace FIFE
         return v;
     }
 
-    InstanceVisual::InstanceVisual() : m_instance(nullptr), m_stackposition(0), m_transparency(0), m_visible(true) { }
+    InstanceVisual::InstanceVisual() : m_instance(nullptr), m_stackposition(0), m_transparency(0), m_visible(true)
+    {
+    }
 
     InstanceVisual* InstanceVisual::create(Instance* instance)
     {
@@ -228,7 +231,7 @@ namespace FIFE
         return v;
     }
 
-    void ActionVisual::addAnimation(uint32_t angle, const AnimationPtr& animationptr)
+    void ActionVisual::addAnimation(uint32_t angle, AnimationPtr const & animationptr)
     {
         m_animation_map[angle % 360] = animationptr;
         m_map[angle % 360]           = angle % 360;
@@ -240,7 +243,7 @@ namespace FIFE
         return m_animation_map[getIndexByAngle(angle, m_map, closestMatch)];
     }
 
-    void ActionVisual::addAnimationOverlay(uint32_t angle, int32_t order, const AnimationPtr& animationptr)
+    void ActionVisual::addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr const & animationptr)
     {
         std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[angle % 360];
         m_map[angle % 360]                        = angle % 360;
@@ -268,7 +271,7 @@ namespace FIFE
         }
     }
 
-    void ActionVisual::addColorOverlay(uint32_t angle, const OverlayColors& colors)
+    void ActionVisual::addColorOverlay(uint32_t angle, OverlayColors const & colors)
     {
         m_map[angle % 360] = angle % 360;
         std::pair<AngleColorOverlayMap::iterator, bool> const inserter =
@@ -278,8 +281,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
-            const std::map<Color, Color>& colorMap = tmp.getColors();
-            auto it                                = colorMap.begin();
+            std::map<Color, Color> const & colorMap = tmp.getColors();
+            auto it                                 = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -309,7 +312,7 @@ namespace FIFE
         m_colorOverlayMap.erase(index);
     }
 
-    void ActionVisual::addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors)
+    void ActionVisual::addColorOverlay(uint32_t angle, int32_t order, OverlayColors const & colors)
     {
         std::map<int32_t, OverlayColors>& orderMap = m_colorAnimationOverlayMap[angle % 360];
         m_map[angle % 360]                         = angle % 360;
@@ -320,8 +323,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
-            const std::map<Color, Color>& colorMap = tmp.getColors();
-            auto it                                = colorMap.begin();
+            std::map<Color, Color> const & colorMap = tmp.getColors();
+            auto it                                 = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }

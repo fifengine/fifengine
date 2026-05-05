@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "rawdatadat1.h"
+
 // Standard C++ library includes
 #include <memory>
 #include <string>
@@ -8,19 +11,14 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "lzssdecoder.h"
 #include "util/base/exception.h"
 #include "vfs/raw/rawdata.h"
-
-#include "lzssdecoder.h"
-#include "rawdatadat1.h"
 
 namespace FIFE
 {
 
-    RawDataDAT1::RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info) :
+    RawDataDAT1::RawDataDAT1(VFS* vfs, std::string const & datfile, s_info const & info) :
         RawDataMemSource(info.unpackedLength)
     {
 

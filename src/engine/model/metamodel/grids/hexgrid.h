@@ -14,44 +14,43 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/base/fife_stdint.h"
-
 #include "cellgrid.h"
+#include "util/base/fife_stdint.h"
 
 namespace FIFE
 {
     class /*FIFE_API*/ HexGrid : public CellGrid
     {
-    public:
-        explicit HexGrid(bool axial = false);
-        ~HexGrid() override;
+        public:
+            explicit HexGrid(bool axial = false);
+            ~HexGrid() override;
 
-        bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
-        const std::string& getType() const override;
-        const std::string& getName() const override;
-        double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
-        double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
-        uint32_t getCellSideCount() const override
-        {
-            return 6;
-        }
-        ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) override;
-        ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord) override;
-        ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord) override;
-        ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(
-            const ExactModelCoordinate& exact_layer_coords) override;
-        void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) override;
-        std::vector<ModelCoordinate> toMultiCoordinates(
-            const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse) override;
-        std::vector<ModelCoordinate> getCoordinatesInLine(
-            const ModelCoordinate& start, const ModelCoordinate& end) override;
-        CellGrid* clone() override;
+            bool isAccessible(ModelCoordinate const & curpos, ModelCoordinate const & target) override;
+            std::string const & getType() const override;
+            std::string const & getName() const override;
+            double getAdjacentCost(ModelCoordinate const & curpos, ModelCoordinate const & target) override;
+            double getHeuristicCost(ModelCoordinate const & curpos, ModelCoordinate const & target) override;
+            uint32_t getCellSideCount() const override
+            {
+                return 6;
+            }
+            ExactModelCoordinate toMapCoordinates(ExactModelCoordinate const & layer_coords) override;
+            ModelCoordinate toLayerCoordinates(ExactModelCoordinate const & map_coord) override;
+            ExactModelCoordinate toExactLayerCoordinates(ExactModelCoordinate const & map_coord) override;
+            ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(
+                ExactModelCoordinate const & exact_layer_coords) override;
+            void getVertices(std::vector<ExactModelCoordinate>& vtx, ModelCoordinate const & cell) override;
+            std::vector<ModelCoordinate> toMultiCoordinates(
+                ModelCoordinate const & position, std::vector<ModelCoordinate> const & orig, bool reverse) override;
+            std::vector<ModelCoordinate> getCoordinatesInLine(
+                ModelCoordinate const & start, ModelCoordinate const & end) override;
+            CellGrid* clone() override;
 
-    private:
-        double getXZigzagOffset(double y) const;
-        ModelCoordinate toLayerCoordinatesHelper(const ExactModelCoordinate& coords) const;
+        private:
+            double getXZigzagOffset(double y) const;
+            ModelCoordinate toLayerCoordinatesHelper(ExactModelCoordinate const & coords) const;
 
-        bool m_axial;
+            bool m_axial;
     };
 } // namespace FIFE
 

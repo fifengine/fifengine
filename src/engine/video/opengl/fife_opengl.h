@@ -10,8 +10,9 @@
 // Standard C++ library includes
 // 3rd party library includes
 
-// GLEW
+// GLEW - must be included first before any OpenGL headers
 #include "GL/glew.h"
+#define GLEW_INCLUDED
 
 // FIFE includes
 

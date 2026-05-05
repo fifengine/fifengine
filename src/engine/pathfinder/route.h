@@ -16,6 +16,8 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "model/metamodel/modelcoords.h"
+#include "model/structures/location.h"
 #include "util/base/fifeclass.h"
 
 namespace FIFE
@@ -51,238 +53,238 @@ namespace FIFE
      */
     class /*FIFE_API*/ Route : public FifeClass
     {
-    public:
-        /**
-         * Constructor
-         *
-         * @param start A const reference to the start location.
-         * @param end A const reference to the end/target location.
-         */
-        Route(const Location& start, const Location& end);
+        public:
+            /**
+             * Constructor
+             *
+             * @param start A const reference to the start location.
+             * @param end A const reference to the end/target location.
+             */
+            Route(Location const & start, Location const & end);
 
-        /**
-         * Destructor
-         */
-        ~Route();
+            /**
+             * Destructor
+             */
+            ~Route();
 
-        /** Sets route status.
-         * @param status The seach status that should be set.
-         */
-        void setRouteStatus(RouteStatusInfo status);
+            /** Sets route status.
+             * @param status The seach status that should be set.
+             */
+            void setRouteStatus(RouteStatusInfo status);
 
-        /** Returns route status.
-         * @return The seach status that is set.
-         */
-        RouteStatusInfo getRouteStatus() const;
+            /** Returns route status.
+             * @return The seach status that is set.
+             */
+            RouteStatusInfo getRouteStatus() const;
 
-        /** Sets the start location.
-         * @param node A const reference to the start location.
-         */
-        void setStartNode(const Location& node);
+            /** Sets the start location.
+             * @param node A const reference to the start location.
+             */
+            void setStartNode(Location const & node);
 
-        /** Returns the start location.
-         * @return A const reference to the start location.
-         */
-        const Location& getStartNode();
+            /** Returns the start location.
+             * @return A const reference to the start location.
+             */
+            Location const & getStartNode();
 
-        /** Sets the target location.
-         * @param node A const reference to the end location.
-         */
-        void setEndNode(const Location& node);
+            /** Sets the target location.
+             * @param node A const reference to the end location.
+             */
+            void setEndNode(Location const & node);
 
-        /** Returns the target location.
-         * @return A const reference to the end location.
-         */
-        const Location& getEndNode();
+            /** Returns the target location.
+             * @return A const reference to the end location.
+             */
+            Location const & getEndNode();
 
-        /** Returns current location.
-         * @return A const reference to the currently used location.
-         */
-        const Location& getCurrentNode();
+            /** Returns current location.
+             * @return A const reference to the currently used location.
+             */
+            Location const & getCurrentNode();
 
-        /** Returns previous location.
-         * @return A const reference to the previous location.
-         */
-        const Location& getPreviousNode();
+            /** Returns previous location.
+             * @return A const reference to the previous location.
+             */
+            Location const & getPreviousNode();
 
-        /** Returns next location.
-         * @return A const reference to the next location.
-         */
-        const Location& getNextNode();
+            /** Returns next location.
+             * @return A const reference to the next location.
+             */
+            Location const & getNextNode();
 
-        /** Changes the position on the path.
-         * Changes the results of getCurrentNode(), getPreviousNode() and getPreviousNode().
-         * @param step A integer that indicates how much steps should be walked along the path, default is one.
-         * @return A boolean, true if the position could be changed, false otherwise e.g. at path end.
-         */
-        bool walkToNextNode(int32_t step = 1);
+            /** Changes the position on the path.
+             * Changes the results of getCurrentNode(), getPreviousNode() and getPreviousNode().
+             * @param step A integer that indicates how much steps should be walked along the path, default is one.
+             * @return A boolean, true if the position could be changed, false otherwise e.g. at path end.
+             */
+            bool walkToNextNode(int32_t step = 1);
 
-        /** Gets if the end of the path was achieved.
-         * @return A boolean, if true the end is achieved, false otherwise.
-         */
-        bool reachedEnd();
+            /** Gets if the end of the path was achieved.
+             * @return A boolean, if true the end is achieved, false otherwise.
+             */
+            bool reachedEnd();
 
-        /** Sets the path for the route.
-         * @param path A const reference to the path.
-         */
-        void setPath(const Path& path);
+            /** Sets the path for the route.
+             * @param path A const reference to the path.
+             */
+            void setPath(Path const & path);
 
-        /** Returns the path.
-         * @return The path which contains all steps.
-         */
-        const Path& getPath();
+            /** Returns the path.
+             * @return The path which contains all steps.
+             */
+            Path const & getPath();
 
-        /** Cuts path after the given length.
-         * @param length The new length of the path.
-         */
-        void cutPath(uint32_t length = 1);
+            /** Cuts path after the given length.
+             * @param length The new length of the path.
+             */
+            void cutPath(uint32_t length = 1);
 
-        /** Sets the route to replanned.
-         * @param replanned A boolean that indicates if true the route is replanned, otherwise false.
-         */
-        void setReplanned(bool replanned);
+            /** Sets the route to replanned.
+             * @param replanned A boolean that indicates if true the route is replanned, otherwise false.
+             */
+            void setReplanned(bool replanned);
 
-        /** Gets if the route is replanned.
-         * @return A boolean, if true the route is replanned, otherwise false.
-         */
-        bool isReplanned() const;
+            /** Gets if the route is replanned.
+             * @return A boolean, if true the route is replanned, otherwise false.
+             */
+            bool isReplanned() const;
 
-        /** Returns the length of the path.
-         * @return The path length.
-         */
-        uint32_t getPathLength();
+            /** Returns the length of the path.
+             * @return The path length.
+             */
+            uint32_t getPathLength();
 
-        /** Returns the walked steps.
-         * @return The number of walked steps.
-         */
-        uint32_t getWalkedLength() const;
+            /** Returns the walked steps.
+             * @return The number of walked steps.
+             */
+            uint32_t getWalkedLength() const;
 
-        /** Sets the session identifier.
-         * @param id A integer as identifier for the search session.
-         */
-        void setSessionId(int32_t id);
+            /** Sets the session identifier.
+             * @param id A integer as identifier for the search session.
+             */
+            void setSessionId(int32_t id);
 
-        /** Returns the session identifier.
-         * @return A integer as identifier for the search session.
-         */
-        int32_t getSessionId() const;
+            /** Returns the session identifier.
+             * @return A integer as identifier for the search session.
+             */
+            int32_t getSessionId() const;
 
-        /** Sets the current rotation.
-         * @param rotation The rotation as integer.
-         */
-        void setRotation(int32_t rotation);
+            /** Sets the current rotation.
+             * @param rotation The rotation as integer.
+             */
+            void setRotation(int32_t rotation);
 
-        /** Returns the current rotation.
-         * @return The rotation as integer.
-         */
-        int32_t getRotation() const;
+            /** Returns the current rotation.
+             * @return The rotation as integer.
+             */
+            int32_t getRotation() const;
 
-        /** Sets cost identifier which should be used for pathfinding.
-         * @param cost A const reference to the string that contains the identifier.
-         */
-        void setCostId(const std::string& cost);
+            /** Sets cost identifier which should be used for pathfinding.
+             * @param cost A const reference to the string that contains the identifier.
+             */
+            void setCostId(std::string const & cost);
 
-        /** Returns cost identifier which is used for pathfinding.
-         * @return A const reference to the string that contains the identifier.
-         */
-        const std::string& getCostId();
+            /** Returns cost identifier which is used for pathfinding.
+             * @return A const reference to the string that contains the identifier.
+             */
+            std::string const & getCostId();
 
-        /** Gets if path is for a multi cell object.
-         * @return A boolean, true if path is for multi cell, otherwise false.
-         */
-        bool isMultiCell();
+            /** Gets if path is for a multi cell object.
+             * @return A boolean, true if path is for multi cell, otherwise false.
+             */
+            bool isMultiCell();
 
-        /** Sets occupied coordinates for multi cell object.
-         * @param area A const reference to a vector that contains the coordinates.
-         */
-        void setOccupiedArea(const std::vector<ModelCoordinate>& area);
+            /** Sets occupied coordinates for multi cell object.
+             * @param area A const reference to a vector that contains the coordinates.
+             */
+            void setOccupiedArea(std::vector<ModelCoordinate> const & area);
 
-        /** Returns occupied coordinates for multi cell object.
-         * @return A const reference to a vector that contains the coordinates.
-         */
-        const std::vector<ModelCoordinate>& getOccupiedArea();
+            /** Returns occupied coordinates for multi cell object.
+             * @return A const reference to a vector that contains the coordinates.
+             */
+            std::vector<ModelCoordinate> const & getOccupiedArea();
 
-        /** Returns relative coordinates for multi cell object based on rotation.
-         * @param rotation The angle which is used to determine the occupied coordinates.
-         * @return A const reference to a vector that contains the coordinates.
-         */
-        std::vector<ModelCoordinate> getOccupiedCells(int32_t rotation);
+            /** Returns relative coordinates for multi cell object based on rotation.
+             * @param rotation The angle which is used to determine the occupied coordinates.
+             * @return A const reference to a vector that contains the coordinates.
+             */
+            std::vector<ModelCoordinate> getOccupiedCells(int32_t rotation);
 
-        /** Returns z-step range from object. In case it is not limited -1 is returned.
-         * @return The z-step range as int.
-         */
-        int32_t getZStepRange();
+            /** Returns z-step range from object. In case it is not limited -1 is returned.
+             * @return The z-step range as int.
+             */
+            int32_t getZStepRange();
 
-        bool isAreaLimited();
-        std::list<std::string> getLimitedAreas();
+            bool isAreaLimited();
+            std::list<std::string> getLimitedAreas();
 
-        /** Sets the route to ignore dynamic blocker.
-         * @param ignore A boolean that indicates if true the route ignores blocker, otherwise false.
-         */
-        void setDynamicBlockerIgnored(bool ignore);
+            /** Sets the route to ignore dynamic blocker.
+             * @param ignore A boolean that indicates if true the route ignores blocker, otherwise false.
+             */
+            void setDynamicBlockerIgnored(bool ignore);
 
-        /** Gets if the route ignores dynamic blocker.
-         * @return A boolean, if true the route ignores blocker, otherwise false.
-         */
-        bool isDynamicBlockerIgnored() const;
+            /** Gets if the route ignores dynamic blocker.
+             * @return A boolean, if true the route ignores blocker, otherwise false.
+             */
+            bool isDynamicBlockerIgnored() const;
 
-        /** Returns the blocking locations of the path.
-         * Only useful in case the blocking ignore flag is set.
-         * @return A location list that contains all blocking locations of the path.
-         */
-        Path getBlockingPathLocations();
+            /** Returns the blocking locations of the path.
+             * Only useful in case the blocking ignore flag is set.
+             * @return A location list that contains all blocking locations of the path.
+             */
+            Path getBlockingPathLocations();
 
-        /** Sets the object, needed for multi cell and z-step range.
-         * @param obj A pointer to the object.
-         */
-        void setObject(Object* obj);
+            /** Sets the object, needed for multi cell and z-step range.
+             * @param obj A pointer to the object.
+             */
+            void setObject(Object* obj);
 
-        /** Returns the object, needed for multi cell and z-step range.
-         * @return A pointer to the object.
-         */
-        Object* getObject();
+            /** Returns the object, needed for multi cell and z-step range.
+             * @return A pointer to the object.
+             */
+            Object* getObject();
 
-    private:
-        //! path iterator
-        using PathIterator = Path::iterator;
-        //! search status
-        RouteStatusInfo m_status;
+        private:
+            //! path iterator
+            using PathIterator = Path::iterator;
+            //! search status
+            RouteStatusInfo m_status;
 
-        //! start location
-        Location m_startNode;
+            //! start location
+            Location m_startNode;
 
-        //! end location
-        Location m_endNode;
+            //! end location
+            Location m_endNode;
 
-        //! path
-        Path m_path;
+            //! path
+            Path m_path;
 
-        //! current position on the path
-        PathIterator m_current;
+            //! current position on the path
+            PathIterator m_current;
 
-        //! walked steps on the path
-        uint32_t m_walked;
+            //! walked steps on the path
+            uint32_t m_walked;
 
-        //! session id of the search
-        int32_t m_sessionId;
+            //! session id of the search
+            int32_t m_sessionId;
 
-        //! current rotation
-        int32_t m_rotation;
+            //! current rotation
+            int32_t m_rotation;
 
-        //! is path replanned
-        bool m_replanned;
+            //! is path replanned
+            bool m_replanned;
 
-        //! ignores dynamic blocker
-        bool m_ignoresBlocker;
+            //! ignores dynamic blocker
+            bool m_ignoresBlocker;
 
-        //! used cost identifier
-        std::string m_costId;
+            //! used cost identifier
+            std::string m_costId;
 
-        //! occupied cells by multicell object
-        std::vector<ModelCoordinate> m_area;
+            //! occupied cells by multicell object
+            std::vector<ModelCoordinate> m_area;
 
-        //! pointer to multi object
-        Object* m_object;
+            //! pointer to multi object
+            Object* m_object;
     };
 
 } // namespace FIFE

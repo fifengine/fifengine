@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "glimage.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
@@ -9,16 +12,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "video/imagemanager.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "video/renderbackend.h"
 #include "video/sdl/sdlimage.h"
-
-#include "glimage.h"
 
 namespace FIFE
 {
@@ -32,11 +30,10 @@ namespace FIFE
         m_colorkey{0, 0, 0, 0},
         m_compressed(false)
     {
-
         resetGlimage();
     }
 
-    GLImage::GLImage(const std::string& name, IResourceLoader* loader) :
+    GLImage::GLImage(std::string const & name, IResourceLoader* loader) :
         Image(name, loader),
         m_tex_coords{0, 0, 0, 0},
         m_shared_img(nullptr),
@@ -46,7 +43,6 @@ namespace FIFE
         m_colorkey{0, 0, 0, 0},
         m_compressed(false)
     {
-
         resetGlimage();
     }
 
@@ -60,11 +56,10 @@ namespace FIFE
         m_colorkey{0, 0, 0, 0},
         m_compressed(false)
     {
-
         resetGlimage();
     }
 
-    GLImage::GLImage(const std::string& name, SDL_Surface* surface) :
+    GLImage::GLImage(std::string const & name, SDL_Surface* surface) :
         Image(name, surface),
         m_tex_coords{0, 0, 0, 0},
         m_shared_img(nullptr),
@@ -74,11 +69,10 @@ namespace FIFE
         m_colorkey{0, 0, 0, 0},
         m_compressed(false)
     {
-
         resetGlimage();
     }
 
-    GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height) :
+    GLImage::GLImage(uint8_t const * data, uint32_t width, uint32_t height) :
         Image(data, width, height),
         m_tex_coords{0, 0, 0, 0},
         m_shared_img(nullptr),
@@ -93,7 +87,7 @@ namespace FIFE
         resetGlimage();
     }
 
-    GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
+    GLImage::GLImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) :
         Image(name, data, width, height),
         m_tex_coords{0, 0, 0, 0},
         m_shared_img(nullptr),
@@ -147,14 +141,14 @@ namespace FIFE
         m_tex_coords[0] = m_tex_coords[1] = m_tex_coords[2] = m_tex_coords[3] = 0.0F;
     }
 
-    void GLImage::render(const Rect& rect, uint8_t alpha, uint8_t const * rgb)
+    void GLImage::render(Rect const & rect, uint8_t alpha, uint8_t const * rgb)
     {
         // completely transparent so dont bother rendering
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb         = RenderBackend::instance();
-        const SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb          = RenderBackend::instance();
+        SDL_Surface const * target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -171,14 +165,14 @@ namespace FIFE
         rb->addImageToArray(m_texId, rect, &m_tex_coords[0], alpha, rgb);
     }
 
-    void GLImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const * rgb)
+    void GLImage::render(Rect const & rect, ImagePtr const & overlay, uint8_t alpha, uint8_t const * rgb)
     {
         // completely transparent so dont bother rendering
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb         = RenderBackend::instance();
-        const SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb          = RenderBackend::instance();
+        SDL_Surface const * target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -200,14 +194,14 @@ namespace FIFE
         // rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
     }
 
-    void GLImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, uint8_t const * rgb)
+    void GLImage::renderZ(Rect const & rect, float vertexZ, uint8_t alpha, uint8_t const * rgb)
     {
         // completely transparent so dont bother rendering
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb         = RenderBackend::instance();
-        const SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb          = RenderBackend::instance();
+        SDL_Surface const * target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -224,14 +218,15 @@ namespace FIFE
         // rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
     }
 
-    void GLImage::renderZ(const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha, uint8_t const * rgb)
+    void GLImage::renderZ(
+        Rect const & rect, float vertexZ, ImagePtr const & overlay, uint8_t alpha, uint8_t const * rgb)
     {
         // completely transparent so dont bother rendering
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb         = RenderBackend::instance();
-        const SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb          = RenderBackend::instance();
+        SDL_Surface const * target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -268,8 +263,8 @@ namespace FIFE
                 load();
             }
         }
-        const uint32_t width  = m_surface->w;
-        const uint32_t height = m_surface->h;
+        uint32_t const width  = m_surface->w;
+        uint32_t const height = m_surface->h;
 
         // With OpenGL 2.0 or GL_ARB_texture_non_power_of_two we don't really need to care
         // about non power of 2 textures
@@ -348,9 +343,10 @@ namespace FIFE
             m_compressed = false;
         }
 
-        bool const monochrome    = RenderBackend::instance()->isMonochromeEnabled();
-        int32_t const bpp_target = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
-        int32_t const bpp_source = m_surface->format->BitsPerPixel;
+        bool const monochrome                  = RenderBackend::instance()->isMonochromeEnabled();
+        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(RenderBackend::instance()->getPixelFormat());
+        int32_t const bpp_target               = details->bits_per_pixel;
+        int32_t const bpp_source               = SDL_BYTESPERPIXEL(m_surface->format);
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
             auto* oglbuffer = new uint16_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
@@ -544,7 +540,7 @@ namespace FIFE
         }
     }
 
-    void GLImage::generateGLSharedTexture(const GLImage* shared, const Rect& region)
+    void GLImage::generateGLSharedTexture(GLImage const * shared, Rect const & region)
     {
         uint32_t width  = shared->getWidth();
         uint32_t height = shared->getHeight();
@@ -569,7 +565,7 @@ namespace FIFE
         }
     }
 
-    void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region)
+    void GLImage::useSharedImage(ImagePtr const & shared, Rect const & region)
     {
         auto* img = dynamic_cast<GLImage*>(shared.get());
 
@@ -618,7 +614,7 @@ namespace FIFE
         generateGLSharedTexture(m_shared_img, m_subimagerect);
     }
 
-    void GLImage::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img)
+    void GLImage::copySubimage(uint32_t xoffset, uint32_t yoffset, ImagePtr const & img)
     {
         Image::copySubimage(xoffset, yoffset, img);
 
@@ -680,7 +676,7 @@ namespace FIFE
         return m_texId;
     }
 
-    const GLfloat* GLImage::getTexCoords() const
+    GLfloat const * GLImage::getTexCoords() const
     {
         return &m_tex_coords[0];
     }

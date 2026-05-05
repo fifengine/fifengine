@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "hexgrid.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <cmath>
@@ -11,25 +14,20 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-
-#include "hexgrid.h"
 
 namespace FIFE
 {
     static Logger _log(LM_HEXGRID);
 
-    static const double HEX_WIDTH           = 1;
-    static const double HEX_TO_EDGE         = HEX_WIDTH / 2;
-    static const double HEX_TO_CORNER       = 0.5 / Mathd::Cos(Mathd::pi() / 6);
-    static const double HEX_EDGE_HALF       = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
-    static const double VERTICAL_MULTIP     = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
-    static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
-    static const double HEX_EDGE_GRADIENT   = 1 / Mathd::Sqrt(3);
+    static double const HEX_WIDTH           = 1;
+    static double const HEX_TO_EDGE         = HEX_WIDTH / 2;
+    static double const HEX_TO_CORNER       = 0.5 / Mathd::Cos(Mathd::pi() / 6);
+    static double const HEX_EDGE_HALF       = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
+    static double const VERTICAL_MULTIP     = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
+    static double const VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
+    static double const HEX_EDGE_GRADIENT   = 1 / Mathd::Sqrt(3);
 
     HexGrid::HexGrid(bool axial) : m_axial(axial)
     {
@@ -57,7 +55,7 @@ namespace FIFE
 
     HexGrid::~HexGrid() = default;
 
-    bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    bool HexGrid::isAccessible(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         int32_t const x = target.x - curpos.x;
         int32_t const y = target.y - curpos.y;
@@ -80,7 +78,7 @@ namespace FIFE
         return false;
     }
 
-    double HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    double HexGrid::getAdjacentCost(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         if (curpos == target) {
             return 0.0;
@@ -88,12 +86,12 @@ namespace FIFE
         return 1.0;
     }
 
-    double HexGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
+    double HexGrid::getHeuristicCost(ModelCoordinate const & curpos, ModelCoordinate const & target)
     {
         return static_cast<double>(std::abs(target.x - curpos.x) + std::abs(target.y - curpos.y));
     }
 
-    const std::string& HexGrid::getType() const
+    std::string const & HexGrid::getType() const
     {
         if (m_axial) {
             static std::string const type("hexagonal_axial");
@@ -103,7 +101,7 @@ namespace FIFE
         return type;
     }
 
-    const std::string& HexGrid::getName() const
+    std::string const & HexGrid::getName() const
     {
         if (m_axial) {
             static std::string const hexGrid("Hex Grid (Axial)");
@@ -130,7 +128,7 @@ namespace FIFE
         return HEX_TO_EDGE * offset;
     }
 
-    ExactModelCoordinate HexGrid::toMapCoordinates(const ExactModelCoordinate& layer_coords)
+    ExactModelCoordinate HexGrid::toMapCoordinates(ExactModelCoordinate const & layer_coords)
     {
         ExactModelCoordinate tranformed_coords(layer_coords);
         tranformed_coords.x += getXZigzagOffset(layer_coords.y);
@@ -140,7 +138,7 @@ namespace FIFE
         return result;
     }
 
-    ExactModelCoordinate HexGrid::toExactLayerCoordinates(const ExactModelCoordinate& map_coord)
+    ExactModelCoordinate HexGrid::toExactLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
         ExactModelCoordinate layer_coords = m_inverse_matrix * map_coord;
         layer_coords.y /= VERTICAL_MULTIP;
@@ -149,7 +147,7 @@ namespace FIFE
         return layer_coords;
     }
 
-    ModelCoordinate HexGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord)
+    ModelCoordinate HexGrid::toLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
         FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
         ExactModelCoordinate elc = m_inverse_matrix * map_coord;
@@ -157,14 +155,15 @@ namespace FIFE
         return toLayerCoordinatesHelper(elc);
     }
 
-    ModelCoordinate HexGrid::toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords)
+    ModelCoordinate HexGrid::toLayerCoordinatesFromExactLayerCoordinates(
+        ExactModelCoordinate const & exact_layer_coords)
     {
         ExactModelCoordinate elc = exact_layer_coords;
         elc.x += getXZigzagOffset(elc.y);
         return toLayerCoordinatesHelper(elc);
     }
 
-    ModelCoordinate HexGrid::toLayerCoordinatesHelper(const ExactModelCoordinate& coords) const
+    ModelCoordinate HexGrid::toLayerCoordinatesHelper(ExactModelCoordinate const & coords) const
     {
         // this helper method takes exact layer coordinates with zigzag removed
         // and converts them to layer coordinates
@@ -228,7 +227,7 @@ namespace FIFE
         return ModelCoordinate(x, y, z);
     }
 
-    void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell)
+    void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, ModelCoordinate const & cell)
     {
         FL_DBG(_log, LMsg("===============\ngetting vertices for ") << cell);
         vtx.clear();
@@ -247,7 +246,7 @@ namespace FIFE
         double tx = 0.0;
         double ty = 0.0;
 
-        const auto addPt = [&vtx](double px, double py) {
+        auto const addPt = [&vtx](double px, double py) {
             vtx.emplace_back(px, py);
         };
         // FL_DBG(_log, LMsg("Added point ") << px << ", " << py)
@@ -277,7 +276,7 @@ namespace FIFE
     }
 
     std::vector<ModelCoordinate> HexGrid::toMultiCoordinates(
-        const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse)
+        ModelCoordinate const & position, std::vector<ModelCoordinate> const & orig, bool reverse)
     {
         std::vector<ModelCoordinate> coords;
         auto it = orig.begin();
@@ -315,7 +314,8 @@ namespace FIFE
         return coords;
     }
 
-    std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end)
+    std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(
+        ModelCoordinate const & start, ModelCoordinate const & end)
     {
         std::vector<ModelCoordinate> coords;
         int32_t const doubleDeltaX = (2 * (end.x - start.x)) + std::abs(end.y % 2) - std::abs(start.y % 2);

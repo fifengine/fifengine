@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "percentdonelistener.h"
+
 // Standard C++ library includes
 #include <iostream>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
-#include "percentdonelistener.h"
 
 namespace FIFE
 {
-    const uint32_t minPercent = 0;
-    const uint32_t maxPercent = 100;
+    uint32_t const minPercent = 0;
+    uint32_t const maxPercent = 100;
 
     PercentDoneListener::~PercentDoneListener() = default;
 
-    PercentDoneCallback::PercentDoneCallback() : m_totalElements(0), m_percent(1), m_numberOfEvents(0), m_count(0) { }
+    PercentDoneCallback::PercentDoneCallback() : m_totalElements(0), m_percent(1), m_numberOfEvents(0), m_count(0)
+    {
+    }
 
     PercentDoneCallback::~PercentDoneCallback() = default;
 
@@ -52,7 +52,7 @@ namespace FIFE
                 fireEvent(maxPercent);
             } else {
                 // calculate percent done
-                const uint32_t percentDone =
+                uint32_t const percentDone =
                     static_cast<uint32_t>((static_cast<uint64_t>(m_count) * maxPercent) / m_totalElements);
 
                 if ((percentDone % m_percent) == 0 && (percentDone != m_percent * m_numberOfEvents)) {
@@ -83,7 +83,7 @@ namespace FIFE
         }
     }
 
-    void PercentDoneCallback::removeListener(const PercentDoneListener* listener)
+    void PercentDoneCallback::removeListener(PercentDoneListener const * listener)
     {
         auto iter = m_listeners.begin();
         for (; iter != m_listeners.end(); ++iter) {

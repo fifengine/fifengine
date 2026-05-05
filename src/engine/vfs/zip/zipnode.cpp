@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "zipnode.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <filesystem>
@@ -9,12 +12,7 @@
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "vfs/filesystem.h"
-
-#include "zipnode.h"
 
 namespace
 {
@@ -25,18 +23,18 @@ namespace
      * @param name the name to search for
      * @return the ZipNode pointer, or NULL if not found
      */
-    FIFE::ZipNode* FindNameInContainer(const FIFE::ZipNodeContainer& container, const std::string& name)
+    FIFE::ZipNode* FindNameInContainer(FIFE::ZipNodeContainer const & container, std::string const & name)
     {
-        auto it = std::ranges::find_if(container, [&](const auto* node) {
+        auto it = std::ranges::find_if(container, [&](auto const * node) {
             return node->getName() == name;
         });
 
         return (it != container.end()) ? *it : nullptr;
     }
 
-    FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, const std::string& name)
+    FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, std::string const & name)
     {
-        return std::ranges::find_if(container, [&](const auto* node) {
+        return std::ranges::find_if(container, [&](auto const * node) {
             return node->getName() == name;
         });
     }
@@ -44,7 +42,9 @@ namespace
 
 namespace FIFE
 {
-    ZipEntryData::ZipEntryData() : comp(0), crc32(0), size_comp(0), size_real(0), offset(0) { }
+    ZipEntryData::ZipEntryData() : comp(0), crc32(0), size_comp(0), size_real(0), offset(0)
+    {
+    }
 
     ZipNode::ZipNode(std::string name, ZipNode* parent /*=0*/) : m_name(std::move(name)), m_parent(parent)
     {
@@ -72,7 +72,7 @@ namespace FIFE
         m_directoryChildren.clear();
     }
 
-    const std::string& ZipNode::getName() const
+    std::string const & ZipNode::getName() const
     {
         return m_name;
     }
@@ -124,9 +124,10 @@ namespace FIFE
         }
     }
 
-    ZipNode* ZipNode::getChild(const std::string& name, ZipContentType::Enum contentType /*=ZipContentType::All*/) const
+    ZipNode* ZipNode::getChild(
+        std::string const & name, ZipContentType::Enum contentType /*=ZipContentType::All*/) const
     {
-        const bool hasExtension = HasExtension(name);
+        bool const hasExtension = HasExtension(name);
 
         switch (contentType) {
         default: // fall through on purpose
@@ -157,7 +158,7 @@ namespace FIFE
         }
     }
 
-    ZipNode* ZipNode::addChild(const std::string& name)
+    ZipNode* ZipNode::addChild(std::string const & name)
     {
         auto* child = new ZipNode(name, this);
         if (child != nullptr) {
@@ -188,7 +189,7 @@ namespace FIFE
         }
     }
 
-    void ZipNode::removeChild(const std::string& name)
+    void ZipNode::removeChild(std::string const & name)
     {
         if (HasExtension(name)) {
             auto iter = FindNameInContainer(m_fileChildren, name);
@@ -217,18 +218,18 @@ namespace FIFE
         return (!isLeaf());
     }
 
-    void ZipNode::setZipEntryData(const ZipEntryData& entryData)
+    void ZipNode::setZipEntryData(ZipEntryData const & entryData)
     {
         m_entryData = entryData;
     }
 
-    const ZipEntryData& ZipNode::getZipEntryData() const
+    ZipEntryData const & ZipNode::getZipEntryData() const
     {
         return m_entryData;
     }
 } // namespace FIFE
 
-std::ostream& operator<<(std::ostream& os, const FIFE::ZipNode& node)
+std::ostream& operator<<(std::ostream& os, FIFE::ZipNode const & node)
 {
     // print node name first
     os << node.getName() << '\n';

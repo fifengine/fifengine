@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "instancetree.h"
+
 // Standard C++ library includes
 #include <algorithm>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/instance.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
-
-#include "instancetree.h"
 
 namespace FIFE
 {
@@ -27,7 +25,7 @@ namespace FIFE
 
     void InstanceTree::addInstance(Instance* instance)
     {
-        const ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
+        ModelCoordinate const coords = instance->getLocationRef().getLayerCoordinates();
         InstanceTreeNode* node       = m_tree.find_container(coords.x, coords.y, 0, 0);
         InstanceList& list           = node->data();
         list.push_back(instance);
@@ -48,7 +46,7 @@ namespace FIFE
         m_reverse.erase(instance);
         InstanceList& list = node->data();
 
-        auto it = std::ranges::find_if(list, [instance](const Instance* i) {
+        auto it = std::ranges::find_if(list, [instance](Instance const * i) {
             return i == instance;
         });
         if (it != list.end()) {
@@ -61,14 +59,14 @@ namespace FIFE
 
     class InstanceListCollector
     {
-    public:
-        InstanceTree::InstanceList* instanceList;
-        Rect searchRect;
-        InstanceListCollector(InstanceTree::InstanceList* a_instanceList, const Rect& rect) :
-            instanceList(a_instanceList), searchRect(rect)
-        {
-        }
-        bool visit(InstanceTree::InstanceTreeNode* node, int32_t d) const;
+        public:
+            InstanceTree::InstanceList* instanceList;
+            Rect searchRect;
+            InstanceListCollector(InstanceTree::InstanceList* a_instanceList, Rect const & rect) :
+                instanceList(a_instanceList), searchRect(rect)
+            {
+            }
+            bool visit(InstanceTree::InstanceTreeNode* node, int32_t d) const;
     };
 
     bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, [[maybe_unused]] int32_t d) const
@@ -84,11 +82,11 @@ namespace FIFE
     }
 
     void InstanceTree::findInstances(
-        const ModelCoordinate& point, int32_t w, int32_t h, InstanceTree::InstanceList& list)
+        ModelCoordinate const & point, int32_t w, int32_t h, InstanceTree::InstanceList& list)
     {
         list.clear();
         InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
-        const Rect rect(point.x, point.y, w, h);
+        Rect const rect(point.x, point.y, w, h);
         InstanceListCollector collector(&list, rect);
 
         node->apply_visitor(collector);
@@ -96,7 +94,7 @@ namespace FIFE
         node = node->parent();
         while (node != nullptr) {
             for (InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
-                const ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
+                ModelCoordinate const coords = (*it)->getLocationRef().getLayerCoordinates();
                 if (rect.contains(Point(coords.x, coords.y))) {
                     list.push_back(*it);
                 }

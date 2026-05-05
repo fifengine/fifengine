@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "engine.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <iostream>
@@ -8,13 +11,10 @@
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/soundclipmanager.h"
 #include "audio/soundmanager.h"
 #include "eventchannel/eventmanager.h"
@@ -35,7 +35,6 @@
     #include "video/opengl/fife_opengl.h"
     #include "video/opengl/renderbackendopengl.h"
 #endif
-#include "engine.h"
 #include "loaders/native/audio/ogg_loader.h"
 #include "loaders/native/video/imageloader.h"
 #include "model/metamodel/grids/hexgrid.h"
@@ -113,12 +112,12 @@ namespace FIFE
         return m_settings;
     }
 
-    const DeviceCaps& Engine::getDeviceCaps() const
+    DeviceCaps const & Engine::getDeviceCaps() const
     {
         return m_devcaps;
     }
 
-    void Engine::changeScreenMode(const ScreenMode& mode)
+    void Engine::changeScreenMode(ScreenMode const & mode)
     {
         m_cursor->invalidate();
 
@@ -161,10 +160,7 @@ namespace FIFE
         // m_vfs->addProvider(ProviderDAT1());
         FL_LOG(_log, "Engine pre-init done");
 
-        // If failed to init SDL throw exception.
-        if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-            throw SDLException(SDL_GetError());
-        }
+        // SDL3 initializes the timer subsystem automatically, no need for SDL_Init(SDL_INIT_TIMER)
 
         TTF_Init();
 
@@ -181,7 +177,7 @@ namespace FIFE
         m_soundclipmanager = new SoundClipManager();
 
         FL_LOG(_log, "Creating render backend");
-        const std::string rbackend(m_settings.getRenderBackend());
+        std::string const rbackend(m_settings.getRenderBackend());
         if (rbackend == "SDL") {
             m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
             FL_LOG(_log, "SDL Render backend created");
@@ -247,12 +243,12 @@ namespace FIFE
         FL_LOG(_log, "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
 
-        const uint8_t displayCount = m_devcaps.getDisplayCount();
+        uint8_t const displayCount = m_devcaps.getDisplayCount();
         if (displayCount == 0) {
             throw NotSupported("Could not find any display!");
         }
 
-        const uint8_t requestedDisplay = m_settings.getDisplay();
+        uint8_t const requestedDisplay = m_settings.getDisplay();
         uint8_t selectedDisplay        = requestedDisplay;
         if (requestedDisplay >= displayCount) {
             FL_WARN(
@@ -262,8 +258,8 @@ namespace FIFE
             selectedDisplay = 0;
         }
 
-        const uint16_t requestedWidth  = m_settings.getScreenWidth();
-        const uint16_t requestedHeight = m_settings.getScreenHeight();
+        uint16_t const requestedWidth  = m_settings.getScreenWidth();
+        uint16_t const requestedHeight = m_settings.getScreenHeight();
         uint16_t selectedWidth         = requestedWidth;
         uint16_t selectedHeight        = requestedHeight;
 
@@ -287,7 +283,7 @@ namespace FIFE
             LMsg("Using display index ") << int32_t(selectedDisplay) << " out of " << int32_t(displayCount)
                                          << " displays with resolution " << selectedWidth << "x" << selectedHeight);
 
-        const uint16_t bpp = m_settings.getBitsPerPixel();
+        uint16_t const bpp = m_settings.getBitsPerPixel();
 
         m_screenMode = m_devcaps.getNearestScreenMode(
             selectedWidth,

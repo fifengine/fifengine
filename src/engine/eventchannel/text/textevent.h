@@ -16,7 +16,6 @@
 //
 #include "eventchannel/base/inputevent.h"
 #include "eventchannel/source/ieventsource.h"
-
 #include "text.h"
 
 namespace FIFE
@@ -26,86 +25,88 @@ namespace FIFE
      */
     class /*FIFE_API*/ TextEvent : public InputEvent
     {
-    public:
-        enum TextEventType : uint8_t
-        {
-            UNKNOWN = 0,
-            INPUT   = 1,
-            EDIT    = 2
-        };
+        public:
+            enum TextEventType : uint8_t
+            {
+                UNKNOWN = 0,
+                INPUT   = 1,
+                EDIT    = 2
+            };
 
-        /** Constructor
-         */
-        TextEvent() : m_eventType(UNKNOWN) { }
+            /** Constructor
+             */
+            TextEvent() : m_eventType(UNKNOWN)
+            {
+            }
 
-        /** Destructor.
-         */
-        virtual ~TextEvent() = default;
+            /** Destructor.
+             */
+            virtual ~TextEvent() = default;
 
-        TextEventType getType() const
-        {
-            return m_eventType;
-        }
-        void setType(TextEventType type)
-        {
-            m_eventType = type;
-        }
+            TextEventType getType() const
+            {
+                return m_eventType;
+            }
+            void setType(TextEventType type)
+            {
+                m_eventType = type;
+            }
 
-        const Text& getText() const
-        {
-            return m_text;
-        }
-        void setText(const Text& text)
-        {
-            m_text = text;
-        }
+            Text const & getText() const
+            {
+                return m_text;
+            }
+            void setText(Text const & text)
+            {
+                m_text = text;
+            }
 
-        virtual void consume()
-        {
-            InputEvent::consume();
-        }
-        virtual bool isConsumed() const
-        {
-            return InputEvent::isConsumed();
-        }
-        virtual void consumedByWidgets()
-        {
-            InputEvent::consumedByWidgets();
-        }
-        virtual bool isConsumedByWidgets() const
-        {
-            return InputEvent::isConsumedByWidgets();
-        }
-        virtual IEventSource* getSource() const
-        {
-            return InputEvent::getSource();
-        }
-        virtual void setSource(IEventSource* source)
-        {
-            InputEvent::setSource(source);
-        }
-        virtual int32_t getTimeStamp() const
-        {
-            return InputEvent::getTimeStamp();
-        }
-        virtual void setTimeStamp(int32_t timestamp)
-        {
-            InputEvent::setTimeStamp(timestamp);
-        }
+            virtual void consume()
+            {
+                InputEvent::consume();
+            }
+            virtual bool isConsumed() const
+            {
+                return InputEvent::isConsumed();
+            }
+            virtual void consumedByWidgets()
+            {
+                InputEvent::consumedByWidgets();
+            }
+            virtual bool isConsumedByWidgets() const
+            {
+                return InputEvent::isConsumedByWidgets();
+            }
+            virtual IEventSource* getSource() const
+            {
+                return InputEvent::getSource();
+            }
+            virtual void setSource(IEventSource* source)
+            {
+                InputEvent::setSource(source);
+            }
+            virtual int32_t getTimeStamp() const
+            {
+                return InputEvent::getTimeStamp();
+            }
+            virtual void setTimeStamp(int32_t timestamp)
+            {
+                InputEvent::setTimeStamp(timestamp);
+            }
 
-        virtual const std::string& getName() const
-        {
-            static const std::string eventName("TextEvent");
-            return eventName;
-        }
-        virtual std::string getDebugString() const
-        {
-            return InputEvent::getDebugString();
-        }
+            virtual std::string const & getName() const
+            {
+                static std::string const eventName("TextEvent");
+                return eventName;
+            }
+            virtual std::string getDebugString() const
+            {
+                return InputEvent::getDebugString();
+            }
 
-    private:
-        TextEventType m_eventType;
-        Text m_text;
+        private:
+            TextEventType m_eventType;
+            Text m_text;
     };
 
 } // namespace FIFE

@@ -25,78 +25,78 @@ namespace fcn
      */
     class /*FIFE_API*/ PercentageBar : public Widget
     {
-    public:
-        enum Orientation : uint8_t
-        {
-            HORIZONTAL = 0,
-            VERTICAL
-        };
+        public:
+            enum Orientation : uint8_t
+            {
+                HORIZONTAL = 0,
+                VERTICAL
+            };
 
-        /**
-         * Constructor.
-         *
-         */
-        PercentageBar();
-        virtual ~PercentageBar() = default;
+            /**
+             * Constructor.
+             *
+             */
+            PercentageBar();
+            virtual ~PercentageBar() = default;
 
-        PercentageBar(const PercentageBar&)            = delete;
-        PercentageBar& operator=(const PercentageBar&) = delete;
+            PercentageBar(PercentageBar const &)            = delete;
+            PercentageBar& operator=(PercentageBar const &) = delete;
 
-        // Inherited from Widget
+            // Inherited from Widget
 
-        virtual void draw(Graphics* graphics);
+            virtual void draw(Graphics* graphics);
 
-        /*
-         * Sets the image that will be displayed above the widget
-         *
-         * @param image Image to be displayed
-         */
-        void setForegroundImage(Image* image);
+            /*
+             * Sets the image that will be displayed above the widget
+             *
+             * @param image Image to be displayed
+             */
+            void setForegroundImage(Image* image);
 
-        /**
-         * Sets the orientation of the percentage bar.
-         *
-         * @param orientation The orientation of the percentage bar.
-         * @see getOrientation
-         */
-        void setOrientation(Orientation orientation);
+            /**
+             * Sets the orientation of the percentage bar.
+             *
+             * @param orientation The orientation of the percentage bar.
+             * @see getOrientation
+             */
+            void setOrientation(Orientation orientation);
 
-        /**
-         * Gets the orientation of the percentage bar.
-         *
-         * @return The orientation of the percentage bar.
-         * @see setOrientation
-         */
-        Orientation getOrientation() const;
+            /**
+             * Gets the orientation of the percentage bar.
+             *
+             * @return The orientation of the percentage bar.
+             * @see setOrientation
+             */
+            Orientation getOrientation() const;
 
-        /**
-         * Gets the value of the percentage bar
-         *
-         * @return The value of the percentage bar.
-         */
-        int32_t getValue() const;
+            /**
+             * Gets the value of the percentage bar
+             *
+             * @return The value of the percentage bar.
+             */
+            int32_t getValue() const;
 
-        /**
-         * Sets the value of the percentage bar
-         *
-         * @param value In the range of 0-100.
-         */
-        void setValue(int32_t value);
+            /**
+             * Sets the value of the percentage bar
+             *
+             * @param value In the range of 0-100.
+             */
+            void setValue(int32_t value);
 
-        // changed from private to allow derived instance access
-    protected:
-        Image* mImage;
+            // changed from private to allow derived instance access
+        protected:
+            Image* mImage;
 
-        /**
-         * Holds the current value of the percentage bar.
-         */
-        int32_t mValue;
+            /**
+             * Holds the current value of the percentage bar.
+             */
+            int32_t mValue;
 
-        /**
-         * Holds the orientation of the percentage bar. A percentage bar can be drawn
-         * vertically or horizontally.
-         */
-        Orientation mOrientation;
+            /**
+             * Holds the orientation of the percentage bar. A percentage bar can be drawn
+             * vertically or horizontally.
+             */
+            Orientation mOrientation;
     };
 } // namespace fcn
 

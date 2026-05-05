@@ -24,27 +24,27 @@ namespace FIFE
      */
     class /*FIFE_API*/ RawDataDAT1 : public RawDataMemSource
     {
-    public:
-        /** The needed information for the extraction.
-         */
-        struct /*FIFE_API*/ s_info
-        {
-            std::string name;
-            uint32_t packedLength;
-            uint32_t unpackedLength;
-            uint32_t offset;
-            uint32_t type;
-        };
+        public:
+            /** The needed information for the extraction.
+             */
+            struct /*FIFE_API*/ s_info
+            {
+                    std::string name;
+                    uint32_t packedLength;
+                    uint32_t unpackedLength;
+                    uint32_t offset;
+                    uint32_t type;
+            };
 
-        /** Constructor
-         * @param vfs The vfs to open with.
-         * @param datfile The .DAT archive - e.g. master.DAT
-         * @param info The .DAT file entry, as retrieved by MFFalloutDAT1
-         */
-        RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info);
+            /** Constructor
+             * @param vfs The vfs to open with.
+             * @param datfile The .DAT archive - e.g. master.DAT
+             * @param info The .DAT file entry, as retrieved by MFFalloutDAT1
+             */
+            RawDataDAT1(VFS* vfs, std::string const & datfile, s_info const & info);
 
-        RawDataDAT1(const RawDataDAT1&)            = delete;
-        RawDataDAT1& operator=(const RawDataDAT1&) = delete;
+            RawDataDAT1(RawDataDAT1 const &)            = delete;
+            RawDataDAT1& operator=(RawDataDAT1 const &) = delete;
     };
 
 } // namespace FIFE

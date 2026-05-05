@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "ogg_loader.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -9,16 +12,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "audio/soundclip.h"
+#include "sounddecoder_ogg.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/vfs.h"
-
-#include "ogg_loader.h"
-#include "sounddecoder_ogg.h"
 
 namespace FIFE
 {
@@ -28,7 +26,7 @@ namespace FIFE
     {
         VFS* vfs = VFS::instance();
 
-        const std::string filename = res->getName();
+        std::string const filename = res->getName();
 
         RawData* rdptr = vfs->open(filename);
         dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));

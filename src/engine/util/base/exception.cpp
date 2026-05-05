@@ -13,11 +13,13 @@ namespace FIFE
 {
     static Logger _log(LM_EXCEPTION);
 
-    Exception::Exception(const std::string& msg) : std::runtime_error(msg), m_what(msg) { }
+    Exception::Exception(std::string const & msg) : std::runtime_error(msg), m_what(msg)
+    {
+    }
 
     Exception::~Exception() noexcept = default;
 
-    const char* Exception::what() const noexcept
+    char const * Exception::what() const noexcept
     {
         return m_what.c_str();
     }

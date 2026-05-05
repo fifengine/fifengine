@@ -8,8 +8,9 @@
 #include "platform.h"
 
 // Standard C++ library includes
-#include "util/base/fife_stdint.h"
 #include <string>
+
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 
@@ -18,33 +19,34 @@
 
 namespace FIFE
 {
+    class VFS;
 
     /** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
      * @see MFFalloutDAT2
      */
     class /*FIFE_API*/ RawDataDAT2 : public RawDataMemSource
     {
-    public:
-        /** The needed information for the extraction.
-         */
-        struct /*FIFE_API*/ s_info
-        {
-            std::string name;
-            uint32_t packedLength;
-            uint32_t unpackedLength;
-            uint32_t offset;
-            uint32_t type;
-        };
+        public:
+            /** The needed information for the extraction.
+             */
+            struct /*FIFE_API*/ s_info
+            {
+                    std::string name;
+                    uint32_t packedLength;
+                    uint32_t unpackedLength;
+                    uint32_t offset;
+                    uint32_t type;
+            };
 
-        /** Constructor
-         * @param vfs The vfs to open with.
-         * @param datfile The .DAT archive - e.g. master.DAT
-         * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
-         */
-        RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info);
+            /** Constructor
+             * @param vfs The vfs to open with.
+             * @param datfile The .DAT archive - e.g. master.DAT
+             * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
+             */
+            RawDataDAT2(VFS* vfs, std::string const & datfile, s_info const & info);
 
-        RawDataDAT2(const RawDataDAT2&)            = delete;
-        RawDataDAT2& operator=(const RawDataDAT2&) = delete;
+            RawDataDAT2(RawDataDAT2 const &)            = delete;
+            RawDataDAT2& operator=(RawDataDAT2 const &) = delete;
     };
 } // namespace FIFE
 #endif

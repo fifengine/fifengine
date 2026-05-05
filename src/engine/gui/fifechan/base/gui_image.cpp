@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "gui_image.h"
+
 // Standard C++ library includes
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
-
-#include "gui_image.h"
 
 namespace FIFE
 {
@@ -21,7 +19,9 @@ namespace FIFE
 
     GuiImage::GuiImage() = default;
 
-    GuiImage::GuiImage(const ImagePtr& img) : m_imgPtr(img) { }
+    GuiImage::GuiImage(ImagePtr const & img) : m_imgPtr(img)
+    {
+    }
 
     GuiImage::~GuiImage() = default;
 
@@ -53,7 +53,7 @@ namespace FIFE
     }
 
     void GuiImage::putPixel(
-        [[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y, [[maybe_unused]] const fcn::Color& color)
+        [[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y, [[maybe_unused]] fcn::Color const & color)
     {
         FL_PANIC(_log, "GuiImage::putPixel, not implemented");
     }

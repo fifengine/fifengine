@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundeffect.h"
+
 // Standard C++ library includes
 #if defined(_WIN32) && !defined(FIFE_EXPORTING)
     #define FIFE_EXPORTING
@@ -13,13 +16,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "soundeffect.h"
 
 namespace FIFE
 {
@@ -31,7 +29,6 @@ namespace FIFE
     SoundEffect::SoundEffect() :
         m_effect(0), m_slot(0), m_effectType(SE_EFFECT_NULL), m_enabled(false), m_filter(nullptr)
     {
-
         alGenEffects(1, &m_effect);
     }
 
@@ -1172,7 +1169,7 @@ namespace FIFE
         return m_reflectionsDelay;
     }
 
-    void EaxReverb::setReflectionsPan(const AudioSpaceCoordinate& coordinate)
+    void EaxReverb::setReflectionsPan(AudioSpaceCoordinate const & coordinate)
     {
         m_reflectionsPan.x = std::min(coordinate.x, (1.0));
         m_reflectionsPan.x = std::max(coordinate.x, (-1.0));
@@ -1181,7 +1178,7 @@ namespace FIFE
         m_reflectionsPan.z = std::min(coordinate.z, (1.0));
         m_reflectionsPan.z = std::max(coordinate.z, (-1.0));
 
-        const ALfloat vec[3] = {
+        ALfloat const vec[3] = {
             static_cast<ALfloat>(m_reflectionsPan.x),
             static_cast<ALfloat>(m_reflectionsPan.y),
             static_cast<ALfloat>(m_reflectionsPan.z)};
@@ -1219,7 +1216,7 @@ namespace FIFE
         return m_reflectionsDelay;
     }
 
-    void EaxReverb::setLateReverbPan(const AudioSpaceCoordinate& coordinate)
+    void EaxReverb::setLateReverbPan(AudioSpaceCoordinate const & coordinate)
     {
         m_lateReverbPan.x = std::min(coordinate.x, (1.0));
         m_lateReverbPan.x = std::max(coordinate.x, (-1.0));
@@ -1228,7 +1225,7 @@ namespace FIFE
         m_lateReverbPan.z = std::min(coordinate.z, (1.0));
         m_lateReverbPan.z = std::max(coordinate.z, (-1.0));
 
-        const ALfloat vec[3] = {
+        ALfloat const vec[3] = {
             static_cast<ALfloat>(m_lateReverbPan.x),
             static_cast<ALfloat>(m_lateReverbPan.y),
             static_cast<ALfloat>(m_lateReverbPan.z)};

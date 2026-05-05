@@ -22,29 +22,31 @@ namespace FIFE
      */
     class /*FIFE_API*/ IListener
     {
-    public:
-        /** Indicates if the listener is active.
-         */
-        virtual bool isActive()
-        {
-            return m_active;
-        }
+        public:
+            /** Indicates if the listener is active.
+             */
+            virtual bool isActive()
+            {
+                return m_active;
+            }
 
-        /** Changes the listener status.
-         * @param active The value to change the listener to active / inactive.
-         */
-        virtual void setActive(bool active)
-        {
-            m_active = active;
-        }
+            /** Changes the listener status.
+             * @param active The value to change the listener to active / inactive.
+             */
+            virtual void setActive(bool active)
+            {
+                m_active = active;
+            }
 
-        virtual ~IListener() = default;
+            virtual ~IListener() = default;
 
-    protected:
-        IListener() : m_active(false) { }
+        protected:
+            IListener() : m_active(false)
+            {
+            }
 
-    private:
-        bool m_active;
+        private:
+            bool m_active;
     };
 
 } // namespace FIFE

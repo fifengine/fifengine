@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "angles.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
@@ -8,31 +11,26 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
-
-#include "angles.h"
 
 namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] uint32_t normalizeAngleKey(const int32_t angle)
+        [[nodiscard]] uint32_t normalizeAngleKey(int32_t const angle)
         {
             return static_cast<uint32_t>(((angle % 360) + 360) % 360);
         }
 
-        [[nodiscard]] int32_t toSignedAngle(const uint32_t angle)
+        [[nodiscard]] int32_t toSignedAngle(uint32_t const angle)
         {
             assert(angle <= 360U);
             return static_cast<int32_t>(angle);
         }
     } // namespace
 
-    int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle)
+    int32_t getIndexByAngle(int32_t angle, type_angle2id const & angle2id, int32_t& closestMatchingAngle)
     {
         if (angle2id.empty()) {
             return -1;
@@ -42,14 +40,14 @@ namespace FIFE
             return angle2id.begin()->second;
         }
 
-        const uint32_t wangle = normalizeAngleKey(angle);
+        uint32_t const wangle = normalizeAngleKey(angle);
         auto u(angle2id.upper_bound(wangle));
         type_angle2id::const_iterator tmp;
 
         // take care of the forward wrapping case
         if (u == angle2id.end()) {
-            const int32_t ud = toSignedAngle(wangle - (--u)->first);
-            const int32_t ld = toSignedAngle(360U - wangle + angle2id.begin()->first);
+            int32_t const ud = toSignedAngle(wangle - (--u)->first);
+            int32_t const ld = toSignedAngle(360U - wangle + angle2id.begin()->first);
             if (ud > ld) {
                 // wrapped value (first)
                 closestMatchingAngle = toSignedAngle(angle2id.begin()->first);
@@ -64,8 +62,8 @@ namespace FIFE
         if (u == angle2id.begin()) {
             tmp = angle2id.end();
             --tmp;
-            const int32_t ld = toSignedAngle(u->first - wangle);
-            const int32_t ud = toSignedAngle(360U - tmp->first + wangle);
+            int32_t const ld = toSignedAngle(u->first - wangle);
+            int32_t const ud = toSignedAngle(360U - tmp->first + wangle);
             if (ud > ld) {
                 // non-wrapped value (first)
                 closestMatchingAngle = toSignedAngle(angle2id.begin()->first);
@@ -77,13 +75,13 @@ namespace FIFE
         }
 
         // value in the middle...
-        const int32_t ud  = toSignedAngle(u->first - wangle);
-        const int32_t ucm = toSignedAngle(u->first);
-        const int32_t ui  = u->second;
+        int32_t const ud  = toSignedAngle(u->first - wangle);
+        int32_t const ucm = toSignedAngle(u->first);
+        int32_t const ui  = u->second;
         u--;
-        const int32_t ld  = toSignedAngle(wangle - u->first);
-        const int32_t lcm = toSignedAngle(u->first);
-        const int32_t li  = u->second;
+        int32_t const ld  = toSignedAngle(wangle - u->first);
+        int32_t const lcm = toSignedAngle(u->first);
+        int32_t const li  = u->second;
 
         // if ud and ls is equal then lcm is prefered (next angle)
         if (ud < ld) {
@@ -94,7 +92,7 @@ namespace FIFE
         return li;
     }
 
-    int32_t getAngleBetween(const Location& loc1, const Location& loc2)
+    int32_t getAngleBetween(Location const & loc1, Location const & loc2)
     {
         ExactModelCoordinate const c1 = loc1.getMapCoordinates();
         ExactModelCoordinate const c2 = loc2.getMapCoordinates();
@@ -111,7 +109,7 @@ namespace FIFE
         return angle;
     }
 
-    Location getFacing(const Location& loc, const int32_t angle)
+    Location getFacing(Location const & loc, int32_t const angle)
     {
         Location facing(loc);
         ExactModelCoordinate emc = facing.getMapCoordinates();
@@ -124,7 +122,7 @@ namespace FIFE
         return facing;
     }
 
-    int32_t getAngleBetween(const ExactModelCoordinate& emc1, const ExactModelCoordinate& emc2)
+    int32_t getAngleBetween(ExactModelCoordinate const & emc1, ExactModelCoordinate const & emc2)
     {
         double const dy = (emc2.y - emc1.y);
         double const dx = (emc2.x - emc1.x);
@@ -137,7 +135,7 @@ namespace FIFE
         return angle;
     }
 
-    ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, const int32_t angle)
+    ExactModelCoordinate getFacing(ExactModelCoordinate const & emc, int32_t const angle)
     {
         ExactModelCoordinate result = emc;
         result.x += Mathd::Cos(static_cast<double>(angle) * (Mathd::pi() / 180.0));

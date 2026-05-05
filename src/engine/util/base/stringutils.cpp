@@ -1,25 +1,23 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "stringutils.h"
+
 // Standard C++ library includes
 #include <cstdlib>
 #include <string>
 #include <utility>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "stringutils.h"
-
 namespace FIFE
 {
-    int32_t makeInt32(const std::string& str)
+    int32_t makeInt32(std::string const & str)
     {
         return static_cast<int32_t>(std::strtol(str.c_str(), nullptr, 10));
     }
 
-    IntVector tokenize(const std::string& str, char delim, char group)
+    IntVector tokenize(std::string const & str, char delim, char group)
     {
         IntVector tokens;
         if (str.empty()) {
@@ -40,12 +38,12 @@ namespace FIFE
                     return {};
                 }
 
-                const std::string token = str.substr(start + 1, curr - start - 1);
+                std::string const token = str.substr(start + 1, curr - start - 1);
                 tokens.push_back(makeInt32(token));
                 start = curr + 1;
             } else if (str[curr] == delim) {
                 if (str[curr - 1] != delim && str[curr - 1] != group) {
-                    const std::string token = str.substr(start, curr - start);
+                    std::string const token = str.substr(start, curr - start);
                     tokens.push_back(makeInt32(token));
                 }
                 start = curr + 1;
@@ -59,7 +57,7 @@ namespace FIFE
         }
 
         if (str[curr - 1] != delim && str[curr - 1] != group) {
-            const std::string token = str.substr(start, curr - start);
+            std::string const token = str.substr(start, curr - start);
             tokens.push_back(makeInt32(token));
         }
 

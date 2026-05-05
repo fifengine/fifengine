@@ -169,19 +169,19 @@ namespace FIFE
      * for which streaming is not used. (bytes)
      * Has to be <= than BUFFERLEN * 3.
      */
-    const uint32_t MAX_KEEP_IN_MEM = 3145728;
+    uint32_t const MAX_KEEP_IN_MEM = 3145728;
 
     // The number of buffers used for streaming.
-    const int16_t BUFFER_NUM = 3;
+    int16_t const BUFFER_NUM = 3;
 
     // The length of one buffer. (bytes)
-    const uint32_t BUFFER_LEN = 1048576;
+    uint32_t const BUFFER_LEN = 1048576;
 
     // The max. number of OpenAL sources.
-    const uint16_t MAX_SOURCES = 64;
+    uint16_t const MAX_SOURCES = 64;
 
     // The max. number of OpenAL effect slots.
-    const uint16_t MAX_EFFECT_SLOTS = 32;
+    uint16_t const MAX_EFFECT_SLOTS = 32;
 } // namespace FIFE
 
 #endif

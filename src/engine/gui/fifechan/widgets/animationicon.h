@@ -9,9 +9,10 @@
 
 // Standard C++ library includes
 // 3rd party library includes
-#include <fifechan.hpp>
 #include <fifechan/image.hpp>
 #include <fifechan/platform.hpp>
+
+#include <fifechan.hpp>
 
 // FIFE includes
 #include "util/base/fife_stdint.h"
@@ -30,117 +31,117 @@ namespace fcn
      */
     class /*FIFE_API*/ AnimationIcon : public Icon
     {
-    public:
-        /**
-         * Default constructor.
-         */
-        AnimationIcon();
+        public:
+            /**
+             * Default constructor.
+             */
+            AnimationIcon();
 
-        /**
-         * Constructor.
-         *
-         * @param animation The animation to display.
-         */
-        explicit AnimationIcon(const FIFE::AnimationPtr& animation);
+            /**
+             * Constructor.
+             *
+             * @param animation The animation to display.
+             */
+            explicit AnimationIcon(FIFE::AnimationPtr const & animation);
 
-        /**
-         * Destructor.
-         */
-        virtual ~AnimationIcon();
+            /**
+             * Destructor.
+             */
+            virtual ~AnimationIcon();
 
-        AnimationIcon(const AnimationIcon&)            = delete;
-        AnimationIcon& operator=(const AnimationIcon&) = delete;
+            AnimationIcon(AnimationIcon const &)            = delete;
+            AnimationIcon& operator=(AnimationIcon const &) = delete;
 
-        /**
-         * Sets the animation to display.
-         *
-         * @param animation The animation to display.
-         */
-        void setAnimation(const FIFE::AnimationPtr& animation);
+            /**
+             * Sets the animation to display.
+             *
+             * @param animation The animation to display.
+             */
+            void setAnimation(FIFE::AnimationPtr const & animation);
 
-        /**
-         * Gets the current animation.
-         *
-         * @return The current animation.
-         */
-        FIFE::AnimationPtr getAnimation() const;
+            /**
+             * Gets the current animation.
+             *
+             * @return The current animation.
+             */
+            FIFE::AnimationPtr getAnimation() const;
 
-        /**
-         * Sets repeating of the animation.
-         *
-         * @param repeat True if the animation repeating is enabled, otherwise false.
-         */
-        void setRepeating(bool repeat);
+            /**
+             * Sets repeating of the animation.
+             *
+             * @param repeat True if the animation repeating is enabled, otherwise false.
+             */
+            void setRepeating(bool repeat);
 
-        /**
-         * Gets repeating of the animation.
-         *
-         * @return True if the animation repeating is enabled, otherwise false.
-         */
-        bool isRepeating() const;
+            /**
+             * Gets repeating of the animation.
+             *
+             * @return True if the animation repeating is enabled, otherwise false.
+             */
+            bool isRepeating() const;
 
-        /**
-         * Starts the animation from beginning.
-         */
-        void play();
+            /**
+             * Starts the animation from beginning.
+             */
+            void play();
 
-        /**
-         * Gets if the animation is playing.
-         *
-         * @return True if the animation is playing, otherwise false.
-         */
-        bool isPlaying() const;
+            /**
+             * Gets if the animation is playing.
+             *
+             * @return True if the animation is playing, otherwise false.
+             */
+            bool isPlaying() const;
 
-        /**
-         * Stops the animation at the current frame.
-         */
-        void pause();
+            /**
+             * Stops the animation at the current frame.
+             */
+            void pause();
 
-        /**
-         * Stops the animation and sets the current frame to the first frame.
-         */
-        void stop();
+            /**
+             * Stops the animation and sets the current frame to the first frame.
+             */
+            void stop();
 
-        // Inherited from Widget
+            // Inherited from Widget
 
-        virtual void logic();
+            virtual void logic();
 
-    protected:
-        /**
-         * Holds pointer to Fifes TimeManager.
-         */
-        FIFE::TimeManager* mTimemanager;
+        protected:
+            /**
+             * Holds pointer to Fifes TimeManager.
+             */
+            FIFE::TimeManager* mTimemanager;
 
-        /**
-         * The animation to display.
-         */
-        FIFE::AnimationPtr mAnimation;
+            /**
+             * The animation to display.
+             */
+            FIFE::AnimationPtr mAnimation;
 
-        /**
-         * Currently used image. It's the current frame from the animation
-         * encapsulated in a GuiImage.
-         */
-        const Image* mCurrentImage;
+            /**
+             * Currently used image. It's the current frame from the animation
+             * encapsulated in a GuiImage.
+             */
+            Image const * mCurrentImage;
 
-        /**
-         * The time as the animation was started.
-         */
-        uint32_t mAnimtime;
+            /**
+             * The time as the animation was started.
+             */
+            uint32_t mAnimtime;
 
-        /**
-         * The last used frame index from the animation.
-         */
-        int32_t mFrameIndex;
+            /**
+             * The last used frame index from the animation.
+             */
+            int32_t mFrameIndex;
 
-        /**
-         * True if the animation should be repeating, otherwise false.
-         */
-        bool mRepeat;
+            /**
+             * True if the animation should be repeating, otherwise false.
+             */
+            bool mRepeat;
 
-        /**
-         * True if the animation was started, otherwise false.
-         */
-        bool mPlay;
+            /**
+             * True if the animation was started, otherwise false.
+             */
+            bool mPlay;
     };
 } // namespace fcn
 

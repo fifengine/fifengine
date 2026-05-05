@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "blockinginforenderer.h"
+
 // Standard C++ library includes
 #include <vector>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
@@ -19,8 +19,6 @@
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "video/renderbackend.h"
-
-#include "blockinginforenderer.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -36,7 +34,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    BlockingInfoRenderer::BlockingInfoRenderer(const BlockingInfoRenderer& old) :
+    BlockingInfoRenderer::BlockingInfoRenderer(BlockingInfoRenderer const & old) :
         RendererBase(old), m_color(old.m_color)
     {
         setEnabled(false);
@@ -65,8 +63,8 @@ namespace FIFE
         Rect const cv    = cam->getViewPort();
         CellCache* cache = layer->getCellCache();
         if (cache != nullptr) {
-            const std::vector<std::vector<Cell*>>& cells = cache->getCells();
-            auto it                                      = cells.begin();
+            std::vector<std::vector<Cell*>> const & cells = cache->getCells();
+            auto it                                       = cells.begin();
             for (; it != cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
@@ -80,7 +78,7 @@ namespace FIFE
                         std::vector<ExactModelCoordinate> vertices;
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
                         auto vit                  = vertices.begin();
-                        const std::size_t halfind = vertices.size() / 2;
+                        std::size_t const halfind = vertices.size() / 2;
                         ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                         Point pt1(firstpt.x, firstpt.y);
                         Point pt2;
@@ -111,7 +109,7 @@ namespace FIFE
                 std::vector<ExactModelCoordinate> vertices;
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
                 auto vit                  = vertices.begin();
-                const std::size_t halfind = vertices.size() / 2;
+                std::size_t const halfind = vertices.size() / 2;
                 ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                 Point pt1(firstpt.x, firstpt.y);
                 Point pt2;

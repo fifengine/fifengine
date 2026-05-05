@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cellgrid.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <vector>
@@ -8,12 +11,7 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
-
-#include "cellgrid.h"
 
 namespace FIFE
 {
@@ -36,7 +34,7 @@ namespace FIFE
 
     CellGrid::~CellGrid() = default;
 
-    void CellGrid::getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates)
+    void CellGrid::getAccessibleCoordinates(ModelCoordinate const & curpos, std::vector<ModelCoordinate>& coordinates)
     {
         coordinates.clear();
         for (int32_t x = curpos.x - 1; x <= curpos.x + 1; x++) {
@@ -57,13 +55,13 @@ namespace FIFE
         m_inverse_matrix = m_matrix.inverse();
     }
 
-    ExactModelCoordinate CellGrid::toMapCoordinates(const ModelCoordinate& layer_coords)
+    ExactModelCoordinate CellGrid::toMapCoordinates(ModelCoordinate const & layer_coords)
     {
         return toMapCoordinates(intPt2doublePt(layer_coords));
     }
 
     int32_t CellGrid::orientation(
-        const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2)
+        ExactModelCoordinate const & pt, ExactModelCoordinate const & pt1, ExactModelCoordinate const & pt2)
     {
         double const o = ((pt2.x - pt1.x) * (pt.y - pt1.y)) - ((pt.x - pt1.x) * (pt2.y - pt1.y));
         if (o > 0.0) {
@@ -76,10 +74,10 @@ namespace FIFE
     }
 
     bool CellGrid::ptInTriangle(
-        const ExactModelCoordinate& pt,
-        const ExactModelCoordinate& pt1,
-        const ExactModelCoordinate& pt2,
-        const ExactModelCoordinate& pt3)
+        ExactModelCoordinate const & pt,
+        ExactModelCoordinate const & pt1,
+        ExactModelCoordinate const & pt2,
+        ExactModelCoordinate const & pt3)
     {
         double const o1   = orientation(pt1, pt2, pt);
         double const o2   = orientation(pt2, pt3, pt);

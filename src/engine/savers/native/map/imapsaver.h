@@ -27,28 +27,29 @@ namespace FIFE
      */
     class /*FIFE_API*/ IMapSaver
     {
-    public:
-        virtual ~IMapSaver() = default;
+        public:
+            virtual ~IMapSaver() = default;
 
-        /** allows setting which object saver will be
-         * used to save object files
-         */
-        virtual void setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver) = 0;
+            /** allows setting which object saver will be
+             * used to save object files
+             */
+            virtual void setObjectSaver(FIFE::ObjectSaverPtr const & objectSaver) = 0;
 
-        /** allows setting which animation saver will be
-         * used to save animation files
-         */
-        virtual void setAnimationSaver(const FIFE::AnimationSaverPtr& animationSaver) = 0;
+            /** allows setting which animation saver will be
+             * used to save animation files
+             */
+            virtual void setAnimationSaver(FIFE::AnimationSaverPtr const & animationSaver) = 0;
 
-        /** allows setting which atlas saver will be
-         * used to save atlas files
-         */
-        virtual void setAtlasSaver(const FIFE::AtlasSaverPtr& atlasSaver) = 0;
+            /** allows setting which atlas saver will be
+             * used to save atlas files
+             */
+            virtual void setAtlasSaver(FIFE::AtlasSaverPtr const & atlasSaver) = 0;
 
-        /** responsible for saving the map resource
-         * used to save map files
-         */
-        virtual void save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles) = 0;
+            /** responsible for saving the map resource
+             * used to save map files
+             */
+            virtual void save(
+                Map const & map, std::string const & filename, std::vector<std::string> const & importFiles) = 0;
     };
 } // namespace FIFE
 

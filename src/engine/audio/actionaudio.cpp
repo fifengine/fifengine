@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "actionaudio.h"
+
 // Standard C++ library includes
 #include <string>
 
@@ -9,13 +12,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "actionaudio.h"
 
 namespace FIFE
 {
@@ -42,22 +40,22 @@ namespace FIFE
 
     ActionAudio::~ActionAudio() = default;
 
-    void ActionAudio::setSoundFileName(const std::string& name)
+    void ActionAudio::setSoundFileName(std::string const & name)
     {
         m_name = name;
     }
 
-    const std::string& ActionAudio::getSoundFileName() const
+    std::string const & ActionAudio::getSoundFileName() const
     {
         return m_name;
     }
 
-    void ActionAudio::setGroupName(const std::string& name)
+    void ActionAudio::setGroupName(std::string const & name)
     {
         m_group = name;
     }
 
-    const std::string& ActionAudio::getGroupName() const
+    std::string const & ActionAudio::getGroupName() const
     {
         return m_group;
     }
@@ -162,12 +160,12 @@ namespace FIFE
         return m_coneOuterGain;
     }
 
-    void ActionAudio::setVelocity(const AudioSpaceCoordinate& velocity)
+    void ActionAudio::setVelocity(AudioSpaceCoordinate const & velocity)
     {
         m_velocity = velocity;
     }
 
-    const AudioSpaceCoordinate& ActionAudio::getVelocity() const
+    AudioSpaceCoordinate const & ActionAudio::getVelocity() const
     {
         return m_velocity;
     }

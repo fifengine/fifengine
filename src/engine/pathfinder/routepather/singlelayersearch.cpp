@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "singlelayersearch.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -14,9 +17,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
@@ -24,26 +24,24 @@
 #include "pathfinder/route.h"
 #include "util/math/fife_math.h"
 
-#include "singlelayersearch.h"
-
 namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] std::size_t toIndex(const int32_t value)
+        [[nodiscard]] std::size_t toIndex(int32_t const value)
         {
             assert(value >= 0);
             return static_cast<std::size_t>(value);
         }
 
-        [[nodiscard]] std::size_t toSize(const int32_t value)
+        [[nodiscard]] std::size_t toSize(int32_t const value)
         {
             assert(value >= 0);
             return static_cast<std::size_t>(value);
         }
     } // namespace
 
-    SingleLayerSearch::SingleLayerSearch(Route* route, const int32_t sessionId) :
+    SingleLayerSearch::SingleLayerSearch(Route* route, int32_t const sessionId) :
         RoutePatherSearch(route, sessionId),
         m_to(route->getEndNode()),
         m_from(route->getStartNode()),
@@ -73,7 +71,7 @@ namespace FIFE
         PriorityQueue<int32_t, double>::value_type const topvalue = m_sortedfrontier.getPriorityElement();
         m_sortedfrontier.popElement();
         m_next                      = topvalue.first;
-        const std::size_t nextIndex = toIndex(m_next);
+        std::size_t const nextIndex = toIndex(m_next);
         m_spt[nextIndex]            = m_sf[nextIndex];
         // found destination
         if (m_destCoordInt == m_next) {
@@ -89,12 +87,12 @@ namespace FIFE
         if (nextCell == nullptr) {
             return;
         }
-        int32_t const cellZ                 = nextCell->getLayerCoordinates().z;
-        int32_t const maxZ                  = m_route->getZStepRange();
-        bool const zLimited                 = maxZ != -1;
-        uint8_t const blockerThreshold      = m_ignoreDynamicBlockers ? 2 : 1;
-        bool const limitedArea              = m_route->isAreaLimited();
-        const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
+        int32_t const cellZ                  = nextCell->getLayerCoordinates().z;
+        int32_t const maxZ                   = m_route->getZStepRange();
+        bool const zLimited                  = maxZ != -1;
+        uint8_t const blockerThreshold       = m_ignoreDynamicBlockers ? 2 : 1;
+        bool const limitedArea               = m_route->isAreaLimited();
+        std::vector<Cell*> const & adjacents = nextCell->getNeighbors();
         for (auto* adjacent : adjacents) {
             if (adjacent == nullptr) {
                 continue;
@@ -103,7 +101,7 @@ namespace FIFE
                 continue;
             }
             int32_t const adjacentInt       = adjacent->getCellId();
-            const std::size_t adjacentIndex = toIndex(adjacentInt);
+            std::size_t const adjacentIndex = toIndex(adjacentInt);
             if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
                 continue;
             }
@@ -145,7 +143,7 @@ namespace FIFE
                         if (limitedArea) {
                             // check if cell is on one of the areas
                             bool sameAreas                     = false;
-                            const std::list<std::string> areas = m_route->getLimitedAreas();
+                            std::list<std::string> const areas = m_route->getLimitedAreas();
                             auto area_it                       = areas.begin();
                             for (; area_it != areas.end(); ++area_it) {
                                 if (m_cellCache->isCellInArea(*area_it, cell)) {
@@ -169,7 +167,7 @@ namespace FIFE
             } else if (limitedArea) {
                 // check if cell is on one of the areas
                 bool sameAreas                     = false;
-                const std::list<std::string> areas = m_route->getLimitedAreas();
+                std::list<std::string> const areas = m_route->getLimitedAreas();
                 auto area_it                       = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
                     if (m_cellCache->isCellInArea(*area_it, adjacent)) {
@@ -211,7 +209,7 @@ namespace FIFE
         newnode.setExactLayerCoordinates(FIFE::intPt2doublePt(m_to.getLayerCoordinates()));
         path.push_back(newnode);
         while (current != end) {
-            const std::size_t currentIndex = toIndex(current);
+            std::size_t const currentIndex = toIndex(current);
             if (m_spt[currentIndex] < 0) {
                 // This is when the size of m_spt can not handle the distance of the location
                 setSearchStatus(search_status_failed);

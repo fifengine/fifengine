@@ -26,33 +26,33 @@ namespace FIFE
      */
     class /*FIFE_API*/ IMapLoader
     {
-    public:
-        virtual ~IMapLoader() = default;
+        public:
+            virtual ~IMapLoader() = default;
 
-        /** allows setting which object loader will be
-         * used to load object files
-         */
-        virtual void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader) = 0;
+            /** allows setting which object loader will be
+             * used to load object files
+             */
+            virtual void setObjectLoader(FIFE::ObjectLoaderPtr const & objectLoader) = 0;
 
-        /** allows setting which animation loader will be
-         * used to load animation files
-         */
-        virtual void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader) = 0;
+            /** allows setting which animation loader will be
+             * used to load animation files
+             */
+            virtual void setAnimationLoader(FIFE::AnimationLoaderPtr const & animationLoader) = 0;
 
-        /** allows setting which atlas loader will be
-         * used to load atlas files
-         */
-        virtual void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader) = 0;
+            /** allows setting which atlas loader will be
+             * used to load atlas files
+             */
+            virtual void setAtlasLoader(FIFE::AtlasLoaderPtr const & atlasLoader) = 0;
 
-        /** determines whether the resource is in
-         *	the correct format for this loader
-         */
-        virtual bool isLoadable(const std::string& filename) const = 0;
+            /** determines whether the resource is in
+             *	the correct format for this loader
+             */
+            virtual bool isLoadable(std::string const & filename) const = 0;
 
-        /** responsible for loading the map resource
-         *	and populating the engine
-         */
-        virtual Map* load(const std::string& filename) = 0;
+            /** responsible for loading the map resource
+             *	and populating the engine
+             */
+            virtual Map* load(std::string const & filename) = 0;
     };
 } // namespace FIFE
 

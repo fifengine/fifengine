@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "vfs.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <regex>
@@ -11,13 +14,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "vfs.h"
 #include "vfssource.h"
 #include "vfssourceprovider.h"
 
@@ -58,7 +56,7 @@ namespace FIFE
         FL_LOG(_log, LMsg("new provider: ") << provider->getName());
     }
 
-    VFSSource* VFS::createSource(const std::string& path)
+    VFSSource* VFS::createSource(std::string const & path)
     {
 
         if (hasSource(path)) {
@@ -76,7 +74,7 @@ namespace FIFE
             try {
                 VFSSource* source = provider->createSource(path);
                 return source;
-            } catch (const Exception& ex) {
+            } catch (Exception const & ex) {
                 FL_WARN(
                     _log,
                     LMsg(provider->getName())
@@ -95,7 +93,7 @@ namespace FIFE
         return nullptr;
     }
 
-    void VFS::addNewSource(const std::string& path)
+    void VFS::addNewSource(std::string const & path)
     {
         VFSSource* source = createSource(path);
         if (source != nullptr) {
@@ -118,7 +116,7 @@ namespace FIFE
         }
     }
 
-    void VFS::removeSource(const std::string& path)
+    void VFS::removeSource(std::string const & path)
     {
         for (VFSSourceProvider* provider : m_providers) {
             if (!provider->hasSource(path)) {
@@ -136,9 +134,9 @@ namespace FIFE
         }
     }
 
-    VFSSource* VFS::getSourceForFile(const std::string& file) const
+    VFSSource* VFS::getSourceForFile(std::string const & file) const
     {
-        auto it = std::ranges::find_if(m_sources, [&file](const VFSSource* s) {
+        auto it = std::ranges::find_if(m_sources, [&file](VFSSource const * s) {
             return s->fileExists(file);
         });
 
@@ -150,12 +148,12 @@ namespace FIFE
         return nullptr;
     }
 
-    bool VFS::exists(const std::string& file) const
+    bool VFS::exists(std::string const & file) const
     {
         return getSourceForFile(file) != nullptr;
     }
 
-    std::vector<std::string> VFS::split(const std::string& str, char delimiter) const
+    std::vector<std::string> VFS::split(std::string const & str, char delimiter) const
     {
         std::vector<std::string> tokens;
         std::string token;
@@ -168,10 +166,10 @@ namespace FIFE
         return tokens;
     }
 
-    bool VFS::isDirectory(const std::string& path) const
+    bool VFS::isDirectory(std::string const & path) const
     {
         // Add a slash in case there isn't one in the string
-        const std::string newpath       = path + "/";
+        std::string const newpath       = path + "/";
         std::vector<std::string> tokens = split(newpath, '/');
 
         std::string currentpath = "/";
@@ -189,11 +187,11 @@ namespace FIFE
         return true;
     }
 
-    RawData* VFS::open(const std::string& path)
+    RawData* VFS::open(std::string const & path)
     {
         FL_DBG(_log, LMsg("Opening: ") << path);
 
-        const VFSSource* source = getSourceForFile(path);
+        VFSSource const * source = getSourceForFile(path);
         if (source == nullptr) {
             throw NotFound(path);
         }
@@ -201,7 +199,7 @@ namespace FIFE
         return source->open(path);
     }
 
-    std::set<std::string> VFS::listFiles(const std::string& pathstr) const
+    std::set<std::string> VFS::listFiles(std::string const & pathstr) const
     {
         std::set<std::string> list;
         auto end = m_sources.end();
@@ -213,13 +211,13 @@ namespace FIFE
         return list;
     }
 
-    std::set<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const
+    std::set<std::string> VFS::listFiles(std::string const & path, std::string const & filterregex) const
     {
         std::set<std::string> const list = listFiles(path);
         return filterList(list, filterregex);
     }
 
-    std::set<std::string> VFS::listDirectories(const std::string& pathstr) const
+    std::set<std::string> VFS::listDirectories(std::string const & pathstr) const
     {
         std::set<std::string> list;
         auto end = m_sources.end();
@@ -231,13 +229,13 @@ namespace FIFE
         return list;
     }
 
-    std::set<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const
+    std::set<std::string> VFS::listDirectories(std::string const & path, std::string const & filterregex) const
     {
         std::set<std::string> const list = listDirectories(path);
         return filterList(list, filterregex);
     }
 
-    std::set<std::string> VFS::filterList(const std::set<std::string>& list, const std::string& fregex) const
+    std::set<std::string> VFS::filterList(std::set<std::string> const & list, std::string const & fregex) const
     {
         std::set<std::string> results;
         std::regex const regex(fregex);
@@ -252,13 +250,13 @@ namespace FIFE
         return results;
     }
 
-    bool VFS::hasSource(const std::string& path) const
+    bool VFS::hasSource(std::string const & path) const
     {
         auto end = m_providers.end();
         for (auto i = m_providers.begin(); i != end; ++i) {
-            const VFSSourceProvider* provider = *i;
+            VFSSourceProvider const * provider = *i;
             if (provider->hasSource(path)) {
-                const VFSSource* source = provider->getSource(path);
+                VFSSource const * source = provider->getSource(path);
 
                 auto srcIt = std::ranges::find(m_sources, source);
                 return srcIt != m_sources.end();

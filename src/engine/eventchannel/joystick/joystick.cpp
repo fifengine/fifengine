@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "joystick.h"
+
 // Standard C++ library includes
 #include <iostream>
 #include <limits>
@@ -8,17 +11,12 @@
 #include <utility>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-
-#include "joystick.h"
 
 namespace FIFE
 {
@@ -75,12 +73,12 @@ namespace FIFE
         return m_deviceIndex;
     }
 
-    const std::string& Joystick::getGuid()
+    std::string const & Joystick::getGuid()
     {
         return m_guidStr;
     }
 
-    const std::string& Joystick::getName()
+    std::string const & Joystick::getName()
     {
         return m_name;
     }
@@ -91,19 +89,19 @@ namespace FIFE
             close();
         }
 
-        m_joystickHandle = SDL_JoystickOpen(m_deviceIndex);
+        m_joystickHandle = SDL_OpenJoystick(m_deviceIndex);
         if (m_joystickHandle != nullptr) {
-            m_instanceId = SDL_JoystickInstanceID(m_joystickHandle);
+            m_instanceId = SDL_GetJoystickID(m_joystickHandle);
 
             char tmp[33];
-            const SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(m_deviceIndex);
-            SDL_JoystickGetGUIDString(guid, tmp, sizeof(tmp));
+            SDL_GUID guid = SDL_GetJoystickGUID(m_joystickHandle);
+            SDL_GUIDToString(guid, tmp, sizeof(tmp));
             m_guidStr = std::string(tmp);
 
             openController();
-            const char* name = SDL_JoystickNameForIndex(m_deviceIndex);
+            char const * name = SDL_GetJoystickName(m_joystickHandle);
             if (isController() && (name == nullptr)) {
-                name = SDL_GameControllerNameForIndex(m_deviceIndex);
+                name = SDL_GetGamepadName(SDL_GetGamepadFromID(SDL_GetJoystickID(m_joystickHandle)));
             }
             m_name = std::string(name);
         } else {
@@ -115,7 +113,7 @@ namespace FIFE
     {
         closeController();
         if (m_joystickHandle != nullptr) {
-            SDL_JoystickClose(m_joystickHandle);
+            SDL_CloseJoystick(m_joystickHandle);
             m_joystickHandle = nullptr;
         }
         m_instanceId  = -1;
@@ -124,7 +122,7 @@ namespace FIFE
 
     bool Joystick::isConnected() const
     {
-        return (m_joystickHandle != nullptr) && (SDL_JoystickGetAttached(m_joystickHandle) != 0U);
+        return (m_joystickHandle != nullptr) && SDL_JoystickConnected(m_joystickHandle);
     }
 
     bool Joystick::isController() const
@@ -135,17 +133,17 @@ namespace FIFE
     void Joystick::openController()
     {
         closeController();
-        if (SDL_IsGameController(m_deviceIndex) == 0U) {
+        if (m_joystickHandle == nullptr || !SDL_IsGamepad(SDL_GetJoystickID(m_joystickHandle))) {
             return;
         }
 
-        m_controllerHandle = SDL_GameControllerOpen(m_deviceIndex);
+        m_controllerHandle = SDL_OpenGamepad(SDL_GetJoystickID(m_joystickHandle));
     }
 
     void Joystick::closeController()
     {
         if (m_controllerHandle != nullptr) {
-            SDL_GameControllerClose(m_controllerHandle);
+            SDL_CloseGamepad(m_controllerHandle);
             m_controllerHandle = nullptr;
         }
     }
@@ -154,7 +152,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = clampJoystickCount(SDL_JoystickNumAxes(m_joystickHandle));
+            number = clampJoystickCount(SDL_GetNumJoystickAxes(m_joystickHandle));
         }
         return number;
     }
@@ -163,7 +161,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = clampJoystickCount(SDL_JoystickNumButtons(m_joystickHandle));
+            number = clampJoystickCount(SDL_GetNumJoystickButtons(m_joystickHandle));
         }
         return number;
     }
@@ -172,7 +170,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = clampJoystickCount(SDL_JoystickNumHats(m_joystickHandle));
+            number = clampJoystickCount(SDL_GetNumJoystickHats(m_joystickHandle));
         }
         return number;
     }
@@ -184,11 +182,11 @@ namespace FIFE
         }
 
         if (!isController()) {
-            return convertRange(SDL_JoystickGetAxis(m_joystickHandle, axis));
+            return convertRange(SDL_GetJoystickAxis(m_joystickHandle, axis));
         }
 
-        auto sdlAxis = static_cast<SDL_GameControllerAxis>(axis);
-        return convertRange(SDL_GameControllerGetAxis(m_controllerHandle, sdlAxis));
+        auto sdlAxis = static_cast<SDL_GamepadAxis>(axis);
+        return convertRange(SDL_GetGamepadAxis(m_controllerHandle, sdlAxis));
     }
 
     int8_t Joystick::getHatValue(int8_t hat) const
@@ -196,7 +194,7 @@ namespace FIFE
         if (hat < 0 || !isConnected()) {
             return HAT_INVALID;
         }
-        return static_cast<int8_t>(SDL_JoystickGetHat(m_joystickHandle, hat));
+        return static_cast<int8_t>(SDL_GetJoystickHat(m_joystickHandle, hat));
     }
 
     bool Joystick::isButtonPressed(int8_t button) const
@@ -205,16 +203,16 @@ namespace FIFE
             return false;
         }
         if (!isController()) {
-            return SDL_JoystickGetButton(m_joystickHandle, button) == 1;
+            return SDL_GetJoystickButton(m_joystickHandle, button) == 1;
         }
 
-        auto sdlButton = static_cast<SDL_GameControllerButton>(button);
-        return SDL_GameControllerGetButton(m_controllerHandle, sdlButton) == 1;
+        auto sdlButton = static_cast<SDL_GamepadButton>(button);
+        return SDL_GetGamepadButton(m_controllerHandle, sdlButton) == 1;
     }
 
     float Joystick::convertRange(int16_t value) const
     {
-        const float range = static_cast<float>(value) / 32768.0F;
+        float const range = static_cast<float>(value) / 32768.0F;
         if (Mathf::FAbs(range) < 0.01F) {
             return 0.0F;
         }

@@ -11,7 +11,7 @@
 #include <list>
 #include <string>
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
 #include "util/time/timer.h"
@@ -32,52 +32,52 @@ namespace FIFE
      */
     class /*FIFE_API*/ TextRenderPool
     {
-    public:
-        /** Constructor
-         *  Constructs a pool with a maximum of poolSize entries
-         */
-        explicit TextRenderPool(size_t poolSize = 200);
+        public:
+            /** Constructor
+             *  Constructs a pool with a maximum of poolSize entries
+             */
+            explicit TextRenderPool(size_t poolSize = 200);
 
-        /** Destructor
-         */
-        ~TextRenderPool();
+            /** Destructor
+             */
+            ~TextRenderPool();
 
-        /** Invalidates all cached text images
-         */
-        void invalidateCachedText();
+            /** Invalidates all cached text images
+             */
+            void invalidateCachedText();
 
-        /** Get a string image
-         */
-        Image* getRenderedText(const FontBase* fontbase, const std::string& text);
+            /** Get a string image
+             */
+            Image* getRenderedText(FontBase const * fontbase, std::string const & text);
 
-        /** Add a string image
-         */
-        void addRenderedText(const FontBase* fontbase, const std::string& text, Image* image);
+            /** Add a string image
+             */
+            void addRenderedText(FontBase const * fontbase, std::string const & text, Image* image);
 
-        /** Remove entries not used since a minute
-         *  Is a timer callback.
-         */
-        void removeOldEntries();
+            /** Remove entries not used since a minute
+             *  Is a timer callback.
+             */
+            void removeOldEntries();
 
-    protected:
-        struct /*FIFE_API*/ s_pool_entry
-        {
-            std::string text;
-            SDL_Color color;
-            bool antialias;
-            int glyph_spacing;
-            int row_spacing;
-            uint32_t timestamp;
+        protected:
+            struct /*FIFE_API*/ s_pool_entry
+            {
+                    std::string text;
+                    SDL_Color color;
+                    bool antialias;
+                    int glyph_spacing;
+                    int row_spacing;
+                    uint32_t timestamp;
 
-            Image* image;
-        };
+                    Image* image;
+            };
 
-        using type_pool = std::list<s_pool_entry>;
-        type_pool m_pool;
-        size_t m_poolSize;
-        size_t m_poolMaxSize;
+            using type_pool = std::list<s_pool_entry>;
+            type_pool m_pool;
+            size_t m_poolSize;
+            size_t m_poolMaxSize;
 
-        Timer m_collectTimer;
+            Timer m_collectTimer;
     };
 } // namespace FIFE
 #endif

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "rendererbase.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
@@ -8,12 +11,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
-#include "rendererbase.h"
 #include "util/log/logger.h"
 
 namespace FIFE
@@ -21,7 +20,7 @@ namespace FIFE
     static Logger _log(LM_VIEW);
 
     // use some big value, so that non-positioned renderers show on top
-    const int32_t DEFAULT_RENDERER_POSITION = 1000;
+    int32_t const DEFAULT_RENDERER_POSITION = 1000;
 
     RendererBase::RendererBase(RenderBackend* renderbackend, int32_t position) :
         m_renderbackend(renderbackend),
@@ -32,7 +31,7 @@ namespace FIFE
         setPipelinePosition(position);
     }
 
-    RendererBase::RendererBase(const RendererBase& old) :
+    RendererBase::RendererBase(RendererBase const & old) :
         m_renderbackend(old.m_renderbackend),
         m_enabled(old.m_enabled),
         m_pipeline_position(old.m_pipeline_position),
@@ -92,8 +91,8 @@ namespace FIFE
     {
         clearActiveLayers();
 
-        const std::list<Layer*>& tmp = map->getLayers();
-        auto it                      = tmp.begin();
+        std::list<Layer*> const & tmp = map->getLayers();
+        auto it                       = tmp.begin();
         for (; it != tmp.end(); ++it) {
             addActiveLayer(*it);
         }

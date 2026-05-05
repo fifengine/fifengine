@@ -22,84 +22,84 @@ namespace FIFE
      * @return true - does have parent path
      *         false - does not have parent path
      */
-    bool HasParentPath(const fs::path& path);
+    bool HasParentPath(fs::path const & path);
 
     /** Helper function to retrieve a parent path object from a path object
      * @param path filesystem path object
      * @return a path object with parent of passed in parameter
      */
-    fs::path GetParentPath(const fs::path& path);
+    fs::path GetParentPath(fs::path const & path);
 
     /** Helper function to retrieve the filename from a filesystem path
      *   filename is just the name of the file and any extension without a path
      * @param path filesystem path object
      * @return filename string
      */
-    std::string GetFilenameFromPath(const fs::path& path);
+    std::string GetFilenameFromPath(fs::path const & path);
 
     /** Helper function to retrieve a filename string from a directory iterator
      * @param iter filesystem directory_iterator object
      * @return a filename string
      */
-    std::string GetFilenameFromDirectoryIterator(const fs::directory_iterator& iter);
+    std::string GetFilenameFromDirectoryIterator(fs::directory_iterator const & iter);
 
     /** Helper function to retrieve the path iterator in a string representation
      *  @param pathIter the iterator to get the string from
      *  @return a string representing the value in the path iterator
      */
-    std::string GetPathIteratorAsString(const fs::path::iterator& pathIter);
+    std::string GetPathIteratorAsString(fs::path::iterator const & pathIter);
 
     /** Helper function to retrieve an absolute path from a given relative path
      * @param path std::string object
      * @return a filesystem path object
      */
-    fs::path GetAbsolutePath(const std::string& path);
+    fs::path GetAbsolutePath(std::string const & path);
 
     /** Helper function to retrieve an absolute path from a given relative path
      * @param path filesystem path object
      * @return a filesystem path object
      */
-    fs::path GetAbsolutePath(const fs::path& path);
+    fs::path GetAbsolutePath(fs::path const & path);
 
     /** Helper function to check if a filename has an extension
      * @param path filesystem path object
      * @return true if filename has extension, false if not
      */
-    bool HasExtension(const std::string& path);
+    bool HasExtension(std::string const & path);
 
     /** Helper function to check if a filename has an extension
      * @param path filesystem path object
      * @return true if filename has extension, false if not
      */
-    bool HasExtension(const fs::path& path);
+    bool HasExtension(fs::path const & path);
 
     /** Helper function to retrieve the extension
      *  @note the extension includes the "."
      *  @param path the input path string
      *  @return the extension on the input path
      */
-    std::string GetExtension(const std::string& path);
+    std::string GetExtension(std::string const & path);
 
     /** Helper function to retrieve the extension
      *  @note the extension includes the "."
      *  @param path the input path object
      *  @return the extension on the input path
      */
-    std::string GetExtension(const fs::path& path);
+    std::string GetExtension(fs::path const & path);
 
     /** Helper function to retrieve the filename minus any extension
      *  @note the "." is NOT included
      *  @param path the input path string
      *  @return the filename minus any extension
      */
-    std::string GetStem(const std::string& path);
+    std::string GetStem(std::string const & path);
 
     /** Helper function to retrieve the filename minus any extension
      *  @note the "." is NOT included
      *  @param path the input path object
      *  @return the filename minus any extension
      */
-    std::string GetStem(const fs::path& path);
+    std::string GetStem(fs::path const & path);
 } // namespace FIFE
 
 #endif

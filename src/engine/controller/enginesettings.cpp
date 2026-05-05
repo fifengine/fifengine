@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "enginesettings.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-
-#include "enginesettings.h"
 
 namespace FIFE
 {
@@ -128,7 +126,7 @@ namespace FIFE
         return MAXIMUM_VOLUME;
     }
 
-    void EngineSettings::setRenderBackend(const std::string& renderbackend)
+    void EngineSettings::setRenderBackend(std::string const & renderbackend)
     {
         std::vector<std::string> pv = getPossibleRenderBackends();
         auto i                      = std::ranges::find(pv, renderbackend);
@@ -233,7 +231,7 @@ namespace FIFE
         m_screenheight = screenheight;
     }
 
-    void EngineSettings::setDefaultFontPath(const std::string& defaultfontpath)
+    void EngineSettings::setDefaultFontPath(std::string const & defaultfontpath)
     {
         m_defaultfontpath = defaultfontpath;
     }
@@ -243,17 +241,17 @@ namespace FIFE
         m_defaultfontsize = defaultfontsize;
     }
 
-    void EngineSettings::setDefaultFontGlyphs(const std::string& defaultfontglyphs)
+    void EngineSettings::setDefaultFontGlyphs(std::string const & defaultfontglyphs)
     {
         m_defaultfontglyphs = defaultfontglyphs;
     }
 
-    void EngineSettings::setWindowTitle(const std::string& title)
+    void EngineSettings::setWindowTitle(std::string const & title)
     {
         m_windowtitle = title;
     }
 
-    void EngineSettings::setWindowIcon(const std::string& icon)
+    void EngineSettings::setWindowIcon(std::string const & icon)
     {
         m_windowicon = icon;
     }
@@ -275,18 +273,18 @@ namespace FIFE
         m_colorkey.b = b;
     }
 
-    const SDL_Color& EngineSettings::getColorKey() const
+    SDL_Color const & EngineSettings::getColorKey() const
     {
         return m_colorkey;
     }
 
-    void EngineSettings::setVideoDriver(const std::string& driver)
+    void EngineSettings::setVideoDriver(std::string const & driver)
     {
         // TODO: validate the video driver
         m_videodriver = driver;
     }
 
-    const std::string& EngineSettings::getVideoDriver() const
+    std::string const & EngineSettings::getVideoDriver() const
     {
         return m_videodriver;
     }

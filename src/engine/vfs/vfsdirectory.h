@@ -25,26 +25,26 @@ namespace FIFE
      */
     class /*FIFE_API*/ VFSDirectory : public VFSSource
     {
-    public:
-        /** Constructor
-         * Creates the given file system's VFS Source.
-         */
-        explicit VFSDirectory(VFS* vfs, std::string root = "./");
-        /** Destructor
-         */
-        ~VFSDirectory() override;
+        public:
+            /** Constructor
+             * Creates the given file system's VFS Source.
+             */
+            explicit VFSDirectory(VFS* vfs, std::string root = "./");
+            /** Destructor
+             */
+            ~VFSDirectory() override;
 
-        bool fileExists(const std::string& filename) const override;
-        RawData* open(const std::string& filename) const override;
+            bool fileExists(std::string const & filename) const override;
+            RawData* open(std::string const & filename) const override;
 
-        std::set<std::string> listFiles(const std::string& path) const override;
+            std::set<std::string> listFiles(std::string const & path) const override;
 
-        std::set<std::string> listDirectories(const std::string& path) const override;
+            std::set<std::string> listDirectories(std::string const & path) const override;
 
-    private:
-        std::string m_root;
+        private:
+            std::string m_root;
 
-        std::set<std::string> list(const std::string& path, bool directorys) const;
+            std::set<std::string> list(std::string const & path, bool directorys) const;
     };
 
 } // namespace FIFE

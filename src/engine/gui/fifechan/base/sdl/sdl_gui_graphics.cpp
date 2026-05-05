@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "sdl_gui_graphics.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
+
 #include <fifechan/font.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src dir
 #include "gui/fifechan/base/gui_image.h"
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-
-#include "sdl_gui_graphics.h"
 #include "video/sdl/renderbackendsdl.h"
 
 namespace FIFE
@@ -39,7 +39,7 @@ namespace FIFE
     }
 
     void SdlGuiGraphics::drawImage(
-        const fcn::Image* image,
+        fcn::Image const * image,
         [[maybe_unused]] int32_t srcX,
         [[maybe_unused]] int32_t srcY,
         int32_t dstX,
@@ -47,11 +47,11 @@ namespace FIFE
         int32_t width,
         int32_t height)
     {
-        const auto* g_img = dynamic_cast<const GuiImage*>(image);
+        auto const * g_img = dynamic_cast<GuiImage const *>(image);
         assert(g_img);
 
-        const ImagePtr fifeimg         = g_img->getFIFEImage();
-        const fcn::ClipRectangle& clip = getCurrentClipArea();
+        ImagePtr const fifeimg          = g_img->getFIFEImage();
+        fcn::ClipRectangle const & clip = getCurrentClipArea();
         Rect rect(dstX, dstY, width, height);
         rect.x += clip.xOffset;
         rect.y += clip.yOffset;
@@ -59,13 +59,13 @@ namespace FIFE
         fifeimg->render(rect);
     }
 
-    void SdlGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment)
+    void SdlGuiGraphics::drawText(std::string const & text, int32_t x, int32_t y, uint32_t alignment)
     {
         if (mFont == nullptr) {
             throw GuiException("SdlGuiGraphics::drawText() - No font set!");
         }
 
-        const auto align = static_cast<fcn::Graphics::Alignment>(alignment);
+        auto const align = static_cast<fcn::Graphics::Alignment>(alignment);
 
         switch (align) {
         case fcn::Graphics::Alignment::Left:
@@ -85,13 +85,13 @@ namespace FIFE
 
     void SdlGuiGraphics::drawPoint(int32_t x, int32_t y)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset, mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
     void SdlGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawLine(
             Point(x1 + top.xOffset, y1 + top.yOffset),
             Point(x2 + top.xOffset, y2 + top.yOffset),
@@ -103,7 +103,7 @@ namespace FIFE
 
     void SdlGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawThickLine(
             Point(x1 + top.xOffset, y1 + top.yOffset),
             Point(x2 + top.xOffset, y2 + top.yOffset),
@@ -114,9 +114,9 @@ namespace FIFE
             mColor.a);
     }
 
-    void SdlGuiGraphics::drawPolyLine(const fcn::PointVector& points, uint32_t width)
+    void SdlGuiGraphics::drawPolyLine(fcn::PointVector const & points, uint32_t width)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         std::vector<Point> npoints;
         auto it = points.begin();
         for (; it != points.end(); ++it) {
@@ -125,9 +125,9 @@ namespace FIFE
         m_renderbackend->drawPolyLine(npoints, width, mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
-    void SdlGuiGraphics::drawBezier(const fcn::PointVector& points, int32_t steps, uint32_t width)
+    void SdlGuiGraphics::drawBezier(fcn::PointVector const & points, int32_t steps, uint32_t width)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         std::vector<Point> npoints;
         auto it = points.begin();
         for (; it != points.end(); ++it) {
@@ -136,9 +136,9 @@ namespace FIFE
         m_renderbackend->drawBezier(npoints, steps, width, mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
-    void SdlGuiGraphics::drawRectangle(const fcn::Rectangle& rectangle)
+    void SdlGuiGraphics::drawRectangle(fcn::Rectangle const & rectangle)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawRectangle(
             Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
             rectangle.width,
@@ -149,9 +149,9 @@ namespace FIFE
             mColor.a);
     }
 
-    void SdlGuiGraphics::fillRectangle(const fcn::Rectangle& rectangle)
+    void SdlGuiGraphics::fillRectangle(fcn::Rectangle const & rectangle)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->fillRectangle(
             Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
             rectangle.width,
@@ -162,23 +162,23 @@ namespace FIFE
             mColor.a);
     }
 
-    void SdlGuiGraphics::drawCircle(const fcn::Point& p, uint32_t radius)
+    void SdlGuiGraphics::drawCircle(fcn::Point const & p, uint32_t radius)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawCircle(
             Point(p.x + top.xOffset, p.y + top.yOffset), radius, mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
-    void SdlGuiGraphics::drawFillCircle(const fcn::Point& p, uint32_t radius)
+    void SdlGuiGraphics::drawFillCircle(fcn::Point const & p, uint32_t radius)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawFillCircle(
             Point(p.x + top.xOffset, p.y + top.yOffset), radius, mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
-    void SdlGuiGraphics::drawCircleSegment(const fcn::Point& p, uint32_t radius, int32_t sangle, int32_t eangle)
+    void SdlGuiGraphics::drawCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawCircleSegment(
             Point(p.x + top.xOffset, p.y + top.yOffset),
             radius,
@@ -190,9 +190,9 @@ namespace FIFE
             mColor.a);
     }
 
-    void SdlGuiGraphics::drawFillCircleSegment(const fcn::Point& p, uint32_t radius, int32_t sangle, int32_t eangle)
+    void SdlGuiGraphics::drawFillCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle)
     {
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawFillCircleSegment(
             Point(p.x + top.xOffset, p.y + top.yOffset),
             radius,
@@ -206,7 +206,7 @@ namespace FIFE
 
     void SdlGuiGraphics::_beginDraw()
     {
-        const fcn::Rectangle area(
+        fcn::Rectangle const area(
             0, 0, static_cast<int>(m_renderbackend->getWidth()), static_cast<int>(m_renderbackend->getHeight()));
         pushClipArea(area);
         m_renderbackend->pushClipArea(
@@ -223,12 +223,12 @@ namespace FIFE
 
     bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area)
     {
-        fcn::sdl2::Graphics::pushClipArea(area);
+        fcn::sdl3::Graphics::pushClipArea(area);
 
         // Due to some odd conception in Fifechan some of area
         // has xOffset and yOffset > 0. And if it happens we
         // need to offset our clip area. Or we can use Fifechan stack.
-        const fcn::ClipRectangle& top = mClipStack.top();
+        fcn::ClipRectangle const & top = mClipStack.top();
 
         m_renderbackend->pushClipArea(Rect(top.x, top.y, top.width, top.height), false);
 
@@ -237,11 +237,11 @@ namespace FIFE
 
     void SdlGuiGraphics::popClipArea()
     {
-        fcn::sdl2::Graphics::popClipArea();
+        fcn::sdl3::Graphics::popClipArea();
         m_renderbackend->popClipArea();
     }
 
-    void SdlGuiGraphics::setColor(const fcn::Color& color)
+    void SdlGuiGraphics::setColor(fcn::Color const & color)
     {
         mColor = color;
     }

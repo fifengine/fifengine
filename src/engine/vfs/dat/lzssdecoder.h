@@ -23,26 +23,26 @@ namespace FIFE
      */
     class /*FIFE_API*/ LZSSDecoder
     {
-    public:
-        /** Constructor
-         */
-        LZSSDecoder();
+        public:
+            /** Constructor
+             */
+            LZSSDecoder();
 
-        /** Destructor
-         */
-        ~LZSSDecoder() = default;
+            /** Destructor
+             */
+            ~LZSSDecoder() = default;
 
-        /** Decodes from a file into a pointer.
-         * @param input The VFS file to read from
-         * @param output The memory location to write to
-         * @param outputsize The size of the memory location in byte
-         */
-        void decode(RawData* input, uint8_t* output, uint32_t outputsize);
+            /** Decodes from a file into a pointer.
+             * @param input The VFS file to read from
+             * @param output The memory location to write to
+             * @param outputsize The size of the memory location in byte
+             */
+            void decode(RawData* input, uint8_t* output, uint32_t outputsize);
 
-    private:
-        uint32_t m_outlen;
-        uint32_t m_outindex;
-        void LZSSDecode(const uint8_t* in, int64_t len, uint8_t* out);
+        private:
+            uint32_t m_outlen;
+            uint32_t m_outindex;
+            void LZSSDecode(uint8_t const * in, int64_t len, uint8_t* out);
     };
 
 } // namespace FIFE

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "devicecaps.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -9,16 +12,12 @@
 #include <string>
 
 // 3rd party library includes
-#include <SDL.h>
-#include <SDL_video.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "renderbackend.h"
 #include "util/base/exception.h"
-
-#include "devicecaps.h"
 
 namespace FIFE
 {
@@ -68,7 +67,7 @@ namespace FIFE
     {
     }
 
-    ScreenMode::ScreenMode(const ScreenMode& rhs) :
+    ScreenMode::ScreenMode(ScreenMode const & rhs) :
         m_width(rhs.getWidth()),
         m_height(rhs.getHeight()),
         m_bpp(rhs.getBPP()),
@@ -83,7 +82,7 @@ namespace FIFE
     {
     }
 
-    bool ScreenMode::operator<(const ScreenMode& rhs) const
+    bool ScreenMode::operator<(ScreenMode const & rhs) const
     {
         // first by display, from lower to higher
         if (m_display > rhs.getDisplay()) {
@@ -124,7 +123,9 @@ namespace FIFE
         return false;
     }
 
-    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"), m_renderDriverIndex(-1) { }
+    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"), m_renderDriverIndex(-1)
+    {
+    }
 
     DeviceCaps::~DeviceCaps() = default;
 
@@ -141,7 +142,7 @@ namespace FIFE
     {
         // video driver section (x11, windows, dummy, ...)
         m_availableVideoDrivers.clear();
-        const int driverCount = SDL_GetNumVideoDrivers();
+        int const driverCount = SDL_GetNumVideoDrivers();
         for (int i = 0; i != driverCount; ++i) {
             std::string const driver(SDL_GetVideoDriver(i));
             m_availableVideoDrivers.push_back(driver);
@@ -150,12 +151,12 @@ namespace FIFE
 
         // render driver section (opengl, direct3d, software, ...)
         m_availableRenderDrivers.clear();
-        SDL_RendererInfo info;
-        const int renderDriverCount = SDL_GetNumRenderDrivers();
-        for (int i = 0; i != renderDriverCount; ++i) {
-            SDL_GetRenderDriverInfo(i, &info);
-            std::string const name(info.name);
-            m_availableRenderDrivers.push_back(name);
+        int const renderDriverCount = SDL_GetNumRenderDrivers();
+        for (int i = 0; i < renderDriverCount; ++i) {
+            char const * name = SDL_GetRenderDriver(i);
+            if (name) {
+                m_availableRenderDrivers.push_back(std::string(name));
+            }
         }
     }
 
@@ -197,48 +198,50 @@ namespace FIFE
         bpps[2] = 32;
 
         bool const renderDriver = m_renderDriverIndex != -1;
-        const int displayCount  = SDL_GetNumVideoDisplays();
-        for (int i = 0; i != displayCount; ++i) {
-            SDL_DisplayMode mode;
-            const int displayModes = SDL_GetNumDisplayModes(i);
-            for (int m = 0; m != displayModes; ++m) {
-                if (SDL_GetDisplayMode(i, m, &mode) == 0) {
-                    for (int16_t const bpp : bpps) {
-                        for (unsigned int const flag : flags) {
-                            // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
-                            // mode.refresh_rate, flags[j]));
-                            const uint16_t modeW = static_cast<uint16_t>(
-                                std::clamp(mode.w, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-                            const uint16_t modeH = static_cast<uint16_t>(
-                                std::clamp(mode.h, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-                            const uint16_t modeRefresh = static_cast<uint16_t>(std::clamp(
-                                mode.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-                            ScreenMode sm(modeW, modeH, static_cast<uint16_t>(bpp), modeRefresh, flag);
-                            sm.setFormat(mode.format);
-                            assert(i <= std::numeric_limits<uint8_t>::max());
-                            sm.setDisplay(static_cast<uint8_t>(i));
-                            if (renderDriver) {
-                                sm.setRenderDriverName(m_renderDriverName);
-                                sm.setRenderDriverIndex(m_renderDriverIndex);
-                            }
-                            m_screenModes.push_back(sm);
+        int displayCount        = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
+        for (int i = 0; i < displayCount; ++i) {
+            int numModes;
+            SDL_DisplayMode** modes = SDL_GetFullscreenDisplayModes(displays[i], &numModes);
+            for (int m = 0; m < numModes; ++m) {
+                SDL_DisplayMode mode = *modes[m];
+                for (int16_t const bpp : bpps) {
+                    for (unsigned int const flag : flags) {
+                        // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
+                        // mode.refresh_rate, flags[j]));
+                        uint16_t const modeW = static_cast<uint16_t>(
+                            std::clamp(mode.w, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                        uint16_t const modeH = static_cast<uint16_t>(
+                            std::clamp(mode.h, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                        uint16_t const modeRefresh = static_cast<uint16_t>(std::clamp(
+                            static_cast<int>(mode.refresh_rate),
+                            0,
+                            static_cast<int>(std::numeric_limits<uint16_t>::max())));
+                        ScreenMode sm(modeW, modeH, static_cast<uint16_t>(bpp), modeRefresh, flag);
+                        sm.setFormat(mode.format);
+                        assert(i <= std::numeric_limits<uint8_t>::max());
+                        sm.setDisplay(static_cast<uint8_t>(i));
+                        if (renderDriver) {
+                            sm.setRenderDriverName(m_renderDriverName);
+                            sm.setRenderDriverIndex(m_renderDriverIndex);
                         }
+                        m_screenModes.push_back(sm);
                     }
-                } else {
-                    throw SDLException(SDL_GetError());
                 }
             }
+            SDL_free(modes);
         }
+        SDL_free(displays);
 
         // sort the list to keep the most preferred modes at the top of the selection process
-        std::ranges::sort(m_screenModes, [](const ScreenMode& lhs, const ScreenMode& rhs) {
+        std::ranges::sort(m_screenModes, [](ScreenMode const & lhs, ScreenMode const & rhs) {
             return lhs < rhs;
         });
         std::ranges::reverse(m_screenModes);
     }
 
     ScreenMode DeviceCaps::getNearestScreenMode(
-        uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const
+        uint16_t width, uint16_t height, uint16_t bpp, std::string const & renderer, bool fs) const
     {
         // refresh rate is set to 0 so that desktop setting is used and the first display is used
         return getNearestScreenMode(width, height, bpp, renderer, fs, 0, 0);
@@ -248,7 +251,7 @@ namespace FIFE
         uint16_t width,
         uint16_t height,
         uint16_t bpp,
-        const std::string& renderer,
+        std::string const & renderer,
         bool fs,
         uint16_t refresh,
         uint8_t display) const
@@ -268,18 +271,24 @@ namespace FIFE
         }
 
         if (!fs) {
-            SDL_DisplayMode desktopMode;
-            if (SDL_GetDesktopDisplayMode(display, &desktopMode) != 0) {
+            SDL_DisplayID displayId = SDL_GetDisplayForWindow(RenderBackend::instance()->getWindow());
+            if (displayId == 0) {
+                displayId = SDL_GetPrimaryDisplay();
+            }
+            SDL_DisplayMode const * desktopMode = SDL_GetDesktopDisplayMode(displayId);
+            if (desktopMode == nullptr) {
                 throw SDLException(SDL_GetError());
             }
 
             // Keep requested dimensions in windowed mode.
-            // SDL_GetClosestDisplayMode() can pick a desktop/fullscreen-sized mode and unexpectedly enlarge
+            // SDL_GetClosestFullscreenDisplayMode() can pick a desktop/fullscreen-sized mode and unexpectedly enlarge
             // windowed windows (for example across a virtual combined desktop).
-            const uint16_t desktopRefresh = static_cast<uint16_t>(
-                std::clamp(desktopMode.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-            mode = ScreenMode(width, height, bpp, desktopRefresh, flags);
-            mode.setFormat(desktopMode.format);
+            uint16_t const desktopRefresh = static_cast<uint16_t>(std::clamp(
+                static_cast<int>(desktopMode->refresh_rate),
+                0,
+                static_cast<int>(std::numeric_limits<uint16_t>::max())));
+            mode                          = ScreenMode(width, height, bpp, desktopRefresh, flags);
+            mode.setFormat(desktopMode->format);
             mode.setDisplay(display);
             if (m_renderDriverIndex != -1) {
                 mode.setRenderDriverName(m_renderDriverName);
@@ -289,32 +298,36 @@ namespace FIFE
         }
 
         SDL_DisplayMode target;
-        SDL_DisplayMode closest;
 
         // Set the desired fullscreen resolution, etc.
         target.w = width;
         target.h = height;
         if (bpp == 0) {
-            target.format = 0; // don't care, should be desktop bpp
+            target.format = SDL_PIXELFORMAT_UNKNOWN; // don't care, should be desktop bpp
         } else if (bpp == 16) {
             target.format = SDL_PIXELFORMAT_RGB565;
         } else {
-            target.format = SDL_PIXELFORMAT_RGB888;
+            target.format = SDL_PIXELFORMAT_XRGB8888;
         }
         target.refresh_rate = refresh;
-        target.driverdata   = nullptr; // initialize to 0
 
-        if (SDL_GetClosestDisplayMode(display, &target, &closest) == nullptr) {
+        SDL_DisplayID displayId = SDL_GetDisplayForWindow(RenderBackend::instance()->getWindow());
+        if (displayId == 0) {
+            displayId = SDL_GetPrimaryDisplay();
+        }
+        SDL_DisplayMode closest;
+        if (!SDL_GetClosestFullscreenDisplayMode(
+                displayId, width, height, static_cast<float>(refresh), false, &closest)) {
             throw NotSupported("Could not find a matching screen mode for the values given!");
         }
 
-        const uint16_t closestW =
+        uint16_t const closestW =
             static_cast<uint16_t>(std::clamp(closest.w, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-        const uint16_t closestH =
+        uint16_t const closestH =
             static_cast<uint16_t>(std::clamp(closest.h, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-        const uint16_t closestRefresh = static_cast<uint16_t>(
-            std::clamp(closest.refresh_rate, 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
-        mode = ScreenMode(closestW, closestH, bpp, closestRefresh, flags);
+        uint16_t const closestRefresh = static_cast<uint16_t>(std::clamp(
+            static_cast<int>(closest.refresh_rate), 0, static_cast<int>(std::numeric_limits<uint16_t>::max())));
+        mode                          = ScreenMode(closestW, closestH, bpp, closestRefresh, flags);
         mode.setFormat(closest.format);
         mode.setDisplay(display);
         if (m_renderDriverIndex != -1) {
@@ -325,11 +338,11 @@ namespace FIFE
         return mode;
     }
 
-    void DeviceCaps::setRenderDriverName(const std::string& driver)
+    void DeviceCaps::setRenderDriverName(std::string const & driver)
     {
         bool found = false;
         assert(m_availableRenderDrivers.size() <= std::numeric_limits<uint8_t>::max());
-        const uint8_t driverCount = static_cast<uint8_t>(m_availableRenderDrivers.size());
+        uint8_t const driverCount = static_cast<uint8_t>(m_availableRenderDrivers.size());
         for (uint8_t i = 0; i != driverCount; i++) {
             if (driver == m_availableRenderDrivers[i]) {
                 m_renderDriverName  = driver;
@@ -351,7 +364,9 @@ namespace FIFE
 
     uint8_t DeviceCaps::getDisplayCount() const
     {
-        const int displayCount = SDL_GetNumVideoDisplays();
+        int displayCount        = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
+        SDL_free(displays);
         assert(displayCount >= 0);
         assert(displayCount <= std::numeric_limits<uint8_t>::max());
         return static_cast<uint8_t>(displayCount);
@@ -362,44 +377,63 @@ namespace FIFE
         if (display >= getDisplayCount()) {
             throw NotSupported("Could not find a matching display!");
         }
-        std::string displayName(SDL_GetDisplayName(display));
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        std::string displayName(SDL_GetDisplayName(displays[display]));
+        SDL_free(displays);
         return displayName;
     }
 
     uint32_t DeviceCaps::getDesktopFormat(uint8_t display) const
     {
-        SDL_DisplayMode mode;
-        if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        SDL_DisplayID displayId = displays[display];
+        SDL_free(displays);
+        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+        if (mode == nullptr) {
             throw SDLException(SDL_GetError());
         }
-        return mode.format;
+        return mode->format;
     }
 
     int32_t DeviceCaps::getDesktopRefreshRate(uint8_t display) const
     {
-        SDL_DisplayMode mode;
-        if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        SDL_DisplayID displayId = displays[display];
+        SDL_free(displays);
+        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+        if (mode == nullptr) {
             throw SDLException(SDL_GetError());
         }
-        return mode.refresh_rate;
+        return mode->refresh_rate;
     }
 
     int32_t DeviceCaps::getDesktopWidth(uint8_t display) const
     {
-        SDL_DisplayMode mode;
-        if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        SDL_DisplayID displayId = displays[display];
+        SDL_free(displays);
+        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+        if (mode == nullptr) {
             throw SDLException(SDL_GetError());
         }
-        return mode.w;
+        return mode->w;
     }
 
     int32_t DeviceCaps::getDesktopHeight(uint8_t display) const
     {
-        SDL_DisplayMode mode;
-        if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        SDL_DisplayID displayId = displays[display];
+        SDL_free(displays);
+        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+        if (mode == nullptr) {
             throw SDLException(SDL_GetError());
         }
-        return mode.h;
+        return mode->h;
     }
 
     Rect DeviceCaps::getDisplayBounds(uint8_t display) const

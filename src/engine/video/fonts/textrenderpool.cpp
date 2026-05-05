@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "textrenderpool.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
@@ -10,14 +13,9 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "fontbase.h"
 #include "util/time/timemanager.h"
 #include "video/image.h"
-
-#include "fontbase.h"
-#include "textrenderpool.h"
 
 namespace FIFE
 {
@@ -38,9 +36,9 @@ namespace FIFE
         }
     }
 
-    Image* TextRenderPool::getRenderedText(const FontBase* fontbase, const std::string& text)
+    Image* TextRenderPool::getRenderedText(FontBase const * fontbase, std::string const & text)
     {
-        const SDL_Color c = fontbase->getColor();
+        SDL_Color const c = fontbase->getColor();
 
         auto it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
@@ -74,7 +72,7 @@ namespace FIFE
         return nullptr;
     }
 
-    void TextRenderPool::addRenderedText(const FontBase* fontbase, const std::string& text, Image* image)
+    void TextRenderPool::addRenderedText(FontBase const * fontbase, std::string const & text, Image* image)
     {
         // Construct a entry and add it.
         s_pool_entry centry;
@@ -106,7 +104,7 @@ namespace FIFE
     {
 
         auto it            = m_pool.begin();
-        const uint32_t now = TimeManager::instance()->getTime();
+        uint32_t const now = TimeManager::instance()->getTime();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000 * 60) {
                 delete it->image;

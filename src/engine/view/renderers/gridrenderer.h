@@ -21,32 +21,32 @@ namespace FIFE
 
     class /*FIFE_API*/ GridRenderer : public RendererBase
     {
-    public:
-        /** constructor.
-         * @param renderbackend to use
-         * @param position position for this renderer in rendering pipeline
-         */
-        GridRenderer(RenderBackend* renderbackend, int32_t position);
+        public:
+            /** constructor.
+             * @param renderbackend to use
+             * @param position position for this renderer in rendering pipeline
+             */
+            GridRenderer(RenderBackend* renderbackend, int32_t position);
 
-        GridRenderer(const GridRenderer& old);
+            GridRenderer(GridRenderer const & old);
 
-        RendererBase* clone();
+            RendererBase* clone();
 
-        /** Destructor.
-         */
-        virtual ~GridRenderer();
+            /** Destructor.
+             */
+            virtual ~GridRenderer();
 
-        void render(Camera* cam, Layer* layer, RenderList& instances);
-        std::string getName()
-        {
-            return "GridRenderer";
-        }
-        void setColor(Uint8 r, Uint8 g, Uint8 b);
+            void render(Camera* cam, Layer* layer, RenderList& instances);
+            std::string getName()
+            {
+                return "GridRenderer";
+            }
+            void setColor(Uint8 r, Uint8 g, Uint8 b);
 
-        static GridRenderer* getInstance(IRendererContainer* cnt);
+            static GridRenderer* getInstance(IRendererContainer* cnt);
 
-    private:
-        SDL_Color m_color;
+        private:
+            SDL_Color m_color;
     };
 } // namespace FIFE
 

@@ -5,11 +5,12 @@
 #define FIFE_SOLVER_INDEXEDPQ_H
 
 // Platform specific includes
-#include "platform.h"
-
 #include <cassert>
+#include <cstdint>
 #include <list>
 #include <utility>
+
+#include "platform.h"
 
 namespace FIFE
 {
@@ -22,148 +23,152 @@ namespace FIFE
     template <typename index_type, typename priority_type>
     class /*FIFE_API*/ PriorityQueue
     {
-    public:
-        /** Used for element ordering.
-         *
-         */
-        enum Ordering
-        {
-            Ascending, //!< lowest priority first.
-            Descending //!< highest priority first.
-        };
+        public:
+            /** Used for element ordering.
+             *
+             */
+            enum Ordering
+            {
+                Ascending, //!< lowest priority first.
+                Descending //!< highest priority first.
+            };
 
-        using value_type = std::pair<index_type, priority_type>;
-        /** Constructor
-         *
-         */
-        PriorityQueue() : m_ordering(Ascending) { }
-
-        /** Constructor
-         *
-         * @param ordering The ordering the priority queue should use.
-         */
-        explicit PriorityQueue(const Ordering ordering) : m_ordering(ordering) { }
-
-        /** Pushes a new element onto the queue.
-         *
-         * The element is pushed onto the queue and then moved up the queue until it's
-         * in the correct position by priority.
-         *
-         * @param element Of type value_type which contains both the index and the priority of the element.
-         */
-        void pushElement(const value_type& element);
-
-        /** Pops the element with the highest priority from the queue.
-         *
-         * Removes and deletes the highest priority element.
-         */
-        void popElement();
-
-        /** Changes the priority of an element.
-         *
-         * Locates the element with the given index and changes it's priority to the given
-         * priority, it then re-orders the priority queue to take account of this new information.
-         *
-         * @param index The index of the element to change the priority of.
-         * @param newPriority The new priority of the element.
-         * @return True if the element could be found, false otherwise.
-         */
-        bool changeElementPriority(const index_type& index, const priority_type& newPriority);
-
-        /** Removes all elements from the priority queue.
-         *
-         */
-        void clear();
-
-        /** Retrieves the element with the highest priority.
-         *
-         * This function will generate an assertion error if the pq is
-         * empty.
-         *
-         * @return A const reference to the highest priority element.
-         */
-        value_type getPriorityElement() const
-        {
-
-            assert(!empty());
-
-            return m_elements.front();
-        }
-
-        /** Determines whether the queue is currently empty.
-         *
-         * @return true if it is empty, false otherwise.
-         */
-        bool empty() const
-        {
-            return m_elements.empty();
-        }
-
-        /** Returns the current size of the queue.
-         *
-         */
-        size_t size() const
-        {
-            return m_elements.size();
-        }
-
-    private:
-        using ElementList        = std::list<value_type>;
-        using ElementListIt      = typename ElementList::iterator;
-        using ElementListConstIt = typename ElementList::const_iterator;
-        // A list of valuetype pairs that represents the pq.
-        ElementList m_elements;
-
-        // The order to use when sorting the pq.
-        Ordering m_ordering;
-
-        /** Orders a PQ element up the list.
-         *
-         * @param i An iterator representing the element in the list to be sorted up.
-         */
-        void orderUp(ElementListIt i);
-        /** Orders a PQ element up the list.
-         *
-         * @param entry A const reference to a value_type which represents the element to be added to the
-         * pq.
-         */
-        void orderUp(const value_type& val);
-
-        /** Orders a PQ element down the list.
-         *
-         * @param i An iterator representing the element in the PQ to order down.
-         */
-        void orderDown(ElementListIt i);
-
-        /** Retrieves the iterator to the element with the given index.
-         *
-         * @param index A const reference to the index to find.
-         */
-        ElementListIt getElementIterator(const index_type& index)
-        {
-
-            for (ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i) {
-                if (i->first == index) {
-                    return i;
-                }
+            using value_type = std::pair<index_type, priority_type>;
+            /** Constructor
+             *
+             */
+            PriorityQueue() : m_ordering(Ascending)
+            {
             }
 
-            return m_elements.end();
-        }
+            /** Constructor
+             *
+             * @param ordering The ordering the priority queue should use.
+             */
+            explicit PriorityQueue(Ordering const ordering) : m_ordering(ordering)
+            {
+            }
 
-        /** The comparison function, used to compare two elements.
-         *
-         * @param a The l-operand of the comparison operation.
-         * @param b The r-operand of the comparison operation.
-         * @return An integer representing the result of the comparison operation. 1 being a is greather than b,
-         *		   -1 being a is less than b and 0 meaning that they're equal.
-         */
-        int32_t compare(const value_type& a, const value_type& b);
+            /** Pushes a new element onto the queue.
+             *
+             * The element is pushed onto the queue and then moved up the queue until it's
+             * in the correct position by priority.
+             *
+             * @param element Of type value_type which contains both the index and the priority of the element.
+             */
+            void pushElement(value_type const & element);
+
+            /** Pops the element with the highest priority from the queue.
+             *
+             * Removes and deletes the highest priority element.
+             */
+            void popElement();
+
+            /** Changes the priority of an element.
+             *
+             * Locates the element with the given index and changes it's priority to the given
+             * priority, it then re-orders the priority queue to take account of this new information.
+             *
+             * @param index The index of the element to change the priority of.
+             * @param newPriority The new priority of the element.
+             * @return True if the element could be found, false otherwise.
+             */
+            bool changeElementPriority(index_type const & index, priority_type const & newPriority);
+
+            /** Removes all elements from the priority queue.
+             *
+             */
+            void clear();
+
+            /** Retrieves the element with the highest priority.
+             *
+             * This function will generate an assertion error if the pq is
+             * empty.
+             *
+             * @return A const reference to the highest priority element.
+             */
+            value_type getPriorityElement() const
+            {
+
+                assert(!empty());
+
+                return m_elements.front();
+            }
+
+            /** Determines whether the queue is currently empty.
+             *
+             * @return true if it is empty, false otherwise.
+             */
+            bool empty() const
+            {
+                return m_elements.empty();
+            }
+
+            /** Returns the current size of the queue.
+             *
+             */
+            size_t size() const
+            {
+                return m_elements.size();
+            }
+
+        private:
+            using ElementList        = std::list<value_type>;
+            using ElementListIt      = typename ElementList::iterator;
+            using ElementListConstIt = typename ElementList::const_iterator;
+            // A list of valuetype pairs that represents the pq.
+            ElementList m_elements;
+
+            // The order to use when sorting the pq.
+            Ordering m_ordering;
+
+            /** Orders a PQ element up the list.
+             *
+             * @param i An iterator representing the element in the list to be sorted up.
+             */
+            void orderUp(ElementListIt i);
+            /** Orders a PQ element up the list.
+             *
+             * @param entry A const reference to a value_type which represents the element to be added to the
+             * pq.
+             */
+            void orderUp(value_type const & val);
+
+            /** Orders a PQ element down the list.
+             *
+             * @param i An iterator representing the element in the PQ to order down.
+             */
+            void orderDown(ElementListIt i);
+
+            /** Retrieves the iterator to the element with the given index.
+             *
+             * @param index A const reference to the index to find.
+             */
+            ElementListIt getElementIterator(index_type const & index)
+            {
+
+                for (ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i) {
+                    if (i->first == index) {
+                        return i;
+                    }
+                }
+
+                return m_elements.end();
+            }
+
+            /** The comparison function, used to compare two elements.
+             *
+             * @param a The l-operand of the comparison operation.
+             * @param b The r-operand of the comparison operation.
+             * @return An integer representing the result of the comparison operation. 1 being a is greather than b,
+             *		   -1 being a is less than b and 0 meaning that they're equal.
+             */
+            int32_t compare(value_type const & a, value_type const & b);
     };
 } // namespace FIFE
 
 template <typename index_type, typename priority_type>
-void FIFE::PriorityQueue<index_type, priority_type>::pushElement(const value_type& element)
+void FIFE::PriorityQueue<index_type, priority_type>::pushElement(value_type const & element)
 {
     if (empty()) {
         m_elements.push_front(element);
@@ -183,7 +188,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::popElement()
 
 template <typename index_type, typename priority_type>
 bool FIFE::PriorityQueue<index_type, priority_type>::changeElementPriority(
-    const index_type& index, const priority_type& newPriority)
+    index_type const & index, priority_type const & newPriority)
 {
 
     ElementListIt i = getElementIterator(index);
@@ -208,7 +213,6 @@ bool FIFE::PriorityQueue<index_type, priority_type>::changeElementPriority(
 template <typename index_type, typename priority_type>
 void FIFE::PriorityQueue<index_type, priority_type>::clear()
 {
-
     m_elements.clear();
 }
 
@@ -238,7 +242,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderUp(ElementListIt i)
 }
 
 template <class index_type, class priority_type>
-void FIFE::PriorityQueue<index_type, priority_type>::orderUp(const value_type& val)
+void FIFE::PriorityQueue<index_type, priority_type>::orderUp(value_type const & val)
 {
     for (ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i) {
         assert(val.first != i->first);
@@ -289,7 +293,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderDown(ElementListIt i)
 }
 
 template <typename index_type, typename priority_type>
-int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a, const value_type& b)
+int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(value_type const & a, value_type const & b)
 {
 
     if (m_ordering == Descending) {

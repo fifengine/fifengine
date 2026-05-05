@@ -18,9 +18,9 @@ namespace FIFE
 
     class /*FIFE_API*/ OggLoader : public IResourceLoader
     {
-    public:
-        OggLoader() = default;
-        virtual void load(IResource* res);
+        public:
+            OggLoader() = default;
+            virtual void load(IResource* res);
     };
 } // namespace FIFE
 

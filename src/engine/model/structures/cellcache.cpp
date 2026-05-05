@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cellcache.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cmath>
@@ -16,19 +19,14 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "model/metamodel/grids/cellgrid.h"
-#include "util/log/logger.h"
-#include "util/structures/purge.h"
-
 #include "cell.h"
-#include "cellcache.h"
 #include "instance.h"
 #include "instancetree.h"
 #include "layer.h"
 #include "map.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "util/log/logger.h"
+#include "util/structures/purge.h"
 
 namespace FIFE
 {
@@ -37,35 +35,115 @@ namespace FIFE
 
     class CellCacheChangeListener : public LayerChangeListener
     {
-    public:
-        explicit CellCacheChangeListener(Layer* layer) : m_layer(layer) { }
-        ~CellCacheChangeListener() override = default;
+        public:
+            explicit CellCacheChangeListener(Layer* layer) : m_layer(layer)
+            {
+            }
+            ~CellCacheChangeListener() override = default;
 
-        void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
-        {
-            for (auto& instance : instances) {
-                if (instance->isMultiCell()) {
-                    bool const rotchange = (instance->getChangeInfo() & ICHANGE_ROTATION) == ICHANGE_ROTATION;
-                    bool const locchange = (instance->getChangeInfo() & ICHANGE_LOC) == ICHANGE_LOC;
-                    bool const celchange = (instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL;
-                    bool const blochange = (instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK;
+            void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
+            {
+                for (auto& instance : instances) {
+                    if (instance->isMultiCell()) {
+                        bool const rotchange = (instance->getChangeInfo() & ICHANGE_ROTATION) == ICHANGE_ROTATION;
+                        bool const locchange = (instance->getChangeInfo() & ICHANGE_LOC) == ICHANGE_LOC;
+                        bool const celchange = (instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL;
+                        bool const blochange = (instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK;
 
-                    if (!rotchange && !locchange && !celchange && !blochange) {
+                        if (!rotchange && !locchange && !celchange && !blochange) {
+                            continue;
+                        }
+
+                        int32_t oldrotation       = instance->getOldRotation();
+                        int32_t const newrotation = instance->getRotation();
+                        if (!rotchange) {
+                            oldrotation = newrotation;
+                        }
+
+                        if (rotchange || locchange || celchange) {
+                            // update visual positions
+                            instance->updateMultiInstances();
+                        }
+                        if (rotchange || celchange) {
+                            // update cache positions
+                            ModelCoordinate oldmc;
+                            ModelCoordinate newmc;
+                            if (m_layer == layer) {
+                                oldmc = instance->getOldLocationRef().getLayerCoordinates();
+                                newmc = instance->getLocationRef().getLayerCoordinates();
+                            } else {
+                                oldmc =
+                                    m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                                        instance->getOldLocationRef().getExactLayerCoordinatesRef()));
+                                newmc =
+                                    m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                                        instance->getLocationRef().getExactLayerCoordinatesRef()));
+                            }
+
+                            if (!celchange) {
+                                oldmc = newmc;
+                            }
+
+                            CellGrid* cg                                  = m_layer->getCellGrid();
+                            std::vector<Instance*> const & multiinstances = instance->getMultiInstances();
+                            auto it                                       = multiinstances.begin();
+                            for (; it != multiinstances.end(); ++it) {
+                                // remove
+                                std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
+                                    oldmc, (*it)->getObject()->getMultiPartCoordinates(oldrotation));
+                                auto mcit = coordinates.begin();
+                                for (; mcit != coordinates.end(); ++mcit) {
+                                    Cell* cell = m_layer->getCellCache()->getCell(*mcit);
+                                    if (cell != nullptr) {
+                                        cell->removeInstance(*it);
+                                    }
+                                }
+                                // add
+                                coordinates = cg->toMultiCoordinates(
+                                    newmc, (*it)->getObject()->getMultiPartCoordinates(newrotation));
+                                mcit = coordinates.begin();
+                                for (; mcit != coordinates.end(); ++mcit) {
+                                    Cell* cell = m_layer->getCellCache()->getCell(*mcit);
+                                    if (cell != nullptr) {
+                                        cell->addInstance(*it);
+                                    }
+                                }
+                            }
+
+                            if (celchange) {
+                                // leader instance
+                                Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
+                                Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+                                if (oldcell == newcell) {
+                                    continue;
+                                }
+                                if (oldcell != nullptr) {
+                                    oldcell->removeInstance(instance);
+                                }
+                                if (newcell != nullptr) {
+                                    newcell->addInstance(instance);
+                                }
+                            }
+                        }
                         continue;
                     }
-
-                    int32_t oldrotation       = instance->getOldRotation();
-                    int32_t const newrotation = instance->getRotation();
-                    if (!rotchange) {
-                        oldrotation = newrotation;
+                    if (instance->getObject()->isMultiPart()) {
+                        continue;
                     }
-
-                    if (rotchange || locchange || celchange) {
-                        // update visual positions
-                        instance->updateMultiInstances();
+                    if ((instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK) {
+                        ModelCoordinate mc;
+                        if (m_layer == layer) {
+                            mc = instance->getLocationRef().getLayerCoordinates();
+                        } else {
+                            mc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                                instance->getLocationRef().getExactLayerCoordinatesRef()));
+                        }
+                        Cell* cell = m_layer->getCellCache()->getCell(mc);
+                        if (cell != nullptr) {
+                            cell->changeInstance(instance);
+                        }
                     }
-                    if (rotchange || celchange) {
-                        // update cache positions
+                    if ((instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL) {
                         ModelCoordinate oldmc;
                         ModelCoordinate newmc;
                         if (m_layer == layer) {
@@ -78,181 +156,107 @@ namespace FIFE
                                 instance->getLocationRef().getExactLayerCoordinatesRef()));
                         }
 
-                        if (!celchange) {
-                            oldmc = newmc;
+                        Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
+                        Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+                        if (oldcell == newcell) {
+                            continue;
                         }
+                        if (oldcell != nullptr) {
+                            oldcell->removeInstance(instance);
+                        }
+                        if (newcell != nullptr) {
+                            newcell->addInstance(instance);
+                        }
+                    }
+                }
+            }
 
-                        CellGrid* cg                                 = m_layer->getCellGrid();
-                        const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                        auto it                                      = multiinstances.begin();
-                        for (; it != multiinstances.end(); ++it) {
-                            // remove
-                            std::vector<ModelCoordinate> coordinates =
-                                cg->toMultiCoordinates(oldmc, (*it)->getObject()->getMultiPartCoordinates(oldrotation));
-                            auto mcit = coordinates.begin();
-                            for (; mcit != coordinates.end(); ++mcit) {
-                                Cell* cell = m_layer->getCellCache()->getCell(*mcit);
-                                if (cell != nullptr) {
-                                    cell->removeInstance(*it);
-                                }
+            void onInstanceCreate(Layer* layer, Instance* instance) override
+            {
+                ModelCoordinate mc;
+                if (m_layer == layer) {
+                    mc = instance->getLocationRef().getLayerCoordinates();
+                } else {
+                    mc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                        instance->getLocationRef().getExactLayerCoordinatesRef()));
+                }
+
+                CellCache* cache = m_layer->getCellCache();
+                Location loc(m_layer);
+                loc.setLayerCoordinates(mc);
+                if (!cache->isInCellCache(loc)) {
+                    cache->resize();
+                }
+                if (instance->isMultiCell()) {
+                    instance->updateMultiInstances();
+                    CellGrid* cg                                  = m_layer->getCellGrid();
+                    std::vector<Instance*> const & multiinstances = instance->getMultiInstances();
+                    auto it                                       = multiinstances.begin();
+                    for (; it != multiinstances.end(); ++it) {
+                        std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
+                            mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
+                        auto mcit = coordinates.begin();
+                        for (; mcit != coordinates.end(); ++mcit) {
+                            loc.setLayerCoordinates(*mcit);
+                            if (!cache->isInCellCache(loc)) {
+                                cache->resize();
                             }
-                            // add
-                            coordinates =
-                                cg->toMultiCoordinates(newmc, (*it)->getObject()->getMultiPartCoordinates(newrotation));
-                            mcit = coordinates.begin();
-                            for (; mcit != coordinates.end(); ++mcit) {
-                                Cell* cell = m_layer->getCellCache()->getCell(*mcit);
-                                if (cell != nullptr) {
-                                    cell->addInstance(*it);
-                                }
-                            }
-                        }
-
-                        if (celchange) {
-                            // leader instance
-                            Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
-                            Cell* newcell = m_layer->getCellCache()->getCell(newmc);
-                            if (oldcell == newcell) {
-                                continue;
-                            }
-                            if (oldcell != nullptr) {
-                                oldcell->removeInstance(instance);
-                            }
-                            if (newcell != nullptr) {
-                                newcell->addInstance(instance);
+                            Cell* cell = cache->getCell(*mcit);
+                            if (cell != nullptr) {
+                                cell->addInstance(*it);
                             }
                         }
                     }
-                    continue;
                 }
-                if (instance->getObject()->isMultiPart()) {
-                    continue;
-                }
-                if ((instance->getChangeInfo() & ICHANGE_BLOCK) == ICHANGE_BLOCK) {
-                    ModelCoordinate mc;
-                    if (m_layer == layer) {
-                        mc = instance->getLocationRef().getLayerCoordinates();
-                    } else {
-                        mc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
-                            instance->getLocationRef().getExactLayerCoordinatesRef()));
-                    }
-                    Cell* cell = m_layer->getCellCache()->getCell(mc);
-                    if (cell != nullptr) {
-                        cell->changeInstance(instance);
-                    }
-                }
-                if ((instance->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL) {
-                    ModelCoordinate oldmc;
-                    ModelCoordinate newmc;
-                    if (m_layer == layer) {
-                        oldmc = instance->getOldLocationRef().getLayerCoordinates();
-                        newmc = instance->getLocationRef().getLayerCoordinates();
-                    } else {
-                        oldmc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
-                            instance->getOldLocationRef().getExactLayerCoordinatesRef()));
-                        newmc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
-                            instance->getLocationRef().getExactLayerCoordinatesRef()));
-                    }
-
-                    Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
-                    Cell* newcell = m_layer->getCellCache()->getCell(newmc);
-                    if (oldcell == newcell) {
-                        continue;
-                    }
-                    if (oldcell != nullptr) {
-                        oldcell->removeInstance(instance);
-                    }
-                    if (newcell != nullptr) {
-                        newcell->addInstance(instance);
-                    }
+                Cell* cell = cache->getCell(mc);
+                if (cell != nullptr) {
+                    cell->addInstance(instance);
                 }
             }
-        }
 
-        void onInstanceCreate(Layer* layer, Instance* instance) override
-        {
-            ModelCoordinate mc;
-            if (m_layer == layer) {
-                mc = instance->getLocationRef().getLayerCoordinates();
-            } else {
-                mc = m_layer->getCellGrid()->toLayerCoordinates(
-                    layer->getCellGrid()->toMapCoordinates(instance->getLocationRef().getExactLayerCoordinatesRef()));
-            }
+            void onInstanceDelete(Layer* layer, Instance* instance) override
+            {
+                ModelCoordinate mc;
+                if (m_layer == layer) {
+                    mc = instance->getLocationRef().getLayerCoordinates();
+                } else {
+                    mc = m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                        instance->getLocationRef().getExactLayerCoordinatesRef()));
+                }
 
-            CellCache* cache = m_layer->getCellCache();
-            Location loc(m_layer);
-            loc.setLayerCoordinates(mc);
-            if (!cache->isInCellCache(loc)) {
-                cache->resize();
-            }
-            if (instance->isMultiCell()) {
-                instance->updateMultiInstances();
-                CellGrid* cg                                 = m_layer->getCellGrid();
-                const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                auto it                                      = multiinstances.begin();
-                for (; it != multiinstances.end(); ++it) {
-                    std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
-                        mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
-                    auto mcit = coordinates.begin();
-                    for (; mcit != coordinates.end(); ++mcit) {
-                        loc.setLayerCoordinates(*mcit);
-                        if (!cache->isInCellCache(loc)) {
-                            cache->resize();
-                        }
-                        Cell* cell = cache->getCell(*mcit);
-                        if (cell != nullptr) {
-                            cell->addInstance(*it);
+                CellCache* cache = m_layer->getCellCache();
+                if (instance->isMultiCell()) {
+                    instance->updateMultiInstances();
+                    CellGrid* cg                                  = m_layer->getCellGrid();
+                    std::vector<Instance*> const & multiinstances = instance->getMultiInstances();
+                    auto it                                       = multiinstances.begin();
+                    for (; it != multiinstances.end(); ++it) {
+                        std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
+                            mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
+                        auto mcit = coordinates.begin();
+                        for (; mcit != coordinates.end(); ++mcit) {
+                            Cell* cell = cache->getCell(*mcit);
+                            if (cell != nullptr) {
+                                cell->removeInstance(*it);
+                            }
                         }
                     }
                 }
-            }
-            Cell* cell = cache->getCell(mc);
-            if (cell != nullptr) {
-                cell->addInstance(instance);
-            }
-        }
-
-        void onInstanceDelete(Layer* layer, Instance* instance) override
-        {
-            ModelCoordinate mc;
-            if (m_layer == layer) {
-                mc = instance->getLocationRef().getLayerCoordinates();
-            } else {
-                mc = m_layer->getCellGrid()->toLayerCoordinates(
-                    layer->getCellGrid()->toMapCoordinates(instance->getLocationRef().getExactLayerCoordinatesRef()));
-            }
-
-            CellCache* cache = m_layer->getCellCache();
-            if (instance->isMultiCell()) {
-                instance->updateMultiInstances();
-                CellGrid* cg                                 = m_layer->getCellGrid();
-                const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                auto it                                      = multiinstances.begin();
-                for (; it != multiinstances.end(); ++it) {
-                    std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
-                        mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
-                    auto mcit = coordinates.begin();
-                    for (; mcit != coordinates.end(); ++mcit) {
-                        Cell* cell = cache->getCell(*mcit);
-                        if (cell != nullptr) {
-                            cell->removeInstance(*it);
-                        }
-                    }
+                Cell* cell = cache->getCell(mc);
+                if (cell != nullptr) {
+                    cell->removeInstance(instance);
                 }
+                // updates size on the next cache update (happens on same pump)
+                cache->setSizeUpdate(true);
             }
-            Cell* cell = cache->getCell(mc);
-            if (cell != nullptr) {
-                cell->removeInstance(instance);
-            }
-            // updates size on the next cache update (happens on same pump)
-            cache->setSizeUpdate(true);
-        }
 
-    private:
-        Layer* m_layer;
+        private:
+            Layer* m_layer;
     };
 
-    Zone::Zone(uint32_t id) : m_id(id) { }
+    Zone::Zone(uint32_t id) : m_id(id)
+    {
+    }
 
     Zone::~Zone()
     {
@@ -280,7 +284,7 @@ namespace FIFE
 
     void Zone::mergeZone(Zone* zone)
     {
-        const std::set<Cell*>& cells = zone->getCells();
+        std::set<Cell*> const & cells = zone->getCells();
         m_cells.insert(cells.begin(), cells.end());
         for (auto* cell : cells) {
             cell->setZone(this);
@@ -288,7 +292,7 @@ namespace FIFE
         zone->resetCells();
     }
 
-    const std::set<Cell*>& Zone::getCells() const
+    std::set<Cell*> const & Zone::getCells() const
     {
         return m_cells;
     }
@@ -308,12 +312,12 @@ namespace FIFE
         return static_cast<uint32_t>(m_cells.size());
     }
 
-    std::vector<Cell*> Zone::getTransitionCells(const Layer* layer)
+    std::vector<Cell*> Zone::getTransitionCells(Layer const * layer)
     {
         std::vector<Cell*> transitions;
         auto it = m_cells.begin();
         for (; it != m_cells.end(); ++it) {
-            const TransitionInfo* trans = (*it)->getTransition();
+            TransitionInfo const * trans = (*it)->getTransition();
             if (trans == nullptr) {
                 continue;
             }
@@ -330,39 +334,45 @@ namespace FIFE
 
     class ZoneCellChangeListener : public CellChangeListener
     {
-    public:
-        explicit ZoneCellChangeListener(CellCache* cache) : m_cache(cache) { }
-        ~ZoneCellChangeListener() override = default;
+        public:
+            explicit ZoneCellChangeListener(CellCache* cache) : m_cache(cache)
+            {
+            }
+            ~ZoneCellChangeListener() override = default;
 
-        void onInstanceEnteredCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override { }
+            void onInstanceEnteredCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override
+            {
+            }
 
-        void onInstanceExitedCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override { }
+            void onInstanceExitedCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override
+            {
+            }
 
-        void onBlockingChangedCell(Cell* cell, [[maybe_unused]] CellTypeInfo type, bool blocks) override
-        {
-            if (blocks) {
-                cell->setZoneProtected(true);
-                m_cache->splitZone(cell);
-            } else {
-                Zone* z1                            = cell->getZone();
-                Zone* z2                            = nullptr;
-                const std::vector<Cell*>& neighbors = cell->getNeighbors();
-                auto it                             = neighbors.begin();
-                for (; it != neighbors.end(); ++it) {
-                    Zone* z = (*it)->getZone();
-                    if ((z != nullptr) && z != z1) {
-                        z2 = z;
+            void onBlockingChangedCell(Cell* cell, [[maybe_unused]] CellTypeInfo type, bool blocks) override
+            {
+                if (blocks) {
+                    cell->setZoneProtected(true);
+                    m_cache->splitZone(cell);
+                } else {
+                    Zone* z1                             = cell->getZone();
+                    Zone* z2                             = nullptr;
+                    std::vector<Cell*> const & neighbors = cell->getNeighbors();
+                    auto it                              = neighbors.begin();
+                    for (; it != neighbors.end(); ++it) {
+                        Zone* z = (*it)->getZone();
+                        if ((z != nullptr) && z != z1) {
+                            z2 = z;
+                        }
+                    }
+                    if ((z1 != nullptr) && (z2 != nullptr)) {
+                        cell->setZoneProtected(false);
+                        m_cache->mergeZones(z1, z2);
                     }
                 }
-                if ((z1 != nullptr) && (z2 != nullptr)) {
-                    cell->setZoneProtected(false);
-                    m_cache->mergeZones(z1, z2);
-                }
             }
-        }
 
-    private:
-        CellCache* m_cache;
+        private:
+            CellCache* m_cache;
     };
 
     CellCache::CellCache(Layer* layer) :
@@ -389,7 +399,7 @@ namespace FIFE
 
         m_layer->addChangeListener(m_cellListener);
         m_layer->addChangeListener(m_cellListener);
-        const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
+        std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {
             auto layit = interacts.begin();
             for (; layit != interacts.end(); ++layit) {
@@ -419,7 +429,7 @@ namespace FIFE
         reset();
         // remove listener from layers
         m_layer->removeChangeListener(m_cellListener);
-        const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
+        std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {
             auto layit = interacts.begin();
             for (; layit != interacts.end(); ++layit) {
@@ -481,7 +491,7 @@ namespace FIFE
         resize(newsize);
     }
 
-    void CellCache::resize(const Rect& rec)
+    void CellCache::resize(Rect const & rec)
     {
         // check if size has changed
         Rect const newsize = rec;
@@ -494,7 +504,7 @@ namespace FIFE
             for (uint32_t i = 0; i < w; ++i) {
                 cells[i].resize(h, nullptr);
             }
-            const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
+            std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
             for (uint32_t y = 0; y < h; ++y) {
                 for (uint32_t x = 0; x < w; ++x) {
                     // transfer cells
@@ -589,7 +599,7 @@ namespace FIFE
 
     void CellCache::createCells()
     {
-        const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
+        std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
                 ModelCoordinate const mc(m_size.x + x, m_size.y + y);
@@ -673,7 +683,7 @@ namespace FIFE
                     cellstack.pop();
                     zone->addCell(c);
 
-                    const std::vector<Cell*>& neighbors = c->getNeighbors();
+                    std::vector<Cell*> const & neighbors = c->getNeighbors();
                     for (auto* nc : neighbors) {
                         if (!nc->isInserted() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                             nc->getCellType() != CTYPE_CELL_BLOCKER) {
@@ -703,7 +713,7 @@ namespace FIFE
         m_cells[(mc.x - m_size.x)][(mc.y - m_size.y)] = cell;
     }
 
-    Cell* CellCache::createCell(const ModelCoordinate& mc)
+    Cell* CellCache::createCell(ModelCoordinate const & mc)
     {
         Cell* cell = getCell(mc);
         if (cell == nullptr) {
@@ -713,7 +723,7 @@ namespace FIFE
         return cell;
     }
 
-    Cell* CellCache::getCell(const ModelCoordinate& mc)
+    Cell* CellCache::getCell(ModelCoordinate const & mc)
     {
         int32_t const x = mc.x - m_size.x;
         int32_t const y = mc.y - m_size.y;
@@ -725,7 +735,7 @@ namespace FIFE
         return m_cells[static_cast<uint32_t>(x)][static_cast<uint32_t>(y)];
     }
 
-    const std::vector<std::vector<Cell*>>& CellCache::getCells()
+    std::vector<std::vector<Cell*>> const & CellCache::getCells()
     {
         return m_cells;
     }
@@ -822,12 +832,12 @@ namespace FIFE
         return m_layer;
     }
 
-    const Rect& CellCache::getSize()
+    Rect const & CellCache::getSize()
     {
         return m_size;
     }
 
-    void CellCache::setSize(const Rect& rec)
+    void CellCache::setSize(Rect const & rec)
     {
         resize(rec);
     }
@@ -842,7 +852,7 @@ namespace FIFE
         return m_height;
     }
 
-    bool CellCache::isInCellCache(const Location& location) const
+    bool CellCache::isInCellCache(Location const & location) const
     {
         if (m_layer != location.getLayer()) {
             return false;
@@ -853,13 +863,13 @@ namespace FIFE
         return x >= 0 && std::cmp_less(x, m_width) && y >= 0 && std::cmp_less(y, m_height);
     }
 
-    int32_t CellCache::convertCoordToInt(const ModelCoordinate& coord) const
+    int32_t CellCache::convertCoordToInt(ModelCoordinate const & coord) const
     {
         ModelCoordinate const newcoords(coord.x - m_size.x, coord.y - m_size.y);
         return newcoords.x + (newcoords.y * m_width);
     }
 
-    ModelCoordinate CellCache::convertIntToCoord(const int32_t cell) const
+    ModelCoordinate CellCache::convertIntToCoord(int32_t const cell) const
     {
         ModelCoordinate const coord((cell % m_width) + m_size.x, (cell / m_width) + m_size.y);
         return coord;
@@ -881,11 +891,11 @@ namespace FIFE
         return m_neighborZ;
     }
 
-    std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker)
+    std::vector<Cell*> CellCache::getCellsInLine(ModelCoordinate const & pt1, ModelCoordinate const & pt2, bool blocker)
     {
         std::vector<Cell*> cells;
         std::vector<ModelCoordinate> const coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
-        for (const auto& coord : coords) {
+        for (auto const & coord : coords) {
             Cell* c = getCell(coord);
             if (c != nullptr) {
                 if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
@@ -899,7 +909,7 @@ namespace FIFE
         return cells;
     }
 
-    std::vector<Cell*> CellCache::getCellsInRect(const Rect& rec)
+    std::vector<Cell*> CellCache::getCellsInRect(Rect const & rec)
     {
         std::vector<Cell*> cells;
         cells.reserve(static_cast<std::size_t>(rec.w) * static_cast<std::size_t>(rec.h));
@@ -918,7 +928,7 @@ namespace FIFE
         return cells;
     }
 
-    std::vector<Cell*> CellCache::getBlockingCellsInRect(const Rect& rec)
+    std::vector<Cell*> CellCache::getBlockingCellsInRect(Rect const & rec)
     {
         std::vector<Cell*> cells;
         cells.reserve(static_cast<std::size_t>(rec.w) * static_cast<std::size_t>(rec.h));
@@ -937,7 +947,7 @@ namespace FIFE
         return cells;
     }
 
-    std::vector<Cell*> CellCache::getCellsInCircle(const ModelCoordinate& center, uint16_t radius)
+    std::vector<Cell*> CellCache::getCellsInCircle(ModelCoordinate const & center, uint16_t radius)
     {
         std::vector<Cell*> cells;
         // radius power 2
@@ -1000,7 +1010,7 @@ namespace FIFE
     }
 
     std::vector<Cell*> CellCache::getCellsInCircleSegment(
-        const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle)
+        ModelCoordinate const & center, uint16_t radius, int32_t sangle, int32_t eangle)
     {
         std::vector<Cell*> cells;
         ExactModelCoordinate const exactCenter(center.x, center.y);
@@ -1008,7 +1018,7 @@ namespace FIFE
         int32_t const s                   = (sangle + 360) % 360;
         int32_t const e                   = (eangle + 360) % 360;
         bool const greater                = s > e;
-        for (const auto& tmpCell : tmpCells) {
+        for (auto const & tmpCell : tmpCells) {
             int32_t const angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
@@ -1023,7 +1033,7 @@ namespace FIFE
         return cells;
     }
 
-    void CellCache::registerCost(const std::string& costId, double cost)
+    void CellCache::registerCost(std::string const & costId, double cost)
     {
         std::pair<std::map<std::string, double>::iterator, bool> insertiter;
         insertiter = m_costsTable.insert(std::pair<std::string, double>(costId, cost));
@@ -1033,7 +1043,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::unregisterCost(const std::string& costId)
+    void CellCache::unregisterCost(std::string const & costId)
     {
         auto it = m_costsTable.find(costId);
         if (it != m_costsTable.end()) {
@@ -1042,7 +1052,7 @@ namespace FIFE
         }
     }
 
-    double CellCache::getCost(const std::string& costId)
+    double CellCache::getCost(std::string const & costId)
     {
         auto it = m_costsTable.find(costId);
         if (it != m_costsTable.end()) {
@@ -1051,7 +1061,7 @@ namespace FIFE
         return 0.0;
     }
 
-    bool CellCache::existsCost(const std::string& costId)
+    bool CellCache::existsCost(std::string const & costId)
     {
         auto it = m_costsTable.find(costId);
         return it != m_costsTable.end();
@@ -1073,7 +1083,7 @@ namespace FIFE
         m_costsToCells.clear();
     }
 
-    void CellCache::addCellToCost(const std::string& costId, Cell* cell)
+    void CellCache::addCellToCost(std::string const & costId, Cell* cell)
     {
         if (existsCost(costId)) {
             StringCellPair const result = m_costsToCells.equal_range(costId);
@@ -1087,7 +1097,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::addCellsToCost(const std::string& costId, const std::vector<Cell*>& cells)
+    void CellCache::addCellsToCost(std::string const & costId, std::vector<Cell*> const & cells)
     {
         auto it = cells.begin();
         for (; it != cells.end(); ++it) {
@@ -1107,7 +1117,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromCost(const std::string& costId, Cell* cell)
+    void CellCache::removeCellFromCost(std::string const & costId, Cell* cell)
     {
         StringCellPair const result = m_costsToCells.equal_range(costId);
         auto it                     = result.first;
@@ -1119,7 +1129,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellsFromCost(const std::string& costId, const std::vector<Cell*>& cells)
+    void CellCache::removeCellsFromCost(std::string const & costId, std::vector<Cell*> const & cells)
     {
         auto it = cells.begin();
         for (; it != cells.end(); ++it) {
@@ -1127,7 +1137,7 @@ namespace FIFE
         }
     }
 
-    std::vector<Cell*> CellCache::getCostCells(const std::string& costId)
+    std::vector<Cell*> CellCache::getCostCells(std::string const & costId)
     {
         std::vector<Cell*> cells;
         StringCellPair const result = m_costsToCells.equal_range(costId);
@@ -1150,7 +1160,7 @@ namespace FIFE
         return costs;
     }
 
-    bool CellCache::existsCostForCell(const std::string& costId, Cell* cell)
+    bool CellCache::existsCostForCell(std::string const & costId, Cell* cell)
     {
         StringCellPair const result = m_costsToCells.equal_range(costId);
         auto it                     = result.first;
@@ -1162,7 +1172,7 @@ namespace FIFE
         return false;
     }
 
-    double CellCache::getAdjacentCost(const ModelCoordinate& adjacent, const ModelCoordinate& next)
+    double CellCache::getAdjacentCost(ModelCoordinate const & adjacent, ModelCoordinate const & next)
     {
         double cost    = m_layer->getCellGrid()->getAdjacentCost(adjacent, next);
         Cell* nextcell = getCell(next);
@@ -1177,7 +1187,7 @@ namespace FIFE
     }
 
     double CellCache::getAdjacentCost(
-        const ModelCoordinate& adjacent, const ModelCoordinate& next, const std::string& costId)
+        ModelCoordinate const & adjacent, ModelCoordinate const & next, std::string const & costId)
     {
         double cost    = m_layer->getCellGrid()->getAdjacentCost(adjacent, next);
         Cell* nextcell = getCell(next);
@@ -1195,7 +1205,7 @@ namespace FIFE
         return cost;
     }
 
-    bool CellCache::getCellSpeedMultiplier(const ModelCoordinate& cell, double& multiplier)
+    bool CellCache::getCellSpeedMultiplier(ModelCoordinate const & cell, double& multiplier)
     {
         Cell* nextcell = getCell(cell);
         if (nextcell != nullptr) {
@@ -1314,7 +1324,7 @@ namespace FIFE
         std::vector<Cell*> cells;
         auto it = m_transitions.begin();
         for (; it != m_transitions.end(); ++it) {
-            const TransitionInfo* trans = (*it)->getTransition();
+            TransitionInfo const * trans = (*it)->getTransition();
             if (trans != nullptr) {
                 if (trans->m_layer == layer) {
                     cells.push_back(*it);
@@ -1331,7 +1341,7 @@ namespace FIFE
         while (search) {
             bool found = false;
             if (!m_zones.empty()) {
-                if (std::ranges::any_of(m_zones, [id](const Zone* z) {
+                if (std::ranges::any_of(m_zones, [id](Zone const * z) {
                         return z->getId() == id;
                     })) {
                     found = true;
@@ -1346,7 +1356,7 @@ namespace FIFE
         return zi;
     }
 
-    const std::vector<Zone*>& CellCache::getZones()
+    std::vector<Zone*> const & CellCache::getZones()
     {
         return m_zones;
     }
@@ -1354,7 +1364,7 @@ namespace FIFE
     Zone* CellCache::getZone(uint32_t id)
     {
         Zone* zi = nullptr;
-        auto it  = std::ranges::find_if(m_zones, [id](const Zone* z) {
+        auto it  = std::ranges::find_if(m_zones, [id](Zone const * z) {
             return z->getId() == id;
         });
         if (it != m_zones.end()) {
@@ -1371,7 +1381,7 @@ namespace FIFE
 
     void CellCache::removeZone(Zone* zone)
     {
-        auto it = std::ranges::find_if(m_zones, [zone](const Zone* z) {
+        auto it = std::ranges::find_if(m_zones, [zone](Zone const * z) {
             return z == zone;
         });
         if (it != m_zones.end()) {
@@ -1389,8 +1399,8 @@ namespace FIFE
 
         Zone* newZone = createZone();
         std::stack<Cell*> cellstack;
-        const std::vector<Cell*>& neighbors = cell->getNeighbors();
-        auto it                             = std::ranges::find_if(neighbors, [](Cell* nc) {
+        std::vector<Cell*> const & neighbors = cell->getNeighbors();
+        auto it                              = std::ranges::find_if(neighbors, [](Cell* nc) {
             return nc->isInserted() && !nc->isZoneProtected() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                    nc->getCellType() != CTYPE_CELL_BLOCKER;
         });
@@ -1408,7 +1418,7 @@ namespace FIFE
             if (c->isZoneProtected()) {
                 continue;
             }
-            const std::vector<Cell*>& neigh = c->getNeighbors();
+            std::vector<Cell*> const & neigh = c->getNeighbors();
             for (auto* nc : neigh) {
                 if (nc->getZone() == currentZone && nc->isInserted() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                     nc->getCellType() != CTYPE_CELL_BLOCKER) {
@@ -1445,7 +1455,7 @@ namespace FIFE
         }
     }
 
-    const std::set<Cell*>& CellCache::getNarrowCells()
+    std::set<Cell*> const & CellCache::getNarrowCells()
     {
         return m_narrowCells;
     }
@@ -1478,12 +1488,12 @@ namespace FIFE
         m_searchNarrow = search;
     }
 
-    void CellCache::addCellToArea(const std::string& id, Cell* cell)
+    void CellCache::addCellToArea(std::string const & id, Cell* cell)
     {
         m_cellAreas.insert(std::pair<std::string, Cell*>(id, cell));
     }
 
-    void CellCache::addCellsToArea(const std::string& id, const std::vector<Cell*>& cells)
+    void CellCache::addCellsToArea(std::string const & id, std::vector<Cell*> const & cells)
     {
         auto it = cells.begin();
         for (; it != cells.end(); ++it) {
@@ -1503,7 +1513,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromArea(const std::string& id, Cell* cell)
+    void CellCache::removeCellFromArea(std::string const & id, Cell* cell)
     {
         StringCellPair const result = m_cellAreas.equal_range(id);
         auto it                     = result.first;
@@ -1515,7 +1525,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellsFromArea(const std::string& id, const std::vector<Cell*>& cells)
+    void CellCache::removeCellsFromArea(std::string const & id, std::vector<Cell*> const & cells)
     {
         auto it = cells.begin();
         for (; it != cells.end(); ++it) {
@@ -1523,12 +1533,12 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeArea(const std::string& id)
+    void CellCache::removeArea(std::string const & id)
     {
         m_cellAreas.erase(id);
     }
 
-    bool CellCache::existsArea(const std::string& id)
+    bool CellCache::existsArea(std::string const & id)
     {
         auto it = m_cellAreas.find(id);
         return it != m_cellAreas.end();
@@ -1560,7 +1570,7 @@ namespace FIFE
         return areas;
     }
 
-    std::vector<Cell*> CellCache::getAreaCells(const std::string& id)
+    std::vector<Cell*> CellCache::getAreaCells(std::string const & id)
     {
         std::vector<Cell*> cells;
         StringCellPair const result = m_cellAreas.equal_range(id);
@@ -1571,7 +1581,7 @@ namespace FIFE
         return cells;
     }
 
-    bool CellCache::isCellInArea(const std::string& id, Cell* cell)
+    bool CellCache::isCellInArea(std::string const & id, Cell* cell)
     {
         StringCellPair const result = m_cellAreas.equal_range(id);
         auto it                     = result.first;
@@ -1591,7 +1601,7 @@ namespace FIFE
         m_layer->getMinMaxCoordinates(min, max);
         Rect newsize(min.x, min.y, max.x, max.y);
 
-        const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
+        std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {
             auto layit = interacts.begin();
             for (; layit != interacts.end(); ++layit) {

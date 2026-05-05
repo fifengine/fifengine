@@ -26,38 +26,38 @@ namespace FIFE
      */
     class /*FIFE_API*/ IJoystickListener : public IListener
     {
-    public:
-        /** Called on a axis motion event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void axisMotion(JoystickEvent& evt) = 0;
+        public:
+            /** Called on a axis motion event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void axisMotion(JoystickEvent& evt) = 0;
 
-        /** Called on a hat motion event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void hatMotion(JoystickEvent& evt) = 0;
+            /** Called on a hat motion event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void hatMotion(JoystickEvent& evt) = 0;
 
-        /** Called on a button pressed event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void buttonPressed(JoystickEvent& evt) = 0;
+            /** Called on a button pressed event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void buttonPressed(JoystickEvent& evt) = 0;
 
-        /** Called on a button released event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void buttonReleased(JoystickEvent& evt) = 0;
+            /** Called on a button released event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void buttonReleased(JoystickEvent& evt) = 0;
 
-        /** Called on a device added event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void deviceAdded(JoystickEvent& evt) = 0;
+            /** Called on a device added event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void deviceAdded(JoystickEvent& evt) = 0;
 
-        /** Called on a device removed event.
-         * @param evt JoystickEvent that describes the event.
-         */
-        virtual void deviceRemoved(JoystickEvent& evt) = 0;
+            /** Called on a device removed event.
+             * @param evt JoystickEvent that describes the event.
+             */
+            virtual void deviceRemoved(JoystickEvent& evt) = 0;
 
-        virtual ~IJoystickListener() = default;
+            virtual ~IJoystickListener() = default;
     };
 
 } // namespace FIFE

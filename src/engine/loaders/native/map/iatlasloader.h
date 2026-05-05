@@ -26,23 +26,23 @@ namespace FIFE
      */
     class /*FIFE_API*/ IAtlasLoader
     {
-    public:
-        virtual ~IAtlasLoader() = default;
+        public:
+            virtual ~IAtlasLoader() = default;
 
-        /** determines whether the resource is in
-         *	the correct format for this loader
-         */
-        virtual bool isLoadable(const std::string& filename) = 0;
+            /** determines whether the resource is in
+             *	the correct format for this loader
+             */
+            virtual bool isLoadable(std::string const & filename) = 0;
 
-        /** responsible for loading the atlas
-         * returns a shared pointer to an image resource
-         */
-        virtual AtlasPtr load(const std::string& filename) = 0;
+            /** responsible for loading the atlas
+             * returns a shared pointer to an image resource
+             */
+            virtual AtlasPtr load(std::string const & filename) = 0;
 
-        /** responsible for loading the all atlases
-         * returns a vector of shared pointer to an image resource
-         */
-        virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
+            /** responsible for loading the all atlases
+             * returns a vector of shared pointer to an image resource
+             */
+            virtual std::vector<AtlasPtr> loadMultiple(std::string const & filename) = 0;
     };
 
     using AtlasLoaderPtr = SharedPtr<FIFE::IAtlasLoader>;

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "lightrenderer.h"
+
 // Standard C++ library includes
 #include <list>
 #include <map>
@@ -8,12 +11,9 @@
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/timeprovider.h"
 #include "model/structures/instance.h"
@@ -29,8 +29,6 @@
 #include "video/opengl/glimage.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "video/renderbackend.h"
-
-#include "lightrenderer.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -40,7 +38,7 @@ namespace FIFE
      */
     static Logger _log(LM_VIEWVIEW);
 
-    LightRendererElementInfo::LightRendererElementInfo(const RendererNode& n, int32_t src, int32_t dst) :
+    LightRendererElementInfo::LightRendererElementInfo(RendererNode const & n, int32_t src, int32_t dst) :
         m_anchor(n), m_src(src), m_dst(dst), m_stencil(false), m_stencil_ref(0)
     {
     }
@@ -66,7 +64,7 @@ namespace FIFE
     }
 
     LightRendererImageInfo::LightRendererImageInfo(
-        const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst) :
+        RendererNode const & anchor, ImagePtr const & image, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image)
     {
     }
@@ -102,7 +100,7 @@ namespace FIFE
     }
 
     LightRendererAnimationInfo::LightRendererAnimationInfo(
-        const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst) :
+        RendererNode const & anchor, AnimationPtr const & animation, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst),
         m_animation(animation),
         m_start_time(TimeManager::instance()->getTime()),
@@ -144,7 +142,7 @@ namespace FIFE
     }
 
     LightRendererResizeInfo::LightRendererResizeInfo(
-        const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, int32_t src, int32_t dst) :
+        RendererNode const & anchor, ImagePtr const & image, int32_t width, int32_t height, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image), m_width(width), m_height(height)
     {
     }
@@ -180,7 +178,7 @@ namespace FIFE
     }
 
     LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(
-        const RendererNode& anchor,
+        RendererNode const & anchor,
         uint8_t intensity,
         float radius,
         int32_t subdivisions,
@@ -253,7 +251,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    LightRenderer::LightRenderer(const LightRenderer& old) : RendererBase(old)
+    LightRenderer::LightRenderer(LightRenderer const & old) : RendererBase(old)
     {
         setEnabled(false);
     }
@@ -267,7 +265,7 @@ namespace FIFE
 
     // Add a static lightmap
     void LightRenderer::addImage(
-        const std::string& group, const RendererNode& n, const ImagePtr& image, int32_t src, int32_t dst)
+        std::string const & group, RendererNode const & n, ImagePtr const & image, int32_t src, int32_t dst)
     {
         LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
         m_groups[group].push_back(info);
@@ -275,7 +273,7 @@ namespace FIFE
 
     // Add a animation lightmap
     void LightRenderer::addAnimation(
-        const std::string& group, const RendererNode& n, const AnimationPtr& animation, int32_t src, int32_t dst)
+        std::string const & group, RendererNode const & n, AnimationPtr const & animation, int32_t src, int32_t dst)
     {
         LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
         m_groups[group].push_back(info);
@@ -283,8 +281,8 @@ namespace FIFE
 
     // Add a simple light
     void LightRenderer::addSimpleLight(
-        const std::string& group,
-        const RendererNode& n,
+        std::string const & group,
+        RendererNode const & n,
         uint8_t intensity,
         float radius,
         int32_t subdivisions,
@@ -303,9 +301,9 @@ namespace FIFE
 
     // Resize an Image
     void LightRenderer::resizeImage(
-        const std::string& group,
-        const RendererNode& n,
-        const ImagePtr& image,
+        std::string const & group,
+        RendererNode const & n,
+        ImagePtr const & image,
         int32_t width,
         int32_t height,
         int32_t src,
@@ -316,7 +314,7 @@ namespace FIFE
     }
 
     // Enable stencil test for the group
-    void LightRenderer::addStencilTest(const std::string& group, uint8_t stencil_ref)
+    void LightRenderer::addStencilTest(std::string const & group, uint8_t stencil_ref)
     {
         auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
@@ -325,7 +323,7 @@ namespace FIFE
     }
 
     // Disable stencil test for the group
-    void LightRenderer::removeStencilTest(const std::string& group)
+    void LightRenderer::removeStencilTest(std::string const & group)
     {
         auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
@@ -347,7 +345,7 @@ namespace FIFE
     }
 
     // Return a vector of all LightElementInfos
-    std::vector<LightRendererElementInfo*> LightRenderer::getLightInfo(const std::string& group)
+    std::vector<LightRendererElementInfo*> LightRenderer::getLightInfo(std::string const & group)
     {
         std::vector<LightRendererElementInfo*> info;
         auto info_it = m_groups[group].begin();
@@ -358,7 +356,7 @@ namespace FIFE
     }
 
     // Remove the group
-    void LightRenderer::removeAll(const std::string& group)
+    void LightRenderer::removeAll(std::string const & group)
     {
         auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {

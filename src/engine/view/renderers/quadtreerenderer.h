@@ -23,40 +23,40 @@ namespace FIFE
 
     class /*FIFE_API*/ RenderVisitor
     {
-    public:
-        int32_t visited;
-        RenderBackend* m_renderbackend;
-        Layer* m_layer;
-        Camera* m_camera;
-        RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera);
-        ~RenderVisitor() = default;
-        template <typename T>
-        bool visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
+        public:
+            int32_t visited;
+            RenderBackend* m_renderbackend;
+            Layer* m_layer;
+            Camera* m_camera;
+            RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera);
+            ~RenderVisitor() = default;
+            template <typename T>
+            bool visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
     };
 
     class /*FIFE_API*/ QuadTreeRenderer : public RendererBase
     {
-    public:
-        /** constructor.
-         * @param renderbackend to use
-         * @param position position for this renderer in rendering pipeline
-         */
-        QuadTreeRenderer(RenderBackend* renderbackend, int32_t position);
+        public:
+            /** constructor.
+             * @param renderbackend to use
+             * @param position position for this renderer in rendering pipeline
+             */
+            QuadTreeRenderer(RenderBackend* renderbackend, int32_t position);
 
-        QuadTreeRenderer(const QuadTreeRenderer& old);
+            QuadTreeRenderer(QuadTreeRenderer const & old);
 
-        RendererBase* clone();
+            RendererBase* clone();
 
-        /** Destructor.
-         */
-        virtual ~QuadTreeRenderer();
+            /** Destructor.
+             */
+            virtual ~QuadTreeRenderer();
 
-        void render(Camera* cam, Layer* layer, RenderList& instances);
+            void render(Camera* cam, Layer* layer, RenderList& instances);
 
-        std::string getName()
-        {
-            return "QuadTreeRenderer";
-        }
+            std::string getName()
+            {
+                return "QuadTreeRenderer";
+            }
     };
 } // namespace FIFE
 

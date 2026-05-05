@@ -25,26 +25,26 @@ namespace FIFE
      */
     class /*FIFE_API*/ ITextController
     {
-    public:
-        /** Adds a listener to the back of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addTextListener(ITextListener* listener) = 0;
+        public:
+            /** Adds a listener to the back of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addTextListener(ITextListener* listener) = 0;
 
-        /** Adds a listener to the front of the listener deque
-         * Listener will be notified via the corresponding events
-         * @param listener listener to add
-         */
-        virtual void addTextListenerFront(ITextListener* listener) = 0;
+            /** Adds a listener to the front of the listener deque
+             * Listener will be notified via the corresponding events
+             * @param listener listener to add
+             */
+            virtual void addTextListenerFront(ITextListener* listener) = 0;
 
-        /** Removes an added listener from the controller.
-         * Listener will not be notified anymore via the corresponding events
-         * @param listener listener to remove
-         */
-        virtual void removeTextListener(ITextListener* listener) = 0;
+            /** Removes an added listener from the controller.
+             * Listener will not be notified anymore via the corresponding events
+             * @param listener listener to remove
+             */
+            virtual void removeTextListener(ITextListener* listener) = 0;
 
-        virtual ~ITextController() = default;
+            virtual ~ITextController() = default;
     };
 
 } // namespace FIFE

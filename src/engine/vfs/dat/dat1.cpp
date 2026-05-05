@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "dat1.h"
+
 // Standard C++ library includes
 #include <list>
 #include <set>
@@ -10,26 +13,21 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/raw/rawdata.h"
-
-#include "dat1.h"
 
 namespace FIFE
 {
     static Logger _log(LM_FO_LOADERS);
 
-    DAT1::DAT1(VFS* vfs, const std::string& file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
+    DAT1::DAT1(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
         FL_LOG(_log, LMsg("MFFalloutDAT1") << "loading: " << file << " filesize: " << m_data->getDataLength());
 
         m_data->setIndex(0);
 
-        const uint32_t dircount = m_data->read32Big();
+        uint32_t const dircount = m_data->read32Big();
         m_data->moveIndex(4 * 3);
 
         FL_LOG(_log, LMsg("MFFalloutDAT1") << "number of directories " << dircount);
@@ -53,9 +51,9 @@ namespace FIFE
         }
     }
 
-    void DAT1::loadFileList(const std::string& dirname)
+    void DAT1::loadFileList(std::string const & dirname)
     {
-        const uint32_t filecount = m_data->read32Big();
+        uint32_t const filecount = m_data->read32Big();
         m_data->moveIndex(4 * 3);
         for (uint32_t i = 0; i < filecount; ++i) {
             RawDataDAT1::s_info info;
@@ -71,22 +69,22 @@ namespace FIFE
 
     std::string DAT1::readString()
     {
-        const uint8_t length = m_data->read8();
+        uint8_t const length = m_data->read8();
         return m_data->readString(length);
     }
 
-    RawData* DAT1::open(const std::string& file) const
+    RawData* DAT1::open(std::string const & file) const
     {
-        const RawDataDAT1::s_info& info = getInfo(file);
+        RawDataDAT1::s_info const & info = getInfo(file);
         return new RawData(new RawDataDAT1(getVFS(), m_datpath, info));
     }
 
-    bool DAT1::fileExists(const std::string& name) const
+    bool DAT1::fileExists(std::string const & name) const
     {
         return m_filelist.contains(name);
     }
 
-    const RawDataDAT1::s_info& DAT1::getInfo(const std::string& name) const
+    RawDataDAT1::s_info const & DAT1::getInfo(std::string const & name) const
     {
         auto i = m_filelist.find(name);
         if (i == m_filelist.end()) {
@@ -96,17 +94,17 @@ namespace FIFE
         return i->second;
     }
 
-    std::set<std::string> DAT1::listFiles(const std::string& pathstr) const
+    std::set<std::string> DAT1::listFiles(std::string const & pathstr) const
     {
         return list(pathstr, false);
     }
 
-    std::set<std::string> DAT1::listDirectories(const std::string& pathstr) const
+    std::set<std::string> DAT1::listDirectories(std::string const & pathstr) const
     {
         return list(pathstr, true);
     }
 
-    std::set<std::string> DAT1::list(const std::string& pathstr, bool dirs) const
+    std::set<std::string> DAT1::list(std::string const & pathstr, bool dirs) const
     {
         std::set<std::string> list;
         std::string path = pathstr;
@@ -116,17 +114,17 @@ namespace FIFE
             path.erase(0, 2);
         }
 
-        const size_t lastIndex = path.size();
+        size_t const lastIndex = path.size();
         if (lastIndex != 0 && path[lastIndex - 1] != '/') {
             path += '/';
         }
 
         auto end = m_filelist.end();
         for (auto i = m_filelist.begin(); i != end; ++i) {
-            const std::string& file = i->first;
+            std::string const & file = i->first;
             if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
-                const bool isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir
+                bool const isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir
 
                 if (isdir) {
                     cleanedfile.resize(cleanedfile.find('/'));

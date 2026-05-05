@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "gui_imageloader.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "video/atlasbook.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 
-#include "gui_imageloader.h"
-
-static const uint32_t ATLAS_SIZE = 512;
+static uint32_t const ATLAS_SIZE = 512;
 
 namespace FIFE
 {
-    GuiImageLoader::GuiImageLoader() : m_atlasbook(new AtlasBook(ATLAS_SIZE, ATLAS_SIZE)) { }
+    GuiImageLoader::GuiImageLoader() : m_atlasbook(new AtlasBook(ATLAS_SIZE, ATLAS_SIZE))
+    {
+    }
 
     GuiImageLoader::~GuiImageLoader()
     {
         delete m_atlasbook;
     }
 
-    fcn::Image* GuiImageLoader::load(const std::string& filename, [[maybe_unused]] bool convertToDisplayFormat)
+    fcn::Image* GuiImageLoader::load(std::string const & filename, [[maybe_unused]] bool convertToDisplayFormat)
     {
         ImageManager* imgManager = ImageManager::instance();
 
@@ -50,7 +50,7 @@ namespace FIFE
             // because we gonna update texture on-the fly (via TexSubImage)
             // we cant really use compressed texture
             RenderBackend* rb = RenderBackend::instance();
-            const bool prev   = rb->isImageCompressingEnabled();
+            bool const prev   = rb->isImageCompressingEnabled();
             rb->setImageCompressingEnabled(false);
             m_atlases[block->page]->forceLoadInternal();
             rb->setImageCompressingEnabled(prev);
@@ -64,8 +64,8 @@ namespace FIFE
         imgManager->remove(tmpimg);
 
         // create shared image and return it
-        const ImagePtr img = imgManager->create(filename);
-        const Rect region(block->left, block->top, block->getWidth(), block->getHeight());
+        ImagePtr const img = imgManager->create(filename);
+        Rect const region(block->left, block->top, block->getWidth(), block->getHeight());
         img->useSharedImage(m_atlases[block->page], region);
 
         return new GuiImage(img);

@@ -13,11 +13,10 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/base/sharedptr.h"
-
 #include "ianimationloader.h"
 #include "iatlasloader.h"
 #include "iobjectloader.h"
+#include "util/base/sharedptr.h"
 
 namespace FIFE
 {
@@ -29,47 +28,47 @@ namespace FIFE
 
     class /*FIFE_API*/ ObjectLoader : public IObjectLoader
     {
-    public:
-        ObjectLoader(
-            Model* model,
-            VFS* vfs,
-            ImageManager* imageManager,
-            AnimationManager* animationManager,
-            const AnimationLoaderPtr& animationLoader = AnimationLoaderPtr(),
-            const AtlasLoaderPtr& atlasLoader         = AtlasLoaderPtr());
+        public:
+            ObjectLoader(
+                Model* model,
+                VFS* vfs,
+                ImageManager* imageManager,
+                AnimationManager* animationManager,
+                AnimationLoaderPtr const & animationLoader = AnimationLoaderPtr(),
+                AtlasLoaderPtr const & atlasLoader         = AtlasLoaderPtr());
 
-        ~ObjectLoader() override;
+            ~ObjectLoader() override;
 
-        void setAnimationLoader(const AnimationLoaderPtr& animationLoader) override;
+            void setAnimationLoader(AnimationLoaderPtr const & animationLoader) override;
 
-        AnimationLoaderPtr getAnimationLoader() override;
+            AnimationLoaderPtr getAnimationLoader() override;
 
-        void setAtlasLoader(const AtlasLoaderPtr& atlasLoader) override;
+            void setAtlasLoader(AtlasLoaderPtr const & atlasLoader) override;
 
-        AtlasLoaderPtr getAtlasLoader() override;
+            AtlasLoaderPtr getAtlasLoader() override;
 
-        bool isLoadable(const std::string& filename) const override;
+            bool isLoadable(std::string const & filename) const override;
 
-        void load(const std::string& filename) override;
+            void load(std::string const & filename) override;
 
-        /**
-         * Used to load an object, atlas or animation file
-         * if directory is provided then file is assumed relative to directory
-         */
-        void loadImportFile(const std::string& file, const std::string& directory = "");
+            /**
+             * Used to load an object, atlas or animation file
+             * if directory is provided then file is assumed relative to directory
+             */
+            void loadImportFile(std::string const & file, std::string const & directory = "");
 
-        /**
-         * Used to load a directory of object, atlas or animation  files recursively
-         */
-        void loadImportDirectory(const std::string& directory);
+            /**
+             * Used to load a directory of object, atlas or animation  files recursively
+             */
+            void loadImportDirectory(std::string const & directory);
 
-    private:
-        Model* m_model;
-        VFS* m_vfs;
-        ImageManager* m_imageManager;
-        AnimationManager* m_animationManager;
-        AnimationLoaderPtr m_animationLoader;
-        AtlasLoaderPtr m_atlasLoader;
+        private:
+            Model* m_model;
+            VFS* m_vfs;
+            ImageManager* m_imageManager;
+            AnimationManager* m_animationManager;
+            AnimationLoaderPtr m_animationLoader;
+            AtlasLoaderPtr m_atlasLoader;
     };
 } // namespace FIFE
 

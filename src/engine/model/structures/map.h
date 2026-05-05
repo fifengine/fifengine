@@ -16,12 +16,11 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "location.h"
 #include "model/metamodel/timeprovider.h"
 #include "util/base/fifeclass.h"
 #include "util/resource/resource.h"
 #include "util/structures/rect.h"
-
-#include "location.h"
 
 namespace FIFE
 {
@@ -39,30 +38,30 @@ namespace FIFE
      */
     class /*FIFE_API*/ MapChangeListener
     {
-    public:
-        virtual ~MapChangeListener() = default;
+        public:
+            virtual ~MapChangeListener() = default;
 
-        /** Called when some layer is changed on map. @see LayerChangeListener
-         * Layer is effectively changed, in case some of its instances
-         * is created, deleted or changed during latest update cycle
-         * @param map where change occurred
-         * @param changedLayers list of layers containing some changes
-         * @note Does not report layer creations and deletions
-         */
-        virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+            /** Called when some layer is changed on map. @see LayerChangeListener
+             * Layer is effectively changed, in case some of its instances
+             * is created, deleted or changed during latest update cycle
+             * @param map where change occurred
+             * @param changedLayers list of layers containing some changes
+             * @note Does not report layer creations and deletions
+             */
+            virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
 
-        /** Called when some layer gets created on the map
-         * @param map where change occurred
-         * @param layer which got created
-         */
-        virtual void onLayerCreate(Map* map, Layer* layer) = 0;
+            /** Called when some layer gets created on the map
+             * @param map where change occurred
+             * @param layer which got created
+             */
+            virtual void onLayerCreate(Map* map, Layer* layer) = 0;
 
-        /** Called when some layer gets deleted on map
-         * @param map where change occurred
-         * @param layer which will be deleted
-         * @note right after this call, layer actually gets deleted!
-         */
-        virtual void onLayerDelete(Map* map, Layer* layer) = 0;
+            /** Called when some layer gets deleted on map
+             * @param map where change occurred
+             * @param layer which will be deleted
+             * @note right after this call, layer actually gets deleted!
+             */
+            virtual void onLayerDelete(Map* map, Layer* layer) = 0;
     };
 
     /** A container of \c Layer(s).
@@ -72,205 +71,205 @@ namespace FIFE
      */
     class /*FIFE_API*/ Map : public FifeClass
     {
-    public:
-        /** Construct a map
-         * To add map to model, one should call Model::addMap (otherwise
-         * map is not registered with the engine properly)
-         */
-        Map(std::string identifier,
-            RenderBackend* renderbackend,
-            const std::vector<RendererBase*>& renderers,
-            TimeProvider* tp_master = nullptr);
+        public:
+            /** Construct a map
+             * To add map to model, one should call Model::addMap (otherwise
+             * map is not registered with the engine properly)
+             */
+            Map(std::string identifier,
+                RenderBackend* renderbackend,
+                std::vector<RendererBase*> const & renderers,
+                TimeProvider* tp_master = nullptr);
 
-        /** Destructor
-         */
-        ~Map();
+            /** Destructor
+             */
+            ~Map();
 
-        /** Get the identifier for this map.
-         */
-        const std::string& getId() const
-        {
-            return m_id;
-        }
+            /** Get the identifier for this map.
+             */
+            std::string const & getId() const
+            {
+                return m_id;
+            }
 
-        /** Sets the identifier for this map.
-         */
-        void setId(const std::string& id)
-        {
-            m_id = id;
-        }
+            /** Sets the identifier for this map.
+             */
+            void setId(std::string const & id)
+            {
+                m_id = id;
+            }
 
-        /** Add a Layer to this Map. Map owns the returned pointer to the new Layer, so don't delete it!
-         */
-        Layer* createLayer(const std::string& identifier, CellGrid* grid);
+            /** Add a Layer to this Map. Map owns the returned pointer to the new Layer, so don't delete it!
+             */
+            Layer* createLayer(std::string const & identifier, CellGrid* grid);
 
-        /** Delete a layer from the map
-         */
-        void deleteLayer(Layer*);
+            /** Delete a layer from the map
+             */
+            void deleteLayer(Layer*);
 
-        /** Get the layers on this map.
-         */
-        const std::list<Layer*>& getLayers() const
-        {
-            return m_layers;
-        }
+            /** Get the layers on this map.
+             */
+            std::list<Layer*> const & getLayers() const
+            {
+                return m_layers;
+            }
 
-        /** Get the layer with the given id.
-         */
-        Layer* getLayer(const std::string& identifier);
+            /** Get the layer with the given id.
+             */
+            Layer* getLayer(std::string const & identifier);
 
-        /** Get the overall number of layers
-         */
-        uint32_t getLayerCount() const;
+            /** Get the overall number of layers
+             */
+            uint32_t getLayerCount() const;
 
-        /** Delete all layers from the map
-         */
-        void deleteLayers();
+            /** Delete all layers from the map
+             */
+            void deleteLayers();
 
-        /** Retrieves the minimum/maximum coordinates of instances on the map.
-         * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.
-         * @param max A reference to a ExactModelCoordinate that will hold the maximum coordinate.
-         */
-        void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
+            /** Retrieves the minimum/maximum coordinates of instances on the map.
+             * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.
+             * @param max A reference to a ExactModelCoordinate that will hold the maximum coordinate.
+             */
+            void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
 
-        /** Called periodically to update events on map
-         * @returns true, if map was changed
-         */
-        bool update();
+            /** Called periodically to update events on map
+             * @returns true, if map was changed
+             */
+            bool update();
 
-        /** Sets speed for the map. See Model::setTimeMultiplier.
-         */
-        void setTimeMultiplier(float multip)
-        {
-            m_timeProvider.setMultiplier(multip);
-        }
+            /** Sets speed for the map. See Model::setTimeMultiplier.
+             */
+            void setTimeMultiplier(float multip)
+            {
+                m_timeProvider.setMultiplier(multip);
+            }
 
-        /** Gets model speed. @see setTimeMultiplier.
-         */
-        float getTimeMultiplier() const
-        {
-            return m_timeProvider.getMultiplier();
-        }
+            /** Gets model speed. @see setTimeMultiplier.
+             */
+            float getTimeMultiplier() const
+            {
+                return m_timeProvider.getMultiplier();
+            }
 
-        /** Gets timeprovider used in the map
-         */
-        TimeProvider* getTimeProvider()
-        {
-            return &m_timeProvider;
-        }
+            /** Gets timeprovider used in the map
+             */
+            TimeProvider* getTimeProvider()
+            {
+                return &m_timeProvider;
+            }
 
-        /** Adds new change listener
-         * @param listener to add
-         */
-        void addChangeListener(MapChangeListener* listener);
+            /** Adds new change listener
+             * @param listener to add
+             */
+            void addChangeListener(MapChangeListener* listener);
 
-        /** Removes associated change listener
-         * @param listener to remove
-         */
-        void removeChangeListener(MapChangeListener* listener);
+            /** Removes associated change listener
+             * @param listener to remove
+             */
+            void removeChangeListener(MapChangeListener* listener);
 
-        /** Returns true, if map information was changed during previous update round
-         */
-        bool isChanged()
-        {
-            return !m_changedLayers.empty();
-        }
+            /** Returns true, if map information was changed during previous update round
+             */
+            bool isChanged()
+            {
+                return !m_changedLayers.empty();
+            }
 
-        /** Returns layers that were changed during previous update round
-         */
-        std::vector<Layer*>& getChangedLayers()
-        {
-            return m_changedLayers;
-        }
+            /** Returns layers that were changed during previous update round
+             */
+            std::vector<Layer*>& getChangedLayers()
+            {
+                return m_changedLayers;
+            }
 
-        /** Adds camera to the map. The Map takes ownership of the camera
-                so don't delete it.
-        */
-        Camera* addCamera(const std::string& id, const Rect& viewport);
+            /** Adds camera to the map. The Map takes ownership of the camera
+                    so don't delete it.
+            */
+            Camera* addCamera(std::string const & id, Rect const & viewport);
 
-        /** Removes a camera from the map
-         */
-        void removeCamera(const std::string& id);
+            /** Removes a camera from the map
+             */
+            void removeCamera(std::string const & id);
 
-        /** Get a camera by its identifier.
-         */
-        Camera* getCamera(const std::string& id);
+            /** Get a camera by its identifier.
+             */
+            Camera* getCamera(std::string const & id);
 
-        /** Get a list containing all cameras.
-         */
-        const std::vector<Camera*>& getCameras() const;
+            /** Get a list containing all cameras.
+             */
+            std::vector<Camera*> const & getCameras() const;
 
-        /** Return the number of enabled cameras in this map.
-         */
-        uint32_t getActiveCameraCount() const;
+            /** Return the number of enabled cameras in this map.
+             */
+            uint32_t getActiveCameraCount() const;
 
-        void setFilename(const std::string& file)
-        {
-            m_filename = file;
-        }
-        const std::string& getFilename() const
-        {
-            return m_filename;
-        }
+            void setFilename(std::string const & file)
+            {
+                m_filename = file;
+            }
+            std::string const & getFilename() const
+            {
+                return m_filename;
+            }
 
-        /** Adds instance that is to be transferred to another layer.
-         * @param instance A pointer to the instance that is to be transferred.
-         * @param target A const reference to the target location.
-         */
-        void addInstanceForTransfer(Instance* instance, const Location& target);
+            /** Adds instance that is to be transferred to another layer.
+             * @param instance A pointer to the instance that is to be transferred.
+             * @param target A const reference to the target location.
+             */
+            void addInstanceForTransfer(Instance* instance, Location const & target);
 
-        /** Removes instance that should be transferred to another layer.
-         * @param instance A pointer to the instance that should be transferred.
-         */
-        void removeInstanceForTransfer(Instance* instance);
+            /** Removes instance that should be transferred to another layer.
+             * @param instance A pointer to the instance that should be transferred.
+             */
+            void removeInstanceForTransfer(Instance* instance);
 
-        /** Creates cellcaches for this map. Called from maploader.
-         */
-        void initializeCellCaches();
+            /** Creates cellcaches for this map. Called from maploader.
+             */
+            void initializeCellCaches();
 
-        /** Creates cellcaches for this map. Called from maploader.
-         */
-        void finalizeCellCaches();
+            /** Creates cellcaches for this map. Called from maploader.
+             */
+            void finalizeCellCaches();
 
-        /**
-         */
-        TriggerController* getTriggerController() const
-        {
-            return m_triggerController;
-        };
+            /**
+             */
+            TriggerController* getTriggerController() const
+            {
+                return m_triggerController;
+            };
 
-    private:
-        std::string m_id;
-        std::string m_filename;
+        private:
+            std::string m_id;
+            std::string m_filename;
 
-        std::list<Layer*> m_layers;
-        TimeProvider m_timeProvider;
+            std::list<Layer*> m_layers;
+            TimeProvider m_timeProvider;
 
-        Map(const Map& map);
-        Map& operator=(const Map& map);
+            Map(Map const & map);
+            Map& operator=(Map const & map);
 
-        //! listeners for map changes
-        std::vector<MapChangeListener*> m_changeListeners;
+            //! listeners for map changes
+            std::vector<MapChangeListener*> m_changeListeners;
 
-        //! holds changed layers after each update
-        std::vector<Layer*> m_changedLayers;
+            //! holds changed layers after each update
+            std::vector<Layer*> m_changedLayers;
 
-        //! holds the cameras attached to this map
-        std::vector<Camera*> m_cameras;
+            //! holds the cameras attached to this map
+            std::vector<Camera*> m_cameras;
 
-        //! pointer to renderbackend
-        RenderBackend* m_renderBackend;
+            //! pointer to renderbackend
+            RenderBackend* m_renderBackend;
 
-        //! holds handles to all created renderers
-        std::vector<RendererBase*> m_renderers;
+            //! holds handles to all created renderers
+            std::vector<RendererBase*> m_renderers;
 
-        //! true, if something was changed on map during previous update (layer change, creation, deletion)
-        bool m_changed;
+            //! true, if something was changed on map during previous update (layer change, creation, deletion)
+            bool m_changed;
 
-        //! holds instances which should be transferred on the next update
-        std::map<Instance*, Location> m_transferInstances;
+            //! holds instances which should be transferred on the next update
+            std::map<Instance*, Location> m_transferInstances;
 
-        TriggerController* m_triggerController;
+            TriggerController* m_triggerController;
     };
 
 } // namespace FIFE

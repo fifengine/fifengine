@@ -43,52 +43,52 @@ namespace FIFE
      */
     class /*FIFE_API*/ Timer : protected TimeEvent
     {
-    public:
-        using type_callback = std::function<void()>;
-        /** Default constructor.
-         *
-         *  Constructs an idle timer, use @see setInterval and @see setCallback
-         *  to set it up for use.
-         */
-        Timer();
+        public:
+            using type_callback = std::function<void()>;
+            /** Default constructor.
+             *
+             *  Constructs an idle timer, use @see setInterval and @see setCallback
+             *  to set it up for use.
+             */
+            Timer();
 
-        /** Destructor.
-         *
-         *  Stops and destroys the timer.
-         */
-        ~Timer() override;
+            /** Destructor.
+             *
+             *  Stops and destroys the timer.
+             */
+            ~Timer() override;
 
-        /** Set the interval in milliseconds
-         *
-         *  @param msec The interval
-         *  If you use an intervall 0 the timer will fire every frame.
-         */
-        void setInterval(int32_t msec);
+            /** Set the interval in milliseconds
+             *
+             *  @param msec The interval
+             *  If you use an intervall 0 the timer will fire every frame.
+             */
+            void setInterval(int32_t msec);
 
-        /** Start the timer
-         *
-         * Without calling this function, nothing will happen.
-         * It is save to call this more than once.
-         */
-        void start();
+            /** Start the timer
+             *
+             * Without calling this function, nothing will happen.
+             * It is save to call this more than once.
+             */
+            void start();
 
-        /** Stop the timer
-         *
-         *  Stops execution of the callback
-         *  It is save to call this more than once.
-         */
-        void stop();
+            /** Stop the timer
+             *
+             *  Stops execution of the callback
+             *  It is save to call this more than once.
+             */
+            void stop();
 
-        /** Set the callback that will be called
-         *
-         *  @param callback A @c std::function returning void
-         */
-        void setCallback(const type_callback& cb);
+            /** Set the callback that will be called
+             *
+             *  @param callback A @c std::function returning void
+             */
+            void setCallback(type_callback const & cb);
 
-    protected:
-        bool m_active;
-        type_callback m_callback;
-        void updateEvent(uint32_t time) override;
+        protected:
+            bool m_active;
+            type_callback m_callback;
+            void updateEvent(uint32_t time) override;
     };
 
 } // namespace FIFE

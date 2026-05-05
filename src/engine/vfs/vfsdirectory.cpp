@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "vfsdirectory.h"
+
 // Standard C++ library includes
 #include <set>
 #include <string>
@@ -9,16 +12,11 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "filesystem.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/raw/rawdatafile.h"
-
-#include "filesystem.h"
-#include "vfsdirectory.h"
 
 namespace FIFE
 {
@@ -37,7 +35,7 @@ namespace FIFE
 
     VFSDirectory::~VFSDirectory() = default;
 
-    bool VFSDirectory::fileExists(const std::string& name) const
+    bool VFSDirectory::fileExists(std::string const & name) const
     {
         std::string const filename = m_root + name;
 
@@ -47,22 +45,22 @@ namespace FIFE
         return file.is_open();
     }
 
-    RawData* VFSDirectory::open(const std::string& file) const
+    RawData* VFSDirectory::open(std::string const & file) const
     {
         return new RawData(new RawDataFile(m_root + file));
     }
 
-    std::set<std::string> VFSDirectory::listFiles(const std::string& path) const
+    std::set<std::string> VFSDirectory::listFiles(std::string const & path) const
     {
         return list(path, false);
     }
 
-    std::set<std::string> VFSDirectory::listDirectories(const std::string& path) const
+    std::set<std::string> VFSDirectory::listDirectories(std::string const & path) const
     {
         return list(path, true);
     }
 
-    std::set<std::string> VFSDirectory::list(const std::string& path, bool directorys) const
+    std::set<std::string> VFSDirectory::list(std::string const & path, bool directorys) const
     {
         std::set<std::string> list;
         std::string dir = m_root;
@@ -91,7 +89,7 @@ namespace FIFE
                     list.insert(filename);
                 }
             }
-        } catch (const fs::filesystem_error& ex) {
+        } catch (fs::filesystem_error const & ex) {
             throw Exception(ex.what());
         }
 

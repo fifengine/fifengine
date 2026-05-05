@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "objectloader.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <cstdio>
@@ -10,9 +13,8 @@
 #include <string>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "animationloader.h"
+#include "atlasloader.h"
 #include "audio/actionaudio.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/object.h"
@@ -26,10 +28,6 @@
 #include "video/imagemanager.h"
 #include "view/visual.h"
 
-#include "animationloader.h"
-#include "atlasloader.h"
-#include "objectloader.h"
-
 namespace FIFE
 {
     /** Logger to use for this source file.
@@ -42,8 +40,8 @@ namespace FIFE
         VFS* vfs,
         ImageManager* imageManager,
         AnimationManager* animationManager,
-        const AnimationLoaderPtr& animationLoader,
-        const AtlasLoaderPtr& atlasLoader) :
+        AnimationLoaderPtr const & animationLoader,
+        AtlasLoaderPtr const & atlasLoader) :
         m_model(model), m_vfs(vfs), m_imageManager(imageManager), m_animationManager(animationManager)
     {
         assert(m_model && m_vfs && m_imageManager && m_animationManager);
@@ -63,7 +61,7 @@ namespace FIFE
 
     ObjectLoader::~ObjectLoader() = default;
 
-    void ObjectLoader::setAnimationLoader(const AnimationLoaderPtr& animationLoader)
+    void ObjectLoader::setAnimationLoader(AnimationLoaderPtr const & animationLoader)
     {
         assert(animationLoader);
 
@@ -75,7 +73,7 @@ namespace FIFE
         return m_animationLoader;
     }
 
-    void ObjectLoader::setAtlasLoader(const AtlasLoaderPtr& atlasLoader)
+    void ObjectLoader::setAtlasLoader(AtlasLoaderPtr const & atlasLoader)
     {
         assert(atlasLoader);
 
@@ -87,7 +85,7 @@ namespace FIFE
         return m_atlasLoader;
     }
 
-    bool ObjectLoader::isLoadable(const std::string& filename) const
+    bool ObjectLoader::isLoadable(std::string const & filename) const
     {
         fs::path const objectPath(filename);
 
@@ -98,7 +96,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(objectFile, xml)) {
                         std::ostringstream oss;
@@ -152,7 +150,7 @@ namespace FIFE
         return false;
     }
 
-    void ObjectLoader::load(const std::string& filename)
+    void ObjectLoader::load(std::string const & filename)
     {
         fs::path const objectPath(filename);
 
@@ -163,7 +161,7 @@ namespace FIFE
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
-                    const std::string xml = data->readString(data->getDataLength());
+                    std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(objectFile, xml)) {
                         delete data;
@@ -194,10 +192,10 @@ namespace FIFE
         // if we get here then loading the file went well
         XML::Element* root = objectFile.RootElement();
         if (root != nullptr) {
-            for (const XML::Element* importElement = root->FirstChildElement("import"); importElement != nullptr;
-                 importElement                     = importElement->NextSiblingElement("import")) {
-                const char* importDir  = XML::Attribute(importElement, "dir");
-                const char* importFile = XML::Attribute(importElement, "file");
+            for (XML::Element const * importElement = root->FirstChildElement("import"); importElement != nullptr;
+                 importElement                      = importElement->NextSiblingElement("import")) {
+                char const * importDir  = XML::Attribute(importElement, "dir");
+                char const * importFile = XML::Attribute(importElement, "file");
 
                 std::string directory;
                 if (importDir != nullptr) {
@@ -231,12 +229,12 @@ namespace FIFE
         if (XML::HasName(root, "assets")) {
             for (XML::Element* objectElem = root->FirstChildElement("object"); objectElem != nullptr;
                  objectElem               = objectElem->NextSiblingElement("object")) {
-                const char* objectId    = XML::Attribute(objectElem, "id");
-                const char* namespaceId = XML::Attribute(objectElem, "namespace");
+                char const * objectId    = XML::Attribute(objectElem, "id");
+                char const * namespaceId = XML::Attribute(objectElem, "namespace");
 
                 Object* obj = nullptr;
                 if ((objectId != nullptr) && (namespaceId != nullptr)) {
-                    const char* parentId = XML::Attribute(objectElem, "parent");
+                    char const * parentId = XML::Attribute(objectElem, "parent");
 
                     if (parentId != nullptr) {
                         Object* parent = m_model->getObject(parentId, namespaceId);
@@ -275,7 +273,7 @@ namespace FIFE
                     objectElem->QueryIntAttribute("static", &isStatic);
                     obj->setStatic(isStatic != 0);
 
-                    const char* pather = XML::Attribute(objectElem, "pather");
+                    char const * pather = XML::Attribute(objectElem, "pather");
 
                     if (pather != nullptr) {
                         obj->setPather(m_model->getPather(pather));
@@ -283,7 +281,7 @@ namespace FIFE
                         obj->setPather(m_model->getPather("RoutePather"));
                     }
 
-                    const char* costId = XML::Attribute(objectElem, "cost_id");
+                    char const * costId = XML::Attribute(objectElem, "cost_id");
                     if (costId != nullptr) {
                         obj->setCostId(costId);
                         double cost       = 1.0;
@@ -293,7 +291,7 @@ namespace FIFE
                         }
                     }
 
-                    const char* areaId = XML::Attribute(objectElem, "area_id");
+                    char const * areaId = XML::Attribute(objectElem, "area_id");
                     if (areaId != nullptr) {
                         obj->setArea(areaId);
                     }
@@ -308,7 +306,7 @@ namespace FIFE
                     for (XML::Element* walkableElement = objectElem->FirstChildElement("walkable_area");
                          walkableElement != nullptr;
                          walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
-                        const char* walkableId = XML::Attribute(walkableElement, "id");
+                        char const * walkableId = XML::Attribute(walkableElement, "id");
                         if (walkableId != nullptr) {
                             obj->addWalkableArea(walkableId);
                         }
@@ -344,7 +342,7 @@ namespace FIFE
                     for (XML::Element* multiElement = objectElem->FirstChildElement("multipart");
                          multiElement != nullptr;
                          multiElement = multiElement->NextSiblingElement("multipart")) {
-                        const char* partId = XML::Attribute(multiElement, "id");
+                        char const * partId = XML::Attribute(multiElement, "id");
                         if (partId != nullptr) {
                             obj->addMultiPartId(partId);
                         }
@@ -373,7 +371,7 @@ namespace FIFE
                     // loop over all image tags
                     for (XML::Element* imageElement = objectElem->FirstChildElement("image"); imageElement != nullptr;
                          imageElement               = imageElement->NextSiblingElement("image")) {
-                        const char* sourceId = XML::Attribute(imageElement, "source");
+                        char const * sourceId = XML::Attribute(imageElement, "source");
 
                         if (sourceId != nullptr) {
                             fs::path imagePath(filename);
@@ -430,7 +428,7 @@ namespace FIFE
                     for (XML::Element* actionElement = objectElem->FirstChildElement("action");
                          actionElement != nullptr;
                          actionElement = actionElement->NextSiblingElement("action")) {
-                        const char* actionId = XML::Attribute(actionElement, "id");
+                        char const * actionId = XML::Attribute(actionElement, "id");
 
                         if (actionId != nullptr) {
                             int isDefault = 0;
@@ -440,13 +438,13 @@ namespace FIFE
                             // Fetch ActionAudio data
                             XML::Element* soundElement = actionElement->FirstChildElement("sound");
                             if (soundElement != nullptr) {
-                                const char* clip = XML::Attribute(soundElement, "source");
+                                char const * clip = XML::Attribute(soundElement, "source");
                                 if (clip != nullptr) {
                                     auto* audio = new ActionAudio();
                                     action->adoptAudio(audio);
                                     audio->setSoundFileName(clip);
 
-                                    const char* group = XML::Attribute(soundElement, "group");
+                                    char const * group = XML::Attribute(soundElement, "group");
                                     if (group != nullptr) {
                                         audio->setGroupName(group);
                                     }
@@ -525,7 +523,7 @@ namespace FIFE
                                  animElement != nullptr;
                                  animElement = animElement->NextSiblingElement("animation")) {
                                 // Fetch already created animation
-                                const char* animationId = XML::Attribute(animElement, "animation_id");
+                                char const * animationId = XML::Attribute(animElement, "animation_id");
                                 if (animationId != nullptr) {
                                     AnimationPtr const animation = m_animationManager->getPtr(animationId);
                                     if (animation) {
@@ -539,7 +537,7 @@ namespace FIFE
                                 }
 
                                 // Create animated spritesheet
-                                const char* sourceId = XML::Attribute(animElement, "atlas");
+                                char const * sourceId = XML::Attribute(animElement, "atlas");
                                 if (sourceId != nullptr) {
                                     fs::path atlasPath(filename);
 
@@ -681,7 +679,7 @@ namespace FIFE
         }
     }
 
-    void ObjectLoader::loadImportFile(const std::string& file, const std::string& directory)
+    void ObjectLoader::loadImportFile(std::string const & file, std::string const & directory)
     {
         if (!file.empty()) {
             fs::path importFilePath(directory);
@@ -700,7 +698,7 @@ namespace FIFE
         }
     }
 
-    void ObjectLoader::loadImportDirectory(const std::string& directory)
+    void ObjectLoader::loadImportDirectory(std::string const & directory)
     {
         if (!directory.empty()) {
             fs::path const importDirectory(directory);

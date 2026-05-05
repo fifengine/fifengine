@@ -12,9 +12,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/base/sharedptr.h"
 
@@ -22,34 +19,46 @@ using FIFE::SharedPtr;
 
 class Data
 {
-public:
-    int32_t x, y;
+    public:
+        int32_t x, y;
 
-    Data() : x(0), y(0) { }
-    Data(int32_t _x, int32_t _y) : x(_x), y(_y) { }
+        Data() : x(0), y(0)
+        {
+        }
+        Data(int32_t _x, int32_t _y) : x(_x), y(_y)
+        {
+        }
 
-    virtual ~Data() { }
+        virtual ~Data()
+        {
+        }
 
-    virtual int32_t total()
-    {
-        return x + y;
-    }
+        virtual int32_t total()
+        {
+            return x + y;
+        }
 };
 
 class SubData : public Data
 {
-public:
-    int32_t z;
+    public:
+        int32_t z;
 
-    SubData() : Data(0, 0), z(0) { }
-    SubData(int32_t _x, int32_t _y, int32_t _z) : Data(_x, _y), z(_z) { }
+        SubData() : Data(0, 0), z(0)
+        {
+        }
+        SubData(int32_t _x, int32_t _y, int32_t _z) : Data(_x, _y), z(_z)
+        {
+        }
 
-    virtual ~SubData() { }
+        virtual ~SubData()
+        {
+        }
 
-    virtual int32_t total()
-    {
-        return x + y + z;
-    }
+        virtual int32_t total()
+        {
+            return x + y + z;
+        }
 };
 
 /**

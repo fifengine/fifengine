@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "cellselectionrenderer.h"
+
 // Standard C++ library includes
 #include <vector>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -17,8 +17,6 @@
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "video/renderbackend.h"
-
-#include "cellselectionrenderer.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -34,7 +32,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    CellSelectionRenderer::CellSelectionRenderer(const CellSelectionRenderer& old) :
+    CellSelectionRenderer::CellSelectionRenderer(CellSelectionRenderer const & old) :
         RendererBase(old), m_color(old.m_color)
     {
         setEnabled(false);
@@ -57,7 +55,7 @@ namespace FIFE
         m_locations.clear();
     }
 
-    void CellSelectionRenderer::selectLocation(const Location* loc)
+    void CellSelectionRenderer::selectLocation(Location const * loc)
     {
         if (loc != nullptr) {
             auto it = m_locations.begin();
@@ -71,7 +69,7 @@ namespace FIFE
         }
     }
 
-    void CellSelectionRenderer::deselectLocation(const Location* loc)
+    void CellSelectionRenderer::deselectLocation(Location const * loc)
     {
         if (loc != nullptr) {
             auto it = m_locations.begin();
@@ -92,7 +90,7 @@ namespace FIFE
 
         auto locit = m_locations.begin();
         for (; locit != m_locations.end(); locit++) {
-            const Location& loc = *locit;
+            Location const & loc = *locit;
             if (layer != loc.getLayer()) {
                 continue;
             }
@@ -106,16 +104,16 @@ namespace FIFE
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, loc.getLayerCoordinates());
             auto it                   = vertices.begin();
-            const ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+            ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;
             ++it;
             for (; it != vertices.end(); it++) {
-                const ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                 pt2.x                 = pts.x;
                 pt2.y                 = pts.y;
-                const Point cpt1      = pt1;
-                const Point cpt2      = pt2;
+                Point const cpt1      = pt1;
+                Point const cpt2      = pt2;
                 m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
                 pt1 = pt2;
             }

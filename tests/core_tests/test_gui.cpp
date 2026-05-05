@@ -10,7 +10,8 @@
 #include "fife_unittest.h"
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
+
 #include <fifechan.hpp>
 
 #include "gui/fifechan/base/gui_image.h"
@@ -44,24 +45,24 @@ using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-static const std::string IMAGE_FILE    = "tests/data/beach_e1.png";
-static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
+static std::string const IMAGE_FILE    = "tests/data/beach_e1.png";
+static std::string const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 struct environment
 {
-    std::shared_ptr<TimeManager> timemanager;
-    std::shared_ptr<VFS> vfs;
-    std::shared_ptr<ImageManager> imageManager;
+        std::shared_ptr<TimeManager> timemanager;
+        std::shared_ptr<VFS> vfs;
+        std::shared_ptr<ImageManager> imageManager;
 
-    environment() :
-        timemanager(std::make_shared<TimeManager>()),
-        vfs(std::make_shared<VFS>()),
-        imageManager(std::make_shared<ImageManager>())
-    {
-        vfs->addSource(new VFSDirectory(vfs.get()));
-        if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-            throw SDLException(SDL_GetError());
+        environment() :
+            timemanager(std::make_shared<TimeManager>()),
+            vfs(std::make_shared<VFS>()),
+            imageManager(std::make_shared<ImageManager>())
+        {
+            vfs->addSource(new VFSDirectory(vfs.get()));
+            if (!SDL_Init(SDL_INIT_TIMER)) {
+                throw SDLException(SDL_GetError());
+            }
         }
-    }
 };
 
 void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)

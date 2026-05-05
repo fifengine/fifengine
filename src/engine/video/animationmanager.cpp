@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "animationmanager.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -8,15 +11,10 @@
 #include <vector>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
 #include "video/renderbackend.h"
-
-#include "animationmanager.h"
 
 namespace FIFE
 {
@@ -82,7 +80,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    AnimationPtr AnimationManager::create(const std::string& name, IResourceLoader* loader)
+    AnimationPtr AnimationManager::create(std::string const & name, IResourceLoader* loader)
     {
         if (exists(name)) {
             FL_WARN(
@@ -96,7 +94,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    AnimationPtr AnimationManager::load(const std::string& name, IResourceLoader* loader)
+    AnimationPtr AnimationManager::load(std::string const & name, IResourceLoader* loader)
     {
         auto nit = m_animNameMap.find(name);
 
@@ -145,7 +143,7 @@ namespace FIFE
         return returnValue.first->second;
     }
 
-    bool AnimationManager::exists(const std::string& name)
+    bool AnimationManager::exists(std::string const & name)
     {
         auto it = m_animNameMap.find(name);
         return it != m_animNameMap.end();
@@ -157,7 +155,7 @@ namespace FIFE
         return it != m_animHandleMap.end();
     }
 
-    void AnimationManager::reload(const std::string& name)
+    void AnimationManager::reload(std::string const & name)
     {
         auto nit = m_animNameMap.find(name);
 
@@ -217,7 +215,7 @@ namespace FIFE
             _log, LMsg("AnimationManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
     }
 
-    void AnimationManager::free(const std::string& name)
+    void AnimationManager::free(std::string const & name)
     {
         auto nit = m_animNameMap.find(name);
 
@@ -300,7 +298,7 @@ namespace FIFE
                 << "Resource " << resource->getName() << " was not found.");
     }
 
-    void AnimationManager::remove(const std::string& name)
+    void AnimationManager::remove(std::string const & name)
     {
         std::size_t handle = 0;
 
@@ -385,7 +383,7 @@ namespace FIFE
             LMsg("AnimationManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
     }
 
-    AnimationPtr AnimationManager::get(const std::string& name)
+    AnimationPtr AnimationManager::get(std::string const & name)
     {
         auto nit = m_animNameMap.find(name);
 
@@ -419,7 +417,7 @@ namespace FIFE
         return {};
     }
 
-    AnimationPtr AnimationManager::getPtr(const std::string& name)
+    AnimationPtr AnimationManager::getPtr(std::string const & name)
     {
         auto nit = m_animNameMap.find(name);
 
@@ -446,7 +444,7 @@ namespace FIFE
         return {};
     }
 
-    ResourceHandle AnimationManager::getResourceHandle(const std::string& name)
+    ResourceHandle AnimationManager::getResourceHandle(std::string const & name)
     {
         auto nit = m_animNameMap.find(name);
         if (nit != m_animNameMap.end()) {
@@ -460,7 +458,7 @@ namespace FIFE
         return 0;
     }
 
-    void AnimationManager::invalidate(const std::string& name)
+    void AnimationManager::invalidate(std::string const & name)
     {
         auto it = m_animNameMap.find(name);
         if (it != m_animNameMap.end()) {

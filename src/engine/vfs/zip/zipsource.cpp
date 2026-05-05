@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "zipsource.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <cstdint>
@@ -14,30 +17,25 @@
 #include "zlib.h"
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "modules.h"
 #include "util/log/logger.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/zip/ziptree.h"
-
 #include "zipfilesource.h"
 #include "zipnode.h"
-#include "zipsource.h"
 
 namespace FIFE
 {
 
-    static const uint32_t LF_HEADER = 0x04034b50;
-    static const uint32_t DE_HEADER = 0x08064b50;
-    static const uint32_t CF_HEADER = 0x02014b50;
+    static uint32_t const LF_HEADER = 0x04034b50;
+    static uint32_t const DE_HEADER = 0x08064b50;
+    static uint32_t const CF_HEADER = 0x02014b50;
 
     static Logger _log(LM_LOADERS);
 
-    ZipSource::ZipSource(VFS* vfs, const std::string& zip_file) : VFSSource(vfs), m_zipfile(vfs->open(zip_file))
+    ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) : VFSSource(vfs), m_zipfile(vfs->open(zip_file))
     {
         readIndex();
     }
@@ -47,21 +45,21 @@ namespace FIFE
         delete m_zipfile;
     }
 
-    bool ZipSource::fileExists(const std::string& file) const
+    bool ZipSource::fileExists(std::string const & file) const
     {
         fs::path const path(file);
         return (m_zipTree.getNode(path.string()) != nullptr);
     }
 
-    RawData* ZipSource::open(const std::string& path) const
+    RawData* ZipSource::open(std::string const & path) const
     {
         fs::path const filePath(path);
-        const ZipNode* node = m_zipTree.getNode(filePath.string());
+        ZipNode const * node = m_zipTree.getNode(filePath.string());
 
         assert(node != 0);
 
         if (node != nullptr) {
-            const ZipEntryData& entryData = node->getZipEntryData();
+            ZipEntryData const & entryData = node->getZipEntryData();
 
             m_zipfile->setIndex(entryData.offset);
             auto* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
@@ -119,7 +117,8 @@ namespace FIFE
     {
         m_zipfile->setIndex(0);
 
-        while (!readFileToIndex()) { }
+        while (!readFileToIndex()) {
+        }
     }
 
     bool ZipSource::readFileToIndex()
@@ -167,7 +166,8 @@ namespace FIFE
             realsize = m_zipfile->read32Little();
         }
 
-        if ((lmodtime != 0U) || (lmoddate != 0U)) { } // shut up the compiler (warnings of unused variables)
+        if ((lmodtime != 0U) || (lmoddate != 0U)) {
+        } // shut up the compiler (warnings of unused variables)
 
         ZipEntryData data;
         data.comp      = comp;
@@ -187,13 +187,13 @@ namespace FIFE
         return false;
     }
 
-    std::set<std::string> ZipSource::listFiles(const std::string& path) const
+    std::set<std::string> ZipSource::listFiles(std::string const & path) const
     {
         std::set<std::string> result;
 
         fs::path const fixedPath(path);
 
-        const ZipNode* node = m_zipTree.getNode(fixedPath.string());
+        ZipNode const * node = m_zipTree.getNode(fixedPath.string());
 
         if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::File);
@@ -207,13 +207,13 @@ namespace FIFE
     }
 
     // FIXME: quick&very dirty..
-    std::set<std::string> ZipSource::listDirectories(const std::string& path) const
+    std::set<std::string> ZipSource::listDirectories(std::string const & path) const
     {
         std::set<std::string> result;
 
         fs::path const fixedPath(path);
 
-        const ZipNode* node = m_zipTree.getNode(fixedPath.string());
+        ZipNode const * node = m_zipTree.getNode(fixedPath.string());
 
         if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::Directory);

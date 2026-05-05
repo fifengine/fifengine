@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "percentagebar.h"
+
 /*
  * For comments regarding functions please see the header file.
  */
@@ -12,11 +15,6 @@
 #include <fifechan/rectangle.hpp>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "percentagebar.h"
-
 namespace fcn
 {
 
@@ -33,7 +31,7 @@ namespace fcn
         if (getOrientation() == HORIZONTAL) {
             graphics->fillRectangle(fcn::Rectangle(0, 0, (getWidth() * mValue) / 100, getHeight()));
         } else {
-            const int32_t filledHeight = (getHeight() * mValue) / 100;
+            int32_t const filledHeight = (getHeight() * mValue) / 100;
             graphics->fillRectangle(fcn::Rectangle(0, getHeight() - filledHeight, getWidth(), filledHeight));
         }
 

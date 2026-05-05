@@ -20,12 +20,12 @@ namespace FIFE
      */
     class /*FIFE_API*/ ControllerMappingLoader
     {
-    public:
-        ControllerMappingLoader() = default;
+        public:
+            ControllerMappingLoader() = default;
 
-        /** Loads mapping from file.
-         */
-        void load(const std::string& filename);
+            /** Loads mapping from file.
+             */
+            void load(std::string const & filename);
     };
 } // namespace FIFE
 #endif

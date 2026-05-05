@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "object.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <list>
@@ -13,20 +16,15 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "util/base/exception.h"
-
 #include "action.h"
 #include "ipather.h"
-#include "object.h"
+#include "util/base/exception.h"
 
 namespace FIFE
 {
     namespace
     {
-        [[nodiscard]] uint32_t toAngleKey(const int32_t rotation)
+        [[nodiscard]] uint32_t toAngleKey(int32_t const rotation)
         {
             assert(rotation >= 0);
             return static_cast<uint32_t>(rotation);
@@ -54,7 +52,9 @@ namespace FIFE
     }
     Object::MovableObjectProperty::~MovableObjectProperty() = default;
 
-    Object::MultiObjectProperty::MultiObjectProperty() : m_multiPart(false), m_restrictedRotation(false) { }
+    Object::MultiObjectProperty::MultiObjectProperty() : m_multiPart(false), m_restrictedRotation(false)
+    {
+    }
     Object::MultiObjectProperty::~MultiObjectProperty() = default;
 
     Object::Object(std::string identifier, std::string name_space, Object* inherited) :
@@ -77,7 +77,7 @@ namespace FIFE
         delete m_multiProperty;
     }
 
-    Action* Object::createAction(const std::string& identifier, bool is_default)
+    Action* Object::createAction(std::string const & identifier, bool is_default)
     {
         std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty == nullptr) {
@@ -107,7 +107,7 @@ namespace FIFE
         return a;
     }
 
-    Action* Object::getAction(const std::string& identifier, bool deepsearch) const
+    Action* Object::getAction(std::string const & identifier, bool deepsearch) const
     {
         std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty != nullptr) {
@@ -143,7 +143,7 @@ namespace FIFE
         return action_ids;
     }
 
-    void Object::setDefaultAction(const std::string& identifier)
+    void Object::setDefaultAction(std::string const & identifier)
     {
         std::map<std::string, Action*>::const_iterator i;
         Action* action                          = nullptr;
@@ -248,12 +248,12 @@ namespace FIFE
         return m_basicProperty->m_static;
     }
 
-    void Object::setFilename(const std::string& file)
+    void Object::setFilename(std::string const & file)
     {
         m_filename = file;
     }
 
-    const std::string& Object::getFilename() const
+    std::string const & Object::getFilename() const
     {
         return m_filename;
     }
@@ -288,7 +288,7 @@ namespace FIFE
         return false;
     }
 
-    void Object::setCostId(const std::string& cost)
+    void Object::setCostId(std::string const & cost)
     {
         if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
@@ -367,7 +367,7 @@ namespace FIFE
         return false;
     }
 
-    void Object::addMultiPartId(const std::string& partId)
+    void Object::addMultiPartId(std::string const & partId)
     {
         if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
@@ -386,7 +386,7 @@ namespace FIFE
         return {};
     }
 
-    void Object::removeMultiPartId(const std::string& partId)
+    void Object::removeMultiPartId(std::string const & partId)
     {
         if (m_multiProperty == nullptr) {
             return;
@@ -462,7 +462,7 @@ namespace FIFE
         m_multiProperty->m_multiParts.clear();
     }
 
-    void Object::addMultiPartCoordinate(int32_t rotation, const ModelCoordinate& coord)
+    void Object::addMultiPartCoordinate(int32_t rotation, ModelCoordinate const & coord)
     {
         if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
@@ -489,11 +489,11 @@ namespace FIFE
         if (m_multiProperty != nullptr) {
             int32_t closest = 0;
             getIndexByAngle(rotation, m_multiProperty->m_partAngleMap, closest);
-            const std::pair<
+            std::pair<
                 std::multimap<int32_t, ModelCoordinate>::iterator,
-                std::multimap<int32_t, ModelCoordinate>::iterator>
-                result = m_multiProperty->m_multiPartCoordinates.equal_range(closest);
-            auto it    = result.first;
+                std::multimap<int32_t, ModelCoordinate>::iterator> const result =
+                m_multiProperty->m_multiPartCoordinates.equal_range(closest);
+            auto it = result.first;
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
             }
@@ -510,7 +510,7 @@ namespace FIFE
             if (m_multiProperty->m_multiObjectCoordinates.empty()) {
                 auto subit = m_multiProperty->m_multiParts.begin();
                 for (; subit != m_multiProperty->m_multiParts.end(); ++subit) {
-                    const std::multimap<int32_t, ModelCoordinate>& subcoords = (*subit)->getMultiPartCoordinates();
+                    std::multimap<int32_t, ModelCoordinate> const & subcoords = (*subit)->getMultiPartCoordinates();
                     m_multiProperty->m_multiObjectCoordinates.insert(subcoords.begin(), subcoords.end());
                 }
                 auto it = m_multiProperty->m_multiObjectCoordinates.begin();
@@ -520,12 +520,12 @@ namespace FIFE
             }
             int32_t closest = 0;
             getIndexByAngle(rotation, m_multiProperty->m_multiAngleMap, closest);
-            const std::pair<
+            std::pair<
                 std::multimap<int32_t, ModelCoordinate>::iterator,
-                std::multimap<int32_t, ModelCoordinate>::iterator>
-                result = m_multiProperty->m_multiObjectCoordinates.equal_range(closest);
-            auto it    = result.first;
-            const ModelCoordinate parent(0, 0);
+                std::multimap<int32_t, ModelCoordinate>::iterator> const result =
+                m_multiProperty->m_multiObjectCoordinates.equal_range(closest);
+            auto it = result.first;
+            ModelCoordinate const parent(0, 0);
             coordinates.push_back(parent);
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
@@ -536,7 +536,7 @@ namespace FIFE
         return coordinates;
     }
 
-    void Object::setRotationAnchor(const ExactModelCoordinate& anchor)
+    void Object::setRotationAnchor(ExactModelCoordinate const & anchor)
     {
         if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
@@ -608,7 +608,7 @@ namespace FIFE
         return 0;
     }
 
-    void Object::setArea(const std::string& id)
+    void Object::setArea(std::string const & id)
     {
         if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
@@ -627,7 +627,7 @@ namespace FIFE
         return "";
     }
 
-    void Object::addWalkableArea(const std::string& id)
+    void Object::addWalkableArea(std::string const & id)
     {
         if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
@@ -637,7 +637,7 @@ namespace FIFE
         m_moveProperty->m_walkableAreas.unique();
     }
 
-    void Object::removeWalkableArea(const std::string& id)
+    void Object::removeWalkableArea(std::string const & id)
     {
         if (m_moveProperty == nullptr) {
             return;
@@ -656,12 +656,12 @@ namespace FIFE
         return {};
     }
 
-    bool Object::operator==(const Object& obj) const
+    bool Object::operator==(Object const & obj) const
     {
         return m_id == obj.getId() && m_namespace == obj.getNamespace();
     }
 
-    bool Object::operator!=(const Object& obj) const
+    bool Object::operator!=(Object const & obj) const
     {
         return m_id != obj.getId() || m_namespace != obj.getNamespace();
     }

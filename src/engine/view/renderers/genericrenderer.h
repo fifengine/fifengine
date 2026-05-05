@@ -26,369 +26,376 @@ namespace FIFE
 
     class /*FIFE_API*/ GenericRendererElementInfo
     {
-    public:
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
-        {
-            static_cast<void>(cam);
-            static_cast<void>(layer);
-            static_cast<void>(instances);
-            static_cast<void>(renderbackend);
-        }
-        virtual ~GenericRendererElementInfo() = default;
+        public:
+            virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+            {
+                static_cast<void>(cam);
+                static_cast<void>(layer);
+                static_cast<void>(instances);
+                static_cast<void>(renderbackend);
+            }
+            virtual ~GenericRendererElementInfo() = default;
     };
 
     class /*FIFE_API*/ GenericRendererLineInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererLineInfo(
-            const RendererNode& n1, const RendererNode& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        ~GenericRendererLineInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererLineInfo(
+                RendererNode const & n1, RendererNode const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+            ~GenericRendererLineInfo() override;
 
-    private:
-        RendererNode m_edge1;
-        RendererNode m_edge2;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
-        uint8_t m_alpha;
+        private:
+            RendererNode m_edge1;
+            RendererNode m_edge2;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
+            uint8_t m_alpha;
     };
     class /*FIFE_API*/ GenericRendererPointInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererPointInfo(const RendererNode& anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        ~GenericRendererPointInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererPointInfo(RendererNode const & anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+            ~GenericRendererPointInfo() override;
 
-    private:
-        RendererNode m_anchor;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
-        uint8_t m_alpha;
+        private:
+            RendererNode m_anchor;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
+            uint8_t m_alpha;
     };
     class /*FIFE_API*/ GenericRendererTriangleInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererTriangleInfo(
-            const RendererNode& n1,
-            const RendererNode& n2,
-            const RendererNode& n3,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a);
-        ~GenericRendererTriangleInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererTriangleInfo(
+                RendererNode const & n1,
+                RendererNode const & n2,
+                RendererNode const & n3,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a);
+            ~GenericRendererTriangleInfo() override;
 
-    private:
-        RendererNode m_edge1;
-        RendererNode m_edge2;
-        RendererNode m_edge3;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
-        uint8_t m_alpha;
+        private:
+            RendererNode m_edge1;
+            RendererNode m_edge2;
+            RendererNode m_edge3;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
+            uint8_t m_alpha;
     };
     class /*FIFE_API*/ GenericRendererQuadInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererQuadInfo(
-            const RendererNode& n1,
-            const RendererNode& n2,
-            const RendererNode& n3,
-            const RendererNode& n4,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a);
-        ~GenericRendererQuadInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererQuadInfo(
+                RendererNode const & n1,
+                RendererNode const & n2,
+                RendererNode const & n3,
+                RendererNode const & n4,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a);
+            ~GenericRendererQuadInfo() override;
 
-    private:
-        RendererNode m_edge1;
-        RendererNode m_edge2;
-        RendererNode m_edge3;
-        RendererNode m_edge4;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
-        uint8_t m_alpha;
+        private:
+            RendererNode m_edge1;
+            RendererNode m_edge2;
+            RendererNode m_edge3;
+            RendererNode m_edge4;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
+            uint8_t m_alpha;
     };
 
     class /*FIFE_API*/ GenericRendererVertexInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererVertexInfo(const RendererNode& center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        ~GenericRendererVertexInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererVertexInfo(
+                RendererNode const & center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+            ~GenericRendererVertexInfo() override;
 
-    private:
-        RendererNode m_center;
-        int32_t m_size;
-        uint8_t m_red;
-        uint8_t m_green;
-        uint8_t m_blue;
-        uint8_t m_alpha;
+        private:
+            RendererNode m_center;
+            int32_t m_size;
+            uint8_t m_red;
+            uint8_t m_green;
+            uint8_t m_blue;
+            uint8_t m_alpha;
     };
 
     class /*FIFE_API*/ GenericRendererImageInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, bool zoomed = true);
-        ~GenericRendererImageInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererImageInfo(RendererNode const & anchor, ImagePtr const & image, bool zoomed = true);
+            ~GenericRendererImageInfo() override;
 
-    private:
-        RendererNode m_anchor;
-        ImagePtr m_image;
-        bool m_zoomed;
+        private:
+            RendererNode m_anchor;
+            ImagePtr m_image;
+            bool m_zoomed;
     };
     class /*FIFE_API*/ GenericRendererAnimationInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererAnimationInfo(const RendererNode& anchor, const AnimationPtr& animation, bool zoomed = true);
-        ~GenericRendererAnimationInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererAnimationInfo(
+                RendererNode const & anchor, AnimationPtr const & animation, bool zoomed = true);
+            ~GenericRendererAnimationInfo() override;
 
-    private:
-        RendererNode m_anchor;
-        AnimationPtr m_animation;
-        uint32_t m_start_time;
-        float m_time_scale;
-        bool m_zoomed;
+        private:
+            RendererNode m_anchor;
+            AnimationPtr m_animation;
+            uint32_t m_start_time;
+            float m_time_scale;
+            bool m_zoomed;
     };
     class /*FIFE_API*/ GenericRendererTextInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererTextInfo(const RendererNode& anchor, IFont* font, std::string text, bool zoomed = true);
-        ~GenericRendererTextInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererTextInfo(RendererNode const & anchor, IFont* font, std::string text, bool zoomed = true);
+            ~GenericRendererTextInfo() override;
 
-    private:
-        RendererNode m_anchor;
-        IFont* m_font;
-        std::string m_text;
-        bool m_zoomed;
+        private:
+            RendererNode m_anchor;
+            IFont* m_font;
+            std::string m_text;
+            bool m_zoomed;
     };
     class /*FIFE_API*/ GenericRendererResizeInfo : public GenericRendererElementInfo
     {
-    public:
-        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererResizeInfo(
-            const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, bool zoomed = true);
-        ~GenericRendererResizeInfo() override;
+        public:
+            void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+            GenericRendererResizeInfo(
+                RendererNode const & anchor, ImagePtr const & image, int32_t width, int32_t height, bool zoomed = true);
+            ~GenericRendererResizeInfo() override;
 
-    private:
-        RendererNode m_anchor;
-        ImagePtr m_image;
-        int32_t m_width;
-        int32_t m_height;
-        bool m_zoomed;
+        private:
+            RendererNode m_anchor;
+            ImagePtr m_image;
+            int32_t m_width;
+            int32_t m_height;
+            bool m_zoomed;
     };
     class /*FIFE_API*/ GenericRenderer : public RendererBase
     {
-    public:
-        /** Constructor.
-         *
-         * @param renderbackend The renderbackend to use.
-         * @param position The position for this renderer in rendering pipeline.
-         * @ see setPipelinePosition
-         */
-        GenericRenderer(RenderBackend* renderbackend, int32_t position);
+        public:
+            /** Constructor.
+             *
+             * @param renderbackend The renderbackend to use.
+             * @param position The position for this renderer in rendering pipeline.
+             * @ see setPipelinePosition
+             */
+            GenericRenderer(RenderBackend* renderbackend, int32_t position);
 
-        /** Copy Constructor.
-         */
-        GenericRenderer(const GenericRenderer& old);
+            /** Copy Constructor.
+             */
+            GenericRenderer(GenericRenderer const & old);
 
-        /** Makes copy of this renderer.
-         */
-        RendererBase* clone();
+            /** Makes copy of this renderer.
+             */
+            RendererBase* clone();
 
-        /** Destructor.
-         */
-        virtual ~GenericRenderer();
+            /** Destructor.
+             */
+            virtual ~GenericRenderer();
 
-        /** This method is called by the view to ask renderer to draw its rendering aspect based on
-         * given parameters.
-         *
-         * @param cam Camera view to draw
-         * @param layer Current layer to be rendered
-         * @param instances Instances on the current layer
-         */
-        void render(Camera* cam, Layer* layer, RenderList& instances);
+            /** This method is called by the view to ask renderer to draw its rendering aspect based on
+             * given parameters.
+             *
+             * @param cam Camera view to draw
+             * @param layer Current layer to be rendered
+             * @param instances Instances on the current layer
+             */
+            void render(Camera* cam, Layer* layer, RenderList& instances);
 
-        /** Returns the renderer name.
-         *
-         * @return The name as string.
-         */
-        std::string getName()
-        {
-            return "GenericRenderer";
-        }
+            /** Returns the renderer name.
+             *
+             * @return The name as string.
+             */
+            std::string getName()
+            {
+                return "GenericRenderer";
+            }
 
-        /** Gets instance for interface access.
-         */
-        static GenericRenderer* getInstance(IRendererContainer* cnt);
+            /** Gets instance for interface access.
+             */
+            static GenericRenderer* getInstance(IRendererContainer* cnt);
 
-        /** Adds a line.
-         *
-         * @param group The group name as string.
-         * @param n1 A RendererNode, contains the coordinates.
-         * @param n2 A RendererNode, contains the coordinates.
-         * @param r The value for red, range 0-255.
-         * @param g The value for green, range 0-255.
-         * @param b The value for blue, range 0-255.
-         * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
-         */
-        void addLine(
-            const std::string& group,
-            const RendererNode& n1,
-            const RendererNode& n2,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a = 255);
+            /** Adds a line.
+             *
+             * @param group The group name as string.
+             * @param n1 A RendererNode, contains the coordinates.
+             * @param n2 A RendererNode, contains the coordinates.
+             * @param r The value for red, range 0-255.
+             * @param g The value for green, range 0-255.
+             * @param b The value for blue, range 0-255.
+             * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
+             */
+            void addLine(
+                std::string const & group,
+                RendererNode const & n1,
+                RendererNode const & n2,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a = 255);
 
-        /** Adds a point.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param r The value for red, range 0-255.
-         * @param g The value for green, range 0-255.
-         * @param b The value for blue, range 0-255.
-         * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
-         */
-        void addPoint(
-            const std::string& group, const RendererNode& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+            /** Adds a point.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param r The value for red, range 0-255.
+             * @param g The value for green, range 0-255.
+             * @param b The value for blue, range 0-255.
+             * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
+             */
+            void addPoint(
+                std::string const & group, RendererNode const & n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
-        /** Adds a triangle.
-         *
-         * @param group The group name as string.
-         * @param n1 A RendererNode, contains the coordinates.
-         * @param n2 A RendererNode, contains the coordinates.
-         * @param n3 A RendererNode, contains the coordinates.
-         * @param r The value for red, range 0-255.
-         * @param g The value for green, range 0-255.
-         * @param b The value for blue, range 0-255.
-         * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
-         */
-        void addTriangle(
-            const std::string& group,
-            const RendererNode& n1,
-            const RendererNode& n2,
-            const RendererNode& n3,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a = 255);
+            /** Adds a triangle.
+             *
+             * @param group The group name as string.
+             * @param n1 A RendererNode, contains the coordinates.
+             * @param n2 A RendererNode, contains the coordinates.
+             * @param n3 A RendererNode, contains the coordinates.
+             * @param r The value for red, range 0-255.
+             * @param g The value for green, range 0-255.
+             * @param b The value for blue, range 0-255.
+             * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
+             */
+            void addTriangle(
+                std::string const & group,
+                RendererNode const & n1,
+                RendererNode const & n2,
+                RendererNode const & n3,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a = 255);
 
-        /** Adds a quad.
-         *
-         * @param group The group name as string.
-         * @param n1 A RendererNode, contains the coordinates.
-         * @param n2 A RendererNode, contains the coordinates.
-         * @param n3 A RendererNode, contains the coordinates.
-         * @param n4 A RendererNode, contains the coordinates.
-         * @param r The value for red, range 0-255.
-         * @param g The value for green, range 0-255.
-         * @param b The value for blue, range 0-255.
-         * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
-         */
-        void addQuad(
-            const std::string& group,
-            const RendererNode& n1,
-            const RendererNode& n2,
-            const RendererNode& n3,
-            const RendererNode& n4,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a = 255);
+            /** Adds a quad.
+             *
+             * @param group The group name as string.
+             * @param n1 A RendererNode, contains the coordinates.
+             * @param n2 A RendererNode, contains the coordinates.
+             * @param n3 A RendererNode, contains the coordinates.
+             * @param n4 A RendererNode, contains the coordinates.
+             * @param r The value for red, range 0-255.
+             * @param g The value for green, range 0-255.
+             * @param b The value for blue, range 0-255.
+             * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
+             */
+            void addQuad(
+                std::string const & group,
+                RendererNode const & n1,
+                RendererNode const & n2,
+                RendererNode const & n3,
+                RendererNode const & n4,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a = 255);
 
-        /** Adds a vertex.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param size The size of the vertex.
-         * @param r The value for red, range 0-255.
-         * @param g The value for green, range 0-255.
-         * @param b The value for blue, range 0-255.
-         * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
-         */
-        void addVertex(
-            const std::string& group,
-            const RendererNode& n,
-            int32_t size,
-            uint8_t r,
-            uint8_t g,
-            uint8_t b,
-            uint8_t a = 255);
+            /** Adds a vertex.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param size The size of the vertex.
+             * @param r The value for red, range 0-255.
+             * @param g The value for green, range 0-255.
+             * @param b The value for blue, range 0-255.
+             * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
+             */
+            void addVertex(
+                std::string const & group,
+                RendererNode const & n,
+                int32_t size,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a = 255);
 
-        /** Adds text.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param font The used font.
-         * @param text The text as string.
-         * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
-         */
-        void addText(
-            const std::string& group, const RendererNode& n, IFont* font, const std::string& text, bool zoomed = true);
+            /** Adds text.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param font The used font.
+             * @param text The text as string.
+             * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
+             */
+            void addText(
+                std::string const & group,
+                RendererNode const & n,
+                IFont* font,
+                std::string const & text,
+                bool zoomed = true);
 
-        /** Adds an image.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param image The used image.
-         * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
-         */
-        void addImage(const std::string& group, const RendererNode& n, const ImagePtr& image, bool zoomed = true);
+            /** Adds an image.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param image The used image.
+             * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
+             */
+            void addImage(
+                std::string const & group, RendererNode const & n, ImagePtr const & image, bool zoomed = true);
 
-        /** Adds an animation.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param animation The used animation.
-         * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
-         */
-        void addAnimation(
-            const std::string& group, const RendererNode& n, const AnimationPtr& animation, bool zoomed = true);
+            /** Adds an animation.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param animation The used animation.
+             * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
+             */
+            void addAnimation(
+                std::string const & group, RendererNode const & n, AnimationPtr const & animation, bool zoomed = true);
 
-        /** Adds an image with another size.
-         *
-         * @param group The group name as string.
-         * @param n A RendererNode, contains the coordinates.
-         * @param image The used image.
-         * @param width New width of the image.
-         * @param height New height of the image.
-         * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
-         */
-        void resizeImage(
-            const std::string& group,
-            const RendererNode& n,
-            const ImagePtr& image,
-            int32_t width,
-            int32_t height,
-            bool zoomed = true);
+            /** Adds an image with another size.
+             *
+             * @param group The group name as string.
+             * @param n A RendererNode, contains the coordinates.
+             * @param image The used image.
+             * @param width New width of the image.
+             * @param height New height of the image.
+             * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
+             */
+            void resizeImage(
+                std::string const & group,
+                RendererNode const & n,
+                ImagePtr const & image,
+                int32_t width,
+                int32_t height,
+                bool zoomed = true);
 
-        /** Removes all elements of a group.
-         *
-         * @param group The group name as string.
-         */
-        void removeAll(const std::string& group);
+            /** Removes all elements of a group.
+             *
+             * @param group The group name as string.
+             */
+            void removeAll(std::string const & group);
 
-        /** Removes all elements.
-         */
-        void removeAll();
+            /** Removes all elements.
+             */
+            void removeAll();
 
-        /** Resets the renderer.
-         */
-        void reset();
+            /** Resets the renderer.
+             */
+            void reset();
 
-    private:
-        //! A map that holds the groups together with the appended render elements.
-        std::map<std::string, std::vector<GenericRendererElementInfo*>> m_groups;
+        private:
+            //! A map that holds the groups together with the appended render elements.
+            std::map<std::string, std::vector<GenericRendererElementInfo*>> m_groups;
     };
 
 } // namespace FIFE

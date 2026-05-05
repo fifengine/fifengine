@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "location.h"
+
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "layer.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "util/base/exception.h"
-
-#include "layer.h"
-#include "location.h"
 
 namespace FIFE
 {
@@ -26,7 +24,7 @@ namespace FIFE
         reset();
     }
 
-    Location::Location(const Location& loc) = default;
+    Location::Location(Location const & loc) = default;
 
     Location::Location(Layer* layer) : m_layer(layer)
     {
@@ -43,7 +41,7 @@ namespace FIFE
         m_layer                = nullptr;
     }
 
-    Location& Location::operator=(const Location& rhs)
+    Location& Location::operator=(Location const & rhs)
     {
         if (this == &rhs) {
             return *this;
@@ -73,7 +71,7 @@ namespace FIFE
         return m_layer;
     }
 
-    void Location::setExactLayerCoordinates(const ExactModelCoordinate& coordinates)
+    void Location::setExactLayerCoordinates(ExactModelCoordinate const & coordinates)
     {
         if (!isValid()) {
             throw NotSet(INVALID_LAYER_SET);
@@ -81,12 +79,12 @@ namespace FIFE
         m_exact_layer_coords = coordinates;
     }
 
-    void Location::setLayerCoordinates(const ModelCoordinate& coordinates)
+    void Location::setLayerCoordinates(ModelCoordinate const & coordinates)
     {
         setExactLayerCoordinates(intPt2doublePt(coordinates));
     }
 
-    void Location::setMapCoordinates(const ExactModelCoordinate& coordinates)
+    void Location::setMapCoordinates(ExactModelCoordinate const & coordinates)
     {
         if (!isValid()) {
             throw NotSet(INVALID_LAYER_SET);
@@ -119,12 +117,12 @@ namespace FIFE
         return isValid(m_layer);
     }
 
-    bool Location::isValid(const Layer* layer) const
+    bool Location::isValid(Layer const * layer) const
     {
         return ((layer != nullptr) && (layer->getCellGrid() != nullptr));
     }
 
-    ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const
+    ExactModelCoordinate Location::getExactLayerCoordinates(Layer const * layer) const
     {
         if (!isValid(layer)) {
             throw NotSet(INVALID_LAYER_GET);
@@ -139,7 +137,7 @@ namespace FIFE
         return cg2->toExactLayerCoordinates(cg1->toMapCoordinates(m_exact_layer_coords));
     }
 
-    ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const
+    ModelCoordinate Location::getLayerCoordinates(Layer const * layer) const
     {
         if (!isValid(layer)) {
             throw NotSet(INVALID_LAYER_GET);
@@ -156,19 +154,19 @@ namespace FIFE
 
     double Location::getCellOffsetDistance() const
     {
-        const ExactModelCoordinate& pt = m_exact_layer_coords;
-        double const dx                = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
-        double const dy                = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
+        ExactModelCoordinate const & pt = m_exact_layer_coords;
+        double const dx                 = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
+        double const dy                 = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
         return Mathd::Sqrt((dx * dx) + (dy * dy));
     }
 
-    std::ostream& operator<<(std::ostream& os, const Location& l)
+    std::ostream& operator<<(std::ostream& os, Location const & l)
     {
         ExactModelCoordinate const p = l.getExactLayerCoordinates();
         return os << "x=" << p.x << ", y=" << p.y;
     }
 
-    double Location::getMapDistanceTo(const Location& location) const
+    double Location::getMapDistanceTo(Location const & location) const
     {
         ExactModelCoordinate const current = getMapCoordinates();
         ExactModelCoordinate const target  = location.getMapCoordinates();
@@ -180,7 +178,7 @@ namespace FIFE
         return Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
     }
 
-    double Location::getLayerDistanceTo(const Location& location) const
+    double Location::getLayerDistanceTo(Location const & location) const
     {
         ModelCoordinate const current = getLayerCoordinates();
         ModelCoordinate const target  = location.getLayerCoordinates(m_layer);

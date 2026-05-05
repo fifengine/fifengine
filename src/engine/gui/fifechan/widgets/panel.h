@@ -19,72 +19,72 @@ namespace fcn
     class DockArea;
     class /*FIFE_API*/ Panel : public ResizableWindow
     {
-    public:
-        Panel();
-        explicit Panel(bool dockable);
+        public:
+            Panel();
+            explicit Panel(bool dockable);
 
-        ~Panel() override;
+            ~Panel() override;
 
-        Panel(const Panel&)            = delete;
-        Panel& operator=(const Panel&) = delete;
+            Panel(Panel const &)            = delete;
+            Panel& operator=(Panel const &) = delete;
 
-        /** Sets if the widget is dockable.
-         * @param dockable True if the widget should be dockable, otherwise false.
-         */
-        void setDockable(bool dockable);
+            /** Sets if the widget is dockable.
+             * @param dockable True if the widget should be dockable, otherwise false.
+             */
+            void setDockable(bool dockable);
 
-        /** Gets if the widget is dockable.
-         * @return True if the widget should be dockable, otherwise false.
-         */
-        bool isDockable() const;
+            /** Gets if the widget is dockable.
+             * @return True if the widget should be dockable, otherwise false.
+             */
+            bool isDockable() const;
 
-        /** Sets if the widget is docked.
-         * @param docked True if the widget is docked, otherwise false.
-         */
-        void setDocked(bool docked);
+            /** Sets if the widget is docked.
+             * @param docked True if the widget is docked, otherwise false.
+             */
+            void setDocked(bool docked);
 
-        /** Gets if the widget is docked.
-         * @return True if the widget is docked, otherwise false.
-         */
-        bool isDocked() const;
+            /** Gets if the widget is docked.
+             * @return True if the widget is docked, otherwise false.
+             */
+            bool isDocked() const;
 
-        virtual DockArea* findDockArea();
+            virtual DockArea* findDockArea();
 
-        // Inherited from ResizableWindow
+            // Inherited from ResizableWindow
 
-        void resizeToContent(bool recursiv = true) override;
-        void expandContent(bool recursiv = true) override;
+            void resizeToContent(bool recursiv = true) override;
+            void expandContent(bool recursiv = true) override;
 
-        // Inherited from ResizableWindow / MouseListener
+            // Inherited from ResizableWindow / MouseListener
 
-        void mouseEntered(MouseEvent& mouseEvent) override;
+            void mouseEntered(MouseEvent& mouseEvent) override;
 
-        void mouseExited(MouseEvent& mouseEvent) override;
+            void mouseExited(MouseEvent& mouseEvent) override;
 
-        void mousePressed(MouseEvent& mouseEvent) override;
+            void mousePressed(MouseEvent& mouseEvent) override;
 
-        void mouseReleased(MouseEvent& mouseEvent) override;
+            void mouseReleased(MouseEvent& mouseEvent) override;
 
-        void mouseMoved(MouseEvent& mouseEvent) override;
+            void mouseMoved(MouseEvent& mouseEvent) override;
 
-        void mouseDragged(MouseEvent& mouseEvent) override;
+            void mouseDragged(MouseEvent& mouseEvent) override;
 
-    protected:
-        DockArea* getDockedArea();
+        protected:
+            DockArea* getDockedArea();
 
-        // is dockable
-        bool m_dockable;
-        // is docked
-        bool m_docked;
+            // is dockable
+            bool m_dockable;
+            // is docked
+            bool m_docked;
 
-        struct /*FIFE_API*/ SavedState
-        {
-            Rectangle dimension;
-            uint32_t innerBorder{0};
-            bool resizable{false};
-            bool movable{false};
-        };
-        SavedState m_state;
+            struct /*FIFE_API*/ SavedState
+            {
+                    Rectangle dimension;
+                    uint32_t innerBorder{0};
+                    bool resizable{false};
+                    bool movable{false};
+            };
+            SavedState m_state;
     };
 } // namespace fcn
 

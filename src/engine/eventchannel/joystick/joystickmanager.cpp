@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "joystickmanager.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <deque>
@@ -13,19 +16,13 @@
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-// #include "loaders/native/input/controllermappingloader.h"
+// FIFE includes// #include "loaders/native/input/controllermappingloader.h"
 // #include "savers/native/input/controllermappingsaver.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-
-#include "joystickmanager.h"
 
 namespace FIFE
 {
@@ -34,7 +31,7 @@ namespace FIFE
     JoystickManager::JoystickManager()
     {
         // init joystick and controller systems
-        if (SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
+        if (!SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD)) {
             throw SDLException(SDL_GetError());
         }
         // create loader/saver for controller mappings
@@ -42,12 +39,15 @@ namespace FIFE
         m_mappingSaver  = ControllerMappingSaver();
 
         // add already connected joysticks / controllers
-        for (int32_t i = 0; i < SDL_NumJoysticks(); ++i) {
+        int count;
+        SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
+        for (int32_t i = 0; i < count; ++i) {
             addJoystick(i);
         }
+        SDL_free(joysticks);
         // enable joystick and gamecontroller events
-        SDL_JoystickEventState(SDL_ENABLE);
-        SDL_GameControllerEventState(SDL_ENABLE);
+        SDL_SetJoystickEventsEnabled(true);
+        SDL_SetGamepadEventsEnabled(true);
     }
 
     JoystickManager::~JoystickManager()
@@ -56,13 +56,13 @@ namespace FIFE
             delete m_joystick;
         }
 
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
+        SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD);
     }
 
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
         Joystick* joystick = nullptr;
-        if (std::ranges::any_of(m_activeJoysticks, [deviceIndex](const Joystick* j) {
+        if (std::ranges::any_of(m_activeJoysticks, [deviceIndex](Joystick const * j) {
                 return j->getDeviceIndex() == deviceIndex;
             })) {
             return joystick;
@@ -117,7 +117,7 @@ namespace FIFE
         return static_cast<uint8_t>(m_activeJoysticks.size());
     }
 
-    void JoystickManager::loadMapping(const std::string& file)
+    void JoystickManager::loadMapping(std::string const & file)
     {
         m_mappingLoader.load(file);
         // check if one of the joysticks can now be opened as gamecontroller
@@ -129,13 +129,13 @@ namespace FIFE
         }
     }
 
-    void JoystickManager::saveMapping(const std::string& guid, const std::string& file)
+    void JoystickManager::saveMapping(std::string const & guid, std::string const & file)
     {
         std::string const stringMapping = getStringMapping(guid);
         m_mappingSaver.save(stringMapping, file);
     }
 
-    void JoystickManager::saveMappings(const std::string& file)
+    void JoystickManager::saveMappings(std::string const & file)
     {
         std::string stringMappings;
         auto it = m_gamepadGuids.begin();
@@ -145,10 +145,10 @@ namespace FIFE
         m_mappingSaver.save(stringMappings, file);
     }
 
-    std::string JoystickManager::getStringMapping(const std::string& guid)
+    std::string JoystickManager::getStringMapping(std::string const & guid)
     {
-        SDL_JoystickGUID const realGuid = SDL_JoystickGetGUIDFromString(guid.c_str());
-        char* mapping                   = SDL_GameControllerMappingForGUID(realGuid);
+        SDL_GUID const realGuid = SDL_StringToGUID(guid.c_str());
+        char* mapping           = SDL_GetGamepadMappingForGUID(realGuid);
         if (mapping == nullptr) {
             throw SDLException(SDL_GetError());
         }
@@ -166,9 +166,9 @@ namespace FIFE
         return stringMapping;
     }
 
-    void JoystickManager::setStringMapping(const std::string& mapping)
+    void JoystickManager::setStringMapping(std::string const & mapping)
     {
-        int32_t const result = SDL_GameControllerAddMapping(mapping.c_str());
+        int32_t const result = SDL_AddGamepadMapping(mapping.c_str());
         if (result == 1) {
             // check if one of the joysticks can now be opened as gamecontroller
             for (auto& m_activeJoystick : m_activeJoysticks) {
@@ -209,22 +209,23 @@ namespace FIFE
         JoystickEvent joyevt;
         joyevt.setSource(this);
 
-        if (event.type == SDL_JOYAXISMOTION) {
+        if (event.type == SDL_EVENT_JOYSTICK_AXIS_MOTION) {
             joyevt.setType(JoystickEvent::AXIS_MOTION);
             joyevt.setInstanceId(event.jaxis.which);
             joyevt.setAxis(event.jaxis.axis);
             joyevt.setAxisValue(convertRange(event.jaxis.value));
-        } else if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
+        } else if (event.type == SDL_EVENT_JOYSTICK_BUTTON_DOWN || event.type == SDL_EVENT_JOYSTICK_BUTTON_UP) {
             joyevt.setType(
-                event.type == SDL_JOYBUTTONDOWN ? JoystickEvent::BUTTON_PRESSED : JoystickEvent::BUTTON_RELEASED);
+                event.type == SDL_EVENT_JOYSTICK_BUTTON_DOWN ? JoystickEvent::BUTTON_PRESSED :
+                                                               JoystickEvent::BUTTON_RELEASED);
             joyevt.setInstanceId(event.jbutton.which);
             joyevt.setButton(event.jbutton.button);
-        } else if (event.type == SDL_JOYHATMOTION) {
+        } else if (event.type == SDL_EVENT_JOYSTICK_HAT_MOTION) {
             joyevt.setType(JoystickEvent::HAT_MOTION);
             joyevt.setInstanceId(event.jhat.which);
             joyevt.setHat(event.jhat.hat);
             joyevt.setHatValue(event.jhat.value);
-        } else if (event.type == SDL_JOYDEVICEADDED) {
+        } else if (event.type == SDL_EVENT_JOYSTICK_ADDED) {
             joyevt.setType(JoystickEvent::DEVICE_ADDED);
             // Note: In this case it's the device index, instead of instance id
             Joystick* joy = addJoystick(event.jdevice.which);
@@ -233,7 +234,7 @@ namespace FIFE
             } else {
                 dispatch = false;
             }
-        } else if (event.type == SDL_JOYDEVICEREMOVED) {
+        } else if (event.type == SDL_EVENT_JOYSTICK_REMOVED) {
             joyevt.setType(JoystickEvent::DEVICE_REMOVED);
             joyevt.setInstanceId(event.jdevice.which);
         } else {
@@ -242,14 +243,14 @@ namespace FIFE
         // Dispatch only if it's not a controller, SDL sends events twice.
         // Only exception for added and removed events.
         Joystick* joy = getJoystick(joyevt.getInstanceId());
-        dispatch      = dispatch &&
-                   (!joy->isController() || (event.type == SDL_JOYDEVICEREMOVED || event.type == SDL_JOYDEVICEADDED));
+        dispatch = dispatch && (!joy->isController() ||
+                                (event.type == SDL_EVENT_JOYSTICK_REMOVED || event.type == SDL_EVENT_JOYSTICK_ADDED));
         if (dispatch) {
             joyevt.setController(joy->isController());
             dispatchJoystickEvent(joyevt);
         }
         // Remove it after event dispatch.
-        if (event.type == SDL_JOYDEVICEREMOVED) {
+        if (event.type == SDL_EVENT_JOYSTICK_REMOVED) {
             removeJoystick(joy);
         }
     }
@@ -261,17 +262,17 @@ namespace FIFE
         joyevt.setSource(this);
         joyevt.setController(true);
 
-        if (event.type == SDL_CONTROLLERAXISMOTION) {
+        if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION) {
             joyevt.setType(JoystickEvent::AXIS_MOTION);
-            joyevt.setInstanceId(event.caxis.which);
-            joyevt.setAxis(event.caxis.axis);
-            joyevt.setAxisValue(convertRange(event.caxis.value));
-        } else if (event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP) {
+            joyevt.setInstanceId(event.gaxis.which);
+            joyevt.setAxis(event.gaxis.axis);
+            joyevt.setAxisValue(convertRange(event.gaxis.value));
+        } else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN || event.type == SDL_EVENT_GAMEPAD_BUTTON_UP) {
             joyevt.setType(
-                event.type == SDL_CONTROLLERBUTTONDOWN ? JoystickEvent::BUTTON_PRESSED :
-                                                         JoystickEvent::BUTTON_RELEASED);
-            joyevt.setInstanceId(event.cbutton.which);
-            joyevt.setButton(event.cbutton.button);
+                event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN ? JoystickEvent::BUTTON_PRESSED :
+                                                              JoystickEvent::BUTTON_RELEASED);
+            joyevt.setInstanceId(event.gbutton.which);
+            joyevt.setButton(event.gbutton.button);
         } else {
             dispatch = false;
         }
@@ -326,8 +327,14 @@ namespace FIFE
     std::string JoystickManager::getGuidString(int32_t deviceIndex)
     {
         char tmp[33];
-        SDL_JoystickGUID const guid = SDL_JoystickGetDeviceGUID(deviceIndex);
-        SDL_JoystickGetGUIDString(guid, &tmp[0], sizeof(tmp));
+        SDL_Joystick* joy = SDL_OpenJoystick(deviceIndex);
+        if (joy) {
+            SDL_GUID guid = SDL_GetJoystickGUID(joy);
+            SDL_GUIDToString(guid, &tmp[0], sizeof(tmp));
+            SDL_CloseJoystick(joy);
+        } else {
+            tmp[0] = '\0';
+        }
         std::string guidString(&tmp[0]);
         return guidString;
     }

@@ -1,29 +1,29 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "timemanager.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "util/log/logger.h"
-
 #include "timeevent.h"
-#include "timemanager.h"
+#include "util/log/logger.h"
 
 namespace FIFE
 {
-    static const uint32_t UNDEFINED_TIME_DELTA = 999999;
+    static uint32_t const UNDEFINED_TIME_DELTA = 999999;
     static Logger _log(LM_UTIL);
 
-    TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0) { }
+    TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0)
+    {
+    }
 
     TimeManager::~TimeManager() = default;
 
@@ -68,7 +68,7 @@ namespace FIFE
     void TimeManager::unregisterEvent(TimeEvent* event)
     {
         // Unregister.
-        auto it = std::ranges::find_if(m_events_list, [event](const TimeEvent* e) {
+        auto it = std::ranges::find_if(m_events_list, [event](TimeEvent const * e) {
             return e == event;
         });
         if (it != m_events_list.end()) {

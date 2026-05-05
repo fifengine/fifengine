@@ -24,13 +24,13 @@ namespace FIFE
      */
     class /*FIFE_API*/ IEventSource
     {
-    public:
-        /** Gets the source type of this event
-         * @return source type of this event
-         */
-        virtual EventSourceType getEventSourceType() = 0;
+        public:
+            /** Gets the source type of this event
+             * @return source type of this event
+             */
+            virtual EventSourceType getEventSourceType() = 0;
 
-        virtual ~IEventSource() = default;
+            virtual ~IEventSource() = default;
     };
 
 } // namespace FIFE

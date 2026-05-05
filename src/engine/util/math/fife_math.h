@@ -72,78 +72,78 @@ namespace FIFE
     template <>
     struct float_traits<float>
     {
-        using float_type = float; ///< Floating-point typedef for this specialization.
+            using float_type = float; ///< Floating-point typedef for this specialization.
 
-        /** Machine epsilon for float. */
-        static float_type epsilon()
-        {
-            return FLT_STD_EPSILON;
-        }
-        /** Recommended zero tolerance for float comparisons. */
-        static float_type zeroTolerance()
-        {
-            return FLT_ZERO_TOLERANCE;
-        }
-        /** Maximum finite float value. */
-        static float_type max()
-        {
-            return FLT_STD_MAX;
-        }
-        /** Pi constant for floats. */
-        static float_type pi()
-        {
-            return FLT_PI;
-        }
-        /** Two times pi. */
-        static float_type twoPi()
-        {
-            return FLT_TWO_PI;
-        }
-        /** Half of pi. */
-        static float_type halfPi()
-        {
-            return FLT_HALF_PI;
-        }
-        /** 1/pi constant. */
-        static float_type inversePi()
-        {
-            return FLT_INVERSE_PI;
-        }
-        /** 1/(2*pi) constant. */
-        static float_type inverseTwoPi()
-        {
-            return FLT_INVERSE_TWO_PI;
-        }
-        /** Degrees to radians conversion factor. */
-        static float_type degToRad()
-        {
-            return FLT_DEG_TO_RAD;
-        }
-        /** Radians to degrees conversion factor. */
-        static float_type radToDeg()
-        {
-            return FLT_RAD_TO_DEG;
-        }
-        /** Natural log base 2 for floats. */
-        static float_type log2()
-        {
-            return FLT_LOG_2;
-        }
-        /** Natural log base 10 for floats. */
-        static float_type log10()
-        {
-            return FLT_LOG_10;
-        }
-        /** 1 / ln(2) for float conversions. */
-        static float_type invLog2()
-        {
-            return FLT_INV_LOG_2;
-        }
-        /** 1 / ln(10) for float conversions. */
-        static float_type invLog10()
-        {
-            return FLT_INV_LOG_10;
-        }
+            /** Machine epsilon for float. */
+            static float_type epsilon()
+            {
+                return FLT_STD_EPSILON;
+            }
+            /** Recommended zero tolerance for float comparisons. */
+            static float_type zeroTolerance()
+            {
+                return FLT_ZERO_TOLERANCE;
+            }
+            /** Maximum finite float value. */
+            static float_type max()
+            {
+                return FLT_STD_MAX;
+            }
+            /** Pi constant for floats. */
+            static float_type pi()
+            {
+                return FLT_PI;
+            }
+            /** Two times pi. */
+            static float_type twoPi()
+            {
+                return FLT_TWO_PI;
+            }
+            /** Half of pi. */
+            static float_type halfPi()
+            {
+                return FLT_HALF_PI;
+            }
+            /** 1/pi constant. */
+            static float_type inversePi()
+            {
+                return FLT_INVERSE_PI;
+            }
+            /** 1/(2*pi) constant. */
+            static float_type inverseTwoPi()
+            {
+                return FLT_INVERSE_TWO_PI;
+            }
+            /** Degrees to radians conversion factor. */
+            static float_type degToRad()
+            {
+                return FLT_DEG_TO_RAD;
+            }
+            /** Radians to degrees conversion factor. */
+            static float_type radToDeg()
+            {
+                return FLT_RAD_TO_DEG;
+            }
+            /** Natural log base 2 for floats. */
+            static float_type log2()
+            {
+                return FLT_LOG_2;
+            }
+            /** Natural log base 10 for floats. */
+            static float_type log10()
+            {
+                return FLT_LOG_10;
+            }
+            /** 1 / ln(2) for float conversions. */
+            static float_type invLog2()
+            {
+                return FLT_INV_LOG_2;
+            }
+            /** 1 / ln(10) for float conversions. */
+            static float_type invLog10()
+            {
+                return FLT_INV_LOG_10;
+            }
     };
 
     /**
@@ -155,78 +155,78 @@ namespace FIFE
     template <>
     struct float_traits<double>
     {
-        using float_type = double; ///< Floating-point typedef for this specialization.
+            using float_type = double; ///< Floating-point typedef for this specialization.
 
-        /** Machine epsilon for double. */
-        static float_type epsilon()
-        {
-            return DBL_STD_EPSILON;
-        }
-        /** Recommended zero tolerance for double comparisons. */
-        static float_type zeroTolerance()
-        {
-            return DBL_ZERO_TOLERANCE;
-        }
-        /** Maximum finite double value. */
-        static float_type max()
-        {
-            return DBL_STD_MAX;
-        }
-        /** Pi constant for double. */
-        static float_type pi()
-        {
-            return DBL_PI;
-        }
-        /** Two times pi. */
-        static float_type twoPi()
-        {
-            return DBL_TWO_PI;
-        }
-        /** Half of pi. */
-        static float_type halfPi()
-        {
-            return DBL_HALF_PI;
-        }
-        /** 1/pi constant. */
-        static float_type inversePi()
-        {
-            return DBL_INVERSE_PI;
-        }
-        /** 1/(2*pi) constant. */
-        static float_type inverseTwoPi()
-        {
-            return DBL_INVERSE_TWO_PI;
-        }
-        /** Degrees to radians conversion factor. */
-        static float_type degToRad()
-        {
-            return DBL_DEG_TO_RAD;
-        }
-        /** Radians to degrees conversion factor. */
-        static float_type radToDeg()
-        {
-            return DBL_RAD_TO_DEG;
-        }
-        /** Natural log base 2 for doubles. */
-        static float_type log2()
-        {
-            return DBL_LOG_2;
-        }
-        /** Natural log base 10 for doubles. */
-        static float_type log10()
-        {
-            return DBL_LOG_10;
-        }
-        /** 1 / ln(2) for double conversions. */
-        static float_type invLog2()
-        {
-            return DBL_INV_LOG_2;
-        }
-        /** 1 / ln(10) for double conversions. */
-        static float_type invLog10()
-        {
-            return DBL_INV_LOG_10;
-        }
+            /** Machine epsilon for double. */
+            static float_type epsilon()
+            {
+                return DBL_STD_EPSILON;
+            }
+            /** Recommended zero tolerance for double comparisons. */
+            static float_type zeroTolerance()
+            {
+                return DBL_ZERO_TOLERANCE;
+            }
+            /** Maximum finite double value. */
+            static float_type max()
+            {
+                return DBL_STD_MAX;
+            }
+            /** Pi constant for double. */
+            static float_type pi()
+            {
+                return DBL_PI;
+            }
+            /** Two times pi. */
+            static float_type twoPi()
+            {
+                return DBL_TWO_PI;
+            }
+            /** Half of pi. */
+            static float_type halfPi()
+            {
+                return DBL_HALF_PI;
+            }
+            /** 1/pi constant. */
+            static float_type inversePi()
+            {
+                return DBL_INVERSE_PI;
+            }
+            /** 1/(2*pi) constant. */
+            static float_type inverseTwoPi()
+            {
+                return DBL_INVERSE_TWO_PI;
+            }
+            /** Degrees to radians conversion factor. */
+            static float_type degToRad()
+            {
+                return DBL_DEG_TO_RAD;
+            }
+            /** Radians to degrees conversion factor. */
+            static float_type radToDeg()
+            {
+                return DBL_RAD_TO_DEG;
+            }
+            /** Natural log base 2 for doubles. */
+            static float_type log2()
+            {
+                return DBL_LOG_2;
+            }
+            /** Natural log base 10 for doubles. */
+            static float_type log10()
+            {
+                return DBL_LOG_10;
+            }
+            /** 1 / ln(2) for double conversions. */
+            static float_type invLog2()
+            {
+                return DBL_INV_LOG_2;
+            }
+            /** 1 / ln(10) for double conversions. */
+            static float_type invLog10()
+            {
+                return DBL_INV_LOG_10;
+            }
     };
 
     /**
@@ -240,158 +240,158 @@ namespace FIFE
     template <typename T>
     class /*FIFE_API*/ Math
     {
-    public:
-        /**
-         * Type definitions
-         */
-        using num_type = T;
+        public:
+            /**
+             * Type definitions
+             */
+            using num_type = T;
 
-        /** Trait alias providing numeric constants and helpers for `num_type`. */
-        using traits_type = float_traits<num_type>;
+            /** Trait alias providing numeric constants and helpers for `num_type`. */
+            using traits_type = float_traits<num_type>;
 
-        /** Returns machine epsilon for the numeric type. */
-        static num_type epsilon()
-        {
-            return traits_type::epsilon();
-        }
+            /** Returns machine epsilon for the numeric type. */
+            static num_type epsilon()
+            {
+                return traits_type::epsilon();
+            }
 
-        /** Recommended zero tolerance for comparisons. */
-        static num_type zeroTolerance()
-        {
-            return traits_type::zeroTolerance();
-        }
+            /** Recommended zero tolerance for comparisons. */
+            static num_type zeroTolerance()
+            {
+                return traits_type::zeroTolerance();
+            }
 
-        /** Maximum finite value for the numeric type. */
-        static num_type max()
-        {
-            return traits_type::max();
-        }
+            /** Maximum finite value for the numeric type. */
+            static num_type max()
+            {
+                return traits_type::max();
+            }
 
-        /** Pi constant. */
-        static num_type pi()
-        {
-            return traits_type::pi();
-        }
+            /** Pi constant. */
+            static num_type pi()
+            {
+                return traits_type::pi();
+            }
 
-        /** Two times pi. */
-        static num_type twoPi()
-        {
-            return traits_type::twoPi();
-        }
+            /** Two times pi. */
+            static num_type twoPi()
+            {
+                return traits_type::twoPi();
+            }
 
-        /** Half of pi. */
-        static num_type halfPi()
-        {
-            return traits_type::halfPi();
-        }
+            /** Half of pi. */
+            static num_type halfPi()
+            {
+                return traits_type::halfPi();
+            }
 
-        /** 1/pi constant. */
-        static num_type inversePi()
-        {
-            return traits_type::inversePi();
-        }
+            /** 1/pi constant. */
+            static num_type inversePi()
+            {
+                return traits_type::inversePi();
+            }
 
-        /** 1/(2*pi) constant. */
-        static num_type inverseTwoPi()
-        {
-            return traits_type::inverseTwoPi();
-        }
+            /** 1/(2*pi) constant. */
+            static num_type inverseTwoPi()
+            {
+                return traits_type::inverseTwoPi();
+            }
 
-        /** Degrees-to-radians factor. */
-        static num_type degToRad()
-        {
-            return traits_type::degToRad();
-        }
+            /** Degrees-to-radians factor. */
+            static num_type degToRad()
+            {
+                return traits_type::degToRad();
+            }
 
-        /** Radians-to-degrees factor. */
-        static num_type radToDeg()
-        {
-            return traits_type::radToDeg();
-        }
+            /** Radians-to-degrees factor. */
+            static num_type radToDeg()
+            {
+                return traits_type::radToDeg();
+            }
 
-        /** Natural log base 2. */
-        static num_type log2()
-        {
-            return traits_type::log2();
-        }
+            /** Natural log base 2. */
+            static num_type log2()
+            {
+                return traits_type::log2();
+            }
 
-        /** Natural log base 10. */
-        static num_type log10()
-        {
-            return traits_type::log10();
-        }
+            /** Natural log base 10. */
+            static num_type log10()
+            {
+                return traits_type::log10();
+            }
 
-        /** 1/ln(2) helper. */
-        static num_type invLog2()
-        {
-            return traits_type::invLog2();
-        }
+            /** 1/ln(2) helper. */
+            static num_type invLog2()
+            {
+                return traits_type::invLog2();
+            }
 
-        /** 1/ln(10) helper. */
-        static num_type invLog10()
-        {
-            return traits_type::invLog10();
-        }
+            /** 1/ln(10) helper. */
+            static num_type invLog10()
+            {
+                return traits_type::invLog10();
+            }
 
-        /** Arc cosine (clamped). */
-        static T ACos(T _val);
+            /** Arc cosine (clamped). */
+            static T ACos(T _val);
 
-        /** Arc sine (clamped). */
-        static T ASin(T _val);
+            /** Arc sine (clamped). */
+            static T ASin(T _val);
 
-        /** Arc tangent. */
-        static T ATan(T _val);
+            /** Arc tangent. */
+            static T ATan(T _val);
 
-        /** Two-argument arc tangent. */
-        static T ATan2(T _x, T _y);
+            /** Two-argument arc tangent. */
+            static T ATan2(T _x, T _y);
 
-        /** Ceiling of value. */
-        static T Ceil(T _val);
+            /** Ceiling of value. */
+            static T Ceil(T _val);
 
-        /** Cosine of value. */
-        static T Cos(T _val);
+            /** Cosine of value. */
+            static T Cos(T _val);
 
-        /** Exponential e^x. */
-        static T Exp(T _val);
+            /** Exponential e^x. */
+            static T Exp(T _val);
 
-        /** Absolute value (floating). */
-        static T FAbs(T _val);
+            /** Absolute value (floating). */
+            static T FAbs(T _val);
 
-        /** Floor of value. */
-        static T Floor(T _val);
+            /** Floor of value. */
+            static T Floor(T _val);
 
-        /** Floating-point modulus. */
-        static T FMod(T _x, T _y);
+            /** Floating-point modulus. */
+            static T FMod(T _x, T _y);
 
-        /** Inverse square root (1/sqrt(x)). */
-        static T InvSqrt(T _val);
+            /** Inverse square root (1/sqrt(x)). */
+            static T InvSqrt(T _val);
 
-        /** Natural logarithm. */
-        static T Log(T _val);
+            /** Natural logarithm. */
+            static T Log(T _val);
 
-        /** Log base 2. */
-        static T Log2(T _val);
+            /** Log base 2. */
+            static T Log2(T _val);
 
-        /** Log base 10. */
-        static T Log10(T _val);
+            /** Log base 10. */
+            static T Log10(T _val);
 
-        /** Power function. */
-        static T Pow(T _base, T _exponent);
+            /** Power function. */
+            static T Pow(T _base, T _exponent);
 
-        /** Sine of value. */
-        static T Sin(T _val);
+            /** Sine of value. */
+            static T Sin(T _val);
 
-        /** Square of value. */
-        static T Sqr(T _val);
+            /** Square of value. */
+            static T Sqr(T _val);
 
-        /** Square root. */
-        static T Sqrt(T _val);
+            /** Square root. */
+            static T Sqrt(T _val);
 
-        /** Tangent of value. */
-        static T Tan(T _val);
+            /** Tangent of value. */
+            static T Tan(T _val);
 
-        /** Approximate equality check using epsilon. */
-        static bool Equal(T _val1, T _val2);
+            /** Approximate equality check using epsilon. */
+            static bool Equal(T _val1, T _val2);
     };
 
     using Mathf = Math<float>;
@@ -493,7 +493,6 @@ namespace FIFE
     template <class T>
     inline T Math<T>::Log10(T _val)
     {
-
         return invLog10() * static_cast<T>(std::log(_val));
     }
 

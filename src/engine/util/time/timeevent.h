@@ -29,60 +29,60 @@ namespace FIFE
      */
     class /*FIFE_API*/ TimeEvent
     {
-    public:
-        /** Default constructor.
-         *
-         * @param period The period of the event. See class description.
-         */
-        explicit TimeEvent(int32_t period = -1);
+        public:
+            /** Default constructor.
+             *
+             * @param period The period of the event. See class description.
+             */
+            explicit TimeEvent(int32_t period = -1);
 
-        /** Destructor.
-         *
-         */
-        virtual ~TimeEvent();
+            /** Destructor.
+             *
+             */
+            virtual ~TimeEvent();
 
-        /** Update function to be overridden by client.
-         *
-         * @param time Time delta.
-         */
-        virtual void updateEvent(uint32_t time) = 0;
+            /** Update function to be overridden by client.
+             *
+             * @param time Time delta.
+             */
+            virtual void updateEvent(uint32_t time) = 0;
 
-        /** Called by TimeManager to update the event.
-         *
-         * @param time Current time. Used To check if its time to update.
-         */
-        void managerUpdateEvent(uint32_t time);
+            /** Called by TimeManager to update the event.
+             *
+             * @param time Current time. Used To check if its time to update.
+             */
+            void managerUpdateEvent(uint32_t time);
 
-        /** Set the period of the event.
-         *
-         * @param period The period of the event. See class description.
-         */
-        void setPeriod(int32_t period);
+            /** Set the period of the event.
+             *
+             * @param period The period of the event. See class description.
+             */
+            void setPeriod(int32_t period);
 
-        /** Get the period of the event.
-         *
-         * @return The period of the event. See class description.
-         */
-        int32_t getPeriod() const;
+            /** Get the period of the event.
+             *
+             * @return The period of the event. See class description.
+             */
+            int32_t getPeriod() const;
 
-        /** Get the last time the event was updated.
-         *
-         * @return Time of last update.
-         */
-        uint32_t getLastUpdateTime() const;
+            /** Get the last time the event was updated.
+             *
+             * @return Time of last update.
+             */
+            uint32_t getLastUpdateTime() const;
 
-        /** Set the last time the event was updated.
-         *
-         * @param ms Time of last update.
-         */
-        void setLastUpdateTime(uint32_t ms);
+            /** Set the last time the event was updated.
+             *
+             * @param ms Time of last update.
+             */
+            void setLastUpdateTime(uint32_t ms);
 
-    private:
-        // The period of the event. See the class description.
-        int32_t m_period;
+        private:
+            // The period of the event. See the class description.
+            int32_t m_period;
 
-        // The last time the class was updated.
-        uint32_t m_last_updated;
+            // The last time the class was updated.
+            uint32_t m_last_updated;
     };
 
 } // namespace FIFE

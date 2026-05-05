@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "vfssourceprovider.h"
+
 // Standard C++ library includes
 #include <string>
 #include <utility>
@@ -8,13 +11,8 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
-
 #include "vfssource.h"
-#include "vfssourceprovider.h"
 
 namespace FIFE
 {
@@ -23,7 +21,9 @@ namespace FIFE
      */
     static Logger _log(LM_VFS);
 
-    VFSSourceProvider::VFSSourceProvider(std::string name) : m_vfs(nullptr), m_name(std::move(name)) { }
+    VFSSourceProvider::VFSSourceProvider(std::string name) : m_vfs(nullptr), m_name(std::move(name))
+    {
+    }
 
     VFSSourceProvider::~VFSSourceProvider() = default;
 
@@ -36,7 +36,7 @@ namespace FIFE
         m_vfs = vfs;
     }
 
-    const std::string& VFSSourceProvider::getName() const
+    std::string const & VFSSourceProvider::getName() const
     {
         return m_name;
     }

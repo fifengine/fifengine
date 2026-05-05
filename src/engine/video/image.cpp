@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "image.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -12,17 +15,12 @@
 #include <string>
 
 // 3rd party library includes
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "loaders/native/video/imageloader.h"
 #include "util/resource/resource.h"
-
-#include "image.h"
 
 namespace FIFE
 {
@@ -31,7 +29,7 @@ namespace FIFE
     {
     }
 
-    Image::Image(const std::string& name, IResourceLoader* loader) :
+    Image::Image(std::string const & name, IResourceLoader* loader) :
         IResource(name, loader), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
@@ -41,12 +39,12 @@ namespace FIFE
     {
     }
 
-    Image::Image(const std::string& name, SDL_Surface* surface) :
+    Image::Image(std::string const & name, SDL_Surface* surface) :
         IResource(name, nullptr), m_surface(surface), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
-    Image::Image(const uint8_t* data, uint32_t width, uint32_t height) :
+    Image::Image(uint8_t const * data, uint32_t width, uint32_t height) :
         IResource(createUniqueImageName(), nullptr), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         if (data == nullptr || width == 0 || height == 0) {
@@ -54,26 +52,27 @@ namespace FIFE
         }
 
         SDL_Surface* surface =
-            SDL_CreateRGBSurface(0, static_cast<int>(width), static_cast<int>(height), 32, RMASK, GMASK, BMASK, AMASK);
+            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA8888);
         if (surface == nullptr) {
             return;
         }
 
         SDL_LockSurface(surface);
-        const uint8_t* src = data;
-        uint8_t* dst       = static_cast<uint8_t*>(surface->pixels);
-        const int pitch    = surface->pitch;
-        const int bpp      = surface->format->BytesPerPixel;
+        uint8_t const * src                    = data;
+        uint8_t* dst                           = static_cast<uint8_t*>(surface->pixels);
+        int const pitch                        = surface->pitch;
+        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
+        int const bpp                          = SDL_BYTESPERPIXEL(surface->format);
 
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                const size_t idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
-                const uint8_t r      = src[idx + 0];
-                const uint8_t g      = src[idx + 1];
-                const uint8_t b      = src[idx + 2];
-                const uint8_t a      = src[idx + 3];
-                const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
+                size_t const idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
+                uint8_t const r      = src[idx + 0];
+                uint8_t const g      = src[idx + 1];
+                uint8_t const b      = src[idx + 2];
+                uint8_t const a      = src[idx + 3];
+                uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
                     std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
                 } else {
@@ -89,7 +88,7 @@ namespace FIFE
         reset(surface);
     }
 
-    Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
+    Image::Image(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) :
         IResource(name, nullptr), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         if (data == nullptr || width == 0 || height == 0) {
@@ -97,26 +96,27 @@ namespace FIFE
         }
 
         SDL_Surface* surface =
-            SDL_CreateRGBSurface(0, static_cast<int>(width), static_cast<int>(height), 32, RMASK, GMASK, BMASK, AMASK);
+            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA8888);
         if (surface == nullptr) {
             return;
         }
 
         SDL_LockSurface(surface);
-        const uint8_t* src = data;
-        uint8_t* dst       = static_cast<uint8_t*>(surface->pixels);
-        const int pitch    = surface->pitch;
-        const int bpp      = surface->format->BytesPerPixel;
+        uint8_t const * src                    = data;
+        uint8_t* dst                           = static_cast<uint8_t*>(surface->pixels);
+        int const pitch                        = surface->pitch;
+        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
+        int const bpp                          = SDL_BYTESPERPIXEL(surface->format);
 
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                const size_t idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
-                const uint8_t r      = src[idx + 0];
-                const uint8_t g      = src[idx + 1];
-                const uint8_t b      = src[idx + 2];
-                const uint8_t a      = src[idx + 3];
-                const uint32_t pixel = SDL_MapRGBA(surface->format, r, g, b, a);
+                size_t const idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
+                uint8_t const r      = src[idx + 0];
+                uint8_t const g      = src[idx + 1];
+                uint8_t const b      = src[idx + 2];
+                uint8_t const a      = src[idx + 3];
+                uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
                     std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
                 } else {
@@ -135,7 +135,7 @@ namespace FIFE
     void Image::reset(SDL_Surface* surface)
     {
         if ((m_surface != nullptr) && !m_shared) {
-            SDL_FreeSurface(m_surface);
+            SDL_DestroySurface(m_surface);
         }
 
         m_xshift  = 0;
@@ -213,8 +213,8 @@ namespace FIFE
 
     Rect Image::getArea() const
     {
-        const uint32_t width  = getWidth();
-        const uint32_t height = getHeight();
+        uint32_t const width  = getWidth();
+        uint32_t const height = getHeight();
         assert(width <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         assert(height <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         Rect r(0, 0, static_cast<int32_t>(width), static_cast<int32_t>(height));
@@ -227,7 +227,8 @@ namespace FIFE
 
         assert(m_surface);
 
-        int32_t const bpp = m_surface->format->BytesPerPixel;
+        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(m_surface->format);
+        int32_t const bpp                      = SDL_BYTESPERPIXEL(m_surface->format);
 
         if (!isSharedImage()) {
             if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
@@ -281,18 +282,18 @@ namespace FIFE
         default:
             break;
         }
-        SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
+        SDL_GetRGBA(pixel, details, SDL_GetSurfacePalette(m_surface), r, g, b, a);
     }
 
-    void Image::saveImage(const std::string& filename)
+    void Image::saveImage(std::string const & filename)
     {
         saveAsPng(filename, *m_surface);
     }
 
-    void Image::saveAsPng(const std::string& filename, SDL_Surface& surface)
+    void Image::saveAsPng(std::string const & filename, SDL_Surface& surface)
     {
         if (IMG_SavePNG(&surface, filename.c_str()) != 0) {
-            std::cerr << "Failed to save PNG '" << filename << "': " << IMG_GetError() << std::endl;
+            std::cerr << "Failed to save PNG '" << filename << "': " << SDL_GetError() << std::endl;
         }
     }
 
@@ -305,24 +306,24 @@ namespace FIFE
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
 
-        const std::string name = oss.str();
+        std::string const name = oss.str();
         ++uniqueNumber;
 
         return name;
     }
 
-    void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg)
+    void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, ImagePtr const & srcimg)
     {
         if (srcimg->m_surface == nullptr) {
             return;
         }
         if (m_surface == nullptr) {
-            const uint32_t srcWidth  = srcimg->getWidth();
-            const uint32_t srcHeight = srcimg->getHeight();
+            uint32_t const srcWidth  = srcimg->getWidth();
+            uint32_t const srcHeight = srcimg->getHeight();
             assert(srcWidth <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
             assert(srcHeight <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
-            m_surface = SDL_CreateRGBSurface(
-                0, static_cast<int>(srcWidth), static_cast<int>(srcHeight), 32, RMASK, GMASK, BMASK, AMASK);
+            m_surface =
+                SDL_CreateSurface(static_cast<int>(srcWidth), static_cast<int>(srcHeight), SDL_PIXELFORMAT_RGBA8888);
         }
         // disable blending
         SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_NONE);
@@ -372,19 +373,20 @@ namespace FIFE
             return false;
         }
 
-        int32_t const bpp = surface->format->BytesPerPixel;
+        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
+        int32_t const bpp                      = SDL_BYTESPERPIXEL(surface->format);
         SDL_LockSurface(surface);
-        Uint8* p = static_cast<Uint8*>(surface->pixels) +
-                   (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
-                   (static_cast<size_t>(x) * static_cast<size_t>(bpp));
-        Uint32 const pixel = SDL_MapRGBA(surface->format, r, g, b, a);
+        Uint8* p           = static_cast<Uint8*>(surface->pixels) +
+                             (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
+                             (static_cast<size_t>(x) * static_cast<size_t>(bpp));
+        Uint32 const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
         switch (bpp) {
         case 1:
             *p = static_cast<Uint8>(pixel & 0xffU);
             break;
 
         case 2: {
-            const Uint16 pixel16 = static_cast<Uint16>(pixel);
+            Uint16 const pixel16 = static_cast<Uint16>(pixel);
             std::memcpy(p, &pixel16, sizeof(pixel16));
         } break;
 

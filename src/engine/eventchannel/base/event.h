@@ -19,7 +19,7 @@
 
 // 3rd party library includes
 //
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 // FIFE includes
 //
@@ -31,94 +31,96 @@ namespace FIFE
      */
     class /*FIFE_API*/ Event
     {
-    public:
-        /** Constructor.
-         */
-        Event() : m_isConsumed(false), m_eventSource(nullptr), m_timestamp(static_cast<int32_t>(SDL_GetTicks())) { }
+        public:
+            /** Constructor.
+             */
+            Event() : m_isConsumed(false), m_eventSource(nullptr), m_timestamp(static_cast<int32_t>(SDL_GetTicks()))
+            {
+            }
 
-        /** Destructor.
-         */
-        virtual ~Event() = default;
+            /** Destructor.
+             */
+            virtual ~Event() = default;
 
-        /** Marks the event as consumed.
-         */
-        virtual void consume()
-        {
-            m_isConsumed = true;
-        }
+            /** Marks the event as consumed.
+             */
+            virtual void consume()
+            {
+                m_isConsumed = true;
+            }
 
-        /** Checks if the event is consumed.
-         * @return true if the event is consumed, false otherwise.
-         */
-        virtual bool isConsumed() const
-        {
-            return m_isConsumed;
-        }
+            /** Checks if the event is consumed.
+             * @return true if the event is consumed, false otherwise.
+             */
+            virtual bool isConsumed() const
+            {
+                return m_isConsumed;
+            }
 
-        /** Gets the source of the event.
-         */
-        virtual IEventSource* getSource() const
-        {
-            return m_eventSource;
-        }
+            /** Gets the source of the event.
+             */
+            virtual IEventSource* getSource() const
+            {
+                return m_eventSource;
+            }
 
-        /** Sets the source of the event.
-         */
-        virtual void setSource(IEventSource* source)
-        {
-            m_eventSource = source;
-        }
+            /** Sets the source of the event.
+             */
+            virtual void setSource(IEventSource* source)
+            {
+                m_eventSource = source;
+            }
 
-        /** Gets the timestamp of the event
-         */
-        virtual int32_t getTimeStamp() const
-        {
-            return m_timestamp;
-        }
+            /** Gets the timestamp of the event
+             */
+            virtual int32_t getTimeStamp() const
+            {
+                return m_timestamp;
+            }
 
-        /** Sets the timestamp of the event
-         */
-        virtual void setTimeStamp(int32_t timestamp)
-        {
-            m_timestamp = timestamp;
-        }
+            /** Sets the timestamp of the event
+             */
+            virtual void setTimeStamp(int32_t timestamp)
+            {
+                m_timestamp = timestamp;
+            }
 
-        /** Gets the name of the event
-         */
-        virtual const std::string& getName() const
-        {
-            static const std::string eventName("Event");
-            return eventName;
-        }
+            /** Gets the name of the event
+             */
+            virtual std::string const & getName() const
+            {
+                static std::string const eventName("Event");
+                return eventName;
+            }
 
-        /** Gets attribute string of the event
-         */
-        virtual std::string getAttrStr() const
-        {
-            std::stringstream ss;
-            ss << "consumed = " << m_isConsumed << ", ";
-            ss << "src = " << m_eventSource << ", ";
-            ss << "timestamp = " << m_timestamp;
-            return ss.str();
-        }
+            /** Gets attribute string of the event
+             */
+            virtual std::string getAttrStr() const
+            {
+                std::stringstream ss;
+                ss << "consumed = " << m_isConsumed << ", ";
+                ss << "src = " << m_eventSource << ", ";
+                ss << "timestamp = " << m_timestamp;
+                return ss.str();
+            }
 
-        /** Gets the debugstring of the event
-         */
-        virtual std::string getDebugString() const
-        {
-            std::stringstream ss;
-            ss << getName() << '\n';
-            ss << getAttrStr() << '\n';
-            return ss.str();
-        }
+            /** Gets the debugstring of the event
+             */
+            virtual std::string getDebugString() const
+            {
+                std::stringstream ss;
+                ss << getName() << '\n';
+                ss << getAttrStr() << '\n';
+                return ss.str();
+            }
 
-    private:
-        //! Indicates if the event is consumed.
-        bool m_isConsumed;
-        //! The source of the event.
-        IEventSource* m_eventSource;
-        //! Timestamp of the event.
-        int32_t m_timestamp;
+        private:
+            //! Indicates if the event is consumed.
+            bool m_isConsumed;
+            //! The source of the event.
+            IEventSource* m_eventSource;
+            //! Timestamp of the event.
+            int32_t m_timestamp;
     };
 
 } // namespace FIFE

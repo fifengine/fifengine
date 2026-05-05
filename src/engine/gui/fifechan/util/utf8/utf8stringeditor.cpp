@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "utf8stringeditor.h"
+
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
@@ -11,16 +14,11 @@
 #include <utf8.h>
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
-#include "utf8stringeditor.h"
 
 namespace fcn
 {
 
-    int UTF8StringEditor::nextChar(const std::string& text, int byteOffset)
+    int UTF8StringEditor::nextChar(std::string const & text, int byteOffset)
     {
         std::string::const_iterator c;
         std::string::const_iterator e;
@@ -29,12 +27,12 @@ namespace fcn
         e = text.end();
 
         utf8::next(c, e);
-        const size_t nextOffset = std::string(text.begin(), c).size();
+        size_t const nextOffset = std::string(text.begin(), c).size();
         assert(nextOffset <= static_cast<size_t>(std::numeric_limits<int>::max()));
         return static_cast<int>(nextOffset);
     }
 
-    int UTF8StringEditor::prevChar(const std::string& text, int byteOffset)
+    int UTF8StringEditor::prevChar(std::string const & text, int byteOffset)
     {
         std::string::const_iterator c;
         std::string::const_iterator b;
@@ -43,7 +41,7 @@ namespace fcn
         b = text.begin();
 
         utf8::prior(c, b);
-        const size_t previousOffset = std::string(b, c).size();
+        size_t const previousOffset = std::string(b, c).size();
         assert(previousOffset <= static_cast<size_t>(std::numeric_limits<int>::max()));
         return static_cast<int>(previousOffset);
     }
@@ -83,12 +81,12 @@ namespace fcn
         return newOffset;
     }
 
-    int UTF8StringEditor::countChars(const std::string& text, int byteOffset)
+    int UTF8StringEditor::countChars(std::string const & text, int byteOffset)
     {
         return utf8::distance(text.begin(), text.begin() + byteOffset);
     }
 
-    int UTF8StringEditor::getOffset(const std::string& text, int charIndex)
+    int UTF8StringEditor::getOffset(std::string const & text, int charIndex)
     {
         std::string::const_iterator cur = std::string::const_iterator();
         std::string::const_iterator end = std::string::const_iterator();
@@ -105,7 +103,7 @@ namespace fcn
             utf8::next(cur, end);
         }
 
-        const size_t offset = std::string(text.begin(), cur).size();
+        size_t const offset = std::string(text.begin(), cur).size();
         assert(offset <= static_cast<size_t>(std::numeric_limits<int>::max()));
         return static_cast<int>(offset);
     }

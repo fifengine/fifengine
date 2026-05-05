@@ -24,13 +24,13 @@ namespace FIFE
      */
     class /*FIFE_API*/ IKeyFilter
     {
-    public:
-        /** Check whether a keyevent should be filtered out.
-         * @param event They key event.
-         */
-        virtual bool isFiltered(const KeyEvent& event) = 0;
+        public:
+            /** Check whether a keyevent should be filtered out.
+             * @param event They key event.
+             */
+            virtual bool isFiltered(KeyEvent const & event) = 0;
 
-        virtual ~IKeyFilter() = default;
+            virtual ~IKeyFilter() = default;
     };
 
 } // namespace FIFE

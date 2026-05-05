@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "fifechanmanager.h"
+
 // Standard C++ library includes
 #include <string>
 #include <vector>
@@ -11,15 +14,13 @@
 #endif
 
 // 3rd party library includes
-#include <fifechan.hpp>
-#include <fifechan/backends/sdl2/sdl.hpp>
+#include <fifechan/backends/sdl3/sdl.hpp>
 #include <fifechan/focushandler.hpp>
 #include <fifechan/key.hpp>
 
+#include <fifechan.hpp>
+
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #ifdef HAVE_OPENGL
     #include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
 #endif
@@ -38,8 +39,6 @@
 #include "video/fonts/truetypefont.h"
 #include "video/renderbackend.h"
 
-#include "fifechanmanager.h"
-
 namespace FIFE
 {
     static Logger _log(LM_GUI);
@@ -50,7 +49,7 @@ namespace FIFE
         m_focushandler(nullptr),
         m_fcn_topcontainer(new fcn::Container()),
         m_imgloader(new GuiImageLoader()),
-        m_input(new fcn::sdl2::Input()),
+        m_input(new fcn::sdl3::Input()),
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
@@ -95,14 +94,14 @@ namespace FIFE
             return false;
         }
 
-        const bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
+        bool const overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
 
         switch (evt.type) {
-        case SDL_MOUSEWHEEL:
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_EVENT_MOUSE_WHEEL:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
             m_had_widget = overWidget;
             [[fallthrough]];
-        case SDL_MOUSEBUTTONUP:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
             // Always send the button up/down events to fifechan
             m_input->pushInput(evt);
 
@@ -123,7 +122,7 @@ namespace FIFE
             // other listeners have a chance to process the event.
             return false;
 
-        case SDL_MOUSEMOTION:
+        case SDL_EVENT_MOUSE_MOTION:
             m_lastMotionX = evt.motion.x;
             m_lastMotionY = evt.motion.y;
             if (m_fcn_topcontainer->getWidgetAt(evt.motion.x, evt.motion.y) != nullptr) {
@@ -140,16 +139,16 @@ namespace FIFE
             }
             return false;
 
-        case SDL_KEYDOWN:
-        case SDL_KEYUP:
+        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_UP:
             if (m_focushandler->getFocused() != nullptr) {
                 m_input->pushInput(evt);
                 return true;
             }
             return false;
 
-        case SDL_TEXTINPUT:
-        case SDL_WINDOWEVENT:
+        case SDL_EVENT_TEXT_INPUT:
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
             // don't consume TEXTINPUT / WINDOWEVENTS
             m_input->pushInput(evt);
             return false;
@@ -204,7 +203,7 @@ namespace FIFE
         return m_enabled_console;
     }
 
-    void FifechanManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight)
+    void FifechanManager::init(std::string const & backend, int32_t screenWidth, int32_t screenHeight)
     {
 #ifdef HAVE_OPENGL
         if (backend == "SDL") {
@@ -233,7 +232,7 @@ namespace FIFE
         resizeTopContainer(0, 0, screenWidth, screenHeight);
     }
 
-    GuiFont* FifechanManager::createFont(const std::string& path, uint32_t size, const std::string& glyphs)
+    GuiFont* FifechanManager::createFont(std::string const & path, uint32_t size, std::string const & glyphs)
     {
         std::string fontpath   = path;
         std::string fontglyphs = glyphs;
@@ -285,7 +284,7 @@ namespace FIFE
         }
     }
 
-    GuiFont* FifechanManager::setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs)
+    GuiFont* FifechanManager::setDefaultFont(std::string const & path, uint32_t size, std::string const & glyphs)
     {
         m_fontpath   = path;
         m_fontsize   = size;
@@ -309,7 +308,7 @@ namespace FIFE
         m_fcn_gui->draw();
     }
 
-    KeyEvent FifechanManager::translateKeyEvent(const fcn::KeyEvent& fcnevt)
+    KeyEvent FifechanManager::translateKeyEvent(fcn::KeyEvent const & fcnevt)
     {
         KeyEvent keyevt;
         if (fcnevt.getType() == fcn::KeyEvent::Type::Pressed) {
@@ -336,7 +335,7 @@ namespace FIFE
         return keyevt;
     }
 
-    MouseEvent FifechanManager::translateMouseEvent(const fcn::MouseEvent& fcnevt)
+    MouseEvent FifechanManager::translateMouseEvent(fcn::MouseEvent const & fcnevt)
     {
         MouseEvent mouseevt;
         mouseevt.setShiftPressed(fcnevt.isShiftPressed());
@@ -505,24 +504,6 @@ namespace FIFE
         case fcn::Key::F9:
             value = Key::F9;
             break;
-        case fcn::Key::F10:
-            value = Key::F10;
-            break;
-        case fcn::Key::F11:
-            value = Key::F11;
-            break;
-        case fcn::Key::F12:
-            value = Key::F12;
-            break;
-        case fcn::Key::F13:
-            value = Key::F13;
-            break;
-        case fcn::Key::F14:
-            value = Key::F14;
-            break;
-        case fcn::Key::F15:
-            value = Key::F15;
-            break;
         case fcn::Key::NumLock:
             value = Key::NUM_LOCK;
             break;
@@ -531,15 +512,6 @@ namespace FIFE
             break;
         case fcn::Key::ScrollLock:
             value = Key::SCROLL_LOCK;
-            break;
-        case fcn::Key::LeftSuper:
-            value = Key::LEFT_SUPER;
-            break;
-        case fcn::Key::RightSuper:
-            value = Key::RIGHT_SUPER;
-            break;
-        case fcn::Key::AltGr:
-            value = Key::ALT_GR;
             break;
         case fcn::Key::Up:
             value = Key::UP;

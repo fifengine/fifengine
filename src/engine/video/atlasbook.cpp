@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "atlasbook.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <limits>
@@ -9,12 +12,7 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
-
-#include "atlasbook.h"
 
 namespace FIFE
 {
@@ -76,7 +74,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
-                            const uint32_t squeezedWidth = newBlock->getWidth();
+                            uint32_t const squeezedWidth = newBlock->getWidth();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -114,7 +112,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
-                            const uint32_t squeezedHeight = newBlock->getHeight();
+                            uint32_t const squeezedHeight = newBlock->getHeight();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -162,8 +160,8 @@ namespace FIFE
         assert(boundaryBox.top == 0);
 
         if (pot) {
-            const uint32_t bwidth  = boundaryBox.getWidth();
-            const uint32_t bheight = boundaryBox.getHeight();
+            uint32_t const bwidth  = boundaryBox.getWidth();
+            uint32_t const bheight = boundaryBox.getHeight();
 
             if (bwidth < width) {
                 // look for next power of 2 for width

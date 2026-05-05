@@ -1,25 +1,23 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "quadtreerenderer.h"
+
 // Standard C++ library includes
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
+#include "model/structures/instancetree.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-#include "video/renderbackend.h"
-
-#include "model/structures/instancetree.h"
-#include "quadtreerenderer.h"
 #include "util/structures/quadtree.h"
+#include "video/renderbackend.h"
 #include "view/camera.h"
 
 // credit to phoku for his NodeDisplay example which the visitor code is adapted from ( he coded the quadtree after all
@@ -38,7 +36,7 @@ namespace FIFE
         setEnabled(false);
     }
 
-    QuadTreeRenderer::QuadTreeRenderer(const QuadTreeRenderer& old) : RendererBase(old)
+    QuadTreeRenderer::QuadTreeRenderer(QuadTreeRenderer const & old) : RendererBase(old)
     {
         setEnabled(false);
     }
@@ -89,7 +87,7 @@ namespace FIFE
 
     void QuadTreeRenderer::render(Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances)
     {
-        const CellGrid* cg = layer->getCellGrid();
+        CellGrid const * cg = layer->getCellGrid();
         if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;

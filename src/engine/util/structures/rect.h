@@ -62,74 +62,76 @@ namespace FIFE
     template <typename T>
     class /*FIFE_API*/ RectType
     {
-    public:
-        /** The X Coordinate.
-         */
-        T x;
-        /** The Y Coordinate.
-         */
-        T y;
-        /** Width of the rectangle.
-         */
-        T w;
-        /** Height of the rectangle.
-         */
-        T h;
+        public:
+            /** The X Coordinate.
+             */
+            T x;
+            /** The Y Coordinate.
+             */
+            T y;
+            /** Width of the rectangle.
+             */
+            T w;
+            /** Height of the rectangle.
+             */
+            T h;
 
-        /** Constructor.
-         *
-         * Creates a new Rect with the values defaulting to 0.
-         */
-        explicit RectType(T x = 0, T y = 0, T w = 0, T h = 0) : x(x), y(y), w(w), h(h) { }
+            /** Constructor.
+             *
+             * Creates a new Rect with the values defaulting to 0.
+             */
+            explicit RectType(T x = 0, T y = 0, T w = 0, T h = 0) : x(x), y(y), w(w), h(h)
+            {
+            }
 
-        /** Constructor.
-         *
-         * Creates a new Rect of type T from the given Rect of type U
-         */
-        template <typename U>
-        explicit RectType(const RectType<U>& r) :
-            x(static_cast<T>(r.x)), y(static_cast<T>(r.y)), w(static_cast<T>(r.w)), h(static_cast<T>(r.h))
-        {
-        }
+            /** Constructor.
+             *
+             * Creates a new Rect of type T from the given Rect of type U
+             */
+            template <typename U>
+            explicit RectType(RectType<U> const & r) :
+                x(static_cast<T>(r.x)), y(static_cast<T>(r.y)), w(static_cast<T>(r.w)), h(static_cast<T>(r.h))
+            {
+            }
 
-        /** The X coordinate of the right edge.
-         */
-        T right() const;
+            /** The X coordinate of the right edge.
+             */
+            T right() const;
 
-        /** The Y coordinate of the bottom edge.
-         */
-        T bottom() const;
+            /** The Y coordinate of the bottom edge.
+             */
+            T bottom() const;
 
-        /** Equivalence operator.
-         *
-         * @param rect The rectangle to which this is compared.
-         * @return True only if both rectangle values are all equal.
-         */
-        bool operator==(const RectType<T>& rect) const;
+            /** Equivalence operator.
+             *
+             * @param rect The rectangle to which this is compared.
+             * @return True only if both rectangle values are all equal.
+             */
+            bool operator==(RectType<T> const & rect) const;
 
-        /** Checks whether a rectangle contains a Point.
-         *
-         * @param point The point that is checked.
-         * @return True if the point lies inside the rectangle or on one of its borders.
-         */
-        bool contains(const PointType2D<T>& point) const;
+            /** Checks whether a rectangle contains a Point.
+             *
+             * @param point The point that is checked.
+             * @return True if the point lies inside the rectangle or on one of its borders.
+             */
+            bool contains(PointType2D<T> const & point) const;
 
-        /** Check whether two rectangles share some area.
-         *
-         * @param rect The other rectangle that is checked.
-         * @return True, if and only if both rectangles have some covered area in common.
-         * This includes edges that cover each other.
-         * @note This operation is commutative.
-         */
-        bool intersects(const RectType<T>& rect) const;
+            /** Check whether two rectangles share some area.
+             *
+             * @param rect The other rectangle that is checked.
+             * @return True, if and only if both rectangles have some covered area in common.
+             * This includes edges that cover each other.
+             * @note This operation is commutative.
+             */
+            bool intersects(RectType<T> const & rect) const;
 
-        /** Calculate rectangle intersection in place
-         *
-         * @param rect The other rectangle that is checked.
-         * @return True, if and only if both rectangles have some covered area in common.
-         * This includes edges that cover each other.
-         */
-        bool intersectInplace(const RectType<T>& rect);
+            /** Calculate rectangle intersection in place
+             *
+             * @param rect The other rectangle that is checked.
+             * @return True, if and only if both rectangles have some covered area in common.
+             * This includes edges that cover each other.
+             */
+            bool intersectInplace(RectType<T> const & rect);
     };
 
     /** Stream output operator.
@@ -138,7 +140,7 @@ namespace FIFE
      * of the rectangle to the stream.
      */
     template <typename T>
-    std::ostream& operator<<(std::ostream& os, const RectType<T>& r)
+    std::ostream& operator<<(std::ostream& os, RectType<T> const & r)
     {
         return os << "(" << r.x << "," << r.y << ")-(" << r.w << "," << r.h << ")";
     }
@@ -158,19 +160,19 @@ namespace FIFE
     }
 
     template <typename T>
-    inline bool RectType<T>::operator==(const RectType<T>& rect) const
+    inline bool RectType<T>::operator==(RectType<T> const & rect) const
     {
         return x == rect.x && y == rect.y && w == rect.w && h == rect.h;
     }
 
     template <typename T>
-    inline bool RectType<T>::contains(const PointType2D<T>& point) const
+    inline bool RectType<T>::contains(PointType2D<T> const & point) const
     {
         return (((point.x >= x) && (point.x <= x + w)) && ((point.y >= y) && (point.y <= y + h)));
     }
 
     template <typename T>
-    inline bool RectType<T>::intersectInplace(const RectType<T>& rectangle)
+    inline bool RectType<T>::intersectInplace(RectType<T> const & rectangle)
     {
         x = x - rectangle.x;
         y = y - rectangle.y;
@@ -205,7 +207,7 @@ namespace FIFE
     }
 
     template <typename T>
-    inline bool RectType<T>::intersects(const RectType<T>& rectangle) const
+    inline bool RectType<T>::intersects(RectType<T> const & rectangle) const
     {
         T _x = x - rectangle.x;
         T _y = y - rectangle.y;

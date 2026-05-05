@@ -11,19 +11,20 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/base/sharedptr.h"
 #include <string>
+
+#include "util/base/sharedptr.h"
 
 namespace FIFE
 {
     class /*FIFE_API*/ IAtlasSaver
     {
-    public:
-        virtual ~IAtlasSaver() = default;
+        public:
+            virtual ~IAtlasSaver() = default;
 
-        /** responsible for saving the atlas
-         */
-        virtual void save(const std::string& filename) = 0;
+            /** responsible for saving the atlas
+             */
+            virtual void save(std::string const & filename) = 0;
     };
 
     using AtlasSaverPtr = SharedPtr<FIFE::IAtlasSaver>;

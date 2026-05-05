@@ -1,33 +1,31 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "sdlblendingfunctions.h"
+
 // Standard C++ library includes
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "sdlblendingfunctions.h"
-
 namespace FIFE
 {
 
     struct ColorRGB8
     {
-        uint8_t r, g, b;
+            uint8_t r, g, b;
     };
 
     struct ColorRGBA8
     {
-        uint8_t r, g, b, a;
+            uint8_t r, g, b, a;
     };
 
-    void SDL_BlendRow_RGBA8_to_RGBA8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
+    void SDL_BlendRow_RGBA8_to_RGBA8(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor =
-            reinterpret_cast<const ColorRGBA8*>(src);        // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto const * srcColor =
+            reinterpret_cast<ColorRGBA8 const *>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         auto* dstColor = reinterpret_cast<ColorRGBA8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
@@ -45,10 +43,10 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA8_to_RGB8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
+    void SDL_BlendRow_RGBA8_to_RGB8(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor =
-            reinterpret_cast<const ColorRGBA8*>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto const * srcColor =
+            reinterpret_cast<ColorRGBA8 const *>(src);      // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         auto* dstColor = reinterpret_cast<ColorRGB8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
@@ -65,10 +63,10 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA8_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
+    void SDL_BlendRow_RGBA8_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor =
-            reinterpret_cast<const ColorRGBA8*>(src);      // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto const * srcColor =
+            reinterpret_cast<ColorRGBA8 const *>(src);     // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {
@@ -86,10 +84,10 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA4_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
+    void SDL_BlendRow_RGBA4_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const auto* srcColor =
-            reinterpret_cast<const uint16_t*>(src);        // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto const * srcColor =
+            reinterpret_cast<uint16_t const *>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         for (int32_t i = n; 0 < i; --i) {

@@ -20,12 +20,12 @@ namespace FIFE
      */
     class /*FIFE_API*/ ControllerMappingSaver
     {
-    public:
-        ControllerMappingSaver() = default;
+        public:
+            ControllerMappingSaver() = default;
 
-        /** Saves mapping to file.
-         */
-        void save(const std::string& data, const std::string& filename);
+            /** Saves mapping to file.
+             */
+            void save(std::string const & data, std::string const & filename);
     };
 } // namespace FIFE
 #endif

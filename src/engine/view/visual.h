@@ -28,29 +28,29 @@ namespace FIFE
 
     class /*FIFE_API*/ OverlayColors
     {
-    public:
-        /** Constructors
-         */
-        OverlayColors() = default;
-        explicit OverlayColors(const ImagePtr& image);
-        explicit OverlayColors(const AnimationPtr& animation);
+        public:
+            /** Constructors
+             */
+            OverlayColors() = default;
+            explicit OverlayColors(ImagePtr const & image);
+            explicit OverlayColors(AnimationPtr const & animation);
 
-        /** Destructor
-         */
-        ~OverlayColors() = default;
+            /** Destructor
+             */
+            ~OverlayColors() = default;
 
-        void setColorOverlayImage(const ImagePtr& image);
-        ImagePtr getColorOverlayImage();
-        void setColorOverlayAnimation(const AnimationPtr& animation);
-        AnimationPtr getColorOverlayAnimation();
-        void changeColor(const Color& source, const Color& target);
-        const std::map<Color, Color>& getColors();
-        void resetColors();
+            void setColorOverlayImage(ImagePtr const & image);
+            ImagePtr getColorOverlayImage();
+            void setColorOverlayAnimation(AnimationPtr const & animation);
+            AnimationPtr getColorOverlayAnimation();
+            void changeColor(Color const & source, Color const & target);
+            std::map<Color, Color> const & getColors();
+            void resetColors();
 
-    private:
-        std::map<Color, Color> m_colorMap;
-        ImagePtr m_image;
-        AnimationPtr m_animation;
+        private:
+            std::map<Color, Color> m_colorMap;
+            ImagePtr m_image;
+            AnimationPtr m_animation;
     };
 
     /**
@@ -62,16 +62,16 @@ namespace FIFE
      */
     class /*FIFE_API*/ Visual2DGfx : public IVisual
     {
-    public:
-        /**
-         * Destructor
-         */
-        virtual ~Visual2DGfx();
+        public:
+            /**
+             * Destructor
+             */
+            virtual ~Visual2DGfx();
 
-    protected:
-        /** Constructor
-         */
-        Visual2DGfx();
+        protected:
+            /** Constructor
+             */
+            Visual2DGfx();
     };
 
     /**
@@ -79,85 +79,85 @@ namespace FIFE
      */
     class /*FIFE_API*/ ObjectVisual : public Visual2DGfx
     {
-    public:
-        /** Constructs and assigns it to the passed item
-         */
-        static ObjectVisual* create(Object* object);
+        public:
+            /** Constructs and assigns it to the passed item
+             */
+            static ObjectVisual* create(Object* object);
 
-        /** Destructor
-         */
-        ~ObjectVisual() override = default;
+            /** Destructor
+             */
+            ~ObjectVisual() override = default;
 
-        // Delete copy operations (prevents C5267 warning)
-        ObjectVisual(const ObjectVisual&)            = delete;
-        ObjectVisual& operator=(const ObjectVisual&) = delete;
+            // Delete copy operations (prevents C5267 warning)
+            ObjectVisual(ObjectVisual const &)            = delete;
+            ObjectVisual& operator=(ObjectVisual const &) = delete;
 
-        // Allow move operations
-        ObjectVisual(ObjectVisual&&)            = default;
-        ObjectVisual& operator=(ObjectVisual&&) = default;
+            // Allow move operations
+            ObjectVisual(ObjectVisual&&)            = default;
+            ObjectVisual& operator=(ObjectVisual&&) = default;
 
-        /**
-         * Creates a heap-allocated deep copy of this visual.
-         */
-        ObjectVisual* clone() const;
+            /**
+             * Creates a heap-allocated deep copy of this visual.
+             */
+            ObjectVisual* clone() const;
 
-        /** Adds new static image with given angle (degrees)
-         * Static images are used in case there are no actions active in the instance
-         * There can be several static images for different angles, that are used in
-         * case view / layer is rotated
-         * In case there are no exact matches for current view angles, closest one is used
-         * @param angle angle for image. 0 degrees starts from right and turns counter-clockwise
-         *              (normal math notation)
-          @param image_index index of image to use for given degress
-         */
-        void addStaticImage(uint32_t angle, int32_t image_index);
+            /** Adds new static image with given angle (degrees)
+             * Static images are used in case there are no actions active in the instance
+             * There can be several static images for different angles, that are used in
+             * case view / layer is rotated
+             * In case there are no exact matches for current view angles, closest one is used
+             * @param angle angle for image. 0 degrees starts from right and turns counter-clockwise
+             *              (normal math notation)
+              @param image_index index of image to use for given degress
+             */
+            void addStaticImage(uint32_t angle, int32_t image_index);
 
-        /** Returns closest matching static image for given angle
-         * @return id for static image
-         */
-        int32_t getStaticImageIndexByAngle(int32_t angle);
+            /** Returns closest matching static image for given angle
+             * @return id for static image
+             */
+            int32_t getStaticImageIndexByAngle(int32_t angle);
 
-        /** Adds new static color overlay with given angle (degrees).
-         */
-        void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+            /** Adds new static color overlay with given angle (degrees).
+             */
+            void addStaticColorOverlay(uint32_t angle, OverlayColors const & colors);
 
-        /**
-         * Returns closest matching static color overlay for given angle
-         *
-         * @return pointer to OverlayColor class
-         */
-        OverlayColors* getStaticColorOverlay(int32_t angle);
+            /**
+             * Returns closest matching static color overlay for given angle
+             *
+             * @return pointer to OverlayColor class
+             */
+            OverlayColors* getStaticColorOverlay(int32_t angle);
 
-        /** Removes a static color overlay with given angle (degrees).
-         */
-        void removeStaticColorOverlay(int32_t angle);
+            /** Removes a static color overlay with given angle (degrees).
+             */
+            void removeStaticColorOverlay(int32_t angle);
 
-        /** Returns closest matching image angle for given angle
-         * @return closest matching angle
-         */
-        int32_t getClosestMatchingAngle(int32_t angle);
+            /** Returns closest matching image angle for given angle
+             * @return closest matching angle
+             */
+            int32_t getClosestMatchingAngle(int32_t angle);
 
-        /** Returns list of available static image angles for this object
-         */
-        void getStaticImageAngles(std::vector<int32_t>& angles);
+            /** Returns list of available static image angles for this object
+             */
+            void getStaticImageAngles(std::vector<int32_t>& angles);
 
-        /** Indicates if there exists a color overlay.
-         */
-        bool isColorOverlay()
-        {
-            return !m_colorOverlayMap.empty();
-        }
+            /** Indicates if there exists a color overlay.
+             */
+            bool isColorOverlay()
+            {
+                return !m_colorOverlayMap.empty();
+            }
 
-    private:
-        /** Constructor
-         */
-        ObjectVisual();
+        private:
+            /** Constructor
+             */
+            ObjectVisual();
 
-        type_angle2id m_angle2img;
+            type_angle2id m_angle2img;
 
-        using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
-        AngleColorOverlayMap m_colorOverlayMap;
-        type_angle2id m_map;
+            using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
+            AngleColorOverlayMap m_colorOverlayMap;
+            type_angle2id m_map;
     };
 
     /**
@@ -165,55 +165,55 @@ namespace FIFE
      */
     class /*FIFE_API*/ InstanceVisual : public Visual2DGfx
     {
-    public:
-        /** Constructs and assigns it to the passed item
-         */
-        static InstanceVisual* create(Instance* instance);
+        public:
+            /** Constructs and assigns it to the passed item
+             */
+            static InstanceVisual* create(Instance* instance);
 
-        /** Destructor
-         */
-        ~InstanceVisual() override;
+            /** Destructor
+             */
+            ~InstanceVisual() override;
 
-        /** Sets transparency value for object to be visualized
-         *  @param transparency set the transparency
-         */
-        void setTransparency(uint8_t transparency);
+            /** Sets transparency value for object to be visualized
+             *  @param transparency set the transparency
+             */
+            void setTransparency(uint8_t transparency);
 
-        /** Gets current transparency value (0-255)
-         *  @return current transparency value
-         */
-        uint8_t getTransparency() const;
+            /** Gets current transparency value (0-255)
+             *  @return current transparency value
+             */
+            uint8_t getTransparency() const;
 
-        /** Sets visibility value for object to be visualized
-         *  @param visible is object visible or not
-         */
-        void setVisible(bool visible);
+            /** Sets visibility value for object to be visualized
+             *  @param visible is object visible or not
+             */
+            void setVisible(bool visible);
 
-        /** Is instance visible or not
-         *  @return is instance visible or not
-         */
-        bool isVisible() const;
+            /** Is instance visible or not
+             *  @return is instance visible or not
+             */
+            bool isVisible() const;
 
-        /** Sets stack position of the instance
-         *  Stack position is used to define the order in which instances residing
-         *  in the same location are drawn
-         *  @param stackposition new stack position
-         */
-        void setStackPosition(int32_t stackposition);
+            /** Sets stack position of the instance
+             *  Stack position is used to define the order in which instances residing
+             *  in the same location are drawn
+             *  @param stackposition new stack position
+             */
+            void setStackPosition(int32_t stackposition);
 
-        /** Gets current stack position of instance
-         *  @return current stack position
-         */
-        int32_t getStackPosition() const;
+            /** Gets current stack position of instance
+             *  @return current stack position
+             */
+            int32_t getStackPosition() const;
 
-    private:
-        /** Constructor
-         */
-        InstanceVisual();
-        Instance* m_instance;
-        int32_t m_stackposition;
-        uint8_t m_transparency;
-        bool m_visible;
+        private:
+            /** Constructor
+             */
+            InstanceVisual();
+            Instance* m_instance;
+            int32_t m_stackposition;
+            uint8_t m_transparency;
+            bool m_visible;
     };
 
     /**
@@ -221,119 +221,119 @@ namespace FIFE
      */
     class /*FIFE_API*/ ActionVisual : public Visual2DGfx
     {
-    public:
-        /** Constructs and assigns it to the passed item
-         */
-        static ActionVisual* create(Action* action);
+        public:
+            /** Constructs and assigns it to the passed item
+             */
+            static ActionVisual* create(Action* action);
 
-        /** Destructor
-         */
-        ~ActionVisual() noexcept override = default;
+            /** Destructor
+             */
+            ~ActionVisual() noexcept override = default;
 
-        // Delete copy operations (prevents C5267 warning)
-        ActionVisual(const ActionVisual&)            = delete;
-        ActionVisual& operator=(const ActionVisual&) = delete;
+            // Delete copy operations (prevents C5267 warning)
+            ActionVisual(ActionVisual const &)            = delete;
+            ActionVisual& operator=(ActionVisual const &) = delete;
 
-        // Allow move operations
-        ActionVisual(ActionVisual&&)            = default;
-        ActionVisual& operator=(ActionVisual&&) = default;
+            // Allow move operations
+            ActionVisual(ActionVisual&&)            = default;
+            ActionVisual& operator=(ActionVisual&&) = default;
 
-        // Create a heap-allocated deep-copy of this visual
-        ActionVisual* clone() const;
+            // Create a heap-allocated deep-copy of this visual
+            ActionVisual* clone() const;
 
-        /** Adds new animation with given angle (degrees)
-         */
-        void addAnimation(uint32_t angle, const AnimationPtr& animationptr);
+            /** Adds new animation with given angle (degrees)
+             */
+            void addAnimation(uint32_t angle, AnimationPtr const & animationptr);
 
-        /** Gets index to animation closest to given angle
-         * @return animation index, -1 if no animations available
-         */
-        AnimationPtr getAnimationByAngle(int32_t angle);
+            /** Gets index to animation closest to given angle
+             * @return animation index, -1 if no animations available
+             */
+            AnimationPtr getAnimationByAngle(int32_t angle);
 
-        /** Adds new animation overlay with given angle (degrees) and order
-         */
-        void addAnimationOverlay(uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+            /** Adds new animation overlay with given angle (degrees) and order
+             */
+            void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr const & animationptr);
 
-        /** Gets map with animations closest to given angle
-         * @return animation map
-         */
-        std::map<int32_t, AnimationPtr> getAnimationOverlay(int32_t angle);
+            /** Gets map with animations closest to given angle
+             * @return animation map
+             */
+            std::map<int32_t, AnimationPtr> getAnimationOverlay(int32_t angle);
 
-        /** Removes animation overlay with given angle (degrees) and order
-         */
-        void removeAnimationOverlay(uint32_t angle, int32_t order);
+            /** Removes animation overlay with given angle (degrees) and order
+             */
+            void removeAnimationOverlay(uint32_t angle, int32_t order);
 
-        /** Adds new color overlay with given angle (degrees) and colors.
-         * Note: Works only for single animations not for AnimationOverlays. (order is missing)
-         */
-        void addColorOverlay(uint32_t angle, const OverlayColors& colors);
+            /** Adds new color overlay with given angle (degrees) and colors.
+             * Note: Works only for single animations not for AnimationOverlays. (order is missing)
+             */
+            void addColorOverlay(uint32_t angle, OverlayColors const & colors);
 
-        /** Gets OverlayColors for given angle (degrees).
-         * @return pointer to OverlayColors or Null
-         */
-        OverlayColors* getColorOverlay(int32_t angle);
+            /** Gets OverlayColors for given angle (degrees).
+             * @return pointer to OverlayColors or Null
+             */
+            OverlayColors* getColorOverlay(int32_t angle);
 
-        /** Removes color overlay with given angle (degrees).
-         */
-        void removeColorOverlay(int32_t angle);
+            /** Removes color overlay with given angle (degrees).
+             */
+            void removeColorOverlay(int32_t angle);
 
-        /** Adds new color overlay with given angle (degrees), order and colors.
-         * Note: Works only for AnimationOverlays.
-         */
-        void addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors);
+            /** Adds new color overlay with given angle (degrees), order and colors.
+             * Note: Works only for AnimationOverlays.
+             */
+            void addColorOverlay(uint32_t angle, int32_t order, OverlayColors const & colors);
 
-        /** Gets OverlayColors for given angle (degrees) and order.
-         * @return pointer to OverlayColors or Null
-         */
-        OverlayColors* getColorOverlay(int32_t angle, int32_t order);
+            /** Gets OverlayColors for given angle (degrees) and order.
+             * @return pointer to OverlayColors or Null
+             */
+            OverlayColors* getColorOverlay(int32_t angle, int32_t order);
 
-        /** Removes color overlay with given angle (degrees) and order.
-         */
-        void removeColorOverlay(int32_t angle, int32_t order);
+            /** Removes color overlay with given angle (degrees) and order.
+             */
+            void removeColorOverlay(int32_t angle, int32_t order);
 
-        /** Returns list of available angles for this Action
-         */
-        void getActionImageAngles(std::vector<int32_t>& angles);
+            /** Returns list of available angles for this Action
+             */
+            void getActionImageAngles(std::vector<int32_t>& angles);
 
-        /** Convertes animations and optional color overlay to default animation overlay.
-         * The default order value for both is 0. The old data remain, so if you remove the animation overlay
-         * the old plain animations and colors be used again.
-         */
-        void convertToOverlays(bool color);
+            /** Convertes animations and optional color overlay to default animation overlay.
+             * The default order value for both is 0. The old data remain, so if you remove the animation overlay
+             * the old plain animations and colors be used again.
+             */
+            void convertToOverlays(bool color);
 
-        /** Returns true if it exists a animation overlay, otherwise false.
-         */
-        bool isAnimationOverlay()
-        {
-            return !m_animationOverlayMap.empty();
-        }
+            /** Returns true if it exists a animation overlay, otherwise false.
+             */
+            bool isAnimationOverlay()
+            {
+                return !m_animationOverlayMap.empty();
+            }
 
-        /** Returns true if it exists a color overlay, otherwise false.
-         */
-        bool isColorOverlay()
-        {
-            return !m_colorOverlayMap.empty() || !m_colorAnimationOverlayMap.empty();
-        }
+            /** Returns true if it exists a color overlay, otherwise false.
+             */
+            bool isColorOverlay()
+            {
+                return !m_colorOverlayMap.empty() || !m_colorAnimationOverlayMap.empty();
+            }
 
-    private:
-        /** Constructor
-         */
-        ActionVisual();
+        private:
+            /** Constructor
+             */
+            ActionVisual();
 
-        // animations associated with this action
-        using AngleAnimationMap = std::map<uint32_t, AnimationPtr>;
-        AngleAnimationMap m_animation_map;
+            // animations associated with this action
+            using AngleAnimationMap = std::map<uint32_t, AnimationPtr>;
+            AngleAnimationMap m_animation_map;
 
-        using AngleAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, AnimationPtr>>;
-        AngleAnimationOverlayMap m_animationOverlayMap;
+            using AngleAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, AnimationPtr>>;
+            AngleAnimationOverlayMap m_animationOverlayMap;
 
-        using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
-        AngleColorOverlayMap m_colorOverlayMap;
+            using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
+            AngleColorOverlayMap m_colorOverlayMap;
 
-        using AngleColorAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, OverlayColors>>;
-        AngleColorAnimationOverlayMap m_colorAnimationOverlayMap;
-        // need this map to use the getIndexByAngle() function in angles.h
-        type_angle2id m_map;
+            using AngleColorAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, OverlayColors>>;
+            AngleColorAnimationOverlayMap m_colorAnimationOverlayMap;
+            // need this map to use the getIndexByAngle() function in angles.h
+            type_angle2id m_map;
     };
 
 } // namespace FIFE

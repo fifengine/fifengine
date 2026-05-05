@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
+#include "soundclipmanager.h"
+
 // Standard C++ library includes
 #include <map>
 #include <string>
@@ -9,14 +12,9 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
-
-#include "soundclipmanager.h"
 
 namespace FIFE
 {
@@ -79,7 +77,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    SoundClipPtr SoundClipManager::create(const std::string& name, IResourceLoader* loader)
+    SoundClipPtr SoundClipManager::create(std::string const & name, IResourceLoader* loader)
     {
         if (exists(name)) {
             {
@@ -95,7 +93,7 @@ namespace FIFE
         return add(ptr);
     }
 
-    SoundClipPtr SoundClipManager::load(const std::string& name, IResourceLoader* loader)
+    SoundClipPtr SoundClipManager::load(std::string const & name, IResourceLoader* loader)
     {
         auto nit = m_sclipNameMap.find(name);
 
@@ -108,7 +106,7 @@ namespace FIFE
         }
 
         // was not found so create and load resource
-        const SoundClipPtr ptr = create(name, loader);
+        SoundClipPtr const ptr = create(name, loader);
         ptr->load();
 
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
@@ -129,7 +127,7 @@ namespace FIFE
         assert(res);
         assert(!(exists(res->getHandle()) || exists(res->getName())));
 
-        const SoundClipPtr resptr(res);
+        SoundClipPtr const resptr(res);
 
         std::pair<SoundClipHandleMapIterator, bool> returnValue;
         returnValue = m_sclipHandleMap.insert(SoundClipHandleMapPair(res->getHandle(), resptr));
@@ -149,7 +147,7 @@ namespace FIFE
         return returnValue.first->second;
     }
 
-    bool SoundClipManager::exists(const std::string& name)
+    bool SoundClipManager::exists(std::string const & name)
     {
         auto it = m_sclipNameMap.find(name);
         return it != m_sclipNameMap.end();
@@ -161,7 +159,7 @@ namespace FIFE
         return it != m_sclipHandleMap.end();
     }
 
-    void SoundClipManager::reload(const std::string& name)
+    void SoundClipManager::reload(std::string const & name)
     {
         auto nit = m_sclipNameMap.find(name);
 
@@ -231,7 +229,7 @@ namespace FIFE
         }
     }
 
-    void SoundClipManager::free(const std::string& name)
+    void SoundClipManager::free(std::string const & name)
     {
         auto nit = m_sclipNameMap.find(name);
 
@@ -330,7 +328,7 @@ namespace FIFE
         }
     }
 
-    void SoundClipManager::remove(const std::string& name)
+    void SoundClipManager::remove(std::string const & name)
     {
         std::size_t handle = 0;
 
@@ -389,7 +387,7 @@ namespace FIFE
         // should always be equal
         assert(m_sclipHandleMap.size() == m_sclipNameMap.size());
 
-        const size_t count = m_sclipHandleMap.size();
+        size_t const count = m_sclipHandleMap.size();
 
         m_sclipHandleMap.clear();
         m_sclipNameMap.clear();
@@ -421,7 +419,7 @@ namespace FIFE
         }
     }
 
-    SoundClipPtr SoundClipManager::get(const std::string& name)
+    SoundClipPtr SoundClipManager::get(std::string const & name)
     {
         auto nit = m_sclipNameMap.find(name);
 
@@ -434,7 +432,7 @@ namespace FIFE
         }
 
         // not found so attempt to create and load the resource
-        const SoundClipPtr ptr = load(name);
+        SoundClipPtr const ptr = load(name);
         return ptr;
     }
 
@@ -458,7 +456,7 @@ namespace FIFE
         return {};
     }
 
-    ResourceHandle SoundClipManager::getResourceHandle(const std::string& name)
+    ResourceHandle SoundClipManager::getResourceHandle(std::string const & name)
     {
         auto nit = m_sclipNameMap.find(name);
         if (nit != m_sclipNameMap.end()) {
