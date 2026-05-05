@@ -39,14 +39,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
-        - {
-            job_name: "Win | VC17 | Release",
-            os: windows-2025,
-            preset: vc17-x64-windows-rel,
-            triplet: x64-windows,
-            artifact-name: libfife-vc17-x64-windows
-          }
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-VS2026-Readme.md
         - {
             job_name: "Win | VC18 | Shared | Release",
@@ -98,18 +90,6 @@ jobs:
       - name: Debug matrix.config.os
         run: |
           echo "matrix.config.os value is: ${{ matrix.config.os }}"
-
-      - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        if: matrix.config.os == 'windows-2025'
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl.exe
-
-      - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        if: matrix.config.os == 'windows-2025-vs2026'
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl.exe
 
       # Redefine location to "c:\vcpkg"
       - name: 🔽 Define VCPKG_ROOT
@@ -188,6 +168,7 @@ jobs:
       - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake ^
             -S dependencies ^
             -B "%DEPS_DIR%\build" ^
@@ -202,6 +183,7 @@ jobs:
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake --build "%DEPS_DIR%\build" --parallel
 
       # Notes:
@@ -215,6 +197,7 @@ jobs:
       #   sccache is only used for release builds, because it conflicts with PDB generation.
       - name: 🛠️ 3.1 Configure fifengine
         run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake ^
             --preset ${{ matrix.config.preset }} ^
             -B "%BUILD_DIR%" ^
@@ -232,10 +215,14 @@ jobs:
         #    -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
 
       - name: 🙏 3.2 Build fifengine
-        run: cmake --build ${{ env.BUILD_DIR }}
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
