@@ -87,7 +87,6 @@ namespace FIFE
         m_reflectionsGain(0.05F),
         m_reflectionsDelay(0.007F),
         m_lateReverbGain(1.26F),
-        m_lateReverbDelay(0.011F),
         m_airAbsorptionGainHf(0.994F),
         m_roomRolloffFactor(0.0F),
         m_decayHfLimit(true)
@@ -1022,7 +1021,6 @@ namespace FIFE
         m_reflectionsDelay(0.007F),
         m_reflectionsPan(AudioSpaceCoordinate(0.0, 0.0, 0.0)),
         m_lateReverbGain(1.26F),
-        m_lateReverbDelay(0.011F),
         m_lateReverbPan(AudioSpaceCoordinate(0.0, 0.0, 0.0)),
         m_echoTime(0.25F),
         m_echoDepth(0.0F),

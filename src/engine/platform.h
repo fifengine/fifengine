@@ -6,27 +6,27 @@
 
 // Check and defines for the operating system
 #if !defined(FIFE_OS_WINDOWS) && (defined(_WIN32) || defined(_WIN64))
-  #define FIFE_OS_WINDOWS 1
+    #define FIFE_OS_WINDOWS 1
 #endif
 #if !defined(FIFE_OS_LINUX) && defined(__linux__)
-  #define FIFE_OS_LINUX 1
+    #define FIFE_OS_LINUX 1
 #endif
 #if !defined(FIFE_OS_MACOS) && defined(__APPLE__)
-  #define FIFE_OS_MACOS 1
+    #define FIFE_OS_MACOS 1
 #endif
 
 // Check and defines for the compiler
 #if !defined(FIFE_COMPILER_MSVC) && defined(_MSC_VER)
-  #define FIFE_COMPILER_MSVC 1
+    #define FIFE_COMPILER_MSVC 1
 #endif
 #if !defined(FIFE_COMPILER_GNU) && defined(__GNUC__)
-  #define FIFE_COMPILER_GNU 1
+    #define FIFE_COMPILER_GNU 1
 #endif
 #if !defined(FIFE_COMPILER_CLANG) && defined(__clang__)
-  #define FIFE_COMPILER_CLANG 1
+    #define FIFE_COMPILER_CLANG 1
 #endif
 #if !defined(FIFE_COMPILER_MINGW) && defined(__MINGW32__)
-  #define FIFE_COMPILER_MINGW 1
+    #define FIFE_COMPILER_MINGW 1
 #endif
 
 // Static builds do not use import/export decorations on Windows.
@@ -38,7 +38,7 @@
 
 /**
  * Symbol Visibility
- * 
+ *
  * When SWIG is used, we set FIFE_API to empty, because we are generating
  * bindings and don't want to export symbols. Also (it seems) Swig doesn't
  * support __declspec(dllexport) or __declspec(dllimport) properly.

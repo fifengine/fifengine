@@ -21,83 +21,168 @@
  * CURRENT_YEAR
  */
 
+/**
+ * All Fife related code is in this namespace.
+ */
 namespace FIFE
 {
 
-    struct semantic_version
+    /**
+     * Simple semantic version container.
+     */
+    class semantic_version
     {
+    public:
+    // clang-format off
+
+        /**
+         * Major version number.
+         */
         int major = @PROJECT_VERSION_MAJOR@;
+        /**
+         * Minor version number.
+         */
         int minor = @PROJECT_VERSION_MINOR@;
+        /**
+         * Patch version number.
+         */
         int patch = @PROJECT_VERSION_PATCH@;
+
+    // clang-format on
     };
 
+    /**
+     * Static application version and metadata.
+     */
     class app_version
     {
     public:
-        // clang-format off
+    // clang-format off
+
+        /**
+         * Machine friendly package name.
+         */
         static constexpr std::string_view name        = "@FIFE_NAME@";
+
+        /**
+         * Version string suitable for display.
+         */
         static constexpr std::string_view version     = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@";
+
+        /**
+         * SPDX or textual license identifier.
+         */
         static constexpr std::string_view license     = "@FIFE_LICENSE@";
+
+        /**
+         * Short descriptive text for the project.
+         */
         static constexpr std::string_view description = "@FIFE_DESC@";
+
+        /**
+         * Project homepage URL.
+         */
         static constexpr std::string_view homepage    = "@FIFE_HOMEPAGE@";
+
+        /**
+         * Copyright notice text.
+         */
         static constexpr std::string_view copyright   = "Copyright (c) Fifengine contributors, 2005-@CURRENT_YEAR@.";
+
+        /**
+         * Semantic version instance for compile-time access.
+         */
         static constexpr semantic_version semver{
             .major = @PROJECT_VERSION_MAJOR@,
             .minor = @PROJECT_VERSION_MINOR@,
             .patch = @PROJECT_VERSION_PATCH@,
         };
+
         static constexpr int version_id = (@PROJECT_VERSION_MAJOR@ * 10000) + (@PROJECT_VERSION_MINOR@ * 100) + @PROJECT_VERSION_PATCH@;
+
         // clang-format on
 
         /**
-         * Getters - c_str() types
+         * --------------------------------------
+         * Getters (c_str() types)
+         * --------------------------------------
          */
 
+        /**
+         * Get the machine friendly package name.
+         */
         static constexpr char const* get_name()
         {
             return name.data();
         }
 
+        /**
+         * Get the textual project version.
+         */
         static constexpr char const* get_version()
         {
             return version.data();
         }
 
+        /**
+         * Get the license string for the project.
+         */
         static constexpr char const* get_license()
         {
             return license.data();
         }
 
+        /**
+         * Short description of the project.
+         */
         static constexpr char const* get_description()
         {
             return description.data();
         }
 
+        /**
+         * Project homepage URL.
+         */
         static constexpr char const* get_homepage()
         {
             return homepage.data();
         }
 
+        /**
+         * Get the copyright notice text.
+         */
         static constexpr char const* get_copyright()
         {
             return copyright.data();
         }
 
+        /**
+         * Get the major version number.
+         */
         static constexpr int get_major()
         {
             return semver.major;
         }
 
+        /**
+         * Get the minor version number.
+         */
         static constexpr int get_minor()
         {
             return semver.minor;
         }
 
+        /**
+         * Get the patch version number.
+         */
         static constexpr int get_patch()
         {
             return semver.patch;
         }
 
+        /**
+         * Get pointer to numeric version id.
+         */
         static constexpr int get_version_id()
         {
             return version_id;

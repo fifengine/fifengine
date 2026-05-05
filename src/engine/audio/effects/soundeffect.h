@@ -225,7 +225,6 @@ namespace FIFE
             float m_reflectionsGain;
             float m_reflectionsDelay;
             float m_lateReverbGain;
-            float m_lateReverbDelay;
             float m_airAbsorptionGainHf;
             float m_roomRolloffFactor;
             bool m_decayHfLimit;
@@ -1164,7 +1163,6 @@ namespace FIFE
             float m_reflectionsDelay;
             AudioSpaceCoordinate m_reflectionsPan;
             float m_lateReverbGain;
-            float m_lateReverbDelay;
             AudioSpaceCoordinate m_lateReverbPan;
             float m_echoTime;
             float m_echoDepth;

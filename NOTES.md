@@ -17,3 +17,8 @@
 - [ ] switch to uv everywhere
    - [ ] build-tools
    - [ ] CI
+
+- [ ] reintroduce audio/effects/soundeffect.h|cpp:
+  - [ ] m_lateReverbDelay field
+  - [ ] Implement the actual reverb delay logic in the audio processing
+  - [ ] Add getter/setter methods for the reverb delay field
