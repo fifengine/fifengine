@@ -36,7 +36,7 @@ namespace FIFE
      * and emit a warning. This is done to avoid problems with filesystems which are not
      * case sensitive.
      */
-    class /*FIFE_API*/ VFS : public DynamicSingleton<VFS>
+    class FIFE_API VFS : public DynamicSingleton<VFS>
     {
         public:
             /** Constructor

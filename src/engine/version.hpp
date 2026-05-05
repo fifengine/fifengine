@@ -26,15 +26,15 @@ namespace FIFE
 
     struct semantic_version
     {
-            int major = 0;
-            int minor = 5;
-            int patch = 0;
+        int major = 0;
+        int minor = 5;
+        int patch = 0;
     };
 
     class app_version
     {
-        public:
-            // clang-format off
+    public:
+        // clang-format off
         static constexpr std::string_view name        = "fifengine";
         static constexpr std::string_view version     = "0.5.0";
         static constexpr std::string_view license     = "LGPL-2.1";
@@ -47,61 +47,61 @@ namespace FIFE
             .patch = 0,
         };
         static constexpr int version_id = (0 * 10000) + (5 * 100) + 0;
-            // clang-format on
+        // clang-format on
 
-            /**
-             * Getters - c_str() types
-             */
+        /**
+         * Getters - c_str() types
+         */
 
-            static constexpr char const * get_name()
-            {
-                return name.data();
-            }
+        static constexpr char const* get_name()
+        {
+            return name.data();
+        }
 
-            static constexpr char const * get_version()
-            {
-                return version.data();
-            }
+        static constexpr char const* get_version()
+        {
+            return version.data();
+        }
 
-            static constexpr char const * get_license()
-            {
-                return license.data();
-            }
+        static constexpr char const* get_license()
+        {
+            return license.data();
+        }
 
-            static constexpr char const * get_description()
-            {
-                return description.data();
-            }
+        static constexpr char const* get_description()
+        {
+            return description.data();
+        }
 
-            static constexpr char const * get_homepage()
-            {
-                return homepage.data();
-            }
+        static constexpr char const* get_homepage()
+        {
+            return homepage.data();
+        }
 
-            static constexpr char const * get_copyright()
-            {
-                return copyright.data();
-            }
+        static constexpr char const* get_copyright()
+        {
+            return copyright.data();
+        }
 
-            static constexpr int get_major()
-            {
-                return semver.major;
-            }
+        static constexpr int get_major()
+        {
+            return semver.major;
+        }
 
-            static constexpr int get_minor()
-            {
-                return semver.minor;
-            }
+        static constexpr int get_minor()
+        {
+            return semver.minor;
+        }
 
-            static constexpr int get_patch()
-            {
-                return semver.patch;
-            }
+        static constexpr int get_patch()
+        {
+            return semver.patch;
+        }
 
-            static constexpr int get_version_id()
-            {
-                return version_id;
-            }
+        static constexpr int get_version_id()
+        {
+            return version_id;
+        }
     };
 
 } // namespace FIFE

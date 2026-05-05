@@ -31,7 +31,7 @@ namespace FIFE
      * RawData uses RawDataSource to get the real data - that way the user doesn't have to know where the data comes
      * from (real files, files inside archives etc.)
      */
-    class /*FIFE_API*/ RawData
+    class FIFE_API RawData
     {
         public:
             explicit RawData(RawDataSource* datasource);

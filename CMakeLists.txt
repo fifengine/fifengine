@@ -1083,6 +1083,13 @@ if(BUILD_PYTHON_BINDINGS)
     ${Python3_INCLUDE_DIRS}
   )
 
+  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    target_compile_options(fife_swig PRIVATE
+      -Wno-unused-parameter
+      -Wno-sometimes-uninitialized
+    )
+  endif()
+
   set_target_properties(fife_swig PROPERTIES
     SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/engine;${PROJECT_SOURCE_DIR}"
   )
@@ -1402,6 +1409,9 @@ if(BUILD_LIBRARY)
   endif()
 
   if(BUILD_TESTS)
+    # disable adding CTest build targets like "NightlyStart" (before ctest include)
+    set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
+
     include(CTest)
     add_subdirectory(tests/core_tests)
   endif()

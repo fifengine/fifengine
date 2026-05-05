@@ -27,7 +27,7 @@ namespace FIFE
      * Exporting the Exception class is required for SWIG Python bindings
      * to properly handle exception type info.
      */
-    class /*FIFE_API*/ Exception : public std::runtime_error
+    class FIFE_API Exception : public std::runtime_error
     {
         public:
             /**
