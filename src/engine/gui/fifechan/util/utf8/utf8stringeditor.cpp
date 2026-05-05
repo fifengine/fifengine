@@ -11,7 +11,7 @@
 #include <string>
 
 // 3rd party library includes
-#include <utf8.h>
+#include <utf8cpp/utf8.h>
 
 // FIFE includes
 
