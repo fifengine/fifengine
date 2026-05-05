@@ -23,7 +23,8 @@ apt-get install -y build-essential git make \
   libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
   libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
   libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
-  libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+  libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev \
+  libglu1-mesa-dev
 
 apt-get install -y libx11-dev libxft-dev libxext-dev
 
