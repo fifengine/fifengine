@@ -53,7 +53,7 @@ namespace FIFE
         m_defaultfontsize(8),
         m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
         m_iscolorkeyenabled(false),
-        m_colorkey{255, 0, 255},
+        m_colorkey{255, 0, 255, 255},
         m_videodriver(
 #if defined(__unix__)
             "x11"

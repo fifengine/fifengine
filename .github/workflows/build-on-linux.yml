@@ -262,9 +262,21 @@ jobs:
           - {
               job_name: "Linux | Clang22 | Release",
               image_version: "trixie-with-vulkansdk-20260503",
-              preset: "trixie-with-vulkansdk-20260503",
+              preset: "clang22-x64-linux-rel",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-linux"
+            }
+          - {
+              job_name: "Linux | Clang22 | Debug",
+              image_version: "trixie-with-vulkansdk-20260503",
+              preset: "clang22-x64-linux-dbg",
+              artifact_suffix: "clang22-x64-dbg"
+            }
+          - {
+              job_name: "Linux | Clang22 | Coverage",
+              image_version: "trixie-with-vulkansdk-20260503",
+              preset: "clang22-x64-linux-dbg-cov",
+              artifact_suffix: "clang22-x64-cov"
             }
 
     env:
@@ -422,3 +434,66 @@ jobs:
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ env.INSTALL_DIR }}/**/*
+
+      # ------------------------------------------------------------------------
+      # Code Coverage Steps (only for "clang22-x64-linux-dbg-cov" preset)
+      # ------------------------------------------------------------------------
+
+      - name: 🧾 Merge Coverage Data
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          set -euo pipefail
+          echo "Merging .profraw files from ${{ env.BUILD_DIR }}/coverage"
+          shopt -s nullglob
+          profraw_files=("${{ env.BUILD_DIR }}/coverage"/*.profraw)
+          if [ ${#profraw_files[@]} -eq 0 ]; then
+            echo "::warning::No .profraw files found. Did tests run with LLVM_PROFILE_FILE set?"
+            exit 0
+          fi
+          llvm-profdata merge -sparse "${profraw_files[@]}" -o "${{ env.BUILD_DIR }}/coverage/coverage.profdata"
+
+      - name: 📊 Generate Coverage Reports (lcov + HTML)
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        env:
+          COV_EXCLUDE_REGEX: '(vcpkg_installed|build|tests)'
+        run: |
+          set -euo pipefail
+
+          # Find all instrumented test binaries (ending with "_test" or "_tests") in the build directory.
+          mapfile -t BINARIES < <(find "${{ env.BUILD_DIR }}" -maxdepth 3 -type f -executable \( -name "*_test" -o -name "*_tests" \) -print || true)
+          if [ ${#BINARIES[@]} -eq 0 ]; then
+            echo "::warning::No instrumented binaries found. Skipping llvm-cov."
+            exit 0
+          fi
+
+          # Export LCOV report
+          llvm-cov export -format=lcov -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+            "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}" \
+            > "${{ env.BUILD_DIR }}/coverage/coverage.lcov"
+
+          # Generate HTML report
+          #llvm-cov show -format=html -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+          # "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}" \
+          # -o "${{ env.BUILD_DIR }}/coverage/html" \
+
+          # Print summary to CI logs for visibility
+          llvm-cov report -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+            "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}"
+
+      - name: 🔼 Upload Coverage Artifact
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        with:
+          name: Coverage-Report-${{ matrix.config.preset }}
+          path: ${{ env.BUILD_DIR }}/coverage/**
+
+      - name: 📦 Upload Coverage to Codecov
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
+        uses: codecov/codecov-action@v6 # https://github.com/codecov/codecov-action
+        with:
+          files: ${{ env.BUILD_DIR }}/coverage/coverage.lcov
+          disable_search: true
+          name: ${{ matrix.config.preset }}
+          flags: ${{ matrix.config.preset }}
+          use_oidc: true
+          fail_ci_if_error: true

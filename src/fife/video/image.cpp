@@ -376,9 +376,11 @@ namespace FIFE
         SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
         int32_t const bpp                      = SDL_BYTESPERPIXEL(surface->format);
         SDL_LockSurface(surface);
-        Uint8* p           = static_cast<Uint8*>(surface->pixels) +
-                             (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
-                             (static_cast<size_t>(x) * static_cast<size_t>(bpp));
+
+        Uint8* p = static_cast<Uint8*>(surface->pixels) +
+                   (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
+                   (static_cast<size_t>(x) * static_cast<size_t>(bpp));
+
         Uint32 const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
         switch (bpp) {
         case 1:

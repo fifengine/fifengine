@@ -21,123 +21,143 @@ namespace FIFE
 {
     class NotSupported;
 
-    /** This class defines the engine settings on engine init
-     *
+    /**
+     * This class defines the engine settings on engine init
      */
     class /*FIFE_API*/ EngineSettings
     {
         public:
-            /** Constructor
+            /**
+             * Constructor
              */
             EngineSettings();
 
-            /** Destructor
+            /**
+             * Destructor
              */
             ~EngineSettings();
 
-            /** Sets bits per pixel
+            /**
+             * Sets bits per pixel
+             *
              * @see getPossibleBitsPerPixel
              */
             void setBitsPerPixel(uint8_t bitsperpixel);
 
-            /** Gets currently set bits per pixel value
+            /**
+             * Gets currently set bits per pixel value
              */
             uint8_t getBitsPerPixel() const
             {
                 return m_bitsperpixel;
             }
 
-            /** Gets all possible bits per pixel values
+            /**
+             * Gets all possible bits per pixel values
              */
             std::vector<uint8_t> getPossibleBitsPerPixel() const;
 
-            /** Sets fullscreen / windowed mode
+            /**
+             * Sets fullscreen / windowed mode
              */
             void setFullScreen(bool fullscreen)
             {
                 m_fullscreen = fullscreen;
             }
 
-            /** True, if set to fullscreen. False = windowed
+            /**
+             * True, if set to fullscreen. False = windowed
              */
             bool isFullScreen() const
             {
                 return m_fullscreen;
             }
 
-            /** Sets refresh rate
+            /**
+             * Sets refresh rate
              */
             void setRefreshRate(uint16_t rate)
             {
                 m_refreshRate = rate;
             }
 
-            /** Gets the refresh rate
+            /**
+             * Gets the refresh rate
              */
             uint16_t getRefreshRate() const
             {
                 return m_refreshRate;
             }
 
-            /** Sets display index, starts with 0
+            /**
+             * Sets display index, starts with 0
              */
             void setDisplay(uint8_t display)
             {
                 m_displayIndex = display;
             }
 
-            /** Gets the display index, starts with 0
+            /**
+             * Gets the display index, starts with 0
              */
             uint8_t getDisplay() const
             {
                 return m_displayIndex;
             }
 
-            /** Sets window X position (-1 = use default/centered)
+            /**
+             * Sets window X position (-1 = use default/centered)
              */
             void setWindowPositionX(int32_t x)
             {
                 m_windowX = x;
             }
 
-            /** Gets the window X position (-1 = use default/centered)
+            /**
+             * Gets the window X position (-1 = use default/centered)
              */
             int32_t getWindowPositionX() const
             {
                 return m_windowX;
             }
 
-            /** Sets window Y position (-1 = use default/centered)
+            /**
+             * Sets window Y position (-1 = use default/centered)
              */
             void setWindowPositionY(int32_t y)
             {
                 m_windowY = y;
             }
 
-            /** Gets the window Y position (-1 = use default/centered)
+            /**
+             * Gets the window Y position (-1 = use default/centered)
              */
             int32_t getWindowPositionY() const
             {
                 return m_windowY;
             }
 
-            /** Sets Vsync. Synchronized updates with vertical refresh rate.
+            /**
+             * Sets Vsync. Synchronized updates with vertical refresh rate.
              */
             void setVSync(bool vsync)
             {
                 m_vSync = vsync;
             }
 
-            /** True, if vsync is enable, otherwise false.
+            /**
+             * True, if vsync is enable, otherwise false.
              */
             bool isVSync() const
             {
                 return m_vSync;
             }
 
-            /** Sets the used SDL render driver. Values depends on platform
+            /**
+             * Sets the used SDL render driver. Values depends on platform
              * and is useless for the OpenGL backend.
              * If none is set, SDL use the first one that supports the requested flags.
+             *
              * @see DeviceCaps::getAvailableRenderDrivers()
              */
             void setSDLDriver(std::string const & driver)
@@ -145,8 +165,10 @@ namespace FIFE
                 m_renderDriver = driver;
             }
 
-            /** Gets the used SDL render driver.
+            /**
+             * Gets the used SDL render driver.
              * Default is a empty string, that indicates SDL chooses the driver.
+             *
              * @see setSDLDriver()
              */
             std::string const & getSDLDriver() const
@@ -154,185 +176,223 @@ namespace FIFE
                 return m_renderDriver;
             }
 
-            /** Sets initial engine sound volume
+            /**
+             * Sets initial engine sound volume
+             *
              *  @see getInitialMaxVolume
              */
             void setInitialVolume(float volume);
 
-            /** Gets initial engine sound volume
+            /**
+             * Gets initial engine sound volume
              */
             float getInitialVolume() const
             {
                 return m_initialvolume;
             }
 
-            /** Gets maximum volume that can be set
+            /**
+             * Gets maximum volume that can be set
              */
             float getMaxVolume() const;
 
-            /** Sets name for renderbackend
-             *  @see getPossibleRenderBackends
+            /**
+             * Sets name for renderbackend
+             *
+             * @see getPossibleRenderBackends
              */
             void setRenderBackend(std::string const & renderbackend);
 
-            /** Gets currently set renderbackend name
+            /**
+             * Gets currently set renderbackend name
              */
             std::string const & getRenderBackend() const
             {
                 return m_renderbackend;
             }
 
-            /** Gets currently set renderbackend name
+            /**
+             * Gets currently set renderbackend name
              */
             std::string const & getRenderBackend()
             {
                 return m_renderbackend;
             }
 
-            /** Gets all possible renderbackend names
+            /**
+             * Gets all possible renderbackend names
              */
             std::vector<std::string> getPossibleRenderBackends();
 
-            /** Sets if fake alpha is removed in SDL renderbackend
+            /**
+             * Sets if fake alpha is removed in SDL renderbackend
              */
             void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
 
-            /** Tells if fake alpha is removed in SDL renderbackend
+            /**
+             * Tells if fake alpha is removed in SDL renderbackend
              */
             bool isSDLRemoveFakeAlpha() const
             {
                 return m_sdlremovefakealpha;
             }
 
-            /** Sets if images are compress by video driver in OpenGL renderbackend
+            /**
+             * Sets if images are compress by video driver in OpenGL renderbackend
              */
             void setGLCompressImages(bool oglcompressimages);
 
-            /** Tells if images are compress by video driver in OpenGL renderbackend
+            /**
+             * Tells if images are compress by video driver in OpenGL renderbackend
              */
             bool isGLCompressImages() const
             {
                 return m_oglcompressimages;
             }
 
-            /** Sets if OpenGL renderbackend should use FramebufferObject (when available)
+            /**
+             * Sets if OpenGL renderbackend should use FramebufferObject (when available)
              */
             void setGLUseFramebuffer(bool ogluseframebuffer);
 
-            /** Tells if OpenGL renderbackend should use FramebufferObject
+            /**
+             * Tells if OpenGL renderbackend should use FramebufferObject
              */
             bool isGLUseFramebuffer() const
             {
                 return m_ogluseframebuffer;
             }
 
-            /** Sets if OpenGL renderbackend should use NPOT Textures (when available)
+            /**
+             * Sets if OpenGL renderbackend should use NPOT Textures (when available)
              */
             void setGLUseNPOT(bool oglusenpot);
 
-            /** Tells if OpenGL renderbackend should use NPOT Textures
+            /**
+             * Tells if OpenGL renderbackend should use NPOT Textures
              */
             bool isGLUseNPOT() const
             {
                 return m_oglusenpot;
             }
 
-            /** Sets texture filtering method for OpenGL renderbackend.
+            /**
+             * Sets texture filtering method for OpenGL renderbackend.
              */
             void setGLTextureFiltering(TextureFiltering filter);
 
-            /** Gets current texture filter which uses OpenGL.
+            /**
+             * Gets current texture filter which uses OpenGL.
              */
             TextureFiltering getGLTextureFiltering() const;
 
-            /** Sets if OpenGL renderbackend should use mipmapping.
+            /**
+             * Sets if OpenGL renderbackend should use mipmapping.
              */
             void setGLUseMipmapping(bool mipmapping);
 
-            /** Tells if OpenGL renderbackend should use mipmapping.
+            /**
+             * Tells if OpenGL renderbackend should use mipmapping.
              */
             bool isGLUseMipmapping() const;
 
-            /** Sets if OpenGL renderbackend should render only monochrome.
+            /**
+             * Sets if OpenGL renderbackend should render only monochrome.
              */
             void setGLUseMonochrome(bool monochrome);
 
-            /** Tells if OpenGL renderbackend should render only monochrome.
+            /**
+             * Tells if OpenGL renderbackend should render only monochrome.
              */
             bool isGLUseMonochrome() const;
 
-            /** Sets if OpenGL renderbackend should use depth buffer.
+            /**
+             * Sets if OpenGL renderbackend should use depth buffer.
              */
             void setGLUseDepthBuffer(bool buffer);
 
-            /** Tells if OpenGL renderbackend should use depth buffer.
+            /**
+             * Tells if OpenGL renderbackend should use depth buffer.
              */
             bool isGLUseDepthBuffer() const;
 
-            /** Sets alpha test value for OpenGL renderbackend.
+            /**
+             * Sets alpha test value for OpenGL renderbackend.
              */
             void setGLAlphaTestValue(float alpha);
 
-            /** Gets current alpha test value which uses OpenGL.
+            /**
+             * Gets current alpha test value which uses OpenGL.
              */
             float getGLAlphaTestValue() const;
 
-            /** Sets screen width (pixels)
+            /**
+             * Sets screen width (pixels)
              */
             void setScreenWidth(uint16_t screenwidth);
 
-            /** Gets screen width (pixels)
+            /**
+             * Gets screen width (pixels)
              */
             uint16_t getScreenWidth() const
             {
                 return m_screenwidth;
             }
 
-            /** Sets screen height (pixels)
+            /**
+             * Sets screen height (pixels)
              */
             void setScreenHeight(uint16_t screenheight);
 
-            /** Gets screen height (pixels)
+            /**
+             * Gets screen height (pixels)
              */
             uint16_t getScreenHeight() const
             {
                 return m_screenheight;
             }
 
-            /** Sets path for default font
+            /**
+             * Sets path for default font
              */
             void setDefaultFontPath(std::string const & defaultfontpath);
 
-            /** Gets current path for default font
+            /**
+             * Gets current path for default font
              */
             std::string const & getDefaultFontPath() const
             {
                 return m_defaultfontpath;
             }
 
-            /** Gets current path for default font
+            /**
+             * Gets current path for default font
              */
             std::string const & getDefaultFontPath()
             {
                 return m_defaultfontpath;
             }
 
-            /** Sets size for default font
+            /**
+             * Sets size for default font
              */
             void setDefaultFontSize(uint16_t defaultfontsize);
 
-            /** Gets size for default font
+            /**
+             * Gets size for default font
              */
             uint16_t getDefaultFontSize() const
             {
                 return m_defaultfontsize;
             }
 
-            /** Sets glyphs for default font
+            /**
+             * Sets glyphs for default font
              */
             void setDefaultFontGlyphs(std::string const & defaultfontglyphs);
 
-            /** Gets current glyphs for default font
+            /**
+             * Gets current glyphs for default font
              */
             std::string const & getDefaultFontGlyphs() const
             {
@@ -346,132 +406,161 @@ namespace FIFE
                 return m_defaultfontglyphs;
             }
 
-            /** Sets the title of the window
+            /**
+             * Sets the title of the window
              */
             void setWindowTitle(std::string const & title);
 
-            /** Gets the current window title
+            /**
+             * Gets the current window title
              */
             std::string const & getWindowTitle() const
             {
                 return m_windowtitle;
             }
 
-            /** Gets the current window title
+            /**
+             * Gets the current window title
              */
             std::string const & getWindowTitle()
             {
                 return m_windowtitle;
             }
 
-            /** Sets the icon that appears in the window title bar
+            /**
+             * Sets the icon that appears in the window title bar
              */
             void setWindowIcon(std::string const & icon);
 
-            /** Gets the icon in the window title bar
+            /**
+             * Gets the icon in the window title bar
              */
             std::string const & getWindowIcon() const
             {
                 return m_windowicon;
             }
 
-            /** Gets the icon in the window title bar
+            /**
+             * Gets the icon in the window title bar
              */
             std::string const & getWindowIcon()
             {
                 return m_windowicon;
             }
 
-            /** Sets whether to use the colorkey feature
+            /**
+             * Sets whether to use the colorkey feature
              */
             void setColorKeyEnabled(bool colorkeyenable);
 
-            /** Gets whether the colorkey feature is in use
+            /**
+             * Gets whether the colorkey feature is in use
              */
             bool isColorKeyEnabled() const;
 
-            /** Sets the global colorkey to use for images
+            /**
+             * Sets the global colorkey to use for images
              */
             void setColorKey(uint8_t r, uint8_t g, uint8_t b);
 
-            /** Gets the global colorkey setting
+            /**
+             * Gets the global colorkey setting
              */
             SDL_Color const & getColorKey() const;
 
-            /** Sets the video driver. Values depends on platform.
+            /**
+             * Sets the video driver. Values depends on platform.
              * If none is set, SDL chooses it.
+             *
              * @see DeviceCaps::getAvailableVideoDrivers()
              */
             void setVideoDriver(std::string const & driver);
 
-            /** Gets the video driver.
+            /**
+             * Gets the video driver.
              * Default is a empty string.
+             *
              * @see setVideoDriver()
              */
             std::string const & getVideoDriver() const;
 
-            /** Sets the light model
+            /**
+             * Sets the light model
              */
             void setLightingModel(uint32_t lighting);
 
-            /** Gets the currently set light model
+            /**
+             * Gets the currently set light model
              */
             uint32_t getLightingModel() const
             {
                 return m_lighting;
             }
 
-            /** Sets whether to use the frame limiter
+            /**
+             * Sets whether to use the frame limiter
              */
             void setFrameLimitEnabled(bool limited);
 
-            /** Gets whether the frame limiter is in use
+            /**
+             * Gets whether the frame limiter is in use
              */
             bool isFrameLimitEnabled() const;
 
-            /** Sets the frame limit
+            /**
+             * Sets the frame limit
              */
             void setFrameLimit(uint16_t framelimit);
 
-            /** Gets the frame limit
+            /**
+             * Gets the frame limit
              */
             uint16_t getFrameLimit() const;
 
-            /** Sets mouse sensitivity
+            /**
+             * Sets mouse sensitivity
              */
             void setMouseSensitivity(float sens);
 
-            /** Gets mouse sensitivity
+            /**
+             * Gets mouse sensitivity
              */
             float getMouseSensitivity() const;
 
-            /** Sets mouse acceleration
-             * if mouse acceleration is enabled,
+            /**
+             * Sets mouse acceleration if mouse acceleration is enabled,
              * then the mouse sensitivity is used as speed max.
              */
             void setMouseAccelerationEnabled(bool acceleration);
 
-            /** Returns if mouse acceleration is enabled or not.
+            /**
+             * Returns if mouse acceleration is enabled or not.
              *
-             *  @return True if mouse acceleration is enabled, false if not.
+             * @return True if mouse acceleration is enabled, false if not.
              */
             bool isMouseAccelerationEnabled() const;
 
-            /** Enables or disables native image cursor.
+            /**
+             * Enables or disables native image cursor.
+             *
              * @see Cursor::setNativeImageCursorEnabled()
              */
             void setNativeImageCursorEnabled(bool nativeimagecursor);
 
-            /** Returns whether cursors set to an image or an animation are drawn natively.
+            /**
+             * Returns whether cursors set to an image or an animation are drawn natively.
+             *
              * @see Cursor::setNativeImageCursorEnabled()
              */
             bool isNativeImageCursorEnabled() const;
 
-            /** Enables or disables joystick and gamepad support.
+            /**
+             * Enables or disables joystick and gamepad support.
              */
             void setJoystickSupport(bool support);
 
-            /** Returns whether joystick and gamepad support is enabled or not.
+            /**
+             * Returns whether joystick and gamepad support is enabled or not.
              */
             bool isJoystickSupport() const;
 

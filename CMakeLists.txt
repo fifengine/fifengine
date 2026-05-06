@@ -153,6 +153,7 @@ endif()
 # TODO enforced globally. change this to target_compile_options
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # MSVC compiler options
 # TODO this should probably be moved into a seperate file and be a function to set it on a target.
