@@ -1226,6 +1226,37 @@ if(BUILD_LIBRARY)
       ${PROJECT_SOURCE_DIR}/src/fife
   )
 
+  # The OBJECT libraries don't perform linking, but this attaches usage
+  # requirements (include dirs, compile defs, etc.) needed to compile the sources.
+  target_link_libraries(fife_lib
+    PRIVATE
+      fife_options
+      ZLIB::ZLIB
+      PNG::PNG
+      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
+      $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
+      Ogg::ogg
+      Vorbis::vorbis
+      Vorbis::vorbisfile
+      Vorbis::vorbisenc
+      OpenAL::OpenAL
+      tinyxml2::tinyxml2
+      utf8cpp::utf8cpp
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
+      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
+  )
+
+  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
+    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_opengl)
+  endif()
+
+  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
+    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_sdl3)
+  endif()
+
 #------------------------------------------------------------------------------
 # FifeGUI core library (shared or static)
 #------------------------------------------------------------------------------
