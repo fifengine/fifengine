@@ -280,14 +280,14 @@ jobs:
               image_version: "trixie-with-vulkansdk-20260503",
               preset: "clang22-x64-linux-dbg",
               triplet: x64-linux,
-              artifact_suffix: "clang22-x64-dbg"
+              artifact-name: "libfife-clang22-x64-dbg"
             }
           - {
               job_name: "Linux | Clang22 | Coverage",
               image_version: "trixie-with-vulkansdk-20260503",
               preset: "clang22-x64-linux-dbg-cov",
               triplet: x64-linux,
-              artifact_suffix: "clang22-x64-cov"
+              artifact-name: "libfife-clang22-x64-cov"
             }
 
     env:
