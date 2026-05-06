@@ -79,6 +79,14 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
+      - name: Disable Defender and Exclude Workspace from Scanning
+        shell: pwsh
+        run: |
+          Set-MpPreference -DisableRealtimeMonitoring $true
+          Add-MpPreference -ExclusionPath "$env:GITHUB_WORKSPACE" -ErrorAction SilentlyContinue
+          Add-MpPreference -ExclusionPath "$env:RUNNER_TEMP" -ErrorAction SilentlyContinue
+          Add-MpPreference -ExclusionPath "$env:TEMP" -ErrorAction SilentlyContinue
+
       # https://community.chocolatey.org/packages/ninja
       - name: 🔽 Install Ninja
         run: choco install ninja --no-progress

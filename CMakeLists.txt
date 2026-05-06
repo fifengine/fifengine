@@ -1109,33 +1109,12 @@ if(BUILD_PYTHON_BINDINGS)
     SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/fife;${PROJECT_SOURCE_DIR}"
   )
 
-  if(APPLE)
-    target_link_options(fife_swig PRIVATE -undefined dynamic_lookup)
-  else()
-    target_link_libraries(fife_swig PRIVATE Python3::Module)
-  endif()
-
   target_link_libraries(
     fife_swig
     PRIVATE
-      fife
-      fife_options
-      SDL3::SDL3
-      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
-      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
-      OpenAL::OpenAL
-      PNG::PNG
-      Vorbis::vorbis
-      Vorbis::vorbisfile
-      Vorbis::vorbisenc
-      Ogg::ogg
-      tinyxml2::tinyxml2
-      utf8cpp::utf8cpp
+      Python3::Module
+      fife::fife
   )
-
-  if(ENABLE_OPENGL)
-    target_link_libraries(fife_swig PRIVATE OpenGL::GL GLEW::GLEW)
-  endif()
 
   if(ENABLE_FIFEGUI)
     set_property(SOURCE "${PROJECT_BINARY_DIR}/fifechan.i" PROPERTY CPLUSPLUS ON)
@@ -1163,24 +1142,14 @@ if(BUILD_PYTHON_BINDINGS)
       SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/fife;${CMAKE_SOURCE_DIR}"
     )
 
-    if(APPLE)
-      target_link_options(fifechan_swig PRIVATE -undefined dynamic_lookup)
-    else()
-      target_link_libraries(fifechan_swig PRIVATE Python3::Module)
-    endif()
+    target_link_libraries(fifechan_swig
+      PRIVATE
+        Python3::Module
+        fifechan::fifechan
+        $<IF:$<TARGET_EXISTS:fifechan::fifechan_sdl3>,fifechan::fifechan_sdl3,>
+        $<IF:$<TARGET_EXISTS:fifechan::fifechan_opengl>,fifechan::fifechan_opengl,>
+    )
 
-    target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan)
-    target_link_libraries(fife_swig PRIVATE fifechan::fifechan)
-
-    if(TARGET fifechan::fifechan_sdl3)
-      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_sdl3)
-      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_sdl3)
-    endif()
-
-    if(TARGET fifechan::fifechan_opengl)
-      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_opengl)
-      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_opengl)
-    endif()
   endif(ENABLE_FIFEGUI)
 
   #---------------------------------------------------------------------------------
@@ -1257,42 +1226,6 @@ if(BUILD_LIBRARY)
       ${PROJECT_SOURCE_DIR}/src/fife
   )
 
-  target_compile_definitions(fife_lib PUBLIC
-    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:FIFE_STATIC>
-    $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
-  )
-
-  target_link_libraries(fife_lib
-    PUBLIC
-      fife_options
-      ZLIB::ZLIB
-      PNG::PNG
-      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
-      $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
-      Ogg::ogg
-      Vorbis::vorbis
-      Vorbis::vorbisfile
-      Vorbis::vorbisenc
-      OpenAL::OpenAL
-      tinyxml2::tinyxml2
-      utf8cpp::utf8cpp
-      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
-      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
-      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
-      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
-      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
-      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_sdl3>
-      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_opengl>
-  )
-
-  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
-    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_opengl)
-  endif()
-
-  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
-    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_sdl3)
-  endif()
-
 #------------------------------------------------------------------------------
 # FifeGUI core library (shared or static)
 #------------------------------------------------------------------------------
@@ -1354,9 +1287,15 @@ if(BUILD_LIBRARY)
       $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
       $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
       $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
-      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_sdl3>
-      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_opengl>
   )
+
+  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
+    target_link_libraries(fife PUBLIC fifechan::fifechan_opengl)
+  endif()
+
+  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
+    target_link_libraries(fife PUBLIC fifechan::fifechan_sdl3)
+  endif()
 
   target_include_directories(fife
     PUBLIC
@@ -1376,6 +1315,17 @@ if(BUILD_LIBRARY)
     # Enable /FS to allow multiple cl.exe instances to safely write PDBs.
     target_compile_options(fife PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/FS>)
   endif()
+
+  # The library exports symbols
+  target_compile_definitions(fife PRIVATE
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
+  )
+
+  # The consumers (including SWIG) need to know when we're building/using
+  # a static library, to avoid incorrect symbol import/export.
+  target_compile_definitions(fife PUBLIC
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:FIFE_STATIC>
+  )
 
   if(BUILD_TESTS)
     # Disable adding CTest build targets like "NightlyStart".
