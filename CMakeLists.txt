@@ -1257,6 +1257,12 @@ if(BUILD_LIBRARY)
     target_link_libraries(fife_lib PRIVATE fifechan::fifechan_sdl3)
   endif()
 
+  # Object files are compiled before the final DLL target exists, so they must
+  # get export mode explicitly in shared builds.
+  target_compile_definitions(fife_lib PRIVATE
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
+  )
+
 #------------------------------------------------------------------------------
 # FifeGUI core library (shared or static)
 #------------------------------------------------------------------------------
@@ -1347,7 +1353,8 @@ if(BUILD_LIBRARY)
     target_compile_options(fife PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/FS>)
   endif()
 
-  # The library exports symbols
+  # The final library target also compiles generated sources on some platforms,
+  # so keep export mode here as well.
   target_compile_definitions(fife PRIVATE
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
   )
