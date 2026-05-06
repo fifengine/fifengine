@@ -118,7 +118,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev alsa-topology-conf
+            libglu1-mesa-dev alsa-topology-conf libasound2-data
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -307,7 +307,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev alsa-topology-conf
+            libglu1-mesa-dev alsa-topology-conf libasound2-data
 
       # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
