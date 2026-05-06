@@ -52,16 +52,9 @@ namespace FIFE
              */
             virtual char const * what() const noexcept;
 
-            virtual std::string const & getTypeStr() const
-            {
-                static std::string const s = "Exception";
-                return s;
-            }
-            virtual std::string const & getDescription() const
-            {
-                static std::string const s = "Generic FIFE exception";
-                return s;
-            }
+            virtual std::string const & getTypeStr() const;
+            virtual std::string const & getDescription() const;
+
             // little helper to change m_what
             void update();
 

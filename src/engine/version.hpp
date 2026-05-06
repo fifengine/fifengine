@@ -21,83 +21,168 @@
  * CURRENT_YEAR
  */
 
+/**
+ * All Fife related code is in this namespace.
+ */
 namespace FIFE
 {
 
-    struct semantic_version
+    /**
+     * Simple semantic version container.
+     */
+    class semantic_version
     {
+    public:
+    // clang-format off
+
+        /**
+         * Major version number.
+         */
         int major = 0;
+        /**
+         * Minor version number.
+         */
         int minor = 5;
+        /**
+         * Patch version number.
+         */
         int patch = 0;
+
+    // clang-format on
     };
 
+    /**
+     * Static application version and metadata.
+     */
     class app_version
     {
     public:
-        // clang-format off
+    // clang-format off
+
+        /**
+         * Machine friendly package name.
+         */
         static constexpr std::string_view name        = "fifengine";
+
+        /**
+         * Version string suitable for display.
+         */
         static constexpr std::string_view version     = "0.5.0";
+
+        /**
+         * SPDX or textual license identifier.
+         */
         static constexpr std::string_view license     = "LGPL-2.1";
+
+        /**
+         * Short descriptive text for the project.
+         */
         static constexpr std::string_view description = "Fifengine is a multi-platform isometric game engine written in C++.";
+
+        /**
+         * Project homepage URL.
+         */
         static constexpr std::string_view homepage    = "https://github.com/fifengine/fifengine";
+
+        /**
+         * Copyright notice text.
+         */
         static constexpr std::string_view copyright   = "Copyright (c) Fifengine contributors, 2005-2026.";
+
+        /**
+         * Semantic version instance for compile-time access.
+         */
         static constexpr semantic_version semver{
             .major = 0,
             .minor = 5,
             .patch = 0,
         };
+
         static constexpr int version_id = (0 * 10000) + (5 * 100) + 0;
+
         // clang-format on
 
         /**
-         * Getters - c_str() types
+         * --------------------------------------
+         * Getters (c_str() types)
+         * --------------------------------------
          */
 
+        /**
+         * Get the machine friendly package name.
+         */
         static constexpr char const* get_name()
         {
             return name.data();
         }
 
+        /**
+         * Get the textual project version.
+         */
         static constexpr char const* get_version()
         {
             return version.data();
         }
 
+        /**
+         * Get the license string for the project.
+         */
         static constexpr char const* get_license()
         {
             return license.data();
         }
 
+        /**
+         * Short description of the project.
+         */
         static constexpr char const* get_description()
         {
             return description.data();
         }
 
+        /**
+         * Project homepage URL.
+         */
         static constexpr char const* get_homepage()
         {
             return homepage.data();
         }
 
+        /**
+         * Get the copyright notice text.
+         */
         static constexpr char const* get_copyright()
         {
             return copyright.data();
         }
 
+        /**
+         * Get the major version number.
+         */
         static constexpr int get_major()
         {
             return semver.major;
         }
 
+        /**
+         * Get the minor version number.
+         */
         static constexpr int get_minor()
         {
             return semver.minor;
         }
 
+        /**
+         * Get the patch version number.
+         */
         static constexpr int get_patch()
         {
             return semver.patch;
         }
 
+        /**
+         * Get pointer to numeric version id.
+         */
         static constexpr int get_version_id()
         {
             return version_id;

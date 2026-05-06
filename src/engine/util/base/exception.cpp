@@ -24,6 +24,18 @@ namespace FIFE
         return m_what.c_str();
     }
 
+    std::string const & Exception::getTypeStr() const
+    {
+        static std::string type = "Exception";
+        return type;
+    }
+
+    std::string const & Exception::getDescription() const
+    {
+        static std::string desc = "Generic FIFE exception";
+        return desc;
+    }
+
     void Exception::update()
     {
         m_what = "_[" + getTypeStr() + "]_ , " + getDescription() + " :: " + m_what;
