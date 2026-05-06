@@ -1,7 +1,7 @@
 {
     "name": "Fife DevBox",
     //"image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-latest",
-    "image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-20260426",
+    "image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-20260503",
     // To use the arch based Dockerfile uncomment the following section:
     //"build": {
     //    "dockerfile": "arch/Dockerfile",

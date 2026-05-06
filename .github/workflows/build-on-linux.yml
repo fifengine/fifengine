@@ -254,15 +254,15 @@ jobs:
         config:
           - {
               job_name: "Linux | Clang20 | Release",
-              image_version: "bookworm-latest",
+              image_version: "bookworm-with-vulkansdk-20260503",
               preset: "clang20-x64-linux-rel",
               triplet: x64-linux,
               artifact-name: "libfife-clang20-x64-linux"
             }
           - {
               job_name: "Linux | Clang22 | Release",
-              image_version: "trixie-latest",
-              preset: "clang22-x64-linux-rel",
+              image_version: "trixie-with-vulkansdk-20260503",
+              preset: "trixie-with-vulkansdk-20260503",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-linux"
             }
