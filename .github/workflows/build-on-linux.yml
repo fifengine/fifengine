@@ -218,7 +218,16 @@ jobs:
         run: cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
+        run: |
+          cmake --install ${{ env.BUILD_DIR }} \
+                --prefix ${{ env.INSTALL_DIR }} \
+                --verbose
+
+      - name: 🧪 CTest ➔ Run Tests
+        run: |
+          ctest \
+            --test-dir "${{ env.BUILD_DIR }}" \
+            --output-on-failure
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
@@ -416,7 +425,16 @@ jobs:
         run: cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }} --verbose
+        run: |
+          cmake --install ${{ env.BUILD_DIR }} \
+                --prefix ${{ env.INSTALL_DIR }} \
+                --verbose
+
+      - name: ⚙️ Prepare Coverage Environment
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          mkdir -p "${BUILD_DIR}/coverage"
+          echo "LLVM_PROFILE_FILE=${GITHUB_WORKSPACE}/${BUILD_DIR}/coverage/%p.profraw" >> "$GITHUB_ENV"
 
       - name: 🧪 CTest ➔ Run Tests
         run: |
@@ -430,7 +448,7 @@ jobs:
 
       - name: 🔼 Upload Build Artifact
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
-        if: always()
+        if: ${{ always() && matrix.config.preset != 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ env.INSTALL_DIR }}/**/*
