@@ -13,7 +13,7 @@ Catch2: https://catch2-temp.readthedocs.io/en/latest/index.html
 
 C++ tests.
 Catch2 based.
-Subjects under test are in `/src/engine`.
+Subjects under test are in `/src/fife`.
 
 ### extension_test
 

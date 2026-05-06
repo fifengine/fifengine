@@ -205,7 +205,7 @@ namespace FIFE
             bool exists(std::string const & name);
 
             //! Pointer to the map this controller is associated with.
-            Map* m_map;
+            Map* m_map [[maybe_unused]]; // TODO: implement map-level trigger operations
 
             using TriggerNameMap              = std::map<std::string, Trigger*>;
             using TriggerNameMapIterator      = std::map<std::string, Trigger*>::iterator;

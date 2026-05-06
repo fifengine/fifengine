@@ -11,9 +11,22 @@
 #ifdef HAVE_SNPRINTF
 #undef HAVE_SNPRINTF
 #endif
+
+/* SWIG does not understand visibility macros.
+ * See: https://www.swig.org/Doc4.4/Windows.html#Windows_interface_file
+ * Redefine as empty for the generated C++ wrapper to avoid macro redefinition warnings.
+ */
+#define FIFE_API
 %}
 
 %module(directors="1") fife
+
+/* SWIG does not understand visibility macros like __declspec or __attribute__.
+ * See: https://www.swig.org/Doc4.4/Windows.html#Windows_interface_file
+ * Defining it to empty allows SWIG to parse headers without syntax errors.
+ */
+%define FIFE_API
+%enddef
 
 %include "std_string.i"
 %include "std_vector.i"

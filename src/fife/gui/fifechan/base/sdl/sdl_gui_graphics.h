@@ -41,7 +41,7 @@ namespace FIFE
                 int32_t width,
                 int32_t height);
 
-            virtual void drawText(std::string const & text, int32_t x, int32_t y, uint32_t alignment);
+            virtual void drawText(std::string const & text, int32_t x, int32_t y, fcn::Graphics::Alignment alignment);
             virtual void drawPoint(int32_t x, int32_t y);
             virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
             virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width);

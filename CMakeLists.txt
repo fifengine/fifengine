@@ -50,8 +50,8 @@ project(fifengine VERSION ${FIFE_VERSION} LANGUAGES CXX)
 # otherwise PROJECT_* variables are not available.
 # See version.hpp.in for the replaced tokens.
 configure_file (
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/engine/version.hpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/src/engine/version.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/fife/version.hpp.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/src/fife/version.hpp"
   @ONLY
 )
 
@@ -279,147 +279,147 @@ message(STATUS "----------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 set(
-  FIFE_CORE_SRC
-  src/engine/audio/actionaudio.cpp
-  src/engine/audio/soundclip.cpp
-  src/engine/audio/soundclipmanager.cpp
-  src/engine/audio/soundemitter.cpp
-  src/engine/audio/soundmanager.cpp
-  src/engine/audio/soundsource.cpp
-  src/engine/audio/effects/soundeffect.cpp
-  src/engine/audio/effects/soundeffectmanager.cpp
-  src/engine/audio/effects/soundfilter.cpp
-  src/engine/controller/engine.cpp
-  src/engine/controller/enginesettings.cpp
-  src/engine/eventchannel/eventmanager.cpp
-  src/engine/eventchannel/joystick/joystick.cpp
-  src/engine/eventchannel/joystick/joystickmanager.cpp
-  src/engine/loaders/native/audio/ogg_loader.cpp
-  src/engine/loaders/native/audio/sounddecoder_ogg.cpp
-  src/engine/loaders/native/input/controllermappingloader.cpp
-  src/engine/loaders/native/map/animationloader.cpp
-  src/engine/loaders/native/map/atlasloader.cpp
-  src/engine/loaders/native/map/maploader.cpp
-  src/engine/loaders/native/map/objectloader.cpp
-  src/engine/loaders/native/map/percentdonelistener.cpp
-  src/engine/loaders/native/video/imageloader.cpp
-  src/engine/loaders/native/video/resourceanimationloader.cpp
-  src/engine/model/model.cpp
-  src/engine/model/metamodel/action.cpp
-  src/engine/model/metamodel/object.cpp
-  src/engine/model/metamodel/timeprovider.cpp
-  src/engine/model/metamodel/grids/cellgrid.cpp
-  src/engine/model/metamodel/grids/hexgrid.cpp
-  src/engine/model/metamodel/grids/squaregrid.cpp
-  src/engine/model/structures/cell.cpp
-  src/engine/model/structures/cellcache.cpp
-  src/engine/model/structures/instance.cpp
-  src/engine/model/structures/instancetree.cpp
-  src/engine/model/structures/layer.cpp
-  src/engine/model/structures/location.cpp
-  src/engine/model/structures/map.cpp
-  src/engine/model/structures/renderernode.cpp
-  src/engine/model/structures/trigger.cpp
-  src/engine/model/structures/triggercontroller.cpp
-  src/engine/pathfinder/route.cpp
-  src/engine/pathfinder/routepather/multilayersearch.cpp
-  src/engine/pathfinder/routepather/routepather.cpp
-  src/engine/pathfinder/routepather/routepathersearch.cpp
-  src/engine/pathfinder/routepather/singlelayersearch.cpp
-  src/engine/savers/native/input/controllermappingsaver.cpp
-  src/engine/savers/native/map/mapsaver.cpp
-  src/engine/util/base/exception.cpp
-  src/engine/util/base/fifeclass.cpp
-  src/engine/util/base/stringutils.cpp
-  src/engine/util/log/logger.cpp
-  src/engine/util/math/angles.cpp
-  src/engine/util/resource/resource.cpp
-  src/engine/util/time/timeevent.cpp
-  src/engine/util/time/timemanager.cpp
-  src/engine/util/time/timer.cpp
-  src/engine/vfs/directoryprovider.cpp
-  src/engine/vfs/filesystem.cpp
-  src/engine/vfs/vfs.cpp
-  src/engine/vfs/vfsdirectory.cpp
-  src/engine/vfs/vfssource.cpp
-  src/engine/vfs/vfssourceprovider.cpp
-  src/engine/vfs/dat/dat1.cpp
-  src/engine/vfs/dat/dat2.cpp
-  src/engine/vfs/dat/lzssdecoder.cpp
-  src/engine/vfs/dat/rawdatadat1.cpp
-  src/engine/vfs/dat/rawdatadat2.cpp
-  src/engine/vfs/raw/rawdata.cpp
-  src/engine/vfs/raw/rawdatafile.cpp
-  src/engine/vfs/raw/rawdatamemsource.cpp
-  src/engine/vfs/raw/rawdatasource.cpp
-  src/engine/vfs/zip/zipfilesource.cpp
-  src/engine/vfs/zip/zipnode.cpp
-  src/engine/vfs/zip/zipprovider.cpp
-  src/engine/vfs/zip/zipsource.cpp
-  src/engine/vfs/zip/ziptree.cpp
-  src/engine/video/animation.cpp
-  src/engine/video/animationmanager.cpp
-  src/engine/video/atlasbook.cpp
-  src/engine/video/color.cpp
-  src/engine/video/cursor.cpp
-  src/engine/video/devicecaps.cpp
-  src/engine/video/image.cpp
-  src/engine/video/imagemanager.cpp
-  src/engine/video/renderbackend.cpp
-  src/engine/video/fonts/fontbase.cpp
-  src/engine/video/fonts/imagefontbase.cpp
-  src/engine/video/fonts/subimagefont.cpp
-  src/engine/video/fonts/textrenderpool.cpp
-  src/engine/video/fonts/truetypefont.cpp
-  src/engine/video/opengl/glimage.cpp
-  src/engine/video/opengl/renderbackendopengl.cpp
-  src/engine/video/sdl/renderbackendsdl.cpp
-  src/engine/video/sdl/sdlblendingfunctions.cpp
-  src/engine/video/sdl/sdlimage.cpp
-  src/engine/view/camera.cpp
-  src/engine/view/layercache.cpp
-  src/engine/view/rendererbase.cpp
-  src/engine/view/renderitem.cpp
-  src/engine/view/visual.cpp
-  src/engine/view/renderers/blockinginforenderer.cpp
-  src/engine/view/renderers/cellrenderer.cpp
-  src/engine/view/renderers/cellselectionrenderer.cpp
-  src/engine/view/renderers/coordinaterenderer.cpp
-  src/engine/view/renderers/floatingtextrenderer.cpp
-  src/engine/view/renderers/genericrenderer.cpp
-  src/engine/view/renderers/gridrenderer.cpp
-  src/engine/view/renderers/instancerenderer.cpp
-  src/engine/view/renderers/lightrenderer.cpp
-  src/engine/view/renderers/offrenderer.cpp
-  src/engine/view/renderers/quadtreerenderer.cpp
-  src/engine/view/renderers/targetrenderer.cpp
+  FIFE_SOURCES
+  src/fife/audio/actionaudio.cpp
+  src/fife/audio/soundclip.cpp
+  src/fife/audio/soundclipmanager.cpp
+  src/fife/audio/soundemitter.cpp
+  src/fife/audio/soundmanager.cpp
+  src/fife/audio/soundsource.cpp
+  src/fife/audio/effects/soundeffect.cpp
+  src/fife/audio/effects/soundeffectmanager.cpp
+  src/fife/audio/effects/soundfilter.cpp
+  src/fife/controller/engine.cpp
+  src/fife/controller/enginesettings.cpp
+  src/fife/eventchannel/eventmanager.cpp
+  src/fife/eventchannel/joystick/joystick.cpp
+  src/fife/eventchannel/joystick/joystickmanager.cpp
+  src/fife/loaders/native/audio/ogg_loader.cpp
+  src/fife/loaders/native/audio/sounddecoder_ogg.cpp
+  src/fife/loaders/native/input/controllermappingloader.cpp
+  src/fife/loaders/native/map/animationloader.cpp
+  src/fife/loaders/native/map/atlasloader.cpp
+  src/fife/loaders/native/map/maploader.cpp
+  src/fife/loaders/native/map/objectloader.cpp
+  src/fife/loaders/native/map/percentdonelistener.cpp
+  src/fife/loaders/native/video/imageloader.cpp
+  src/fife/loaders/native/video/resourceanimationloader.cpp
+  src/fife/model/model.cpp
+  src/fife/model/metamodel/action.cpp
+  src/fife/model/metamodel/object.cpp
+  src/fife/model/metamodel/timeprovider.cpp
+  src/fife/model/metamodel/grids/cellgrid.cpp
+  src/fife/model/metamodel/grids/hexgrid.cpp
+  src/fife/model/metamodel/grids/squaregrid.cpp
+  src/fife/model/structures/cell.cpp
+  src/fife/model/structures/cellcache.cpp
+  src/fife/model/structures/instance.cpp
+  src/fife/model/structures/instancetree.cpp
+  src/fife/model/structures/layer.cpp
+  src/fife/model/structures/location.cpp
+  src/fife/model/structures/map.cpp
+  src/fife/model/structures/renderernode.cpp
+  src/fife/model/structures/trigger.cpp
+  src/fife/model/structures/triggercontroller.cpp
+  src/fife/pathfinder/route.cpp
+  src/fife/pathfinder/routepather/multilayersearch.cpp
+  src/fife/pathfinder/routepather/routepather.cpp
+  src/fife/pathfinder/routepather/routepathersearch.cpp
+  src/fife/pathfinder/routepather/singlelayersearch.cpp
+  src/fife/savers/native/input/controllermappingsaver.cpp
+  src/fife/savers/native/map/mapsaver.cpp
+  src/fife/util/base/exception.cpp
+  src/fife/util/base/fifeclass.cpp
+  src/fife/util/base/stringutils.cpp
+  src/fife/util/log/logger.cpp
+  src/fife/util/math/angles.cpp
+  src/fife/util/resource/resource.cpp
+  src/fife/util/time/timeevent.cpp
+  src/fife/util/time/timemanager.cpp
+  src/fife/util/time/timer.cpp
+  src/fife/vfs/directoryprovider.cpp
+  src/fife/vfs/filesystem.cpp
+  src/fife/vfs/vfs.cpp
+  src/fife/vfs/vfsdirectory.cpp
+  src/fife/vfs/vfssource.cpp
+  src/fife/vfs/vfssourceprovider.cpp
+  src/fife/vfs/dat/dat1.cpp
+  src/fife/vfs/dat/dat2.cpp
+  src/fife/vfs/dat/lzssdecoder.cpp
+  src/fife/vfs/dat/rawdatadat1.cpp
+  src/fife/vfs/dat/rawdatadat2.cpp
+  src/fife/vfs/raw/rawdata.cpp
+  src/fife/vfs/raw/rawdatafile.cpp
+  src/fife/vfs/raw/rawdatamemsource.cpp
+  src/fife/vfs/raw/rawdatasource.cpp
+  src/fife/vfs/zip/zipfilesource.cpp
+  src/fife/vfs/zip/zipnode.cpp
+  src/fife/vfs/zip/zipprovider.cpp
+  src/fife/vfs/zip/zipsource.cpp
+  src/fife/vfs/zip/ziptree.cpp
+  src/fife/video/animation.cpp
+  src/fife/video/animationmanager.cpp
+  src/fife/video/atlasbook.cpp
+  src/fife/video/color.cpp
+  src/fife/video/cursor.cpp
+  src/fife/video/devicecaps.cpp
+  src/fife/video/image.cpp
+  src/fife/video/imagemanager.cpp
+  src/fife/video/renderbackend.cpp
+  src/fife/video/fonts/fontbase.cpp
+  src/fife/video/fonts/imagefontbase.cpp
+  src/fife/video/fonts/subimagefont.cpp
+  src/fife/video/fonts/textrenderpool.cpp
+  src/fife/video/fonts/truetypefont.cpp
+  src/fife/video/opengl/glimage.cpp
+  src/fife/video/opengl/renderbackendopengl.cpp
+  src/fife/video/sdl/renderbackendsdl.cpp
+  src/fife/video/sdl/sdlblendingfunctions.cpp
+  src/fife/video/sdl/sdlimage.cpp
+  src/fife/view/camera.cpp
+  src/fife/view/layercache.cpp
+  src/fife/view/rendererbase.cpp
+  src/fife/view/renderitem.cpp
+  src/fife/view/visual.cpp
+  src/fife/view/renderers/blockinginforenderer.cpp
+  src/fife/view/renderers/cellrenderer.cpp
+  src/fife/view/renderers/cellselectionrenderer.cpp
+  src/fife/view/renderers/coordinaterenderer.cpp
+  src/fife/view/renderers/floatingtextrenderer.cpp
+  src/fife/view/renderers/genericrenderer.cpp
+  src/fife/view/renderers/gridrenderer.cpp
+  src/fife/view/renderers/instancerenderer.cpp
+  src/fife/view/renderers/lightrenderer.cpp
+  src/fife/view/renderers/offrenderer.cpp
+  src/fife/view/renderers/quadtreerenderer.cpp
+  src/fife/view/renderers/targetrenderer.cpp
 )
 
 set(
-  FIFE_FCHAN_SRC
-  src/engine/gui/fifechan/fifechanmanager.cpp
-  src/engine/gui/fifechan/base/gui_font.cpp
-  src/engine/gui/fifechan/base/gui_image.cpp
-  src/engine/gui/fifechan/base/gui_imageloader.cpp
-  src/engine/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
-  src/engine/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
-  src/engine/gui/fifechan/console/commandline.cpp
-  src/engine/gui/fifechan/console/console.cpp
-  src/engine/gui/fifechan/util/utf8/utf8stringeditor.cpp
-  src/engine/gui/fifechan/widgets/animationicon.cpp
-  src/engine/gui/fifechan/widgets/clicklabel.cpp
-  src/engine/gui/fifechan/widgets/dockarea.cpp
-  src/engine/gui/fifechan/widgets/panel.cpp
-  src/engine/gui/fifechan/widgets/percentagebar.cpp
-  src/engine/gui/fifechan/widgets/resizablewindow.cpp
+  FIFE_FIFEGUI_SOURCES
+  src/fife/gui/fifechan/fifechanmanager.cpp
+  src/fife/gui/fifechan/base/gui_font.cpp
+  src/fife/gui/fifechan/base/gui_image.cpp
+  src/fife/gui/fifechan/base/gui_imageloader.cpp
+  src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
+  src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
+  src/fife/gui/fifechan/console/commandline.cpp
+  src/fife/gui/fifechan/console/console.cpp
+  src/fife/gui/fifechan/util/utf8/utf8stringeditor.cpp
+  src/fife/gui/fifechan/widgets/animationicon.cpp
+  src/fife/gui/fifechan/widgets/clicklabel.cpp
+  src/fife/gui/fifechan/widgets/dockarea.cpp
+  src/fife/gui/fifechan/widgets/panel.cpp
+  src/fife/gui/fifechan/widgets/percentagebar.cpp
+  src/fife/gui/fifechan/widgets/resizablewindow.cpp
 )
 
 #------------------------------------------------------------------------------
 # Source Groups for Source Files
 #------------------------------------------------------------------------------
 
-source_group("fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
+source_group("fife"                FILES ${FIFE_SOURCES})
+source_group("fife.gui.fifegui"    FILES ${FIFE_FIFEGUI_SOURCES})
 
 #------------------------------------------------------------------------------
 # Header Files
@@ -427,210 +427,210 @@ source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 
 set(
   FIFE_VERSION_HEADER
-  "${CMAKE_CURRENT_BINARY_DIR}/src/engine/version.hpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/src/fife/version.hpp"
 )
 
 set(
   FIFE_CORE_HEADERS
-  src/engine/platform.h
-  src/engine/modules.h
-  src/engine/audio/actionaudio.h
-  src/engine/audio/fife_openal.h
-  src/engine/audio/soundclip.h
-  src/engine/audio/soundclipmanager.h
-  src/engine/audio/soundconfig.h
-  src/engine/audio/sounddecoder.h
-  src/engine/audio/soundemitter.h
-  src/engine/audio/soundmanager.h
-  src/engine/audio/soundsource.h
-  src/engine/audio/effects/soundeffect.h
-  src/engine/audio/effects/soundeffectmanager.h
-  src/engine/audio/effects/soundfilter.h
-  src/engine/controller/engine.h
-  src/engine/controller/enginesettings.h
-  src/engine/eventchannel/eventmanager.h
-  src/engine/eventchannel/base/event.h
-  src/engine/eventchannel/base/ilistener.h
-  src/engine/eventchannel/base/inputevent.h
-  src/engine/eventchannel/command/command.h
-  src/engine/eventchannel/command/commandids.h
-  src/engine/eventchannel/command/icommandcontroller.h
-  src/engine/eventchannel/command/icommandlistener.h
-  src/engine/eventchannel/drop/dropevent.h
-  src/engine/eventchannel/drop/idropcontroller.h
-  src/engine/eventchannel/drop/idroplistener.h
-  src/engine/eventchannel/joystick/ijoystickcontroller.h
-  src/engine/eventchannel/joystick/ijoysticklistener.h
-  src/engine/eventchannel/joystick/joystick.h
-  src/engine/eventchannel/joystick/joystickevent.h
-  src/engine/eventchannel/joystick/joystickmanager.h
-  src/engine/eventchannel/key/ikeycontroller.h
-  src/engine/eventchannel/key/ikeyfilter.h
-  src/engine/eventchannel/key/ikeylistener.h
-  src/engine/eventchannel/key/key.h
-  src/engine/eventchannel/key/keyevent.h
-  src/engine/eventchannel/mouse/imousecontroller.h
-  src/engine/eventchannel/mouse/imouselistener.h
-  src/engine/eventchannel/mouse/mouseevent.h
-  src/engine/eventchannel/sdl/isdleventcontroller.h
-  src/engine/eventchannel/sdl/isdleventlistener.h
-  src/engine/eventchannel/source/eventsourcetypes.h
-  src/engine/eventchannel/source/ieventsource.h
-  src/engine/eventchannel/text/itextcontroller.h
-  src/engine/eventchannel/text/itextlistener.h
-  src/engine/eventchannel/text/text.h
-  src/engine/eventchannel/text/textevent.h
-  src/engine/loaders/native/audio/ogg_loader.h
-  src/engine/loaders/native/audio/sounddecoder_ogg.h
-  src/engine/loaders/native/input/controllermappingloader.h
-  src/engine/loaders/native/map/animationloader.h
-  src/engine/loaders/native/map/atlasloader.h
-  src/engine/loaders/native/map/ianimationloader.h
-  src/engine/loaders/native/map/iatlasloader.h
-  src/engine/loaders/native/map/imaploader.h
-  src/engine/loaders/native/map/iobjectloader.h
-  src/engine/loaders/native/map/maploader.h
-  src/engine/loaders/native/map/objectloader.h
-  src/engine/loaders/native/map/percentdonelistener.h
-  src/engine/loaders/native/video/imageloader.h
-  src/engine/loaders/native/video/resourceanimationloader.h
-  src/engine/model/model.h
-  src/engine/model/metamodel/action.h
-  src/engine/model/metamodel/ipather.h
-  src/engine/model/metamodel/ivisual.h
-  src/engine/model/metamodel/modelcoords.h
-  src/engine/model/metamodel/object.h
-  src/engine/model/metamodel/timeprovider.h
-  src/engine/model/metamodel/grids/cellgrid.h
-  src/engine/model/metamodel/grids/hexgrid.h
-  src/engine/model/metamodel/grids/squaregrid.h
-  src/engine/model/structures/cell.h
-  src/engine/model/structures/cellcache.h
-  src/engine/model/structures/instance.h
-  src/engine/model/structures/instancetree.h
-  src/engine/model/structures/layer.h
-  src/engine/model/structures/location.h
-  src/engine/model/structures/map.h
-  src/engine/model/structures/renderernode.h
-  src/engine/model/structures/trigger.h
-  src/engine/model/structures/triggercontroller.h
-  src/engine/pathfinder/route.h
-  src/engine/pathfinder/routepather/multilayersearch.h
-  src/engine/pathfinder/routepather/routepather.h
-  src/engine/pathfinder/routepather/routepathersearch.h
-  src/engine/pathfinder/routepather/singlelayersearch.h
-  src/engine/savers/native/input/controllermappingsaver.h
-  src/engine/savers/native/map/ianimationsaver.h
-  src/engine/savers/native/map/iatlassaver.h
-  src/engine/savers/native/map/imapsaver.h
-  src/engine/savers/native/map/iobjectsaver.h
-  src/engine/savers/native/map/mapsaver.h
-  src/engine/util/base/exception.h
-  src/engine/util/base/fifeclass.h
-  src/engine/util/base/fife_stdint.h
-  src/engine/util/base/sharedptr.h
-  src/engine/util/base/singleton.h
-  src/engine/util/base/stringutils.h
-  src/engine/util/log/logger.h
-  src/engine/util/math/angles.h
-  src/engine/util/math/fife_math.h
-  src/engine/util/math/matrix.h
-  src/engine/util/resource/resource.h
-  src/engine/util/resource/resourcemanager.h
-  src/engine/util/structures/point.h
-  src/engine/util/structures/priorityqueue.h
-  src/engine/util/structures/purge.h
-  src/engine/util/structures/quadtree.h
-  src/engine/util/structures/rect.h
-  src/engine/util/time/timeevent.h
-  src/engine/util/time/timemanager.h
-  src/engine/util/time/timer.h
-  src/engine/vfs/directoryprovider.h
-  src/engine/vfs/filesystem.h
-  src/engine/vfs/vfs.h
-  src/engine/vfs/vfsdirectory.h
-  src/engine/vfs/vfssource.h
-  src/engine/vfs/vfssourceprovider.h
-  src/engine/vfs/dat/dat1.h
-  src/engine/vfs/dat/dat2.h
-  src/engine/vfs/dat/lzssdecoder.h
-  src/engine/vfs/dat/rawdatadat1.h
-  src/engine/vfs/dat/rawdatadat2.h
-  src/engine/vfs/raw/rawdata.h
-  src/engine/vfs/raw/rawdatafile.h
-  src/engine/vfs/raw/rawdatamemsource.h
-  src/engine/vfs/raw/rawdatasource.h
-  src/engine/vfs/zip/zipfilesource.h
-  src/engine/vfs/zip/zipnode.h
-  src/engine/vfs/zip/zipprovider.h
-  src/engine/vfs/zip/zipsource.h
-  src/engine/vfs/zip/ziptree.h
-  src/engine/video/animation.h
-  src/engine/video/animationmanager.h
-  src/engine/video/atlasbook.h
-  src/engine/video/color.h
-  src/engine/video/cursor.h
-  src/engine/video/devicecaps.h
-  src/engine/video/image.h
-  src/engine/video/imagemanager.h
-  src/engine/video/renderbackend.h
-  src/engine/video/fonts/fontbase.h
-  src/engine/video/fonts/ifont.h
-  src/engine/video/fonts/imagefontbase.h
-  src/engine/video/fonts/subimagefont.h
-  src/engine/video/fonts/textrenderpool.h
-  src/engine/video/fonts/truetypefont.h
-  src/engine/video/opengl/fife_opengl.h
-  src/engine/video/opengl/glimage.h
-  src/engine/video/opengl/renderbackendopengl.h
-  src/engine/video/sdl/renderbackendsdl.h
-  src/engine/video/sdl/sdlblendingfunctions.h
-  src/engine/video/sdl/sdlimage.h
-  src/engine/view/camera.h
-  src/engine/view/layercache.h
-  src/engine/view/rendererbase.h
-  src/engine/view/renderitem.h
-  src/engine/view/visual.h
-  src/engine/view/renderers/blockinginforenderer.h
-  src/engine/view/renderers/cellrenderer.h
-  src/engine/view/renderers/cellselectionrenderer.h
-  src/engine/view/renderers/coordinaterenderer.h
-  src/engine/view/renderers/floatingtextrenderer.h
-  src/engine/view/renderers/genericrenderer.h
-  src/engine/view/renderers/gridrenderer.h
-  src/engine/view/renderers/instancerenderer.h
-  src/engine/view/renderers/lightrenderer.h
-  src/engine/view/renderers/offrenderer.h
-  src/engine/view/renderers/quadtreerenderer.h
-  src/engine/view/renderers/targetrenderer.h
-  src/engine/gui/guimanager.h
+  src/fife/platform.h
+  src/fife/modules.h
+  src/fife/audio/actionaudio.h
+  src/fife/audio/fife_openal.h
+  src/fife/audio/soundclip.h
+  src/fife/audio/soundclipmanager.h
+  src/fife/audio/soundconfig.h
+  src/fife/audio/sounddecoder.h
+  src/fife/audio/soundemitter.h
+  src/fife/audio/soundmanager.h
+  src/fife/audio/soundsource.h
+  src/fife/audio/effects/soundeffect.h
+  src/fife/audio/effects/soundeffectmanager.h
+  src/fife/audio/effects/soundfilter.h
+  src/fife/controller/engine.h
+  src/fife/controller/enginesettings.h
+  src/fife/eventchannel/eventmanager.h
+  src/fife/eventchannel/base/event.h
+  src/fife/eventchannel/base/ilistener.h
+  src/fife/eventchannel/base/inputevent.h
+  src/fife/eventchannel/command/command.h
+  src/fife/eventchannel/command/commandids.h
+  src/fife/eventchannel/command/icommandcontroller.h
+  src/fife/eventchannel/command/icommandlistener.h
+  src/fife/eventchannel/drop/dropevent.h
+  src/fife/eventchannel/drop/idropcontroller.h
+  src/fife/eventchannel/drop/idroplistener.h
+  src/fife/eventchannel/joystick/ijoystickcontroller.h
+  src/fife/eventchannel/joystick/ijoysticklistener.h
+  src/fife/eventchannel/joystick/joystick.h
+  src/fife/eventchannel/joystick/joystickevent.h
+  src/fife/eventchannel/joystick/joystickmanager.h
+  src/fife/eventchannel/key/ikeycontroller.h
+  src/fife/eventchannel/key/ikeyfilter.h
+  src/fife/eventchannel/key/ikeylistener.h
+  src/fife/eventchannel/key/key.h
+  src/fife/eventchannel/key/keyevent.h
+  src/fife/eventchannel/mouse/imousecontroller.h
+  src/fife/eventchannel/mouse/imouselistener.h
+  src/fife/eventchannel/mouse/mouseevent.h
+  src/fife/eventchannel/sdl/isdleventcontroller.h
+  src/fife/eventchannel/sdl/isdleventlistener.h
+  src/fife/eventchannel/source/eventsourcetypes.h
+  src/fife/eventchannel/source/ieventsource.h
+  src/fife/eventchannel/text/itextcontroller.h
+  src/fife/eventchannel/text/itextlistener.h
+  src/fife/eventchannel/text/text.h
+  src/fife/eventchannel/text/textevent.h
+  src/fife/loaders/native/audio/ogg_loader.h
+  src/fife/loaders/native/audio/sounddecoder_ogg.h
+  src/fife/loaders/native/input/controllermappingloader.h
+  src/fife/loaders/native/map/animationloader.h
+  src/fife/loaders/native/map/atlasloader.h
+  src/fife/loaders/native/map/ianimationloader.h
+  src/fife/loaders/native/map/iatlasloader.h
+  src/fife/loaders/native/map/imaploader.h
+  src/fife/loaders/native/map/iobjectloader.h
+  src/fife/loaders/native/map/maploader.h
+  src/fife/loaders/native/map/objectloader.h
+  src/fife/loaders/native/map/percentdonelistener.h
+  src/fife/loaders/native/video/imageloader.h
+  src/fife/loaders/native/video/resourceanimationloader.h
+  src/fife/model/model.h
+  src/fife/model/metamodel/action.h
+  src/fife/model/metamodel/ipather.h
+  src/fife/model/metamodel/ivisual.h
+  src/fife/model/metamodel/modelcoords.h
+  src/fife/model/metamodel/object.h
+  src/fife/model/metamodel/timeprovider.h
+  src/fife/model/metamodel/grids/cellgrid.h
+  src/fife/model/metamodel/grids/hexgrid.h
+  src/fife/model/metamodel/grids/squaregrid.h
+  src/fife/model/structures/cell.h
+  src/fife/model/structures/cellcache.h
+  src/fife/model/structures/instance.h
+  src/fife/model/structures/instancetree.h
+  src/fife/model/structures/layer.h
+  src/fife/model/structures/location.h
+  src/fife/model/structures/map.h
+  src/fife/model/structures/renderernode.h
+  src/fife/model/structures/trigger.h
+  src/fife/model/structures/triggercontroller.h
+  src/fife/pathfinder/route.h
+  src/fife/pathfinder/routepather/multilayersearch.h
+  src/fife/pathfinder/routepather/routepather.h
+  src/fife/pathfinder/routepather/routepathersearch.h
+  src/fife/pathfinder/routepather/singlelayersearch.h
+  src/fife/savers/native/input/controllermappingsaver.h
+  src/fife/savers/native/map/ianimationsaver.h
+  src/fife/savers/native/map/iatlassaver.h
+  src/fife/savers/native/map/imapsaver.h
+  src/fife/savers/native/map/iobjectsaver.h
+  src/fife/savers/native/map/mapsaver.h
+  src/fife/util/base/exception.h
+  src/fife/util/base/fifeclass.h
+  src/fife/util/base/fife_stdint.h
+  src/fife/util/base/sharedptr.h
+  src/fife/util/base/singleton.h
+  src/fife/util/base/stringutils.h
+  src/fife/util/log/logger.h
+  src/fife/util/math/angles.h
+  src/fife/util/math/fife_math.h
+  src/fife/util/math/matrix.h
+  src/fife/util/resource/resource.h
+  src/fife/util/resource/resourcemanager.h
+  src/fife/util/structures/point.h
+  src/fife/util/structures/priorityqueue.h
+  src/fife/util/structures/purge.h
+  src/fife/util/structures/quadtree.h
+  src/fife/util/structures/rect.h
+  src/fife/util/time/timeevent.h
+  src/fife/util/time/timemanager.h
+  src/fife/util/time/timer.h
+  src/fife/vfs/directoryprovider.h
+  src/fife/vfs/filesystem.h
+  src/fife/vfs/vfs.h
+  src/fife/vfs/vfsdirectory.h
+  src/fife/vfs/vfssource.h
+  src/fife/vfs/vfssourceprovider.h
+  src/fife/vfs/dat/dat1.h
+  src/fife/vfs/dat/dat2.h
+  src/fife/vfs/dat/lzssdecoder.h
+  src/fife/vfs/dat/rawdatadat1.h
+  src/fife/vfs/dat/rawdatadat2.h
+  src/fife/vfs/raw/rawdata.h
+  src/fife/vfs/raw/rawdatafile.h
+  src/fife/vfs/raw/rawdatamemsource.h
+  src/fife/vfs/raw/rawdatasource.h
+  src/fife/vfs/zip/zipfilesource.h
+  src/fife/vfs/zip/zipnode.h
+  src/fife/vfs/zip/zipprovider.h
+  src/fife/vfs/zip/zipsource.h
+  src/fife/vfs/zip/ziptree.h
+  src/fife/video/animation.h
+  src/fife/video/animationmanager.h
+  src/fife/video/atlasbook.h
+  src/fife/video/color.h
+  src/fife/video/cursor.h
+  src/fife/video/devicecaps.h
+  src/fife/video/image.h
+  src/fife/video/imagemanager.h
+  src/fife/video/renderbackend.h
+  src/fife/video/fonts/fontbase.h
+  src/fife/video/fonts/ifont.h
+  src/fife/video/fonts/imagefontbase.h
+  src/fife/video/fonts/subimagefont.h
+  src/fife/video/fonts/textrenderpool.h
+  src/fife/video/fonts/truetypefont.h
+  src/fife/video/opengl/fife_opengl.h
+  src/fife/video/opengl/glimage.h
+  src/fife/video/opengl/renderbackendopengl.h
+  src/fife/video/sdl/renderbackendsdl.h
+  src/fife/video/sdl/sdlblendingfunctions.h
+  src/fife/video/sdl/sdlimage.h
+  src/fife/view/camera.h
+  src/fife/view/layercache.h
+  src/fife/view/rendererbase.h
+  src/fife/view/renderitem.h
+  src/fife/view/visual.h
+  src/fife/view/renderers/blockinginforenderer.h
+  src/fife/view/renderers/cellrenderer.h
+  src/fife/view/renderers/cellselectionrenderer.h
+  src/fife/view/renderers/coordinaterenderer.h
+  src/fife/view/renderers/floatingtextrenderer.h
+  src/fife/view/renderers/genericrenderer.h
+  src/fife/view/renderers/gridrenderer.h
+  src/fife/view/renderers/instancerenderer.h
+  src/fife/view/renderers/lightrenderer.h
+  src/fife/view/renderers/offrenderer.h
+  src/fife/view/renderers/quadtreerenderer.h
+  src/fife/view/renderers/targetrenderer.h
+  src/fife/gui/guimanager.h
 )
 
 set(
   FIFE_FIFEGUI_HEADERS
-  src/engine/gui/fifechan/fifechanmanager.h
-  src/engine/gui/fifechan/base/gui_font.h
-  src/engine/gui/fifechan/base/gui_image.h
-  src/engine/gui/fifechan/base/gui_imageloader.h
-  src/engine/gui/fifechan/base/opengl/opengl_gui_graphics.h
-  src/engine/gui/fifechan/base/sdl/sdl_gui_graphics.h
-  src/engine/gui/fifechan/console/commandline.h
-  src/engine/gui/fifechan/console/console.h
-  src/engine/gui/fifechan/util/utf8/utf8stringeditor.h
-  src/engine/gui/fifechan/widgets/animationicon.h
-  src/engine/gui/fifechan/widgets/clicklabel.h
-  src/engine/gui/fifechan/widgets/dockarea.h
-  src/engine/gui/fifechan/widgets/panel.h
-  src/engine/gui/fifechan/widgets/percentagebar.h
-  src/engine/gui/fifechan/widgets/resizablewindow.h
+  src/fife/gui/fifechan/fifechanmanager.h
+  src/fife/gui/fifechan/base/gui_font.h
+  src/fife/gui/fifechan/base/gui_image.h
+  src/fife/gui/fifechan/base/gui_imageloader.h
+  src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.h
+  src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.h
+  src/fife/gui/fifechan/console/commandline.h
+  src/fife/gui/fifechan/console/console.h
+  src/fife/gui/fifechan/util/utf8/utf8stringeditor.h
+  src/fife/gui/fifechan/widgets/animationicon.h
+  src/fife/gui/fifechan/widgets/clicklabel.h
+  src/fife/gui/fifechan/widgets/dockarea.h
+  src/fife/gui/fifechan/widgets/panel.h
+  src/fife/gui/fifechan/widgets/percentagebar.h
+  src/fife/gui/fifechan/widgets/resizablewindow.h
 )
 
 #------------------------------------------------------------------------------
 # Source Groups for Header Files
 #------------------------------------------------------------------------------
 
-source_group("fife.core"                FILES ${FIFE_CORE_HEADERS})
-source_group("fife.core.gui.fifechan"   FILES ${FIFE_FIFEGUI_HEADERS})
+source_group("fife"               FILES ${FIFE_CORE_HEADERS})
+source_group("fife.gui.fifegui"   FILES ${FIFE_FIFEGUI_HEADERS})
 
 add_custom_target(fife.headers SOURCES
     ${FIFE_CORE_HEADERS}
@@ -645,10 +645,10 @@ add_custom_target(fife.headers SOURCES
 # They define how the C++ code is exposed to the target language (here Python).
 #
 # 1. We have the following interface file sets:
-#   - FIFE_CORE_SWIG: The main SWIG interface files for the core engine.
-#   - FIFE_FCHAN_SWIG_LIB: The SWIG interface files for the FIFECHAN library (the base components).
+#   - FIFE_SWIG: The main SWIG interface files for the core engine.
+#   - FIFE_FIFEGUI_SWIG_LIB: The SWIG interface files for the FIFECHAN library (the base components).
 #     These files declare the `%module fifechan` and are included in the seperate fifechan.i template.
-#   - FIFE_FCHAN_SWIG: The SWIG interface files for the FIFE-specific extensions to FIFECHAN library (the actual GUI components).
+#   - FIFE_FIFEGUI_SWIG: The SWIG interface files for the FIFE-specific extensions to FIFECHAN library (the actual GUI components).
 #     The files declare the `%module fife` and become part of the main fife.i template.
 # 2. We have a double substitution setup for the SWIG interface files:
 #   - The .i.templ.cm files act as both CMake templates and SWIG interface templates.
@@ -658,98 +658,98 @@ add_custom_target(fife.headers SOURCES
 # 3. Then swig_add_library() is called to generate the Python bindings.
 
 set(
-  FIFE_CORE_SWIG
-  version.i
-  audio/effects/soundeffect.i
-  audio/effects/soundfilter.i
-  audio/soundclip.i
-  audio/soundclipmanager.i
-  audio/soundemitter.i
-  audio/soundmanager.i
-  controller/engine.i
-  eventchannel/eventchannel.i
-  loaders/native/map/ianimationloader.i
-  loaders/native/map/iatlasloader.i
-  loaders/native/map/imaploader.i
-  loaders/native/map/iobjectloader.i
-  loaders/native/map/maploader.i
-  loaders/native/map/percentdonelistener.i
-  model/metamodel/action.i
-  model/metamodel/ipather.i
-  model/metamodel/ivisual.i
-  model/metamodel/modelcoords.i
-  model/metamodel/object.i
-  model/metamodel/timeprovider.i
-  model/metamodel/grids/cellgrids.i
-  model/structures/cell.i
-  model/structures/cellcache.i
-  model/structures/instance.i
-  model/structures/layer.i
-  model/structures/location.i
-  model/structures/map.i
-  model/structures/renderernode.i
-  model/structures/trigger.i
-  model/model.i
-  pathfinder/route.i
-  pathfinder/routepather/routepather.i
-  savers/native/map/ianimationsaver.i
-  savers/native/map/iatlassaver.i
-  savers/native/map/imapsaver.i
-  savers/native/map/iobjectsaver.i
-  savers/native/map/mapsaver.i
-  util/base/utilbase.i
-  util/log/logger.i
-  util/math/math.i
-  util/resource/resource.i
-  util/structures/utilstructures.i
-  util/time/timeevent.i
-  util/time/timemanager.i
-  vfs/vfs.i
-  vfs/raw/rawdata.i
-  video/video.i
-  video/fonts/fonts.i
-  view/camera.i
-  view/rendererbase.i
-  view/visual.i
-  view/renderers/blockinginforenderer.i
-  view/renderers/cellrenderer.i
-  view/renderers/cellselectionrenderer.i
-  view/renderers/coordinaterenderer.i
-  view/renderers/floatingtextrenderer.i
-  view/renderers/genericrenderer.i
-  view/renderers/gridrenderer.i
-  view/renderers/instancerenderer.i
-  view/renderers/lightrenderer.i
-  view/renderers/offrenderer.i
-  view/renderers/targetrenderer.i
-  gui/guimanager.i
+  FIFE_SWIG
+  src/fife/version.i
+  src/fife/audio/effects/soundeffect.i
+  src/fife/audio/effects/soundfilter.i
+  src/fife/audio/soundclip.i
+  src/fife/audio/soundclipmanager.i
+  src/fife/audio/soundemitter.i
+  src/fife/audio/soundmanager.i
+  src/fife/controller/engine.i
+  src/fife/eventchannel/eventchannel.i
+  src/fife/gui/guimanager.i
+  src/fife/loaders/native/map/ianimationloader.i
+  src/fife/loaders/native/map/iatlasloader.i
+  src/fife/loaders/native/map/imaploader.i
+  src/fife/loaders/native/map/iobjectloader.i
+  src/fife/loaders/native/map/maploader.i
+  src/fife/loaders/native/map/percentdonelistener.i
+  src/fife/model/metamodel/action.i
+  src/fife/model/metamodel/grids/cellgrids.i
+  src/fife/model/metamodel/ipather.i
+  src/fife/model/metamodel/ivisual.i
+  src/fife/model/metamodel/modelcoords.i
+  src/fife/model/metamodel/object.i
+  src/fife/model/metamodel/timeprovider.i
+  src/fife/model/model.i
+  src/fife/model/structures/cell.i
+  src/fife/model/structures/cellcache.i
+  src/fife/model/structures/instance.i
+  src/fife/model/structures/layer.i
+  src/fife/model/structures/location.i
+  src/fife/model/structures/map.i
+  src/fife/model/structures/renderernode.i
+  src/fife/model/structures/trigger.i
+  src/fife/pathfinder/route.i
+  src/fife/pathfinder/routepather/routepather.i
+  src/fife/savers/native/map/ianimationsaver.i
+  src/fife/savers/native/map/iatlassaver.i
+  src/fife/savers/native/map/imapsaver.i
+  src/fife/savers/native/map/iobjectsaver.i
+  src/fife/savers/native/map/mapsaver.i
+  src/fife/util/base/utilbase.i
+  src/fife/util/log/logger.i
+  src/fife/util/math/math.i
+  src/fife/util/resource/resource.i
+  src/fife/util/structures/utilstructures.i
+  src/fife/util/time/timeevent.i
+  src/fife/util/time/timemanager.i
+  src/fife/vfs/raw/rawdata.i
+  src/fife/vfs/vfs.i
+  src/fife/video/fonts/fonts.i
+  src/fife/video/video.i
+  src/fife/view/camera.i
+  src/fife/view/rendererbase.i
+  src/fife/view/renderers/blockinginforenderer.i
+  src/fife/view/renderers/cellrenderer.i
+  src/fife/view/renderers/cellselectionrenderer.i
+  src/fife/view/renderers/coordinaterenderer.i
+  src/fife/view/renderers/floatingtextrenderer.i
+  src/fife/view/renderers/genericrenderer.i
+  src/fife/view/renderers/gridrenderer.i
+  src/fife/view/renderers/instancerenderer.i
+  src/fife/view/renderers/lightrenderer.i
+  src/fife/view/renderers/offrenderer.i
+  src/fife/view/renderers/targetrenderer.i
+  src/fife/view/visual.i
 )
 
 set(
-  FIFE_FCHAN_SWIG_LIB
-  gui/fifechan/lib/fifechanlistener.i
-  gui/fifechan/lib/widgets.i
+  FIFE_FIFEGUI_SWIG
+  src/fife/gui/fifechan/base/gui_font.i
+  src/fife/gui/fifechan/base/gui_image.i
+  src/fife/gui/fifechan/console/console.i
+  src/fife/gui/fifechan/fifechanmanager.i
+  src/fife/gui/fifechan/widgets/widgets.i
 )
 
 set(
-  FIFE_FCHAN_SWIG
-  gui/fifechan/base/gui_font.i
-  gui/fifechan/base/gui_image.i
-  gui/fifechan/console/console.i
-  gui/fifechan/fifechanmanager.i
-  gui/fifechan/widgets/widgets.i
+  FIFE_FIFEGUI_SWIG_LIB
+  src/fife/gui/fifechan/lib/fifechanlistener.i
+  src/fife/gui/fifechan/lib/widgets.i
 )
+
 
 #------------------------------------------------------------------------------
 # Source Groups for SWIG Files
 #------------------------------------------------------------------------------
 
-source_group("fife.core"                    FILES ${FIFE_CORE_SWIG})
-source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
-source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
+source_group("fife.swig"                   FILES ${FIFE_SWIG})
+source_group("fife.swig.gui.fifegui"       FILES ${FIFE_FIFEGUI_SWIG})
+source_group("fife.swig.gui.fifegui.lib"   FILES ${FIFE_FIFEGUI_SWIG_LIB})
 
-# TODO if enabled, the files are not found. ${CMAKE_CURRENT_SOURCE_DIR} needs to be used.
-# add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG})
+add_custom_target(fife.swig SOURCES ${FIFE_SWIG} ${FIFE_FIFEGUI_SWIG} ${FIFE_FIFEGUI_SWIG_LIB})
 
 #------------------------------------------------------------------------------
 # SWIG WRAPPER Files
@@ -936,8 +936,8 @@ if(BUILD_PYTHON_BINDINGS)
   message(STATUS "Python includes:      ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python module target: Python3::Module")
 
-  foreach(filename ${FIFE_CORE_SWIG})
-    list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
+  foreach(filename ${FIFE_SWIG})
+    list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach()
 endif()
@@ -973,17 +973,17 @@ if(ENABLE_FIFEGUI)
   if(BUILD_PYTHON_BINDINGS)
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
 
-    # Files in FIFE_FCHAN_SWIG_LIB go into CMAKE_SWIG_INCLUSIONS_FCHAN (fifechan module)
-    foreach(filename ${FIFE_FCHAN_SWIG_LIB})
-      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
-      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "src/engine/${filename}")
+    # Files in FIFE_FIFEGUI_SWIG_LIB go into CMAKE_SWIG_INCLUSIONS_FCHAN (fifechan module)
+    foreach(filename ${FIFE_FIFEGUI_SWIG_LIB})
+      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
+      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${filename}")
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
     endforeach()
 
-    # Files in FIFE_FCHAN_SWIG go into CMAKE_SWIG_INCLUSIONS (fife module).
-    foreach(filename ${FIFE_FCHAN_SWIG})
-      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
-      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "src/engine/${filename}")
+    # Files in FIFE_FIFEGUI_SWIG go into CMAKE_SWIG_INCLUSIONS (fife module).
+    foreach(filename ${FIFE_FIFEGUI_SWIG})
+      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
+      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach()
 
@@ -1076,10 +1076,8 @@ if(BUILD_PYTHON_BINDINGS)
     -DSWIG
   )
 
-  set(FIFE_SOURCES ${FIFE_CORE_SRC})
-
   if(ENABLE_FIFEGUI)
-    list(APPEND FIFE_SOURCES ${FIFE_FCHAN_SRC})
+    list(APPEND FIFE_SOURCES ${FIFE_FIFEGUI_SOURCES})
   endif()
 
   set_property(SOURCE "${PROJECT_BINARY_DIR}/fife.i" PROPERTY CPLUSPLUS ON)
@@ -1098,8 +1096,7 @@ if(BUILD_PYTHON_BINDINGS)
 
   target_include_directories(fife_swig PRIVATE
     ${PROJECT_BINARY_DIR}
-    ${PROJECT_SOURCE_DIR}/src/engine
-    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/src/fife
     ${Python3_INCLUDE_DIRS}
   )
 
@@ -1111,7 +1108,7 @@ if(BUILD_PYTHON_BINDINGS)
   endif()
 
   set_target_properties(fife_swig PROPERTIES
-    SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/engine;${PROJECT_SOURCE_DIR}"
+    SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/fife;${PROJECT_SOURCE_DIR}"
   )
 
   if(APPLE)
@@ -1159,13 +1156,13 @@ if(BUILD_PYTHON_BINDINGS)
 
     target_include_directories(fifechan_swig PRIVATE
       ${PROJECT_BINARY_DIR}
-      src/engine
+      src/fife
       ${PROJECT_SOURCE_DIR}
       ${Python3_INCLUDE_DIRS}
     )
 
     set_target_properties(fifechan_swig PROPERTIES
-      SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/engine;${CMAKE_SOURCE_DIR}"
+      SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/fife;${CMAKE_SOURCE_DIR}"
     )
 
     if(APPLE)
@@ -1253,16 +1250,13 @@ if(BUILD_LIBRARY)
 
   target_sources(fife_lib
     PRIVATE
-      ${FIFE_CORE_SRC}
-      ${FIFE_FCHAN_SRC}
+      ${FIFE_SOURCES}
+      ${FIFE_FIFEGUI_SOURCES}
   )
 
-  # TODO is this correct? technically this should be "SOURCE_DIR/include".
   target_include_directories(fife_lib
-    PUBLIC
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-      $<INSTALL_INTERFACE:include>
+    PRIVATE
+      ${PROJECT_SOURCE_DIR}/src/fife
   )
 
   target_compile_definitions(fife_lib PUBLIC
@@ -1321,13 +1315,13 @@ if(BUILD_LIBRARY)
   target_sources(fife
     PUBLIC
       FILE_SET fife_public_headers TYPE HEADERS
-      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
       FILES
         ${FIFE_PUBLIC_HEADERS}
 
     PUBLIC
       FILE_SET generated_headers TYPE HEADERS
-      BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/src/engine
+      BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/src
       FILES
         ${FIFE_VERSION_HEADER}
   )
@@ -1343,10 +1337,33 @@ if(BUILD_LIBRARY)
     VERIFY_INTERFACE_HEADER_SETS ON
   )
 
-  target_include_directories(fife PRIVATE
-    ${PROJECT_SOURCE_DIR}
-    ${PROJECT_BINARY_DIR}
-    src/engine
+  target_link_libraries(fife
+    PUBLIC
+      fife_options
+      ZLIB::ZLIB
+      PNG::PNG
+      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
+      $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
+      Ogg::ogg
+      Vorbis::vorbis
+      Vorbis::vorbisfile
+      Vorbis::vorbisenc
+      OpenAL::OpenAL
+      tinyxml2::tinyxml2
+      utf8cpp::utf8cpp
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
+      $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
+      $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
+      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_sdl3>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_opengl>
+  )
+
+  target_include_directories(fife
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/fife>
+      $<INSTALL_INTERFACE:include>
   )
 
   # Create unique compile PDB per-target to avoid MSVC C1041 conflicts

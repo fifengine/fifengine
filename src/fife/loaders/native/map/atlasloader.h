@@ -105,10 +105,10 @@ namespace FIFE
         private:
             AtlasPtr loadAtlas(std::string const & filename, tinyxml2::XMLElement* atlasElem);
 
-            Model* m_model;
+            Model* m_model [[maybe_unused]]; // TODO: implement model loading from atlas
             VFS* m_vfs;
             ImageManager* m_imageManager;
-            AnimationManager* m_animationManager;
+            AnimationManager* m_animationManager [[maybe_unused]]; // TODO: implement animation loading from atlas
     };
 
     /** convenience function for creating the default fife atlas loader

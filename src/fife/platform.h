@@ -42,28 +42,44 @@
  * When SWIG is used, we set FIFE_API to empty, because we are generating
  * bindings and don't want to export symbols. Also (it seems) Swig doesn't
  * support __declspec(dllexport) or __declspec(dllimport) properly.
+ * If FIFE_API is already defined (e.g., by SWIG's %block), skip redefinition.
  */
+#ifndef FIFE_API
 #if defined(_WIN32)
-    #if defined(FIFE_STATIC)
+    // #pragma message(">>> SETTING: Taking Windows branch")
+    #if defined(SWIG)
+        // #pragma message(">>> SETTING: SWIG")
+        #define FIFE_API
+    #elif defined(FIFE_STATIC)
+        // #pragma message(">>> SETTING: FIFE_STATIC")
         #define FIFE_API
     #elif defined(FIFE_BUILD) || defined(fife_EXPORTS)
+        // #pragma message(">>> SETTING: FIFE_BUILD/fife_EXPORTS")
         #define FIFE_API __declspec(dllexport)
-    #elif defined(SWIG)
-        #define FIFE_API
     #else
+        // #pragma message(">>> SETTING: Windows DLL import")
         #define FIFE_API __declspec(dllimport)
     #endif
 #elif defined(__linux__) || defined(__APPLE__)
     // For Linux/macOS, we only need to use __attribute__ for visibility.
-    #if defined(FIFE_BUILD) || defined(fife_EXPORTS)
+    // #pragma message(">>> SETTING: Taking Linux/macOS branch")
+    #if defined(SWIG)
+        // #pragma message(">>> SETTING: SWIG")
+        #define FIFE_API
+    #elif defined(FIFE_BUILD) || defined(fife_EXPORTS)
+        // #pragma message(">>> SETTING: FIFE_BUILD/fife_EXPORTS")
         #define FIFE_API __attribute__((visibility("default")))
     #elif defined(FIFE_DLL_IMPORT)
+        // #pragma message(">>> SETTING: FIFE_DLL_IMPORT")
         #define FIFE_API __attribute__((visibility("default")))
     #else
+        // #pragma message(">>> SETTING: Linux/macOS default")
         #define FIFE_API __attribute__((visibility("default")))
     #endif
 #else
+    // #pragma message(">>> SETTING: Taking unknown branch")
     #define FIFE_API
 #endif
+#endif // FIFE_API
 
 #endif // FIFE_PLATFORM_H

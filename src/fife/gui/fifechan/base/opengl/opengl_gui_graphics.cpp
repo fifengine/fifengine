@@ -56,15 +56,13 @@ namespace FIFE
         fifeimg->render(Rect(dstX + clip.xOffset, dstY + clip.yOffset, width, height));
     }
 
-    void OpenGLGuiGraphics::drawText(std::string const & text, int32_t x, int32_t y, uint32_t alignment)
+    void OpenGLGuiGraphics::drawText(std::string const & text, int32_t x, int32_t y, fcn::Graphics::Alignment alignment)
     {
         if (mFont == nullptr) {
             throw GuiException("OpenGLGuiGraphics::drawText() - No font set!");
         }
 
-        auto const align = static_cast<fcn::Graphics::Alignment>(alignment);
-
-        switch (align) {
+        switch (alignment) {
         case fcn::Graphics::Alignment::Left:
             mFont->drawString(this, text, x, y);
             break;
@@ -75,7 +73,7 @@ namespace FIFE
             mFont->drawString(this, text, x - mFont->getWidth(text), y);
             break;
         default:
-            FL_WARN(_log, LMsg("OpenGLGuiGraphics::drawText() - ") << "Unknown alignment: " << alignment);
+            FL_WARN(_log, LMsg("OpenGLGuiGraphics::drawText() - ") << "Unknown alignment: " << static_cast<int>(alignment));
             mFont->drawString(this, text, x, y);
         }
     }
