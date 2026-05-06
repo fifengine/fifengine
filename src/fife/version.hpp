@@ -32,8 +32,8 @@ namespace FIFE
      */
     class semantic_version
     {
-    public:
-    // clang-format off
+        public:
+            // clang-format off
 
         /**
          * Major version number.
@@ -48,7 +48,7 @@ namespace FIFE
          */
         int patch = 0;
 
-    // clang-format on
+            // clang-format on
     };
 
     /**
@@ -56,8 +56,8 @@ namespace FIFE
      */
     class app_version
     {
-    public:
-    // clang-format off
+        public:
+            // clang-format off
 
         /**
          * Machine friendly package name.
@@ -100,93 +100,93 @@ namespace FIFE
 
         static constexpr int version_id = (0 * 10000) + (5 * 100) + 0;
 
-        // clang-format on
+            // clang-format on
 
-        /**
-         * --------------------------------------
-         * Getters (c_str() types)
-         * --------------------------------------
-         */
+            /**
+             * --------------------------------------
+             * Getters (c_str() types)
+             * --------------------------------------
+             */
 
-        /**
-         * Get the machine friendly package name.
-         */
-        static constexpr char const* get_name()
-        {
-            return name.data();
-        }
+            /**
+             * Get the machine friendly package name.
+             */
+            static constexpr char const * get_name()
+            {
+                return name.data();
+            }
 
-        /**
-         * Get the textual project version.
-         */
-        static constexpr char const* get_version()
-        {
-            return version.data();
-        }
+            /**
+             * Get the textual project version.
+             */
+            static constexpr char const * get_version()
+            {
+                return version.data();
+            }
 
-        /**
-         * Get the license string for the project.
-         */
-        static constexpr char const* get_license()
-        {
-            return license.data();
-        }
+            /**
+             * Get the license string for the project.
+             */
+            static constexpr char const * get_license()
+            {
+                return license.data();
+            }
 
-        /**
-         * Short description of the project.
-         */
-        static constexpr char const* get_description()
-        {
-            return description.data();
-        }
+            /**
+             * Short description of the project.
+             */
+            static constexpr char const * get_description()
+            {
+                return description.data();
+            }
 
-        /**
-         * Project homepage URL.
-         */
-        static constexpr char const* get_homepage()
-        {
-            return homepage.data();
-        }
+            /**
+             * Project homepage URL.
+             */
+            static constexpr char const * get_homepage()
+            {
+                return homepage.data();
+            }
 
-        /**
-         * Get the copyright notice text.
-         */
-        static constexpr char const* get_copyright()
-        {
-            return copyright.data();
-        }
+            /**
+             * Get the copyright notice text.
+             */
+            static constexpr char const * get_copyright()
+            {
+                return copyright.data();
+            }
 
-        /**
-         * Get the major version number.
-         */
-        static constexpr int get_major()
-        {
-            return semver.major;
-        }
+            /**
+             * Get the major version number.
+             */
+            static constexpr int get_major()
+            {
+                return semver.major;
+            }
 
-        /**
-         * Get the minor version number.
-         */
-        static constexpr int get_minor()
-        {
-            return semver.minor;
-        }
+            /**
+             * Get the minor version number.
+             */
+            static constexpr int get_minor()
+            {
+                return semver.minor;
+            }
 
-        /**
-         * Get the patch version number.
-         */
-        static constexpr int get_patch()
-        {
-            return semver.patch;
-        }
+            /**
+             * Get the patch version number.
+             */
+            static constexpr int get_patch()
+            {
+                return semver.patch;
+            }
 
-        /**
-         * Get pointer to numeric version id.
-         */
-        static constexpr int get_version_id()
-        {
-            return version_id;
-        }
+            /**
+             * Get pointer to numeric version id.
+             */
+            static constexpr int get_version_id()
+            {
+                return version_id;
+            }
     };
 
 } // namespace FIFE

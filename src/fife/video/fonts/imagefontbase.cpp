@@ -93,7 +93,8 @@ namespace FIFE
         return surface;
     }
 
-    void ImageFontBase::setColor([[maybe_unused]] uint8_t r, [[maybe_unused]] uint8_t g, [[maybe_unused]] uint8_t b, [[maybe_unused]] uint8_t a)
+    void ImageFontBase::setColor(
+        [[maybe_unused]] uint8_t r, [[maybe_unused]] uint8_t g, [[maybe_unused]] uint8_t b, [[maybe_unused]] uint8_t a)
     {
     }
 } // namespace FIFE

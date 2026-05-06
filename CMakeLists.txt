@@ -1071,9 +1071,6 @@ if(BUILD_PYTHON_BINDINGS)
     -w473
     -w404
     -w314
-    # Set a SWIG define so that platform.h can unset FIFE_API during SWIG processing.
-    # This allows SWIG to parse headers containing FIFE_API without syntax errors.
-    -DSWIG
   )
 
   if(ENABLE_FIFEGUI)

@@ -76,7 +76,8 @@ namespace FIFE
             mFont->drawString(this, text, x - mFont->getWidth(text), y);
             break;
         default:
-            FL_WARN(_log, LMsg("SdlGuiGraphics::drawText() - ") << "Unknown alignment: " << static_cast<int>(alignment));
+            FL_WARN(
+                _log, LMsg("SdlGuiGraphics::drawText() - ") << "Unknown alignment: " << static_cast<int>(alignment));
             mFont->drawString(this, text, x, y);
         }
     }
