@@ -51,9 +51,25 @@ project(fifengine VERSION ${FIFE_VERSION} LANGUAGES CXX)
 # See version.hpp.in for the replaced tokens.
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/src/engine/version.hpp.in"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/engine/version.hpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/src/engine/version.hpp"
   @ONLY
 )
+
+#-------------------------------------------------------------------
+# CMake Includes
+#-------------------------------------------------------------------
+
+# Project local includes
+include(ShowBuildTargetProperties)
+if(WIN32)
+  # Install runtime DLLs on Windows
+  include(InstallRuntimeDeps)
+endif()
+
+# CMake provided includes
+include(FeatureSummary)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 #------------------------------------------------------------------------------
 # Options
@@ -62,14 +78,48 @@ configure_file (
 option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
-option(ENABLE_FIFEGUI         "Enable Fifechan GUI subsystem"                ON)
-option(ENABLE_LOGGING         "Enable logging"                               ON)
+option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
+option(ENABLE_LOGGING         "Enable Logging"                               ON)
+
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
 option(BUILD_TESTS            "Build C++ tests"                              ON)
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
 # It is not a build option, because it must be set before project().
+
+#------------------------------------------------------------------------------
+# Configure
+#------------------------------------------------------------------------------
+
+# set the default build type to 'Debug' if not specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting default CMAKE_BUILD_TYPE to 'Debug'")
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui, ccmake
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+# Do not allow an in-source-tree build, request an out-of-source-tree build.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+  message(FATAL_ERROR "#Please build outside of the source tree!\n
+                       Make an out-of-source-tree folder for building and run CMake there:\n
+                       mkdir ../out/build; cd ../out/build; cmake ../../fifengine\n
+                       Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
+endif()
+
+# Disable in-source builds and modifications to the source tree.
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+# Create compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Enable color diagnostics (-fcolor-diagnostics).
+SET(CMAKE_COLOR_DIAGNOSTICS ON)
+
+# organize targets into folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #------------------------------------------------------------------------------
 # Global compile definitions as INTERFACE library
@@ -95,49 +145,6 @@ endif()
 if(ENABLE_OPENGL)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL)
 endif()
-
-#-------------------------------------------------------------------
-# CMake Includes
-#-------------------------------------------------------------------
-
-# Project local includes
-include(ShowBuildTargetProperties)
-if(WIN32)
-  # Install runtime DLLs on Windows
-  include(InstallRuntimeDeps)
-endif()
-
-# CMake provided includes
-include(FeatureSummary)
-include(GNUInstallDirs)
-
-#------------------------------------------------------------------------------
-# Configure
-#------------------------------------------------------------------------------
-
-# Create a "Release" build by default.
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-    "Select build type. Options are: 'Debug', 'Release', 'RelWithDebInfo' and 'MinSizeRel'."
-    FORCE
-  )
-  message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
-endif()
-
-# Do not allow an in-source-tree build, request an out-of-source-tree build.
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-  message(FATAL_ERROR "#Please build outside of the source tree!\n
-                       Make an out-of-source-tree folder for building and run CMake there:\n
-                       mkdir ../out/build; cd ../out/build; cmake ../../fifengine\n
-                       Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
-endif()
-
-# Disable in-source builds and modifications to the source tree.
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-
-# organize targets into folders
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #------------------------------------------------------------------------------
 # Compiler Options
@@ -244,24 +251,27 @@ endif()
 message(STATUS "---------------------------------------------------------------------")
 message(STATUS "[ 🛠️ ] Building FIFE v${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
 message(STATUS "---------------------------------------------------------------------")
-message(STATUS "[INFO] Source dir               -> '${PROJECT_SOURCE_DIR}'.")
-message(STATUS "[INFO] Build  dir               -> '${PROJECT_BINARY_DIR}'.")
-message(STATUS "[INFO] Installation path        -> '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-message(STATUS "[INFO] Dependencies folder      -> '${PROJECT_SOURCE_DIR}/out/fife-dependencies/install'.")
-message(STATUS "[INFO] CMAKE_PREFIX_PATH        -> '${CMAKE_PREFIX_PATH}'.")
 message(STATUS "")
-message(STATUS "[INFO] Build shared libraries   -> '${BUILD_SHARED_LIBS}'.")
+message(STATUS "[INFO] Source dir                  -> '${PROJECT_SOURCE_DIR}'.")
+message(STATUS "[INFO] Build dir                   -> '${PROJECT_BINARY_DIR}'.")
+message(STATUS "[INFO] Installation path           -> '${CMAKE_INSTALL_PREFIX}'")
+message(STATUS "                                      To change the installation path set -DCMAKE_INSTALL_PREFIX=<path>.")
 message(STATUS "")
-message(STATUS "[INFO] Enable OpenGL support               -> '${ENABLE_OPENGL}'")
-message(STATUS "[INFO] Enable Fifechan GUI subsystem       -> '${ENABLE_FIFEGUI}'")
-message(STATUS "[INFO] Enable logging                      -> '${ENABLE_LOGGING}'")
-message(STATUS "[INFO] Build the python extension module   -> '${BUILD_PYTHON_BINDINGS}'")
-message(STATUS "[INFO] Build C++ library                   -> '${BUILD_LIBRARY}'")
-message(STATUS "[INFO] Build C++ tests                     -> '${BUILD_TESTS}'")
+message(STATUS "[INFO] Dependencies folder         -> '${PROJECT_SOURCE_DIR}/out/fife-dependencies/install'.")
+message(STATUS "[INFO] CMAKE_PREFIX_PATH           -> '${CMAKE_PREFIX_PATH}'.")
 message(STATUS "")
-message(STATUS "[INFO] CMake version            -> '${CMAKE_VERSION}'.")
-message(STATUS "[INFO] CXX Compiler ID          -> '${CMAKE_CXX_COMPILER_ID}'.")
-message(STATUS "[INFO] CXX Compiler Flags       -> '${CMAKE_CXX_FLAGS}'.")
+message(STATUS "[INFO] Build shared libraries      -> '${BUILD_SHARED_LIBS}'.")
+message(STATUS "")
+message(STATUS "[INFO] Enable OpenGL support       -> '${ENABLE_OPENGL}'")
+message(STATUS "[INFO] Enable FifeGUI subsystem    -> '${ENABLE_FIFEGUI}'")
+message(STATUS "[INFO] Enable logging              -> '${ENABLE_LOGGING}'")
+message(STATUS "[INFO] Build the Python bindings   -> '${BUILD_PYTHON_BINDINGS}'")
+message(STATUS "[INFO] Build C++ library           -> '${BUILD_LIBRARY}'")
+message(STATUS "[INFO] Build C++ tests             -> '${BUILD_TESTS}'")
+message(STATUS "")
+message(STATUS "[INFO] CMake version               -> '${CMAKE_VERSION}'.")
+message(STATUS "[INFO] CXX Compiler ID             -> '${CMAKE_CXX_COMPILER_ID}'.")
+message(STATUS "[INFO] CXX Compiler Flags          -> '${CMAKE_CXX_FLAGS}'.")
 message(STATUS "---------------------------------------------------------------------")
 
 #------------------------------------------------------------------------------
@@ -416,7 +426,12 @@ source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 #------------------------------------------------------------------------------
 
 set(
-  FIFE_CORE_HDR
+  FIFE_VERSION_HEADER
+  "${CMAKE_CURRENT_BINARY_DIR}/src/engine/version.hpp"
+)
+
+set(
+  FIFE_CORE_HEADERS
   src/engine/platform.h
   src/engine/modules.h
   src/engine/audio/actionaudio.h
@@ -592,7 +607,7 @@ set(
 )
 
 set(
-  FIFE_FCHAN_HDR
+  FIFE_FIFEGUI_HEADERS
   src/engine/gui/fifechan/fifechanmanager.h
   src/engine/gui/fifechan/base/gui_font.h
   src/engine/gui/fifechan/base/gui_image.h
@@ -614,12 +629,12 @@ set(
 # Source Groups for Header Files
 #------------------------------------------------------------------------------
 
-source_group("fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
+source_group("fife.core"                FILES ${FIFE_CORE_HEADERS})
+source_group("fife.core.gui.fifechan"   FILES ${FIFE_FIFEGUI_HEADERS})
 
 add_custom_target(fife.headers SOURCES
-    ${FIFE_CORE_HDR}
-    ${FIFE_FCHAN_HDR}
+    ${FIFE_CORE_HEADERS}
+    ${FIFE_FIFEGUI_HEADERS}
 )
 
 #------------------------------------------------------------------------------
@@ -781,6 +796,9 @@ endif()
 # For all packages without CMake config files:
 # We try a quiet find_package first, this will fail and Package_FOUND
 # will be false, then we try to find it using pkg-config.
+#------------------------------------------------------------------------------
+# Yes, looking at you upstream 💩!
+#------------------------------------------------------------------------------
 
 if(UNIX)
 
@@ -833,6 +851,8 @@ endif()
 
 #------------------------------------------------------------------------------
 # Define CMake Target fallbacks for dependencies without CMake config files.
+#------------------------------------------------------------------------------
+# Yes, looking at you upstream 💩!
 #------------------------------------------------------------------------------
 
 # Vorvis:vorbis target fallback
@@ -928,7 +948,7 @@ if(ENABLE_FIFEGUI)
     find_package(fifechan COMPONENTS opengl REQUIRED)
   endif()
 
-  # guard: honor BUILD_SHARED_LIBS, but fail early when shared builds are
+  # Guard: honor BUILD_SHARED_LIBS, but fail early when shared builds are
   # incompatible with static-only fifechan archives on Linux.
   if(UNIX AND NOT APPLE AND BUILD_SHARED_LIBS)
     get_target_property(FIFECHAN_IMPORTED_LOCATION_RELEASE fifechan::fifechan IMPORTED_LOCATION_RELEASE)
@@ -1216,155 +1236,47 @@ if(BUILD_PYTHON_BINDINGS)
 endif(BUILD_PYTHON_BINDINGS)
 
 #------------------------------------------------------------------------------
-# Build the fifengine C++ library
+# Build the fifengine C++ library (object library)
 #------------------------------------------------------------------------------
 
 if(BUILD_LIBRARY)
 
   # Create object library with all sources
-  add_library(fifengine_lib OBJECT ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
-  add_library(fife::fifengine_lib ALIAS fifengine_lib)
-  set_target_properties(fifengine_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  add_library(fife_lib OBJECT)
+  add_library(fife::fife_lib ALIAS fife_lib)
 
-  # Now fife just wraps the object library
-  # Respects BUILD_SHARED_LIBS (ON=SHARED, OFF=STATIC)
-  if(BUILD_SHARED_LIBS)
-    add_library(fife SHARED $<TARGET_OBJECTS:fifengine_lib>)
-  else()
-    add_library(fife STATIC $<TARGET_OBJECTS:fifengine_lib>)
-  endif()
+  set_target_properties(fife_lib PROPERTIES
+    CXX_STANDARD              20
+    CXX_STANDARD_REQUIRED     ON
+    POSITION_INDEPENDENT_CODE ON
+  )
 
-  # Set compile definitions based on library type
-  # When shared: define FIFE_BUILD (for Windows dllexport)
-  # When static: define FIFE_STATIC
-  target_compile_definitions(fifengine_lib PUBLIC
+  target_sources(fife_lib
+    PRIVATE
+      ${FIFE_CORE_SRC}
+      ${FIFE_FCHAN_SRC}
+  )
+
+  # TODO is this correct? technically this should be "SOURCE_DIR/include".
+  target_include_directories(fife_lib
+    PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+      $<INSTALL_INTERFACE:include>
+  )
+
+  target_compile_definitions(fife_lib PUBLIC
     $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:FIFE_STATIC>
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
   )
 
-  # Link dependencies (objects already included via $<TARGET_OBJECTS:fifengine_lib>)
-  target_link_libraries(fife PRIVATE
-    fife_options
-    ZLIB::ZLIB
-    PNG::PNG
-    $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
-    $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
-    Ogg::ogg
-    Vorbis::vorbis
-    Vorbis::vorbisfile
-    Vorbis::vorbisenc
-    OpenAL::OpenAL
-    tinyxml2::tinyxml2
-    utf8cpp::utf8cpp
-    SDL3::SDL3
-    $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
-    $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
-  )
-
-  # Apply settings
-  target_include_directories(fifengine_lib PRIVATE
-    ${PROJECT_BINARY_DIR}
-    src/engine
-    ${PROJECT_SOURCE_DIR}
-  )
-
-  target_link_libraries(fifengine_lib PRIVATE
-    fife_options
-    SDL3::SDL3
-    $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
-    $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
-    OpenAL::OpenAL
-    ZLIB::ZLIB
-    PNG::PNG
-    $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
-    $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
-    Ogg::ogg
-    Vorbis::vorbis
-    Vorbis::vorbisfile
-    Vorbis::vorbisenc
-    tinyxml2::tinyxml2
-    utf8cpp::utf8cpp
-    $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
-  )
-
-  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
-    target_link_libraries(fifengine_lib PRIVATE fifechan::fifechan_opengl)
-  endif()
-
-  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
-    target_link_libraries(fifengine_lib PRIVATE fifechan::fifechan_sdl3)
-  endif()
-
-  # Visibility settings for object library
-  set_target_properties(fifengine_lib PROPERTIES
-    CXX_VISIBILITY_PRESET "hidden"
-    VISIBILITY_INLINE_NEW ON
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-  )
-
-
-  # These visibility and export settings are ignored on STATIC builds.
-  set_target_properties(fife PROPERTIES
-    CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN ON
-    # Windows fallback: exports all symbols not explicitly hidden.
-    # TODO: remove once all FIFE_API annotations are verified.
-    #       Verify with: dumpbin /exports path\\to\\fife.dll
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-  )
-
-  target_include_directories(fife PRIVATE
-    ${PROJECT_BINARY_DIR}
-    src/engine
-    ${PROJECT_SOURCE_DIR}
-  )
-
-  # Provide a namespace alias for the library (fife::fife)
-  add_library(fife::fife ALIAS fife)
-
-  # Build conditional file lists for target_sources
-  set(FIFE_PUBLIC_HEADERS ${FIFE_CORE_HDR})
-  if(ENABLE_FIFEGUI)
-    list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_FCHAN_HDR})
-  endif()
-
-  # define public interface for the library
-  target_sources(fife
+  target_link_libraries(fife_lib
     PUBLIC
-      FILE_SET fife_public_headers TYPE HEADERS
-      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
-      FILES
-        ${FIFE_PUBLIC_HEADERS}
-  )
-
-  set_target_properties(fife PROPERTIES
-    VERSION                ${FIFE_VERSION}
-    SOVERSION              ${FIFE_VERSION}
-  )
-
-  # Create unique compile PDB per-target to avoid MSVC C1041 conflicts
-  # TODO install step is still missing
-  if(MSVC)
-    set_target_properties(fife PROPERTIES
-      MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>"
-      COMPILE_PDB_NAME "fife_compile_%p"
-      COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/compile_pdbs/$<CONFIG>"
-  )
-  endif()
-
-  show_build_target_properties(fife)
-
-  # Enable /FS to allow multiple cl.exe instances to safely write PDBs
-  if(MSVC)
-    target_compile_options(fife PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/FS>)
-  endif()
-
-  target_link_libraries(fife
-    PRIVATE
       fife_options
       ZLIB::ZLIB
       PNG::PNG
-      GLEW::GLEW
+      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
+      $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
       Ogg::ogg
       Vorbis::vorbis
       Vorbis::vorbisfile
@@ -1375,38 +1287,90 @@ if(BUILD_LIBRARY)
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
       $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,SDL3_image::SDL3_image-static>
-      $<TARGET_NAME_IF_EXISTS:SDL3_ttf::SDL3_ttf>
-  )
-
-  target_link_libraries(fife
-    PRIVATE
+      $<IF:$<TARGET_EXISTS:SDL3_ttf::SDL3_ttf>,SDL3_ttf::SDL3_ttf,SDL3_ttf::SDL3_ttf-static>
       $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
-
-      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
-      $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_sdl3>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan_opengl>
   )
 
-  # Fifechan + OpenGL
-  # keep if/elseif for clarity, generator expressions make it hard to read otherwise
-  if(ENABLE_FIFEGUI AND ENABLE_OPENGL)
-    if(TARGET fifechan::fifechan_opengl)
-      target_link_libraries(fife PRIVATE fifechan::fifechan_opengl)
-    endif()
+  if(ENABLE_FIFEGUI AND ENABLE_OPENGL AND TARGET fifechan::fifechan_opengl)
+    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_opengl)
   endif()
 
+  if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
+    target_link_libraries(fife_lib PRIVATE fifechan::fifechan_sdl3)
+  endif()
+
+#------------------------------------------------------------------------------
+# FifeGUI core library (shared or static)
+#------------------------------------------------------------------------------
+
+  add_library(fife $<TARGET_OBJECTS:fife_lib>)
+
+  # Provide a namespace alias for the library (fife::fife)
+  add_library(fife::fife ALIAS fife)
+
+  # expand conditionally outside target_sources(),
+  # because generator expressions doesnt work there. 💩
+  set(FIFE_PUBLIC_HEADERS ${FIFE_CORE_HEADERS})
   if(ENABLE_FIFEGUI)
-    if(TARGET fifechan::fifechan_sdl3)
-      target_link_libraries(fife PRIVATE fifechan::fifechan_sdl3)
-    endif()
+    list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_FIFEGUI_HEADERS})
+  endif()
+
+  # Define public interface for the library
+  target_sources(fife
+    PUBLIC
+      FILE_SET fife_public_headers TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
+      FILES
+        ${FIFE_PUBLIC_HEADERS}
+
+    PUBLIC
+      FILE_SET generated_headers TYPE HEADERS
+      BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/src/engine
+      FILES
+        ${FIFE_VERSION_HEADER}
+  )
+
+  set_target_properties(fife PROPERTIES
+    VERSION                ${FIFE_VERSION}
+    SOVERSION              ${FIFE_VERSION}
+    CLEAN_DIRECT_OUTPUT    1                        # Allow creating static and shared libraries without conflict
+    OUTPUT_NAME            ${PROJECT_NAME}          # Avoid conflicts between library and binary target names
+    LINKER_LANGUAGE        CXX
+    # Verify that all headers in the header set can be included on their own.
+    # This creates the target: fife_verify_interface_header_sets
+    VERIFY_INTERFACE_HEADER_SETS ON
+  )
+
+  target_include_directories(fife PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_BINARY_DIR}
+    src/engine
+  )
+
+  # Create unique compile PDB per-target to avoid MSVC C1041 conflicts
+  # TODO install step is still missing
+  if(MSVC)
+    set_target_properties(fife PROPERTIES
+      MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>"
+      COMPILE_PDB_NAME "fife_compile_%p"
+      COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/compile_pdbs/$<CONFIG>"
+    )
+
+    # Enable /FS to allow multiple cl.exe instances to safely write PDBs.
+    target_compile_options(fife PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/FS>)
   endif()
 
   if(BUILD_TESTS)
-    # disable adding CTest build targets like "NightlyStart" (before ctest include)
+    # Disable adding CTest build targets like "NightlyStart".
     set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 
     include(CTest)
     add_subdirectory(tests/core_tests)
   endif()
+
+  show_build_target_properties(fife)
 
   # scikit-build-core wheel builds bundle runtime DLLs via delvewheel in CI.
   if(SKBUILD AND SKBUILD_STATE STREQUAL "wheel")
@@ -1422,6 +1386,9 @@ if(BUILD_LIBRARY)
      FILE_SET fife_public_headers
      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 
+     FILE_SET generated_headers
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+
      PERMISSIONS
       OWNER_READ OWNER_WRITE OWNER_EXECUTE
       GROUP_READ GROUP_EXECUTE
@@ -1430,9 +1397,6 @@ if(BUILD_LIBRARY)
      # Experimental!
      # EXPORT_PACKAGE_DEPENDENCIES
     )
-
-    # TODO check if this install folder is correct
-    install(FILES src/engine/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife)
   endif()
 
 endif(BUILD_LIBRARY)
