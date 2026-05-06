@@ -243,6 +243,7 @@ namespace FIFE
         // Dispatch only if it's not a controller, SDL sends events twice.
         // Only exception for added and removed events.
         Joystick* joy = getJoystick(joyevt.getInstanceId());
+
         dispatch = dispatch && (!joy->isController() ||
                                 (event.type == SDL_EVENT_JOYSTICK_REMOVED || event.type == SDL_EVENT_JOYSTICK_ADDED));
         if (dispatch) {

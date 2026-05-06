@@ -279,12 +279,14 @@ jobs:
               job_name: "Linux | Clang22 | Debug",
               image_version: "trixie-with-vulkansdk-20260503",
               preset: "clang22-x64-linux-dbg",
+              triplet: x64-linux,
               artifact_suffix: "clang22-x64-dbg"
             }
           - {
               job_name: "Linux | Clang22 | Coverage",
               image_version: "trixie-with-vulkansdk-20260503",
               preset: "clang22-x64-linux-dbg-cov",
+              triplet: x64-linux,
               artifact_suffix: "clang22-x64-cov"
             }
 
@@ -328,7 +330,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev alsa-topology-conf libasound2-data
+            libglu1-mesa-dev alsa-topology-conf libasound2-data alsa-utils
 
       # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
