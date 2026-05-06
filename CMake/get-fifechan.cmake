@@ -22,7 +22,7 @@ if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
   message(FATAL_ERROR "DEPENDENCY_DOWNLOAD_DIR must be defined before including get-fifechan.cmake")
 endif()
 
-if(WIN32 AND MSVC AND NOT FIFE_DEPENDENCY_BUILD_FROM_SOURCE)
+if(WIN32 AND MSVC AND NOT FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE)
 
     # === On Windows download the pre-compiled development binaries ===
 
