@@ -1153,50 +1153,61 @@ if(BUILD_PYTHON_BINDINGS)
   endif(ENABLE_FIFEGUI)
 
   #---------------------------------------------------------------------------------
-  # Install Python package into a prefix-relative site-packages path by default.
-  # This keeps `cmake --install --prefix <dir>` working on CI and local builds.
+  # scikit-build-core Installation Paths
+  #
+  # We install the Python package into the scikit-build-core platlib directory.
+  # Outside scikit-build-core, compute a prefix-relative fallback to
+  # keep `cmake --install --prefix <dir>` working for local/dev installs.
+  #
+  # See https://scikit-build-core.readthedocs.io/en/latest/guide/cmakelists.html#install-directories
   #---------------------------------------------------------------------------------
 
-  if(NOT DEFINED PYTHON_SITE_PACKAGES)
-    execute_process(
-      COMMAND ${Python3_EXECUTABLE} -c "import os,sysconfig; p='/__cmake_prefix__'; pure=sysconfig.get_path('purelib', vars={'base': p, 'platbase': p}); print(os.path.relpath(pure, p), end='')"
-      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
-    )
-    # Slash-Fix: CMake would create a warning when using this variable in FILES or DIRECTORY without changing it.
-    file(TO_CMAKE_PATH "${PYTHON_SITE_PACKAGES}" PYTHON_SITE_PACKAGES)
+  if(SKBUILD AND DEFINED SKBUILD_PLATLIB_DIR)
+    set(FIFE_PY_INSTALL_DIR "${SKBUILD_PLATLIB_DIR}/fife")
+  else()
+    if(NOT DEFINED PYTHON_SITE_PACKAGES)
+      execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "import os,sysconfig; p='/__cmake_prefix__'; pure=sysconfig.get_path('purelib', vars={'base': p, 'platbase': p}); print(os.path.relpath(pure, p), end='')"
+        OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+      )
+      # Slash-Fix
+      file(TO_CMAKE_PATH "${PYTHON_SITE_PACKAGES}" PYTHON_SITE_PACKAGES)
+    endif()
+    set(FIFE_PY_INSTALL_DIR "${PYTHON_SITE_PACKAGES}/fife")
   endif()
 
-  message(STATUS "Python install directory (prefix-relative) is '${PYTHON_SITE_PACKAGES}/fife'.")
+  message(STATUS "Python install directory is '${FIFE_PY_INSTALL_DIR}'.")
 
-  # install pythonized fife (only if targets/files exist)
+  # Install pythonized fife
   if(TARGET fife_swig)
-    install(TARGETS fife_swig DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-    install(FILES ${PROJECT_BINARY_DIR}/fife.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife OPTIONAL)
+    install(TARGETS fife_swig DESTINATION ${FIFE_PY_INSTALL_DIR})
+    install(FILES ${PROJECT_BINARY_DIR}/fife.py DESTINATION ${FIFE_PY_INSTALL_DIR} OPTIONAL)
   endif()
-  install(FILES src/python/fife/__init__.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES src/python/fife/__init__.py DESTINATION ${FIFE_PY_INSTALL_DIR})
 
-  # copy all files/folders from the extension folder
-  # but exclude extension folders of the optional dependencies: pychan
+  # Install all files/folders from the extension folder
+  # but exclude folders of the optional dependencies: pychan
   install(
     DIRECTORY src/python/fife/extensions/
-    DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions
+    DESTINATION ${FIFE_PY_INSTALL_DIR}/extensions
     PATTERN "extensions/pychan" EXCLUDE
     PATTERN "extensions/*"
   )
 
   if(ENABLE_FIFEGUI)
-    # install pychan - fife's extension for fifechan
+    # Install pychan - fife's extension for fifechan
     install(
       DIRECTORY src/python/fife/extensions/pychan/
-      DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/pychan
+      DESTINATION ${FIFE_PY_INSTALL_DIR}/extensions/pychan
     )
 
-    # install pythonized fifechan (only if swig target exists)
+    # Install pythonized fifechan
     if(TARGET fifechan_swig)
-      install(TARGETS fifechan_swig DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-      install(FILES ${PROJECT_BINARY_DIR}/fifechan.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife OPTIONAL)
+      install(TARGETS fifechan_swig DESTINATION ${FIFE_PY_INSTALL_DIR})
+      install(FILES ${PROJECT_BINARY_DIR}/fifechan.py DESTINATION ${FIFE_PY_INSTALL_DIR} OPTIONAL)
     endif()
   endif(ENABLE_FIFEGUI)
+
 endif(BUILD_PYTHON_BINDINGS)
 
 #------------------------------------------------------------------------------
@@ -1375,30 +1386,43 @@ if(BUILD_LIBRARY)
 
   show_build_target_properties(fife)
 
-  # scikit-build-core wheel builds bundle runtime DLLs via delvewheel in CI.
+  # For wheel builds, install runtime next to Python modules so loader and
+  # delvewheel can resolve fifengine.dll without relying on temp build paths.
   if(SKBUILD AND SKBUILD_STATE STREQUAL "wheel")
-    message(STATUS "Skipping C++ library installation to avoid duplicate wheel content (SKBUILD_STATE=wheel).")
+    if(DEFINED SKBUILD_PLATLIB_DIR)
+      set(_fife_runtime_wheel_dir "${SKBUILD_PLATLIB_DIR}/fife")
+    elseif(DEFINED FIFE_PY_INSTALL_DIR)
+      set(_fife_runtime_wheel_dir "${FIFE_PY_INSTALL_DIR}")
+    else()
+      message(FATAL_ERROR "Wheel build requires SKBUILD_PLATLIB_DIR or FIFE_PY_INSTALL_DIR for runtime install destination.")
+    endif()
+
+    install(TARGETS fife
+      RUNTIME DESTINATION ${_fife_runtime_wheel_dir}
+      LIBRARY DESTINATION ${_fife_runtime_wheel_dir}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
   else()
-   install(TARGETS fife
-     EXPORT fife-targets
+    install(TARGETS fife
+      EXPORT fife-targets
 
-     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 
-     FILE_SET fife_public_headers
-     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      FILE_SET fife_public_headers
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 
-     FILE_SET generated_headers
-     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      FILE_SET generated_headers
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 
-     PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
+      PERMISSIONS
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE
 
-     # Experimental!
-     # EXPORT_PACKAGE_DEPENDENCIES
+      # Experimental!
+      # EXPORT_PACKAGE_DEPENDENCIES
     )
   endif()
 

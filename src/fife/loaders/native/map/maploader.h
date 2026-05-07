@@ -120,7 +120,8 @@ namespace FIFE
      * deleting the object returned from this function is the
      * responsibility of the caller
      */
-    FIFE_API MapLoader* createDefaultMapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
+    FIFE_API MapLoader* createDefaultMapLoader(
+        Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
 } // namespace FIFE
 
 #endif
