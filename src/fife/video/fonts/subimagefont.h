@@ -23,7 +23,7 @@ namespace FIFE
     /** Imagefont that is able to read glyphs from single image sheet, see e.g.
      *  Fifechan imagefontcollection (google for it)
      */
-    class /*FIFE_API*/ SubImageFont : public ImageFontBase
+    class FIFE_API SubImageFont : public ImageFontBase
     {
         public:
             /**

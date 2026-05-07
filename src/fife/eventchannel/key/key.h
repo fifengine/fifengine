@@ -20,7 +20,7 @@ namespace FIFE
 
     /** Represents a key.
      */
-    class /*FIFE_API*/ Key
+    class FIFE_API Key
     {
         public:
             /** Codes for different keys

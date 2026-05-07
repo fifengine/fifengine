@@ -26,7 +26,7 @@ namespace fcn
      *
      * @author Przemyslaw Grzywacz
      */
-    class /*FIFE_API*/ UTF8StringEditor
+    class FIFE_API UTF8StringEditor
     {
         public:
             /**

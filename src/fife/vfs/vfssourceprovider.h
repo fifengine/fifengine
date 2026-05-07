@@ -30,7 +30,7 @@ namespace FIFE
      * @see VFSSource
      * @see VFSSourceFactory
      */
-    class /*FIFE_API*/ VFSSourceProvider
+    class FIFE_API VFSSourceProvider
     {
         public:
             explicit VFSSourceProvider(std::string name);

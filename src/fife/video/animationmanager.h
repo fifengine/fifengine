@@ -34,7 +34,7 @@ namespace FIFE
      *
      */
 
-    class /*FIFE_API*/ AnimationManager : public IResourceManager, public DynamicSingleton<AnimationManager>
+    class FIFE_API AnimationManager : public IResourceManager, public DynamicSingleton<AnimationManager>
     {
         public:
             /** Default constructor.

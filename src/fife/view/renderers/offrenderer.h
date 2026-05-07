@@ -22,7 +22,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class /*FIFE_API*/ OffRendererElementInfo
+    class FIFE_API OffRendererElementInfo
     {
         public:
             virtual void render(RenderBackend* renderbackend)
@@ -32,7 +32,7 @@ namespace FIFE
             virtual ~OffRendererElementInfo() = default;
     };
 
-    class /*FIFE_API*/ OffRendererLineInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererLineInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -47,7 +47,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ OffRendererPointInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererPointInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -61,7 +61,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ OffRendererTriangleInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererTriangleInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -78,7 +78,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ OffRendererQuadInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererQuadInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -104,7 +104,7 @@ namespace FIFE
             uint8_t m_alpha;
     };
 
-    class /*FIFE_API*/ OffRendererVertexInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererVertexInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -120,7 +120,7 @@ namespace FIFE
             uint8_t m_alpha;
     };
 
-    class /*FIFE_API*/ OffRendererImageInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererImageInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -131,7 +131,7 @@ namespace FIFE
             Point m_anchor;
             ImagePtr m_image;
     };
-    class /*FIFE_API*/ OffRendererAnimationInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererAnimationInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -144,7 +144,7 @@ namespace FIFE
             uint32_t m_start_time;
             float m_time_scale;
     };
-    class /*FIFE_API*/ OffRendererTextInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererTextInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -156,7 +156,7 @@ namespace FIFE
             IFont* m_font;
             std::string m_text;
     };
-    class /*FIFE_API*/ OffRendererResizeInfo : public OffRendererElementInfo
+    class FIFE_API OffRendererResizeInfo : public OffRendererElementInfo
     {
         public:
             void render(RenderBackend* renderbackend) override;
@@ -170,7 +170,7 @@ namespace FIFE
             int32_t m_height;
     };
 
-    class /*FIFE_API*/ OffRenderer
+    class FIFE_API OffRenderer
     {
         public:
             /** constructor.

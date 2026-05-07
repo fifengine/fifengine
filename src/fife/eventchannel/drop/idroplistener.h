@@ -24,7 +24,7 @@ namespace FIFE
      * To be able to listen for drop events you must make a class which inherits
      * from this class and implements its functions.
      */
-    class /*FIFE_API*/ IDropListener : public IListener
+    class FIFE_API IDropListener : public IListener
     {
         public:
             /** Called on a file drop event.

@@ -30,7 +30,7 @@ namespace fcn
      * Or as fallback the maximal size parameter is used.
      * If a label is clicked an action event will be sent to all action listener's of the label.
      */
-    class /*FIFE_API*/ ClickLabel :
+    class FIFE_API ClickLabel :
         public Widget,
         public MouseListener,
         public KeyListener,

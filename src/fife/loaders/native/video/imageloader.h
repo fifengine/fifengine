@@ -17,7 +17,7 @@ namespace FIFE
 {
     /** ImageLoader for some basic formats like jpeg, png etc.
      */
-    class /*FIFE_API*/ ImageLoader : public IResourceLoader
+    class FIFE_API ImageLoader : public IResourceLoader
     {
         public:
             ImageLoader() = default;

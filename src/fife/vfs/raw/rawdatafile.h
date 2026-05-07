@@ -23,7 +23,7 @@ namespace FIFE
      * @see VFSHostSystem
      * @see RawDataSource
      */
-    class /*FIFE_API*/ RawDataFile : public RawDataSource
+    class FIFE_API RawDataFile : public RawDataSource
     {
 
         public:

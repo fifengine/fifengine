@@ -29,7 +29,7 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    class /*FIFE_API*/ AnimationLoader : public IAnimationLoader
+    class FIFE_API AnimationLoader : public IAnimationLoader
     {
         public:
             AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);

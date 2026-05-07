@@ -23,7 +23,7 @@ namespace FIFE
 
     class Instance;
 
-    class /*FIFE_API*/ InstanceTree : public FifeClass
+    class FIFE_API InstanceTree : public FifeClass
     {
         public:
             static int32_t const MIN_TREE_SIZE = 2;

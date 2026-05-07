@@ -23,7 +23,7 @@ namespace FIFE
 {
     class ActionAudio;
 
-    class /*FIFE_API*/ Action : public FifeClass
+    class FIFE_API Action : public FifeClass
     {
         public:
             /** Constructor

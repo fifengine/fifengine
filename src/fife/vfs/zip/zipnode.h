@@ -20,7 +20,7 @@
 namespace FIFE
 {
 
-    struct /*FIFE_API*/ ZipContentType
+    struct FIFE_API ZipContentType
     {
             enum Enum : uint8_t
             {
@@ -30,7 +30,7 @@ namespace FIFE
             };
     };
 
-    struct /*FIFE_API*/ ZipEntryData
+    struct FIFE_API ZipEntryData
     {
             /** constructor
              */
@@ -46,7 +46,7 @@ namespace FIFE
     // convenience typedef
     class ZipNode;
     using ZipNodeContainer = std::vector<ZipNode*>;
-    class /*FIFE_API*/ ZipNode
+    class FIFE_API ZipNode
     {
         public:
             /** constructor for creating a node

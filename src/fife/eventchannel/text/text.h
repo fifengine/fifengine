@@ -19,7 +19,7 @@ namespace FIFE
 
     /** Represents a text.
      */
-    class /*FIFE_API*/ Text
+    class FIFE_API Text
     {
         public:
             /** Constructor

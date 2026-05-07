@@ -31,7 +31,7 @@ namespace FIFE
      *  Having this implemented via callback mechanism should speed up the rendering a bit
      *  (e.g. no need to sort pipeline order per each frame)
      */
-    class /*FIFE_API*/ IRendererListener
+    class FIFE_API IRendererListener
     {
         public:
             virtual ~IRendererListener() = default;
@@ -48,7 +48,7 @@ namespace FIFE
     /** Interface to class owning the renderers
      * Used to get correct subclass of renderer in scripting side (via renderer's static method)
      */
-    class /*FIFE_API*/ IRendererContainer
+    class FIFE_API IRendererContainer
     {
         public:
             virtual ~IRendererContainer() = default;
@@ -61,7 +61,7 @@ namespace FIFE
     /** Base class for all view renderers
      * View renderer renders one aspect of the view shown on screen
      */
-    class /*FIFE_API*/ RendererBase
+    class FIFE_API RendererBase
     {
         public:
             /** Constructor

@@ -22,7 +22,7 @@ namespace FIFE
 
     /** Interface class between Instance / ActionAudio and SoundEmitter.
      */
-    class /*FIFE_API*/ SoundSource
+    class FIFE_API SoundSource
     {
         public:
             explicit SoundSource(Instance* instance);

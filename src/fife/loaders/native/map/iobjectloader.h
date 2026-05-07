@@ -23,7 +23,7 @@ namespace FIFE
     /**
      * Interface class that all object loaders should derive from
      */
-    class /*FIFE_API*/ IObjectLoader
+    class FIFE_API IObjectLoader
     {
         public:
             virtual ~IObjectLoader() = default;

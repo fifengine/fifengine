@@ -34,7 +34,7 @@ namespace FIFE
      *
      */
 
-    class /*FIFE_API*/ ImageManager : public IResourceManager, public DynamicSingleton<ImageManager>
+    class FIFE_API ImageManager : public IResourceManager, public DynamicSingleton<ImageManager>
     {
         public:
             /** Default constructor.

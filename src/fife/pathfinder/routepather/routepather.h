@@ -27,7 +27,7 @@ namespace FIFE
     class RoutePatherSearch;
     class Route;
 
-    class /*FIFE_API*/ RoutePather : public IPather
+    class FIFE_API RoutePather : public IPather
     {
         public:
             /** Constructor.

@@ -22,7 +22,7 @@
 namespace FIFE
 {
 
-    class /*FIFE_API*/ AtlasBlock
+    class FIFE_API AtlasBlock
     {
         public:
             uint32_t page;
@@ -79,7 +79,7 @@ namespace FIFE
             void merge(AtlasBlock const & rect);
     };
 
-    class /*FIFE_API*/ AtlasPage
+    class FIFE_API AtlasPage
     {
         public:
             AtlasPage(uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t page) :
@@ -117,7 +117,7 @@ namespace FIFE
             Blocks blocks;
     };
 
-    class /*FIFE_API*/ AtlasBook
+    class FIFE_API AtlasBook
     {
         public:
             AtlasBook(uint32_t pageWidth, uint32_t pageHeight, uint32_t pixelSize = 4) :

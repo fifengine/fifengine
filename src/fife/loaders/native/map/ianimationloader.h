@@ -22,7 +22,7 @@ namespace FIFE
     /**
      * Interface class that all animation loaders should derive from
      */
-    class /*FIFE_API*/ IAnimationLoader
+    class FIFE_API IAnimationLoader
     {
         public:
             virtual ~IAnimationLoader() = default;

@@ -13,6 +13,7 @@
 #include <cmath>
 #include <limits>
 #include <numbers>
+
 // 3rd party library includes
 
 // FIFE includes
@@ -59,7 +60,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <class numT>
-    struct /*FIFE_API*/ float_traits
+    struct float_traits
     {
     };
 
@@ -238,7 +239,7 @@ namespace FIFE
      * @ingroup utils
      */
     template <typename T>
-    class /*FIFE_API*/ Math
+    class Math
     {
         public:
             /**

@@ -20,7 +20,7 @@ namespace FIFE
 {
     /**  Base Listener
      */
-    class /*FIFE_API*/ IListener
+    class FIFE_API IListener
     {
         public:
             /** Indicates if the listener is active.

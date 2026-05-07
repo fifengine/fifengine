@@ -22,7 +22,7 @@ namespace FIFE
      * QuadTree Node
      */
     template <typename DataType, int32_t MinimumSize = 128>
-    class /*FIFE_API*/ QuadNode
+    class FIFE_API QuadNode
     {
         protected:
             QuadNode* m_parent;
@@ -163,7 +163,7 @@ namespace FIFE
      * to any object size put into the data structure.
      */
     template <typename DataType, int32_t MinimumSize = 128>
-    class /*FIFE_API*/ QuadTree
+    class FIFE_API QuadTree
     {
         public:
             using Node = QuadNode<DataType, MinimumSize>;

@@ -24,7 +24,7 @@ namespace FIFE
     class SoundFilter;
     class SoundEmitter;
 
-    class /*FIFE_API*/ SoundEffectManager
+    class FIFE_API SoundEffectManager
     {
         public:
             /** Constructor

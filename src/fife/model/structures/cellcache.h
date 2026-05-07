@@ -32,7 +32,7 @@ namespace FIFE
 
     /** A Zone is an abstract depiction of a CellCache or of a part of it.
      */
-    class /*FIFE_API*/ Zone
+    class FIFE_API Zone
     {
         public:
             /** Constructor
@@ -95,7 +95,7 @@ namespace FIFE
     /** A CellCache is an abstract depiction of one or a few layers
      *	and contains additional information, such as different cost and speed and so on.
      */
-    class /*FIFE_API*/ CellCache : public FifeClass
+    class FIFE_API CellCache : public FifeClass
     {
         public:
             /** Constructor

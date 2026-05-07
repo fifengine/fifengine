@@ -22,7 +22,7 @@ namespace FIFE
 
     /**  Class for Joystick events
      */
-    class /*FIFE_API*/ JoystickEvent : public InputEvent
+    class FIFE_API JoystickEvent : public InputEvent
     {
         public:
             enum JoystickEventType : uint8_t

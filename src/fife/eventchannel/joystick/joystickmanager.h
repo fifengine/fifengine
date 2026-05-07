@@ -30,7 +30,7 @@ namespace FIFE
 
     /**  Joystick Manager manages all events related to Joysticks and Gamecontrollers
      */
-    class /*FIFE_API*/ JoystickManager : public IJoystickController, public IEventSource
+    class FIFE_API JoystickManager : public IJoystickController, public IEventSource
     {
         public:
             /** Constructor.

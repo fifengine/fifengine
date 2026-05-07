@@ -52,7 +52,7 @@ namespace FIFE
      *
      * This class controls the Fifechan GUI system in FIFE.
      */
-    class /*FIFE_API*/ FifechanManager : public IGUIManager, public DynamicSingleton<FifechanManager>
+    class FIFE_API FifechanManager : public IGUIManager, public DynamicSingleton<FifechanManager>
     {
         public:
             /** Constructor.

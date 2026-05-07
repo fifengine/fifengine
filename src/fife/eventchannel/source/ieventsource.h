@@ -22,7 +22,7 @@ namespace FIFE
 
     /**  Representation of event source (a thing sending events)
      */
-    class /*FIFE_API*/ IEventSource
+    class FIFE_API IEventSource
     {
         public:
             /** Gets the source type of this event

@@ -24,7 +24,7 @@ namespace FIFE
      * To be able to listen for commands you must make a class which inherits
      * from this class and implements the onSdlEvent function.
      */
-    class /*FIFE_API*/ ISdlEventListener : public IListener
+    class FIFE_API ISdlEventListener : public IListener
     {
         public:
             /** Called when an SDL event is received from SDL

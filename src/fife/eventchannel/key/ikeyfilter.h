@@ -22,7 +22,7 @@ namespace FIFE
     /**  Controller provides a way to receive events from the system
      * Using this interface, clients can subscribe themselves to receive events
      */
-    class /*FIFE_API*/ IKeyFilter
+    class FIFE_API IKeyFilter
     {
         public:
             /** Check whether a keyevent should be filtered out.

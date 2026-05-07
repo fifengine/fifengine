@@ -92,7 +92,7 @@ namespace FIFE
      * Helper class to create log strings out from separate parts
      * Usage: LMsg("some text") << variable << ", " << other variable
      */
-    class /*FIFE_API*/ LMsg
+    class FIFE_API LMsg
     {
         public:
             explicit LMsg(std::string msg = "") : str(std::move(msg))
@@ -122,7 +122,7 @@ namespace FIFE
     /**
      * Logmanager takes care of log filtering and output direction
      */
-    class /*FIFE_API*/ LogManager
+    class FIFE_API LogManager
     {
         public:
             /**
@@ -253,7 +253,7 @@ namespace FIFE
      * Common way of doing things is to instantiate a static Logger on
      * top of .cpp file and then use that in .cpp-file's methods
      */
-    class /*FIFE_API*/ Logger
+    class FIFE_API Logger
     {
         public:
             /**
@@ -302,7 +302,7 @@ namespace FIFE
      * The mechanism is used by calling something like:
      *  somestream << pprint(ptr);
      **/
-    struct /*FIFE_API*/ pprint
+    struct FIFE_API pprint
     {
             void* p;
             explicit pprint(void* _p) : p(_p)

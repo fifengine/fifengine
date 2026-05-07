@@ -21,7 +21,7 @@ namespace FIFE
      * You can have hierarchy of time providers, whose multiplier can be changed independently.
      * Changing providers upper in the hierarchy, changes also all subproviders with the same ratio
      */
-    class /*FIFE_API*/ TimeProvider
+    class FIFE_API TimeProvider
     {
         public:
             /** Constructor

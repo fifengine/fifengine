@@ -18,7 +18,7 @@
 namespace FIFE
 {
 
-    class /*FIFE_API*/ SoundDecoder
+    class FIFE_API SoundDecoder
     {
         public:
             virtual ~SoundDecoder() = default;

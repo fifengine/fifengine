@@ -24,7 +24,7 @@ namespace FIFE
     /**
      * This class defines the engine settings on engine init
      */
-    class /*FIFE_API*/ EngineSettings
+    class FIFE_API EngineSettings
     {
         public:
             /**

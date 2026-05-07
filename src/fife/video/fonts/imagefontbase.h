@@ -25,7 +25,7 @@ namespace FIFE
      *  Just set the glyphs/placeholder in any derived class and the rendering
      *  is handled by this class. Also frees all glyph surfaces on destruction.
      */
-    class /*FIFE_API*/ ImageFontBase : public FontBase
+    class FIFE_API ImageFontBase : public FontBase
     {
         public:
             /**
@@ -47,7 +47,7 @@ namespace FIFE
 
         protected:
             // A glyph (visible character)
-            struct /*FIFE_API*/ s_glyph
+            struct FIFE_API s_glyph
             {
                     // The offset of the glyph relative to the top-left corner.
                     Point offset;

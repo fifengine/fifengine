@@ -21,7 +21,7 @@
 
 namespace FIFE
 {
-    class /*FIFE_API*/ CellGrid : public FifeClass
+    class FIFE_API CellGrid : public FifeClass
     {
         public:
             /** Constructor

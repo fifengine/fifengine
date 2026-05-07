@@ -23,7 +23,7 @@ namespace FIFE
     /**  Controller provides a way to receive events from the system
      * Using this interface, clients can subscribe themselves to receive events
      */
-    class /*FIFE_API*/ ISdlEventController
+    class FIFE_API ISdlEventController
     {
         public:
             /** Adds a listener to the back of the listener deque

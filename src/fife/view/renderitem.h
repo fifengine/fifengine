@@ -21,7 +21,7 @@ namespace FIFE
 
     class Instance;
 
-    class /*FIFE_API*/ OverlayData
+    class FIFE_API OverlayData
     {
         public:
             OverlayData();
@@ -35,7 +35,7 @@ namespace FIFE
             std::vector<OverlayColors*>* animationColorOverlays;
     };
 
-    class /*FIFE_API*/ RenderItem
+    class FIFE_API RenderItem
     {
         public:
             explicit RenderItem(Instance* parent);

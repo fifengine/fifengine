@@ -20,7 +20,7 @@
 namespace FIFE
 {
 
-    class /*FIFE_API*/ GuiImage : public fcn::Image
+    class FIFE_API GuiImage : public fcn::Image
     {
         public:
             GuiImage();

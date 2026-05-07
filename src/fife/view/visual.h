@@ -26,7 +26,7 @@ namespace FIFE
     class Action;
     class Image;
 
-    class /*FIFE_API*/ OverlayColors
+    class FIFE_API OverlayColors
     {
         public:
             /** Constructors
@@ -60,7 +60,7 @@ namespace FIFE
      * The reason why its separated is to keep model view-agnostic, so that we could
      * have e.g. 3d, 2d and character based visualizations to the same data
      */
-    class /*FIFE_API*/ Visual2DGfx : public IVisual
+    class FIFE_API Visual2DGfx : public IVisual
     {
         public:
             /**
@@ -77,7 +77,7 @@ namespace FIFE
     /**
      * Object visual contains data that is needed for visualizing objects
      */
-    class /*FIFE_API*/ ObjectVisual : public Visual2DGfx
+    class FIFE_API ObjectVisual : public Visual2DGfx
     {
         public:
             /** Constructs and assigns it to the passed item
@@ -163,7 +163,7 @@ namespace FIFE
     /**
      * Instance visual contains data that is needed to visualize the instance on screen
      */
-    class /*FIFE_API*/ InstanceVisual : public Visual2DGfx
+    class FIFE_API InstanceVisual : public Visual2DGfx
     {
         public:
             /** Constructs and assigns it to the passed item
@@ -219,7 +219,7 @@ namespace FIFE
     /**
      * Action visual contains data that is needed to visualize different actions on screen
      */
-    class /*FIFE_API*/ ActionVisual : public Visual2DGfx
+    class FIFE_API ActionVisual : public Visual2DGfx
     {
         public:
             /** Constructs and assigns it to the passed item

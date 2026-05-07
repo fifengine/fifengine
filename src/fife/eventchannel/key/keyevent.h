@@ -22,7 +22,7 @@ namespace FIFE
 
     /**  Class for key events
      */
-    class /*FIFE_API*/ KeyEvent : public InputEvent
+    class FIFE_API KeyEvent : public InputEvent
     {
         public:
             enum KeyEventType : int8_t

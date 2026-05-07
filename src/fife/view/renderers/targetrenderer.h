@@ -20,7 +20,7 @@
 namespace FIFE
 {
 
-    class /*FIFE_API*/ RenderTarget
+    class FIFE_API RenderTarget
     {
             friend class TargetRenderer;
 
@@ -92,7 +92,7 @@ namespace FIFE
             ImagePtr m_target;
     };
     using RenderTargetPtr = SharedPtr<RenderTarget>;
-    class /*FIFE_API*/ TargetRenderer
+    class FIFE_API TargetRenderer
     {
         public:
             /** Constructor.
@@ -117,7 +117,7 @@ namespace FIFE
             void render();
 
         private:
-            struct /*FIFE_API*/ RenderJob
+            struct FIFE_API RenderJob
             {
                     int32_t ndraws;
                     int32_t lasttime_draw;

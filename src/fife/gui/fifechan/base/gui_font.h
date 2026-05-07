@@ -19,7 +19,7 @@
 namespace FIFE
 {
 
-    class /*FIFE_API*/ GuiFont : public fcn::Font, public IFont
+    class FIFE_API GuiFont : public fcn::Font, public IFont
     {
         public:
             /** Constructor

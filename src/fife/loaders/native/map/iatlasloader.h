@@ -24,7 +24,7 @@ namespace FIFE
     /**
      * Interface class that all atlas loaders should derive from
      */
-    class /*FIFE_API*/ IAtlasLoader
+    class FIFE_API IAtlasLoader
     {
         public:
             virtual ~IAtlasLoader() = default;

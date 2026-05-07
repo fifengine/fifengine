@@ -184,7 +184,7 @@ namespace FIFE
             static bool littleEndian();
     };
     using RawDataPtr = std::shared_ptr<RawData>;
-    class /*FIFE_API*/ IndexSaver
+    class FIFE_API IndexSaver
     {
         public:
             explicit IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex())

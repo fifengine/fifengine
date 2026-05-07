@@ -29,7 +29,7 @@ namespace FIFE
      *
      */
 
-    class /*FIFE_API*/ IResourceManager
+    class FIFE_API IResourceManager
     {
         public:
             /** Default constructor.

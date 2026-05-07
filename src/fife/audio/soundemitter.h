@@ -32,7 +32,7 @@ namespace FIFE
 
     /** Listener interface for SoundEmitter.
      */
-    class /*FIFE_API*/ SoundEmitterListener
+    class FIFE_API SoundEmitterListener
     {
         public:
             virtual ~SoundEmitterListener() = default;
@@ -50,7 +50,7 @@ namespace FIFE
 
     /** The class for playing audio files
      */
-    class /*FIFE_API*/ SoundEmitter
+    class FIFE_API SoundEmitter
     {
         public:
             SoundEmitter(SoundManager* manager, uint32_t uid);
@@ -408,7 +408,7 @@ namespace FIFE
             uint32_t m_emitterId;
 
             //! buffers OpenAL data
-            struct /*FIFE_API*/ internData
+            struct FIFE_API internData
             {
                     float volume;
                     float maxVolume;

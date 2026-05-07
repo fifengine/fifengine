@@ -34,7 +34,7 @@ namespace FIFE
      *       if they are not supported by the hardware (ARB_texture_non_power_of_two).
      * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
      */
-    class /*FIFE_API*/ GLImage : public Image
+    class FIFE_API GLImage : public Image
     {
         public:
             explicit GLImage(IResourceLoader* loader = nullptr);

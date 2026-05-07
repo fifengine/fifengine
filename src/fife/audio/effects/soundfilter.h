@@ -20,7 +20,7 @@ namespace FIFE
     /** The class defines filters. Lowpass, Highpass and Bandpass filters are possible.
      * Note: On Lowpass filter setGainLf have no effect, same with Highpass and setGainHf.
      */
-    class /*FIFE_API*/ SoundFilter
+    class FIFE_API SoundFilter
     {
         public:
             /** Constructor

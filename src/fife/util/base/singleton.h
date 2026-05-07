@@ -24,7 +24,7 @@ namespace FIFE
      * @see DynamicSingleton
      */
     template <typename T>
-    class /*FIFE_API*/ StaticSingleton
+    class StaticSingleton
     {
         public:
             static T* instance()
@@ -66,7 +66,7 @@ namespace FIFE
      * @see Engine
      */
     template <typename T>
-    class /*FIFE_API*/ DynamicSingleton
+    class DynamicSingleton
     {
         public:
             static T* instance()

@@ -25,7 +25,7 @@ namespace FIFE
     class Instance;
     class TriggerChangeListener;
 
-    class /*FIFE_API*/ ITriggerListener
+    class FIFE_API ITriggerListener
     {
         public:
             virtual ~ITriggerListener() = default;
@@ -67,7 +67,7 @@ namespace FIFE
      *
      * @see Layer
      */
-    class /*FIFE_API*/ Trigger : public FifeClass
+    class FIFE_API Trigger : public FifeClass
     {
         public:
             // LIFECYCLE

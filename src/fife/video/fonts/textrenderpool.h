@@ -30,7 +30,7 @@ namespace FIFE
      *
      *  @todo Should probably use a @c std::map instead of a @c std::list
      */
-    class /*FIFE_API*/ TextRenderPool
+    class FIFE_API TextRenderPool
     {
         public:
             /** Constructor
@@ -60,7 +60,7 @@ namespace FIFE
             void removeOldEntries();
 
         protected:
-            struct /*FIFE_API*/ s_pool_entry
+            struct FIFE_API s_pool_entry
             {
                     std::string text;
                     SDL_Color color;

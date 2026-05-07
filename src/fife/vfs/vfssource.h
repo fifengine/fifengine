@@ -27,7 +27,7 @@ namespace FIFE
      * @see VFS
      * @see VFSSourceProvider
      */
-    class /*FIFE_API*/ VFSSource
+    class FIFE_API VFSSource
     {
         public:
             explicit VFSSource(VFS* vfs);

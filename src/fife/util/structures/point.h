@@ -11,6 +11,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+
 // 3rd party library includes
 
 // FIFE includes
@@ -26,7 +27,7 @@ namespace FIFE
      * @see Rect
      */
     template <typename T>
-    class /*FIFE_API*/ PointType2D
+    class PointType2D
     {
         public:
             T x;
@@ -218,7 +219,7 @@ namespace FIFE
      * @see Rect
      */
     template <typename T>
-    class /*FIFE_API*/ PointType3D
+    class PointType3D
     {
         public:
             T x;

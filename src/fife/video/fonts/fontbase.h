@@ -27,7 +27,7 @@ namespace FIFE
      *  Uses a pool for rendered strings.
      *  @see TextRenderPool
      */
-    class /*FIFE_API*/ FontBase : public IFont
+    class FIFE_API FontBase : public IFont
     {
         public:
             FontBase();

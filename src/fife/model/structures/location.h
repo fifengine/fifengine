@@ -21,7 +21,7 @@ namespace FIFE
     class Map;
     class Layer;
 
-    class /*FIFE_API*/ Location
+    class FIFE_API Location
     {
         public:
             /** Default constructor
@@ -167,6 +167,6 @@ namespace FIFE
      *
      * Useful for debugging purposes
      */
-    std::ostream& operator<<(std::ostream&, Location const &);
+    FIFE_API std::ostream& operator<<(std::ostream&, Location const &);
 } // namespace FIFE
 #endif // FIFE_LOCATION_H

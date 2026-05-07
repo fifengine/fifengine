@@ -36,7 +36,7 @@ namespace FIFE
 
     /** Listener interface for changes happening on map
      */
-    class /*FIFE_API*/ MapChangeListener
+    class FIFE_API MapChangeListener
     {
         public:
             virtual ~MapChangeListener() = default;
@@ -69,7 +69,7 @@ namespace FIFE
      * The actual data is contained in \c Layer objects
      * @see Layer
      */
-    class /*FIFE_API*/ Map : public FifeClass
+    class FIFE_API Map : public FifeClass
     {
         public:
             /** Construct a map

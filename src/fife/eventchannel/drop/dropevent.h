@@ -21,7 +21,7 @@ namespace FIFE
 
     /**  Class for drop events
      */
-    class /*FIFE_API*/ DropEvent : public InputEvent
+    class FIFE_API DropEvent : public InputEvent
     {
         public:
             /** Constructor

@@ -20,7 +20,7 @@ namespace FIFE
 
     /** Pure abstract Font interface
      */
-    class /*FIFE_API*/ IFont
+    class FIFE_API IFont
     {
         public:
             virtual ~IFont() = default;

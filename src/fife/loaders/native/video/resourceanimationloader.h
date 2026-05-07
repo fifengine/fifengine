@@ -17,7 +17,7 @@ namespace FIFE
 {
     /** ResourceAnimationLoader.
      */
-    class /*FIFE_API*/ ResourceAnimationLoader : public IResourceLoader
+    class FIFE_API ResourceAnimationLoader : public IResourceLoader
     {
         public:
             ResourceAnimationLoader() = default;

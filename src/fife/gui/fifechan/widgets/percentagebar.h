@@ -23,7 +23,7 @@ namespace fcn
      *
      *
      */
-    class /*FIFE_API*/ PercentageBar : public Widget
+    class FIFE_API PercentageBar : public Widget
     {
         public:
             enum Orientation : uint8_t

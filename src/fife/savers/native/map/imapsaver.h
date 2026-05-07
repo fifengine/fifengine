@@ -25,7 +25,7 @@ namespace FIFE
     /**
      * Interface class that all map savers should derive from
      */
-    class /*FIFE_API*/ IMapSaver
+    class FIFE_API IMapSaver
     {
         public:
             virtual ~IMapSaver() = default;

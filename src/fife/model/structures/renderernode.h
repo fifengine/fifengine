@@ -25,7 +25,7 @@ namespace FIFE
     class Layer;
     class Location;
 
-    class /*FIFE_API*/ RendererNode
+    class FIFE_API RendererNode
     {
         public:
             RendererNode(

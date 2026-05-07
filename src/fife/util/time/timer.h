@@ -41,7 +41,7 @@ namespace FIFE
      *
      *  @see Console
      */
-    class /*FIFE_API*/ Timer : protected TimeEvent
+    class FIFE_API Timer : protected TimeEvent
     {
         public:
             using type_callback = std::function<void()>;

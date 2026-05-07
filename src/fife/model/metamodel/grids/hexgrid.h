@@ -19,7 +19,7 @@
 
 namespace FIFE
 {
-    class /*FIFE_API*/ HexGrid : public CellGrid
+    class FIFE_API HexGrid : public CellGrid
     {
         public:
             explicit HexGrid(bool axial = false);

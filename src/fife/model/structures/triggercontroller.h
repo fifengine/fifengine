@@ -34,7 +34,7 @@ namespace FIFE
      *  You should never instantiate this class directly as Map does it
      *  when you create a new map.
      */
-    class /*FIFE_API*/ TriggerController : public FifeClass
+    class FIFE_API TriggerController : public FifeClass
     {
         public:
             /** Constructor.

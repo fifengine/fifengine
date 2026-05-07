@@ -22,7 +22,7 @@ namespace FIFE
     using ResourceHandle = std::size_t;
     class IResource;
 
-    class /*FIFE_API*/ IResourceLoader
+    class FIFE_API IResourceLoader
     {
         public:
             IResourceLoader()          = default;
@@ -31,7 +31,7 @@ namespace FIFE
             virtual void load(IResource* resource) = 0;
     };
 
-    class /*FIFE_API*/ IResource
+    class FIFE_API IResource
     {
         public:
             enum ResourceState : uint8_t

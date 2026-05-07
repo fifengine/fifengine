@@ -23,7 +23,7 @@ namespace FIFE
 
     /**  Class for text events
      */
-    class /*FIFE_API*/ TextEvent : public InputEvent
+    class FIFE_API TextEvent : public InputEvent
     {
         public:
             enum TextEventType : uint8_t

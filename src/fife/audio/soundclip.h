@@ -31,7 +31,7 @@ namespace FIFE
         SD_BYTE_POS
     };
 
-    struct /*FIFE_API*/ SoundBufferEntry
+    struct FIFE_API SoundBufferEntry
     {
             ALuint buffers[BUFFER_NUM];
             uint32_t usedbufs;
@@ -40,7 +40,7 @@ namespace FIFE
 
     /**  Class to handle the buffers of an audio file
      */
-    class /*FIFE_API*/ SoundClip : public IResource
+    class FIFE_API SoundClip : public IResource
     {
         public:
             explicit SoundClip(IResourceLoader* loader = nullptr);

@@ -29,7 +29,7 @@ namespace fcn
     /**
      * Implements an icon capable of displaying an animation.
      */
-    class /*FIFE_API*/ AnimationIcon : public Icon
+    class FIFE_API AnimationIcon : public Icon
     {
         public:
             /**

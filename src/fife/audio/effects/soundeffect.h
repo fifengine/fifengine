@@ -22,7 +22,7 @@ namespace FIFE
 
     /** Base class for Efx sound effects.
      */
-    class /*FIFE_API*/ SoundEffect
+    class FIFE_API SoundEffect
     {
         public:
             /** Constructor
@@ -83,7 +83,7 @@ namespace FIFE
 
     /**  The environmental reverberation effect.
      */
-    class /*FIFE_API*/ Reverb : public SoundEffect
+    class FIFE_API Reverb : public SoundEffect
     {
         public:
             /** Constructor
@@ -233,7 +233,7 @@ namespace FIFE
     /** The chorus effect essentially replays the input audio accompanied by another
      * slightly delayed version of the signal, creating a �doubling� effect.
      */
-    class /*FIFE_API*/ Chorus : public SoundEffect
+    class FIFE_API Chorus : public SoundEffect
     {
         public:
             /** Constructor
@@ -309,7 +309,7 @@ namespace FIFE
     /** The distortion effect simulates turning up (overdriving) the gain stage
      * on a guitar amplifier or adding a distortion pedal to an instrument�s output.
      */
-    class /*FIFE_API*/ Distortion : public SoundEffect
+    class FIFE_API Distortion : public SoundEffect
     {
         public:
             /** Constructor
@@ -374,7 +374,7 @@ namespace FIFE
     /** The echo effect generates discrete, delayed instances of the input signal.
      * The amount of delay and feedback is controllable.
      */
-    class /*FIFE_API*/ Echo : public SoundEffect
+    class FIFE_API Echo : public SoundEffect
     {
         public:
             /** Constructor
@@ -436,7 +436,7 @@ namespace FIFE
 
     /** The flanger effect creates a �tearing� or �whooshing� sound.
      */
-    class /*FIFE_API*/ Flanger : public SoundEffect
+    class FIFE_API Flanger : public SoundEffect
     {
         public:
             /** Constructor
@@ -514,7 +514,7 @@ namespace FIFE
     /** The frequency shifter is a single-sideband modulator, which translates all
      * the component frequencies of the input signal by an equal amount.
      */
-    class /*FIFE_API*/ FrequencyShifter : public SoundEffect
+    class FIFE_API FrequencyShifter : public SoundEffect
     {
         public:
             /** Constructor
@@ -564,7 +564,7 @@ namespace FIFE
      * 10=�ER�, 11=�IH�, 12=�IY�, 13=�UH�, 14=�UW�, 15=�B�, 16=�D�, 17=�F�, 18=�G�,
      * 19=�J�, 20=�K�, 21=�L�, 22=�M�, 23=�N�, 24=�P�, 25=�R�, 26=�S�, 27=�T�, 28=�V�, 29=�Z�
      */
-    class /*FIFE_API*/ VocalMorpher : public SoundEffect
+    class FIFE_API VocalMorpher : public SoundEffect
     {
         public:
             /** Constructor
@@ -641,7 +641,7 @@ namespace FIFE
     /** The pitch shifter applies time-invariant pitch shifting to the input signal,
      * over a one octave range and controllable at a semi-tone and cent resolution.
      */
-    class /*FIFE_API*/ PitchShifter : public SoundEffect
+    class FIFE_API PitchShifter : public SoundEffect
     {
         public:
             /** Constructor
@@ -676,7 +676,7 @@ namespace FIFE
     /** The ring modulator multiplies an input signal by a carrier signal in the
      * time domain, resulting in tremolo or inharmonic effects.
      */
-    class /*FIFE_API*/ RingModulator : public SoundEffect
+    class FIFE_API RingModulator : public SoundEffect
     {
         public:
             /** Constructor
@@ -717,7 +717,7 @@ namespace FIFE
     /** The Auto-wah effect emulates the sound of a wah-wah pedal used
      * with an electric guitar, or a mute on a brass instrument.
      */
-    class /*FIFE_API*/ Autowah : public SoundEffect
+    class FIFE_API Autowah : public SoundEffect
     {
         public:
             /** Constructor
@@ -774,7 +774,7 @@ namespace FIFE
     /** The Automatic Gain Control effect performs the same task as a studio
      * compressor � evening out the audio dynamic range of an input sound.
      */
-    class /*FIFE_API*/ Compressor : public SoundEffect
+    class FIFE_API Compressor : public SoundEffect
     {
         public:
             /** Constructor
@@ -797,7 +797,7 @@ namespace FIFE
     /** The Equalizer providing tonal control over four different
      * adjustable frequency ranges. Low, Mid1, Mid2 and High.
      */
-    class /*FIFE_API*/ Equalizer : public SoundEffect
+    class FIFE_API Equalizer : public SoundEffect
     {
         public:
             /** Constructor
@@ -910,7 +910,7 @@ namespace FIFE
     /** The EAX Reverb is similar to Reverb but supports more options.
      * There exists already over 100 presets for it. See SoundEffectPreset.
      */
-    class /*FIFE_API*/ EaxReverb : public SoundEffect
+    class FIFE_API EaxReverb : public SoundEffect
     {
         public:
             /** Constructor

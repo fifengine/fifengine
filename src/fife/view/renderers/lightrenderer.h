@@ -25,7 +25,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class /*FIFE_API*/ LightRendererElementInfo
+    class FIFE_API LightRendererElementInfo
     {
         public:
             LightRendererElementInfo(RendererNode const & n, int32_t src, int32_t dst);
@@ -80,7 +80,7 @@ namespace FIFE
             uint8_t m_stencil_ref;
     };
 
-    class /*FIFE_API*/ LightRendererImageInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererImageInfo : public LightRendererElementInfo
     {
         public:
             LightRendererImageInfo(RendererNode const & anchor, ImagePtr const & image, int32_t src, int32_t dst);
@@ -100,7 +100,7 @@ namespace FIFE
             ImagePtr m_image;
     };
 
-    class /*FIFE_API*/ LightRendererAnimationInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererAnimationInfo : public LightRendererElementInfo
     {
         public:
             LightRendererAnimationInfo(
@@ -123,7 +123,7 @@ namespace FIFE
             float m_time_scale;
     };
 
-    class /*FIFE_API*/ LightRendererSimpleLightInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererSimpleLightInfo : public LightRendererElementInfo
     {
         public:
             LightRendererSimpleLightInfo(
@@ -175,7 +175,7 @@ namespace FIFE
             uint8_t m_blue;
     };
 
-    class /*FIFE_API*/ LightRendererResizeInfo : public LightRendererElementInfo
+    class FIFE_API LightRendererResizeInfo : public LightRendererElementInfo
     {
         public:
             LightRendererResizeInfo(
@@ -204,7 +204,7 @@ namespace FIFE
             int32_t m_height;
     };
 
-    class /*FIFE_API*/ LightRenderer : public RendererBase
+    class FIFE_API LightRenderer : public RendererBase
     {
         public:
             /** constructor.

@@ -28,7 +28,7 @@ namespace FIFE
     /** Minimal matrix class to assist in view 3d calculations
      */
     template <typename T>
-    class /*FIFE_API*/ Matrix
+    class FIFE_API Matrix
     {
         public:
             Matrix() = default;

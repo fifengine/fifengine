@@ -98,7 +98,7 @@ namespace FIFE
         RENDER_DATA_MULTITEXTURE_Z = 3
     };
 
-    class /*FIFE_API*/ GuiVertex
+    class FIFE_API GuiVertex
     {
         public:
             DoublePoint position;
@@ -107,7 +107,7 @@ namespace FIFE
     };
 
     /** Abstract interface for all the renderbackends. */
-    class /*FIFE_API*/ RenderBackend : public DynamicSingleton<RenderBackend>
+    class FIFE_API RenderBackend : public DynamicSingleton<RenderBackend>
     {
         public:
             /** Constructor.
@@ -642,7 +642,7 @@ namespace FIFE
              */
             void clearClipArea();
 
-            class /*FIFE_API*/ ClipInfo
+            class FIFE_API ClipInfo
             {
                 public:
                     Rect r;

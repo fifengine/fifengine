@@ -24,7 +24,7 @@ namespace FIFE
     /**
      * Interface class that all map loaders should derive from
      */
-    class /*FIFE_API*/ IMapLoader
+    class FIFE_API IMapLoader
     {
         public:
             virtual ~IMapLoader() = default;

@@ -24,7 +24,7 @@ namespace FIFE
     class RenderBackend;
     class IFont;
 
-    class /*FIFE_API*/ GenericRendererElementInfo
+    class FIFE_API GenericRendererElementInfo
     {
         public:
             virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
@@ -37,7 +37,7 @@ namespace FIFE
             virtual ~GenericRendererElementInfo() = default;
     };
 
-    class /*FIFE_API*/ GenericRendererLineInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererLineInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -53,7 +53,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ GenericRendererPointInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererPointInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -67,7 +67,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ GenericRendererTriangleInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererTriangleInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -90,7 +90,7 @@ namespace FIFE
             uint8_t m_blue;
             uint8_t m_alpha;
     };
-    class /*FIFE_API*/ GenericRendererQuadInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererQuadInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -116,7 +116,7 @@ namespace FIFE
             uint8_t m_alpha;
     };
 
-    class /*FIFE_API*/ GenericRendererVertexInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererVertexInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -133,7 +133,7 @@ namespace FIFE
             uint8_t m_alpha;
     };
 
-    class /*FIFE_API*/ GenericRendererImageInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererImageInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -145,7 +145,7 @@ namespace FIFE
             ImagePtr m_image;
             bool m_zoomed;
     };
-    class /*FIFE_API*/ GenericRendererAnimationInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererAnimationInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -160,7 +160,7 @@ namespace FIFE
             float m_time_scale;
             bool m_zoomed;
     };
-    class /*FIFE_API*/ GenericRendererTextInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererTextInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -173,7 +173,7 @@ namespace FIFE
             std::string m_text;
             bool m_zoomed;
     };
-    class /*FIFE_API*/ GenericRendererResizeInfo : public GenericRendererElementInfo
+    class FIFE_API GenericRendererResizeInfo : public GenericRendererElementInfo
     {
         public:
             void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -188,7 +188,7 @@ namespace FIFE
             int32_t m_height;
             bool m_zoomed;
     };
-    class /*FIFE_API*/ GenericRenderer : public RendererBase
+    class FIFE_API GenericRenderer : public RendererBase
     {
         public:
             /** Constructor.

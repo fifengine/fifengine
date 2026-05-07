@@ -33,13 +33,13 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
 
-    struct /*FIFE_API*/ AtlasData
+    struct FIFE_API AtlasData
     {
             Rect rect;
             ImagePtr image;
     };
 
-    class /*FIFE_API*/ Atlas
+    class FIFE_API Atlas
     {
         public:
             explicit Atlas(std::string name) : m_name(std::move(name))
@@ -89,7 +89,7 @@ namespace FIFE
             std::string m_name;
     };
 
-    class /*FIFE_API*/ AtlasLoader : public IAtlasLoader
+    class FIFE_API AtlasLoader : public IAtlasLoader
     {
         public:
             AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
@@ -115,7 +115,7 @@ namespace FIFE
      *  deleting the object returned from this function is the
      *  responsibility of the caller
      */
-    AtlasLoader* createDefaultAtlasLoader(
+    FIFE_API AtlasLoader* createDefaultAtlasLoader(
         Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 } // namespace FIFE
 
