@@ -290,6 +290,11 @@ jobs:
               artifact-name: "libfife-clang22-x64-cov"
             }
 
+    permissions:
+      # Required for codecov upload with "use_oidc: true"
+      # See https://github.com/codecov/codecov-action?tab=readme-ov-file#using-oidc
+      id-token: write
+
     env:
       # VCPKG Settings
       VCPKG_DISABLE_METRICS: 1
