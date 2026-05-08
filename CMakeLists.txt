@@ -187,6 +187,8 @@ if(MSVC)
   elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 
     add_compile_options(/W4) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/w14244) # C4244: potential loss of data on conversion
+    add_compile_options(/w14267) # C4267: conversion from size_t and similar to smaller type
     add_compile_options(/O2)
 
   elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -195,6 +197,8 @@ if(MSVC)
     add_compile_options(/JMC)
 
     add_compile_options(/W4) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/w14244) # C4244: potential loss of data on conversion
+    add_compile_options(/w14267) # C4267: conversion from size_t and similar to smaller type
     add_compile_options(/Od) # disable optimizations
 
   endif()
@@ -228,6 +232,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2 -Wall -Wextra -Wunused")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion -Wsign-conversion")
   endif()
 endif()
 
@@ -406,7 +411,6 @@ set(
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
   src/fife/gui/fifechan/console/commandline.cpp
   src/fife/gui/fifechan/console/console.cpp
-  src/fife/gui/fifechan/util/utf8/utf8stringeditor.cpp
   src/fife/gui/fifechan/widgets/animationicon.cpp
   src/fife/gui/fifechan/widgets/clicklabel.cpp
   src/fife/gui/fifechan/widgets/dockarea.cpp
@@ -617,7 +621,6 @@ set(
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.h
   src/fife/gui/fifechan/console/commandline.h
   src/fife/gui/fifechan/console/console.h
-  src/fife/gui/fifechan/util/utf8/utf8stringeditor.h
   src/fife/gui/fifechan/widgets/animationicon.h
   src/fife/gui/fifechan/widgets/clicklabel.h
   src/fife/gui/fifechan/widgets/dockarea.h
