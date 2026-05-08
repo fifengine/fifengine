@@ -1391,6 +1391,10 @@ if(BUILD_LIBRARY)
 
   # For wheel builds, install runtime next to Python modules so loader and
   # delvewheel can resolve fifengine.dll without relying on temp build paths.
+  #
+  # IMPORTANT:
+  # On CI the build wheels are layout verified by check-wheel-contents.
+  # See https://pypi.org/project/check-wheel-contents/ for rules.
   if(SKBUILD AND SKBUILD_STATE STREQUAL "wheel")
     if(DEFINED SKBUILD_PLATLIB_DIR)
       set(_fife_runtime_wheel_dir "${SKBUILD_PLATLIB_DIR}/fife")
@@ -1400,10 +1404,11 @@ if(BUILD_LIBRARY)
       message(FATAL_ERROR "Wheel build requires SKBUILD_PLATLIB_DIR or FIFE_PY_INSTALL_DIR for runtime install destination.")
     endif()
 
+    #
     install(TARGETS fife
       RUNTIME DESTINATION ${_fife_runtime_wheel_dir}
       LIBRARY DESTINATION ${_fife_runtime_wheel_dir}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${_fife_runtime_wheel_dir}
     )
   else()
     install(TARGETS fife

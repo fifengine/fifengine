@@ -221,6 +221,10 @@ jobs:
 
       # For Python versions see: https://devguide.python.org/versions/#versions
       # We build wheels for the current Python version and one preceding minor version.
+      # cmake.define.ENABLE_FIFEGUI=ON
+      # cmake.define.BUILD_PYTHON_BINDINGS=ON
+      # cmake.define.BUILD_LIBRARY=ON
+      # cmake.define.VCPKG_MANIFEST_MODE=OFF
       - name: 🛠️ 3.4 Build wheels
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
@@ -235,13 +239,9 @@ jobs:
             CMAKE_BUILD_PARALLEL_LEVEL=4
           CIBW_CONFIG_SETTINGS: |
             cmake.define.CMAKE_BUILD_TYPE=Release
-            cmake.define.ENABLE_FIFEGUI=ON
-            cmake.define.BUILD_PYTHON_BINDINGS=ON
-            cmake.define.BUILD_LIBRARY=ON
             cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}
             cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
-            cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >
             set PATH=%DEPS_DIR%\install\bin;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}\bin;%PATH% &&
