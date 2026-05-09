@@ -30,8 +30,8 @@
 #endif
 
 // Static builds do not use import/export decorations on Windows.
-#if !defined(FIFE_STATIC)
-    #if defined(FIFE_STATICLIB)
+#ifndef FIFE_STATIC
+    #ifdef FIFE_STATICLIB
         #define FIFE_STATIC 1
     #endif
 #endif
@@ -45,7 +45,7 @@
  * __attribute__((visibility("default"))) on Linux/macOS so that the SWIG
  * module correctly imports symbols from the fifengine shared library.
  */
-#if defined(_WIN32)
+#ifdef FIFE_OS_WINDOWS
     // #pragma message(">>> SETTING: Taking Windows branch")
     #if defined(FIFE_STATIC)
         // #pragma message(">>> SETTING: FIFE_STATIC")
@@ -57,7 +57,7 @@
         // #pragma message(">>> SETTING: Windows DLL import")
         #define FIFE_API __declspec(dllimport)
     #endif
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined(FIFE_OS_LINUX) || defined(FIFE_OS_MACOS)
     // For Linux/macOS, we only need to use __attribute__ for visibility.
     // #pragma message(">>> SETTING: Taking Linux/macOS branch")
     #if defined(FIFE_BUILD) || defined(fife_EXPORTS)

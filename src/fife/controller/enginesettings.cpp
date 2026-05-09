@@ -13,6 +13,7 @@
 #include <SDL3/SDL.h>
 
 // FIFE includes
+#include "platform.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 
@@ -55,11 +56,11 @@ namespace FIFE
         m_iscolorkeyenabled(false),
         m_colorkey{255, 0, 255, 255},
         m_videodriver(
-#if defined(__unix__)
+#ifdef FIFE_OS_LINUX
             "x11"
-#elif defined(WIN32)
-            "windib"
-#elif defined(__APPLE_CC__)
+#elif defined(FIFE_OS_WINDOWS)
+            "opengl"
+#elif defined(FIFE_OS_MACOS)
             "x11"
 #else
             ""
