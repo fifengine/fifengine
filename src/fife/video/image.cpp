@@ -67,7 +67,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                size_t const idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
+                size_t const idx     = ((static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U);
                 uint8_t const r      = src[idx + 0];
                 uint8_t const g      = src[idx + 1];
                 uint8_t const b      = src[idx + 2];
@@ -111,7 +111,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                size_t const idx     = (static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U;
+                size_t const idx     = ((static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U);
                 uint8_t const r      = src[idx + 0];
                 uint8_t const g      = src[idx + 1];
                 uint8_t const b      = src[idx + 2];

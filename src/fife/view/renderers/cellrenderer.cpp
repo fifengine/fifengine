@@ -152,14 +152,14 @@ namespace FIFE
                     Rect r;
                     if (zoomed) {
                         double const zoom = cam->getZoom();
-                        r.x               = drawpt.x - (img->getWidth() / 2.0) * zoom;
-                        r.y               = drawpt.y - (img->getHeight() / 2.0) * zoom;
+                        r.x               = drawpt.x - ((img->getWidth() / 2.0) * zoom);
+                        r.y               = drawpt.y - ((img->getHeight() / 2.0) * zoom);
                         r.w               = img->getWidth() * zoom;
                         r.h               = img->getHeight() * zoom;
                         img->render(r);
                     } else {
-                        r.x = drawpt.x - img->getWidth() / 2.0;
-                        r.y = drawpt.y - img->getHeight() / 2.0;
+                        r.x = drawpt.x - (img->getWidth() / 2.0);
+                        r.y = drawpt.y - (img->getHeight() / 2.0);
                         r.w = img->getWidth();
                         r.h = img->getHeight();
                         img->render(r);

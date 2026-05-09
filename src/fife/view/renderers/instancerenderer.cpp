@@ -242,8 +242,8 @@ namespace FIFE
                             int32_t const areaWidth  = toInt32Dimension(infoa.w);
                             int32_t const areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
-                            rec.x = p.x - areaWidth / 2;
-                            rec.y = p.y - areaHeight / 2;
+                            rec.x = p.x - (areaWidth / 2);
+                            rec.y = p.y - (areaHeight / 2);
                             rec.w = areaWidth;
                             rec.h = areaHeight;
                             if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
@@ -428,8 +428,8 @@ namespace FIFE
                             int32_t const areaWidth  = toInt32Dimension(infoa.w);
                             int32_t const areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
-                            rec.x = p.x - areaWidth / 2;
-                            rec.y = p.y - areaHeight / 2;
+                            rec.x = p.x - (areaWidth / 2);
+                            rec.y = p.y - (areaHeight / 2);
                             rec.w = areaWidth;
                             rec.h = areaHeight;
                             if (infoa.instance != instance && vc.dimensions.intersects(rec)) {

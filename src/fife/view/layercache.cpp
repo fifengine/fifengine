@@ -718,8 +718,8 @@ namespace FIFE
         if (image) {
             int32_t const w  = image->getWidth();
             int32_t const h  = image->getHeight();
-            screenPosition.x = (screenPosition.x - w / 2.0) + image->getXShift();
-            screenPosition.y = (screenPosition.y - h / 2.0) + image->getYShift();
+            screenPosition.x = (screenPosition.x - (w / 2.0)) + image->getXShift();
+            screenPosition.y = (screenPosition.y - (h / 2.0)) + image->getYShift();
             item->bbox.w     = w;
             item->bbox.h     = h;
         } else {
@@ -789,13 +789,13 @@ namespace FIFE
                 float const lmin               = m_layer->getZOffset();
                 float const lmax               = lmin + (globalrange / numlayers);
                 float const a                  = (lmin - lmax) / det;
-                float const b                  = (lmax * m_zMin - lmin * m_zMax) / det;
+                float const b                  = ((lmax * m_zMin) - (lmin * m_zMax)) / det;
 
                 auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {
                     auto* vis = (*it)->instance->getVisual<InstanceVisual>();
                     float& z  = (*it)->vertexZ;
-                    z         = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
+                    z         = ((a * (*it)->screenpoint.z) + b) + (vis->getStackPosition() * stackdelta);
                 }
             }
         } else {

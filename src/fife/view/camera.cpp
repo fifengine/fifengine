@@ -348,8 +348,8 @@ namespace FIFE
 
             m_mapViewPort.x = minX - padding;
             m_mapViewPort.y = minY - padding;
-            m_mapViewPort.w = (maxX - minX) + padding * 2;
-            m_mapViewPort.h = (maxY - minY) + padding * 2;
+            m_mapViewPort.w = (maxX - minX) + (padding * 2);
+            m_mapViewPort.h = (maxY - minY) + (padding * 2);
 
             m_mapViewPortUpdated = true;
         }
@@ -960,8 +960,8 @@ found_non_transparent_pixel:;
                     r.w = img->getWidth();
                     r.h = img->getHeight();
                 }
-                r.x = pm.x - r.w / 2;
-                r.y = pm.y - r.h / 2;
+                r.x = pm.x - (r.w / 2);
+                r.y = pm.y - (r.h / 2);
                 img->render(r);
             }
         }
@@ -983,8 +983,8 @@ found_non_transparent_pixel:;
                     r.w = img->getWidth();
                     r.h = img->getHeight();
                 }
-                r.x = pm.x - r.w / 2;
-                r.y = pm.y - r.h / 2;
+                r.x = pm.x - (r.w / 2);
+                r.y = pm.y - (r.h / 2);
                 img->render(r);
             }
         }

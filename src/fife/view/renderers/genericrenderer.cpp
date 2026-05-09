@@ -216,8 +216,8 @@ namespace FIFE
                 width  = toScreenSize(m_image->getWidth());
                 height = toScreenSize(m_image->getHeight());
             }
-            r.x = p.x - width / 2;
-            r.y = p.y - height / 2;
+            r.x = p.x - (width / 2);
+            r.y = p.y - (height / 2);
             r.w = width;
             r.h = height;
             if (r.intersects(viewport)) {
@@ -262,8 +262,8 @@ namespace FIFE
                 width  = toScreenSize(img->getWidth());
                 height = toScreenSize(img->getHeight());
             }
-            r.x = p.x - width / 2;
-            r.y = p.y - height / 2;
+            r.x = p.x - (width / 2);
+            r.y = p.y - (height / 2);
             r.w = width;
             r.h = height;
             if (r.intersects(viewport)) {
@@ -297,8 +297,8 @@ namespace FIFE
                 width  = toScreenSize(img->getWidth());
                 height = toScreenSize(img->getHeight());
             }
-            r.x = p.x - width / 2;
-            r.y = p.y - height / 2;
+            r.x = p.x - (width / 2);
+            r.y = p.y - (height / 2);
             r.w = width;
             r.h = height;
             if (r.intersects(viewport)) {
@@ -341,8 +341,8 @@ namespace FIFE
                 width  = m_width;
                 height = m_height;
             }
-            r.x = p.x - width / 2;
-            r.y = p.y - height / 2;
+            r.x = p.x - (width / 2);
+            r.y = p.y - (height / 2);
             r.w = width;
             r.h = height;
             if (r.intersects(viewport)) {

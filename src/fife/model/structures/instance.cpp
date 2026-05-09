@@ -1158,8 +1158,8 @@ namespace FIFE
                 loc.setLayerCoordinates(mcv.front());
                 ExactModelCoordinate emc = loc.getMapCoordinates();
                 ExactModelCoordinate const nemc(emc.x - anchor_offset.x, emc.y - anchor_offset.y);
-                emc.x = ((nemc.x * mcos + nemc.y * msin) + anchor_offset.x) + anchor.x;
-                emc.y = ((-nemc.x * msin + nemc.y * mcos) + anchor_offset.y) + anchor.y;
+                emc.x = (((nemc.x * mcos) + (nemc.y * msin)) + anchor_offset.x) + anchor.x;
+                emc.y = (((-nemc.x * msin) + (nemc.y * mcos)) + anchor_offset.y) + anchor.y;
                 loc.setMapCoordinates(emc);
                 (*it)->setLocation(loc);
                 (*it)->setRotation(rot);

@@ -548,7 +548,7 @@ namespace FIFE
                 auto dy              = static_cast<float>(tmp_y - m_oldY);
                 float const distance = Mathf::Sqrt((dx * dx) + (dy * dy));
                 auto acceleration    = (distance / difference) / difference;
-                float velocity       = (m_oldVelocity + acceleration * difference) / 2;
+                float velocity       = (m_oldVelocity + (acceleration * difference)) / 2;
                 velocity             = std::min(velocity, m_mouseSensitivity + 1);
                 m_oldVelocity        = velocity;
                 modifier             = velocity;

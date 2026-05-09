@@ -2046,8 +2046,8 @@ namespace FIFE
         rd.color[2] = b;
         rd.color[3] = a;
         for (int32_t i = 0; i < subdivisions - 1; ++i) {
-            rd.vertex[0] = radiusF * Mathf::Cos(angle) + static_cast<float>(p.x);
-            rd.vertex[1] = radiusF * Mathf::Sin(angle) + static_cast<float>(p.y);
+            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             angle += step;
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
@@ -2080,8 +2080,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
         // reversed because of culling faces
         for (int32_t i = 0; i <= subdivisions; ++i) {
-            rd.vertex[0] = radiusF * Mathf::Cos(angle) + static_cast<float>(p.x);
-            rd.vertex[1] = radiusF * Mathf::Sin(angle) + static_cast<float>(p.y);
+            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             angle -= step;
             // forms triangle with start index, the last and a new one
@@ -2114,8 +2114,8 @@ namespace FIFE
         rd.color[3] = a;
         float angle = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step, ++elements) {
-            rd.vertex[0] = radiusF * Mathf::Cos(angle) + static_cast<float>(p.x);
-            rd.vertex[1] = radiusF * Mathf::Sin(angle) + static_cast<float>(p.y);
+            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
         }
@@ -2153,8 +2153,8 @@ namespace FIFE
         // reversed because of culling faces
         float angle = static_cast<float>(e) * step;
         for (; s <= e; ++s, angle -= step, ++elements) {
-            rd.vertex[0] = radiusF * Mathf::Cos(angle) + static_cast<float>(p.x);
-            rd.vertex[1] = radiusF * Mathf::Sin(angle) + static_cast<float>(p.y);
+            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
 
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index, the last and a new one

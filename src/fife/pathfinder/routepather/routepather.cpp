@@ -358,12 +358,12 @@ namespace FIFE
                     } else {
                         instancePos.z =
                             prevPos.z + cell_dz -
-                            4 * (0.5 - distance / cell_distance) * (0.5 - distance / cell_distance) * cell_dz;
+                            4 * (0.5 - (distance / cell_distance)) * (0.5 - (distance / cell_distance)) * cell_dz;
                     }
                 } else if (cell_dz < 0) {
                     if (locationsEqual(current, currentNode)) {
-                        instancePos.z = prevPos.z + 4 * (0.5 - distance / cell_distance) *
-                                                        (0.5 - distance / cell_distance) * cell_dz;
+                        instancePos.z = prevPos.z + 4 * (0.5 - (distance / cell_distance)) *
+                                                        (0.5 - (distance / cell_distance)) * cell_dz;
                     }
                 }
             }

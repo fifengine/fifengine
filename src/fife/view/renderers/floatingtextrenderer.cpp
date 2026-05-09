@@ -111,9 +111,9 @@ namespace FIFE
                 int32_t const imageWidth  = toScreenSize(img->getWidth());
                 int32_t const imageHeight = toScreenSize(img->getHeight());
                 Rect r;
-                r.x = (ir.x + ir.w / 2) - imageWidth / 2; // the center of the text rect is always aligned to the
-                                                          // instance's rect center.
-                r.y = ir.y - imageHeight;                 // make the text rect floating higher than the instance.
+                r.x = (ir.x + (ir.w / 2)) - (imageWidth / 2); // the center of the text rect is always aligned to the
+                                                              // instance's rect center.
+                r.y = ir.y - imageHeight;                     // make the text rect floating higher than the instance.
                 r.w = imageWidth;
                 r.h = imageHeight;
                 // Without this check it can happen that changeRenderInfos() call produces an out_of_range error

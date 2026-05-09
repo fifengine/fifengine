@@ -43,7 +43,7 @@ namespace FIFE
             m_time_delta   = m_current_time - m_time_delta;
         }
         m_average_frame_time =
-            m_average_frame_time * avg_multiplier + static_cast<double>(m_time_delta) * (1.0 - avg_multiplier);
+            (m_average_frame_time * avg_multiplier) + (static_cast<double>(m_time_delta) * (1.0 - avg_multiplier));
 
         // Update live events.
         //

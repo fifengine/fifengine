@@ -566,7 +566,7 @@ namespace FIFE
             putPixel(y + p.x, -x + p.y, r, g, b, a);
             y++;
             if (radiusError < 0) {
-                radiusError += 2 * y + 1;
+                radiusError += (2 * y) + 1;
             } else {
                 x--;
                 radiusError += 2 * (y - x + 1);

@@ -156,8 +156,8 @@ namespace FIFE
                     r.w = static_cast<int32_t>(round(widthY * zoom));
                     imgy->render(r);
                 } else {
-                    r.x = drawpt.x - (widthX + widthComma + widthY) / 2;
-                    r.y = drawpt.y - heightX / 2;
+                    r.x = drawpt.x - ((widthX + widthComma + widthY) / 2);
+                    r.y = drawpt.y - (heightX / 2);
                     r.w = widthX;
                     r.h = heightX;
                     imgx->render(r);

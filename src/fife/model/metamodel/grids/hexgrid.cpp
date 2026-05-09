@@ -192,7 +192,7 @@ namespace FIFE
         }
 
         // adjustment for cases where our approximation lies beyond the hex edge
-        if (std::abs(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * std::abs(dx)) * VERTICAL_MULTIP_INV)) {
+        if (std::abs(dy) > ((HEX_TO_CORNER - (HEX_EDGE_GRADIENT * std::abs(dx))) * VERTICAL_MULTIP_INV)) {
             int8_t ddx = 0;
             int8_t ddy = 0;
             if (dx > 0) {
@@ -250,7 +250,7 @@ namespace FIFE
             vtx.emplace_back(px, py);
         };
         // FL_DBG(_log, LMsg("Added point ") << px << ", " << py)
-        ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
+        ty = y - (VERTICAL_MULTIP_INV * HEX_EDGE_HALF);
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
@@ -258,7 +258,7 @@ namespace FIFE
         tx = x - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
-        ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
+        ty = y - (VERTICAL_MULTIP_INV * HEX_EDGE_HALF);
         tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 

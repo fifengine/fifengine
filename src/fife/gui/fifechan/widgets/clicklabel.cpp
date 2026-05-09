@@ -131,19 +131,19 @@ namespace fcn
                 int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
                 if (textW < 1) {
                     w     = maxW;
-                    textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+                    textW = (w - 2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
                 } else if (w > maxW) {
                     w     = std::min(w, maxW);
-                    textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+                    textW = (w - 2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
                 }
                 mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
             } else {
                 FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
-                w                  = image->getWidth() + 2 * getBorderSize() + getPaddingLeft() + getPaddingRight();
+                w                  = image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight();
             }
             std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
             FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
-            h                        = 2 * getBorderSize() + getPaddingTop() + getPaddingBottom() + image->getHeight();
+            h = (2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + image->getHeight();
             setSize(w, h);
         }
     }
@@ -189,7 +189,7 @@ namespace fcn
                 break;
             case Graphics::Alignment::Center:
                 textX = offsetRec.x + getPaddingLeft() +
-                        (getWidth() - offsetRec.width - getPaddingLeft() - getPaddingRight() - image->getWidth()) / 2;
+                        ((getWidth() - offsetRec.width - getPaddingLeft() - getPaddingRight() - image->getWidth()) / 2);
                 break;
             case Graphics::Alignment::Right:
                 textX = getWidth() - offsetRec.x - getPaddingRight() - image->getWidth();
