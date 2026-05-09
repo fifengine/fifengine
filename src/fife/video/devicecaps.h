@@ -321,6 +321,9 @@ namespace FIFE
             int8_t m_renderDriverIndex;
             std::vector<std::string> m_availableRenderDrivers;
 
+            SDL_DisplayID getDisplayId(uint8_t display) const;
+            SDL_DisplayMode const * getDesktopMode(uint8_t display) const;
+
             /** Called in the constructor.  No need for anyone to call this
              */
             void fillAvailableDrivers();

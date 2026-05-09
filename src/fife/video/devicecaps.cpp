@@ -372,75 +372,76 @@ namespace FIFE
         return static_cast<uint8_t>(displayCount);
     }
 
-    std::string DeviceCaps::getDisplayName(uint8_t display) const
+    SDL_DisplayID DeviceCaps::getDisplayId(uint8_t display) const
     {
-        if (display >= getDisplayCount()) {
-            throw NotSupported("Could not find a matching display!");
-        }
         int count               = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        std::string displayName(SDL_GetDisplayName(displays[display]));
+        if (displays == nullptr || count <= 0 || display >= static_cast<uint8_t>(count)) {
+            if (displays != nullptr) {
+                SDL_free(displays);
+            }
+            throw NotSupported("Could not find a matching display!");
+        }
+        SDL_DisplayID displayId = displays[display];
         SDL_free(displays);
-        return displayName;
+        return displayId;
+    }
+
+    SDL_DisplayMode const * DeviceCaps::getDesktopMode(uint8_t display) const
+    {
+        SDL_DisplayID displayId      = getDisplayId(display);
+        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+        if (mode == nullptr) {
+            throw SDLException(SDL_GetError());
+        }
+        return mode;
+    }
+
+    std::string DeviceCaps::getDisplayName(uint8_t display) const
+    {
+        return std::string(SDL_GetDisplayName(getDisplayId(display)));
     }
 
     uint32_t DeviceCaps::getDesktopFormat(uint8_t display) const
     {
-        int count               = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        SDL_DisplayID displayId = displays[display];
-        SDL_free(displays);
-        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
-        if (mode == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-        return mode->format;
+        return getDesktopMode(display)->format;
     }
 
     int32_t DeviceCaps::getDesktopRefreshRate(uint8_t display) const
     {
-        int count               = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        SDL_DisplayID displayId = displays[display];
-        SDL_free(displays);
-        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
-        if (mode == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-        return mode->refresh_rate;
+        return getDesktopMode(display)->refresh_rate;
     }
 
     int32_t DeviceCaps::getDesktopWidth(uint8_t display) const
     {
-        int count               = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        SDL_DisplayID displayId = displays[display];
-        SDL_free(displays);
-        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
-        if (mode == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-        return mode->w;
+        return getDesktopMode(display)->w;
     }
 
     int32_t DeviceCaps::getDesktopHeight(uint8_t display) const
     {
-        int count               = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        SDL_DisplayID displayId = displays[display];
-        SDL_free(displays);
-        SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
-        if (mode == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-        return mode->h;
+        return getDesktopMode(display)->h;
     }
 
     Rect DeviceCaps::getDisplayBounds(uint8_t display) const
     {
+        SDL_DisplayID displayId = getDisplayId(display);
+
         SDL_Rect srec;
-        if (SDL_GetDisplayBounds(display, &srec) != 0) {
+        if (!SDL_GetDisplayBounds(displayId, &srec)) {
             throw SDLException(SDL_GetError());
+        }
+
+        // SDL can occasionally report unusable bounds on X11/Xvfb (e.g. height 0).
+        // Fall back to desktop mode dimensions to keep window creation valid.
+        if (srec.w <= 0 || srec.h <= 0) {
+            SDL_DisplayMode const * mode = SDL_GetDesktopDisplayMode(displayId);
+            if (mode == nullptr) {
+                throw SDLException(SDL_GetError());
+            }
+            srec.x = 0;
+            srec.y = 0;
+            srec.w = mode->w;
+            srec.h = mode->h;
         }
         Rect rec(srec.x, srec.y, srec.w, srec.h);
         return rec;
