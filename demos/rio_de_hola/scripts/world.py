@@ -223,8 +223,8 @@ class World(EventListenerBase):
         )
         renderer.setFont(textfont)
         renderer.activateAllLayers(self.map)
-        renderer.setBackground(100, 255, 100, 165)
-        renderer.setBorder(50, 255, 50)
+        renderer.setBackground(100, 255, 100, 165) # green background with some transparency
+        renderer.setBorder(50, 255, 50) # bright green border
         renderer.setEnabled(True)
 
         # Activate the grid renderer on all layers
