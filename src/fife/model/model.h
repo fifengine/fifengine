@@ -163,13 +163,13 @@ namespace FIFE
             using namespace_t = std::pair<std::string, objectmap_t>;
             std::list<namespace_t> m_namespaces;
 
-            /// Used to remember last 'selected' namespace.
+            // Used to remember last 'selected' namespace.
             namespace_t* m_lastNamespace;
 
-            /// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
+            // Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
             namespace_t* selectNamespace(std::string const & name_space);
 
-            /// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
+            // Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
             namespace_t const * selectNamespace(std::string const & name_space) const;
 
             std::vector<IPather*> m_pathers;

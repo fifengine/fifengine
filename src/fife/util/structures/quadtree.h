@@ -135,7 +135,7 @@ namespace FIFE
              */
             bool contains(int32_t x, int32_t y, int32_t w, int32_t h) const;
 
-            /// Expand the subnodes - only needed for debugging/profiling worst cases.
+            // Expand the subnodes - only needed for debugging/profiling worst cases.
             void splice();
 
             /** Return the parent node
@@ -314,7 +314,7 @@ namespace FIFE
             }
             return m_nodes[3]->find_container(x, y, w, h);
         default:
-            assert("BUG in QuadTree !" == 0);
+            assert("BUG in QuadTree !" && false);
             return 0L;
         }
     }

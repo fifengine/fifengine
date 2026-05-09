@@ -67,17 +67,17 @@ namespace FIFE
             using type_filelist = std::map<std::string, RawDataDAT2::s_info>;
             mutable type_filelist m_filelist;
 
-            /// number of file entries to read
+            // number of file entries to read
             mutable uint32_t m_filecount;
-            /// current index in file
+            // current index in file
             mutable uint32_t m_currentIndex;
-            /// lazy loading timer
+            // lazy loading timer
             mutable Timer m_timer;
 
-            /// read a bunch of file entries
+            // read a bunch of file entries
             void readFileEntry() const;
 
-            /// find a file entry
+            // find a file entry
             type_filelist::const_iterator findFileEntry(std::string const & path) const;
 
             std::set<std::string> list(std::string const & pathstr, bool dirs) const;

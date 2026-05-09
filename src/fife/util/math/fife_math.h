@@ -73,7 +73,7 @@ namespace FIFE
     template <>
     struct float_traits<float>
     {
-            using float_type = float; ///< Floating-point typedef for this specialization.
+            using float_type = float; //< Floating-point typedef for this specialization.
 
             /** Machine epsilon for float. */
             static float_type epsilon()
@@ -156,7 +156,7 @@ namespace FIFE
     template <>
     struct float_traits<double>
     {
-            using float_type = double; ///< Floating-point typedef for this specialization.
+            using float_type = double; //< Floating-point typedef for this specialization.
 
             /** Machine epsilon for double. */
             static float_type epsilon()

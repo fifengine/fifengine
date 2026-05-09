@@ -145,7 +145,11 @@ namespace FIFE
         return os << "(" << r.x << "," << r.y << ")-(" << r.w << "," << r.h << ")";
     }
 
-    //////////////// INLINE FUNCTIONS /////////////////////////
+    /**
+     * -----------------------------------------------
+     * INLINE FUNCTIONS
+     * -----------------------------------------------
+     */
 
     template <typename T>
     inline T RectType<T>::right() const

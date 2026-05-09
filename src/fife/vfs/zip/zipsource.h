@@ -41,9 +41,11 @@ namespace FIFE
             ZipSource(ZipSource const &)            = delete;
             ZipSource& operator=(ZipSource const &) = delete;
 
-            /// WARNING: fileExists, listFiles and listDirectories are not
-            // thread-safe, and will probably break if called from multiple
-            // threads at the same time.
+            /**
+             * WARNING: fileExists, listFiles and listDirectories are not
+             * thread-safe, and will probably break if called from multiple
+             * threads at the same time.
+             */
             bool fileExists(std::string const & file) const;
             std::set<std::string> listFiles(std::string const & path) const;
             std::set<std::string> listDirectories(std::string const & path) const;
