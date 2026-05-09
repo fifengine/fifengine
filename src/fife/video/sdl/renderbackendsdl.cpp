@@ -130,8 +130,18 @@ namespace FIFE
             yPos = toDisplayWindowPos(displayIndex, false);
         } else {
             SDL_Rect displayBounds;
-            if (SDL_GetDisplayBounds(displayId, &displayBounds) != 0) {
+            if (!SDL_GetDisplayBounds(displayId, &displayBounds)) {
                 throw SDLException(SDL_GetError());
+            }
+            if (displayBounds.w <= 0 || displayBounds.h <= 0) {
+                SDL_DisplayMode const * desktopMode = SDL_GetDesktopDisplayMode(displayId);
+                if (desktopMode == nullptr) {
+                    throw SDLException(SDL_GetError());
+                }
+                displayBounds.x = 0;
+                displayBounds.y = 0;
+                displayBounds.w = desktopMode->w;
+                displayBounds.h = desktopMode->h;
             }
 
             if (displayCount == 1 && windowX < 0 && windowY < 0) {
@@ -183,7 +193,7 @@ namespace FIFE
         displayMode.w            = createWidth;
         displayMode.h            = createHeight;
         displayMode.refresh_rate = static_cast<float>(mode.getRefreshRate());
-        if (mode.isFullScreen() && SDL_SetWindowFullscreenMode(m_window, &displayMode) != 0) {
+        if (mode.isFullScreen() && !SDL_SetWindowFullscreenMode(m_window, &displayMode)) {
             throw SDLException(SDL_GetError());
         }
 
@@ -340,7 +350,7 @@ namespace FIFE
     bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        return SDL_RenderPoint(m_renderer, x, y) == 0;
+        return SDL_RenderPoint(m_renderer, x, y);
     }
 
     void RenderBackendSDL::drawLine(Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -852,6 +862,7 @@ namespace FIFE
                 toInt32Dimension(static_cast<uint32_t>(m_target->h)));
             image->setTexture(texture);
         }
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
         SDL_SetRenderTarget(m_renderer, texture);
         setClipArea(img->getArea(), discard);
     }

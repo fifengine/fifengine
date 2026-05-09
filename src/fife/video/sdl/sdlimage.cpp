@@ -121,7 +121,10 @@ namespace FIFE
             if (m_surface == nullptr) {
                 load();
             }
-            m_texture = SDL_CreateTextureFromSurface(renderer, m_surface);
+            m_texture = SDL_CreateTexture(
+                renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, m_surface->w, m_surface->h);
+            SDL_UpdateTexture(m_texture, nullptr, m_surface->pixels, m_surface->pitch);
+            SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
         }
 
         // set additonal color and alpha mods
@@ -135,7 +138,7 @@ namespace FIFE
         // set render color
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, alpha);
 
-        if (SDL_RenderTexture(renderer, m_texture, &srcRect, &tarRect) != 0) {
+        if (!SDL_RenderTexture(renderer, m_texture, &srcRect, &tarRect)) {
             throw SDLException(SDL_GetError());
         }
     }
@@ -165,7 +168,10 @@ namespace FIFE
         if (m_texture == nullptr) {
             // create atlas texture
             SDL_Renderer* renderer = dynamic_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
-            m_texture              = SDL_CreateTextureFromSurface(renderer, surface);
+            m_texture =
+                SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, surface->w, surface->h);
+            SDL_UpdateTexture(m_texture, nullptr, surface->pixels, surface->pitch);
+            SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
             image->setTexture(m_texture);
         }
         setSurface(surface);

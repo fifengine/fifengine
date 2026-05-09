@@ -6,6 +6,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <limits>
 #include <string>
 #include <utility>
@@ -91,6 +92,24 @@ namespace FIFE
         {
             return centered ? static_cast<int32_t>(SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex)) :
                               static_cast<int32_t>(SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex));
+        }
+
+        void getDrawableSizeOrFallback(
+            SDL_Window* window, uint32_t fallbackW, uint32_t fallbackH, uint32_t& outW, uint32_t& outH)
+        {
+            outW = fallbackW;
+            outH = fallbackH;
+
+            if (window == nullptr) {
+                return;
+            }
+
+            int drawableW = 0;
+            int drawableH = 0;
+            if (SDL_GetWindowSizeInPixels(window, &drawableW, &drawableH) && drawableW > 0 && drawableH > 0) {
+                outW = static_cast<uint32_t>(drawableW);
+                outH = static_cast<uint32_t>(drawableH);
+            }
         }
     } // namespace
 
@@ -287,8 +306,18 @@ namespace FIFE
             yPos = toDisplayWindowPos(displayIndex, false);
         } else {
             SDL_Rect displayBounds;
-            if (SDL_GetDisplayBounds(displayId, &displayBounds) != 0) {
+            if (!SDL_GetDisplayBounds(displayId, &displayBounds)) {
                 throw SDLException(SDL_GetError());
+            }
+            if (displayBounds.w <= 0 || displayBounds.h <= 0) {
+                SDL_DisplayMode const * desktopMode = SDL_GetDesktopDisplayMode(displayId);
+                if (desktopMode == nullptr) {
+                    throw SDLException(SDL_GetError());
+                }
+                displayBounds.x = 0;
+                displayBounds.y = 0;
+                displayBounds.w = desktopMode->w;
+                displayBounds.h = desktopMode->h;
             }
 
             if (displayCount == 1 && windowX < 0 && windowY < 0) {
@@ -341,7 +370,7 @@ namespace FIFE
         displayMode.w            = createWidth;
         displayMode.h            = createHeight;
         displayMode.refresh_rate = static_cast<float>(mode.getRefreshRate());
-        if (mode.isFullScreen() && SDL_SetWindowFullscreenMode(m_window, &displayMode) != 0) {
+        if (mode.isFullScreen() && !SDL_SetWindowFullscreenMode(m_window, &displayMode)) {
             throw SDLException(SDL_GetError());
         }
 
@@ -385,7 +414,11 @@ namespace FIFE
         // update the screen mode with the actual flags used
         m_screenMode = mode;
 
-        glViewport(0, 0, toGLsizei(width), toGLsizei(height));
+        uint32_t viewportW = width;
+        uint32_t viewportH = height;
+        getDrawableSizeOrFallback(m_window, width, height, viewportW, viewportH);
+
+        glViewport(0, 0, toGLsizei(viewportW), toGLsizei(viewportH));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         GLdouble const left   = 0.0;
@@ -2839,11 +2872,32 @@ namespace FIFE
 
     void RenderBackendOpenGL::setClipArea(Rect const & cliparea, bool clear)
     {
-        glScissor(
-            cliparea.x,
-            toGLint(getHeight()) - cliparea.y - cliparea.h,
-            toGLsizei(static_cast<uint32_t>(cliparea.w)),
-            toGLsizei(static_cast<uint32_t>(cliparea.h)));
+        GLint scissorX   = cliparea.x;
+        GLint scissorY   = toGLint(getHeight()) - cliparea.y - cliparea.h;
+        GLsizei scissorW = toGLsizei(static_cast<uint32_t>(cliparea.w));
+        GLsizei scissorH = toGLsizei(static_cast<uint32_t>(cliparea.h));
+
+        // On HiDPI displays, OpenGL viewport/scissor are in drawable pixels,
+        // while FIFE layout coordinates remain in logical units.
+        if (m_target == m_screen && m_window != nullptr) {
+            uint32_t drawableW = static_cast<uint32_t>(m_screen->w);
+            uint32_t drawableH = static_cast<uint32_t>(m_screen->h);
+            getDrawableSizeOrFallback(
+                m_window, static_cast<uint32_t>(m_screen->w), static_cast<uint32_t>(m_screen->h), drawableW, drawableH);
+
+            double const logicalW = static_cast<double>(std::max(1, m_screen->w));
+            double const logicalH = static_cast<double>(std::max(1, m_screen->h));
+            double const scaleX   = static_cast<double>(drawableW) / logicalW;
+            double const scaleY   = static_cast<double>(drawableH) / logicalH;
+
+            scissorX = static_cast<GLint>(std::floor(static_cast<double>(cliparea.x) * scaleX));
+            scissorY =
+                static_cast<GLint>(std::floor((static_cast<double>(getHeight() - cliparea.y - cliparea.h)) * scaleY));
+            scissorW = static_cast<GLsizei>(std::ceil(static_cast<double>(cliparea.w) * scaleX));
+            scissorH = static_cast<GLsizei>(std::ceil(static_cast<double>(cliparea.h) * scaleY));
+        }
+
+        glScissor(scissorX, scissorY, scissorW, scissorH);
         if (clear) {
             if (m_isbackgroundcolor) {
                 auto red   = static_cast<float>(m_backgroundcolor.r / 255.0);
@@ -2941,8 +2995,13 @@ namespace FIFE
                 0);
         }
 
-        m_target = m_screen;
-        glViewport(0, 0, toGLsizei(static_cast<uint32_t>(m_screen->w)), toGLsizei(static_cast<uint32_t>(m_screen->h)));
+        m_target           = m_screen;
+        uint32_t viewportW = static_cast<uint32_t>(m_screen->w);
+        uint32_t viewportH = static_cast<uint32_t>(m_screen->h);
+        getDrawableSizeOrFallback(
+            m_window, static_cast<uint32_t>(m_screen->w), static_cast<uint32_t>(m_screen->h), viewportW, viewportH);
+
+        glViewport(0, 0, toGLsizei(viewportW), toGLsizei(viewportH));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0, m_screen->w, m_screen->h, 0, -100, 100);
