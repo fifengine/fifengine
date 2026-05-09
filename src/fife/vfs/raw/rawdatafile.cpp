@@ -28,7 +28,9 @@ namespace FIFE
         m_stream.seekg(0, std::ios::end);
         std::streamoff const streamSize = m_stream.tellg();
         assert(streamSize >= 0);
-        assert(streamSize <= static_cast<std::streamoff>(std::numeric_limits<uint32_t>::max()));
+        if (streamSize < 0 || streamSize > static_cast<std::streamoff>(std::numeric_limits<uint32_t>::max())) {
+            throw Exception("RawDataFile: file size does not fit into uint32_t: " + m_file);
+        }
         m_filesize = static_cast<uint32_t>(streamSize);
         m_stream.seekg(0, std::ios::beg);
     }

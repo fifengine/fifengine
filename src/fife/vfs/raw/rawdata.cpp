@@ -61,7 +61,9 @@ namespace FIFE
     uint32_t RawData::getDataLength() const
     {
         size_t const dataLength = m_datasource->getSize();
-        assert(dataLength <= std::numeric_limits<uint32_t>::max());
+        if (dataLength > std::numeric_limits<uint32_t>::max()) {
+            throw Exception("RawData: data length does not fit into uint32_t");
+        }
         return static_cast<uint32_t>(dataLength);
     }
 
