@@ -5,7 +5,7 @@
   "description": "Fifengine is a multi-platform isometric game engine written in C++.",
   "homepage": "https://github.com/fifengine/fifengine",
   "license": "LGPL-2.1",
-  "supports": "windows, linux, osx",
+  "supports": "windows, (linux, osx)",
   "builtin-baseline": "56bb2411609227288b70117ead2c47585ba07713",
   "dependencies": [
     "catch2",
@@ -26,8 +26,18 @@
       "name": "sdl3",
       "platform": "windows"
     },
-    "sdl3-image",
-    "sdl3-ttf",
+    {
+      "name": "sdl3-image",
+      "features": [
+        "png"
+      ]
+    },
+    {
+      "name": "sdl3-ttf",
+      "features": [
+        "svg"
+      ]
+    },
     "tinyxml2",
     "utfcpp",
     "zlib"
