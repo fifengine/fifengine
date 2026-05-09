@@ -36,16 +36,26 @@ namespace FIFE
 
         if (!img->isSharedImage()) {
             std::string const & filename = img->getName();
-            std::unique_ptr<RawData> data(vfs->open(filename));
-            size_t const datalen = data->getDataLength();
-            std::unique_ptr<uint8_t[]> const darray(new uint8_t[datalen]);
-            data->readInto(darray.get(), datalen);
-            SDL_IOStream* iostream = SDL_IOFromConstMem(darray.get(), datalen);
-
-            SDL_Surface* surface = IMG_Load_IO(iostream, false);
+            SDL_Surface* surface         = IMG_Load(filename.c_str());
+            std::string fileError;
 
             if (surface == nullptr) {
-                throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
+                fileError = SDL_GetError();
+
+                std::unique_ptr<RawData> data(vfs->open(filename));
+                size_t const datalen = data->getDataLength();
+                std::unique_ptr<uint8_t[]> const darray(new uint8_t[datalen]);
+                data->readInto(darray.get(), datalen);
+                SDL_IOStream* iostream = SDL_IOFromConstMem(darray.get(), datalen);
+
+                surface = IMG_Load_IO(iostream, false);
+                SDL_CloseIO(iostream);
+
+                if (surface == nullptr) {
+                    throw SDLException(
+                        std::string("Fatal Error when loading image into a SDL_Surface: file load failed: ") +
+                        fileError + "; memory load failed: " + SDL_GetError());
+                }
             }
 
             RenderBackend* rb = RenderBackend::instance();
@@ -72,8 +82,6 @@ namespace FIFE
                     img->setSurface(surface);
                 }
             }
-
-            SDL_CloseIO(iostream);
         }
         // restore saved x and y shifts
         img->setXShift(xShiftSave);
