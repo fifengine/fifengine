@@ -86,7 +86,7 @@ class Timer(fife.TimeEvent):
 
         self._executed = 0
 
-        self.setLastUpdateTime(self._manager.getTime())
+        self.setLastUpdateTime64(self._manager.now64())
         self._manager.registerEvent(self)
 
     def stop(self):

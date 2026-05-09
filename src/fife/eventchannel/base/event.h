@@ -24,6 +24,8 @@
 // FIFE includes
 //
 #include "eventchannel/source/ieventsource.h"
+#include "util/time/sdltimecompat.h"
+#include "util/time/timemanager.h"
 
 namespace FIFE
 {
@@ -34,7 +36,7 @@ namespace FIFE
         public:
             /** Constructor.
              */
-            Event() : m_isConsumed(false), m_eventSource(nullptr), m_timestamp(static_cast<int32_t>(SDL_GetTicks()))
+            Event() : m_isConsumed(false), m_eventSource(nullptr), m_timestamp64(TimeManager::instance()->getTicks64())
             {
             }
 
@@ -73,16 +75,30 @@ namespace FIFE
 
             /** Gets the timestamp of the event
              */
-            virtual int32_t getTimeStamp() const
+            [[deprecated("Use getTimeStamp64() instead.")]] virtual int32_t getTimeStamp() const
             {
-                return m_timestamp;
+                return SDLTimeCompat::toInt32Ticks(m_timestamp64);
+            }
+
+            /** Gets the timestamp of the event as 64-bit SDL ticks.
+             */
+            virtual Uint64 getTimeStamp64() const
+            {
+                return m_timestamp64;
             }
 
             /** Sets the timestamp of the event
              */
-            virtual void setTimeStamp(int32_t timestamp)
+            [[deprecated("Use setTimeStamp64() instead.")]] virtual void setTimeStamp(int32_t timestamp)
             {
-                m_timestamp = timestamp;
+                m_timestamp64 = SDLTimeCompat::fromLegacy32Ticks(timestamp);
+            }
+
+            /** Sets the timestamp of the event as 64-bit SDL ticks.
+             */
+            virtual void setTimeStamp64(Uint64 timestamp)
+            {
+                m_timestamp64 = timestamp;
             }
 
             /** Gets the name of the event
@@ -100,7 +116,8 @@ namespace FIFE
                 std::stringstream ss;
                 ss << "consumed = " << m_isConsumed << ", ";
                 ss << "src = " << m_eventSource << ", ";
-                ss << "timestamp = " << m_timestamp;
+                ss << "timestamp = " << SDLTimeCompat::toInt32Ticks(m_timestamp64);
+                ss << ", timestamp64 = " << getTimeStamp64();
                 return ss.str();
             }
 
@@ -119,8 +136,8 @@ namespace FIFE
             bool m_isConsumed;
             //! The source of the event.
             IEventSource* m_eventSource;
-            //! Timestamp of the event.
-            int32_t m_timestamp;
+            //! Timestamp of the event in SDL ticks.
+            Uint64 m_timestamp64;
     };
 
 } // namespace FIFE

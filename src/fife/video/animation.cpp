@@ -20,7 +20,7 @@
 #include "image.h"
 #include "loaders/native/video/resourceanimationloader.h"
 #include "util/base/exception.h"
-#include "util/time/timemanager.h"
+#include "util/time/sdltimecompat.h"
 
 namespace FIFE
 {
@@ -113,9 +113,15 @@ namespace FIFE
 
     int32_t Animation::getFrameIndex(uint32_t timestamp)
     {
+        return getFrameIndex64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
+    }
+
+    int32_t Animation::getFrameIndex64(uint64_t timestamp)
+    {
         int32_t val = -1;
         if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
-            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
+            assert(timestamp <= std::numeric_limits<uint32_t>::max());
+            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(static_cast<uint32_t>(timestamp)));
             --i;
             assert(i->second.index <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             val = static_cast<int32_t>(i->second.index);
@@ -144,9 +150,15 @@ namespace FIFE
 
     ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp)
     {
+        return getFrameByTimestamp64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
+    }
+
+    ImagePtr Animation::getFrameByTimestamp64(uint64_t timestamp)
+    {
         ImagePtr val;
         if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
-            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
+            assert(timestamp <= std::numeric_limits<uint32_t>::max());
+            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(static_cast<uint32_t>(timestamp)));
             --i;
             val = i->second.image;
         }

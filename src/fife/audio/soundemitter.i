@@ -88,6 +88,7 @@ namespace FIFE {
 		uint64_t getSampleRate();
 		uint64_t getDecodedLength();
 		uint64_t getDuration();
+		uint64_t getPlayTimestamp64() const;
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);
 		SoundStateType getState();
@@ -97,7 +98,7 @@ namespace FIFE {
 
 		void addListener(SoundEmitterListener* listener);
 		void removeListener(SoundEmitterListener* listener);
-	
+
 	private:
 		SoundEmitter(SoundManager* manager, uint32_t uid);
 	};

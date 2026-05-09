@@ -18,6 +18,7 @@
 #include "model/metamodel/timeprovider.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 #include "video/fonts/ifont.h"
 #include "video/image.h"
@@ -157,7 +158,7 @@ namespace FIFE
         OffRendererElementInfo(),
         m_anchor(anchor),
         m_animation(animation),
-        m_start_time(TimeManager::instance()->getTime()),
+        m_start_time(TimeManager::instance()->now64()),
         m_time_scale(1.0)
     {
     }
@@ -167,9 +168,11 @@ namespace FIFE
     void OffRendererAnimationInfo::render(RenderBackend* renderbackend)
     {
         static_cast<void>(renderbackend);
-        uint32_t const duration = toAnimationTimestamp(m_animation->getDuration());
-        uint32_t const animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
-        ImagePtr const img      = m_animation->getFrameByTimestamp(animtime);
+        uint32_t const duration      = toAnimationTimestamp(m_animation->getDuration());
+        uint64_t const elapsed       = TimeManager::instance()->now64() - m_start_time;
+        uint64_t const scaledElapsed = static_cast<uint64_t>(static_cast<double>(elapsed) * m_time_scale);
+        uint64_t const animtime      = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(duration);
+        ImagePtr const img           = m_animation->getFrameByTimestamp64(animtime);
 
         Rect r;
         int32_t const width  = toScreenSize(img->getWidth());

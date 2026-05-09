@@ -15,7 +15,9 @@ namespace FIFE {
 		virtual void updateEvent(uint32_t time) = 0;
 		void setPeriod(int32_t period);
 		int32_t getPeriod();
-		uint32_t getLastUpdateTime();	
-		void setLastUpdateTime(uint32_t);	
+		uint32_t getLastUpdateTime();
+		uint64_t getLastUpdateTime64();
+		void setLastUpdateTime(uint32_t);
+		void setLastUpdateTime64(uint64_t);
 	};
 }

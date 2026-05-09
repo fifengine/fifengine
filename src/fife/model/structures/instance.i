@@ -15,9 +15,11 @@
 namespace FIFE {
 
 	class Layer;
+
 	class Action;
 	class Object;
 	class Instance;
+	%feature("deprecated", "Use getRuntime64() instead.") Instance::getRuntime;
 	class Route;
 	class OverlayColors;
 	class AnimationPtr;
@@ -90,7 +92,9 @@ namespace FIFE {
 		void setFacingLocation(const Location& loc);
 		Location getFacingLocation();
 		uint32_t getActionRuntime();
+		uint64_t getActionRuntime64();
 		void setActionRuntime(uint32_t time_offset);
+		void setActionRuntime64(uint64_t time_offset);
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
 		void actOnce(const std::string& actionName, const Location& direction);
 		void actOnce(const std::string& actionName, int32_t rotation);
@@ -105,6 +109,7 @@ namespace FIFE {
 		void setTimeMultiplier(float multip);
 		float getTimeMultiplier();
 		uint32_t getRuntime();
+		uint64_t getRuntime64();
 		void refresh();
 		InstanceChangeInfo getChangeInfo();
 

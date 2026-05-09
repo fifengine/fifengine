@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <string>
@@ -523,7 +524,7 @@ namespace FIFE
             AnimationPtr m_ani_ptr;
             bool m_img_fill;
             bool m_ani_fill;
-            uint32_t m_start_time;
+            uint64_t m_start_time;
     };
 } // namespace FIFE
 #endif

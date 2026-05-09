@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <list>
 #include <string>
 // 3rd party library includes
@@ -67,7 +68,7 @@ namespace FIFE
                     bool antialias;
                     int glyph_spacing;
                     int row_spacing;
-                    uint32_t timestamp;
+                    uint64_t timestamp;
 
                     Image* image;
             };

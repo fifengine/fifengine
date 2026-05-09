@@ -7,6 +7,9 @@
 %}
 
 namespace FIFE {
+	%feature("deprecated", "Use now64() instead.") TimeManager::getTime;
+	%feature("deprecated", "Use getTimeDelta64() instead.") TimeManager::getTimeDelta;
+
 	class TimeEvent;
 	class TimeManager {
 	public:
@@ -14,7 +17,11 @@ namespace FIFE {
 		virtual ~TimeManager();
 		void update();
 		uint32_t getTime() const;
+		uint64_t now64() const;
 		uint32_t getTimeDelta() const;
+		uint64_t getTimeDelta64() const;
+		uint64_t getTicks64() const;
+		void sleep64(uint64_t ms) const;
 		double getAverageFrameTime() const;
 		void printStatistics() const;
 		void registerEvent(TimeEvent* event);

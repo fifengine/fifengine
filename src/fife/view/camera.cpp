@@ -30,6 +30,7 @@
 #include "util/log/logger.h"
 #include "util/math/angles.h"
 #include "util/math/fife_math.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 #include "video/animation.h"
 #include "video/image.h"
@@ -52,10 +53,12 @@ namespace FIFE
             explicit MapObserver(Camera* camera) : m_camera(camera)
             {
             }
-            ~MapObserver() override = default;
 
             void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override
             {
+                for (auto* changedLayer : changedLayers) {
+                    m_camera->addLayer(changedLayer);
+                }
             }
 
             void onLayerCreate([[maybe_unused]] Map* map, Layer* layer) override
@@ -967,11 +970,11 @@ found_non_transparent_pixel:;
             assert(m_ani_ptr);
 
             if (m_start_time == 0) {
-                m_start_time = TimeManager::instance()->getTime();
+                m_start_time = TimeManager::instance()->now64();
             }
-            uint32_t const animtime =
-                scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % m_ani_ptr->getDuration();
-            ImagePtr const img = m_ani_ptr->getFrameByTimestamp(animtime);
+            uint64_t const elapsed  = TimeManager::instance()->now64() - m_start_time;
+            uint64_t const animtime = elapsed % SDLTimeCompat::fromLegacy32Ticks(m_ani_ptr->getDuration());
+            ImagePtr const img      = m_ani_ptr->getFrameByTimestamp64(animtime);
             if (img) {
                 if (m_ani_fill) {
                     r.w = width;

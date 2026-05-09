@@ -67,6 +67,10 @@ namespace FIFE
              */
             int32_t getFrameIndex(uint32_t timestamp);
 
+            /** 64-bit counterpart to getFrameIndex().
+             */
+            int32_t getFrameIndex64(uint64_t timestamp);
+
             /** Gets the frame iamge that matches the given index. If no matches found, returns an invalid ImagePtr
              */
             ImagePtr getFrame(int32_t index);
@@ -74,6 +78,10 @@ namespace FIFE
             /** Gets the frame image that matches the given timestamp.
              */
             ImagePtr getFrameByTimestamp(uint32_t timestamp);
+
+            /** 64-bit counterpart to getFrameByTimestamp().
+             */
+            ImagePtr getFrameByTimestamp64(uint64_t timestamp);
 
             /** Gets all frame images.
              */

@@ -7,18 +7,20 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <limits>
 #include <vector>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>
 
 // FIFE includes
+#include "sdltimecompat.h"
 #include "timeevent.h"
 #include "util/log/logger.h"
 
 namespace FIFE
 {
-    static uint32_t const UNDEFINED_TIME_DELTA = 999999;
+    static uint64_t const UNDEFINED_TIME_DELTA = 999999;
     static Logger _log(LM_UTIL);
 
     TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0)
@@ -32,12 +34,12 @@ namespace FIFE
         // if first update...
         double avg_multiplier = 0.985;
         if (m_current_time == 0) {
-            m_current_time = SDL_GetTicks();
+            m_current_time = getTicks64();
             avg_multiplier = 0;
             m_time_delta   = 0;
         } else {
             m_time_delta   = m_current_time;
-            m_current_time = SDL_GetTicks();
+            m_current_time = getTicks64();
             m_time_delta   = m_current_time - m_time_delta;
         }
         m_average_frame_time =
@@ -50,7 +52,7 @@ namespace FIFE
         // -> Ugly segfault
         for (auto* event : m_events_list) {
             if (event != nullptr) {
-                event->managerUpdateEvent(m_current_time);
+                event->managerUpdateEvent64(m_current_time);
             }
         }
 
@@ -79,12 +81,37 @@ namespace FIFE
 
     uint32_t TimeManager::getTime() const
     {
+        return SDLTimeCompat::toUint32Ticks(m_current_time);
+    }
+
+    uint64_t TimeManager::now64() const
+    {
         return m_current_time;
     }
 
     uint32_t TimeManager::getTimeDelta() const
     {
+        return SDLTimeCompat::toUint32Ticks(m_time_delta);
+    }
+
+    uint64_t TimeManager::getTimeDelta64() const
+    {
         return m_time_delta;
+    }
+
+    uint64_t TimeManager::getTicks64() const
+    {
+        return SDL_GetTicks();
+    }
+
+    void TimeManager::sleep64(uint64_t ms) const
+    {
+        while (ms > std::numeric_limits<Uint32>::max()) {
+            SDL_Delay(std::numeric_limits<Uint32>::max());
+            ms -= std::numeric_limits<Uint32>::max();
+        }
+
+        SDL_Delay(static_cast<Uint32>(ms));
     }
 
     double TimeManager::getAverageFrameTime() const

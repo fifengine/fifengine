@@ -53,6 +53,12 @@ namespace FIFE
              */
             void managerUpdateEvent(uint32_t time);
 
+            /** Called by TimeManager to update the event with 64-bit time.
+             *
+             * @param time Current 64-bit time. Used to check if it is time to update.
+             */
+            void managerUpdateEvent64(uint64_t time);
+
             /** Set the period of the event.
              *
              * @param period The period of the event. See class description.
@@ -71,18 +77,30 @@ namespace FIFE
              */
             uint32_t getLastUpdateTime() const;
 
+            /** Get the last time the event was updated as 64-bit ticks.
+             *
+             * @return 64-bit time of last update.
+             */
+            uint64_t getLastUpdateTime64() const;
+
             /** Set the last time the event was updated.
              *
              * @param ms Time of last update.
              */
             void setLastUpdateTime(uint32_t ms);
 
+            /** Set the last time the event was updated using 64-bit ticks.
+             *
+             * @param ms 64-bit time of last update.
+             */
+            void setLastUpdateTime64(uint64_t ms);
+
         private:
             // The period of the event. See the class description.
             int32_t m_period;
 
             // The last time the class was updated.
-            uint32_t m_last_updated;
+            uint64_t m_last_updated;
     };
 
 } // namespace FIFE

@@ -63,7 +63,7 @@ namespace FIFE
             }
 
             // Stay sorted after access time
-            it->timestamp = TimeManager::instance()->getTime();
+            it->timestamp = TimeManager::instance()->now64();
             m_pool.push_front(*it);
             m_pool.erase(it);
 
@@ -82,7 +82,7 @@ namespace FIFE
         centry.text          = text;
         centry.color         = fontbase->getColor();
         centry.image         = image;
-        centry.timestamp     = TimeManager::instance()->getTime();
+        centry.timestamp     = TimeManager::instance()->now64();
         m_pool.push_front(centry);
 
         // Some minimal amount of entries -> start collection timer
@@ -104,7 +104,7 @@ namespace FIFE
     {
 
         auto it            = m_pool.begin();
-        uint32_t const now = TimeManager::instance()->getTime();
+        uint64_t const now = TimeManager::instance()->now64();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000 * 60) {
                 delete it->image;

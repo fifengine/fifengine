@@ -17,6 +17,7 @@
 #include "renderbackend.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 #include "video/imagemanager.h"
 
@@ -90,7 +91,7 @@ namespace FIFE
         m_cursor_type      = CURSOR_ANIMATION;
 
         if (m_native_image_cursor_enabled) {
-            if (!setNativeImageCursor(anim->getFrameByTimestamp(0))) {
+            if (!setNativeImageCursor(anim->getFrameByTimestamp64(0))) {
                 return;
             }
             if (!SDL_ShowCursor()) {
@@ -99,7 +100,7 @@ namespace FIFE
         } else if (SDL_ShowCursor()) {
             SDL_PumpEvents();
         }
-        m_animtime = m_timemanager->getTime();
+        m_animtime = m_timemanager->now64();
 
         m_cursor_id = NC_ARROW;
         m_cursor_image.reset();
@@ -126,7 +127,7 @@ namespace FIFE
         m_drag_offset_x         = drag_offset_x;
         m_drag_offset_y         = drag_offset_y;
 
-        m_drag_animtime = m_timemanager->getTime();
+        m_drag_animtime = m_timemanager->now64();
 
         m_cursor_drag_image.reset();
     }
@@ -198,9 +199,10 @@ namespace FIFE
         if (m_drag_type == CURSOR_IMAGE) {
             img = m_cursor_drag_image;
         } else if (m_drag_type == CURSOR_ANIMATION) {
-            int32_t const animtime =
-                (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
-            img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
+            uint64_t const elapsed = m_timemanager->now64() - m_drag_animtime;
+            uint64_t const animtime =
+                elapsed % SDLTimeCompat::fromLegacy32Ticks(m_cursor_drag_animation->getDuration());
+            img = m_cursor_drag_animation->getFrameByTimestamp64(animtime);
         }
 
         if (img) {
@@ -224,8 +226,9 @@ namespace FIFE
         if (m_cursor_type == CURSOR_IMAGE) {
             img2 = m_cursor_image;
         } else if (m_cursor_type == CURSOR_ANIMATION) {
-            int32_t const animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
-            img2                   = m_cursor_animation->getFrameByTimestamp(animtime);
+            uint64_t const elapsed  = m_timemanager->now64() - m_animtime;
+            uint64_t const animtime = elapsed % SDLTimeCompat::fromLegacy32Ticks(m_cursor_animation->getDuration());
+            img2                    = m_cursor_animation->getFrameByTimestamp64(animtime);
         }
 
         if (img2) {

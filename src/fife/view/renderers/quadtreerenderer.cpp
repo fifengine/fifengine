@@ -65,8 +65,8 @@ namespace FIFE
         int32_t const size = node->size();
 
         ++visited;
-        CellGrid* cg = m_layer->getCellGrid(); /// we have checked for null pointer in  quadtreerenderer::render().. no
-                                               /// need to check again
+        CellGrid* cg = m_layer->getCellGrid(); // we have checked for null pointer in  quadtreerenderer::render().. no
+                                               // need to check again
 
         ExactModelCoordinate emc = cg->toMapCoordinates(ExactModelCoordinate(x, y)); // 0.5 for each cell's half-width
         ScreenPoint const scrpt1 = m_camera->toScreenCoordinates(emc);

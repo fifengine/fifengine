@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -141,7 +142,7 @@ namespace FIFE
         private:
             Point m_anchor;
             AnimationPtr m_animation;
-            uint32_t m_start_time;
+            uint64_t m_start_time;
             float m_time_scale;
     };
     class FIFE_API OffRendererTextInfo : public OffRendererElementInfo

@@ -22,6 +22,7 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/time/timemanager.h"
 #include "video/renderbackend.h"
 
 namespace FIFE
@@ -540,7 +541,7 @@ namespace FIFE
 
             float modifier = 0.0F;
             if (m_acceleration) {
-                uint32_t const ticks = SDL_GetTicks();
+                uint64_t const ticks = TimeManager::instance()->getTicks64();
                 auto difference      = static_cast<float>((ticks - m_lastTicks) + 1);
                 m_lastTicks          = ticks;
                 auto dx              = static_cast<float>(tmp_x - m_oldX);
@@ -580,7 +581,9 @@ namespace FIFE
                 m_oldY         = tmp_y;
                 event.motion.x = static_cast<float>(tmp_x);
                 event.motion.y = static_cast<float>(tmp_y);
-                m_warp         = true; // don't trigger an event handler when warping
+
+                // don't trigger an event handler when warping
+                m_warp = true;
                 SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), tmp_x, tmp_y);
                 m_warp = false;
             }

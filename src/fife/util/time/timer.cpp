@@ -29,7 +29,7 @@ namespace FIFE
         if (m_active) {
             return;
         }
-        setLastUpdateTime(TimeManager::instance()->getTime());
+        setLastUpdateTime64(TimeManager::instance()->now64());
         TimeManager::instance()->registerEvent(this);
         m_active = true;
     }

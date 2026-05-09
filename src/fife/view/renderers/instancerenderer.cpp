@@ -1472,7 +1472,7 @@ namespace FIFE
             }
             s_image_entry entry;
             entry.image     = image;
-            entry.timestamp = TimeManager::instance()->getTime();
+            entry.timestamp = TimeManager::instance()->now64();
             m_check_images.push_front(entry);
 
             if (!m_timer_enabled) {
@@ -1484,7 +1484,7 @@ namespace FIFE
 
     void InstanceRenderer::check()
     {
-        uint32_t const now = TimeManager::instance()->getTime();
+        uint64_t const now = TimeManager::instance()->now64();
         auto it            = m_check_images.begin();
         // free unused images
         while (it != m_check_images.end()) {

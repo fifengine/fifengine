@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <vector>
 
 // 3rd party library includes
@@ -33,66 +34,101 @@ namespace FIFE
     class FIFE_API TimeManager : public DynamicSingleton<TimeManager>
     {
         public:
-            /** Default constructor.
+            /**
+             * Default constructor.
              */
             TimeManager();
 
             TimeManager(TimeManager const &)            = delete;
             TimeManager& operator=(TimeManager const &) = delete;
 
-            /** Destructor.
+            /**
+             * Destructor.
              */
             virtual ~TimeManager();
 
-            /** Called once a frame and updates the timer objects and events.
+            /**
+             * Called once a frame and updates the timer objects and events.
              */
             void update();
 
-            /** Adds a TimeEvent.
+            /**
+             * Adds a TimeEvent.
              *
              * The event will be updated regularly, depending on its settings.
              * @param event The TimeEvent object to be added.
              */
             void registerEvent(TimeEvent* event);
 
-            /** Removes a TimeEvent.
+            /**
+             * Removes a TimeEvent.
              *
              * Removes an event from the list. It will not be deleted.
              * @param event The TimeEvent object to be removed.
              */
             void unregisterEvent(TimeEvent* event);
 
-            /** Get the time.
+            /**
+             * Get the time.
              *
              * @return The time in milliseconds.
              */
-            uint32_t getTime() const;
+            [[deprecated("Use now64() instead.")]] uint32_t getTime() const;
 
-            /** Get the time since the last frame.
+            /**
+             * Get the time in 64-bit SDL ticks.
+             *
+             * @return The time in milliseconds.
+             */
+            uint64_t now64() const;
+
+            /**
+             * Get the time since the last frame.
              *
              * @return Time since last frame in milliseconds.
              */
-            uint32_t getTimeDelta() const;
+            [[deprecated("Use getTimeDelta64() instead.")]] uint32_t getTimeDelta() const;
 
-            /** Gets average frame time
+            /**
+             * Get the time since the last frame in 64-bit SDL ticks.
+             *
+             * @return Time since last frame in milliseconds.
+             */
+            uint64_t getTimeDelta64() const;
+
+            /**
+             * Get current SDL tick count.
+             *
+             * @return Current SDL ticks in milliseconds.
+             */
+            uint64_t getTicks64() const;
+
+            /**
+             * Sleep for a 64-bit millisecond duration.
+             */
+            void sleep64(uint64_t ms) const;
+
+            /**
+             * Gets average frame time
              *
              * @return Average frame time in milliseconds.
              */
             double getAverageFrameTime() const;
 
-            /** Prints Timer statistics
+            /**
+             * Prints Timer statistics
              */
             void printStatistics() const;
 
         private:
-            /// Current time in milliseconds.
-            uint32_t m_current_time;
-            /// Time since last frame in milliseconds.
-            uint32_t m_time_delta;
-            /// Average frame time in milliseconds.
+            // Current time in milliseconds.
+            uint64_t m_current_time;
+            // Time since last frame in milliseconds.
+            uint64_t m_time_delta;
+            // Average frame time in milliseconds.
             double m_average_frame_time;
 
-            /// List of active TimeEvents.
+            // List of active TimeEvents.
             std::vector<TimeEvent*> m_events_list;
     };
 

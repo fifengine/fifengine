@@ -13,6 +13,7 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "util/time/timemanager.h"
 #include "video/devicecaps.h"
 
 namespace FIFE
@@ -55,17 +56,18 @@ namespace FIFE
     void RenderBackend::startFrame()
     {
         if (m_isframelimit) {
-            m_frame_start = SDL_GetTicks();
+            m_frame_start = TimeManager::instance()->getTicks64();
         }
     }
 
     void RenderBackend::endFrame()
     {
-        if (m_isframelimit) {
-            uint16_t const frame_time = SDL_GetTicks() - m_frame_start;
-            float const frame_limit   = 1000.0F / m_framelimit;
-            if (frame_time < frame_limit) {
-                SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
+        if (m_isframelimit && m_framelimit > 0) {
+            Uint64 const frame_time = TimeManager::instance()->getTicks64() - m_frame_start;
+            float const frame_limit = 1000.0F / static_cast<float>(m_framelimit);
+            if (frame_time < static_cast<Uint64>(frame_limit)) {
+                Uint64 const remaining = static_cast<Uint64>(frame_limit) - frame_time;
+                SDL_Delay(static_cast<Uint32>(remaining));
             }
         }
     }

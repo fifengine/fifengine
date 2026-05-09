@@ -10,14 +10,15 @@
 
 // FIFE includes
 #include "util/base/exception.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 
 namespace FIFE
 {
     TimeProvider::TimeProvider(TimeProvider* master) : m_master(master), m_multiplier(1.0)
     {
-        m_time_static = m_time_scaled =
-            (master != nullptr) ? master->getGameTime() : TimeManager::instance()->getTime();
+        m_time_static = m_time_scaled = (master != nullptr) ? static_cast<double>(master->getGameTime64()) :
+                                                              static_cast<double>(TimeManager::instance()->now64());
     }
 
     void TimeProvider::setMultiplier(float multiplier)
@@ -27,7 +28,7 @@ namespace FIFE
         }
         m_time_static = getPreciseGameTime();
         m_time_scaled = (m_master != nullptr) ? m_master->getPreciseGameTime() :
-                                                static_cast<float>(TimeManager::instance()->getTime());
+                                                static_cast<float>(TimeManager::instance()->now64());
         m_multiplier  = multiplier;
     }
 
@@ -46,14 +47,19 @@ namespace FIFE
 
     uint32_t TimeProvider::getGameTime() const
     {
-        return static_cast<uint32_t>(getPreciseGameTime());
+        return SDLTimeCompat::toUint32Ticks(getGameTime64());
+    }
+
+    uint64_t TimeProvider::getGameTime64() const
+    {
+        return static_cast<uint64_t>(getPreciseGameTime());
     }
 
     double TimeProvider::getPreciseGameTime() const
     {
         return m_time_static +
                (m_multiplier * (((m_master != nullptr) ? m_master->getPreciseGameTime() :
-                                                         static_cast<float>(TimeManager::instance()->getTime())) -
+                                                         static_cast<float>(TimeManager::instance()->now64())) -
                                 m_time_scaled));
     }
 

@@ -654,7 +654,7 @@ namespace FIFE
 
         private:
             bool m_isframelimit;
-            uint32_t m_frame_start;
+            Uint64 m_frame_start;
             uint16_t m_framelimit;
     };
 } // namespace FIFE

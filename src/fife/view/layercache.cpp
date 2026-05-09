@@ -26,6 +26,7 @@
 #include "util/log/logger.h"
 #include "util/math/angles.h"
 #include "util/math/fife_math.h"
+#include "util/time/sdltimecompat.h"
 #include "video/animation.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
@@ -630,23 +631,25 @@ namespace FIFE
                 std::vector<OverlayColors*>* animationColorOverlays =
                     colorOverlay ? new std::vector<OverlayColors*>() : nullptr;
                 for (; it != animations.end(); ++it) {
-                    uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
-                    image                  = it->second->getFrameByTimestamp(animationTime);
+                    uint64_t animationTime =
+                        instance->getActionRuntime64() % SDLTimeCompat::fromLegacy32Ticks(it->second->getDuration());
+                    image = it->second->getFrameByTimestamp64(animationTime);
                     animOverlays->push_back(image);
 
                     if (colorOverlay) {
                         OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
                         if (co != nullptr) {
                             AnimationPtr const ovAnim = co->getColorOverlayAnimation();
-                            animationTime             = instance->getActionRuntime() % ovAnim->getDuration();
-                            co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
+                            animationTime             = instance->getActionRuntime64() %
+                                                        SDLTimeCompat::fromLegacy32Ticks(ovAnim->getDuration());
+                            co->setColorOverlayImage(ovAnim->getFrameByTimestamp64(animationTime));
                         }
                         animationColorOverlays->push_back(co);
                     }
                     // works only for one animation
                     int32_t const actionFrame = it->second->getActionFrame();
                     if (actionFrame != -1) {
-                        int32_t const newFrame = it->second->getFrameIndex(animationTime);
+                        int32_t const newFrame = it->second->getFrameIndex64(animationTime);
                         if (item->currentFrame != newFrame) {
                             // Also notify if the action frame was skipped.
                             if (actionFrame == newFrame ||
@@ -661,8 +664,9 @@ namespace FIFE
                 item->setAnimationOverlay(animOverlays, animationColorOverlays);
             } else {
                 AnimationPtr const animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
-                uint32_t animationTime       = instance->getActionRuntime() % animation->getDuration();
-                image                        = animation->getFrameByTimestamp(animationTime);
+                uint64_t animationTime =
+                    instance->getActionRuntime64() % SDLTimeCompat::fromLegacy32Ticks(animation->getDuration());
+                image = animation->getFrameByTimestamp64(animationTime);
                 // if the action have an animation with only one frame (idle animation) then
                 // a forced update is not necessary.
                 if (animation->getFrameCount() <= 1) {
@@ -672,15 +676,16 @@ namespace FIFE
                     OverlayColors* co = actionVisual->getColorOverlay(angle);
                     if (co != nullptr) {
                         AnimationPtr const ovAnim = co->getColorOverlayAnimation();
-                        animationTime             = instance->getActionRuntime() % ovAnim->getDuration();
-                        co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
+                        animationTime =
+                            instance->getActionRuntime64() % SDLTimeCompat::fromLegacy32Ticks(ovAnim->getDuration());
+                        co->setColorOverlayImage(ovAnim->getFrameByTimestamp64(animationTime));
                         item->setColorOverlay(co);
                     }
                 }
                 int32_t const actionFrame = animation->getActionFrame();
                 if (actionFrame != -1) {
                     if (item->image != image) {
-                        int32_t const newFrame = animation->getFrameIndex(animationTime);
+                        int32_t const newFrame = animation->getFrameIndex64(animationTime);
                         // Also notify if the action frame was skipped.
                         if (actionFrame == newFrame || (newFrame > actionFrame && item->currentFrame < actionFrame)) {
                             instance->callOnActionFrame(action, actionFrame);

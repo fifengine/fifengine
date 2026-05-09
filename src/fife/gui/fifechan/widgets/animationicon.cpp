@@ -12,6 +12,7 @@
 // FIFE includes
 #include "gui/fifechan/base/gui_image.h"
 #include "util/base/exception.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 
 namespace fcn
@@ -63,7 +64,7 @@ namespace fcn
     {
         mAnimation = animation;
         if (mPlay) {
-            mAnimtime = mTimemanager->getTime();
+            mAnimtime = mTimemanager->now64();
         } else {
             mAnimtime = 0;
         }
@@ -98,7 +99,7 @@ namespace fcn
     void AnimationIcon::play()
     {
         mPlay     = true;
-        mAnimtime = mTimemanager->getTime();
+        mAnimtime = mTimemanager->now64();
     }
 
     bool AnimationIcon::isPlaying() const
@@ -125,11 +126,13 @@ namespace fcn
     void AnimationIcon::logic()
     {
         if (isPlaying()) {
-            int32_t index = mFrameIndex;
+            int32_t index          = mFrameIndex;
+            uint64_t const elapsed = mTimemanager->now64() - mAnimtime;
             if (isRepeating()) {
-                index = mAnimation->getFrameIndex((mTimemanager->getTime() - mAnimtime) % mAnimation->getDuration());
+                index = mAnimation->getFrameIndex64(
+                    elapsed % FIFE::SDLTimeCompat::fromLegacy32Ticks(mAnimation->getDuration()));
             } else {
-                index = mAnimation->getFrameIndex(mTimemanager->getTime() - mAnimtime);
+                index = mAnimation->getFrameIndex64(elapsed);
             }
             if (index != mFrameIndex) {
                 mFrameIndex = index;

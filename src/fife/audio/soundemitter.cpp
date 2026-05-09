@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <limits>
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@
 #include "soundmanager.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 
 namespace FIFE
@@ -44,6 +46,34 @@ namespace FIFE
         {
             assert(value <= static_cast<std::size_t>(std::numeric_limits<uint32_t>::max()));
             return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] uint64_t toTimestampMillis64(float const value)
+        {
+            if (!std::isfinite(value) || value <= 0.0F) {
+                return 0;
+            }
+
+            double const millis = static_cast<double>(value) * 1000.0;
+            if (millis >= static_cast<double>(std::numeric_limits<uint64_t>::max())) {
+                return std::numeric_limits<uint64_t>::max();
+            }
+
+            return static_cast<uint64_t>(millis);
+        }
+
+        [[nodiscard]] uint64_t addSaturating(uint64_t const lhs, uint64_t const rhs)
+        {
+            uint64_t const maxValue = std::numeric_limits<uint64_t>::max();
+            if (rhs > maxValue - lhs) {
+                return maxValue;
+            }
+            return lhs + rhs;
+        }
+
+        [[nodiscard]] uint64_t subtractClamped(uint64_t const lhs, uint64_t const rhs)
+        {
+            return (rhs > lhs) ? 0 : (lhs - rhs);
         }
 
         [[nodiscard]] float sampleFrameBytes(SoundEmitter* emitter)
@@ -384,11 +414,12 @@ namespace FIFE
         if (m_soundClip && isActive()) {
             alSourcePlay(m_source);
         }
-        m_internData.playTimestamp = TimeManager::instance()->getTime();
+        m_internData.playTimestamp = TimeManager::instance()->now64();
         m_playCheckDifference      = 0;
         // resume
         if (m_internData.soundState == SD_PAUSED_STATE) {
-            m_internData.playTimestamp -= static_cast<uint32_t>(getCursor(SD_TIME_POS) * 1000);
+            m_internData.playTimestamp =
+                subtractClamped(m_internData.playTimestamp, toTimestampMillis64(getCursor(SD_TIME_POS)));
         }
         m_internData.soundState = SD_PLAYING_STATE;
     }
@@ -402,7 +433,7 @@ namespace FIFE
             setGain(0.0F);
             play();
             m_fadeInStartTimestamp = m_internData.playTimestamp;
-            m_fadeInEndTimestamp   = m_fadeInStartTimestamp + static_cast<uint32_t>(inTime * 1000.0F);
+            m_fadeInEndTimestamp   = addSaturating(m_fadeInStartTimestamp, toTimestampMillis64(inTime));
         }
         if (getState() != SD_PLAYING_STATE) {
             play();
@@ -410,8 +441,9 @@ namespace FIFE
         if (!Mathf::Equal(zero, outTime)) {
             m_fadeOut = true;
             setGain(0.0F);
-            m_fadeOutEndTimestamp   = m_internData.playTimestamp + toTimestampMillis(getDuration());
-            m_fadeOutStartTimestamp = m_fadeOutEndTimestamp - static_cast<uint32_t>(outTime * 1000.0F);
+            m_fadeOutEndTimestamp = addSaturating(
+                m_internData.playTimestamp, SDLTimeCompat::fromLegacy32Ticks(toTimestampMillis(getDuration())));
+            m_fadeOutStartTimestamp = subtractClamped(m_fadeOutEndTimestamp, toTimestampMillis64(outTime));
         }
     }
 
@@ -430,8 +462,8 @@ namespace FIFE
     {
         m_fadeOut               = true;
         m_origGain              = m_internData.volume;
-        m_fadeOutStartTimestamp = TimeManager::instance()->getTime();
-        m_fadeOutEndTimestamp   = m_fadeOutStartTimestamp + static_cast<uint32_t>(time * 1000.0F);
+        m_fadeOutStartTimestamp = TimeManager::instance()->now64();
+        m_fadeOutEndTimestamp   = addSaturating(m_fadeOutStartTimestamp, toTimestampMillis64(time));
     }
 
     void SoundEmitter::pause()
@@ -545,6 +577,11 @@ namespace FIFE
 
     uint32_t SoundEmitter::getPlayTimestamp() const
     {
+        return SDLTimeCompat::toUint32Ticks(getPlayTimestamp64());
+    }
+
+    uint64_t SoundEmitter::getPlayTimestamp64() const
+    {
         return m_internData.playTimestamp;
     }
 
@@ -560,8 +597,8 @@ namespace FIFE
             return true;
         }
         // roughly check, in the case the clip do not plays (is not active)
-        return (m_internData.playTimestamp + m_playCheckDifference + toTimestampMillis(getDuration())) <=
-               TimeManager::instance()->getTime();
+        return (m_internData.playTimestamp + m_playCheckDifference +
+                SDLTimeCompat::fromLegacy32Ticks(toTimestampMillis(getDuration()))) <= TimeManager::instance()->now64();
     }
 
     void SoundEmitter::setCursor(SoundPositionType type, float value)
@@ -830,15 +867,15 @@ namespace FIFE
         setLooping(m_internData.loop);
         setRelativePositioning(m_internData.relative);
         if (m_internData.soundState == SD_PLAYING_STATE) {
-            uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp - m_playCheckDifference;
+            uint64_t timediff = TimeManager::instance()->now64() - m_internData.playTimestamp - m_playCheckDifference;
             if (m_internData.loop) {
-                timediff = timediff % toTimestampMillis(getDuration());
+                timediff = timediff % SDLTimeCompat::fromLegacy32Ticks(toTimestampMillis(getDuration()));
             }
             float const time = static_cast<float>(timediff) / 1000.0F;
             attachSoundClip();
             setCursor(SD_TIME_POS, time);
             if (m_soundClip && isActive()) {
-                m_internData.playTimestamp = TimeManager::instance()->getTime() - timediff;
+                m_internData.playTimestamp = TimeManager::instance()->now64() - timediff;
                 alSourcePlay(m_source);
             }
         }
@@ -867,7 +904,7 @@ namespace FIFE
 
     void SoundEmitter::checkFade()
     {
-        uint32_t const timestamp = TimeManager::instance()->getTime();
+        uint64_t const timestamp = TimeManager::instance()->now64();
         if (m_fadeIn) {
             float const delta = m_origGain / static_cast<float>(m_fadeInEndTimestamp - m_fadeInStartTimestamp);
             if (timestamp >= m_fadeInEndTimestamp) {
@@ -974,7 +1011,7 @@ namespace FIFE
     void SoundEmitter::setCheckDifference()
     {
         if (m_playCheckDifference == 0 && getState() == SD_PLAYING_STATE) {
-            m_playCheckDifference = TimeManager::instance()->getTime() - m_internData.playTimestamp;
+            m_playCheckDifference = TimeManager::instance()->now64() - m_internData.playTimestamp;
         }
     }
 

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <list>
 #include <map>
 #include <string>
@@ -119,7 +120,7 @@ namespace FIFE
 
         private:
             AnimationPtr m_animation;
-            uint32_t m_start_time;
+            uint64_t m_start_time;
             float m_time_scale;
     };
 

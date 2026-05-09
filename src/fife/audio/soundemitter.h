@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <string>
 #include <vector>
 // 3rd party library includes
@@ -235,7 +236,11 @@ namespace FIFE
 
             /** Returns timestamp of the last play start in milliseconds
              */
-            uint32_t getPlayTimestamp() const;
+            [[deprecated("Use getPlayTimestamp64() instead.")]] uint32_t getPlayTimestamp() const;
+
+            /** Returns timestamp of the last play start in milliseconds as 64-bit value.
+             */
+            uint64_t getPlayTimestamp64() const;
 
             /** Returns true if clip is finished.
              */
@@ -423,7 +428,7 @@ namespace FIFE
                     AudioSpaceCoordinate position;
                     AudioSpaceCoordinate direction;
                     AudioSpaceCoordinate velocity;
-                    uint32_t playTimestamp;
+                    uint64_t playTimestamp;
                     SoundStateType soundState;
                     bool loop;
                     bool relative;
@@ -442,15 +447,15 @@ namespace FIFE
             //! original gain
             float m_origGain;
             //! fade in start time
-            uint32_t m_fadeInStartTimestamp;
+            uint64_t m_fadeInStartTimestamp;
             //! fade in end time
-            uint32_t m_fadeInEndTimestamp;
+            uint64_t m_fadeInEndTimestamp;
             //! fade out start time
-            uint32_t m_fadeOutStartTimestamp;
+            uint64_t m_fadeOutStartTimestamp;
             //! fade out end time
-            uint32_t m_fadeOutEndTimestamp;
+            uint64_t m_fadeOutEndTimestamp;
             //! time difference between play and first check
-            uint32_t m_playCheckDifference;
+            uint64_t m_playCheckDifference;
             //! holds pointer to applied SoundEffects
             std::vector<SoundEffect*> m_effects;
             //! listeners for sound related events

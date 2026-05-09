@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 // 3rd party library includes
 
 // FIFE includes
@@ -46,7 +47,11 @@ namespace FIFE
 
             /** Returns current game ticks, already scaled.
              */
-            uint32_t getGameTime() const;
+            [[deprecated("Use getGameTime64() instead.")]] uint32_t getGameTime() const;
+
+            /** Returns current game ticks as 64-bit value.
+             */
+            uint64_t getGameTime64() const;
 
         private:
             TimeProvider* m_master;

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <map>
+#include <optional>
 #include <ranges>
 #include <string>
 #include <utility>
@@ -27,6 +28,25 @@
 namespace FIFE
 {
     static Logger _log(LM_EVTCHANNEL);
+
+    namespace
+    {
+        [[nodiscard]] std::optional<int32_t> toInt32JoystickId(SDL_JoystickID const value)
+        {
+            if (std::cmp_greater(value, static_cast<SDL_JoystickID>(std::numeric_limits<int32_t>::max()))) {
+                return std::nullopt;
+            }
+            return static_cast<int32_t>(value);
+        }
+
+        [[nodiscard]] std::optional<SDL_JoystickID> toSdlJoystickId(int32_t const value)
+        {
+            if (value < 0) {
+                return std::nullopt;
+            }
+            return static_cast<SDL_JoystickID>(value);
+        }
+    } // namespace
 
     JoystickManager::JoystickManager()
     {
@@ -76,7 +96,7 @@ namespace FIFE
             joystick = *it;
         }
         if (joystick == nullptr) {
-            if (m_joysticks.size() > static_cast<size_t>(std::numeric_limits<int32_t>::max())) {
+            if (std::cmp_greater(m_joysticks.size(), std::numeric_limits<int32_t>::max())) {
                 throw InvalidFormat("Too many joystick instances registered");
             }
             joystick = new Joystick(static_cast<int32_t>(m_joysticks.size()), deviceIndex);
@@ -211,32 +231,57 @@ namespace FIFE
 
         if (event.type == SDL_EVENT_JOYSTICK_AXIS_MOTION) {
             joyevt.setType(JoystickEvent::AXIS_MOTION);
-            joyevt.setInstanceId(event.jaxis.which);
+            auto const instanceId = toInt32JoystickId(event.jaxis.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
             joyevt.setAxis(event.jaxis.axis);
             joyevt.setAxisValue(convertRange(event.jaxis.value));
         } else if (event.type == SDL_EVENT_JOYSTICK_BUTTON_DOWN || event.type == SDL_EVENT_JOYSTICK_BUTTON_UP) {
             joyevt.setType(
                 event.type == SDL_EVENT_JOYSTICK_BUTTON_DOWN ? JoystickEvent::BUTTON_PRESSED :
                                                                JoystickEvent::BUTTON_RELEASED);
-            joyevt.setInstanceId(event.jbutton.which);
+            auto const instanceId = toInt32JoystickId(event.jbutton.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
             joyevt.setButton(event.jbutton.button);
         } else if (event.type == SDL_EVENT_JOYSTICK_HAT_MOTION) {
             joyevt.setType(JoystickEvent::HAT_MOTION);
-            joyevt.setInstanceId(event.jhat.which);
+            auto const instanceId = toInt32JoystickId(event.jhat.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
             joyevt.setHat(event.jhat.hat);
             joyevt.setHatValue(event.jhat.value);
         } else if (event.type == SDL_EVENT_JOYSTICK_ADDED) {
             joyevt.setType(JoystickEvent::DEVICE_ADDED);
             // Note: In this case it's the device index, instead of instance id
-            Joystick* joy = addJoystick(event.jdevice.which);
-            if (joy != nullptr) {
-                joyevt.setInstanceId(joy->getInstanceId());
-            } else {
+            auto const deviceIndex = toInt32JoystickId(event.jdevice.which);
+            if (!deviceIndex) {
                 dispatch = false;
+            } else {
+                Joystick* joy = addJoystick(*deviceIndex);
+                if (joy != nullptr) {
+                    joyevt.setInstanceId(joy->getInstanceId());
+                } else {
+                    dispatch = false;
+                }
             }
         } else if (event.type == SDL_EVENT_JOYSTICK_REMOVED) {
             joyevt.setType(JoystickEvent::DEVICE_REMOVED);
-            joyevt.setInstanceId(event.jdevice.which);
+            auto const instanceId = toInt32JoystickId(event.jdevice.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
         } else {
             dispatch = false;
         }
@@ -265,14 +310,24 @@ namespace FIFE
 
         if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION) {
             joyevt.setType(JoystickEvent::AXIS_MOTION);
-            joyevt.setInstanceId(event.gaxis.which);
+            auto const instanceId = toInt32JoystickId(event.gaxis.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
             joyevt.setAxis(event.gaxis.axis);
             joyevt.setAxisValue(convertRange(event.gaxis.value));
         } else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN || event.type == SDL_EVENT_GAMEPAD_BUTTON_UP) {
             joyevt.setType(
                 event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN ? JoystickEvent::BUTTON_PRESSED :
                                                               JoystickEvent::BUTTON_RELEASED);
-            joyevt.setInstanceId(event.gbutton.which);
+            auto const instanceId = toInt32JoystickId(event.gbutton.which);
+            if (!instanceId) {
+                dispatch = false;
+            } else {
+                joyevt.setInstanceId(*instanceId);
+            }
             joyevt.setButton(event.gbutton.button);
         } else {
             dispatch = false;
@@ -328,7 +383,8 @@ namespace FIFE
     std::string JoystickManager::getGuidString(int32_t deviceIndex)
     {
         char tmp[33];
-        SDL_Joystick* joy = SDL_OpenJoystick(deviceIndex);
+        auto const sdlDeviceIndex = toSdlJoystickId(deviceIndex);
+        SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
         if (joy) {
             SDL_GUID guid = SDL_GetJoystickGUID(joy);
             SDL_GUIDToString(guid, &tmp[0], sizeof(tmp));

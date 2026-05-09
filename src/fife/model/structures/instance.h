@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
@@ -226,12 +227,23 @@ namespace FIFE
              */
             uint32_t getActionRuntime();
 
+            /** Gets the time in milliseconds how long action has been active as 64-bit value.
+             *  In case there is no current action, returns current runtime.
+             * @return action runtime as 64-bit ticks
+             */
+            uint64_t getActionRuntime64();
+
             /** Sets the time in milliseconds how long an action has been active
              *  This was requested in Ticket #373.  This way the state
              *  of the action can be saved and restored at a later time
              *  @param time_offset The action time offset that should be applied
              */
             void setActionRuntime(uint32_t time_offset);
+
+            /** Sets the 64-bit time offset how long an action has been active.
+             *  @param time_offset The action time offset that should be applied
+             */
+            void setActionRuntime64(uint64_t time_offset);
 
             /** Performs given named action to the instance. While performing the action
              *  moves instance to given target with given speed
@@ -354,7 +366,11 @@ namespace FIFE
             /** Gets the scaled runtime in milliseconds
              * @return runtime
              */
-            uint32_t getRuntime();
+            [[deprecated("Use getRuntime64() instead.")]] uint32_t getRuntime();
+
+            /** Gets the runtime as 64-bit milliseconds.
+             */
+            uint64_t getRuntime64();
 
             /** Refreshes instance e.g. in case location is updated directly (not via setLocation)
              * In this case e.g. instance's master time provider is changed, so it needs to be updated

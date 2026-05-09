@@ -29,6 +29,7 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 #include "view/visual.h"
 
@@ -68,11 +69,11 @@ namespace FIFE
             // finished
             bool m_repeating{false};
             // action start time (ticks)
-            uint32_t m_action_start_time{0};
+            uint64_t m_action_start_time{0};
             // action offset time (ticks) for resuming an action
-            uint32_t m_action_offset_time{0};
+            uint64_t m_action_offset_time{0};
             // ticks since last call
-            uint32_t m_prev_call_time{0};
+            uint64_t m_prev_call_time{0};
             // pather
             IPather* m_pather;
             // leader for follow activity
@@ -85,13 +86,13 @@ namespace FIFE
     class SayInfo
     {
         public:
-            SayInfo(std::string txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration)
+            SayInfo(std::string txt, uint64_t duration) : m_txt(std::move(txt)), m_duration(duration)
             {
             }
 
             std::string m_txt;
-            uint32_t m_duration;
-            uint32_t m_start_time{0};
+            uint64_t m_duration;
+            uint64_t m_start_time{0};
     };
 
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
@@ -433,7 +434,7 @@ namespace FIFE
             m_activity->m_actionInfo = nullptr;
             throw NotFound(std::string("action ") + actionName + " not found");
         }
-        m_activity->m_actionInfo->m_prev_call_time = getRuntime();
+        m_activity->m_actionInfo->m_prev_call_time = getRuntime64();
         if (m_activity->m_actionInfo->m_action != old_action) {
             m_activity->m_actionInfo->m_action_start_time = m_activity->m_actionInfo->m_prev_call_time;
         }
@@ -637,7 +638,7 @@ namespace FIFE
 
         if (!text.empty()) {
             m_activity->m_sayInfo               = new SayInfo(text, duration);
-            m_activity->m_sayInfo->m_start_time = getRuntime();
+            m_activity->m_sayInfo->m_start_time = getRuntime64();
         }
     }
 
@@ -699,7 +700,7 @@ namespace FIFE
 
         if (route->getRouteStatus() == ROUTE_SOLVED) {
             // timeslice for this movement
-            uint32_t const timedelta = m_activity->m_timeProvider->getGameTime() - info->m_prev_call_time;
+            uint64_t const timedelta = m_activity->m_timeProvider->getGameTime64() - info->m_prev_call_time;
             // how far we can travel
             double const distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
             // location for this movement
@@ -792,11 +793,11 @@ namespace FIFE
                 }
             } else {
                 //				FL_DBG(_log, "action does not contain target for movement");
-                if (m_activity->m_timeProvider->getGameTime() - info->m_action_start_time +
+                if (m_activity->m_timeProvider->getGameTime64() - info->m_action_start_time +
                         info->m_action_offset_time >=
-                    info->m_action->getDuration()) {
+                    SDLTimeCompat::fromLegacy32Ticks(info->m_action->getDuration())) {
                     if (info->m_repeating) {
-                        info->m_action_start_time = m_activity->m_timeProvider->getGameTime();
+                        info->m_action_start_time = m_activity->m_timeProvider->getGameTime64();
                         // prock: offset no longer needed
                         info->m_action_offset_time = 0;
                     } else if (!m_object->isMultiPart()) {
@@ -807,13 +808,13 @@ namespace FIFE
 
             // previous code may invalidate actioninfo.
             if (m_activity->m_actionInfo != nullptr) {
-                m_activity->m_actionInfo->m_prev_call_time = m_activity->m_timeProvider->getGameTime();
+                m_activity->m_actionInfo->m_prev_call_time = m_activity->m_timeProvider->getGameTime64();
             }
         }
         m_activity->update(*this);
         if (m_activity->m_sayInfo != nullptr) {
             if (m_activity->m_sayInfo->m_duration > 0) {
-                if (m_activity->m_timeProvider->getGameTime() >=
+                if (m_activity->m_timeProvider->getGameTime64() >=
                     m_activity->m_sayInfo->m_start_time + m_activity->m_sayInfo->m_duration) {
                     say("");
                 }
@@ -955,17 +956,27 @@ namespace FIFE
 
     uint32_t Instance::getActionRuntime()
     {
+        return SDLTimeCompat::toUint32Ticks(getActionRuntime64());
+    }
+
+    uint64_t Instance::getActionRuntime64()
+    {
         if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr)) {
             if (m_activity->m_timeProvider == nullptr) {
                 bindTimeProvider();
             }
-            return m_activity->m_timeProvider->getGameTime() - m_activity->m_actionInfo->m_action_start_time +
+            return m_activity->m_timeProvider->getGameTime64() - m_activity->m_actionInfo->m_action_start_time +
                    m_activity->m_actionInfo->m_action_offset_time;
         }
-        return getRuntime();
+        return getRuntime64();
     }
 
     void Instance::setActionRuntime(uint32_t time_offset)
+    {
+        setActionRuntime64(SDLTimeCompat::fromLegacy32Ticks(time_offset));
+    }
+
+    void Instance::setActionRuntime64(uint64_t time_offset)
     {
         m_activity->m_actionInfo->m_action_offset_time = time_offset;
     }
@@ -1056,19 +1067,24 @@ namespace FIFE
 
     uint32_t Instance::getRuntime()
     {
+        return SDLTimeCompat::toUint32Ticks(getRuntime64());
+    }
+
+    uint64_t Instance::getRuntime64()
+    {
         if (m_activity != nullptr) {
             if (m_activity->m_timeProvider == nullptr) {
                 bindTimeProvider();
             }
-            return m_activity->m_timeProvider->getGameTime();
+            return m_activity->m_timeProvider->getGameTime64();
         }
         if (m_location.getLayer() != nullptr) {
             Map* map = m_location.getLayer()->getMap();
             if ((map != nullptr) && (map->getTimeProvider() != nullptr)) {
-                return map->getTimeProvider()->getGameTime();
+                return map->getTimeProvider()->getGameTime64();
             }
         }
-        return TimeManager::instance()->getTime();
+        return TimeManager::instance()->now64();
     }
 
     void Instance::setCost(std::string const & id, double cost)

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 // 3rd party library includes
 
 // FIFE includes
@@ -231,8 +232,8 @@ namespace FIFE
 
             RenderBackend* m_renderbackend;
 
-            uint32_t m_animtime;
-            uint32_t m_drag_animtime;
+            uint64_t m_animtime;
+            uint64_t m_drag_animtime;
 
             int32_t m_drag_offset_x;
             int32_t m_drag_offset_y;

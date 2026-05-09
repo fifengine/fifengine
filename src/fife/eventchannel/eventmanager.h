@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 #include <deque>
 #include <list>
 #include <map>
@@ -225,7 +226,7 @@ namespace FIFE
             bool m_enter;
             int32_t m_oldX;
             int32_t m_oldY;
-            uint32_t m_lastTicks;
+            uint64_t m_lastTicks;
             float m_oldVelocity;
 
             JoystickManager* m_joystickManager;

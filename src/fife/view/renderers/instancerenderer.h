@@ -218,7 +218,7 @@ namespace FIFE
             struct FIFE_API s_image_entry
             {
                     ImagePtr image;
-                    uint32_t timestamp;
+                    uint64_t timestamp;
             };
             using ImagesToCheck_t = std::list<s_image_entry>;
             // old effect images

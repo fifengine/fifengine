@@ -92,14 +92,14 @@ namespace FIFE
              */
             virtual int32_t getTimeStamp() const
             {
-                return InputEvent::getTimeStamp();
+                return SDLTimeCompat::toInt32Ticks(InputEvent::getTimeStamp64());
             }
 
             /** Sets the timestamp of the event.
              */
             virtual void setTimeStamp(int32_t timestamp)
             {
-                InputEvent::setTimeStamp(timestamp);
+                InputEvent::setTimeStamp64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
             }
 
             /** Gets the name of the event.

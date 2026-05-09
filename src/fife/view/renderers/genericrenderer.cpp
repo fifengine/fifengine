@@ -22,6 +22,7 @@
 #include "model/structures/location.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 #include "video/animation.h"
 #include "video/fonts/ifont.h"
@@ -230,7 +231,7 @@ namespace FIFE
         GenericRendererElementInfo(),
         m_anchor(anchor),
         m_animation(animation),
-        m_start_time(TimeManager::instance()->getTime()),
+        m_start_time(TimeManager::instance()->now64()),
         m_time_scale(1.0),
         m_zoomed(zoomed)
     {
@@ -245,10 +246,11 @@ namespace FIFE
         static_cast<void>(renderbackend);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
-            uint32_t const duration = toAnimationTimestamp(m_animation->getDuration());
-            uint32_t const animtime =
-                scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
-            ImagePtr const img = m_animation->getFrameByTimestamp(animtime);
+            uint32_t const duration      = toAnimationTimestamp(m_animation->getDuration());
+            uint64_t const elapsed       = TimeManager::instance()->now64() - m_start_time;
+            uint64_t const scaledElapsed = static_cast<uint64_t>(static_cast<double>(elapsed) * m_time_scale);
+            uint64_t const animtime      = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(duration);
+            ImagePtr const img           = m_animation->getFrameByTimestamp64(animtime);
             Rect r;
             Rect const viewport = cam->getViewPort();
             int32_t width       = 0;

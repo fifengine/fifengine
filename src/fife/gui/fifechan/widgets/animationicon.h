@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <cstdint>
 // 3rd party library includes
 #include <fifechan/image.hpp>
 #include <fifechan/platform.hpp>
@@ -126,7 +127,7 @@ namespace fcn
             /**
              * The time as the animation was started.
              */
-            uint32_t mAnimtime;
+            uint64_t mAnimtime;
 
             /**
              * The last used frame index from the animation.
