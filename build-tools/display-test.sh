@@ -36,7 +36,7 @@ parse_args() {
       --install) FORCE_INSTALL=1; shift ;;
       --verbose) VERBOSE=1; shift ;;
       -h|--help) usage; exit 0 ;;
-      *) err "Unknown option: $1"; usage; exit 1 ;;
+      *) err "Unknown option: $1" ;;
     esac
   done
 }
@@ -58,9 +58,9 @@ ensure_deps() {
   log "Installing dependencies... (${#missing[@]} missing)"
   local pkg_list="x11-apps mesa-utils x11-utils x11-xserver-utils xauth libgl1-mesa-dri"
   if [[ $VERBOSE -eq 0 ]]; then
-    apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq $pkg_list >/dev/null 2>&1
+    apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "$pkg_list" >/dev/null 2>&1
   else
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y $pkg_list
+    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg_list"
   fi
   log "✅ Dependencies ready."
 }
@@ -79,7 +79,7 @@ normalize_display() {
   # Fallback to first available socket
   if [[ -z "$DISPLAY" ]]; then
     local sock
-    sock="$(ls /tmp/.X11-unix/X* 2>/dev/null | head -1 || true)"
+    sock="$(find /tmp/.X11-unix/ -maxdepth 1 -name 'X*' -type s 2>/dev/null | head -1 || true)"
     [[ -n "$sock" ]] && DISPLAY=":${sock##*/X}"
   fi
   export DISPLAY
@@ -129,8 +129,12 @@ main() {
   normalize_display
 
   if [[ "$MODE" == "check" ]]; then
-    check_display && log "✅ Setup looks good." || err "❌ Display check failed."
-    exit $?
+    if check_display; then
+      log "✅ Setup looks good."
+      exit 0
+    else
+      err "❌ Display check failed."
+    fi
   fi
 
   ensure_deps
