@@ -74,7 +74,7 @@ namespace FIFE
 
     uint32_t Map::getLayerCount() const
     {
-        assert(m_layers.size() <= std::numeric_limits<uint32_t>::max());
+        assert(std::cmp_less_equal(m_layers.size(), std::numeric_limits<uint32_t>::max()));
         return static_cast<uint32_t>(m_layers.size());
     }
 

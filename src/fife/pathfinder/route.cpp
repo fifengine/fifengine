@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <iterator>
 #include <limits>
 #include <list>
 #include <string>
@@ -136,20 +137,13 @@ namespace FIFE
             return false;
         }
 
-        int32_t const pos = static_cast<int32_t>(m_walked) + step;
-        if (pos < 0 || static_cast<size_t>(pos) >= m_path.size()) {
+        int64_t const pos = static_cast<int64_t>(m_walked) + static_cast<int64_t>(step);
+        if (pos < 0 || pos >= static_cast<int64_t>(m_path.size())) {
             return false;
         }
-        if (step > 0) {
-            for (int32_t i = 0; i < step; ++i, ++m_current) {
-                ;
-            }
-        } else {
-            for (int32_t i = 0; i > step; --i, --m_current) {
-                ;
-            }
-        }
-        m_walked += step;
+
+        std::advance(m_current, step);
+        m_walked = static_cast<uint32_t>(pos);
 
         return true;
     }
@@ -196,12 +190,12 @@ namespace FIFE
             m_replanned = true;
             return;
         }
-        if (length >= m_path.size()) {
+        if (!std::cmp_less(length, m_path.size())) {
             return;
         }
 
         uint32_t const newend = m_walked + length - 1;
-        if (newend > m_path.size()) {
+        if (std::cmp_greater(newend, m_path.size())) {
             return;
         }
 
@@ -222,7 +216,7 @@ namespace FIFE
 
     uint32_t Route::getPathLength()
     {
-        assert(m_path.size() <= std::numeric_limits<uint32_t>::max());
+        assert(std::cmp_less_equal(m_path.size(), std::numeric_limits<uint32_t>::max()));
         return static_cast<uint32_t>(m_path.size());
     }
 

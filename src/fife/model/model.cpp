@@ -10,6 +10,7 @@
 #include <limits>
 #include <list>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -173,7 +174,7 @@ namespace FIFE
 
     uint32_t Model::getMapCount() const
     {
-        assert(m_maps.size() <= std::numeric_limits<uint32_t>::max());
+        assert(std::cmp_less_equal(m_maps.size(), std::numeric_limits<uint32_t>::max()));
         return static_cast<uint32_t>(m_maps.size());
     }
 
