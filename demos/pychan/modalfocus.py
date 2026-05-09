@@ -4,7 +4,7 @@
 """Demo for modal focus handling in widgets."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class ModalFocusExample(PyChanExample):

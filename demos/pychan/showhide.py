@@ -4,7 +4,7 @@
 """Demo for show/hide functionality on widgets."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class ShowHideExample(PyChanExample):

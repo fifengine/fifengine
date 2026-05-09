@@ -1,14 +1,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-"""Proof-of-concept Pychan demo app to test GUI animations."""
-
-import random
+"""Demo for pychan gui animations."""
 
 from fife.extensions import pychan
-from fife.extensions.fife_timer import Timer
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 ACTION_MOVE = 1
 ACTION_RESIZE = 2

@@ -6,7 +6,7 @@
 from fife import fife
 from fife.extensions import pychan
 from fife.fifechan import Point
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class DynamicGraphExample(PyChanExample):

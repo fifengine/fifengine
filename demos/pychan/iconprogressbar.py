@@ -4,7 +4,7 @@
 """Demo for icon-based progress bar widgets."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class IconProgressBarExample(PyChanExample):
