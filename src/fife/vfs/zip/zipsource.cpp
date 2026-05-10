@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-// Corresponding header include
 #include "zipsource.h"
 
-// Standard C++ library includes
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
@@ -13,10 +11,6 @@
 #include <string>
 #include <vector>
 
-// 3rd party library includes
-#include "zlib.h"
-
-// FIFE includes
 #include "modules.h"
 #include "util/log/logger.h"
 #include "vfs/filesystem.h"
@@ -25,17 +19,15 @@
 #include "vfs/zip/ziptree.h"
 #include "zipfilesource.h"
 #include "zipnode.h"
+#include "zlib.h"
 
 namespace FIFE
 {
 
-    static uint32_t const LF_HEADER = 0x04034b50;
-    static uint32_t const DE_HEADER = 0x08064b50;
-    static uint32_t const CF_HEADER = 0x02014b50;
-
     static Logger _log(LM_LOADERS);
 
-    ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) : VFSSource(vfs), m_zipfile(vfs->open(zip_file))
+    ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) :
+        VFSSource(vfs), m_zipfile(vfs->open(zip_file)), m_centralDirOffset(0), m_centralDirCount(0)
     {
         readIndex();
     }
@@ -48,7 +40,7 @@ namespace FIFE
     bool ZipSource::fileExists(std::string const & file) const
     {
         fs::path const path(file);
-        return (m_zipTree.getNode(path.string()) != nullptr);
+        return m_zipTree.getNode(path.string()) != nullptr;
     }
 
     RawData* ZipSource::open(std::string const & path) const
@@ -56,14 +48,15 @@ namespace FIFE
         fs::path const filePath(path);
         ZipNode const * node = m_zipTree.getNode(filePath.string());
 
-        assert(node != 0);
+        assert("File not found in zip archive" && node != nullptr);
 
         if (node != nullptr) {
             ZipEntryData const & entryData = node->getZipEntryData();
+            uint32_t dataOffset            = getLocalFileDataOffset(entryData.offset);
 
-            m_zipfile->setIndex(entryData.offset);
-            auto* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
-            if (entryData.comp == 8) {                     // compressed using deflate
+            m_zipfile->setIndex(dataOffset);
+            auto* data = new uint8_t[entryData.size_real];
+            if (entryData.comp == 8) {
                 FL_DBG(
                     _log,
                     LMsg("trying to uncompress file ") << path << " (compressed with method " << entryData.comp << ")");
@@ -92,14 +85,13 @@ namespace FIFE
                     } else {
                         FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
                     }
-
                     inflateEnd(&zstream);
                     delete[] data;
                     return nullptr;
                 }
 
                 inflateEnd(&zstream);
-            } else if (entryData.comp == 0) { // uncompressed
+            } else if (entryData.comp == 0) {
                 m_zipfile->readInto(data, entryData.size_real);
             } else {
                 FL_ERR(_log, LMsg("unsupported compression"));
@@ -115,111 +107,125 @@ namespace FIFE
 
     void ZipSource::readIndex()
     {
-        m_zipfile->setIndex(0);
+        readEndOfCentralDirectory();
 
-        while (!readFileToIndex()) {
+        m_zipfile->setIndex(m_centralDirOffset);
+        for (uint32_t i = 0; i < m_centralDirCount; ++i) {
+            readCentralDirectoryEntry();
         }
     }
 
-    bool ZipSource::readFileToIndex()
+    void ZipSource::readEndOfCentralDirectory()
     {
-        uint32_t const header = m_zipfile->read32Little();
-        if (header == DE_HEADER ||
-            header == CF_HEADER) { // decryption header or central directory header - we are finished
-            return true;
-        }
+        uint32_t const fileSize = m_zipfile->getDataLength();
+        assert("Zip file is too small" && fileSize >= 22);
 
-        uint16_t const vneeded  = m_zipfile->read16Little();
-        uint16_t const gflags   = m_zipfile->read16Little();
-        uint16_t const comp     = m_zipfile->read16Little();
-        uint16_t const lmodtime = m_zipfile->read16Little();
-        uint16_t const lmoddate = m_zipfile->read16Little();
-        uint32_t crc            = m_zipfile->read32Little();
-        uint32_t compsize       = m_zipfile->read32Little();
-        uint32_t realsize       = m_zipfile->read32Little();
-        uint16_t const fnamelen = m_zipfile->read16Little();
-        uint16_t const extralen = m_zipfile->read16Little();
+        m_zipfile->setIndex(fileSize - 2);
+        uint16_t commentLength = m_zipfile->read16Little();
 
-        if (header != LF_HEADER) {
-            FL_ERR(_log, LMsg("invalid local file header: ") << header);
-            return true;
-        }
+        uint32_t eocdOffset = fileSize - 22 - commentLength;
+        m_zipfile->setIndex(eocdOffset);
+        uint32_t signature = m_zipfile->read32Little();
+        assert("End of Central Directory signature not found" && signature == 0x06054b50);
 
-        if (vneeded > 20) {
-            FL_ERR(_log, LMsg("only zip version 2 is supported, required: ") << vneeded);
-            return true;
-        }
+        m_zipfile->read16Little();                      // disk number
+        m_zipfile->read16Little();                      // disk with CD
+        m_zipfile->read16Little();                      // entries on this disk
+        m_centralDirCount = m_zipfile->read16Little();  // total entries
+        m_zipfile->read32Little();                      // CD size
+        m_centralDirOffset = m_zipfile->read32Little(); // CD offset
+    }
 
-        fs::path const filePath = fs::path(m_zipfile->readString(fnamelen));
+    void ZipSource::readCentralDirectoryEntry()
+    {
+        uint32_t signature = m_zipfile->read32Little();
+        assert("Invalid central directory entry signature" && signature == 0x02014b50);
 
-        m_zipfile->moveIndex(extralen);
-        uint32_t const offset = m_zipfile->getCurrentIndex();
-        FL_DBG(
-            _log,
-            LMsg("found file: ") << filePath.string() << " (" << compsize << "/" << realsize << ") on offset "
-                                 << offset);
+        m_zipfile->read16Little(); // version made by
+        m_zipfile->read16Little(); // version needed
+        m_zipfile->read16Little(); // flags
+        uint16_t compression = m_zipfile->read16Little();
+        m_zipfile->read16Little(); // mod time
+        m_zipfile->read16Little(); // mod date
+        uint32_t crc32            = m_zipfile->read32Little();
+        uint32_t compressedSize   = m_zipfile->read32Little();
+        uint32_t uncompressedSize = m_zipfile->read32Little();
+        uint16_t filenameLen      = m_zipfile->read16Little();
+        uint16_t extraLen         = m_zipfile->read16Little();
+        uint16_t commentLen       = m_zipfile->read16Little();
+        m_zipfile->read16Little(); // disk number start
+        m_zipfile->read16Little(); // internal attrs
+        uint32_t externalAttrs     = m_zipfile->read32Little();
+        uint32_t localHeaderOffset = m_zipfile->read32Little();
 
-        m_zipfile->moveIndex(static_cast<int32_t>(compsize));
-        if ((gflags & (0x01 << 3)) != 0) {
-            crc      = m_zipfile->read32Little();
-            compsize = m_zipfile->read32Little();
-            realsize = m_zipfile->read32Little();
-        }
+        std::string filename = m_zipfile->readString(filenameLen);
 
-        if ((lmodtime != 0U) || (lmoddate != 0U)) {
-        } // shut up the compiler (warnings of unused variables)
+        m_zipfile->moveIndex(extraLen + commentLen);
 
-        ZipEntryData data;
-        data.comp      = comp;
-        data.size_real = realsize;
-        data.size_comp = compsize;
-        data.offset    = offset;
-        data.crc32     = crc;
+        ZipEntryType type = classifyEntry(filename, externalAttrs);
 
-        std::string const filename = filePath.string();
-        ZipNode* node              = m_zipTree.addNode(filename);
+        ZipNode* node = m_zipTree.addNode(filename, type);
+        assert("Failed to add node to zip tree" && node != nullptr);
 
-        if (node != nullptr) {
-            // store the zip entry information in the node
+        if (type == ZipEntryType::File) {
+            ZipEntryData data;
+            data.comp      = compression;
+            data.size_real = uncompressedSize;
+            data.size_comp = compressedSize;
+            data.offset    = localHeaderOffset;
+            data.crc32     = crc32;
             node->setZipEntryData(data);
         }
+    }
 
-        return false;
+    uint32_t ZipSource::getLocalFileDataOffset(uint32_t localHeaderOffset) const
+    {
+        m_zipfile->setIndex(localHeaderOffset + 26);
+        uint16_t fnamelen = m_zipfile->read16Little();
+        uint16_t extralen = m_zipfile->read16Little();
+        return localHeaderOffset + 30 + fnamelen + extralen;
+    }
+
+    ZipEntryType ZipSource::classifyEntry(std::string const & name, uint32_t externalAttrs) const
+    {
+        if (!name.empty() && name.back() == '/') {
+            return ZipEntryType::Directory;
+        }
+        if (externalAttrs & 0x4000) {
+            return ZipEntryType::Directory;
+        }
+        if ((externalAttrs & 0xF000) == 0xA000) {
+            return ZipEntryType::Symlink;
+        }
+        return ZipEntryType::File;
     }
 
     std::set<std::string> ZipSource::listFiles(std::string const & path) const
     {
         std::set<std::string> result;
 
-        fs::path const fixedPath(path);
-
-        ZipNode const * node = m_zipTree.getNode(fixedPath.string());
+        ZipNode const * node = m_zipTree.getNode(path);
 
         if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::File);
-            ZipNodeContainer::iterator iter;
-            for (iter = files.begin(); iter != files.end(); ++iter) {
-                result.insert((*iter)->getFullName());
+            for (auto* child : files) {
+                result.insert(child->getName());
             }
         }
 
         return result;
     }
 
-    // FIXME: quick&very dirty..
     std::set<std::string> ZipSource::listDirectories(std::string const & path) const
     {
         std::set<std::string> result;
 
-        fs::path const fixedPath(path);
-
-        ZipNode const * node = m_zipTree.getNode(fixedPath.string());
+        ZipNode const * node = m_zipTree.getNode(path);
 
         if (node != nullptr) {
-            ZipNodeContainer files = node->getChildren(ZipContentType::Directory);
-            ZipNodeContainer::iterator iter;
-            for (iter = files.begin(); iter != files.end(); ++iter) {
-                result.insert((*iter)->getFullName());
+            ZipNodeContainer dirs = node->getChildren(ZipContentType::Directory);
+            for (auto* child : dirs) {
+                result.insert(child->getName());
             }
         }
 

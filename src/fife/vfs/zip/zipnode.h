@@ -16,6 +16,7 @@
 
 // FIFE includes
 #include "util/base/fife_stdint.h"
+#include "vfs/zip/zipentry.h"
 
 namespace FIFE
 {
@@ -32,8 +33,6 @@ namespace FIFE
 
     struct FIFE_API ZipEntryData
     {
-            /** constructor
-             */
             ZipEntryData();
 
             uint16_t comp;
@@ -46,58 +45,94 @@ namespace FIFE
     // convenience typedef
     class ZipNode;
     using ZipNodeContainer = std::vector<ZipNode*>;
+
     class FIFE_API ZipNode
     {
         public:
-            /** constructor for creating a node
-             *  @param name the name of the node
-             *  @param parent the parent of this node, defaults to NULL
+            /**
+             * Constructor for creating a node.
+             *
+             * The content type is inferred from the name using HasExtension.
+             * @param name the name of the node
+             * @param parent the parent of this node, defaults to NULL
              */
             explicit ZipNode(std::string name, ZipNode* parent = nullptr);
 
-            /** destructor
+            /**
+             * Constructor for creating a node with an explicit entry type.
+             *
+             * The content type is set from the ZipEntryType rather than inferred.
+             * @param name the name of the node
+             * @param parent the parent of this node
+             * @param entryType the explicit type (File, Directory, or Symlink)
              */
+            ZipNode(std::string name, ZipNode* parent, ZipEntryType entryType);
+
             ~ZipNode();
 
-            /** accessor for the name of this node
+            /**
+             * accessor for the name of this node
              *
              */
             std::string const & getName() const;
 
-            /** accessor for the absolute path name of this node
+            /**
+             * accessor for the absolute path name of this node
              */
             std::string getFullName() const;
 
-            /** accessor for the content type of this node
+            /**
+             * accessor for the content type of this node
+             *
              * @return ZipContentType enumeration
              */
             ZipContentType::Enum getContentType() const;
 
-            /** accessor for the parent node of this node
-             *  will be NULL if this node has no parent
+            /**
+             * accessor for the parent node of this node
+             * will be NULL if this node has no parent
              */
             ZipNode* getParent() const;
 
-            /** gives access to retrieve the children of this node
+            /**
+             * gives access to retrieve the children of this node
+             *
              * @param contentType allows filtering on the type of nodes
              *        returned, @see ZipContentType for description
              * @return vector of ZipNode pointers matching the request
              */
             std::vector<ZipNode*> getChildren(ZipContentType::Enum contentType = ZipContentType::All) const;
 
-            /** gives access to retrieving a specific child node by name
-             *  @param name the name of the child node to search for
-             *  @param contentType optional for filtering on the type of node to return
-             *  @return the ZipNode pointer matching the child (NULL if not found)
+            /**
+             * gives access to retrieving a specific child node by name
+             *
+             * @param name the name of the child node to search for
+             * @param contentType optional for filtering on the type of node to return
+             *
+             * @return the ZipNode pointer matching the child (NULL if not found)
              */
             ZipNode* getChild(std::string const & name, ZipContentType::Enum contentType = ZipContentType::All) const;
 
-            /** allows adding a child node to this node
-             *  @note this should only be used internally by the FIFE zip classes
-             *  @param child the name to add as a child node
-             *  @return the newly created child ZipNode
+            /**
+             * Allows adding a child node to this node.
+             *
+             * The content type is inferred from the name using HasExtension.
+             * @note this should only be used internally by the FIFE zip classes
+             * @param name the name to add as a child node
+             * @return the newly created child ZipNode
              */
             ZipNode* addChild(std::string const & name);
+
+            /**
+             * Allows adding a child node with an explicit entry type.
+             *
+             * The content type is set from the ZipEntryType rather than inferred.
+             * @note this should only be used internally by the FIFE zip classes
+             * @param name the name to add as a child node
+             * @param entryType the explicit type (File, Directory, or Symlink)
+             * @return the newly created child ZipNode
+             */
+            ZipNode* addChild(std::string const & name, ZipEntryType entryType);
 
             /** allows removing a child from this node
              *  @param child the child node to remove
@@ -115,20 +150,24 @@ namespace FIFE
              */
             bool isLeaf() const;
 
-            /** accessor for checking if this node has children
-             *  @return true if node has children
-             *          false if node does not have children
+            /**
+             * accessor for checking if this node has children
+             *
+             * @return true if node has children
+             *         false if node does not have children
              */
             bool isBranch() const;
 
-            /** sets the zip file entry information for this
-             *  node in the zip archive
-             *  @param entryData the entry data that goes with this node
+            /**
+             * sets the zip file entry information for this
+             * node in the zip archive
+             * @param entryData the entry data that goes with this node
              */
             void setZipEntryData(ZipEntryData const & entryData);
 
-            /** accessor for the entry data associated with this node
-             *  in the zip archive
+            /**
+             * accessor for the entry data associated with this node
+             * in the zip archive
              *  @return ZipEntryData for this node
              */
             ZipEntryData const & getZipEntryData() const;

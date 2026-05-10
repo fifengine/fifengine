@@ -11,9 +11,8 @@
 #include <ostream>
 #include <string>
 
-// 3rd party library includes
-
 // FIFE includes
+#include "vfs/zip/zipentry.h"
 
 namespace FIFE
 {
@@ -33,19 +32,23 @@ namespace FIFE
             /** destructor
              */
             ~ZipTree();
-
-            /** adds a node to the proper place in the tree
-             *  based on the node path name
-             *  @param nodePath the node description
-             *  @return ZipNode of the most derived path added
-                        (value after the last path separator)
-                        or NULL if the path could not be added
+            /**
+             * Adds a node to the proper place in the tree
+             * based on the node path name.
+             *
+             * @param nodePath the node description
+             * @param entryType the type of the node to add
+             * @return ZipNode of the most derived path added
+             *         (value after the last path separator)
+             *         or NULL if the path could not be added
              */
-            ZipNode* addNode(std::string const & nodePath);
+            ZipNode* addNode(std::string const & nodePath, ZipEntryType entryType);
 
-            /** accessor for getting a node by name
-             *  @param name the name to search for
-             *  @ param ZipNode pointer, or NULL if not found
+            /**
+             * accessor for getting a node by name.
+             *
+             * @param name the name to search for
+             * @return ZipNode pointer, or NULL if not found
              */
             ZipNode* getNode(std::string const & name) const;
 
@@ -60,12 +63,6 @@ namespace FIFE
     };
 } // namespace FIFE
 
-/** debug stream for a zip tree
- *  useful for debugging
- *  @param os output stream
- *  @param zipTree the ZipTree to output
- *  @return os output stream to allow for chaining
- */
 std::ostream& operator<<(std::ostream& os, FIFE::ZipTree const & zipTree);
 
 #endif

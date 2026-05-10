@@ -28,7 +28,6 @@ namespace
         auto it = std::ranges::find_if(container, [&](auto const * node) {
             return node->getName() == name;
         });
-
         return (it != container.end()) ? *it : nullptr;
     }
 
@@ -46,11 +45,8 @@ namespace FIFE
     {
     }
 
-    ZipNode::ZipNode(std::string name, ZipNode* parent /*=0*/) : m_name(std::move(name)), m_parent(parent)
+    ZipNode::ZipNode(std::string name, ZipNode* parent) : m_name(std::move(name)), m_parent(parent)
     {
-
-        // set the content type based on whether
-        // the name has an extension
         if (HasExtension(m_name)) {
             m_contentType = ZipContentType::File;
         } else {
@@ -58,16 +54,29 @@ namespace FIFE
         }
     }
 
+    ZipNode::ZipNode(std::string name, ZipNode* parent, ZipEntryType entryType) :
+        m_name(std::move(name)), m_parent(parent)
+    {
+        switch (entryType) {
+        case ZipEntryType::File:
+            m_contentType = ZipContentType::File;
+            break;
+        case ZipEntryType::Directory:
+        case ZipEntryType::Symlink:
+            m_contentType = ZipContentType::Directory;
+            break;
+        }
+    }
+
     ZipNode::~ZipNode()
     {
-        ZipNodeContainer::iterator iter;
-        for (iter = m_fileChildren.begin(); iter != m_fileChildren.end(); ++iter) {
-            delete *iter;
+        for (auto* child : m_fileChildren) {
+            delete child;
         }
         m_fileChildren.clear();
 
-        for (iter = m_directoryChildren.begin(); iter != m_directoryChildren.end(); ++iter) {
-            delete *iter;
+        for (auto* child : m_directoryChildren) {
+            delete child;
         }
         m_directoryChildren.clear();
     }
@@ -79,12 +88,10 @@ namespace FIFE
 
     std::string ZipNode::getFullName() const
     {
-        // traverse up the hierarchy of parents
-        // to build the full path
         if (m_parent != nullptr) {
             fs::path path(m_parent->getFullName());
             path /= m_name;
-            return (path.string());
+            return path.string();
         }
         return m_name;
     }
@@ -99,7 +106,7 @@ namespace FIFE
         return m_parent;
     }
 
-    std::vector<ZipNode*> ZipNode::getChildren(ZipContentType::Enum contentType /*=ZipContentType::All*/) const
+    std::vector<ZipNode*> ZipNode::getChildren(ZipContentType::Enum contentType) const
     {
         switch (contentType) {
         default: // fall through on purpose
@@ -112,49 +119,30 @@ namespace FIFE
             allNodes.reserve(m_directoryChildren.size() + m_fileChildren.size());
             allNodes.insert(allNodes.end(), m_directoryChildren.begin(), m_directoryChildren.end());
             allNodes.insert(allNodes.end(), m_fileChildren.begin(), m_fileChildren.end());
-
             return allNodes;
         }
-        case ZipContentType::File: {
+        case ZipContentType::File:
             return m_fileChildren;
-        }
-        case ZipContentType::Directory: {
+        case ZipContentType::Directory:
             return m_directoryChildren;
-        }
         }
     }
 
-    ZipNode* ZipNode::getChild(
-        std::string const & name, ZipContentType::Enum contentType /*=ZipContentType::All*/) const
+    ZipNode* ZipNode::getChild(std::string const & name, ZipContentType::Enum contentType) const
     {
-        bool const hasExtension = HasExtension(name);
-
         switch (contentType) {
         default: // fall through on purpose
         case ZipContentType::All: {
-            ZipNode* node = nullptr;
-            if (hasExtension) {
+            ZipNode* node = FindNameInContainer(m_directoryChildren, name);
+            if (node == nullptr) {
                 node = FindNameInContainer(m_fileChildren, name);
-            } else {
-                node = FindNameInContainer(m_directoryChildren, name);
             }
-
             return node;
         }
-        case ZipContentType::File: {
-            if (!hasExtension) {
-                return nullptr;
-            }
-
+        case ZipContentType::File:
             return FindNameInContainer(m_fileChildren, name);
-        }
-        case ZipContentType::Directory: {
-            if (hasExtension) {
-                return nullptr;
-            }
-
+        case ZipContentType::Directory:
             return FindNameInContainer(m_directoryChildren, name);
-        }
         }
     }
 
@@ -164,47 +152,59 @@ namespace FIFE
         if (child != nullptr) {
             if (child->getContentType() == ZipContentType::File) {
                 m_fileChildren.push_back(child);
-            } else if (child->getContentType() == ZipContentType::Directory) {
-                m_directoryChildren.push_back(child);
             } else {
-                // TODO - vtchill - error case here, maybe exception
+                m_directoryChildren.push_back(child);
             }
         }
+        return child;
+    }
 
+    ZipNode* ZipNode::addChild(std::string const & name, ZipEntryType entryType)
+    {
+        auto* child = new ZipNode(name, this, entryType);
+        if (child != nullptr) {
+            if (child->getContentType() == ZipContentType::File) {
+                m_fileChildren.push_back(child);
+            } else {
+                m_directoryChildren.push_back(child);
+            }
+        }
         return child;
     }
 
     void ZipNode::removeChild(ZipNode* child)
     {
-        if (child != nullptr) {
-            if (child->getContentType() == ZipContentType::File) {
-                ZipNodeContainer::iterator iter;
-                iter = std::ranges::find(m_fileChildren, child);
+        if (child == nullptr) {
+            return;
+        }
 
-                if (iter != m_fileChildren.end()) {
-                    delete *iter;
-                    m_fileChildren.erase(iter);
-                }
-            }
+        auto it = std::ranges::find(m_fileChildren, child);
+        if (it != m_fileChildren.end()) {
+            delete *it;
+            m_fileChildren.erase(it);
+            return;
+        }
+
+        it = std::ranges::find(m_directoryChildren, child);
+        if (it != m_directoryChildren.end()) {
+            delete *it;
+            m_directoryChildren.erase(it);
         }
     }
 
     void ZipNode::removeChild(std::string const & name)
     {
-        if (HasExtension(name)) {
-            auto iter = FindNameInContainer(m_fileChildren, name);
+        auto it = FindNameInContainer(m_fileChildren, name);
+        if (it != m_fileChildren.end()) {
+            delete *it;
+            m_fileChildren.erase(it);
+            return;
+        }
 
-            if (iter != m_fileChildren.end()) {
-                delete *iter;
-                m_fileChildren.erase(iter);
-            }
-        } else {
-            auto iter = FindNameInContainer(m_directoryChildren, name);
-
-            if (iter != m_directoryChildren.end()) {
-                delete *iter;
-                m_directoryChildren.erase(iter);
-            }
+        it = FindNameInContainer(m_directoryChildren, name);
+        if (it != m_directoryChildren.end()) {
+            delete *it;
+            m_directoryChildren.erase(it);
         }
     }
 
@@ -236,15 +236,13 @@ std::ostream& operator<<(std::ostream& os, FIFE::ZipNode const & node)
 
     // print all file children
     FIFE::ZipNodeContainer fileChildren = node.getChildren(FIFE::ZipContentType::File);
-    FIFE::ZipNodeContainer::iterator iter;
-    for (iter = fileChildren.begin(); iter != fileChildren.end(); ++iter) {
-        os << *(*iter) << '\n';
+    for (auto* child : fileChildren) {
+        os << *child << '\n';
     }
 
-    // print all directory children (recursively)
     FIFE::ZipNodeContainer directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
-    for (iter = directoryChildren.begin(); iter != directoryChildren.end(); ++iter) {
-        os << *(*iter) << '\n';
+    for (auto* child : directoryChildren) {
+        os << *child << '\n';
     }
 
     return os;

@@ -1,23 +1,14 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-// Standard C++ library includes
 #include <algorithm>
 #include <cstdint>
-#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <set>
 #include <string>
 
-// Platform specific includes
 #include "fife_unittest.h"
-
-// 3rd party library includes
-
-// FIFE includes
-#include "util/base/exception.h"
-#include "util/time/timemanager.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
@@ -25,37 +16,15 @@
 
 using FIFE::NotFound;
 using FIFE::RawData;
-using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 using FIFE::ZipSource;
-
-// Environment
-struct environment
-{
-        std::shared_ptr<TimeManager> timemanager;
-        std::shared_ptr<VFS> vfs;
-
-        environment() : timemanager(std::make_shared<TimeManager>()), vfs(nullptr)
-        {
-            if (!VFS::instance()) {
-                vfs.reset(new VFS()); // Sets VFS::instance()
-                vfs->addSource(new VFSDirectory(vfs.get()));
-            }
-        }
-};
 
 static std::string const COMPRESSED_FILE = "tests/data/testmap.zip";
-using FIFE::NotFound;
-using FIFE::RawData;
-using FIFE::VFS;
-using FIFE::VFSDirectory;
-using FIFE::ZipSource;
-static std::string const RAW_FILE = "tests/data/test.map";
+static std::string const RAW_FILE        = "tests/data/test.map";
 
 TEST_CASE("test_decoder")
 {
-    environment env;
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
     vfs->addSource(new VFSDirectory(vfs.get()));
 
