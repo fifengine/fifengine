@@ -143,6 +143,29 @@ namespace FIFE
             err += SDL_GetError();
             throw FIFE::SDLException(err);
         }
+
+        // Sanitize transparent pixels: FreeType's anti-aliasing can produce
+        // pixels with alpha=0 but non-zero RGB channels. Zero them out so
+        // fully transparent pixels are truly black-transparent.
+        if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
+            if (SDL_LockSurface(renderedText)) {
+                SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(renderedText->format);
+                int32_t const pitch_px             = renderedText->pitch / 4;
+                auto* pixels                       = static_cast<uint32_t*>(renderedText->pixels);
+                for (int32_t y = 0; y < renderedText->h; ++y) {
+                    uint32_t* row = pixels + static_cast<size_t>(y) * static_cast<size_t>(pitch_px);
+                    for (int32_t x = 0; x < renderedText->w; ++x) {
+                        uint8_t r, g, b, a;
+                        SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
+                        if (a == 0) {
+                            row[x] = 0;
+                        }
+                    }
+                }
+                SDL_UnlockSurface(renderedText);
+            }
+        }
+
         return renderedText;
     }
 

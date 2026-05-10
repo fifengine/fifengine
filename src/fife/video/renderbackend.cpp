@@ -393,8 +393,10 @@ namespace FIFE
         p.x = static_cast<int32_t>(x[segmentCount - 1]);
         p.y = static_cast<int32_t>(y[segmentCount - 1]);
         newPoints.push_back(p);
-        p.x = static_cast<int32_t>((static_cast<float>(points[segmentCount].x) + x[segmentCount - 1]) / static_cast<float>(2));
-        p.y = static_cast<int32_t>((static_cast<float>(points[segmentCount].y) + y[segmentCount - 1]) / static_cast<float>(2));
+        p.x = static_cast<int32_t>(
+            (static_cast<float>(points[segmentCount].x) + x[segmentCount - 1]) / static_cast<float>(2));
+        p.y = static_cast<int32_t>(
+            (static_cast<float>(points[segmentCount].y) + y[segmentCount - 1]) / static_cast<float>(2));
         newPoints.push_back(p);
         // end point
         newPoints.push_back(points[segmentCount]);

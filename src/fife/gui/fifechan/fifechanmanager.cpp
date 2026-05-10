@@ -125,7 +125,8 @@ namespace FIFE
         case SDL_EVENT_MOUSE_MOTION:
             m_lastMotionX = static_cast<int32_t>(evt.motion.x);
             m_lastMotionY = static_cast<int32_t>(evt.motion.y);
-            if (m_fcn_topcontainer->getWidgetAt(static_cast<int>(evt.motion.x), static_cast<int>(evt.motion.y)) != nullptr) {
+            if (m_fcn_topcontainer->getWidgetAt(static_cast<int>(evt.motion.x), static_cast<int>(evt.motion.y)) !=
+                nullptr) {
                 m_had_mouse = true;
                 m_input->pushInput(evt);
                 return true;
@@ -165,7 +166,9 @@ namespace FIFE
         } else {
             dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
         }
-        m_fcn_topcontainer->setDimension(fcn::Rectangle(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height)));
+        m_fcn_topcontainer->setDimension(
+            fcn::Rectangle(
+                static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height)));
         invalidateFonts();
         if (m_console != nullptr) {
             m_console->reLayout();

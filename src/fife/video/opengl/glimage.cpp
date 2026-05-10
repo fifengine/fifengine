@@ -279,8 +279,12 @@ namespace FIFE
 
         // used to calculate the fill ratio for given chunk
         m_tex_coords[0] = m_tex_coords[1] = 0.0F;
-        m_tex_coords[2] = static_cast<float>(static_cast<uint32_t>(m_surface->w) % m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
-        m_tex_coords[3] = static_cast<float>(static_cast<uint32_t>(m_surface->h) % m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
+
+        m_tex_coords[2] = static_cast<float>(static_cast<uint32_t>(m_surface->w) % m_chunk_size_w) /
+                          static_cast<float>(m_chunk_size_w);
+
+        m_tex_coords[3] = static_cast<float>(static_cast<uint32_t>(m_surface->h) % m_chunk_size_h) /
+                          static_cast<float>(m_chunk_size_h);
 
         if (m_tex_coords[2] == 0.0F) {
             m_tex_coords[2] = 1.0F;

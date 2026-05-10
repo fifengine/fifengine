@@ -797,7 +797,9 @@ namespace FIFE
                 for (; it != renderlist.end(); ++it) {
                     auto* vis = (*it)->instance->getVisual<InstanceVisual>();
                     float& z  = (*it)->vertexZ;
-                    z         = ((a * static_cast<float>((*it)->screenpoint.z)) + b) + (static_cast<float>(vis->getStackPosition()) * stackdelta);
+
+                    z = ((a * static_cast<float>((*it)->screenpoint.z)) + b) +
+                        (static_cast<float>(vis->getStackPosition()) * stackdelta);
                 }
             }
         } else {

@@ -383,7 +383,9 @@ namespace FIFE
         int32_t yMin        = p1.y;
 
         std::vector<Point> points;
-        Point p(static_cast<int32_t>(static_cast<float>(p1.x) + cornerX), static_cast<int32_t>(static_cast<float>(p1.y) + cornerY));
+        Point p(
+            static_cast<int32_t>(static_cast<float>(p1.x) + cornerX),
+            static_cast<int32_t>(static_cast<float>(p1.y) + cornerY));
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);

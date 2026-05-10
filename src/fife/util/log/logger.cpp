@@ -23,7 +23,7 @@ struct ModuleInfo
 {
         logmodule_t module;
         logmodule_t parent;
-        const char* name;
+        char const * name;
 };
 
 static ModuleInfo moduleInfos[] = {
