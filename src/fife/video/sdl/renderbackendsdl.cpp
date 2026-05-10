@@ -383,22 +383,22 @@ namespace FIFE
         int32_t yMin        = p1.y;
 
         std::vector<Point> points;
-        Point p(static_cast<int32_t>(p1.x + cornerX), static_cast<int32_t>(p1.y + cornerY));
+        Point p(static_cast<int32_t>(static_cast<float>(p1.x) + cornerX), static_cast<int32_t>(static_cast<float>(p1.y) + cornerY));
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = static_cast<int32_t>(p2.x + cornerX);
-        p.y  = static_cast<int32_t>(p2.y + cornerY);
+        p.x  = static_cast<int32_t>(static_cast<float>(p2.x) + cornerX);
+        p.y  = static_cast<int32_t>(static_cast<float>(p2.y) + cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = static_cast<int32_t>(p2.x - cornerX);
-        p.y  = static_cast<int32_t>(p2.y - cornerY);
+        p.x  = static_cast<int32_t>(static_cast<float>(p2.x) - cornerX);
+        p.y  = static_cast<int32_t>(static_cast<float>(p2.y) - cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = static_cast<int32_t>(p1.x - cornerX);
-        p.y  = static_cast<int32_t>(p1.y - cornerY);
+        p.x  = static_cast<int32_t>(static_cast<float>(p1.x) - cornerX);
+        p.y  = static_cast<int32_t>(static_cast<float>(p1.y) - cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
@@ -620,7 +620,7 @@ namespace FIFE
         for (float dy = 1.0F; dy <= rad; dy += 1.0F) {
             float const dx = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dy) - (dy * dy)));
             int32_t x      = p.x - static_cast<int32_t>(dx);
-            for (; x <= static_cast<float>(p.x) + dx; x++) {
+            for (; static_cast<float>(x) <= static_cast<float>(p.x) + dx; x++) {
                 putPixel(x, p.y + static_cast<int32_t>(rad - dy), r, g, b, a);
                 putPixel(x, p.y - static_cast<int32_t>(rad - dy), r, g, b, a);
             }
@@ -642,12 +642,12 @@ namespace FIFE
 
         float angle = static_cast<float>(s) * step;
         Point oldPoint(
-            static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
-            static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
+            static_cast<int32_t>((static_cast<float>(radius) * Mathf::Cos(angle)) + static_cast<float>(p.x)),
+            static_cast<int32_t>((static_cast<float>(radius) * Mathf::Sin(angle)) + static_cast<float>(p.y)));
         for (; s <= e; ++s, angle += step) {
             Point const newPoint(
-                static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
-                static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
+                static_cast<int32_t>((static_cast<float>(radius) * Mathf::Cos(angle)) + static_cast<float>(p.x)),
+                static_cast<int32_t>((static_cast<float>(radius) * Mathf::Sin(angle)) + static_cast<float>(p.y)));
             drawLine(oldPoint, newPoint, r, g, b, a);
             oldPoint = newPoint;
         }
@@ -673,8 +673,8 @@ namespace FIFE
         float angle  = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step) {
             Point const newPoint(
-                static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
-                static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
+                static_cast<int32_t>((static_cast<float>(radius) * Mathf::Cos(angle)) + static_cast<float>(p.x)),
+                static_cast<int32_t>((static_cast<float>(radius) * Mathf::Sin(angle)) + static_cast<float>(p.y)));
             yMax = std::max(yMax, newPoint.y);
             yMin = std::min(yMin, newPoint.y);
             points.push_back(newPoint);
@@ -682,8 +682,8 @@ namespace FIFE
         // add end point (again)
         angle = static_cast<float>(e) * step;
         Point const newPoint(
-            static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
-            static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
+            static_cast<int32_t>((static_cast<float>(radius) * Mathf::Cos(angle)) + static_cast<float>(p.x)),
+            static_cast<int32_t>((static_cast<float>(radius) * Mathf::Sin(angle)) + static_cast<float>(p.y)));
         points.push_back(newPoint);
         yMax = std::max(yMax, newPoint.y);
         yMin = std::min(yMin, newPoint.y);

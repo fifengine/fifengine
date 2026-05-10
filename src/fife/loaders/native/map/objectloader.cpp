@@ -530,7 +530,7 @@ namespace FIFE
                                         auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(animation->getDirection(), animation);
-                                            action->setDuration(animation->getDuration());
+                                            action->setDuration(static_cast<uint32_t>(animation->getDuration()));
                                             continue;
                                         }
                                     }
@@ -630,7 +630,7 @@ namespace FIFE
                                         if (actionVisual != nullptr) {
                                             assert(dir >= 0);
                                             actionVisual->addAnimation(static_cast<uint32_t>(dir), animation);
-                                            action->setDuration(animation->getDuration());
+                                            action->setDuration(static_cast<uint32_t>(animation->getDuration()));
                                         }
                                         ++nDir;
                                     }
@@ -667,7 +667,7 @@ namespace FIFE
                                         if (actionVisual != nullptr) {
                                             assert(direction >= 0);
                                             actionVisual->addAnimation(static_cast<uint32_t>(direction), animation);
-                                            action->setDuration(animation->getDuration());
+                                            action->setDuration(static_cast<uint32_t>(animation->getDuration()));
                                         }
                                     }
                                 }

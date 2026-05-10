@@ -346,7 +346,7 @@ namespace FIFE
         for (uint8_t i = 0; i != driverCount; i++) {
             if (driver == m_availableRenderDrivers[i]) {
                 m_renderDriverName  = driver;
-                m_renderDriverIndex = i;
+                m_renderDriverIndex = static_cast<int8_t>(i);
                 found               = true;
                 break;
             }
@@ -409,7 +409,7 @@ namespace FIFE
 
     int32_t DeviceCaps::getDesktopRefreshRate(uint8_t display) const
     {
-        return getDesktopMode(display)->refresh_rate;
+        return static_cast<int32_t>(getDesktopMode(display)->refresh_rate);
     }
 
     int32_t DeviceCaps::getDesktopWidth(uint8_t display) const

@@ -150,7 +150,7 @@ namespace FIFE
         assert(y <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         m_mx = static_cast<int32_t>(x);
         m_my = static_cast<int32_t>(y);
-        SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), m_mx, m_my);
+        SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), static_cast<float>(m_mx), static_cast<float>(m_my));
     }
 
     void Cursor::getPosition(int32_t* x, int32_t* y) const

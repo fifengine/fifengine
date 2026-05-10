@@ -123,9 +123,9 @@ namespace FIFE
             return false;
 
         case SDL_EVENT_MOUSE_MOTION:
-            m_lastMotionX = evt.motion.x;
-            m_lastMotionY = evt.motion.y;
-            if (m_fcn_topcontainer->getWidgetAt(evt.motion.x, evt.motion.y) != nullptr) {
+            m_lastMotionX = static_cast<int32_t>(evt.motion.x);
+            m_lastMotionY = static_cast<int32_t>(evt.motion.y);
+            if (m_fcn_topcontainer->getWidgetAt(static_cast<int>(evt.motion.x), static_cast<int>(evt.motion.y)) != nullptr) {
                 m_had_mouse = true;
                 m_input->pushInput(evt);
                 return true;
@@ -165,7 +165,7 @@ namespace FIFE
         } else {
             dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
         }
-        m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
+        m_fcn_topcontainer->setDimension(fcn::Rectangle(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height)));
         invalidateFonts();
         if (m_console != nullptr) {
             m_console->reLayout();
@@ -229,14 +229,14 @@ namespace FIFE
             m_console = new Console();
         }
 
-        resizeTopContainer(0, 0, screenWidth, screenHeight);
+        resizeTopContainer(0, 0, static_cast<uint32_t>(screenWidth), static_cast<uint32_t>(screenHeight));
     }
 
     GuiFont* FifechanManager::createFont(std::string const & path, uint32_t size, std::string const & glyphs)
     {
         std::string fontpath   = path;
         std::string fontglyphs = glyphs;
-        int32_t fontsize       = size;
+        int32_t fontsize       = static_cast<int32_t>(size);
 
         // Set default settings if necessary
         if (fontpath.empty()) {
@@ -287,7 +287,7 @@ namespace FIFE
     GuiFont* FifechanManager::setDefaultFont(std::string const & path, uint32_t size, std::string const & glyphs)
     {
         m_fontpath   = path;
-        m_fontsize   = size;
+        m_fontsize   = static_cast<int32_t>(size);
         m_fontglyphs = glyphs;
 
         m_defaultfont = createFont();

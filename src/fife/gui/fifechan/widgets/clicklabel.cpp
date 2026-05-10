@@ -99,7 +99,7 @@ namespace fcn
     void ClickLabel::wrapText()
     {
         if (isTextWrapping() && (mGuiFont != nullptr)) {
-            int32_t const w = getWidth() - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+            int32_t const w = getWidth() - static_cast<int32_t>(2 * getBorderSize()) - static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
             mWrappedText    = mGuiFont->splitTextToWidth(mCaption, w);
         }
     }
@@ -127,23 +127,23 @@ namespace fcn
                 if (getParent() != nullptr) {
                     w = getParent()->getChildrenArea().width;
                 }
-                int32_t textW      = w - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+                int32_t textW      = w - static_cast<int32_t>(2 * getBorderSize()) - static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
                 int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
                 if (textW < 1) {
                     w     = maxW;
-                    textW = (w - (2 * getBorderSize())) - getPaddingLeft() - getPaddingRight();
+                    textW = (w - static_cast<int32_t>(2 * getBorderSize())) - static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
                 } else if (w > maxW) {
                     w     = std::min(w, maxW);
-                    textW = (w - (2 * getBorderSize())) - getPaddingLeft() - getPaddingRight();
+                    textW = (w - static_cast<int32_t>(2 * getBorderSize())) - static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
                 }
                 mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
             } else {
                 FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
-                w                  = image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight();
+                w                  = static_cast<int32_t>(image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight());
             }
             std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
             FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
-            h = (2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + image->getHeight();
+            h = static_cast<int32_t>((2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + image->getHeight());
             setSize(w, h);
         }
     }
@@ -151,7 +151,7 @@ namespace fcn
     void ClickLabel::draw(Graphics* graphics)
     {
         bool const active = isFocused();
-        Rectangle const offsetRec(getBorderSize(), getBorderSize(), 2 * getBorderSize(), 2 * getBorderSize());
+        Rectangle const offsetRec(static_cast<int>(getBorderSize()), static_cast<int>(getBorderSize()), static_cast<int>(2 * getBorderSize()), static_cast<int>(2 * getBorderSize()));
 
         if (isOpaque()) {
             Color faceColor          = getBackgroundColor();
@@ -180,19 +180,19 @@ namespace fcn
 
             int32_t textX = 0;
             int32_t const textY =
-                offsetRec.y + getPaddingTop() +
-                ((getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2);
+                offsetRec.y + static_cast<int32_t>(getPaddingTop()) +
+                ((getHeight() - offsetRec.height - static_cast<int32_t>(getPaddingTop()) - static_cast<int32_t>(getPaddingBottom()) - static_cast<int32_t>(image->getHeight())) / 2);
 
             switch (getAlignment()) {
             case Graphics::Alignment::Left:
-                textX = offsetRec.x + getPaddingLeft();
+                textX = offsetRec.x + static_cast<int32_t>(getPaddingLeft());
                 break;
             case Graphics::Alignment::Center:
-                textX = offsetRec.x + getPaddingLeft() +
-                        ((getWidth() - offsetRec.width - getPaddingLeft() - getPaddingRight() - image->getWidth()) / 2);
+                textX = offsetRec.x + static_cast<int32_t>(getPaddingLeft()) +
+                        ((getWidth() - offsetRec.width - static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight()) - static_cast<int32_t>(image->getWidth())) / 2);
                 break;
             case Graphics::Alignment::Right:
-                textX = getWidth() - offsetRec.x - getPaddingRight() - image->getWidth();
+                textX = getWidth() - offsetRec.x - static_cast<int32_t>(getPaddingRight()) - static_cast<int32_t>(image->getWidth());
                 break;
             default:
                 fcn::throwException("Unknown alignment.");

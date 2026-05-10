@@ -132,9 +132,11 @@ namespace FIFE
                 rpos.x += rpos.y / 2;
                 auto* liv         = lhs->instance->getVisual<InstanceVisual>();
                 auto* riv         = rhs->instance->getVisual<InstanceVisual>();
-                int32_t const lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
+                int32_t const lvc = static_cast<int32_t>(ceil((xtox * lpos.x) + (ytox * lpos.y))) +
+                                    static_cast<int32_t>(ceil((xtoy * lpos.x) + (ytoy * lpos.y))) +
                                     liv->getStackPosition();
-                int32_t const rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
+                int32_t const rvc = static_cast<int32_t>(ceil((xtox * rpos.x) + (ytox * rpos.y))) +
+                                    static_cast<int32_t>(ceil((xtoy * rpos.x) + (ytoy * rpos.y))) +
                                     riv->getStackPosition();
                 if (lvc == rvc) {
                     if (Mathd::Equal(lpos.z, rpos.z)) {
@@ -264,11 +266,11 @@ namespace FIFE
             // uses free/unused RenderItem
             int32_t const index = m_freeEntries.front();
             m_freeEntries.pop_front();
-            item                     = m_renderItems[index];
+            item                     = m_renderItems[static_cast<size_t>(index)];
             item->instance           = instance;
             m_instance_map[instance] = index;
             // uses free/unused Entry
-            entry                = m_entries[index];
+            entry                = m_entries[static_cast<size_t>(index)];
             entry->instanceIndex = index;
             entry->entryIndex    = index;
         }
@@ -285,9 +287,9 @@ namespace FIFE
     {
         assert(m_instance_map.find(instance) != m_instance_map.end());
 
-        Entry* entry = m_entries[m_instance_map[instance]];
+        Entry* entry = m_entries[static_cast<size_t>(m_instance_map[instance])];
         assert(entry->instanceIndex == m_instance_map[instance]);
-        RenderItem* item = m_renderItems[entry->instanceIndex];
+        RenderItem* item = m_renderItems[static_cast<size_t>(entry->instanceIndex)];
         // removes entry from updates
         auto entriesToUpdateIt = m_entriesToUpdate.find(entry->entryIndex);
         if (entriesToUpdateIt != m_entriesToUpdate.end()) {
@@ -320,7 +322,7 @@ namespace FIFE
 
     void LayerCache::updateInstance(Instance* instance)
     {
-        Entry* entry = m_entries[m_instance_map[instance]];
+        Entry* entry = m_entries[static_cast<size_t>(m_instance_map[instance])];
         if (entry->instanceIndex == -1) {
             return;
         }
@@ -384,7 +386,7 @@ namespace FIFE
             FL_DBG(_log, "Layer instances hidden");
             auto entry_it = m_entriesToUpdate.begin();
             for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
-                Entry* entry       = m_entries[*entry_it];
+                Entry* entry       = m_entries[static_cast<size_t>(*entry_it)];
                 entry->forceUpdate = false;
                 entry->visible     = false;
             }
@@ -439,8 +441,8 @@ namespace FIFE
             collect(viewport, index_list);
             // fill renderlist
             for (int const i : index_list) {
-                Entry* entry     = m_entries[i];
-                RenderItem* item = m_renderItems[entry->instanceIndex];
+                Entry* entry     = m_entries[static_cast<size_t>(i)];
+                RenderItem* item = m_renderItems[static_cast<size_t>(entry->instanceIndex)];
                 if (!item->image || !entry->visible) {
                     continue;
                 }
@@ -509,7 +511,7 @@ namespace FIFE
                     }
                     continue;
                 }
-                updateScreenCoordinate(m_renderItems[entry->instanceIndex], zoomChange);
+                updateScreenCoordinate(m_renderItems[static_cast<size_t>(entry->instanceIndex)], zoomChange);
             }
         }
     }
@@ -520,14 +522,14 @@ namespace FIFE
         Rect const viewport = m_camera->getViewPort();
         auto entry_it       = m_entriesToUpdate.begin();
         for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
-            Entry* entry       = m_entries[*entry_it];
+            Entry* entry       = m_entries[static_cast<size_t>(*entry_it)];
             entry->forceUpdate = false;
             if (entry->instanceIndex == -1) {
                 entry->updateInfo = EntryNoneUpdate;
                 removes.insert(*entry_it);
                 continue;
             }
-            RenderItem* item     = m_renderItems[entry->instanceIndex];
+            RenderItem* item     = m_renderItems[static_cast<size_t>(entry->instanceIndex)];
             bool const onScreenA = entry->visible && item->image && item->dimensions.intersects(viewport);
             bool positionUpdate  = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
             if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
@@ -577,7 +579,7 @@ namespace FIFE
 
     bool LayerCache::updateVisual(Entry* entry)
     {
-        RenderItem* item    = m_renderItems[entry->instanceIndex];
+        RenderItem* item    = m_renderItems[static_cast<size_t>(entry->instanceIndex)];
         Instance* instance  = item->instance;
         auto* visual        = instance->getVisual<InstanceVisual>();
         item->facingAngle   = instance->getRotation();
@@ -615,7 +617,7 @@ namespace FIFE
                     action = instance->getObject()->getDefaultAction();
                 }
             } else {
-                image = ImageManager::instance()->get(image_id);
+                image = ImageManager::instance()->get(static_cast<ResourceHandle>(image_id));
             }
         }
         entry->forceUpdate = (action != nullptr);
@@ -709,15 +711,15 @@ namespace FIFE
 
     void LayerCache::updatePosition(Entry* entry)
     {
-        RenderItem* item                     = m_renderItems[entry->instanceIndex];
+        RenderItem* item                     = m_renderItems[static_cast<size_t>(entry->instanceIndex)];
         Instance* instance                   = item->instance;
         ExactModelCoordinate const mapCoords = instance->getLocationRef().getMapCoordinates();
         DoublePoint3D screenPosition         = m_camera->toVirtualScreenCoordinates(mapCoords);
         ImagePtr const image                 = item->image;
 
         if (image) {
-            int32_t const w  = image->getWidth();
-            int32_t const h  = image->getHeight();
+            int32_t const w  = static_cast<int32_t>(image->getWidth());
+            int32_t const h  = static_cast<int32_t>(image->getHeight());
             screenPosition.x = (screenPosition.x - (w / 2.0)) + image->getXShift();
             screenPosition.y = (screenPosition.y - (h / 2.0)) + image->getYShift();
             item->bbox.w     = w;
@@ -757,8 +759,8 @@ namespace FIFE
 
         if (changedZoom) {
             if (m_zoomed) {
-                item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
-                item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
+                item->dimensions.w = static_cast<int32_t>(round(static_cast<double>(item->bbox.w) * m_zoom));
+                item->dimensions.h = static_cast<int32_t>(round(static_cast<double>(item->bbox.h) * m_zoom));
             } else {
                 item->dimensions.w = item->bbox.w;
                 item->dimensions.h = item->bbox.h;
@@ -781,21 +783,21 @@ namespace FIFE
         // more an workaround, because z values are wrong in case of inverted top with bottom
         if (!m_needSorting && !m_layer->isStatic()) {
             // if (!m_needSorting) {
-            float const det = m_zMin - m_zMax;
+            float const det = static_cast<float>(m_zMin - m_zMax);
             if (fabs(det) > FLT_EPSILON) {
                 static float const globalrange = 200.0;
                 static float const stackdelta  = (FLT_EPSILON * 100.0);
-                int32_t const numlayers        = m_layer->getLayerCount();
+                int32_t const numlayers        = static_cast<int32_t>(m_layer->getLayerCount());
                 float const lmin               = m_layer->getZOffset();
-                float const lmax               = lmin + (globalrange / numlayers);
+                float const lmax               = lmin + (globalrange / static_cast<float>(numlayers));
                 float const a                  = (lmin - lmax) / det;
-                float const b                  = ((lmax * m_zMin) - (lmin * m_zMax)) / det;
+                float const b                  = static_cast<float>(((lmax * m_zMin) - (lmin * m_zMax)) / det);
 
                 auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {
                     auto* vis = (*it)->instance->getVisual<InstanceVisual>();
                     float& z  = (*it)->vertexZ;
-                    z         = ((a * (*it)->screenpoint.z) + b) + (vis->getStackPosition() * stackdelta);
+                    z         = ((a * static_cast<float>((*it)->screenpoint.z)) + b) + (static_cast<float>(vis->getStackPosition()) * stackdelta);
                 }
             }
         } else {

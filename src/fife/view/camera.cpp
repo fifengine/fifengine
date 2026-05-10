@@ -1020,7 +1020,7 @@ found_non_transparent_pixel:;
             RenderList& instancesToRender = m_layerToInstances[layer];
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
-                uint8_t const batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+                uint8_t const batches   = static_cast<uint8_t>(ceil(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
                 uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
                     uint32_t const start = i * MAX_BATCH_SIZE;
@@ -1112,7 +1112,7 @@ found_non_transparent_pixel:;
             RenderList& instancesToRender = m_layerToInstances[*layer_it];
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
-                uint8_t const batches   = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+                uint8_t const batches   = static_cast<uint8_t>(ceil(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
                 uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
                     uint32_t const start = i * MAX_BATCH_SIZE;

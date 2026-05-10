@@ -78,13 +78,13 @@ namespace FIFE
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.left -= static_cast<int>(squeezedWidth) / div;
-                                squeezed.right -= static_cast<int>(squeezedWidth) / div;
+                                squeezed.left -= squeezedWidth / static_cast<uint32_t>(div);
+                                squeezed.right -= squeezedWidth / static_cast<uint32_t>(div);
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.left += static_cast<int>(squeezedWidth) / div;
-                                    squeezed.right += static_cast<int>(squeezedWidth) / div;
+                                    squeezed.left += squeezedWidth / static_cast<uint32_t>(div);
+                                    squeezed.right += squeezedWidth / static_cast<uint32_t>(div);
                                 }
                                 div <<= 1;
                             }
@@ -116,13 +116,13 @@ namespace FIFE
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.top -= static_cast<int>(squeezedHeight) / div;
-                                squeezed.bottom -= static_cast<int>(squeezedHeight) / div;
+                                squeezed.top -= squeezedHeight / static_cast<uint32_t>(div);
+                                squeezed.bottom -= squeezedHeight / static_cast<uint32_t>(div);
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.top += static_cast<int>(squeezedHeight) / div;
-                                    squeezed.bottom += static_cast<int>(squeezedHeight) / div;
+                                    squeezed.top += squeezedHeight / static_cast<uint32_t>(div);
+                                    squeezed.bottom += squeezedHeight / static_cast<uint32_t>(div);
                                 }
                                 div <<= 1;
                             }

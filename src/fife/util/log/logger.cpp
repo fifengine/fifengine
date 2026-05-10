@@ -23,7 +23,7 @@ struct ModuleInfo
 {
         logmodule_t module;
         logmodule_t parent;
-        std::string name;
+        const char* name;
 };
 
 static ModuleInfo moduleInfos[] = {
@@ -242,7 +242,7 @@ namespace FIFE
         }
     }
 
-    std::string const & LogManager::getModuleName(logmodule_t module)
+    std::string LogManager::getModuleName(logmodule_t module)
     {
         return moduleInfos[module].name;
     }

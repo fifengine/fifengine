@@ -84,7 +84,7 @@ namespace FIFE
         fcn::Color const dark(50, 60, 50, 0xff);
 
         setSize(w, h);
-        setPosition(static_cast<int>((RenderBackend::instance()->getScreenWidth() - w) / 2), -h);
+        setPosition(static_cast<int>((RenderBackend::instance()->getScreenWidth() - static_cast<uint32_t>(w)) / 2), -h);
         setBorderSize(0);
 
         setForegroundColor(white);

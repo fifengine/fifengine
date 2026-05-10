@@ -269,8 +269,7 @@ namespace FIFE
 
         ALuint const slot = m_freeSlots.front();
         m_freeSlots.pop();
-        alAuxiliaryEffectSloti(
-            static_cast<ALint>(slot), AL_EFFECTSLOT_EFFECT, static_cast<ALint>(effect->getEffectId()));
+        alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, static_cast<ALint>(effect->getEffectId()));
         effect->setSlotId(slot);
         effect->setEnabled(true);
         auto effectIt = m_effectEmitters.find(effect);
@@ -290,7 +289,7 @@ namespace FIFE
         if (!effect->isEnabled()) {
             return;
         }
-        alAuxiliaryEffectSloti(static_cast<ALint>(effect->getSlotId()), AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL);
+        alAuxiliaryEffectSloti(effect->getSlotId(), AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL);
         m_freeSlots.push(effect->getSlotId());
         effect->setSlotId(0);
 

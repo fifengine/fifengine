@@ -263,8 +263,8 @@ namespace FIFE
                 load();
             }
         }
-        uint32_t const width  = m_surface->w;
-        uint32_t const height = m_surface->h;
+        uint32_t const width  = static_cast<uint32_t>(m_surface->w);
+        uint32_t const height = static_cast<uint32_t>(m_surface->h);
 
         // With OpenGL 2.0 or GL_ARB_texture_non_power_of_two we don't really need to care
         // about non power of 2 textures
@@ -279,8 +279,8 @@ namespace FIFE
 
         // used to calculate the fill ratio for given chunk
         m_tex_coords[0] = m_tex_coords[1] = 0.0F;
-        m_tex_coords[2] = static_cast<float>(m_surface->w % m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
-        m_tex_coords[3] = static_cast<float>(m_surface->h % m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
+        m_tex_coords[2] = static_cast<float>(static_cast<uint32_t>(m_surface->w) % m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
+        m_tex_coords[3] = static_cast<float>(static_cast<uint32_t>(m_surface->h) % m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
 
         if (m_tex_coords[2] == 0.0F) {
             m_tex_coords[2] = 1.0F;
@@ -379,7 +379,7 @@ namespace FIFE
                         b        = lum;
                     }
                     oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
-                        ((r >> 4) << 12) | ((g >> 4) << 8) | ((b >> 4) << 4) | ((a >> 4) << 0);
+                        static_cast<uint16_t>(((r >> 4) << 12) | ((g >> 4) << 8) | ((b >> 4) << 4) | ((a >> 4) << 0));
                 }
             }
             // in case of compression we let OpenGL handle it
@@ -392,8 +392,8 @@ namespace FIFE
                 GL_TEXTURE_2D,
                 0,
                 internalFormat,
-                m_chunk_size_w,
-                m_chunk_size_h,
+                static_cast<GLsizei>(m_chunk_size_w),
+                static_cast<GLsizei>(m_chunk_size_h),
                 0,
                 GL_RGBA,
                 GL_UNSIGNED_SHORT_4_4_4_4,
@@ -436,8 +436,8 @@ namespace FIFE
                     GL_TEXTURE_2D,
                     0,
                     internalFormat,
-                    m_chunk_size_w,
-                    m_chunk_size_h,
+                    static_cast<GLsizei>(m_chunk_size_w),
+                    static_cast<GLsizei>(m_chunk_size_h),
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
@@ -466,8 +466,8 @@ namespace FIFE
                     GL_TEXTURE_2D,
                     0,
                     internalFormat,
-                    m_chunk_size_w,
-                    m_chunk_size_h,
+                    static_cast<GLsizei>(m_chunk_size_w),
+                    static_cast<GLsizei>(m_chunk_size_h),
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
@@ -480,8 +480,8 @@ namespace FIFE
                     GL_TEXTURE_2D,
                     0,
                     internalFormat,
-                    m_chunk_size_w,
-                    m_chunk_size_h,
+                    static_cast<GLsizei>(m_chunk_size_w),
+                    static_cast<GLsizei>(m_chunk_size_h),
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
@@ -520,7 +520,7 @@ namespace FIFE
                     }
 
                     oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
-                        r | (g << 8) | (b << 16) | (a << 24);
+                        static_cast<uint32_t>(r | (g << 8) | (b << 16) | (a << 24));
                 }
             }
 
@@ -529,8 +529,8 @@ namespace FIFE
                 GL_TEXTURE_2D,
                 0,
                 internalFormat,
-                m_chunk_size_w,
-                m_chunk_size_h,
+                static_cast<GLsizei>(m_chunk_size_w),
+                static_cast<GLsizei>(m_chunk_size_h),
                 0,
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
@@ -553,10 +553,10 @@ namespace FIFE
         if (RenderBackend::instance()->getTextureFiltering() != TEXTURE_FILTER_NONE ||
             RenderBackend::instance()->isMipmappingEnabled()) {
             // half pixel correction
-            m_tex_coords[0] = (static_cast<GLfloat>(region.x) + 0.5) / static_cast<GLfloat>(width);
-            m_tex_coords[1] = (static_cast<GLfloat>(region.y) + 0.5) / static_cast<GLfloat>(height);
-            m_tex_coords[2] = (static_cast<GLfloat>(region.x + region.w) - 0.5) / static_cast<GLfloat>(width);
-            m_tex_coords[3] = (static_cast<GLfloat>(region.y + region.h) - 0.5) / static_cast<GLfloat>(height);
+            m_tex_coords[0] = (static_cast<GLfloat>(region.x) + 0.5f) / static_cast<GLfloat>(width);
+            m_tex_coords[1] = (static_cast<GLfloat>(region.y) + 0.5f) / static_cast<GLfloat>(height);
+            m_tex_coords[2] = (static_cast<GLfloat>(region.x + region.w) - 0.5f) / static_cast<GLfloat>(width);
+            m_tex_coords[3] = (static_cast<GLfloat>(region.y + region.h) - 0.5f) / static_cast<GLfloat>(height);
         } else {
             m_tex_coords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
             m_tex_coords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
@@ -623,10 +623,10 @@ namespace FIFE
             glTexSubImage2D(
                 GL_TEXTURE_2D,
                 0,
-                xoffset,
-                yoffset,
-                img->getWidth(),
-                img->getHeight(),
+                static_cast<GLint>(xoffset),
+                static_cast<GLint>(yoffset),
+                static_cast<GLsizei>(img->getWidth()),
+                static_cast<GLsizei>(img->getHeight()),
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 img->getSurface()->pixels);

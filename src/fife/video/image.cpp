@@ -330,8 +330,8 @@ namespace FIFE
         if (this->isSharedImage()) {
             Rect const & rect = this->getSubImageRect();
             SDL_Rect dstrect  = {
-                static_cast<int>(rect.x + xoffset),
-                static_cast<int>(rect.y + yoffset),
+                static_cast<int>(rect.x) + static_cast<int>(xoffset),
+                static_cast<int>(rect.y) + static_cast<int>(yoffset),
                 static_cast<Uint16>(srcimg->getWidth()),
                 static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {

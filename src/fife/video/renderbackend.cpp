@@ -343,15 +343,15 @@ namespace FIFE
         auto* xrhs = new float[segmentCount];
         auto* yrhs = new float[segmentCount];
         // first
-        xrhs[0] = points[0].x + static_cast<float>(2 * points[1].x);
-        yrhs[0] = points[0].y + static_cast<float>(2 * points[1].y);
+        xrhs[0] = static_cast<float>(points[0].x) + static_cast<float>(2 * points[1].x);
+        yrhs[0] = static_cast<float>(points[0].y) + static_cast<float>(2 * points[1].y);
         // last
         xrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].x) + points[segmentCount].x) / 2.0F;
         yrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].y) + points[segmentCount].y) / 2.0F;
         // rest
         for (size_t i = 1; i + 1 < segmentCount; ++i) {
-            xrhs[i] = (4 * points[i].x) + (2 * points[i + 1].x);
-            yrhs[i] = (4 * points[i].y) + (2 * points[i + 1].y);
+            xrhs[i] = static_cast<float>((4 * points[i].x) + (2 * points[i + 1].x));
+            yrhs[i] = static_cast<float>((4 * points[i].y) + (2 * points[i + 1].y));
         }
 
         auto* x    = new float[segmentCount];
@@ -381,20 +381,20 @@ namespace FIFE
         // start point
         newPoints.push_back(points[0]);
         for (size_t i = 0; i + 1 < segmentCount; ++i) {
-            p.x = x[i];
-            p.y = y[i];
+            p.x = static_cast<int32_t>(x[i]);
+            p.y = static_cast<int32_t>(y[i]);
             newPoints.push_back(p);
-            p.x = (2 * points[i + 1].x) - x[i + 1];
-            p.y = (2 * points[i + 1].y) - y[i + 1];
+            p.x = static_cast<int32_t>(static_cast<float>(2 * points[i + 1].x) - x[i + 1]);
+            p.y = static_cast<int32_t>(static_cast<float>(2 * points[i + 1].y) - y[i + 1]);
             newPoints.push_back(p);
 
             newPoints.push_back(points[i + 1]);
         }
-        p.x = x[segmentCount - 1];
-        p.y = y[segmentCount - 1];
+        p.x = static_cast<int32_t>(x[segmentCount - 1]);
+        p.y = static_cast<int32_t>(y[segmentCount - 1]);
         newPoints.push_back(p);
-        p.x = (points[segmentCount].x + x[segmentCount - 1]) / 2;
-        p.y = (points[segmentCount].y + y[segmentCount - 1]) / 2;
+        p.x = static_cast<int32_t>((static_cast<float>(points[segmentCount].x) + x[segmentCount - 1]) / static_cast<float>(2));
+        p.y = static_cast<int32_t>((static_cast<float>(points[segmentCount].y) + y[segmentCount - 1]) / static_cast<float>(2));
         newPoints.push_back(p);
         // end point
         newPoints.push_back(points[segmentCount]);

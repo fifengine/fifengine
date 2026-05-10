@@ -153,7 +153,7 @@ namespace fcn
         if (!m_docked) {
             ResizableWindow::mousePressed(mouseEvent);
         } else {
-            int32_t const height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
+            int32_t const height = static_cast<int32_t>(getBorderSize() + getPaddingTop() + getTitleBarHeight());
             mDragOffsetX         = mouseEvent.getX();
             mDragOffsetY         = mouseEvent.getY();
 
