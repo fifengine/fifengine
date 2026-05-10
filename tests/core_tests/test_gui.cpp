@@ -50,17 +50,18 @@ static std::string const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 struct environment
 {
         std::shared_ptr<TimeManager> timemanager;
-        std::shared_ptr<VFS> vfs;
-        std::shared_ptr<ImageManager> imageManager;
 
-        environment() :
-            timemanager(std::make_shared<TimeManager>()),
-            vfs(std::make_shared<VFS>()),
-            imageManager(std::make_shared<ImageManager>())
+        environment() : timemanager(std::make_shared<TimeManager>())
         {
-            vfs->addSource(new VFSDirectory(vfs.get()));
-            if (!SDL_Init(SDL_INIT_TIMER)) {
-                throw SDLException(SDL_GetError());
+            // Always ensure VFS singleton is set
+            if (!VFS::instance()) {
+                auto vfs = std::make_shared<VFS>();
+                vfs->addSource(new VFSDirectory(vfs.get()));
+            }
+            // Always ensure ImageManager singleton is set
+            if (!ImageManager::instance()) {
+                auto imgMgr = std::make_shared<ImageManager>();
+                (void)imgMgr; // Keep alive
             }
         }
 };
@@ -86,8 +87,8 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
     ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
-    int h = img->getHeight();
-    int w = img->getWidth();
+    int h = static_cast<int>(img->getHeight());
+    int w = static_cast<int>(img->getWidth());
     for (int i = 0; i < 100; i += 2) {
         renderbackend.startFrame();
         img->render(Rect(i, i, w, h));

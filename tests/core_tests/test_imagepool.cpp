@@ -54,9 +54,6 @@ struct environment
             imageManager(std::make_shared<ImageManager>())
         {
             vfs->addSource(new VFSDirectory(vfs.get()));
-            if (!SDL_Init(SDL_INIT_TIMER)) {
-                throw SDLException(SDL_GetError());
-            }
         }
 };
 
@@ -78,10 +75,10 @@ TEST_CASE_METHOD(environment, "test_image_pool")
     ImagePtr atlas = imageManager->load(SUBIMAGE_FILE);
     CHECK((2) == (imageManager->getTotalResourcesLoaded()));
 
-    int W = atlas->getWidth();
-    int w = W / 12;
-    int H = atlas->getHeight();
-    int h = H / 12;
+    uint32_t W = atlas->getWidth();
+    int w      = static_cast<int>(W / 12);
+    uint32_t H = atlas->getHeight();
+    int h      = static_cast<int>(H / 12);
     CHECK_NE(w, 0);
     CHECK_NE(h, 0);
 
@@ -92,12 +89,12 @@ TEST_CASE_METHOD(environment, "test_image_pool")
 
     for (int k = 0; k < 3; k++) {
         for (int j = 0; j < 3; j++) {
-            Image* r = (j == 0) ? image.get() : ((j == 1) ? atlas.get() : subImage.get());
-            int h    = r->getHeight();
-            int w    = r->getWidth();
+            Image* r   = (j == 0) ? image.get() : ((j == 1) ? atlas.get() : subImage.get());
+            int height = static_cast<int>(r->getHeight());
+            int width  = static_cast<int>(r->getWidth());
             for (int i = 20; i > 0; i -= 2) {
                 renderbackend.startFrame();
-                r->render(Rect(i, i, w, h));
+                r->render(Rect(i, i, width, height));
                 renderbackend.endFrame();
                 TimeManager::instance()->update();
             }

@@ -12,9 +12,6 @@ if(NOT TARGET fife_lib)
   message(FATAL_ERROR "The fife tests require target 'fife_lib'. Configure with -DBUILD_LIBRARY=ON when enabling tests.")
 endif()
 
-option(CORE_TESTS_GUI_EXPERIMENTAL "Build GUI/imagepool core tests (currently unported to current engine APIs)" OFF)
-option(CORE_TESTS_ZIP              "Build zip core test (currently unstable)" OFF)
-
 set(
   FIFE_CORE_TEST_SOURCES
   test_dat1.cpp
@@ -23,19 +20,12 @@ set(
   test_sharedptr.cpp
   test_utf.cpp
   test_vfs.cpp
+  test_font_ttf.cpp
+  test_zip.cpp
+  test_gui.cpp
+  test_imagepool.cpp
+  test_images.cpp
 )
-
-if(CORE_TESTS_ZIP)
-  list(APPEND FIFE_CORE_TEST_SOURCES test_zip.cpp)
-endif()
-
-if(CORE_TESTS_GUI_EXPERIMENTAL)
-  list(APPEND FIFE_CORE_TEST_SOURCES
-    test_gui.cpp
-    test_imagepool.cpp
-    test_images.cpp
-  )
-endif()
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")
 
@@ -63,6 +53,7 @@ target_link_libraries(
   all_tests
     PRIVATE
       Catch2::Catch2WithMain
+      PNG::PNG
       ZLIB::ZLIB
       ${PNG_LIBRARIES}
       Ogg::ogg

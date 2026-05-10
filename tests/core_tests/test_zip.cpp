@@ -34,9 +34,14 @@ using FIFE::ZipSource;
 struct environment
 {
         std::shared_ptr<TimeManager> timemanager;
+        std::shared_ptr<VFS> vfs;
 
-        environment() : timemanager(std::make_shared<TimeManager>())
+        environment() : timemanager(std::make_shared<TimeManager>()), vfs(nullptr)
         {
+            if (!VFS::instance()) {
+                vfs.reset(new VFS()); // Sets VFS::instance()
+                vfs->addSource(new VFSDirectory(vfs.get()));
+            }
         }
 };
 

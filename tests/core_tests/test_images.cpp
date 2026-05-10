@@ -48,17 +48,18 @@ static std::string const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
 struct environment
 {
         std::shared_ptr<TimeManager> timemanager;
-        std::shared_ptr<VFS> vfs;
-        std::shared_ptr<ImageManager> imageManager;
 
-        environment() :
-            timemanager(std::make_shared<TimeManager>()),
-            vfs(std::make_shared<VFS>()),
-            imageManager(std::make_shared<ImageManager>())
+        environment() : timemanager(std::make_shared<TimeManager>())
         {
-            vfs->addSource(new VFSDirectory(vfs.get()));
-            if (!SDL_Init(SDL_INIT_TIMER)) {
-                throw SDLException(SDL_GetError());
+            // Always ensure VFS singleton is set
+            if (!VFS::instance()) {
+                auto vfs = std::make_shared<VFS>();
+                vfs->addSource(new VFSDirectory(vfs.get()));
+            }
+            // Always ensure ImageManager singleton is set
+            if (!ImageManager::instance()) {
+                auto imgMgr = std::make_shared<ImageManager>();
+                (void)imgMgr; // Keep alive
             }
         }
 };
@@ -71,8 +72,8 @@ void test_image(RenderBackend& renderbackend, ScreenMode const & mode)
     ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
-    int h = img->getHeight();
-    int w = img->getWidth();
+    int h = static_cast<int>(img->getHeight());
+    int w = static_cast<int>(img->getWidth());
     for (int i = 0; i < 100; i++) {
         renderbackend.startFrame();
         img->render(Rect(i, i, w, h));
@@ -96,9 +97,9 @@ void test_subimage(RenderBackend& renderbackend, ScreenMode const & mode)
     ImagePtr img = ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
 
-    int W = img->getWidth();
+    int W = static_cast<int>(img->getWidth());
     int w = W / 12;
-    int H = img->getHeight();
+    int H = static_cast<int>(img->getHeight());
     int h = H / 12;
     std::vector<ImagePtr> subimages;
 
@@ -130,11 +131,12 @@ TEST_CASE("test_sdl_alphaoptimize")
     REQUIRE(img);
     REQUIRE(alpha_img);
 
-    int h0 = img->getHeight();
-    int w0 = img->getWidth();
+    int h0 = static_cast<int>(img->getHeight());
+    int w0 = static_cast<int>(img->getWidth());
 
-    int h1 = alpha_img->getHeight();
-    int w1 = alpha_img->getWidth();
+    int h1 = static_cast<int>(alpha_img->getHeight());
+    int w1 = static_cast<int>(alpha_img->getWidth());
+
     for (int i = 0; i != 200; ++i) {
         renderbackend.startFrame();
         img.get()->render(Rect(i, i, w0, h0));
