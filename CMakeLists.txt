@@ -1277,6 +1277,11 @@ if(BUILD_LIBRARY)
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
   )
 
+  # do not allow undefined symbols in the final link step, to catch missing dependencies early.
+  target_link_options(fife_lib PRIVATE
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--no-undefined>
+  )
+
 #------------------------------------------------------------------------------
 # FifeGUI core library (shared or static)
 #------------------------------------------------------------------------------
