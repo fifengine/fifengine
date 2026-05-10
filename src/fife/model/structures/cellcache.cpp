@@ -414,8 +414,8 @@ namespace FIFE
             }
         }
 
-        m_width  = std::abs(m_size.w - m_size.x) + 1;
-        m_height = std::abs(m_size.h - m_size.y) + 1;
+        m_width  = static_cast<uint32_t>(std::abs(m_size.w - m_size.x) + 1);
+        m_height = static_cast<uint32_t>(std::abs(m_size.h - m_size.y) + 1);
 
         m_cells.resize(m_width);
         for (uint32_t i = 0; i < m_width; ++i) {
@@ -496,8 +496,8 @@ namespace FIFE
         // check if size has changed
         Rect const newsize = rec;
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
-            uint32_t const w = std::abs(newsize.w - newsize.x) + 1;
-            uint32_t const h = std::abs(newsize.h - newsize.y) + 1;
+            uint32_t const w = static_cast<uint32_t>(std::abs(newsize.w - newsize.x) + 1);
+            uint32_t const h = static_cast<uint32_t>(std::abs(newsize.h - newsize.y) + 1);
 
             std::vector<std::vector<Cell*>> cells;
             cells.resize(w);
@@ -508,14 +508,14 @@ namespace FIFE
             for (uint32_t y = 0; y < h; ++y) {
                 for (uint32_t x = 0; x < w; ++x) {
                     // transfer cells
-                    ModelCoordinate const mc(newsize.x + x, newsize.y + y);
+                    ModelCoordinate const mc(newsize.x + static_cast<int32_t>(x), newsize.y + static_cast<int32_t>(y));
                     Cell* cell          = nullptr;
                     int32_t const old_x = mc.x - m_size.x;
                     int32_t const old_y = mc.y - m_size.y;
                     // out of range in the old size, so we create a new cell
                     if (old_x < 0 || std::cmp_greater_equal(old_x, m_width) || old_y < 0 ||
                         std::cmp_greater_equal(old_y, m_height)) {
-                        int32_t const coordId = x + (y * w);
+                        int32_t const coordId = static_cast<int32_t>(x + (y * w));
                         cell                  = new Cell(coordId, mc, m_layer);
                         cells[x][y]           = cell;
 
@@ -548,7 +548,7 @@ namespace FIFE
                         cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
                         m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = nullptr;
                         cells[x][y]                                                         = cell;
-                        int32_t const coordId                                               = x + (y * w);
+                        int32_t const coordId = static_cast<int32_t>(x + (y * w));
                         cell->setCellId(coordId);
                         cell->resetNeighbors();
                     }
@@ -602,7 +602,7 @@ namespace FIFE
         std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + static_cast<int32_t>(x), m_size.y + static_cast<int32_t>(y));
                 Cell* cell = getCell(mc);
                 if (cell == nullptr) {
                     cell          = new Cell(convertCoordToInt(mc), mc, m_layer);
@@ -709,16 +709,16 @@ namespace FIFE
 
     void CellCache::addCell(Cell* cell)
     {
-        ModelCoordinate const mc                      = cell->getLayerCoordinates();
-        m_cells[(mc.x - m_size.x)][(mc.y - m_size.y)] = cell;
+        ModelCoordinate const mc = cell->getLayerCoordinates();
+        m_cells[static_cast<size_t>(mc.x - m_size.x)][static_cast<size_t>(mc.y - m_size.y)] = cell;
     }
 
     Cell* CellCache::createCell(ModelCoordinate const & mc)
     {
         Cell* cell = getCell(mc);
         if (cell == nullptr) {
-            cell                                          = new Cell(convertCoordToInt(mc), mc, m_layer);
-            m_cells[(mc.x - m_size.x)][(mc.y - m_size.y)] = cell;
+            cell = new Cell(convertCoordToInt(mc), mc, m_layer);
+            m_cells[static_cast<size_t>(mc.x - m_size.x)][static_cast<size_t>(mc.y - m_size.y)] = cell;
         }
         return cell;
     }
@@ -771,7 +771,7 @@ namespace FIFE
         // not optimal but needed if the grids have different geometry
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + static_cast<int32_t>(x), m_size.y + static_cast<int32_t>(y));
                 Cell* cell = getCell(mc);
                 if (cell != nullptr) {
                     // convert coordinates
@@ -801,7 +801,7 @@ namespace FIFE
         // not optimal but needed if the grids have different geometry
         for (uint32_t y = 0; y < m_height; ++y) {
             for (uint32_t x = 0; x < m_width; ++x) {
-                ModelCoordinate const mc(m_size.x + x, m_size.y + y);
+                ModelCoordinate const mc(m_size.x + static_cast<int32_t>(x), m_size.y + static_cast<int32_t>(y));
                 Cell* cell = getCell(mc);
                 if (cell != nullptr) {
                     // convert coordinates
@@ -866,18 +866,19 @@ namespace FIFE
     int32_t CellCache::convertCoordToInt(ModelCoordinate const & coord) const
     {
         ModelCoordinate const newcoords(coord.x - m_size.x, coord.y - m_size.y);
-        return newcoords.x + (newcoords.y * m_width);
+        return newcoords.x + (newcoords.y * static_cast<int32_t>(m_width));
     }
 
     ModelCoordinate CellCache::convertIntToCoord(int32_t const cell) const
     {
-        ModelCoordinate const coord((cell % m_width) + m_size.x, (cell / m_width) + m_size.y);
+        ModelCoordinate const coord(
+            (cell % static_cast<int32_t>(m_width)) + m_size.x, (cell / static_cast<int32_t>(m_width)) + m_size.y);
         return coord;
     }
 
     int32_t CellCache::getMaxIndex() const
     {
-        int32_t const max_index = m_width * m_height;
+        int32_t const max_index = static_cast<int32_t>(m_width * m_height);
         return max_index;
     }
 
@@ -960,8 +961,8 @@ namespace FIFE
             for (; current.x < center.x; current.x++) {
                 Cell* c = getCell(current);
                 if (c != nullptr) {
-                    uint16_t const dx       = center.x - current.x;
-                    uint16_t const dy       = center.y - current.y;
+                    uint16_t const dx       = static_cast<uint16_t>(center.x - current.x);
+                    uint16_t const dy       = static_cast<uint16_t>(center.y - current.y);
                     uint16_t const distance = (dx * dx) + (dy * dy);
                     if (distance <= radiusp2) {
                         cells.push_back(c);

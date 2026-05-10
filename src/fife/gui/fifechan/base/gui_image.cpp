@@ -35,7 +35,7 @@ namespace FIFE
         if (!m_imgPtr) {
             return 0;
         }
-        return m_imgPtr->getWidth();
+        return static_cast<int32_t>(m_imgPtr->getWidth());
     }
 
     int32_t GuiImage::getHeight() const
@@ -43,7 +43,7 @@ namespace FIFE
         if (!m_imgPtr) {
             return 0;
         }
-        return m_imgPtr->getHeight();
+        return static_cast<int32_t>(m_imgPtr->getHeight());
     }
 
     fcn::Color GuiImage::getPixel([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y)

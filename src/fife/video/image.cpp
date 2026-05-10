@@ -67,7 +67,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                size_t const idx     = ((static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U);
+                size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
                 uint8_t const r      = src[idx + 0];
                 uint8_t const g      = src[idx + 1];
                 uint8_t const b      = src[idx + 2];
@@ -111,7 +111,7 @@ namespace FIFE
         for (uint32_t y = 0; y < height; ++y) {
             uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
             for (uint32_t x = 0; x < width; ++x) {
-                size_t const idx     = ((static_cast<size_t>(y) * static_cast<size_t>(width) + x) * 4U);
+                size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
                 uint8_t const r      = src[idx + 0];
                 uint8_t const g      = src[idx + 1];
                 uint8_t const b      = src[idx + 2];
@@ -269,9 +269,9 @@ namespace FIFE
 
         case 3:
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-                pixel = p[0] << 16 | p[1] << 8 | p[2];
+                pixel = static_cast<uint32_t>(p[0] << 16 | p[1] << 8 | p[2]);
             } else {
-                pixel = p[0] | p[1] << 8 | p[2] << 16;
+                pixel = static_cast<uint32_t>(p[0] | p[1] << 8 | p[2] << 16);
             }
             break;
 
@@ -330,8 +330,8 @@ namespace FIFE
         if (this->isSharedImage()) {
             Rect const & rect = this->getSubImageRect();
             SDL_Rect dstrect  = {
-                static_cast<Sint16>(rect.x + xoffset),
-                static_cast<Sint16>(rect.y + yoffset),
+                static_cast<int>(rect.x + xoffset),
+                static_cast<int>(rect.y + yoffset),
                 static_cast<Uint16>(srcimg->getWidth()),
                 static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {

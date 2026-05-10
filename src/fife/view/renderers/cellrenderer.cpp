@@ -116,7 +116,8 @@ namespace FIFE
                         pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
                     ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
                     Point const pt3(spt1.x, spt1.y);
-                    ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                    ScreenPoint const spt2 =
+                        cam->toScreenCoordinates(cg->toMapCoordinates(vertices[static_cast<size_t>(halfind)]));
                     Point const pt4(spt2.x, spt2.y);
                     m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
                 }
@@ -152,16 +153,16 @@ namespace FIFE
                     Rect r;
                     if (zoomed) {
                         double const zoom = cam->getZoom();
-                        r.x               = drawpt.x - ((img->getWidth() / 2.0) * zoom);
-                        r.y               = drawpt.y - ((img->getHeight() / 2.0) * zoom);
-                        r.w               = img->getWidth() * zoom;
-                        r.h               = img->getHeight() * zoom;
+                        r.x               = static_cast<int32_t>(drawpt.x - ((img->getWidth() / 2.0) * zoom));
+                        r.y               = static_cast<int32_t>(drawpt.y - ((img->getHeight() / 2.0) * zoom));
+                        r.w               = static_cast<int32_t>(img->getWidth() * zoom);
+                        r.h               = static_cast<int32_t>(img->getHeight() * zoom);
                         img->render(r);
                     } else {
-                        r.x = drawpt.x - (img->getWidth() / 2.0);
-                        r.y = drawpt.y - (img->getHeight() / 2.0);
-                        r.w = img->getWidth();
-                        r.h = img->getHeight();
+                        r.x = static_cast<int32_t>(drawpt.x - (img->getWidth() / 2.0));
+                        r.y = static_cast<int32_t>(drawpt.y - (img->getHeight() / 2.0));
+                        r.w = static_cast<int32_t>(img->getWidth());
+                        r.h = static_cast<int32_t>(img->getHeight());
                         img->render(r);
                     }
                 }

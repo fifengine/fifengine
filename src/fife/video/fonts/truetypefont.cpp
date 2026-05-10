@@ -23,7 +23,7 @@ namespace FIFE
 {
 
     TrueTypeFont::TrueTypeFont(std::string const & filename, int32_t size) :
-        mFont(TTF_OpenFont(filename.c_str(), size)), mFontStyle(TTF_STYLE_NORMAL)
+        mFont(TTF_OpenFont(filename.c_str(), static_cast<float>(size))), mFontStyle(TTF_STYLE_NORMAL)
     {
         mFilename = filename;
 
@@ -69,7 +69,7 @@ namespace FIFE
                 mFontStyle &= ~TTF_STYLE_BOLD;
             }
             m_boldStyle = style;
-            TTF_SetFontStyle(mFont, mFontStyle);
+            TTF_SetFontStyle(mFont, static_cast<TTF_FontStyleFlags>(mFontStyle));
         }
     }
 
@@ -82,7 +82,7 @@ namespace FIFE
                 mFontStyle &= ~TTF_STYLE_ITALIC;
             }
             m_italicStyle = style;
-            TTF_SetFontStyle(mFont, mFontStyle);
+            TTF_SetFontStyle(mFont, static_cast<TTF_FontStyleFlags>(mFontStyle));
         }
     }
 
@@ -95,7 +95,7 @@ namespace FIFE
                 mFontStyle &= ~TTF_STYLE_UNDERLINE;
             }
             m_underlineStyle = style;
-            TTF_SetFontStyle(mFont, mFontStyle);
+            TTF_SetFontStyle(mFont, static_cast<TTF_FontStyleFlags>(mFontStyle));
         }
     }
 

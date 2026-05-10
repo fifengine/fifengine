@@ -95,7 +95,7 @@ namespace FIFE
             setCaretPosition(0);
         } else if (keyType == Key::End) {
             assert(getText().size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
-            setCaretPosition(static_cast<int>(getText().size()));
+            setCaretPosition(static_cast<unsigned int>(getText().size()));
         }
         stopBlinking();
         fixScroll();

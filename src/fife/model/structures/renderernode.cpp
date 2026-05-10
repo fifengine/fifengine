@@ -322,7 +322,9 @@ namespace FIFE
             setAttached(layer);
         }
         if (zoomed) {
-            return Point(round(m_point.x * cam->getZoom()) + p.x, round(m_point.y * cam->getZoom()) + p.y);
+            return Point(
+                static_cast<int>(round(m_point.x * cam->getZoom())) + p.x,
+                static_cast<int>(round(m_point.y * cam->getZoom())) + p.y);
         }
         return Point(m_point.x + p.x, m_point.y + p.y);
     }

@@ -131,10 +131,10 @@ namespace fcn
                 int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
                 if (textW < 1) {
                     w     = maxW;
-                    textW = (w - 2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+                    textW = (w - (2 * getBorderSize())) - getPaddingLeft() - getPaddingRight();
                 } else if (w > maxW) {
                     w     = std::min(w, maxW);
-                    textW = (w - 2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
+                    textW = (w - (2 * getBorderSize())) - getPaddingLeft() - getPaddingRight();
                 }
                 mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
             } else {

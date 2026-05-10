@@ -129,7 +129,7 @@ namespace FIFE
     bool SoundDecoderOgg::decode(uint64_t length)
     {
         int32_t stream = 0;
-        int32_t ret    = 0;
+        long ret       = 0;
 
         // release buffer and allocate new memory
         releaseBuffer();

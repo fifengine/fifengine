@@ -208,8 +208,8 @@ namespace FIFE
             }
 
             if ((y & 1) != 0) {
-                ddx = -ddx;
-                ddy = -ddy;
+                ddx = static_cast<int8_t>(-ddx);
+                ddy = static_cast<int8_t>(-ddy);
             }
 
             x += ddx;
@@ -413,7 +413,7 @@ namespace FIFE
                     }
                     err -= errY;
                 } else {
-                    signX = -signX;
+                    signX = static_cast<int8_t>(-signX);
                     if (signX == -1) {
                         if (signY == -1) {
                             // down left
@@ -443,7 +443,7 @@ namespace FIFE
                             current.y += 1;
                         }
                     }
-                    signX = -signX;
+                    signX = static_cast<int8_t>(-signX);
                     err += errY;
                 }
                 coords.push_back(current);

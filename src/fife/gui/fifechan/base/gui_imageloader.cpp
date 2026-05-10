@@ -65,7 +65,11 @@ namespace FIFE
 
         // create shared image and return it
         ImagePtr const img = imgManager->create(filename);
-        Rect const region(block->left, block->top, block->getWidth(), block->getHeight());
+        Rect const region(
+            static_cast<int32_t>(block->left),
+            static_cast<int32_t>(block->top),
+            static_cast<int32_t>(block->getWidth()),
+            static_cast<int32_t>(block->getHeight()));
         img->useSharedImage(m_atlases[block->page], region);
 
         return new GuiImage(img);

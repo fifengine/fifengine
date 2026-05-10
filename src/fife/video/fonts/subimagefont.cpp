@@ -110,8 +110,8 @@ namespace FIFE
             SDL_SetSurfaceBlendMode(tmp, SDL_BLENDMODE_NONE);
             SDL_SetSurfaceColorKey(tmp, true, colorkey);
 
-            uint32_t codepoint          = utf8::next(text_it, glyphs.end());
-            m_glyphs[codepoint].surface = tmp;
+            uint32_t codepoint                            = utf8::next(text_it, glyphs.end());
+            m_glyphs[static_cast<int>(codepoint)].surface = tmp;
 
             x += w;
         }

@@ -277,7 +277,7 @@ namespace FIFE
 
     Point Camera::getCellImageDimensions() const
     {
-        return Point(m_screenCellWidth, m_screenCellHeight);
+        return Point(static_cast<int32_t>(m_screenCellWidth), static_cast<int32_t>(m_screenCellHeight));
     }
 
     Point Camera::getCellImageDimensions(Layer* layer) const
@@ -452,7 +452,7 @@ namespace FIFE
 
     void Camera::calculateZValue(DoublePoint3D& screen_coords)
     {
-        int32_t const dy = -(screen_coords.y - toScreenCoordinates(m_position).y);
+        int32_t const dy = static_cast<int32_t>(-(screen_coords.y - toScreenCoordinates(m_position).y));
         screen_coords.z  = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
     }
 
@@ -950,15 +950,15 @@ found_non_transparent_pixel:;
         }
         // image overlay
         if (m_img_overlay) {
-            ImagePtr const resptr = ImageManager::instance()->get(m_img_id);
+            ImagePtr const resptr = ImageManager::instance()->get(static_cast<ResourceHandle>(m_img_id));
             Image* img            = resptr.get();
             if (img != nullptr) {
                 if (m_img_fill) {
                     r.w = width;
                     r.h = height;
                 } else {
-                    r.w = img->getWidth();
-                    r.h = img->getHeight();
+                    r.w = static_cast<int32_t>(img->getWidth());
+                    r.h = static_cast<int32_t>(img->getHeight());
                 }
                 r.x = pm.x - (r.w / 2);
                 r.y = pm.y - (r.h / 2);
@@ -980,8 +980,8 @@ found_non_transparent_pixel:;
                     r.w = width;
                     r.h = height;
                 } else {
-                    r.w = img->getWidth();
-                    r.h = img->getHeight();
+                    r.w = static_cast<int32_t>(img->getWidth());
+                    r.h = static_cast<int32_t>(img->getHeight());
                 }
                 r.x = pm.x - (r.w / 2);
                 r.y = pm.y - (r.h / 2);
@@ -1000,14 +1000,16 @@ found_non_transparent_pixel:;
         if (cacheImage.get() == nullptr) {
             // the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
             cacheImage = ImageManager::instance()->loadBlank(
-                m_id + "_virtual_layer_image_" + layer->getId(), m_viewport.w, m_viewport.h);
+                m_id + "_virtual_layer_image_" + layer->getId(),
+                static_cast<uint32_t>(m_viewport.w),
+                static_cast<uint32_t>(m_viewport.h));
             cache->setCacheImage(cacheImage);
             update = true;
         }
         if (update) {
             // for the case that the viewport size is not the same as the screen size,
             // we have to change the values for OpenGL backend
-            Rect rec(0, m_renderbackend->getHeight() - m_viewport.h, m_viewport.w, m_viewport.h);
+            Rect rec(0, static_cast<int32_t>(m_renderbackend->getHeight()) - m_viewport.h, m_viewport.w, m_viewport.h);
             if (m_renderbackend->getName() == "SDL") {
                 rec = m_viewport;
             }

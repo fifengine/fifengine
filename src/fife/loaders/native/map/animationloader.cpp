@@ -277,9 +277,9 @@ namespace FIFE
                     int frameDelay = 0;
                     success        = XML::QueryAttribute(frameElement, "delay", &frameDelay);
                     if (success == XML::SUCCESS) {
-                        animation->addFrame(imagePtr, frameDelay);
+                        animation->addFrame(imagePtr, static_cast<uint32_t>(frameDelay));
                     } else {
-                        animation->addFrame(imagePtr, animDelay);
+                        animation->addFrame(imagePtr, static_cast<uint32_t>(animDelay));
                     }
                 }
             }

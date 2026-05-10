@@ -151,7 +151,7 @@ namespace FIFE
     void Cell::updateCellBlockingInfo()
     {
         CellTypeInfo const old_type = m_type;
-        m_coordinate.z              = MIN_CELL_Z;
+        m_coordinate.z              = static_cast<int>(MIN_CELL_Z);
         if (!m_instances.empty()) {
             int32_t pos          = -1;
             bool const cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);

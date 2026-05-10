@@ -269,7 +269,8 @@ namespace FIFE
 
         ALuint const slot = m_freeSlots.front();
         m_freeSlots.pop();
-        alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect->getEffectId());
+        alAuxiliaryEffectSloti(
+            static_cast<ALint>(slot), AL_EFFECTSLOT_EFFECT, static_cast<ALint>(effect->getEffectId()));
         effect->setSlotId(slot);
         effect->setEnabled(true);
         auto effectIt = m_effectEmitters.find(effect);
@@ -289,7 +290,7 @@ namespace FIFE
         if (!effect->isEnabled()) {
             return;
         }
-        alAuxiliaryEffectSloti(effect->getSlotId(), AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL);
+        alAuxiliaryEffectSloti(static_cast<ALint>(effect->getSlotId()), AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL);
         m_freeSlots.push(effect->getSlotId());
         effect->setSlotId(0);
 
@@ -406,7 +407,12 @@ namespace FIFE
         }
         auto number         = static_cast<ALuint>(emitter->getEffectNumber(effect));
         ALuint const filter = (effect->getFilter() != nullptr) ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
-        alSource3i(emitter->getSource(), AL_AUXILIARY_SEND_FILTER, effect->getSlotId(), number, filter);
+        alSource3i(
+            emitter->getSource(),
+            AL_AUXILIARY_SEND_FILTER,
+            static_cast<ALint>(effect->getSlotId()),
+            static_cast<ALint>(number),
+            static_cast<ALint>(filter));
     }
 
     void SoundEffectManager::deactivateEffect(SoundEffect* effect, SoundEmitter* emitter)
@@ -415,7 +421,12 @@ namespace FIFE
             return;
         }
         auto number = static_cast<ALuint>(emitter->getEffectNumber(effect));
-        alSource3i(emitter->getSource(), AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, number, AL_FILTER_NULL);
+        alSource3i(
+            emitter->getSource(),
+            AL_AUXILIARY_SEND_FILTER,
+            AL_EFFECTSLOT_NULL,
+            static_cast<ALint>(number),
+            AL_FILTER_NULL);
     }
 
     SoundFilter* SoundEffectManager::createSoundFilter(SoundFilterType type)
@@ -540,7 +551,7 @@ namespace FIFE
     void SoundEffectManager::activateFilter(SoundFilter const * filter, SoundEmitter const * emitter)
     {
         if (filter->isEnabled()) {
-            alSourcei(emitter->getSource(), AL_DIRECT_FILTER, filter->getFilterId());
+            alSourcei(emitter->getSource(), AL_DIRECT_FILTER, static_cast<ALint>(filter->getFilterId()));
         }
     }
 

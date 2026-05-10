@@ -86,8 +86,8 @@ namespace FIFE
         FIFE::Rect rect;
         rect.x = x + clip.xOffset;
         rect.y = y + clip.yOffset + yoffset;
-        rect.w = image->getWidth();
-        rect.h = image->getHeight();
+        rect.w = static_cast<int32_t>(image->getWidth());
+        rect.h = static_cast<int32_t>(image->getHeight());
         if (!rect.intersects(Rect(clip.x, clip.y, clip.width, clip.height))) {
             return;
         }

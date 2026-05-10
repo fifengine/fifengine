@@ -81,10 +81,10 @@ namespace FIFE
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
             auto height         = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
-            r.x                 = p.x - width / 2;
-            r.y                 = p.y - height / 2;
-            r.w                 = width;
-            r.h                 = height;
+            r.x                 = p.x - static_cast<int32_t>(width / 2);
+            r.y                 = p.y - static_cast<int32_t>(height / 2);
+            r.w                 = static_cast<int32_t>(width);
+            r.h                 = static_cast<int32_t>(height);
 
             if (r.intersects(viewport)) {
                 auto const lm = renderbackend->getLightingModel();
@@ -124,10 +124,10 @@ namespace FIFE
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
             auto height         = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
-            r.x                 = p.x - width / 2;
-            r.y                 = p.y - height / 2;
-            r.w                 = width;
-            r.h                 = height;
+            r.x                 = p.x - static_cast<int32_t>(width / 2);
+            r.y                 = p.y - static_cast<int32_t>(height / 2);
+            r.w                 = static_cast<int32_t>(width);
+            r.h                 = static_cast<int32_t>(height);
 
             if (r.intersects(viewport)) {
                 auto const lm = renderbackend->getLightingModel();
@@ -160,10 +160,10 @@ namespace FIFE
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(m_width * cam->getZoom()));
             auto height         = static_cast<uint32_t>(round(m_height * cam->getZoom()));
-            r.x                 = p.x - width / 2;
-            r.y                 = p.y - height / 2;
-            r.w                 = width;
-            r.h                 = height;
+            r.x                 = p.x - static_cast<int32_t>(width / 2);
+            r.y                 = p.y - static_cast<int32_t>(height / 2);
+            r.w                 = static_cast<int32_t>(width);
+            r.h                 = static_cast<int32_t>(height);
 
             if (r.intersects(viewport)) {
                 auto const lm = renderbackend->getLightingModel();
@@ -403,7 +403,7 @@ namespace FIFE
                 if (lm != 0) {
                     if ((*info_it)->getStencil() != -1 && (*info_it)->getStencil() < 255) {
                         if (info_it != group_it->second.begin()) {
-                            (*info_it)->setStencil((*info_it)->getStencil() + 1);
+                            (*info_it)->setStencil(static_cast<uint8_t>((*info_it)->getStencil() + 1));
                         }
                     }
                 }

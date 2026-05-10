@@ -350,13 +350,18 @@ namespace FIFE
     bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        return SDL_RenderPoint(m_renderer, x, y);
+        return SDL_RenderPoint(m_renderer, static_cast<float>(x), static_cast<float>(y));
     }
 
     void RenderBackendSDL::drawLine(Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        SDL_RenderLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p1.x),
+            static_cast<float>(p1.y),
+            static_cast<float>(p2.x),
+            static_cast<float>(p2.y));
     }
 
     void RenderBackendSDL::drawThickLine(
@@ -378,22 +383,22 @@ namespace FIFE
         int32_t yMin        = p1.y;
 
         std::vector<Point> points;
-        Point p(p1.x + cornerX, p1.y + cornerY);
+        Point p(static_cast<int32_t>(p1.x + cornerX), static_cast<int32_t>(p1.y + cornerY));
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = p2.x + cornerX;
-        p.y  = p2.y + cornerY;
+        p.x  = static_cast<int32_t>(p2.x + cornerX);
+        p.y  = static_cast<int32_t>(p2.y + cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = p2.x - cornerX;
-        p.y  = p2.y - cornerY;
+        p.x  = static_cast<int32_t>(p2.x - cornerX);
+        p.y  = static_cast<int32_t>(p2.y - cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
-        p.x  = p1.x - cornerX;
-        p.y  = p1.y - cornerY;
+        p.x  = static_cast<int32_t>(p1.x - cornerX);
+        p.y  = static_cast<int32_t>(p1.y - cornerY);
         yMax = std::max(yMax, p.y);
         yMin = std::min(yMin, p.y);
         points.push_back(p);
@@ -407,7 +412,7 @@ namespace FIFE
             for (std::size_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     auto x = static_cast<int32_t>(
-                        points[i].x +
+                        static_cast<float>(points[i].x) +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
@@ -466,7 +471,7 @@ namespace FIFE
         }
 
         bool const thick = width > 1;
-        float const step = 1.0 / static_cast<float>(steps - 1);
+        float const step = 1.0F / static_cast<float>(steps - 1);
         float t          = 0.0;
         Point old        = getBezierPoint(points, elements + 1, t);
         if (thick) {
@@ -492,9 +497,24 @@ namespace FIFE
         Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        SDL_RenderLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
-        SDL_RenderLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
-        SDL_RenderLine(m_renderer, p3.x, p1.y, p1.x, p1.y);
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p1.x),
+            static_cast<float>(p1.y),
+            static_cast<float>(p2.x),
+            static_cast<float>(p2.y));
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p2.x),
+            static_cast<float>(p2.y),
+            static_cast<float>(p3.x),
+            static_cast<float>(p3.y));
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p3.x),
+            static_cast<float>(p1.y),
+            static_cast<float>(p1.x),
+            static_cast<float>(p1.y));
     }
 
     void RenderBackendSDL::drawRectangle(
@@ -542,16 +562,36 @@ namespace FIFE
         Point const p4 = Point(p.x - size, p.y - size);
 
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        SDL_RenderLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
-        SDL_RenderLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
-        SDL_RenderLine(m_renderer, p3.x, p3.y, p4.x, p4.y);
-        SDL_RenderLine(m_renderer, p4.x, p4.y, p1.x, p1.y);
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p1.x),
+            static_cast<float>(p1.y),
+            static_cast<float>(p2.x),
+            static_cast<float>(p2.y));
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p2.x),
+            static_cast<float>(p2.y),
+            static_cast<float>(p3.x),
+            static_cast<float>(p3.y));
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p3.x),
+            static_cast<float>(p3.y),
+            static_cast<float>(p4.x),
+            static_cast<float>(p4.y));
+        SDL_RenderLine(
+            m_renderer,
+            static_cast<float>(p4.x),
+            static_cast<float>(p4.y),
+            static_cast<float>(p1.x),
+            static_cast<float>(p1.y));
     }
 
     void RenderBackendSDL::drawCircle(Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         // Midpoint Circle Algorithm
-        int32_t x           = radius;
+        int32_t x           = static_cast<int32_t>(radius);
         int32_t y           = 0;
         int32_t radiusError = 1 - x;
 
@@ -580,7 +620,7 @@ namespace FIFE
         for (float dy = 1.0F; dy <= rad; dy += 1.0F) {
             float const dx = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dy) - (dy * dy)));
             int32_t x      = p.x - static_cast<int32_t>(dx);
-            for (; x <= p.x + dx; x++) {
+            for (; x <= static_cast<float>(p.x) + dx; x++) {
                 putPixel(x, p.y + static_cast<int32_t>(rad - dy), r, g, b, a);
                 putPixel(x, p.y - static_cast<int32_t>(rad - dy), r, g, b, a);
             }
@@ -601,9 +641,13 @@ namespace FIFE
         }
 
         float angle = static_cast<float>(s) * step;
-        Point oldPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+        Point oldPoint(
+            static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
+            static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
         for (; s <= e; ++s, angle += step) {
-            Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+            Point const newPoint(
+                static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
+                static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
             drawLine(oldPoint, newPoint, r, g, b, a);
             oldPoint = newPoint;
         }
@@ -628,14 +672,18 @@ namespace FIFE
         int32_t yMin = p.y;
         float angle  = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step) {
-            Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+            Point const newPoint(
+                static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
+                static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
             yMax = std::max(yMax, newPoint.y);
             yMin = std::min(yMin, newPoint.y);
             points.push_back(newPoint);
         }
         // add end point (again)
         angle = static_cast<float>(e) * step;
-        Point const newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
+        Point const newPoint(
+            static_cast<int32_t>((radius * Mathf::Cos(angle)) + p.x),
+            static_cast<int32_t>((radius * Mathf::Sin(angle)) + p.y));
         points.push_back(newPoint);
         yMax = std::max(yMax, newPoint.y);
         yMin = std::min(yMin, newPoint.y);
@@ -649,7 +697,7 @@ namespace FIFE
             for (std::size_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     auto x = static_cast<int32_t>(
-                        points[i].x +
+                        static_cast<float>(points[i].x) +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
@@ -764,7 +812,7 @@ namespace FIFE
             int32_t sy_c   = 0;
 
             // Allocates memory and calculates row wide&height
-            auto* sx_a = new int32_t[dst->w + 1];
+            auto* sx_a = new int32_t[static_cast<size_t>(dst->w) + 1];
             sx_ca      = sx_a;
             for (x = 0; x <= dst->w; x++) {
                 *sx_ca = sx_c;
@@ -773,7 +821,7 @@ namespace FIFE
                 sx_c += sx;
             }
 
-            auto* sy_a = new int32_t[dst->h + 1];
+            auto* sy_a = new int32_t[static_cast<size_t>(dst->h) + 1];
             sy_ca      = sy_a;
             for (y = 0; y <= dst->h; y++) {
                 *sy_ca = sy_c;

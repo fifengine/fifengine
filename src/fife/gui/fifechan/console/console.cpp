@@ -84,7 +84,7 @@ namespace FIFE
         fcn::Color const dark(50, 60, 50, 0xff);
 
         setSize(w, h);
-        setPosition((RenderBackend::instance()->getScreenWidth() - w) / 2, -h);
+        setPosition(static_cast<int>((RenderBackend::instance()->getScreenWidth() - w) / 2), -h);
         setBorderSize(0);
 
         setForegroundColor(white);
@@ -261,7 +261,7 @@ namespace FIFE
             unsigned const firstRow = rows - m_maxOutputRows;
             std::vector<std::string> rows_text;
             for (unsigned i = firstRow; i < rows; ++i) {
-                rows_text.push_back(m_output->getTextRow(i));
+                rows_text.push_back(m_output->getTextRow(static_cast<int>(i)));
             }
             m_output->setText("");
             for (auto const & i : rows_text) {

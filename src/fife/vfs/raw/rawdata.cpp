@@ -83,7 +83,7 @@ namespace FIFE
 
     void RawData::moveIndex(int32_t offset)
     {
-        setIndex(getCurrentIndex() + offset);
+        setIndex(static_cast<uint32_t>(static_cast<int64_t>(getCurrentIndex()) + offset));
     }
 
     void RawData::readInto(uint8_t* buffer, size_t len)
@@ -142,7 +142,8 @@ namespace FIFE
 
     void RawData::read(std::string& outbuffer, int32_t size)
     {
-        if ((size < 0) || ((size + m_index_current) > getDataLength())) {
+        if ((size < 0) || ((static_cast<int64_t>(size) + static_cast<int64_t>(m_index_current)) >
+                           static_cast<int64_t>(getDataLength()))) {
             int32_t const remaining = static_cast<int32_t>(getDataLength() - m_index_current);
             size                    = remaining;
         }
@@ -165,7 +166,7 @@ namespace FIFE
 
         buffer = "";
         char c = 0;
-        while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n') {
+        while (getCurrentIndex() < getDataLength() && (c = static_cast<char>(read8())) != '\n') {
             buffer += c;
         }
 

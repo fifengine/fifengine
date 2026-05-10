@@ -159,7 +159,7 @@ namespace FIFE
             LMsg("found file: ") << filePath.string() << " (" << compsize << "/" << realsize << ") on offset "
                                  << offset);
 
-        m_zipfile->moveIndex(compsize);
+        m_zipfile->moveIndex(static_cast<int32_t>(compsize));
         if ((gflags & (0x01 << 3)) != 0) {
             crc      = m_zipfile->read32Little();
             compsize = m_zipfile->read32Little();

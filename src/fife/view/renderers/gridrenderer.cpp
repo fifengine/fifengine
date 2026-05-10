@@ -127,10 +127,10 @@ namespace FIFE
 
         // make the viewport 25% larger
         Rect cv            = cam->getViewPort();
-        int32_t const cvx2 = round((cv.x + cv.w) * 1.25);
-        int32_t const cvy2 = round((cv.y + cv.h) * 1.25);
-        cv.x -= round((cv.x + cv.w) * 0.125);
-        cv.y -= round((cv.y + cv.h) * 0.125);
+        int32_t const cvx2 = static_cast<int32_t>(round((cv.x + cv.w) * 1.25));
+        int32_t const cvy2 = static_cast<int32_t>(round((cv.y + cv.h) * 1.25));
+        cv.x -= static_cast<int32_t>(round((cv.x + cv.w) * 0.125));
+        cv.y -= static_cast<int32_t>(round((cv.y + cv.h) * 0.125));
         auto instance_it = instances.begin();
         for (; instance_it != instances.end(); ++instance_it) {
             Instance* instance = (*instance_it)->instance;

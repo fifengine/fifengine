@@ -1220,7 +1220,7 @@ namespace FIFE
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
-            return visual->getColorOverlay(angle);
+            return visual->getColorOverlay(static_cast<int32_t>(angle));
         }
         return nullptr;
     }
@@ -1280,7 +1280,7 @@ namespace FIFE
     {
         ActionVisual* visual = getActionVisual(actionName, false);
         if (visual != nullptr) {
-            return visual->getColorOverlay(angle, order);
+            return visual->getColorOverlay(static_cast<int32_t>(angle), order);
         }
         return nullptr;
     }

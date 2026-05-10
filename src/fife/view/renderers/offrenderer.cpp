@@ -146,8 +146,8 @@ namespace FIFE
         Rect r;
         int32_t const width  = toScreenSize(m_image->getWidth());
         int32_t const height = toScreenSize(m_image->getHeight());
-        r.x                  = m_anchor.x - width / 2;
-        r.y                  = m_anchor.y - height / 2;
+        r.x                  = m_anchor.x - (width / 2);
+        r.y                  = m_anchor.y - (height / 2);
         r.w                  = width;
         r.h                  = height;
 
@@ -177,8 +177,8 @@ namespace FIFE
         Rect r;
         int32_t const width  = toScreenSize(img->getWidth());
         int32_t const height = toScreenSize(img->getHeight());
-        r.x                  = m_anchor.x - width / 2;
-        r.y                  = m_anchor.y - height / 2;
+        r.x                  = m_anchor.x - (width / 2);
+        r.y                  = m_anchor.y - (height / 2);
         r.w                  = width;
         r.h                  = height;
 
@@ -200,8 +200,8 @@ namespace FIFE
         Rect r;
         int32_t const width  = toScreenSize(img->getWidth());
         int32_t const height = toScreenSize(img->getHeight());
-        r.x                  = m_anchor.x - width / 2;
-        r.y                  = m_anchor.y - height / 2;
+        r.x                  = m_anchor.x - (width / 2);
+        r.y                  = m_anchor.y - (height / 2);
         r.w                  = width;
         r.h                  = height;
 
@@ -222,8 +222,8 @@ namespace FIFE
         Rect r;
         int32_t const width  = m_width;
         int32_t const height = m_height;
-        r.x                  = m_anchor.x - width / 2;
-        r.y                  = m_anchor.y - height / 2;
+        r.x                  = m_anchor.x - (width / 2);
+        r.y                  = m_anchor.y - (height / 2);
         r.w                  = width;
         r.h                  = height;
 

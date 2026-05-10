@@ -29,13 +29,19 @@ namespace FIFE
     {
         // New fifechan SDL backend expects an SDL_Renderer and dimensions
         auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
-        setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
+        setTarget(
+            rb_sdl->getRenderer(),
+            static_cast<int>(m_renderbackend->getWidth()),
+            static_cast<int>(m_renderbackend->getHeight()));
     }
 
     void SdlGuiGraphics::updateTarget()
     {
         auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
-        setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
+        setTarget(
+            rb_sdl->getRenderer(),
+            static_cast<int>(m_renderbackend->getWidth()),
+            static_cast<int>(m_renderbackend->getHeight()));
     }
 
     void SdlGuiGraphics::drawImage(
@@ -106,7 +112,7 @@ namespace FIFE
         m_renderbackend->drawThickLine(
             Point(x1 + top.xOffset, y1 + top.yOffset),
             Point(x2 + top.xOffset, y2 + top.yOffset),
-            width,
+            static_cast<uint8_t>(width),
             mColor.r,
             mColor.g,
             mColor.b,
@@ -121,7 +127,7 @@ namespace FIFE
         for (; it != points.end(); ++it) {
             npoints.emplace_back((*it).x + top.xOffset, (*it).y + top.yOffset);
         }
-        m_renderbackend->drawPolyLine(npoints, width, mColor.r, mColor.g, mColor.b, mColor.a);
+        m_renderbackend->drawPolyLine(npoints, static_cast<uint8_t>(width), mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
     void SdlGuiGraphics::drawBezier(fcn::PointVector const & points, int32_t steps, uint32_t width)
@@ -132,7 +138,8 @@ namespace FIFE
         for (; it != points.end(); ++it) {
             npoints.emplace_back((*it).x + top.xOffset, (*it).y + top.yOffset);
         }
-        m_renderbackend->drawBezier(npoints, steps, width, mColor.r, mColor.g, mColor.b, mColor.a);
+        m_renderbackend->drawBezier(
+            npoints, steps, static_cast<uint8_t>(width), mColor.r, mColor.g, mColor.b, mColor.a);
     }
 
     void SdlGuiGraphics::drawRectangle(fcn::Rectangle const & rectangle)
@@ -140,8 +147,8 @@ namespace FIFE
         fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->drawRectangle(
             Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
-            rectangle.width,
-            rectangle.height,
+            static_cast<uint16_t>(rectangle.width),
+            static_cast<uint16_t>(rectangle.height),
             mColor.r,
             mColor.g,
             mColor.b,
@@ -153,8 +160,8 @@ namespace FIFE
         fcn::ClipRectangle const & top = mClipStack.top();
         m_renderbackend->fillRectangle(
             Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
-            rectangle.width,
-            rectangle.height,
+            static_cast<uint16_t>(rectangle.width),
+            static_cast<uint16_t>(rectangle.height),
             mColor.r,
             mColor.g,
             mColor.b,

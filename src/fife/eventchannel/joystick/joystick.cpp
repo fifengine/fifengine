@@ -41,7 +41,7 @@ namespace FIFE
     Joystick::Joystick(int32_t joystickId, int32_t deviceIndex) :
         m_joystickHandle(nullptr),
         m_controllerHandle(nullptr),
-        m_instanceId(-1),
+        m_instanceId(SDL_JoystickID(-1)),
         m_joystickId(joystickId),
         m_deviceIndex(deviceIndex)
 
@@ -89,7 +89,7 @@ namespace FIFE
             close();
         }
 
-        m_joystickHandle = SDL_OpenJoystick(m_deviceIndex);
+        m_joystickHandle = SDL_OpenJoystick(static_cast<SDL_JoystickID>(m_deviceIndex));
         if (m_joystickHandle != nullptr) {
             m_instanceId = SDL_GetJoystickID(m_joystickHandle);
 
@@ -116,7 +116,7 @@ namespace FIFE
             SDL_CloseJoystick(m_joystickHandle);
             m_joystickHandle = nullptr;
         }
-        m_instanceId  = -1;
+        m_instanceId  = SDL_JoystickID(-1);
         m_deviceIndex = -1;
     }
 

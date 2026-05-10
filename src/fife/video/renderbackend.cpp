@@ -329,8 +329,8 @@ namespace FIFE
         // straight line
         if (n == 1) {
             newPoints.push_back(points[0]);
-            p.x = ((2 * points[0].x + points[1].x) / 3);
-            p.y = ((2 * points[0].y + points[1].y) / 3);
+            p.x = (((2 * points[0].x) + points[1].x) / 3);
+            p.y = (((2 * points[0].y) + points[1].y) / 3);
             newPoints.push_back(p);
             p.x = (2 * p.x) - points[0].x;
             p.y = (2 * p.y) - points[0].y;
@@ -343,11 +343,11 @@ namespace FIFE
         auto* xrhs = new float[segmentCount];
         auto* yrhs = new float[segmentCount];
         // first
-        xrhs[0] = points[0].x + (2 * points[1].x);
-        yrhs[0] = points[0].y + (2 * points[1].y);
+        xrhs[0] = points[0].x + static_cast<float>(2 * points[1].x);
+        yrhs[0] = points[0].y + static_cast<float>(2 * points[1].y);
         // last
-        xrhs[segmentCount - 1] = ((8 * points[segmentCount - 1].x + points[segmentCount].x) / 2.0F);
-        yrhs[segmentCount - 1] = ((8 * points[segmentCount - 1].y + points[segmentCount].y) / 2.0F);
+        xrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].x) + points[segmentCount].x) / 2.0F;
+        yrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].y) + points[segmentCount].y) / 2.0F;
         // rest
         for (size_t i = 1; i + 1 < segmentCount; ++i) {
             xrhs[i] = (4 * points[i].x) + (2 * points[i + 1].x);

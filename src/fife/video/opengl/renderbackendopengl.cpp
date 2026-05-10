@@ -52,11 +52,6 @@ namespace FIFE
             return static_cast<GLsizei>(value);
         }
 
-        GLsizei toGLsizei(uint16_t value)
-        {
-            return static_cast<GLsizei>(value);
-        }
-
         GLsizei toGLsizei(std::size_t value)
         {
             assert(value <= static_cast<std::size_t>(std::numeric_limits<GLsizei>::max()));
@@ -2191,16 +2186,16 @@ namespace FIFE
         rd.color[3]  = intensity;
         m_renderPrimitiveDatas.push_back(rd);
         for (float angle = 0; angle <= Mathf::twoPi(); angle += step, elements += 3) {
-            rd.vertex[0] = radius * Mathf::Cos(angle + step) * xstretch + static_cast<float>(p.x);
-            rd.vertex[1] = radius * Mathf::Sin(angle + step) * ystretch + static_cast<float>(p.y);
+            rd.vertex[0] = (radius * Mathf::Cos(angle + step) * xstretch) + static_cast<float>(p.x);
+            rd.vertex[1] = (radius * Mathf::Sin(angle + step) * ystretch) + static_cast<float>(p.y);
             rd.color[0]  = 0;
             rd.color[1]  = 0;
             rd.color[2]  = 0;
             rd.color[3]  = 255;
             m_renderPrimitiveDatas.push_back(rd);
 
-            rd.vertex[0] = radius * Mathf::Cos(angle) * xstretch + static_cast<float>(p.x);
-            rd.vertex[1] = radius * Mathf::Sin(angle) * ystretch + static_cast<float>(p.y);
+            rd.vertex[0] = (radius * Mathf::Cos(angle) * xstretch) + static_cast<float>(p.x);
+            rd.vertex[1] = (radius * Mathf::Sin(angle) * ystretch) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index and two new ones
             uint32_t indices[] = {index, ++lastIndex, ++lastIndex};
@@ -2891,8 +2886,10 @@ namespace FIFE
             double const scaleY   = static_cast<double>(drawableH) / logicalH;
 
             scissorX = static_cast<GLint>(std::floor(static_cast<double>(cliparea.x) * scaleX));
-            scissorY =
-                static_cast<GLint>(std::floor((static_cast<double>(getHeight() - cliparea.y - cliparea.h)) * scaleY));
+            scissorY = static_cast<GLint>(std::floor(
+                (static_cast<double>(
+                    getHeight() - static_cast<uint32_t>(cliparea.y) - static_cast<uint32_t>(cliparea.h))) *
+                scaleY));
             scissorW = static_cast<GLsizei>(std::ceil(static_cast<double>(cliparea.w) * scaleX));
             scissorH = static_cast<GLsizei>(std::ceil(static_cast<double>(cliparea.h) * scaleY));
         }

@@ -78,13 +78,13 @@ namespace FIFE
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.left -= squeezedWidth / div;
-                                squeezed.right -= squeezedWidth / div;
+                                squeezed.left -= static_cast<int>(squeezedWidth) / div;
+                                squeezed.right -= static_cast<int>(squeezedWidth) / div;
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.left += squeezedWidth / div;
-                                    squeezed.right += squeezedWidth / div;
+                                    squeezed.left += static_cast<int>(squeezedWidth) / div;
+                                    squeezed.right += static_cast<int>(squeezedWidth) / div;
                                 }
                                 div <<= 1;
                             }
@@ -116,13 +116,13 @@ namespace FIFE
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
-                                squeezed.top -= squeezedHeight / div;
-                                squeezed.bottom -= squeezedHeight / div;
+                                squeezed.top -= static_cast<int>(squeezedHeight) / div;
+                                squeezed.bottom -= static_cast<int>(squeezedHeight) / div;
 
                                 intersection = intersects(&squeezed);
                                 if (intersection != nullptr) {
-                                    squeezed.top += squeezedHeight / div;
-                                    squeezed.bottom += squeezedHeight / div;
+                                    squeezed.top += static_cast<int>(squeezedHeight) / div;
+                                    squeezed.bottom += static_cast<int>(squeezedHeight) / div;
                                 }
                                 div <<= 1;
                             }

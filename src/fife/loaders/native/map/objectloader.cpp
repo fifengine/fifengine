@@ -623,7 +623,7 @@ namespace FIFE
                                             } else {
                                                 framePtr = m_imageManager->getPtr(frameId);
                                             }
-                                            animation->addFrame(framePtr, delay);
+                                            animation->addFrame(framePtr, static_cast<uint32_t>(delay));
                                         }
 
                                         auto* actionVisual = action->getVisual<ActionVisual>();

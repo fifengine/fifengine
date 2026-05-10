@@ -936,14 +936,14 @@ namespace FIFE
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
                         if (std::cmp_less(a, prev_a)) {
                             for (int32_t yy = y; yy < y + info.width; yy++) {
-                                int32_t const tx = x + (outlineWidth / 2 - overlayWidth / 2);
-                                int32_t const ty = yy + (outlineHeight / 2 - overlayHeight / 2);
+                                int32_t const tx = x + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = yy + ((outlineHeight / 2) - (overlayHeight / 2));
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         } else {
                             for (int32_t yy = y - info.width; yy < y; yy++) {
-                                int32_t const tx = x + (outlineWidth / 2 - overlayWidth / 2);
-                                int32_t const ty = yy + (outlineHeight / 2 - overlayHeight / 2);
+                                int32_t const tx = x + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = yy + ((outlineHeight / 2) - (overlayHeight / 2));
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         }
@@ -960,14 +960,14 @@ namespace FIFE
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
                         if (std::cmp_less(a, prev_a)) {
                             for (int32_t xx = x; xx < x + info.width; xx++) {
-                                int32_t const tx = xx + (outlineWidth / 2 - overlayWidth / 2);
-                                int32_t const ty = y + (outlineHeight / 2 - overlayHeight / 2);
+                                int32_t const tx = xx + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = y + ((outlineHeight / 2) - (overlayHeight / 2));
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         } else {
                             for (int32_t xx = x - info.width; xx < x; xx++) {
-                                int32_t const tx = xx + (outlineWidth / 2 - overlayWidth / 2);
-                                int32_t const ty = y + (outlineHeight / 2 - overlayHeight / 2);
+                                int32_t const tx = xx + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = y + ((outlineHeight / 2) - (overlayHeight / 2));
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         }

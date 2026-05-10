@@ -584,7 +584,8 @@ namespace FIFE
 
                 // don't trigger an event handler when warping
                 m_warp = true;
-                SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), tmp_x, tmp_y);
+                SDL_WarpMouseInWindow(
+                    RenderBackend::instance()->getWindow(), static_cast<float>(tmp_x), static_cast<float>(tmp_y));
                 m_warp = false;
             }
         }
