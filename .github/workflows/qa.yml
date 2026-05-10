@@ -214,9 +214,9 @@ jobs:
         run: |
           rg -i '\b(?:TODO|FIXME)\b' src
 
-      - name: 🛠️ Check for MAYBE, PROBABLY, BROKEN comments (src)
+      - name: 🛠️ Check for MAYBE, PROBABLY, BROKEN, WORKAROUND comments (src)
         run: |
-          rg -i '\b(?:MAYBE|PROBABLY|BROKEN)\b' src
+          rg -i '\b(?:MAYBE|PROBABLY|BROKEN|WORKAROUND)\b' src
 
       - name: 🛠️ Check SWIG interface files for comments (src/**/*.i)
         run: |
