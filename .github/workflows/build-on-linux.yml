@@ -446,6 +446,11 @@ jobs:
         run: |
           find "${{ env.INSTALL_DIR }}" -type f | sort
 
+      - name: 🔍 clang-tidy
+        if: matrix.config.preset == 'clang22-x64-linux-dbg-cov'
+        run: |
+          run-clang-tidy -p "${{ env.BUILD_DIR }}" -quiet || true
+
       - name: 🔼 Upload Build Artifact
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         if: ${{ always() && matrix.config.preset != 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
