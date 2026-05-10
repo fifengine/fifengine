@@ -133,7 +133,15 @@ namespace FIFE
         }
         // Still could not render? Something went horribly wrong!
         if (renderedText == nullptr) {
-            throw FIFE::SDLException(SDL_GetError());
+            std::string err = "TTF_RenderText_";
+            err += m_antiAlias ? "Blended" : "Solid";
+            err += " failed for font '";
+            err += mFilename;
+            err += "' text '";
+            err += text;
+            err += "': ";
+            err += SDL_GetError();
+            throw FIFE::SDLException(err);
         }
         return renderedText;
     }
