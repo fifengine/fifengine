@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -28,8 +29,8 @@ using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-static std::string const COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
-static std::string const RAW_FILE        = "tests/data/test.map";
+static char const * const COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
+static char const * const RAW_FILE        = "tests/data/test.map";
 TEST_CASE("DAT2_test")
 {
 
@@ -50,8 +51,8 @@ TEST_CASE("DAT2_test")
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("dat2vfstest.map"));
 
-    FIFE::RawData* fraw  = vfs->open(RAW_FILE);
-    FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
+    auto fraw  = std::unique_ptr<FIFE::RawData>(vfs->open(RAW_FILE));
+    auto fcomp = std::unique_ptr<FIFE::RawData>(vfs->open("dat2vfstest.map"));
 
     CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
     // std::cout << "data length match, length = " << fcomp->getDataLength() << '\n';
@@ -61,10 +62,10 @@ TEST_CASE("DAT2_test")
         smaller_len = fcomp->getDataLength();
     }
 
-    uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
-    uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
-    fraw->readInto(d_raw, fraw->getDataLength());
-    fcomp->readInto(d_comp, fcomp->getDataLength());
+    std::vector<uint8_t> d_raw(fraw->getDataLength());
+    std::vector<uint8_t> d_comp(fcomp->getDataLength());
+    fraw->readInto(d_raw.data(), fraw->getDataLength());
+    fcomp->readInto(d_comp.data(), fcomp->getDataLength());
     // std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t rawc  = d_raw[i];
@@ -76,9 +77,4 @@ TEST_CASE("DAT2_test")
         break;
     }
     // std::cout << "scanning finished" << '\n';
-
-    delete[] d_raw;
-    delete[] d_comp;
-    delete fraw;
-    delete fcomp;
 }

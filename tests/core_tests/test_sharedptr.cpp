@@ -29,9 +29,7 @@ class Data
         {
         }
 
-        virtual ~Data()
-        {
-        }
+        virtual ~Data() = default;
 
         virtual int32_t total()
         {
@@ -51,9 +49,7 @@ class SubData : public Data
         {
         }
 
-        virtual ~SubData()
-        {
-        }
+        virtual ~SubData() = default;
 
         virtual int32_t total()
         {
@@ -216,7 +212,7 @@ TEST_CASE("case8")
     SharedPtr<Data> copy(shptr);
 
     CHECK_EQ(copy.useCount(), 2);
-    shptr.reset(new Data(6, 8));
+    shptr.reset(new Data(6, 8)); // NOLINT(cppcoreguidelines-owning-memory)
     CHECK_EQ(copy.useCount(), 1);
 
     // shptr holding values we expect?

@@ -19,7 +19,8 @@ namespace
 
     std::string make_utf8(unsigned char const * bytes, size_t len)
     {
-        return std::string(reinterpret_cast<char const *>(bytes), len);
+        return std::string(
+            reinterpret_cast<char const *>(bytes), len); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     }
 
 } // namespace
@@ -27,7 +28,7 @@ namespace
 TEST_CASE("utf8_russian_hello")
 {
     // "Привет мир" (Hello world in Russian)
-    unsigned char const russian[] = {
+    static constexpr unsigned char russian[] = {
         0xD0,
         0x9F,
         0xD1,
@@ -62,7 +63,7 @@ TEST_CASE("utf8_russian_hello")
 TEST_CASE("utf8_french_hello")
 {
     // "Bonjour le monde" (Hello world in French)
-    unsigned char const french[] = {
+    static constexpr unsigned char french[] = {
         0x42, 0x6f, 0x6e, 0x6a, 0x6f, 0x75, 0x72, 0x20, 0x6c, 0x65, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x65};
     std::string s = make_utf8(french, sizeof(french));
 
@@ -73,8 +74,8 @@ TEST_CASE("utf8_french_hello")
 TEST_CASE("utf8_french_accents")
 {
     // "él" - é = C3 A9, l = 6C
-    unsigned char const french[] = {0xc3, 0xa9, 0x6c};
-    std::string s                = make_utf8(french, sizeof(french));
+    static constexpr unsigned char french[] = {0xc3, 0xa9, 0x6c};
+    std::string s                           = make_utf8(french, sizeof(french));
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x00E9); // é
@@ -85,8 +86,8 @@ TEST_CASE("utf8_french_accents")
 TEST_CASE("utf8_italian_hello")
 {
     // "Ciao mondo" (Hello world in Italian)
-    unsigned char const italian[] = {0x43, 0x69, 0x61, 0x6f, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x6f};
-    std::string s                 = make_utf8(italian, sizeof(italian));
+    static constexpr unsigned char italian[] = {0x43, 0x69, 0x61, 0x6f, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x6f};
+    std::string s                            = make_utf8(italian, sizeof(italian));
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 10);
 
@@ -100,7 +101,7 @@ TEST_CASE("utf8_italian_hello")
 TEST_CASE("utf8_hebrew_hello")
 {
     // "שלום עולם" (Hello world in Hebrew - RTL)
-    unsigned char const hebrew[] = {
+    static constexpr unsigned char hebrew[] = {
         0xd7, 0xa9, 0xd7, 0x9c, 0xd7, 0x95, 0xd7, 0x9d, 0x20, 0xd7, 0xa2, 0xd7, 0x95, 0xd7, 0x9c, 0xd7, 0x9d, 0x00};
     std::string s = make_utf8(hebrew, sizeof(hebrew) - 1);
 
@@ -116,8 +117,8 @@ TEST_CASE("utf8_hebrew_hello")
 TEST_CASE("utf8_japanese_hello")
 {
     // "日本" (Japan/Nihon in Japanese)
-    unsigned char const japanese[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac};
-    std::string s                  = make_utf8(japanese, sizeof(japanese));
+    static constexpr unsigned char japanese[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac};
+    std::string s                             = make_utf8(japanese, sizeof(japanese));
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x65E5); // 日
@@ -125,7 +126,7 @@ TEST_CASE("utf8_japanese_hello")
 
     std::vector<uint32_t> codepoints;
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(codepoints));
-    CHECK_EQ(codepoints.size(), 2u);
+    CHECK_EQ(codepoints.size(), 2U);
     CHECK_EQ(codepoints[0], 0x65E5);
     CHECK_EQ(codepoints[1], 0x672C);
 }
@@ -133,8 +134,8 @@ TEST_CASE("utf8_japanese_hello")
 TEST_CASE("utf8_emoji_wave_globe")
 {
     // "👋🌍" (waving hand + earth globe)
-    unsigned char const emoji[] = {0xf0, 0x9f, 0x91, 0x8b, 0xf0, 0x9f, 0x8c, 0x8d};
-    std::string s               = make_utf8(emoji, sizeof(emoji));
+    static constexpr unsigned char emoji[] = {0xf0, 0x9f, 0x91, 0x8b, 0xf0, 0x9f, 0x8c, 0x8d};
+    std::string s                          = make_utf8(emoji, sizeof(emoji));
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x0001F44B); // 👋
@@ -142,22 +143,22 @@ TEST_CASE("utf8_emoji_wave_globe")
 
     std::vector<uint32_t> codepoints;
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(codepoints));
-    CHECK_EQ(codepoints.size(), 2u);
+    CHECK_EQ(codepoints.size(), 2U);
 }
 
 TEST_CASE("utf8_mixed_languages")
 {
     // "Hello 世界" - H, e, l, l, o, space, 世, 界
-    unsigned char const mixed[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c};
-    std::string s               = make_utf8(mixed, sizeof(mixed));
+    static constexpr unsigned char mixed[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c};
+    std::string s                          = make_utf8(mixed, sizeof(mixed));
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 8);
 
-    char const * it = s.data();
-    uint32_t cp1    = utf8::unchecked::next(it);
-    uint32_t cp2    = utf8::unchecked::next(it);
-    uint32_t cp3    = utf8::unchecked::next(it);
-    uint32_t cp4    = utf8::unchecked::next(it);
+    char const * it    = s.data();
+    uint32_t const cp1 = utf8::unchecked::next(it);
+    uint32_t const cp2 = utf8::unchecked::next(it);
+    uint32_t const cp3 = utf8::unchecked::next(it);
+    uint32_t const cp4 = utf8::unchecked::next(it);
     CHECK_EQ(cp1, 72);
     CHECK_EQ(cp2, 101);
     CHECK_EQ(cp3, 108);
@@ -186,15 +187,16 @@ TEST_CASE("utf8_append_russian")
     utf8::unchecked::append(0x0435, std::back_inserter(result)); // е
     utf8::unchecked::append(0x0442, std::back_inserter(result)); // т
 
-    unsigned char const expected[] = {0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
-    CHECK_EQ(result.size(), 12u);
+    static constexpr unsigned char expected[] = {
+        0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
+    CHECK_EQ(result.size(), 12U);
     CHECK_EQ(std::memcmp(result.data(), expected, 12), 0);
 }
 
 TEST_CASE("utf8_roundtrip_russian")
 {
-    unsigned char const russian[] = {0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
-    std::string s                 = make_utf8(russian, sizeof(russian));
+    static constexpr unsigned char russian[] = {0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
+    std::string s                            = make_utf8(russian, sizeof(russian));
 
     std::vector<uint32_t> utf32;
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(utf32));
@@ -209,9 +211,9 @@ TEST_CASE("utf8_roundtrip_russian")
 TEST_CASE("utf8_prior_navigation")
 {
     // Navigate backwards through "日本語"
-    unsigned char const text[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac, 0xe8, 0xaa, 0x9e};
-    std::string s              = make_utf8(text, sizeof(text));
-    char const * it            = s.data() + s.size();
+    static constexpr unsigned char text[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac, 0xe8, 0xaa, 0x9e};
+    std::string s                         = make_utf8(text, sizeof(text));
+    char const * it                       = s.data() + s.size();
 
     CHECK_EQ(utf8::unchecked::prior(it), 0x8A9E); // 語
     CHECK_EQ(utf8::unchecked::prior(it), 0x672C); // 本
@@ -221,8 +223,8 @@ TEST_CASE("utf8_prior_navigation")
 TEST_CASE("utf8_advance_through_languages")
 {
     // "HelloПри" - 5 ASCII + 2 Cyrillic (each 2 bytes)
-    unsigned char const text[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0xD0, 0x9F, 0xD1, 0x80};
-    std::string s              = make_utf8(text, sizeof(text));
+    static constexpr unsigned char text[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0xD0, 0x9F, 0xD1, 0x80};
+    std::string s                         = make_utf8(text, sizeof(text));
 
     // "HelloПри" = H(0), e(1), l(2), l(3), o(4), П(5), р(6)
     char const * it1 = s.data();

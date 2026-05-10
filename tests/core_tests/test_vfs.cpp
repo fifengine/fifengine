@@ -20,7 +20,7 @@
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 
-static std::string const FIFE_TEST_DIR = "fifetestdir";
+static char const * const FIFE_TEST_DIR = "fifetestdir";
 
 using FIFE::VFS;
 using FIFE::VFSDirectory;

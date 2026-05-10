@@ -1,52 +1,25 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#include <SDL3/SDL.h>
-#include <SDL3_ttf/SDL_ttf.h>
-
 #include <cstdint>
 #include <memory>
 #include <string>
 
 #include "fife_unittest.h"
-#include "util/base/exception.h"
+#include "fixture.h"
 #include "video/fonts/truetypefont.h"
 #include "video/image.h"
-#include "video/renderbackend.h"
 
-using FIFE::Image;
-using FIFE::RenderBackend;
-using FIFE::SDLException;
 using FIFE::TrueTypeFont;
 
-static std::string const FONT_FILE = "demos/rio_de_hola/fonts/FreeSans.ttf";
-
-struct FontEnvironment
-{
-        SDL_Surface* surface = nullptr;
-
-        FontEnvironment()
-        {
-            if (!SDL_Init(SDL_INIT_VIDEO)) {
-                throw SDLException(SDL_GetError());
-            }
-            if (TTF_Init() != 0) {
-                throw SDLException(SDL_GetError());
-            }
-        }
-
-        ~FontEnvironment()
-        {
-            TTF_Quit();
-            SDL_Quit();
-        }
-};
+static char const * const FONT_FILE = "tests/data/FreeMono.ttf";
 
 TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf]")
 {
-    FontEnvironment env;
+    FontTestFixture env;
+    require_font_renderable(FONT_FILE, 16);
 
-    std::unique_ptr<TrueTypeFont> font(new TrueTypeFont(FONT_FILE, 16));
+    auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 16);
     REQUIRE(font != nullptr);
 
     SDL_Surface* surface = font->renderString("Test");
@@ -63,10 +36,13 @@ TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf
     bool found_colored_transparent = false;
 
     for (int32_t y = 0; y < surface->h; ++y) {
-        uint32_t* row = pixels + static_cast<size_t>(y) * static_cast<size_t>(pitch_px);
+        uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surface->w; ++x) {
             uint32_t p = row[x];
-            uint8_t r, g, b, a;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
             SDL_GetRGBA(p, format_details, nullptr, &r, &g, &b, &a);
 
             if (a == 0) {
@@ -86,9 +62,10 @@ TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf
 
 TEST_CASE("TrueTypeFont::renderString handles empty string", "[font][ttf]")
 {
-    FontEnvironment env;
+    FontTestFixture env;
+    require_font_renderable(FONT_FILE, 16);
 
-    std::unique_ptr<TrueTypeFont> font(new TrueTypeFont(FONT_FILE, 16));
+    auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 16);
     REQUIRE(font != nullptr);
 
     SDL_Surface* surface = font->renderString("");
@@ -101,9 +78,10 @@ TEST_CASE("TrueTypeFont::renderString handles empty string", "[font][ttf]")
 
 TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", "[font][ttf]")
 {
-    FontEnvironment env;
+    FontTestFixture env;
+    require_font_renderable(FONT_FILE, 24);
 
-    std::unique_ptr<TrueTypeFont> font(new TrueTypeFont(FONT_FILE, 24));
+    auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 24);
     REQUIRE(font != nullptr);
 
     SDL_Surface* surface = font->renderString("AaBbCc");
@@ -117,10 +95,13 @@ TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", 
     bool found_cyan_transparent = false;
 
     for (int32_t y = 0; y < surface->h; ++y) {
-        uint32_t* row = pixels + static_cast<size_t>(y) * static_cast<size_t>(pitch_px);
+        uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surface->w; ++x) {
             uint32_t p = row[x];
-            uint8_t r, g, b, a;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
             SDL_GetRGBA(p, format_details, nullptr, &r, &g, &b, &a);
 
             if (a == 0 && r == 0 && g == 255 && b == 255) {

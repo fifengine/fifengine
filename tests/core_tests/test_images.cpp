@@ -3,80 +3,38 @@
 
 // Standard C++ library includes
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
-// Platform specific includes
 #include "fife_unittest.h"
-
-// 3rd party library includes
-#include <SDL3/SDL.h>
-
-// FIFE includes
-#include "util/base/exception.h"
+#include "fixture.h"
 #include "util/structures/rect.h"
-#include "util/time/timemanager.h"
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "video/devicecaps.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/opengl/renderbackendopengl.h"
+#include "video/renderbackend.h"
 #include "video/sdl/renderbackendsdl.h"
 
-using FIFE::Image;
-using FIFE::ImageManager;
-using FIFE::ImagePtr;
-using FIFE::Rect;
-using FIFE::RenderBackend;
-using FIFE::RenderBackendOpenGL;
-using FIFE::RenderBackendSDL;
-using FIFE::ScreenMode;
-using FIFE::SDLException;
-using FIFE::TimeManager;
-using FIFE::VFS;
-using FIFE::VFSDirectory;
+static char const * const IMAGE_FILE       = "tests/data/fife_logo.png";
+static char const * const ALPHA_IMAGE_FILE = "tests/data/alpha.png";
+static char const * const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
 
-static std::string const IMAGE_FILE       = "tests/data/beach_e1.png";
-static std::string const ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
-static std::string const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
-
-// Environment
-struct environment
+TEST_CASE("test_sdl_image")
 {
-        std::shared_ptr<TimeManager> timemanager;
-
-        environment() : timemanager(std::make_shared<TimeManager>())
-        {
-            // Always ensure VFS singleton is set
-            if (!VFS::instance()) {
-                auto vfs = std::make_shared<VFS>();
-                vfs->addSource(new VFSDirectory(vfs.get()));
-            }
-            // Always ensure ImageManager singleton is set
-            if (!ImageManager::instance()) {
-                auto imgMgr = std::make_shared<ImageManager>();
-                (void)imgMgr; // Keep alive
-            }
-        }
-};
-
-void test_image(RenderBackend& renderbackend, ScreenMode const & mode)
-{
+    TestFixture const _init;
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
     renderbackend.init("");
-    renderbackend.createMainScreen(mode, "FIFE", "");
+    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
 
-    ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
+    FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
     int h = static_cast<int>(img->getHeight());
     int w = static_cast<int>(img->getWidth());
     for (int i = 0; i < 100; i++) {
         renderbackend.startFrame();
-        img->render(Rect(i, i, w, h));
+        img->render(FIFE::Rect(i, i, w, h));
         renderbackend.endFrame();
     }
     for (int j = 0; j < 5; j++) {
@@ -84,50 +42,103 @@ void test_image(RenderBackend& renderbackend, ScreenMode const & mode)
             renderbackend.startFrame();
             img->setXShift(i);
             img->setYShift(i);
-            img->render(Rect(200, 200, w, h));
+            img->render(FIFE::Rect(200, 200, w, h));
             renderbackend.endFrame();
         }
     }
 }
-void test_subimage(RenderBackend& renderbackend, ScreenMode const & mode)
-{
-    renderbackend.init("");
-    renderbackend.createMainScreen(mode, "FIFE", "");
 
-    ImagePtr img = ImageManager::instance()->load(SUBIMAGE_FILE);
+TEST_CASE("test_ogl_image")
+{
+    TestFixture const _init;
+    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    renderbackend.init("");
+    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+
+    FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(IMAGE_FILE);
+    REQUIRE(img);
+
+    int h = static_cast<int>(img->getHeight());
+    int w = static_cast<int>(img->getWidth());
+    for (int i = 0; i < 100; i++) {
+        renderbackend.startFrame();
+        img->render(FIFE::Rect(i, i, w, h));
+        renderbackend.endFrame();
+    }
+}
+
+TEST_CASE("test_sdl_subimage")
+{
+    TestFixture const _init;
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    renderbackend.init("");
+    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
+
+    FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
 
     int W = static_cast<int>(img->getWidth());
     int w = W / 12;
     int H = static_cast<int>(img->getHeight());
     int h = H / 12;
-    std::vector<ImagePtr> subimages;
+    std::vector<FIFE::ImagePtr> subimages;
 
     for (int x = 0; x < (W - w); x += w) {
         for (int y = 0; y < (H - h); y += h) {
-            ImagePtr sub = ImageManager::instance()->create();
-            sub->useSharedImage(img, Rect(x, y, w, h));
+            FIFE::ImagePtr sub = FIFE::ImageManager::instance()->create();
+            sub->useSharedImage(img, FIFE::Rect(x, y, w, h));
             subimages.push_back(sub);
         }
     }
 
     for (unsigned int i = 0; i < 200; i++) {
         renderbackend.startFrame();
-        subimages[i / 40].get()->render(Rect(200, 200, w, h));
+        subimages[i / 40].get()->render(FIFE::Rect(200, 200, w, h));
+        renderbackend.endFrame();
+    }
+}
+
+TEST_CASE("test_ogl_subimage")
+{
+    TestFixture const _init;
+    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    renderbackend.init("");
+    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+
+    FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
+    REQUIRE(img);
+
+    int W = static_cast<int>(img->getWidth());
+    int w = W / 12;
+    int H = static_cast<int>(img->getHeight());
+    int h = H / 12;
+    std::vector<FIFE::ImagePtr> subimages;
+
+    for (int x = 0; x < (W - w); x += w) {
+        for (int y = 0; y < (H - h); y += h) {
+            FIFE::ImagePtr sub = FIFE::ImageManager::instance()->create();
+            sub->useSharedImage(img, FIFE::Rect(x, y, w, h));
+            subimages.push_back(sub);
+        }
+    }
+
+    for (unsigned int i = 0; i < 200; i++) {
+        renderbackend.startFrame();
+        subimages[i / 40].get()->render(FIFE::Rect(200, 200, w, h));
         renderbackend.endFrame();
     }
 }
 
 TEST_CASE("test_sdl_alphaoptimize")
 {
-    environment env;
-    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+    TestFixture const _init;
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
     renderbackend.setAlphaOptimizerEnabled(true);
 
-    ImagePtr img       = ImageManager::instance()->load(IMAGE_FILE);
-    ImagePtr alpha_img = ImageManager::instance()->load(ALPHA_IMAGE_FILE);
+    FIFE::ImagePtr img       = FIFE::ImageManager::instance()->load(IMAGE_FILE);
+    FIFE::ImagePtr alpha_img = FIFE::ImageManager::instance()->load(ALPHA_IMAGE_FILE);
     REQUIRE(img);
     REQUIRE(alpha_img);
 
@@ -136,44 +147,15 @@ TEST_CASE("test_sdl_alphaoptimize")
 
     int h1 = static_cast<int>(alpha_img->getHeight());
     int w1 = static_cast<int>(alpha_img->getWidth());
-
     for (int i = 0; i != 200; ++i) {
         renderbackend.startFrame();
-        img.get()->render(Rect(i, i, w0, h0));
-        alpha_img.get()->render(Rect(i, i, w1, h1));
-        alpha_img.get()->render(Rect(i, h0 + i, w1, h1));
-        img.get()->render(Rect(i, h0 + i, w0, h0));
+        img.get()->render(FIFE::Rect(i, i, w0, h0));
+        alpha_img.get()->render(FIFE::Rect(i, i, w1, h1));
+        alpha_img.get()->render(FIFE::Rect(i, h0 + i, w1, h1));
+        img.get()->render(FIFE::Rect(i, h0 + i, w0, h0));
         renderbackend.endFrame();
     }
 
     CHECK_NE(img.get()->getSurface(), nullptr);
     CHECK_NE(SDL_GetPixelFormatDetails(alpha_img.get()->getSurface()->format)->Amask, 0);
-}
-
-TEST_CASE("test_sdl_image")
-{
-    environment env;
-    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
-    test_image(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL));
-}
-
-TEST_CASE("test_ogl_image")
-{
-    environment env;
-    RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
-    test_image(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL));
-}
-
-TEST_CASE("test_sdl_subimage")
-{
-    environment env;
-    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
-    test_subimage(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL));
-}
-
-TEST_CASE("test_ogl_subimage")
-{
-    environment env;
-    RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
-    test_subimage(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL));
 }

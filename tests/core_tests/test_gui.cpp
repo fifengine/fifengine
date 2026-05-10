@@ -1,29 +1,20 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+#include <fifechan.hpp>
+
 // Standard C++ library includes
 #include <cstdint>
 #include <memory>
 #include <string>
 
-// Platform specific includes
 #include "fife_unittest.h"
-
-// 3rd party library includes
-#include <SDL3/SDL.h>
-
-#include <fifechan.hpp>
-
+#include "fixture.h"
 #include "gui/fifechan/base/gui_image.h"
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
-#include "util/base/exception.h"
 #include "util/structures/rect.h"
-#include "util/time/timemanager.h"
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "video/devicecaps.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/opengl/renderbackendopengl.h"
@@ -39,31 +30,12 @@ using FIFE::RenderBackend;
 using FIFE::RenderBackendOpenGL;
 using FIFE::RenderBackendSDL;
 using FIFE::ScreenMode;
-using FIFE::SDLException;
 using FIFE::SdlGuiGraphics;
-using FIFE::TimeManager;
-using FIFE::VFS;
-using FIFE::VFSDirectory;
 
-static std::string const IMAGE_FILE    = "tests/data/beach_e1.png";
-static std::string const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
-struct environment
+static char const * const IMAGE_FILE    = "tests/data/beach_e1.png";
+static char const * const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
+struct environment : TestFixture
 {
-        std::shared_ptr<TimeManager> timemanager;
-
-        environment() : timemanager(std::make_shared<TimeManager>())
-        {
-            // Always ensure VFS singleton is set
-            if (!VFS::instance()) {
-                auto vfs = std::make_shared<VFS>();
-                vfs->addSource(new VFSDirectory(vfs.get()));
-            }
-            // Always ensure ImageManager singleton is set
-            if (!ImageManager::instance()) {
-                auto imgMgr = std::make_shared<ImageManager>();
-                (void)imgMgr; // Keep alive
-            }
-        }
 };
 
 void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
@@ -78,8 +50,8 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
     gui->setTop(top);
     fcn::Label* label = new fcn::Label("Label");
 
-    fcn::Image* guiimage = fcn::Image::load(IMAGE_FILE);
-    fcn::Icon* icon      = new fcn::Icon(guiimage);
+    fcn::Image const * guiimage = fcn::Image::load(IMAGE_FILE);
+    fcn::Icon* icon             = new fcn::Icon(guiimage);
 
     top->add(label, 10, 10);
     top->add(icon, 10, 30);
@@ -101,7 +73,7 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
 TEST_CASE("test_sdl_gui_image")
 {
     environment env;
-    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
     SdlGuiGraphics graphics;
@@ -112,7 +84,7 @@ TEST_CASE("test_sdl_gui_image")
 TEST_CASE("test_ogl_gui_image")
 {
     environment env;
-    RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
+    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
     OpenGLGuiGraphics graphics;

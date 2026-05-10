@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -20,8 +19,8 @@ using FIFE::VFS;
 using FIFE::VFSDirectory;
 using FIFE::ZipSource;
 
-static std::string const COMPRESSED_FILE = "tests/data/testmap.zip";
-static std::string const RAW_FILE        = "tests/data/test.map";
+static char const * const COMPRESSED_FILE = "tests/data/testmap.zip";
+static char const * const RAW_FILE        = "tests/data/test.map";
 
 TEST_CASE("test_decoder")
 {
@@ -35,28 +34,28 @@ TEST_CASE("test_decoder")
     std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
 
     CHECK_EQ(dirlist.size(), 4);
-    CHECK(std::find(dirlist.begin(), dirlist.end(), "maps") != dirlist.end());
-    CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir1") != dirlist.end());
-    CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir2") != dirlist.end());
-    CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir3") != dirlist.end());
+    CHECK(dirlist.contains("maps"));
+    CHECK(dirlist.contains("testdir1"));
+    CHECK(dirlist.contains("testdir2"));
+    CHECK(dirlist.contains("testdir3"));
 
     std::set<std::string> filelist = vfs->listFiles("ziptest_content");
     CHECK_EQ(filelist.size(), 0);
     filelist = vfs->listFiles("ziptest_content/testdir1");
 
     CHECK_EQ(filelist.size(), 4);
-    CHECK(std::find(filelist.begin(), filelist.end(), "file") != filelist.end());
-    CHECK(std::find(filelist.begin(), filelist.end(), "file-a") != filelist.end());
-    CHECK(std::find(filelist.begin(), filelist.end(), "file-b") != filelist.end());
-    CHECK(std::find(filelist.begin(), filelist.end(), "file-c") != filelist.end());
+    CHECK(filelist.contains("file"));
+    CHECK(filelist.contains("file-a"));
+    CHECK(filelist.contains("file-b"));
+    CHECK(filelist.contains("file-c"));
 
     CHECK_EQ(vfs->listFiles("ziptest_content/testdir3").size(), 0);
     CHECK_EQ(vfs->listDirectories("ziptest_content/testdir1").size(), 0);
 
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("ziptest_content/maps/test.map"));
-    RawData* fraw  = vfs->open(RAW_FILE);
-    RawData* fcomp = vfs->open("ziptest_content/maps/test.map");
+    auto fraw  = std::unique_ptr<RawData>(vfs->open(RAW_FILE));
+    auto fcomp = std::unique_ptr<RawData>(vfs->open("ziptest_content/maps/test.map"));
 
     CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
     std::cout << "9" << '\n';
@@ -65,10 +64,10 @@ TEST_CASE("test_decoder")
         smaller_len = fcomp->getDataLength();
     }
 
-    uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
-    uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
-    fraw->readInto(d_raw, fraw->getDataLength());
-    fcomp->readInto(d_comp, fcomp->getDataLength());
+    std::vector<uint8_t> d_raw(fraw->getDataLength());
+    std::vector<uint8_t> d_comp(fcomp->getDataLength());
+    fraw->readInto(d_raw.data(), fraw->getDataLength());
+    fcomp->readInto(d_comp.data(), fcomp->getDataLength());
 
     std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
@@ -77,8 +76,4 @@ TEST_CASE("test_decoder")
         CHECK_EQ(rawc, compc);
     }
     std::cout << "scanning finished" << '\n';
-    delete[] d_raw;
-    delete[] d_comp;
-    delete fraw;
-    delete fcomp;
 }

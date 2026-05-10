@@ -3,27 +3,14 @@
 
 // Standard C++ library includes
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
 #include <memory>
 #include <string>
 
-// Platform specific includes
 #include "fife_unittest.h"
-
-// 3rd party library includes
-#include <SDL3/SDL.h>
-
-// FIFE includes
-#include "util/base/exception.h"
+#include "fixture.h"
 #include "util/structures/rect.h"
-#include "util/time/timemanager.h"
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "video/devicecaps.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
-#include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
 
 using FIFE::Image;
@@ -32,29 +19,14 @@ using FIFE::ImagePtr;
 using FIFE::Rect;
 using FIFE::RenderBackendSDL;
 using FIFE::ScreenMode;
-using FIFE::SDLException;
 using FIFE::TimeManager;
-using FIFE::VFS;
-using FIFE::VFSDirectory;
 
-static std::string const IMAGE_FILE    = "tests/data/beach_e1.png";
-static std::string const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
-static std::string const ANIM_FILE     = "tests/data/crate_full_001.xml";
+static char const * const IMAGE_FILE    = "tests/data/beach_e1.png";
+static char const * const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
+static char const * const ANIM_FILE     = "tests/data/crate_full_001.xml";
 
-// Environment
-struct environment
+struct environment : TestFixture
 {
-        std::shared_ptr<TimeManager> timemanager;
-        std::shared_ptr<VFS> vfs;
-        std::shared_ptr<ImageManager> imageManager;
-
-        environment() :
-            timemanager(std::make_shared<TimeManager>()),
-            vfs(std::make_shared<VFS>()),
-            imageManager(std::make_shared<ImageManager>())
-        {
-            vfs->addSource(new VFSDirectory(vfs.get()));
-        }
 };
 
 TEST_CASE_METHOD(environment, "test_image_pool")
@@ -62,7 +34,7 @@ TEST_CASE_METHOD(environment, "test_image_pool")
     ImageManager* imageManager = ImageManager::instance();
     imageManager->removeAll();
 
-    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
 
