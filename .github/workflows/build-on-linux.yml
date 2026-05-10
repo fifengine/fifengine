@@ -456,7 +456,7 @@ jobs:
 
       - name: 🔼 Upload Build Artifact (clang-tidy-err.log)
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
-        if: ${{ always() && matrix.config.preset != 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
+        if: matrix.config.preset == 'clang22-x64-linux-dbg-cov'
         with:
           name: clang-tidy
           path: clang-tidy-err.log
