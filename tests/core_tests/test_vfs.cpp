@@ -25,7 +25,7 @@ static char const * const FIFE_TEST_DIR = "fifetestdir";
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-TEST_CASE("test_is_directory")
+TEST_CASE("VFSDirectory::isDirectory on created and removed directories", "[core][vfs]")
 {
     std::filesystem::path const test_dir = std::filesystem::current_path() / FIFE_TEST_DIR;
 

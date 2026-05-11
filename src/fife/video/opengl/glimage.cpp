@@ -351,6 +351,7 @@ namespace FIFE
         SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(RenderBackend::instance()->getPixelFormat());
         int32_t const bpp_target               = details->bits_per_pixel;
         int32_t const bpp_source               = SDL_BYTESPERPIXEL(m_surface->format);
+
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
             auto* oglbuffer = new uint16_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
@@ -402,7 +403,6 @@ namespace FIFE
                 GL_RGBA,
                 GL_UNSIGNED_SHORT_4_4_4_4,
                 oglbuffer);
-
             delete[] oglbuffer;
             return;
         }
@@ -479,17 +479,42 @@ namespace FIFE
 
                 delete[] oglbuffer;
             } else {
-                // transfer data directly from sdl buffer
-                glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    internalFormat,
-                    static_cast<GLsizei>(m_chunk_size_w),
-                    static_cast<GLsizei>(m_chunk_size_h),
-                    0,
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    data);
+                // SDL3 surfaces may have padded row pitch; OpenGL expects contiguous rows when
+                // uploading with GL_RGBA/GL_UNSIGNED_BYTE in this path, so repack when needed.
+                uint32_t const tightPitch = width * 4U;
+                if (static_cast<uint32_t>(pitch) == tightPitch) {
+                    // Fast path for tightly packed RGBA rows.
+                    glTexImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        internalFormat,
+                        static_cast<GLsizei>(m_chunk_size_w),
+                        static_cast<GLsizei>(m_chunk_size_h),
+                        0,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        data);
+                } else {
+                    // SDL surfaces can have padded row pitch; repack to a tightly packed buffer.
+                    auto* packed = new uint8_t[static_cast<size_t>(tightPitch) * static_cast<size_t>(height)];
+                    for (uint32_t y = 0; y < height; ++y) {
+                        uint8_t const * srcRow = data + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
+                        uint8_t* dstRow        = packed + (static_cast<size_t>(y) * static_cast<size_t>(tightPitch));
+                        memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
+                    }
+
+                    glTexImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        internalFormat,
+                        static_cast<GLsizei>(m_chunk_size_w),
+                        static_cast<GLsizei>(m_chunk_size_h),
+                        0,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        packed);
+                    delete[] packed;
+                }
             }
             // Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
         } else {
@@ -539,7 +564,6 @@ namespace FIFE
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 static_cast<GLvoid*>(oglbuffer));
-
             delete[] oglbuffer;
         }
     }

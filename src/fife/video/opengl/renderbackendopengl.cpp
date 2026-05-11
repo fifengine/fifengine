@@ -400,8 +400,9 @@ namespace FIFE
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
         // our texture generation. 32 bit surfaces to BitsPerPixel texturen.
+        // Use ARGB8888 to match what SDL_ttf returns (avoid conversion issues)
         if (bitsPerPixel != 16) {
-            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA8888);
+            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_ARGB8888);
         } else {
             m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA4444);
         }

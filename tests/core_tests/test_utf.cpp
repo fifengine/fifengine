@@ -25,7 +25,7 @@ namespace
 
 } // namespace
 
-TEST_CASE("utf8_russian_hello")
+TEST_CASE("utf8_russian_hello", "[core][utf]")
 {
     // "Привет мир" (Hello world in Russian)
     static constexpr unsigned char russian[] = {
@@ -60,7 +60,7 @@ TEST_CASE("utf8_russian_hello")
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 10);
 }
 
-TEST_CASE("utf8_french_hello")
+TEST_CASE("utf8_french_hello", "[core][utf]")
 {
     // "Bonjour le monde" (Hello world in French)
     static constexpr unsigned char french[] = {
@@ -71,7 +71,7 @@ TEST_CASE("utf8_french_hello")
     CHECK_EQ(utf8::unchecked::peek_next(s.data()), 0x0042); // B
 }
 
-TEST_CASE("utf8_french_accents")
+TEST_CASE("utf8_french_accents", "[core][utf]")
 {
     // "él" - é = C3 A9, l = 6C
     static constexpr unsigned char french[] = {0xc3, 0xa9, 0x6c};
@@ -83,7 +83,7 @@ TEST_CASE("utf8_french_accents")
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 2);
 }
 
-TEST_CASE("utf8_italian_hello")
+TEST_CASE("utf8_italian_hello", "[core][utf]")
 {
     // "Ciao mondo" (Hello world in Italian)
     static constexpr unsigned char italian[] = {0x43, 0x69, 0x61, 0x6f, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x6f};
@@ -98,7 +98,7 @@ TEST_CASE("utf8_italian_hello")
     CHECK_EQ(utf8::unchecked::next(it), 0x006F); // o
 }
 
-TEST_CASE("utf8_hebrew_hello")
+TEST_CASE("utf8_hebrew_hello", "[core][utf]")
 {
     // "שלום עולם" (Hello world in Hebrew - RTL)
     static constexpr unsigned char hebrew[] = {
@@ -114,7 +114,7 @@ TEST_CASE("utf8_hebrew_hello")
     CHECK_EQ(utf8::unchecked::next(it), 0x05DD); // ם
 }
 
-TEST_CASE("utf8_japanese_hello")
+TEST_CASE("utf8_japanese_hello", "[core][utf]")
 {
     // "日本" (Japan/Nihon in Japanese)
     static constexpr unsigned char japanese[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac};
@@ -131,7 +131,7 @@ TEST_CASE("utf8_japanese_hello")
     CHECK_EQ(codepoints[1], 0x672C);
 }
 
-TEST_CASE("utf8_emoji_wave_globe")
+TEST_CASE("utf8_emoji_wave_globe", "[core][utf]")
 {
     // "👋🌍" (waving hand + earth globe)
     static constexpr unsigned char emoji[] = {0xf0, 0x9f, 0x91, 0x8b, 0xf0, 0x9f, 0x8c, 0x8d};
@@ -146,7 +146,7 @@ TEST_CASE("utf8_emoji_wave_globe")
     CHECK_EQ(codepoints.size(), 2U);
 }
 
-TEST_CASE("utf8_mixed_languages")
+TEST_CASE("utf8_mixed_languages", "[core][utf]")
 {
     // "Hello 世界" - H, e, l, l, o, space, 世, 界
     static constexpr unsigned char mixed[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c};
@@ -165,7 +165,7 @@ TEST_CASE("utf8_mixed_languages")
     CHECK_EQ(cp4, 108);
 }
 
-TEST_CASE("utf8_append_codepoints")
+TEST_CASE("utf8_append_codepoints", "[core][utf]")
 {
     std::string result;
     utf8::unchecked::append(0x0057, std::back_inserter(result)); // W
@@ -177,7 +177,7 @@ TEST_CASE("utf8_append_codepoints")
     CHECK_EQ(result, "World");
 }
 
-TEST_CASE("utf8_append_russian")
+TEST_CASE("utf8_append_russian", "[core][utf]")
 {
     std::string result;
     utf8::unchecked::append(0x041F, std::back_inserter(result)); // П
@@ -193,7 +193,7 @@ TEST_CASE("utf8_append_russian")
     CHECK_EQ(std::memcmp(result.data(), expected, 12), 0);
 }
 
-TEST_CASE("utf8_roundtrip_russian")
+TEST_CASE("utf8_roundtrip_russian", "[core][utf]")
 {
     static constexpr unsigned char russian[] = {0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
     std::string s                            = make_utf8(russian, sizeof(russian));
@@ -208,7 +208,7 @@ TEST_CASE("utf8_roundtrip_russian")
     CHECK_EQ(std::memcmp(result.data(), s.data(), s.size()), 0);
 }
 
-TEST_CASE("utf8_prior_navigation")
+TEST_CASE("utf8_prior_navigation", "[core][utf]")
 {
     // Navigate backwards through "日本語"
     static constexpr unsigned char text[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac, 0xe8, 0xaa, 0x9e};
@@ -220,7 +220,7 @@ TEST_CASE("utf8_prior_navigation")
     CHECK_EQ(utf8::unchecked::prior(it), 0x65E5); // 日
 }
 
-TEST_CASE("utf8_advance_through_languages")
+TEST_CASE("utf8_advance_through_languages", "[core][utf]")
 {
     // "HelloПри" - 5 ASCII + 2 Cyrillic (each 2 bytes)
     static constexpr unsigned char text[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0xD0, 0x9F, 0xD1, 0x80};

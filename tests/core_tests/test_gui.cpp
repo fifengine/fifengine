@@ -32,8 +32,7 @@ using FIFE::RenderBackendSDL;
 using FIFE::ScreenMode;
 using FIFE::SdlGuiGraphics;
 
-static char const * const IMAGE_FILE    = "tests/data/beach_e1.png";
-static char const * const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
+static char const * const IMAGE_FILE = "tests/data/beach_e1.png";
 struct environment : TestFixture
 {
 };
@@ -70,10 +69,10 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
     }
 }
 
-TEST_CASE("test_sdl_gui_image")
+TEST_CASE("GuiImageLoader renders beach_e1.png via SDL", "[gui][sdl]")
 {
     environment env;
-    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
     SdlGuiGraphics graphics;
@@ -81,10 +80,10 @@ TEST_CASE("test_sdl_gui_image")
     test_gui_image(renderbackend, graphics);
 }
 
-TEST_CASE("test_ogl_gui_image")
+TEST_CASE("GuiImageLoader renders beach_e1.png via OpenGL", "[gui][opengl]")
 {
     environment env;
-    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
     OpenGLGuiGraphics graphics;

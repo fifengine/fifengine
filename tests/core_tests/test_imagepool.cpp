@@ -23,18 +23,17 @@ using FIFE::TimeManager;
 
 static char const * const IMAGE_FILE    = "tests/data/beach_e1.png";
 static char const * const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
-static char const * const ANIM_FILE     = "tests/data/crate_full_001.xml";
 
 struct environment : TestFixture
 {
 };
 
-TEST_CASE_METHOD(environment, "test_image_pool")
+TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png and rpg_tiles_01.png", "[imagepool]")
 {
     ImageManager* imageManager = ImageManager::instance();
     imageManager->removeAll();
 
-    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
 

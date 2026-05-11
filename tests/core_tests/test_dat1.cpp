@@ -30,7 +30,7 @@ using FIFE::VFSDirectory;
 static char const * const COMPRESSED_FILE = "tests/data/dat1vfstest.dat";
 static char const * const RAW_FILE        = "tests/data/test.map";
 
-TEST_CASE("DAT1_test")
+TEST_CASE("DAT1::open decompresses stored entry correctly", "[dat1][vfs]")
 {
 
     std::shared_ptr<FIFE::VFS> vfs = std::make_shared<FIFE::VFS>();

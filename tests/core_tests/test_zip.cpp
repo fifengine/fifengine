@@ -22,7 +22,7 @@ using FIFE::ZipSource;
 static char const * const COMPRESSED_FILE = "tests/data/testmap.zip";
 static char const * const RAW_FILE        = "tests/data/test.map";
 
-TEST_CASE("test_decoder")
+TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", "[core][zip]")
 {
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
     vfs->addSource(new VFSDirectory(vfs.get()));

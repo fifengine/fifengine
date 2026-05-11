@@ -144,9 +144,10 @@ namespace FIFE
             throw FIFE::SDLException(err);
         }
 
-        // Sanitize transparent pixels: FreeType's anti-aliasing can produce
-        // pixels with alpha=0 but non-zero RGB channels. Zero them out so
-        // fully transparent pixels are truly black-transparent.
+        // Sanitize: Zero RGB for pixels where alpha=0 but RGB is non-zero.
+        // FreeType's anti-aliasing can produce pixels with alpha=0 but non-zero
+        // RGB (e.g., cyan 0,255,255). When alpha is lost in SDL3 texture
+        // conversion, these become visible.
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {
                 SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(renderedText->format);
@@ -157,7 +158,8 @@ namespace FIFE
                     for (int32_t x = 0; x < renderedText->w; ++x) {
                         uint8_t r, g, b, a;
                         SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
-                        if (a == 0) {
+                        // Fully transparent but has RGB
+                        if (a == 0 && (r != 0 || g != 0 || b != 0)) {
                             row[x] = 0;
                         }
                     }

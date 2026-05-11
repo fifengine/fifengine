@@ -2,7 +2,10 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <SDL3/SDL.h>
+
 #include <cstdint>
+#include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,23 +19,70 @@
 #include "video/renderbackend.h"
 #include "video/sdl/renderbackendsdl.h"
 
-static char const * const IMAGE_FILE       = "tests/data/fife_logo.png";
-static char const * const ALPHA_IMAGE_FILE = "tests/data/alpha.png";
+static char const * const IMAGE_FILE       = "docs/logo/FIFE_small_c3.png";
+static char const * const ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
 static char const * const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
 
-TEST_CASE("test_sdl_image")
+TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[core][images]")
 {
     TestFixture const _init;
-    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
+
+    {
+        SDL_Rect rect     = {0, 0, 1, 1};
+        SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
+        REQUIRE(surf != nullptr);
+        SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
+        uint8_t r, g, b, a;
+        SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
+        CHECK_EQ(r, 0);
+        CHECK_EQ(g, 0);
+        CHECK_EQ(b, 0);
+        CHECK_EQ(a, 255);
+        SDL_DestroySurface(surf);
+    }
 
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
+    // Read pixel (134,172) from the loaded surface for ground truth
+    uint8_t surf_r, surf_g, surf_b, surf_a;
+    {
+        SDL_Surface const * s = img->getSurface();
+        REQUIRE(s->w > 134);
+        REQUIRE(s->h > 172);
+        SDL_PixelFormatDetails const * f = SDL_GetPixelFormatDetails(s->format);
+        uint32_t pix;
+        std::memcpy(&pix, static_cast<uint8_t const *>(s->pixels) + 172 * s->pitch + 134 * 4, sizeof(pix));
+        SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
+    }
+
     int h = static_cast<int>(img->getHeight());
     int w = static_cast<int>(img->getWidth());
-    for (int i = 0; i < 100; i++) {
+
+    // Render first frame at (0,0) and verify a known pixel from the image
+    renderbackend.startFrame();
+    img->render(FIFE::Rect(0, 0, w, h));
+
+    {
+        SDL_Rect rect     = {134, 172, 1, 1};
+        SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
+        REQUIRE(surf != nullptr);
+        SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
+        uint8_t r, g, b, a;
+        SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
+        CHECK_EQ(r, surf_r);
+        CHECK_EQ(g, surf_g);
+        CHECK_EQ(b, surf_b);
+        CHECK_EQ(a, surf_a);
+        SDL_DestroySurface(surf);
+    }
+
+    renderbackend.endFrame();
+
+    for (int i = 1; i < 100; i++) {
         renderbackend.startFrame();
         img->render(FIFE::Rect(i, i, w, h));
         renderbackend.endFrame();
@@ -48,10 +98,10 @@ TEST_CASE("test_sdl_image")
     }
 }
 
-TEST_CASE("test_ogl_image")
+TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
 {
     TestFixture const _init;
-    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
 
@@ -67,10 +117,10 @@ TEST_CASE("test_ogl_image")
     }
 }
 
-TEST_CASE("test_sdl_subimage")
+TEST_CASE("RenderBackendSDL renders subimages from rpg_tiles_01.png", "[core][images]")
 {
     TestFixture const _init;
-    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
 
@@ -98,10 +148,10 @@ TEST_CASE("test_sdl_subimage")
     }
 }
 
-TEST_CASE("test_ogl_subimage")
+TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core][images]")
 {
     TestFixture const _init;
-    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
 
@@ -129,10 +179,10 @@ TEST_CASE("test_ogl_subimage")
     }
 }
 
-TEST_CASE("test_sdl_alphaoptimize")
+TEST_CASE("RenderBackendSDL alpha optimizer renders fife_logo.png and alpha_fidgit.png", "[core][images]")
 {
     TestFixture const _init;
-    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 0});
+    FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
     renderbackend.setAlphaOptimizerEnabled(true);

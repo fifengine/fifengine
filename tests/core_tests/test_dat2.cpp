@@ -31,7 +31,8 @@ using FIFE::VFSDirectory;
 
 static char const * const COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
 static char const * const RAW_FILE        = "tests/data/test.map";
-TEST_CASE("DAT2_test")
+
+TEST_CASE("DAT2::open decompresses LZSS entry correctly", "[dat2][vfs]")
 {
 
     std::shared_ptr<TimeManager> timemanager = std::make_shared<TimeManager>();

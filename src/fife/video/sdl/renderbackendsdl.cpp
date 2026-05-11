@@ -209,6 +209,9 @@ namespace FIFE
         // enable alpha blending
         SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 
+        // TODO do we need to clear here?
+        clearBackBuffer();
+
         // set the window surface as main surface, not really needed anymore
         // In SDL3, windows with renderers don't have surfaces, so create a dummy one
         m_screen = SDL_CreateSurface(createWidth, createHeight, SDL_PIXELFORMAT_RGBA8888);

@@ -21,7 +21,7 @@ void add_rect(std::vector<Rect>& v, T x, T y, T w, T h)
     v.emplace_back(x, y, w, h);
 }
 
-TEST_CASE("rectangle_interesection")
+TEST_CASE("Rect::intersects with overlapping and non-overlapping rects", "[core][rect]")
 {
     Rect a(0, 0, 10, 10);
 

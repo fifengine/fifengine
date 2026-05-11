@@ -30,6 +30,14 @@ fi
 
 echo "=== Step 5: Run pychan demo ==="
 export PYTHONPATH="$ENGINE_PYTHON_DIR:$PYTHONPATH"
-export LD_LIBRARY_PATH="$BUILD_DIR:/workspaces/fifengine/out/fife-dependencies/install/lib:/workspaces/fifengine/vcpkg_installed/x64-linux/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$BUILD_DIR:$REPO_ROOT/vcpkg_installed/x64-linux/lib:$REPO_ROOT/out/fife-dependencies/x64-linux/install/lib:$LD_LIBRARY_PATH"
+
+# Verify we're using the rebuilt library
+echo "=== Verifying library loading ==="
+ls -la "$BUILD_DIR/libfifengine.so.0.5.0" || echo "ERROR: libfifengine.so.0.5.0 not found!"
+
+# Check ldd to see what's loaded
+echo "=== Library dependencies ==="
+ldd "$BUILD_DIR/_fife_swig.so" 2>/dev/null | grep fife || echo "No fife lib found"
 
 python3 run.py
