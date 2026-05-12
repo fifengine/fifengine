@@ -4,7 +4,7 @@
 """Demo for dynamic widget creation and management."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class DynamicExample(PyChanExample):

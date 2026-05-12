@@ -19,46 +19,54 @@ Language: Cpp
 IndentWidth: 4
 ContinuationIndentWidth: 4
 UseCRLF: false
-Standard: c++20
+Standard: Latest
 UseTab: Never
 MaxEmptyLinesToKeep: 1
 
-AccessModifierOffset: -4
+AccessModifierOffset: -8
 AlignAfterOpenBracket: AlwaysBreak
+AlignArrayOfStructures: None
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: true
 AlignEscapedNewlinesLeft: true
 AlignOperands: true
-AlignTrailingComments: true
+AlignTrailingComments :
+    Kind : Always
+    OverEmptyLines : 0
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortBlocksOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AllowShortLambdasOnASingleLine: Empty
+AllowBreakBeforeNoexceptSpecifier : Always
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
 
 # Configure each individual brace in BraceWrapping
 BraceWrapping:
-    AfterCaseLabel: false
-    AfterClass: true
-    AfterControlStatement: false
-    AfterEnum: true
-    AfterFunction: true
-    AfterNamespace: true
-    AfterObjCDeclaration: true
-    AfterStruct: true
-    AfterUnion: true
-    BeforeCatch: false
-    BeforeElse: false
-    IndentBraces: false
+  AfterCaseLabel:        false
+  AfterClass:            true
+  AfterControlStatement: false
+  AfterEnum:             true
+  AfterExternBlock:      true
+  AfterFunction:         true
+  AfterNamespace:        true
+  AfterObjCDeclaration:  true
+  AfterStruct:           true
+  AfterUnion:            true
+  BeforeCatch:           false
+  BeforeElse:            false
+  BeforeLambdaBody:      false
+  BeforeWhile:           false
+  IndentBraces:          false
 BreakBeforeBraces: Custom
 
 BinPackArguments: false
 BinPackParameters: false
+BitFieldColonSpacing : Both
 BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: AfterColon
@@ -71,10 +79,13 @@ Cpp11BracedListStyle: true
 DeriveLineEnding: true
 ExperimentalAutoDetectBinPacking: true
 FixNamespaceComments: true
+IndentAccessModifiers: true
 IndentCaseLabels: false
+IndentExternBlock: true
 IndentGotoLabels: false
 IndentPPDirectives: BeforeHash
 IndentFunctionDeclarationAfterType: false
+InsertNewlineAtEOF : true
 NamespaceIndentation: All
 ObjCSpaceBeforeProtocolList: false
 PenaltyBreakBeforeFirstCallParameter: 10
@@ -83,6 +94,8 @@ PenaltyBreakFirstLessLess: 20
 PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 200
+ReflowComments : true
+SortUsingDeclarations : true
 SpaceAfterControlStatementKeyword: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeAssignmentOperators: true
@@ -105,8 +118,20 @@ PointerBindsToType: true
 SpaceAroundPointerQualifiers: After
 
 # Prefer "east const", placing `const` after the type: int const instead of const int
-#QualifierAlignment: Right
+QualifierAlignment: Right
 
 SortIncludes: true
-#IncludeBlocks: Regroup
-#IncludeCategories:
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Headers in <> from specific external libraries.
+  - Regex:      '^<(fmt|gtest|gmock|SDL|spdlog|allegro)(\/)?([A-Za-z0-9.\/-_])+>'
+    Priority:   3
+  - Regex:      '^<fifechan/widgets/.*\.hpp>$'
+    Priority:   4
+  - Regex:      '^<fifechan/.*\.hpp>$'
+    Priority:   5
+  - Regex:      '^<[a-z0-9_]*\.hpp>$'
+    Priority:   6
+  # C++ standard library. These includes are all lowercase.
+  - Regex:      '^<[a-z0-9_]*>$'
+    Priority:   7

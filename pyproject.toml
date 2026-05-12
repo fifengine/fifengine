@@ -59,7 +59,7 @@ docs = [
 # 3. vcpkg             -> dependencies
 # ---------------------------------------------------------------------
 # External dependencies are not bundled by default:
-#   libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
+#   libfifechan_sdl3.so, libfifechan_opengl.so, SDL3, OpenAL, etc.
 # cibuildwheel uses the following tools internally to bundle the dependencies
 # into redistributable platform wheels:
 #   Windows: delevewheel

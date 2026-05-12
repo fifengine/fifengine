@@ -149,7 +149,7 @@ class World(EventListenerBase):
         self._gameover.hide()
         self._winner.hide()
 
-        self._starttime = self._timemanager.getTime()
+        self._starttime = self._timemanager.now64()
 
         self._genericrenderer = fife.GenericRenderer.getInstance(self.cameras["main"])
         self._genericrenderer.clearActiveLayers()
@@ -292,7 +292,7 @@ class World(EventListenerBase):
             self._keystate["SPACE"] = True
         elif keyval == fife.Key.P:
             self._paused = not self._paused
-            self._pausedtime += self._timemanager.getTime()
+            self._pausedtime += self._timemanager.now64()
         elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
             self._keystate["CTRL"] = True
 
@@ -324,11 +324,9 @@ class World(EventListenerBase):
         # update the scene
         if not self._paused and not self._gamecomplete:
             if self._scene.paused:
-                self._scene.unpause(self._timemanager.getTime() - self._starttime)
+                self._scene.unpause(self._timemanager.now64() - self._starttime)
 
-            self._scene.update(
-                self._timemanager.getTime() - self._starttime, self._keystate
-            )
+            self._scene.update(self._timemanager.now64() - self._starttime, self._keystate)
 
             # update the HUD
             avgframe = self._timemanager.getAverageFrameTime()
@@ -358,7 +356,7 @@ class World(EventListenerBase):
 
         else:
             if not self._scene.paused:
-                self._scene.pause(self._timemanager.getTime() - self._starttime)
+                self._scene.pause(self._timemanager.now64() - self._starttime)
 
         if self._gamecomplete:
             self.saveScore()

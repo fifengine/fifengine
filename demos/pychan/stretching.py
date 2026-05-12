@@ -4,7 +4,7 @@
 """Demo for widget stretching/resizing with sliders."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class StretchingExample(PyChanExample):

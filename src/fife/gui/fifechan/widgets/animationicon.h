@@ -1,0 +1,149 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+#ifndef FIFE_GUI_WIDGETS_ANIMATIONICON_H
+#define FIFE_GUI_WIDGETS_ANIMATIONICON_H
+
+// Platform specific includes
+#include "platform.h"
+
+// Standard C++ library includes
+#include <cstdint>
+// 3rd party library includes
+#include <fifechan/image.hpp>
+#include <fifechan/platform.hpp>
+
+#include <fifechan.hpp>
+
+// FIFE includes
+#include "util/base/fife_stdint.h"
+#include "video/animation.h"
+
+namespace FIFE
+{
+    class TimeManager;
+}
+
+namespace fcn
+{
+
+    /**
+     * Implements an icon capable of displaying an animation.
+     */
+    class FIFE_API AnimationIcon : public Icon
+    {
+        public:
+            /**
+             * Default constructor.
+             */
+            AnimationIcon();
+
+            /**
+             * Constructor.
+             *
+             * @param animation The animation to display.
+             */
+            explicit AnimationIcon(FIFE::AnimationPtr const & animation);
+
+            /**
+             * Destructor.
+             */
+            virtual ~AnimationIcon();
+
+            AnimationIcon(AnimationIcon const &)            = delete;
+            AnimationIcon& operator=(AnimationIcon const &) = delete;
+
+            /**
+             * Sets the animation to display.
+             *
+             * @param animation The animation to display.
+             */
+            void setAnimation(FIFE::AnimationPtr const & animation);
+
+            /**
+             * Gets the current animation.
+             *
+             * @return The current animation.
+             */
+            FIFE::AnimationPtr getAnimation() const;
+
+            /**
+             * Sets repeating of the animation.
+             *
+             * @param repeat True if the animation repeating is enabled, otherwise false.
+             */
+            void setRepeating(bool repeat);
+
+            /**
+             * Gets repeating of the animation.
+             *
+             * @return True if the animation repeating is enabled, otherwise false.
+             */
+            bool isRepeating() const;
+
+            /**
+             * Starts the animation from beginning.
+             */
+            void play();
+
+            /**
+             * Gets if the animation is playing.
+             *
+             * @return True if the animation is playing, otherwise false.
+             */
+            bool isPlaying() const;
+
+            /**
+             * Stops the animation at the current frame.
+             */
+            void pause();
+
+            /**
+             * Stops the animation and sets the current frame to the first frame.
+             */
+            void stop();
+
+            // Inherited from Widget
+
+            virtual void logic();
+
+        protected:
+            /**
+             * Holds pointer to Fifes TimeManager.
+             */
+            FIFE::TimeManager* mTimemanager;
+
+            /**
+             * The animation to display.
+             */
+            FIFE::AnimationPtr mAnimation;
+
+            /**
+             * Currently used image. It's the current frame from the animation
+             * encapsulated in a GuiImage.
+             */
+            Image const * mCurrentImage;
+
+            /**
+             * The time as the animation was started.
+             */
+            uint64_t mAnimtime;
+
+            /**
+             * The last used frame index from the animation.
+             */
+            int32_t mFrameIndex;
+
+            /**
+             * True if the animation should be repeating, otherwise false.
+             */
+            bool mRepeat;
+
+            /**
+             * True if the animation was started, otherwise false.
+             */
+            bool mPlay;
+    };
+} // namespace fcn
+
+#endif

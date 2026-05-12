@@ -9,9 +9,9 @@ The engine is extendable and enables you to add any feature you can imagine to y
 [Website](http://fifengine.net/) | [Changelog](https://github.com/fifengine/fifengine/blob/main/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Docs](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](https://fifengine.github.io/fifengine/api/) | [Python API](https://fifengine.github.io/fifengine/api/python)
 
 
-| Continuous Integration | Windows | Linux  |   Mac   | Python Wheels |
-|:----------------------:|:-----:|:--------:|:-------:|:-------------:|
-| **Build Status** | [![Build on Windows (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml) | [![Build on Linux (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml) | 👷🏼 | [![Build Fifengine (Python Wheels)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml)
+| Continuous Integration | Windows | Linux  |   Mac   | Python Wheels | Coverage |
+|:----------------------:|:-----:|:--------:|:-------:|:-------------:|:--------:|
+| **Build Status** | [![Build on Windows (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-windows.yml) | [![Build on Linux (C++ Library)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-on-linux.yml) | 👷🏼 | [![Build Fifengine (Python Wheels)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml/badge.svg?branch=main)](https://github.com/fifengine/fifengine/actions/workflows/build-wheels.yml) | [![Codecov test coverage](https://codecov.io/github/fifengine/fifengine/branch/main/badge.svg)](https://app.codecov.io/github/fifengine/fifengine/tree/main) |
 
 
 

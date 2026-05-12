@@ -15,13 +15,12 @@
 name: Build on Linux (C++ Library)
 
 on:
-  push:
-    #branches: [ master, main, resurge ]
-  pull_request:
-    #branches: [ master, main ]
-  workflow_dispatch:
+  - push
+  - pull_request
+  # You can manually run this workflow.
+  - workflow_dispatch
 
-# Improve CI concurrency by automatically cancelling outdated jobs
+# improve CI concurrency by automatically cancelling outdated jobs
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
@@ -67,25 +66,59 @@ jobs:
           }
 
     env:
-      # VCPKG_ROOT is used by SetupVcpkg to automatically load the toolchain.
-      VCPKG_ROOT: /usr/local/share/vcpkg
+      # VCPKG Settings
       VCPKG_DISABLE_METRICS: 1
+      VCPKG_FORCE_SYSTEM_BINARIES: 1
+      VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching,registries
+      VCPKG_ROOT: /usr/local/share/vcpkg
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+      # Paths
       SOURCE_DIR:  ${{ github.workspace }}
       BUILD_DIR:   ${{ github.workspace }}/build
       INSTALL_DIR: ${{ github.workspace }}/install
+      # Path to non-vcpkg dependencies
       DEPS_DIR:    ${{ github.workspace }}/out/fife-dependencies
 
     steps:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
-      - name: 🔽 Update Build Environment
+      - name: 🔽 Install Build Tools
         run: |
-          sudo apt update -qq
-          sudo apt install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
-          echo -e "libxcrypt depends on ltdl development files from the system package manager:"
-          sudo apt install -y libltdl-dev
+          sudo apt-get update
+          sudo apt-get install -y \
+            software-properties-common \
+            ninja-build \
+            cmake \
+            jq \
+            wget \
+            git \
+            pkg-config
+
+      - name: Get latest CMake and Ninja
+        uses: lukka/get-cmake@latest # https://github.com/lukka/get-cmake
+        with:
+          cmakeVersion: latest
+          ninjaVersion: latest
+
+      - name: ℹ Show Tool Versions
+        run: |
+          cmake --version
+          ninja --version
+
+      - name: 🔽 Install required system packages (for vcpkg packages, e.g. SDL3)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf autoconf-archive automake libtool \
+            build-essential git make \
+            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -122,32 +155,34 @@ jobs:
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
             cache-deps-${{ matrix.config.preset }}
 
-      - name: 🔽 1.1 Setup VCPKG
+      - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
-          set -euo pipefail
-          echo "[VCPKG] Updating registry..."
           cd ${{ env.VCPKG_ROOT }}
-          git reset --hard
-          git pull --quiet
-          echo "[VCPKG] Bootstrapping..."
-          ./bootstrap-vcpkg.sh
-          echo "[VCPKG] Integrating with the system..."
-          vcpkg integrate install
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+          LATEST_VCPKG_TAG="$(git tag --sort=-v:refname | head -n 1)"
+          git checkout "$LATEST_VCPKG_TAG"
 
-      - name: 📦 1.2 Install VCPKG dependencies
+      - name: 🛠️ 1.2 Setup VCPKG
         run: |
-          set -euo pipefail
+          "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+          "${VCPKG_ROOT}/vcpkg" integrate install
+
+      - name: 📦 1.3 Install VCPKG dependencies
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
           "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
       - name: ❔ CHECK important folders, to see if everything is present (after vcpkg install)
         run: |
-          set -euo pipefail
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/include" || true
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        #if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake \
             -S dependencies \
@@ -157,11 +192,11 @@ jobs:
             -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
-            -DFIFECHAN_BUILD_FROM_SOURCE=ON
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
+            -DFIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE=ON
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        #if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
@@ -183,7 +218,29 @@ jobs:
         run: cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
+        run: |
+          cmake --install ${{ env.BUILD_DIR }} \
+                --prefix ${{ env.INSTALL_DIR }} \
+                --verbose
+
+      - name: 🖥️ Setup Headless Display
+        run: |
+          {
+            echo "SDL_VIDEODRIVER=x11"
+            echo "SDL_AUDIODRIVER=dummy"
+            echo "LIBGL_ALWAYS_SOFTWARE=1"
+            echo "GALLIUM_DRIVER=llvmpipe"
+            echo "MESA_GL_VERSION_OVERRIDE=3.3"
+          } >> "$GITHUB_ENV"
+
+      - name: 🧪 CTest ➔ Run Tests
+        run: |
+          xvfb-run \
+            --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
+          ctest \
+            --test-dir "${{ env.BUILD_DIR }}" \
+            --output-on-failure
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
@@ -218,30 +275,46 @@ jobs:
       matrix:
         config:
           - {
-              job_name: "Linux | Clang20 | Release",
-              image_version: "bookworm-latest",
-              preset: "clang20-x64-linux-rel",
-              triplet: x64-linux,
-              artifact-name: "libfife-clang20-x64-linux"
-            }
-          - {
               job_name: "Linux | Clang22 | Release",
-              image_version: "trixie-latest",
+              image_version: "trixie-with-vulkansdk-20260503",
               preset: "clang22-x64-linux-rel",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-linux"
             }
+          - {
+              job_name: "Linux | Clang22 | Debug",
+              image_version: "trixie-with-vulkansdk-20260503",
+              preset: "clang22-x64-linux-dbg",
+              triplet: x64-linux,
+              artifact-name: "libfife-clang22-x64-dbg"
+            }
+          - {
+              job_name: "Linux | Clang22 | Coverage",
+              image_version: "trixie-with-vulkansdk-20260503",
+              preset: "clang22-x64-linux-dbg-cov",
+              triplet: x64-linux,
+              artifact-name: "libfife-clang22-x64-cov"
+            }
+
+    permissions:
+      # Required for codecov upload with "use_oidc: true"
+      # See https://github.com/codecov/codecov-action?tab=readme-ov-file#using-oidc
+      id-token: write
 
     env:
+      # VCPKG Settings
       VCPKG_DISABLE_METRICS: 1
       VCPKG_FORCE_SYSTEM_BINARIES: 1
       VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching,registries
-      SOURCE_DIR: ${{ github.workspace }}
-      BUILD_DIR:   ${{ github.workspace }}/build
-      INSTALL_DIR: ${{ github.workspace }}/install
+      # vcpkg is pre-installed at /opt/vcpkg in the devcontainer images.
       VCPKG_ROOT: /opt/vcpkg
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
-      DEPS_DIR: ${{ github.workspace }}/out/fife-dependencies
+      # Paths
+      SOURCE_DIR:  ${{ github.workspace }}
+      BUILD_DIR:   ${{ github.workspace }}/build
+      INSTALL_DIR: ${{ github.workspace }}/install
+      # Path to non-vcpkg dependencies
+      DEPS_DIR:    ${{ github.workspace }}/out/fife-dependencies
 
     defaults:
       run:
@@ -251,23 +324,26 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
-      # - libxcrypt requires: libltdl-dev
-      # - python3-dev is required for the python bindings
-      # - also requires: autoconf autoconf-archive automake libtool
-      - name: 🔽 Install System Dependencies
+      - name: ℹ Show Tool Versions
         run: |
-          apt-get update -qq
-          apt-get install -y \
-            libglu1-mesa-dev \
-            libfreetype6-dev \
-            libxmu-dev \
-            libxi-dev \
-            libgl-dev \
-            libltdl-dev \
-            python3 \
-            python3-dev \
-            autoconf autoconf-archive automake libtool
+          cmake --version
+          ninja --version
 
+      - name: 🔽 Install required system packages (for vcpkg packages, e.g. SDL3)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf autoconf-archive automake libtool \
+            build-essential git make \
+            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
+
+      # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
         run: |
           echo "BUILD_DIR=out/build/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
@@ -298,45 +374,34 @@ jobs:
             cache-deps--container-${{ matrix.config.preset }}-${{ github.ref }}
             cache-deps--container-${{ matrix.config.preset }}
 
-      - name: 🔽 Update VCPKG (to latest tag of package registry)
+      - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
-          echo "[VCPKG] Updating registry..."
-          cd "${VCPKG_ROOT}"
-          git fetch --tags --force
+          cd ${{ env.VCPKG_ROOT }}
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+          LATEST_VCPKG_TAG="$(git tag --sort=-v:refname | head -n 1)"
+          git checkout "$LATEST_VCPKG_TAG"
 
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git stash push --include-untracked --message "ci-temp-before-tag-checkout"
-          fi
-
-          LATEST_VCPKG_TAG="$(git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | head -n 1)"
-          if [[ -z "${LATEST_VCPKG_TAG}" ]]; then
-            echo "Failed to resolve latest vcpkg tag" >&2
-            exit 1
-          fi
-
-          git checkout "${LATEST_VCPKG_TAG}"
-
-      - name: 🔽 1.1 Setup VCPKG
+      - name: 🛠️ 1.2 Setup VCPKG
         run: |
-          echo "[VCPKG] Bootstrapping..."
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
-          echo "[VCPKG] Integrating with the system..."
           "${VCPKG_ROOT}/vcpkg" integrate install
 
-      - name: 📦 1.2 Install VCPKG dependencies
+      - name: 📦 1.3 Install VCPKG dependencies
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
-          set -euo pipefail
           "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
       - name: ❔ CHECK important folders, to see if everything is present (after vcpkg install)
         run: |
-          set -euo pipefail
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/include" || true
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        #if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake \
             -S dependencies \
@@ -346,10 +411,11 @@ jobs:
             -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
+            -DFIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE=ON
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        #if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
@@ -366,16 +432,38 @@ jobs:
             -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/x64-linux" \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}  \
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🙏 3.2 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 3.3 Install fifengine
-        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }} --verbose
+        run: |
+          cmake --install ${{ env.BUILD_DIR }} \
+                --prefix ${{ env.INSTALL_DIR }} \
+                --verbose
+
+      - name: ⚙️ Prepare Coverage Environment
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          mkdir -p "${BUILD_DIR}/coverage"
+          echo "LLVM_PROFILE_FILE=${GITHUB_WORKSPACE}/${BUILD_DIR}/coverage/%p.profraw" >> "$GITHUB_ENV"
+
+      - name: 🖥️ Setup Headless Display
+        run: |
+          {
+            echo "SDL_VIDEODRIVER=x11"
+            echo "SDL_AUDIODRIVER=dummy"
+            echo "LIBGL_ALWAYS_SOFTWARE=1"
+            echo "GALLIUM_DRIVER=llvmpipe"
+            echo "MESA_GL_VERSION_OVERRIDE=3.3"
+          } >> "$GITHUB_ENV"
 
       - name: 🧪 CTest ➔ Run Tests
         run: |
+          xvfb-run \
+            --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
           ctest \
             --test-dir "${BUILD_DIR}" \
             --output-on-failure
@@ -384,9 +472,87 @@ jobs:
         run: |
           find "${{ env.INSTALL_DIR }}" -type f | sort
 
+      - name: 🔍 clang-tidy
+        if: matrix.config.preset == 'clang22-x64-linux-dbg-cov'
+        run: |
+          run-clang-tidy -p "${{ env.BUILD_DIR }}" \
+            -quiet \
+            2>&1 | tee clang-tidy-err.log \
+            || true
+
+      - name: 🔼 Upload Build Artifact (clang-tidy-err.log)
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        if: matrix.config.preset == 'clang22-x64-linux-dbg-cov'
+        with:
+          name: clang-tidy
+          path: clang-tidy-err.log
+
       - name: 🔼 Upload Build Artifact
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
-        if: always()
+        if: ${{ always() && matrix.config.preset != 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ env.INSTALL_DIR }}/**/*
+
+      # ------------------------------------------------------------------------
+      # Code Coverage Steps (only for "clang22-x64-linux-dbg-cov" preset)
+      # ------------------------------------------------------------------------
+
+      - name: 🧾 Merge Coverage Data
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          set -euo pipefail
+          echo "Merging .profraw files from ${{ env.BUILD_DIR }}/coverage"
+          shopt -s nullglob
+          profraw_files=("${{ env.BUILD_DIR }}/coverage"/*.profraw)
+          if [ ${#profraw_files[@]} -eq 0 ]; then
+            echo "::warning::No .profraw files found. Did tests run with LLVM_PROFILE_FILE set?"
+            exit 0
+          fi
+          llvm-profdata merge -sparse "${profraw_files[@]}" -o "${{ env.BUILD_DIR }}/coverage/coverage.profdata"
+
+      - name: 📊 Generate Coverage Reports (lcov + HTML)
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        env:
+          COV_EXCLUDE_REGEX: '(vcpkg_installed|build|tests)'
+        run: |
+          set -euo pipefail
+
+          # Find all instrumented test binaries (ending with "_test" or "_tests") in the build directory.
+          mapfile -t BINARIES < <(find "${{ env.BUILD_DIR }}" -maxdepth 3 -type f -executable \( -name "*_test" -o -name "*_tests" \) -print || true)
+          if [ ${#BINARIES[@]} -eq 0 ]; then
+            echo "::warning::No instrumented binaries found. Skipping llvm-cov."
+            exit 0
+          fi
+
+          # Export LCOV report
+          llvm-cov export -format=lcov -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+            "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}" \
+            > "${{ env.BUILD_DIR }}/coverage/coverage.lcov"
+
+          # Generate HTML report
+          #llvm-cov show -format=html -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+          # "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}" \
+          # -o "${{ env.BUILD_DIR }}/coverage/html" \
+
+          # Print summary to CI logs for visibility
+          llvm-cov report -instr-profile="${{ env.BUILD_DIR }}/coverage/coverage.profdata" \
+            "${BINARIES[@]}" --ignore-filename-regex="${COV_EXCLUDE_REGEX}"
+
+      - name: 🔼 Upload Coverage Artifact
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        with:
+          name: Coverage-Report-${{ matrix.config.preset }}
+          path: ${{ env.BUILD_DIR }}/coverage/**
+
+      - name: 📦 Upload Coverage to Codecov
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
+        uses: codecov/codecov-action@v6 # https://github.com/codecov/codecov-action
+        with:
+          files: ${{ env.BUILD_DIR }}/coverage/coverage.lcov
+          disable_search: true
+          name: ${{ matrix.config.preset }}
+          flags: ${{ matrix.config.preset }}
+          use_oidc: true
+          fail_ci_if_error: true

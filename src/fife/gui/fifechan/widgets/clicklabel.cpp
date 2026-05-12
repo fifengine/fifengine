@@ -1,0 +1,294 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "clicklabel.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <cassert>
+#include <string>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "gui/fifechan/base/gui_font.h"
+#include "util/base/exception.h"
+#include "video/image.h"
+
+namespace fcn
+{
+    ClickLabel::ClickLabel() :
+        mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
+    {
+        setAlignment(Graphics::Alignment::Left);
+        setOpaque(true);
+        setBorderSize(0);
+        mHasMouse = false, mKeyPressed = false, mMousePressed = false;
+
+        addMouseListener(this);
+        addKeyListener(this);
+        addFocusListener(this);
+        addWidgetListener(this);
+    }
+
+    ClickLabel::ClickLabel(std::string const & caption) :
+        mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
+    {
+        setCaption(caption);
+        setAlignment(Graphics::Alignment::Left);
+        setOpaque(true);
+        setBorderSize(0);
+        mHasMouse = false, mKeyPressed = false, mMousePressed = false;
+
+        adjustSize();
+        addMouseListener(this);
+        addKeyListener(this);
+        addFocusListener(this);
+        addWidgetListener(this);
+    }
+
+    ClickLabel::~ClickLabel() = default;
+
+    void ClickLabel::setCaption(std::string const & caption)
+    {
+        mCaption = caption;
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
+        wrapText();
+    }
+
+    std::string const & ClickLabel::getCaption() const
+    {
+        return mCaption;
+    }
+
+    void ClickLabel::setAlignment(Graphics::Alignment alignment)
+    {
+        mAlignment = alignment;
+    }
+
+    Graphics::Alignment ClickLabel::getAlignment() const
+    {
+        return mAlignment;
+    }
+
+    void ClickLabel::setOpaque(bool opaque)
+    {
+        mOpaque = opaque;
+    }
+
+    bool ClickLabel::isOpaque() const
+    {
+        return mOpaque;
+    }
+
+    void ClickLabel::setTextWrapping(bool textWrapping)
+    {
+        bool const wrappingEnabled = !mTextWrapping && textWrapping;
+        mTextWrapping              = textWrapping;
+        if (wrappingEnabled) {
+            wrapText();
+        }
+    }
+
+    bool ClickLabel::isTextWrapping() const
+    {
+        return mTextWrapping;
+    }
+
+    void ClickLabel::wrapText()
+    {
+        if (isTextWrapping() && (mGuiFont != nullptr)) {
+            int32_t const w = getWidth() - static_cast<int32_t>(2 * getBorderSize()) -
+                              static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
+            mWrappedText    = mGuiFont->splitTextToWidth(mCaption, w);
+        }
+    }
+
+    void ClickLabel::setDimension(Rectangle const & dimension)
+    {
+        int32_t const w = getWidth();
+        Widget::setDimension(dimension);
+        if (getWidth() != w && isTextWrapping()) {
+            wrapText();
+        }
+    }
+
+    void ClickLabel::resizeToContent([[maybe_unused]] bool recursiv)
+    {
+        adjustSize();
+    }
+
+    void ClickLabel::adjustSize()
+    {
+        if (mGuiFont != nullptr) {
+            int32_t w = getWidth();
+            int32_t h = 0;
+            if (isTextWrapping()) {
+                if (getParent() != nullptr) {
+                    w = getParent()->getChildrenArea().width;
+                }
+                int32_t textW = w - static_cast<int32_t>(2 * getBorderSize()) - static_cast<int32_t>(getPaddingLeft()) -
+                                static_cast<int32_t>(getPaddingRight());
+                int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
+                if (textW < 1) {
+                    w     = maxW;
+                    textW = (w - static_cast<int32_t>(2 * getBorderSize())) - static_cast<int32_t>(getPaddingLeft()) -
+                            static_cast<int32_t>(getPaddingRight());
+                } else if (w > maxW) {
+                    w     = std::min(w, maxW);
+                    textW = (w - static_cast<int32_t>(2 * getBorderSize())) - static_cast<int32_t>(getPaddingLeft()) -
+                            static_cast<int32_t>(getPaddingRight());
+                }
+                mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
+            } else {
+                FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
+                w                  = static_cast<int32_t>(
+                    image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight());
+            }
+            std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
+            FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
+            h = static_cast<int32_t>((2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + image->getHeight());
+            setSize(w, h);
+        }
+    }
+
+    void ClickLabel::draw(Graphics* graphics)
+    {
+        bool const active = isFocused();
+        Rectangle const offsetRec(
+            static_cast<int>(getBorderSize()),
+            static_cast<int>(getBorderSize()),
+            static_cast<int>(2 * getBorderSize()),
+            static_cast<int>(2 * getBorderSize()));
+
+        if (isOpaque()) {
+            Color faceColor          = getBackgroundColor();
+            auto const selectionMode = static_cast<uint8_t>(getSelectionMode());
+            if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Background)) != 0)) {
+                faceColor = getSelectionColor();
+            }
+            graphics->setColor(faceColor);
+            graphics->fillRectangle(
+                offsetRec.x, offsetRec.y, getWidth() - offsetRec.width, getHeight() - offsetRec.height);
+        }
+
+        if (getBorderSize() > 0) {
+            auto const selectionMode = static_cast<uint8_t>(getSelectionMode());
+            if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Border)) != 0)) {
+                drawSelectionFrame(graphics);
+            } else {
+                drawBorder(graphics);
+            }
+        }
+
+        if (mGuiFont != nullptr) {
+            graphics->setColor(getForegroundColor());
+            std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
+            FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
+
+            int32_t textX = 0;
+            int32_t const textY =
+                offsetRec.y + static_cast<int32_t>(getPaddingTop()) +
+                ((getHeight() - offsetRec.height - static_cast<int32_t>(getPaddingTop()) -
+                  static_cast<int32_t>(getPaddingBottom()) - static_cast<int32_t>(image->getHeight())) /
+                 2);
+
+            switch (getAlignment()) {
+            case Graphics::Alignment::Left:
+                textX = offsetRec.x + static_cast<int32_t>(getPaddingLeft());
+                break;
+            case Graphics::Alignment::Center:
+                textX = offsetRec.x + static_cast<int32_t>(getPaddingLeft()) +
+                        ((getWidth() - offsetRec.width - static_cast<int32_t>(getPaddingLeft()) -
+                          static_cast<int32_t>(getPaddingRight()) - static_cast<int32_t>(image->getWidth())) /
+                         2);
+                break;
+            case Graphics::Alignment::Right:
+                textX = getWidth() - offsetRec.x - static_cast<int32_t>(getPaddingRight()) -
+                        static_cast<int32_t>(image->getWidth());
+                break;
+            default:
+                fcn::throwException("Unknown alignment.");
+            }
+
+            mGuiFont->drawMultiLineString(graphics, text, textX, textY);
+        }
+    }
+
+    void ClickLabel::fontChanged()
+    {
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
+        wrapText();
+    }
+
+    void ClickLabel::mousePressed(MouseEvent& mouseEvent)
+    {
+        if (mouseEvent.getButton() == MouseEvent::Button::Left) {
+            mMousePressed = true;
+            mouseEvent.consume();
+        }
+    }
+
+    void ClickLabel::mouseExited([[maybe_unused]] MouseEvent& mouseEvent)
+    {
+        mHasMouse = false;
+    }
+
+    void ClickLabel::mouseEntered([[maybe_unused]] MouseEvent& mouseEvent)
+    {
+        mHasMouse = true;
+    }
+
+    void ClickLabel::mouseReleased(MouseEvent& mouseEvent)
+    {
+        if (mouseEvent.getButton() == MouseEvent::Button::Left && mMousePressed && mHasMouse) {
+            mMousePressed = false;
+            distributeActionEvent();
+            mouseEvent.consume();
+        } else if (mouseEvent.getButton() == MouseEvent::Button::Left) {
+            mMousePressed = false;
+            mouseEvent.consume();
+        }
+    }
+
+    void ClickLabel::mouseDragged(MouseEvent& mouseEvent)
+    {
+        mouseEvent.consume();
+    }
+
+    void ClickLabel::keyPressed(KeyEvent& keyEvent)
+    {
+        Key const key = keyEvent.getKey();
+
+        if (key.getValue() == Key::Enter || key.getValue() == Key::Space) {
+            mKeyPressed = true;
+            keyEvent.consume();
+        }
+    }
+
+    void ClickLabel::keyReleased(KeyEvent& keyEvent)
+    {
+        Key const key = keyEvent.getKey();
+
+        if ((key.getValue() == Key::Enter || key.getValue() == Key::Space) && mKeyPressed) {
+            mKeyPressed = false;
+            distributeActionEvent();
+            keyEvent.consume();
+        }
+    }
+
+    void ClickLabel::focusLost([[maybe_unused]] Event const & event)
+    {
+        mMousePressed = false;
+        mKeyPressed   = false;
+        mHasMouse     = false;
+    }
+
+    void ClickLabel::ancestorHidden([[maybe_unused]] Event const & event)
+    {
+        mMousePressed = false;
+        mKeyPressed   = false;
+        mHasMouse     = false;
+    }
+} // namespace fcn

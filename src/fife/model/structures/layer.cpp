@@ -1,0 +1,706 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "layer.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <cassert>
+#include <limits>
+#include <list>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "cell.h"
+#include "cellcache.h"
+#include "instance.h"
+#include "instancetree.h"
+#include "map.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "trigger.h"
+#include "util/log/logger.h"
+#include "util/structures/purge.h"
+
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_STRUCTURES);
+
+    Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
+        m_id(std::move(identifier)),
+        m_map(map),
+        m_instanceTree(new InstanceTree()),
+        m_grid(grid),
+        m_cellCache(nullptr),
+        m_pathingStrategy(CELL_EDGES_ONLY),
+        m_sortingStrategy(SORTING_CAMERA),
+        m_transparency(0),
+        m_instancesVisibility(true),
+        m_walkable(false),
+        m_interact(false),
+
+        m_changed(false),
+        m_static(false)
+    {
+    }
+
+    Layer::~Layer()
+    {
+        // if this is a walkable layer
+        destroyCellCache();
+        // if this is a interact layer
+        if (m_interact) {
+            Layer* temp = m_map->getLayer(m_walkableId);
+            if (temp != nullptr) {
+                temp->removeInteractLayer(this);
+            }
+        }
+        purge(m_instances);
+        delete m_instanceTree;
+    }
+
+    std::string const & Layer::getId() const
+    {
+        return m_id;
+    }
+
+    void Layer::setId(std::string const & id)
+    {
+        m_id = id;
+    }
+
+    Map* Layer::getMap() const
+    {
+        return m_map;
+    }
+
+    CellGrid* Layer::getCellGrid() const
+    {
+        return m_grid;
+    }
+
+    void Layer::setCellGrid(CellGrid* grid)
+    {
+        m_grid = grid;
+    }
+
+    InstanceTree* Layer::getInstanceTree() const
+    {
+        return m_instanceTree;
+    }
+
+    bool Layer::hasInstances() const
+    {
+        return !m_instances.empty();
+    }
+
+    Instance* Layer::createInstance(Object* object, ModelCoordinate const & p, std::string const & id)
+    {
+        ExactModelCoordinate const emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
+        return createInstance(object, emc, id);
+    }
+
+    Instance* Layer::createInstance(Object* object, ExactModelCoordinate const & p, std::string const & id)
+    {
+        Location location(this);
+        location.setExactLayerCoordinates(p);
+
+        auto* instance = new Instance(object, location, id);
+        if (instance->isActive()) {
+            setInstanceActivityStatus(instance, instance->isActive());
+        }
+        m_instances.push_back(instance);
+        m_instanceTree->addInstance(instance);
+
+        auto i = m_changeListeners.begin();
+        while (i != m_changeListeners.end()) {
+            (*i)->onInstanceCreate(this, instance);
+            ++i;
+        }
+        m_changed = true;
+        return instance;
+    }
+
+    bool Layer::addInstance(Instance* instance, ExactModelCoordinate const & p)
+    {
+        if (instance == nullptr) {
+            FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
+            return false;
+        }
+
+        Location& location = instance->getLocationRef();
+        location.setLayer(this);
+        location.setExactLayerCoordinates(p);
+
+        m_instances.push_back(instance);
+        m_instanceTree->addInstance(instance);
+        if (instance->isActive()) {
+            setInstanceActivityStatus(instance, instance->isActive());
+        }
+
+        auto i = m_changeListeners.begin();
+        while (i != m_changeListeners.end()) {
+            (*i)->onInstanceCreate(this, instance);
+            ++i;
+        }
+        m_changed = true;
+        return true;
+    }
+
+    void Layer::removeInstance(Instance* instance)
+    {
+        // If the instance is changed and removed on the same pump,
+        // it can happen that the instance can not cleanly be removed,
+        // to avoid this we have to update the instance first and send
+        // the result to the LayerChangeListeners.
+        if (instance->isActive()) {
+            if (instance->update() != ICHANGE_NO_CHANGES) {
+                std::vector<Instance*> updateInstances;
+                updateInstances.push_back(instance);
+                auto i = m_changeListeners.begin();
+                while (i != m_changeListeners.end()) {
+                    (*i)->onLayerChanged(this, updateInstances);
+                    ++i;
+                }
+            }
+        }
+
+        auto i = m_changeListeners.begin();
+        while (i != m_changeListeners.end()) {
+            (*i)->onInstanceDelete(this, instance);
+            ++i;
+        }
+        setInstanceActivityStatus(instance, false);
+        auto it = m_instances.begin();
+        for (; it != m_instances.end(); ++it) {
+            if (*it == instance) {
+                m_instanceTree->removeInstance(*it);
+                m_instances.erase(it);
+                break;
+            }
+        }
+        m_changed = true;
+    }
+
+    void Layer::deleteInstance(Instance* instance)
+    {
+        // If the instance is changed and deleted on the same pump,
+        // it can happen that the instance can not cleanly be removed,
+        // to avoid this we have to update the instance first and send
+        // the result to the LayerChangeListeners.
+        if (instance->isActive()) {
+            if (instance->update() != ICHANGE_NO_CHANGES) {
+                std::vector<Instance*> updateInstances;
+                updateInstances.push_back(instance);
+                auto i = m_changeListeners.begin();
+                while (i != m_changeListeners.end()) {
+                    (*i)->onLayerChanged(this, updateInstances);
+                    ++i;
+                }
+            }
+        }
+
+        auto i = m_changeListeners.begin();
+        while (i != m_changeListeners.end()) {
+            (*i)->onInstanceDelete(this, instance);
+            ++i;
+        }
+        setInstanceActivityStatus(instance, false);
+        auto it = m_instances.begin();
+        for (; it != m_instances.end(); ++it) {
+            if (*it == instance) {
+                m_instanceTree->removeInstance(*it);
+                delete *it;
+                m_instances.erase(it);
+                break;
+            }
+        }
+
+        m_changed = true;
+    }
+
+    std::vector<Instance*> const & Layer::getInstances() const
+    {
+        return m_instances;
+    }
+
+    void Layer::setInstanceActivityStatus(Instance* instance, bool active)
+    {
+        if (active) {
+            m_activeInstances.insert(instance);
+        } else {
+            m_activeInstances.erase(instance);
+        }
+    }
+
+    Instance* Layer::getInstance(std::string const & id)
+    {
+        auto it = m_instances.begin();
+        for (; it != m_instances.end(); ++it) {
+            if ((*it)->getId() == id) {
+                return *it;
+            }
+        }
+
+        return nullptr;
+    }
+
+    std::vector<Instance*> Layer::getInstances(std::string const & id)
+    {
+        std::vector<Instance*> matching_instances;
+        auto it = m_instances.begin();
+        for (; it != m_instances.end(); ++it) {
+            if ((*it)->getId() == id) {
+                matching_instances.push_back(*it);
+            }
+        }
+        return matching_instances;
+    }
+
+    std::vector<Instance*> Layer::getInstancesAt(Location& loc, bool use_exactcoordinates)
+    {
+        std::vector<Instance*> matching_instances;
+        auto it = m_instances.begin();
+
+        for (; it != m_instances.end(); ++it) {
+            if (use_exactcoordinates) {
+                if ((*it)->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+                    matching_instances.push_back(*it);
+                }
+            } else {
+                if ((*it)->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+                    matching_instances.push_back(*it);
+                }
+            }
+        }
+
+        return matching_instances;
+    }
+
+    std::list<Instance*> Layer::getInstancesIn(Rect& rec)
+    {
+        std::list<Instance*> matching_instances;
+        ModelCoordinate const mc(rec.x, rec.y);
+        m_instanceTree->findInstances(mc, rec.w, rec.h, matching_instances);
+
+        return matching_instances;
+    }
+
+    std::vector<Instance*> Layer::getInstancesInLine(ModelCoordinate const & pt1, ModelCoordinate const & pt2)
+    {
+        std::vector<Instance*> instances;
+        std::list<Instance*> matchingInstances;
+        std::vector<ModelCoordinate> const coords = m_grid->getCoordinatesInLine(pt1, pt2);
+        for (auto const & coord : coords) {
+            m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
+            if (!matchingInstances.empty()) {
+                instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+            }
+        }
+        return instances;
+    }
+
+    std::vector<Instance*> Layer::getInstancesInCircle(ModelCoordinate const & center, uint16_t radius)
+    {
+        std::vector<Instance*> instances;
+        std::list<Instance*> matchingInstances;
+        // radius power 2
+        int32_t const radiusp2 = static_cast<int32_t>(radius + 1) * static_cast<int32_t>(radius);
+
+        ModelCoordinate current(center.x - radius, center.y - radius);
+        ModelCoordinate const target(center.x + radius, center.y + radius);
+        for (; current.y < center.y; current.y++) {
+            current.x = center.x - radius;
+            for (; current.x < center.x; current.x++) {
+                int32_t const dx       = center.x - current.x;
+                int32_t const dy       = center.y - current.y;
+                int32_t const distance = (dx * dx) + (dy * dy);
+                if (distance <= radiusp2) {
+                    m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+                    if (!matchingInstances.empty()) {
+                        instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+                    }
+
+                    current.x = center.x + dx;
+                    m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+                    if (!matchingInstances.empty()) {
+                        instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+                    }
+
+                    current.y = center.y + dy;
+                    m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+                    if (!matchingInstances.empty()) {
+                        instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+                    }
+
+                    current.x = center.x - dx;
+                    m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+                    if (!matchingInstances.empty()) {
+                        instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+                    }
+
+                    current.y = center.y - dy;
+                }
+            }
+        }
+        current.x = center.x;
+        current.y = center.y - radius;
+        for (; current.y <= target.y; current.y++) {
+            m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+            if (!matchingInstances.empty()) {
+                instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+            }
+        }
+
+        current.y = center.y;
+        current.x = center.x - radius;
+        for (; current.x <= target.x; current.x++) {
+            m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+            if (!matchingInstances.empty()) {
+                instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+            }
+        }
+        return instances;
+    }
+
+    std::vector<Instance*> Layer::getInstancesInCircleSegment(
+        ModelCoordinate const & center, uint16_t radius, int32_t sangle, int32_t eangle)
+    {
+        std::vector<Instance*> instances;
+        ExactModelCoordinate const exactCenter(center.x, center.y);
+        std::vector<Instance*> tmpInstances = getInstancesInCircle(center, radius);
+        int32_t const s                     = (sangle + 360) % 360;
+        int32_t const e                     = (eangle + 360) % 360;
+        bool const greater                  = s > e;
+        for (auto& tmpInstance : tmpInstances) {
+            int32_t const angle =
+                getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
+            if (greater) {
+                if (angle >= s || angle <= e) {
+                    instances.push_back(tmpInstance);
+                }
+            } else {
+                if (angle >= s && angle <= e) {
+                    instances.push_back(tmpInstance);
+                }
+            }
+        }
+        return instances;
+    }
+
+    void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, Layer const * layer) const
+    {
+        if (layer == nullptr) {
+            layer = this;
+        }
+
+        if (m_instances.empty()) {
+            min = ModelCoordinate();
+            max = min;
+        } else {
+            min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
+            max = min;
+
+            for (auto* m_instance : m_instances) {
+                ModelCoordinate const coord = m_instance->getLocationRef().getLayerCoordinates(layer);
+                min.x                       = std::min(min.x, coord.x);
+                max.x                       = std::max(max.x, coord.x);
+                min.y                       = std::min(min.y, coord.y);
+                max.y                       = std::max(max.y, coord.y);
+            }
+        }
+    }
+
+    float Layer::getZOffset() const
+    {
+        static float const globalmax   = 100.0;
+        static float const globalrange = 200.0;
+        uint32_t const mapLayerCount   = m_map->getLayerCount();
+        assert(mapLayerCount > 0);
+        assert(mapLayerCount <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+        int32_t const numlayers = static_cast<int32_t>(mapLayerCount);
+        int32_t thislayer       = 1; // we don't need 0 indexed
+
+        std::list<Layer*> const & layers = m_map->getLayers();
+        auto iter                        = layers.begin();
+        for (; iter != layers.end(); ++iter, ++thislayer) {
+            if (*iter == this) {
+                break;
+            }
+        }
+
+        float const layerSpan   = globalrange / static_cast<float>(numlayers);
+        float const layerOffset = static_cast<float>(numlayers - (thislayer - 1));
+        float const offset      = globalmax - (layerOffset * layerSpan);
+        return offset;
+    }
+
+    uint32_t Layer::getLayerCount() const
+    {
+        return m_map->getLayerCount();
+    }
+
+    void Layer::setInstancesVisible(bool vis)
+    {
+        if (m_instancesVisibility != vis) {
+            m_instancesVisibility = vis;
+            auto it               = m_instances.begin();
+            for (; it != m_instances.end(); ++it) {
+                (*it)->callOnVisibleChange();
+            }
+        }
+    }
+
+    void Layer::setLayerTransparency(uint8_t transparency)
+    {
+        if (m_transparency != transparency) {
+            m_transparency = transparency;
+            auto it        = m_instances.begin();
+            for (; it != m_instances.end(); ++it) {
+                (*it)->callOnTransparencyChange();
+            }
+        }
+    }
+
+    uint8_t Layer::getLayerTransparency() const
+    {
+        return m_transparency;
+    }
+
+    void Layer::toggleInstancesVisible()
+    {
+        setInstancesVisible(!m_instancesVisibility);
+    }
+
+    bool Layer::areInstancesVisible() const
+    {
+        return m_instancesVisibility;
+    }
+
+    bool Layer::cellContainsBlockingInstance(ModelCoordinate const & cellCoordinate)
+    {
+        bool blockingInstance = false;
+        if (m_cellCache != nullptr) {
+            Cell* cell = m_cellCache->getCell(cellCoordinate);
+            if (cell != nullptr) {
+                return cell->getCellType() != CTYPE_NO_BLOCKER;
+            }
+        } else {
+            std::list<Instance*> adjacentInstances;
+            m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
+            if (std::ranges::any_of(adjacentInstances, [&cellCoordinate](Instance* inst) {
+                    return inst->isBlocking() && inst->getLocationRef().getLayerCoordinates() == cellCoordinate;
+                })) {
+                blockingInstance = true;
+            }
+        }
+        return blockingInstance;
+    }
+
+    std::vector<Instance*> Layer::getBlockingInstances(ModelCoordinate const & cellCoordinate)
+    {
+        std::vector<Instance*> blockingInstances;
+        if (m_cellCache != nullptr) {
+            Cell* cell = m_cellCache->getCell(cellCoordinate);
+            if (cell != nullptr) {
+                std::set<Instance*> const & blocker = cell->getInstances();
+                std::ranges::copy_if(blocker, std::back_inserter(blockingInstances), [](Instance const * inst) {
+                    return inst->isBlocking();
+                });
+            }
+        } else {
+            std::list<Instance*> adjacentInstances;
+            m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
+            for (auto* j : adjacentInstances) {
+                if (j->isBlocking() && j->getLocationRef().getLayerCoordinates() == cellCoordinate) {
+                    blockingInstances.push_back(j);
+                }
+            }
+        }
+        return blockingInstances;
+    }
+
+    void Layer::setPathingStrategy(PathingStrategy strategy)
+    {
+        m_pathingStrategy = strategy;
+        m_grid->setAllowDiagonals(m_pathingStrategy != CELL_EDGES_ONLY);
+    }
+
+    PathingStrategy Layer::getPathingStrategy() const
+    {
+        return m_pathingStrategy;
+    }
+
+    void Layer::setSortingStrategy(SortingStrategy strategy)
+    {
+        m_sortingStrategy = strategy;
+    }
+
+    SortingStrategy Layer::getSortingStrategy() const
+    {
+        return m_sortingStrategy;
+    }
+
+    void Layer::setWalkable(bool walkable)
+    {
+        m_walkable = walkable;
+    }
+
+    bool Layer::isWalkable() const
+    {
+        return m_walkable;
+    }
+
+    void Layer::setInteract(bool interact, std::string const & id)
+    {
+        m_interact   = interact;
+        m_walkableId = id;
+    }
+
+    bool Layer::isInteract() const
+    {
+        return m_interact;
+    }
+
+    std::string const & Layer::getWalkableId()
+    {
+        return m_walkableId;
+    }
+
+    void Layer::addInteractLayer(Layer* layer)
+    {
+        if (m_walkable) {
+            m_interacts.push_back(layer);
+        }
+    }
+
+    std::vector<Layer*> const & Layer::getInteractLayers()
+    {
+        return m_interacts;
+    }
+
+    void Layer::removeInteractLayer(Layer* layer)
+    {
+        if (m_walkable) {
+            auto it = m_interacts.begin();
+            for (; it != m_interacts.end(); ++it) {
+                if (*it == layer) {
+                    (*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+                    m_interacts.erase(it);
+                    break;
+                }
+            }
+        }
+    }
+
+    void Layer::createCellCache()
+    {
+        if ((m_cellCache == nullptr) && m_walkable) {
+            m_cellCache = new CellCache(this);
+        }
+    }
+
+    CellCache* Layer::getCellCache()
+    {
+        return m_cellCache;
+    }
+
+    void Layer::destroyCellCache()
+    {
+        if (m_walkable) {
+            removeChangeListener(m_cellCache->getCellCacheChangeListener());
+            if (!m_interacts.empty()) {
+                auto it = m_interacts.begin();
+                for (; it != m_interacts.end(); ++it) {
+                    (*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+                    (*it)->setInteract(false, "");
+                }
+                m_interacts.clear();
+            }
+            delete m_cellCache;
+            m_cellCache = nullptr;
+            m_walkable  = false;
+        }
+    }
+
+    bool Layer::update()
+    {
+        m_changedInstances.clear();
+        std::vector<Instance*> inactiveInstances;
+        auto it = m_activeInstances.begin();
+        for (; it != m_activeInstances.end(); ++it) {
+            if ((*it)->update() != ICHANGE_NO_CHANGES) {
+                m_changedInstances.push_back(*it);
+                m_changed = true;
+            } else if (!(*it)->isActive()) {
+                inactiveInstances.push_back(*it);
+            }
+        }
+        if (!m_changedInstances.empty()) {
+            auto i = m_changeListeners.begin();
+            while (i != m_changeListeners.end()) {
+                (*i)->onLayerChanged(this, m_changedInstances);
+                ++i;
+            }
+            // std::cout << "Layer named " << Id() << " changed = 1\n";
+        }
+        // remove inactive instances from m_activeInstances
+        if (!inactiveInstances.empty()) {
+            auto i = inactiveInstances.begin();
+            while (i != inactiveInstances.end()) {
+                m_activeInstances.erase(*i);
+                ++i;
+            }
+        }
+        // std::cout << "Layer named " << Id() << " changed = 0\n";
+        bool const retval = m_changed;
+        m_changed         = false;
+        return retval;
+    }
+
+    void Layer::addChangeListener(LayerChangeListener* listener)
+    {
+        m_changeListeners.push_back(listener);
+    }
+
+    void Layer::removeChangeListener(LayerChangeListener* listener)
+    {
+        auto i = m_changeListeners.begin();
+        while (i != m_changeListeners.end()) {
+            if ((*i) == listener) {
+                m_changeListeners.erase(i);
+                return;
+            }
+            ++i;
+        }
+    }
+
+    bool Layer::isChanged() const
+    {
+        return m_changed;
+    }
+
+    std::vector<Instance*>& Layer::getChangedInstances()
+    {
+        return m_changedInstances;
+    }
+
+    void Layer::setStatic(bool stati)
+    {
+        m_static = stati;
+    }
+
+    bool Layer::isStatic() const
+    {
+        return m_static;
+    }
+
+} // namespace FIFE

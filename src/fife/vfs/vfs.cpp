@@ -1,0 +1,267 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "vfs.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <regex>
+#include <set>
+#include <string>
+#include <vector>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "util/base/exception.h"
+#include "util/log/logger.h"
+#include "vfssource.h"
+#include "vfssourceprovider.h"
+
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_VFS);
+
+    VFS::VFS() = default;
+
+    VFS::~VFS()
+    {
+        cleanup();
+    }
+
+    void VFS::cleanup()
+    {
+        type_sources sources = m_sources;
+        auto end             = sources.end();
+        for (auto i = sources.begin(); i != end; ++i) {
+            delete *i;
+        }
+
+        auto end2 = m_providers.end();
+        for (auto j = m_providers.begin(); j != end2; ++j) {
+            delete *j;
+        }
+
+        m_providers.clear();
+    }
+
+    void VFS::addProvider(VFSSourceProvider* provider)
+    {
+        provider->setVFS(this);
+        m_providers.push_back(provider);
+        FL_LOG(_log, LMsg("new provider: ") << provider->getName());
+    }
+
+    VFSSource* VFS::createSource(std::string const & path)
+    {
+
+        if (hasSource(path)) {
+            FL_WARN(_log, LMsg(path) << " is already used as VFS source");
+            return nullptr;
+        }
+
+        auto end = m_providers.end();
+        for (auto i = m_providers.begin(); i != end; ++i) {
+            VFSSourceProvider* provider = *i;
+            if (!provider->isReadable(path)) {
+                continue;
+            }
+
+            try {
+                VFSSource* source = provider->createSource(path);
+                return source;
+            } catch (Exception const & ex) {
+                FL_WARN(
+                    _log,
+                    LMsg(provider->getName())
+                        << " thought it could load " << path << " but didn't succeed (" << ex.what() << ")");
+                continue;
+            } catch (...) {
+                FL_WARN(
+                    _log,
+                    LMsg(provider->getName())
+                        << " thought it could load " << path << " but didn't succeed (unknown exception)");
+                continue;
+            }
+        }
+
+        FL_WARN(_log, LMsg("no provider for ") << path << " found");
+        return nullptr;
+    }
+
+    void VFS::addNewSource(std::string const & path)
+    {
+        VFSSource* source = createSource(path);
+        if (source != nullptr) {
+            addSource(source);
+        } else {
+            FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
+        }
+    }
+
+    void VFS::addSource(VFSSource* source)
+    {
+        m_sources.push_back(source);
+    }
+
+    void VFS::removeSource(VFSSource* source)
+    {
+        auto i = std::ranges::find(m_sources, source);
+        if (i != m_sources.end()) {
+            m_sources.erase(i);
+        }
+    }
+
+    void VFS::removeSource(std::string const & path)
+    {
+        for (VFSSourceProvider* provider : m_providers) {
+            if (!provider->hasSource(path)) {
+                continue;
+            }
+
+            VFSSource* source = provider->getSource(path);
+
+            auto it = std::ranges::find(m_sources, source);
+
+            if (it != m_sources.end()) {
+                removeSource(*it);
+                return;
+            }
+        }
+    }
+
+    VFSSource* VFS::getSourceForFile(std::string const & file) const
+    {
+        auto it = std::ranges::find_if(m_sources, [&file](VFSSource const * s) {
+            return s->fileExists(file);
+        });
+
+        if (it != m_sources.end()) {
+            return *it;
+        }
+
+        FL_WARN(_log, LMsg("no source for ") << file << " found");
+        return nullptr;
+    }
+
+    bool VFS::exists(std::string const & file) const
+    {
+        return getSourceForFile(file) != nullptr;
+    }
+
+    std::vector<std::string> VFS::split(std::string const & str, char delimiter) const
+    {
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream tokenStream(str);
+
+        while (std::getline(tokenStream, token, delimiter)) {
+            tokens.push_back(token);
+        }
+
+        return tokens;
+    }
+
+    bool VFS::isDirectory(std::string const & path) const
+    {
+        // Add a slash in case there isn't one in the string
+        std::string const newpath       = path + "/";
+        std::vector<std::string> tokens = split(newpath, '/');
+
+        std::string currentpath = "/";
+        auto token              = tokens.begin();
+        while (token != tokens.end()) {
+            if (!(*token).empty()) {
+                if (*token != "." && *token != ".." && listDirectories(currentpath, *token).empty()) {
+                    return false;
+                }
+                currentpath += *token + "/";
+            }
+            ++token;
+        }
+
+        return true;
+    }
+
+    RawData* VFS::open(std::string const & path)
+    {
+        FL_DBG(_log, LMsg("Opening: ") << path);
+
+        VFSSource const * source = getSourceForFile(path);
+        if (source == nullptr) {
+            throw NotFound(path);
+        }
+
+        return source->open(path);
+    }
+
+    std::set<std::string> VFS::listFiles(std::string const & pathstr) const
+    {
+        std::set<std::string> list;
+        auto end = m_sources.end();
+        for (auto i = m_sources.begin(); i != end; ++i) {
+            std::set<std::string> const sourcelist = (*i)->listFiles(pathstr);
+            list.insert(sourcelist.begin(), sourcelist.end());
+        }
+
+        return list;
+    }
+
+    std::set<std::string> VFS::listFiles(std::string const & path, std::string const & filterregex) const
+    {
+        std::set<std::string> const list = listFiles(path);
+        return filterList(list, filterregex);
+    }
+
+    std::set<std::string> VFS::listDirectories(std::string const & pathstr) const
+    {
+        std::set<std::string> list;
+        auto end = m_sources.end();
+        for (auto i = m_sources.begin(); i != end; ++i) {
+            std::set<std::string> const sourcelist = (*i)->listDirectories(pathstr);
+            list.insert(sourcelist.begin(), sourcelist.end());
+        }
+
+        return list;
+    }
+
+    std::set<std::string> VFS::listDirectories(std::string const & path, std::string const & filterregex) const
+    {
+        std::set<std::string> const list = listDirectories(path);
+        return filterList(list, filterregex);
+    }
+
+    std::set<std::string> VFS::filterList(std::set<std::string> const & list, std::string const & fregex) const
+    {
+        std::set<std::string> results;
+        std::regex const regex(fregex);
+        auto end = list.end();
+        for (auto i = list.begin(); i != end;) {
+            std::cmatch match;
+            if (std::regex_match((*i).c_str(), match, regex)) {
+                results.insert(*i);
+            }
+            ++i;
+        }
+        return results;
+    }
+
+    bool VFS::hasSource(std::string const & path) const
+    {
+        auto end = m_providers.end();
+        for (auto i = m_providers.begin(); i != end; ++i) {
+            VFSSourceProvider const * provider = *i;
+            if (provider->hasSource(path)) {
+                VFSSource const * source = provider->getSource(path);
+
+                auto srcIt = std::ranges::find(m_sources, source);
+                return srcIt != m_sources.end();
+            }
+        }
+        return false;
+    }
+} // namespace FIFE

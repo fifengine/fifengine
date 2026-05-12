@@ -1,0 +1,436 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "engine.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+
+// 3rd party library includes
+#include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
+// FIFE includes
+#include "audio/soundclipmanager.h"
+#include "audio/soundmanager.h"
+#include "eventchannel/eventmanager.h"
+#include "gui/guimanager.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
+#include "util/time/timemanager.h"
+#include "vfs/directoryprovider.h"
+#include "vfs/vfs.h"
+#include "vfs/vfsdirectory.h"
+#include "vfs/zip/zipprovider.h"
+#include "video/animationmanager.h"
+#include "video/cursor.h"
+#include "video/devicecaps.h"
+#include "video/imagemanager.h"
+#include "video/renderbackend.h"
+#ifdef HAVE_OPENGL
+    #include "video/opengl/fife_opengl.h"
+    #include "video/opengl/renderbackendopengl.h"
+#endif
+#include "loaders/native/audio/ogg_loader.h"
+#include "loaders/native/video/imageloader.h"
+#include "model/metamodel/grids/hexgrid.h"
+#include "model/metamodel/grids/squaregrid.h"
+#include "model/model.h"
+#include "pathfinder/routepather/routepather.h"
+#include "version.hpp"
+#include "video/image.h"
+#include "video/sdl/renderbackendsdl.h"
+#include "view/renderers/blockinginforenderer.h"
+#include "view/renderers/cellrenderer.h"
+#include "view/renderers/cellselectionrenderer.h"
+#include "view/renderers/coordinaterenderer.h"
+#include "view/renderers/floatingtextrenderer.h"
+#include "view/renderers/genericrenderer.h"
+#include "view/renderers/gridrenderer.h"
+#include "view/renderers/instancerenderer.h"
+#include "view/renderers/lightrenderer.h"
+#include "view/renderers/offrenderer.h"
+#include "view/renderers/quadtreerenderer.h"
+#include "view/renderers/targetrenderer.h"
+
+#ifdef USE_COCOA
+int32_t main(int32_t argc, char** argv)
+{
+    return 0;
+}
+#endif
+
+namespace FIFE
+{
+    static Logger _log(LM_CONTROLLER);
+
+    Engine::Engine() :
+        m_renderbackend(nullptr),
+        m_guimanager(nullptr),
+        m_eventmanager(nullptr),
+        m_soundmanager(nullptr),
+        m_timemanager(nullptr),
+        m_imagemanager(nullptr),
+        m_animationmanager(nullptr),
+        m_soundclipmanager(nullptr),
+        m_vfs(nullptr),
+        m_model(nullptr),
+        m_logmanager(LogManager::instance()),
+        m_cursor(nullptr),
+        m_destroyed(false),
+
+        m_offrenderer(nullptr),
+        m_targetrenderer(nullptr)
+
+    {
+#ifdef USE_COCOA
+        // The next lines ensure that Cocoa is initialzed correctly.
+        // This is needed for SDL to function properly on MAC OS X.
+        void* cocoa_lib;
+        cocoa_lib = dlopen("/System/Library/Frameworks/Cocoa.framework/Cocoa", RTLD_LAZY);
+        void (*nsappload)(void);
+        nsappload = (void (*)())dlsym(cocoa_lib, "NSApplicationLoad");
+        nsappload();
+
+        // Create an autorelease pool, so autoreleased SDL objects don't leak.
+    #ifdef OSX_109
+        Class NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+        m_autoreleasePool       = class_createInstance(NSAutoreleasePool, 0);
+    #else
+        objc_object* NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+        m_autoreleasePool              = objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
+    #endif
+#endif
+    }
+
+    EngineSettings& Engine::getSettings()
+    {
+        return m_settings;
+    }
+
+    DeviceCaps const & Engine::getDeviceCaps() const
+    {
+        return m_devcaps;
+    }
+
+    void Engine::changeScreenMode(ScreenMode const & mode)
+    {
+        m_cursor->invalidate();
+
+        m_imagemanager->invalidateAll();
+
+        // recreate main screen
+        m_renderbackend->createMainScreen(mode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
+
+        if (m_guimanager != nullptr) {
+            m_guimanager->resizeTopContainer(0, 0, mode.getWidth(), mode.getHeight());
+        }
+
+        auto i = m_changelisteners.begin();
+        while (i != m_changelisteners.end()) {
+            (*i)->onScreenModeChanged(mode);
+            ++i;
+        }
+    }
+
+    void Engine::init()
+    {
+        m_destroyed = false;
+
+        FL_LOG(_log, LMsg("Fifengine v") << FIFE::app_version::get_version());
+        FL_LOG(_log, "================== Engine initialize start =================");
+        m_timemanager = new TimeManager();
+        FL_LOG(_log, "Time manager created");
+
+        FL_LOG(_log, "Creating VFS");
+        m_vfs = new VFS();
+
+        FL_LOG(_log, "Adding root directory to VFS");
+        m_vfs->addSource(new VFSDirectory(m_vfs));
+        m_vfs->addProvider(new DirectoryProvider());
+
+        FL_LOG(_log, "Adding zip provider to VFS");
+        m_vfs->addProvider(new ZipProvider());
+
+        // m_vfs->addProvider(ProviderDAT2());
+        // m_vfs->addProvider(ProviderDAT1());
+        FL_LOG(_log, "Engine pre-init done");
+
+        // SDL3 initializes the timer subsystem automatically, no need for SDL_Init(SDL_INIT_TIMER)
+
+        TTF_Init();
+
+        FL_LOG(_log, "Creating event manager");
+        m_eventmanager = new EventManager();
+        m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
+        m_eventmanager->setMouseAccelerationEnabled(m_settings.isMouseAccelerationEnabled());
+        m_eventmanager->setJoystickSupport(m_settings.isJoystickSupport());
+
+        FL_LOG(_log, "Creating resource managers");
+
+        m_imagemanager     = new ImageManager();
+        m_animationmanager = new AnimationManager();
+        m_soundclipmanager = new SoundClipManager();
+
+        FL_LOG(_log, "Creating render backend");
+        std::string const rbackend(m_settings.getRenderBackend());
+        if (rbackend == "SDL") {
+            m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
+            FL_LOG(_log, "SDL Render backend created");
+        } else {
+#ifdef HAVE_OPENGL
+            m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
+            FL_LOG(_log, "OpenGL Render backend created");
+#else
+            m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
+            // Remember  the choice so we pick the right graphics class.
+            rbackend = "SDL";
+            FL_WARN(
+                _log,
+                "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render "
+                "backend");
+#endif
+        }
+        FL_LOG(_log, "Initializing render backend");
+        m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
+        // we always set this to false
+        // m_renderbackend->setAlphaOptimizerEnabled(false);
+        m_renderbackend->setImageCompressingEnabled(m_settings.isGLCompressImages());
+        m_renderbackend->setFramebufferEnabled(m_settings.isGLUseFramebuffer());
+        m_renderbackend->setNPOTEnabled(m_settings.isGLUseNPOT());
+        m_renderbackend->setTextureFiltering(m_settings.getGLTextureFiltering());
+        m_renderbackend->setMipmappingEnabled(m_settings.isGLUseMipmapping());
+        m_renderbackend->setMonochromeEnabled(m_settings.isGLUseMonochrome());
+        m_renderbackend->setDepthBufferEnabled(m_settings.isGLUseDepthBuffer());
+        m_renderbackend->setAlphaTestValue(m_settings.getGLAlphaTestValue());
+        m_renderbackend->setVSyncEnabled(m_settings.isVSync());
+        if (m_settings.isFrameLimitEnabled()) {
+            m_renderbackend->setFrameLimitEnabled(true);
+            m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
+        }
+
+        std::string driver = m_settings.getVideoDriver();
+        if (!driver.empty()) {
+            std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
+            if (std::ranges::find(drivers, driver) == drivers.end()) {
+                FL_WARN(
+                    _log,
+                    "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
+                driver = "";
+            }
+            m_devcaps.setVideoDriverName(driver);
+        }
+        // init backend with selected video driver or default
+        m_renderbackend->init(driver);
+
+        // in case of SDL we use this to create the SDL_Renderer
+        driver = m_settings.getSDLDriver();
+        if (!driver.empty()) {
+            std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
+            if (std::ranges::find(drivers, driver) == drivers.end()) {
+                FL_WARN(
+                    _log,
+                    "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
+                driver = "";
+            }
+            m_devcaps.setRenderDriverName(driver);
+        }
+
+        FL_LOG(_log, "Querying device capabilities");
+        m_devcaps.fillDeviceCaps();
+
+        uint8_t const displayCount = m_devcaps.getDisplayCount();
+        if (displayCount == 0) {
+            throw NotSupported("Could not find any display!");
+        }
+
+        uint8_t const requestedDisplay = m_settings.getDisplay();
+        uint8_t selectedDisplay        = requestedDisplay;
+        if (requestedDisplay >= displayCount) {
+            FL_WARN(
+                _log,
+                LMsg("Selected display index ") << int32_t(requestedDisplay) << " is out of range [0, "
+                                                << int32_t(displayCount - 1) << "] and will fall back to display 0.");
+            selectedDisplay = 0;
+        }
+
+        uint16_t const requestedWidth  = m_settings.getScreenWidth();
+        uint16_t const requestedHeight = m_settings.getScreenHeight();
+        uint16_t selectedWidth         = requestedWidth;
+        uint16_t selectedHeight        = requestedHeight;
+
+        Rect const displayBounds = m_devcaps.getDisplayBounds(selectedDisplay);
+        int32_t const maxWidth   = std::max<int32_t>(1, displayBounds.w);
+        int32_t const maxHeight  = std::max<int32_t>(1, displayBounds.h);
+        selectedWidth            = static_cast<uint16_t>(std::clamp<int32_t>(selectedWidth, 1, maxWidth));
+        selectedHeight           = static_cast<uint16_t>(std::clamp<int32_t>(selectedHeight, 1, maxHeight));
+        if (selectedWidth != requestedWidth || selectedHeight != requestedHeight) {
+
+            FL_WARN(
+                _log,
+                LMsg("Requested resolution ")
+                    << requestedWidth << "x" << requestedHeight << " exceeds selected display bounds "
+                    << displayBounds.w << "x" << displayBounds.h << ". Clamping to " << selectedWidth << "x"
+                    << selectedHeight << ".");
+        }
+
+        FL_LOG(
+            _log,
+            LMsg("Using display index ") << int32_t(selectedDisplay) << " out of " << int32_t(displayCount)
+                                         << " displays with resolution " << selectedWidth << "x" << selectedHeight);
+
+        uint16_t const bpp = m_settings.getBitsPerPixel();
+
+        m_screenMode = m_devcaps.getNearestScreenMode(
+            selectedWidth,
+            selectedHeight,
+            bpp,
+            rbackend,
+            m_settings.isFullScreen(),
+            m_settings.getRefreshRate(),
+            selectedDisplay);
+
+        // Set window position
+        m_screenMode.setWindowPositionX(m_settings.getWindowPositionX());
+        m_screenMode.setWindowPositionY(m_settings.getWindowPositionY());
+
+        FL_LOG(_log, "Creating main screen");
+        m_renderbackend->createMainScreen(m_screenMode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
+        FL_LOG(_log, "Main screen created");
+
+#ifdef HAVE_OPENGL
+        if (m_settings.getLightingModel() != 0) {
+            m_renderbackend->setLightingModel(m_settings.getLightingModel());
+        }
+
+#endif
+        FL_LOG(_log, "Creating sound manager");
+        m_soundmanager = new SoundManager();
+        m_soundmanager->setVolume(m_settings.getInitialVolume() / 10.0F);
+
+        FL_LOG(_log, "Creating renderers");
+        m_offrenderer    = new OffRenderer(m_renderbackend);
+        m_targetrenderer = new TargetRenderer(m_renderbackend);
+        m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
+        m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
+        m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
+        m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
+        m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50));
+        m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
+        m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70));
+        m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
+        m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
+        m_renderers.push_back(new CellRenderer(m_renderbackend, 100));
+
+        FL_LOG(_log, "Creating model");
+        m_model = new Model(m_renderbackend, m_renderers);
+        FL_LOG(_log, "Adding pathers to model");
+        m_model->adoptPather(new RoutePather());
+        FL_LOG(_log, "Adding grid prototypes to model");
+        m_model->adoptCellGrid(new SquareGrid());
+        m_model->adoptCellGrid(new HexGrid(false));
+        m_model->adoptCellGrid(new HexGrid(true));
+
+        m_cursor = new Cursor(m_renderbackend);
+        m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
+        FL_LOG(_log, "Engine initialized");
+    }
+
+    Engine::~Engine()
+    {
+        if (!m_destroyed) {
+            destroy();
+        }
+    }
+
+    void Engine::destroy()
+    {
+        FL_LOG(_log, "Destructing engine");
+        delete m_cursor;
+        delete m_model;
+        delete m_soundmanager;
+        delete m_guimanager;
+
+        delete m_animationmanager;
+        delete m_imagemanager;
+        delete m_soundclipmanager;
+        delete m_eventmanager;
+
+        // properly remove all the renderers created during init
+        delete m_offrenderer;
+        delete m_targetrenderer;
+        auto rendererIter = m_renderers.begin();
+        for (; rendererIter != m_renderers.end(); ++rendererIter) {
+            delete *rendererIter;
+        }
+        m_renderers.clear();
+
+        delete m_renderbackend;
+        delete m_vfs;
+        delete m_timemanager;
+
+        TTF_Quit();
+        SDL_Quit();
+
+#ifdef USE_COCOA
+        objc_msgSend(m_autoreleasePool, sel_registerName("release"));
+#endif
+
+        FL_LOG(_log, "================== Engine destructed ==================");
+        m_destroyed = true;
+        // delete m_logmanager;
+    }
+    void Engine::initializePumping()
+    {
+        m_eventmanager->processEvents();
+    }
+
+    void Engine::pump()
+    {
+        m_renderbackend->startFrame();
+        m_eventmanager->processEvents();
+        m_timemanager->update();
+        m_soundmanager->update();
+
+        m_targetrenderer->render();
+        if (m_model->getActiveCameraCount() == 0) {
+            m_renderbackend->clearBackBuffer();
+            m_offrenderer->render();
+        } else {
+            m_model->update();
+        }
+
+        if (m_guimanager != nullptr) {
+            m_guimanager->turn();
+        }
+
+        m_cursor->draw();
+        m_renderbackend->endFrame();
+    }
+
+    void Engine::finalizePumping()
+    {
+        // nothing here at the moment..
+    }
+
+    void Engine::addChangeListener(IEngineChangeListener* listener)
+    {
+        m_changelisteners.push_back(listener);
+    }
+
+    void Engine::removeChangeListener(IEngineChangeListener* listener)
+    {
+        auto i = m_changelisteners.begin();
+        while (i != m_changelisteners.end()) {
+            if ((*i) == listener) {
+                m_changelisteners.erase(i);
+                return;
+            }
+            ++i;
+        }
+    }
+} // namespace FIFE

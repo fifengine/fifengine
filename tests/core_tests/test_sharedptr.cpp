@@ -12,9 +12,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/base/sharedptr.h"
 
@@ -22,34 +19,42 @@ using FIFE::SharedPtr;
 
 class Data
 {
-public:
-    int32_t x, y;
+    public:
+        int32_t x, y;
 
-    Data() : x(0), y(0) { }
-    Data(int32_t _x, int32_t _y) : x(_x), y(_y) { }
+        Data() : x(0), y(0)
+        {
+        }
+        Data(int32_t _x, int32_t _y) : x(_x), y(_y)
+        {
+        }
 
-    virtual ~Data() { }
+        virtual ~Data() = default;
 
-    virtual int32_t total()
-    {
-        return x + y;
-    }
+        virtual int32_t total()
+        {
+            return x + y;
+        }
 };
 
 class SubData : public Data
 {
-public:
-    int32_t z;
+    public:
+        int32_t z;
 
-    SubData() : Data(0, 0), z(0) { }
-    SubData(int32_t _x, int32_t _y, int32_t _z) : Data(_x, _y), z(_z) { }
+        SubData() : Data(0, 0), z(0)
+        {
+        }
+        SubData(int32_t _x, int32_t _y, int32_t _z) : Data(_x, _y), z(_z)
+        {
+        }
 
-    virtual ~SubData() { }
+        virtual ~SubData() = default;
 
-    virtual int32_t total()
-    {
-        return x + y + z;
-    }
+        virtual int32_t total()
+        {
+            return x + y + z;
+        }
 };
 
 /**
@@ -59,7 +64,7 @@ public:
  * 4. Call reset on the second shared pointer and make sure the dynamic memory is deleted
  **/
 
-TEST_CASE("case1")
+TEST_CASE("SharedPtr::operator= preserves data after source reset", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data(5, 10));
 
@@ -86,7 +91,7 @@ TEST_CASE("case1")
  * 4. Call reset on the second shared pointer and make sure the dynamic memory is deleted
  **/
 
-TEST_CASE("case2")
+TEST_CASE("SharedPtr::copy constructor preserves data after source reset", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data(5, 10));
 
@@ -113,7 +118,7 @@ TEST_CASE("case2")
  * 4. Access underlying dynamic data using the "*" operator and make sure the value is the same as what was set in
  * step 2.
  */
-TEST_CASE("case3")
+TEST_CASE("SharedPtr::operator-> and operator* access underlying data", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data());
 
@@ -144,7 +149,7 @@ TEST_CASE("case3")
  * 3. Create another shared pointer to same shared data using "=" or copy constructor
  * 4. Make sure unique on both shared pointers return false
  */
-TEST_CASE("case4")
+TEST_CASE("SharedPtr::unique reports single vs shared ownership", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data());
     CHECK(shptr.unique());
@@ -159,7 +164,7 @@ TEST_CASE("case4")
  * 1. Create empty shared pointer using default constructor
  * 2. use shared pointer in condition such as an if statement to make sure it evaluates correctly
  */
-TEST_CASE("case5")
+TEST_CASE("SharedPtr::default constructor creates empty (falsy) pointer", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr;
 
@@ -170,7 +175,7 @@ TEST_CASE("case5")
  * 1. Create a shared pointer of type base class to a dynamic object of the child class
  * 2. Call a virtual function using the "->" of the shared pointer and make sure the proper function overload is called.
  */
-TEST_CASE("case6")
+TEST_CASE("SharedPtr<Base> to Derived calls virtual function correctly", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new SubData(2, 4, 6));
 
@@ -184,7 +189,7 @@ TEST_CASE("case6")
  * 4. Check for equality of the first 2 shared pointers.
  * 5. Check for inequality of the first and 3rd shared pointers.
  */
-TEST_CASE("case7")
+TEST_CASE("SharedPtr::operator== and operator!= compare pointers correctly", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data(2, 4));
     SharedPtr<Data> copy(shptr);
@@ -201,13 +206,13 @@ TEST_CASE("case7")
  * 4. Check the data values of the original shared pointer
  * 5. Check the data values of the copied shared pointer
  */
-TEST_CASE("case8")
+TEST_CASE("SharedPtr::reset with new data isolates copies", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data(2, 4));
     SharedPtr<Data> copy(shptr);
 
     CHECK_EQ(copy.useCount(), 2);
-    shptr.reset(new Data(6, 8));
+    shptr.reset(new Data(6, 8)); // NOLINT(cppcoreguidelines-owning-memory)
     CHECK_EQ(copy.useCount(), 1);
 
     // shptr holding values we expect?

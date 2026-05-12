@@ -1,0 +1,199 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "dat2.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <set>
+#include <string>
+#include <utility>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "util/base/exception.h"
+#include "util/log/logger.h"
+#include "vfs/raw/rawdata.h"
+
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_FO_LOADERS);
+
+    DAT2::DAT2(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
+    {
+
+        FL_LOG(_log, LMsg("MFFalloutDAT2") << "loading: " << file << " filesize: " << m_data->getDataLength());
+
+        m_data->setIndex(m_data->getDataLength() - 8);
+        uint32_t const fileListLength = m_data->read32Little();
+        uint32_t const archiveSize    = m_data->read32Little();
+
+        FL_LOG(_log, LMsg("MFFalloutDAT2") << "FileListLength: " << fileListLength << " ArchiveSize: " << archiveSize);
+
+        if (archiveSize != m_data->getDataLength()) {
+            throw InvalidFormat("size mismatch");
+        }
+
+        m_data->setIndex(archiveSize - fileListLength - 8);
+        m_filecount    = m_data->read32Little();
+        m_currentIndex = m_data->getCurrentIndex();
+
+        FL_LOG(_log, LMsg("MFFalloutDAT2 FileCount: ") << m_filecount);
+
+        // Do not read the complete file list at startup.
+        // Instead read a chunk each frame.
+        m_timer.setInterval(0);
+        m_timer.setCallback([this] {
+            readFileEntry();
+        });
+        m_timer.start();
+    }
+
+    void DAT2::readFileEntry() const
+    {
+        assert(m_filecount != 0);
+
+        // Load more items per call,
+        // otherwise it takes _ages_ until everything is in.
+        uint32_t load_per_cycle = 50;
+        load_per_cycle          = std::min(load_per_cycle, m_filecount);
+        m_filecount -= load_per_cycle;
+
+        // Save the old index in an exception save way.
+        IndexSaver const isaver(m_data.get());
+
+        // Move index to file list and read the entries.
+        m_data->setIndex(m_currentIndex);
+        RawDataDAT2::s_info info;
+        while ((load_per_cycle--) != 0U) {
+            uint32_t const namelen = m_data->read32Little();
+            info.name              = fixPath(m_data->readString(namelen));
+
+            info.type           = m_data->read8();
+            info.unpackedLength = m_data->read32Little();
+            info.packedLength   = m_data->read32Little();
+            info.offset         = m_data->read32Little();
+
+            m_filelist.insert(std::make_pair(info.name, info));
+        }
+        m_currentIndex = m_data->getCurrentIndex();
+
+        // Finally log on completion and stop the timer.
+        if (m_filecount == 0) {
+            FL_LOG(_log, LMsg("MFFalloutDAT2, All file entries in '") << m_datpath << "' loaded.");
+            m_timer.stop();
+        }
+    }
+
+    RawData* DAT2::open(std::string const & file) const
+    {
+        RawDataDAT2::s_info const & info = getInfo(file);
+        return new RawData(new RawDataDAT2(getVFS(), m_datpath, info));
+    }
+
+    bool DAT2::fileExists(std::string const & name) const
+    {
+        return findFileEntry(name) != m_filelist.end();
+    }
+
+    RawDataDAT2::s_info const & DAT2::getInfo(std::string const & name) const
+    {
+        auto i = findFileEntry(name);
+        if (i == m_filelist.end()) {
+            throw NotFound(name);
+        }
+        return i->second;
+    }
+
+    DAT2::type_filelist::const_iterator DAT2::findFileEntry(std::string const & path) const
+    {
+
+        // Either the normalization is bogus, or we have to do
+        // it here, too. Otherwise we can't load the files returned
+        // by listFiles.
+
+        std::string name = path;
+
+        // Normalize the path
+        if (name.starts_with("./")) {
+            name.erase(0, 2);
+        }
+
+        auto i = m_filelist.find(name);
+
+        // We might have another chance to find the file
+        // if the number of file entries not zero.
+        if ((m_filecount != 0U) && i == m_filelist.end()) {
+            FL_LOG(
+                _log,
+                LMsg("MFFalloutDAT2") << "Missing '" << name << "' in partially(" << m_filecount << ") loaded "
+                                      << m_datpath);
+            while ((m_filecount != 0U) && i == m_filelist.end()) {
+                readFileEntry();
+                i = m_filelist.find(name);
+            }
+        }
+        return i;
+    }
+
+    std::set<std::string> DAT2::listFiles(std::string const & pathstr) const
+    {
+        return list(pathstr, false);
+    }
+
+    std::set<std::string> DAT2::listDirectories(std::string const & pathstr) const
+    {
+        return list(pathstr, true);
+    }
+
+    std::set<std::string> DAT2::list(std::string const & pathstr, bool dirs) const
+    {
+        std::set<std::string> list;
+        std::string path = pathstr;
+
+        // Force loading the complete file entries
+        // This is a costly operation... right after startup.
+        // Later this should do nothing.
+        while (m_filecount != 0U) {
+            readFileEntry();
+        }
+
+        // Normalize the path
+        if (path.starts_with("./")) {
+            path.erase(0, 2);
+        }
+
+        size_t const lastIndex = path.size();
+        if (lastIndex != 0 && path[lastIndex - 1] != '/') {
+            path += '/';
+        }
+
+        auto end = m_filelist.end();
+        for (auto i = m_filelist.begin(); i != end; ++i) {
+            std::string const & file = i->first;
+            if (file.starts_with(path)) {
+                std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
+                bool const isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir
+
+                if (isdir) {
+                    cleanedfile.resize(cleanedfile.find('/'));
+                    if (cleanedfile.find('/') != cleanedfile.rfind('/')) {
+                        // check if this is a direct subdir
+                        continue;
+                    }
+                }
+
+                if (isdir == dirs) {
+                    list.insert(cleanedfile);
+                }
+            }
+        }
+
+        return list;
+    }
+} // namespace FIFE

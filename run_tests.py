@@ -46,6 +46,10 @@ def resolve_headless_mode(cli_headless):
     if _env_truthy(os.environ.get("CI")):
         return True
 
+    # Default to headless mode on container/CI.
+    if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
+        return True
+
     return False
 
 
@@ -279,6 +283,8 @@ def resolve_test_modules(directory):
     skipped_filenames = ("test_all.py",)
     for p in pythonfilenames:
         skip = False
+        if p == "conftest.py":
+            skip = True
         for s in skipped_filenames:
             if p.find(s) != -1:
                 skip = True
@@ -496,6 +502,7 @@ def _build_test_subprocess_env(
             _prepend_unique_env_paths(env, "PATH", extra_library_path, os.pathsep)
 
     if headless:
+        env.setdefault("FIFE_TEST_HEADLESS", "1")
         env.setdefault("SDL_VIDEODRIVER", "dummy")
         env.setdefault("SDL_AUDIODRIVER", "dummy")
     return env
@@ -550,7 +557,8 @@ def run_test_modules(
     for module in modules:
         module_timeout = resolve_module_timeout(module)
         print(f"\n===== Running {module} =====")
-        cmd = [sys.executable, "-m", "unittest", module]
+        module_path = os.path.join(*module.split(".")) + ".py"
+        cmd = [sys.executable, "-m", "pytest", "-q", module_path]
         try:
             proc = subprocess.run(
                 cmd,

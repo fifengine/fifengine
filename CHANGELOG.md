@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - tba
 
-- Changed some things.
+## Changed
+
+- migration from SDL2 to SDL3
 - removed dependency on boost
   - removed dependencies boost::system, boost::filesystem
   - removed usage of boost::shared_ptr, boost::scoped_ptr, boost::tokenizer, etc.

@@ -4,7 +4,7 @@
 """Demo for tabbed area widgets."""
 
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 
 class TabbedAreaExample(PyChanExample):

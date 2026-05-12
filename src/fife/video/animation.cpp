@@ -1,0 +1,204 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "animation.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <cassert>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "image.h"
+#include "loaders/native/video/resourceanimationloader.h"
+#include "util/base/exception.h"
+#include "util/time/sdltimecompat.h"
+
+namespace FIFE
+{
+
+    Animation::Animation(IResourceLoader* loader) :
+        IResource(createUniqueAnimationName(), loader), m_direction(0), m_action_frame(-1), m_animation_endtime(-1)
+    {
+    }
+
+    Animation::Animation(std::string const & name, IResourceLoader* loader) :
+        IResource(name, loader), m_direction(0), m_action_frame(-1), m_animation_endtime(-1)
+    {
+    }
+
+    Animation::~Animation() = default;
+
+    size_t Animation::getSize()
+    {
+        return 0;
+    }
+
+    void Animation::load()
+    {
+        if (m_loader != nullptr) {
+            m_loader->load(this);
+        } else {
+            ResourceAnimationLoader loader;
+            loader.load(this);
+        }
+        m_state = IResource::RES_LOADED;
+    }
+
+    void Animation::free()
+    {
+        auto it = m_frames.begin();
+        for (; it != m_frames.end(); ++it) {
+            (*it).image->free();
+        }
+        m_state = IResource::RES_NOT_LOADED;
+    }
+
+    void Animation::invalidate()
+    {
+        free();
+        m_framemap.clear();
+        m_frames.clear();
+        m_action_frame      = -1;
+        m_animation_endtime = -1;
+        m_direction         = 0;
+    }
+
+    std::string Animation::createUniqueAnimationName()
+    {
+        // automated counting for name generation, in case the user doesn't provide a name
+        static uint32_t uniqueNumber      = 0;
+        static std::string const baseName = "animation";
+
+        std::ostringstream oss;
+        oss << uniqueNumber << "_" << baseName;
+
+        std::string const name = oss.str();
+        ++uniqueNumber;
+
+        return name;
+    }
+
+    void Animation::addFrame(ImagePtr const & image, uint32_t duration)
+    {
+        FrameInfo info;
+        assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());
+        info.index    = static_cast<uint32_t>(m_frames.size());
+        info.duration = duration;
+        info.image    = image;
+        m_frames.push_back(info);
+
+        std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.end());
+        if (i == m_framemap.begin()) {
+            m_framemap[0] = info;
+            assert(duration <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            m_animation_endtime = static_cast<int32_t>(duration);
+        } else {
+            --i;
+            uint32_t const frametime        = i->first + i->second.duration;
+            m_framemap[frametime]           = info;
+            uint32_t const animationEndTime = frametime + duration;
+            assert(animationEndTime <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            m_animation_endtime = static_cast<int32_t>(animationEndTime);
+        }
+    }
+
+    int32_t Animation::getFrameIndex(uint32_t timestamp)
+    {
+        return getFrameIndex64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
+    }
+
+    int32_t Animation::getFrameIndex64(uint64_t timestamp)
+    {
+        int32_t val = -1;
+        if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
+            assert(timestamp <= std::numeric_limits<uint32_t>::max());
+            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(static_cast<uint32_t>(timestamp)));
+            --i;
+            assert(i->second.index <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            val = static_cast<int32_t>(i->second.index);
+        }
+        return val;
+    }
+
+    bool Animation::isValidIndex(int32_t index) const
+    {
+        assert(m_frames.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        int32_t const size = static_cast<int32_t>(m_frames.size());
+        return size > 0 && index >= 0 && index < size;
+    }
+
+    ImagePtr Animation::getFrame(int32_t index)
+    {
+        ImagePtr image;
+        if (isValidIndex(index)) {
+            image = m_frames[static_cast<size_t>(index)].image;
+            if (image->getState() == IResource::RES_NOT_LOADED) {
+                image->load();
+            }
+        }
+        return image;
+    }
+
+    ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp)
+    {
+        return getFrameByTimestamp64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
+    }
+
+    ImagePtr Animation::getFrameByTimestamp64(uint64_t timestamp)
+    {
+        ImagePtr val;
+        if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
+            assert(timestamp <= std::numeric_limits<uint32_t>::max());
+            std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(static_cast<uint32_t>(timestamp)));
+            --i;
+            val = i->second.image;
+        }
+        if (val && val->getState() == IResource::RES_NOT_LOADED) {
+            val->load();
+        }
+        return val;
+    }
+
+    std::vector<ImagePtr> Animation::getFrames()
+    {
+        std::vector<ImagePtr> frames;
+        frames.reserve(m_frames.size());
+
+        std::ranges::transform(m_frames, std::back_inserter(frames), [](auto const & frame) {
+            return frame.image;
+        });
+
+        return frames;
+    }
+
+    int32_t Animation::getFrameDuration(int32_t index) const
+    {
+        if (isValidIndex(index)) {
+            assert(
+                m_frames[static_cast<size_t>(index)].duration <=
+                static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(m_frames[static_cast<size_t>(index)].duration);
+        }
+        return -1;
+    }
+
+    uint32_t Animation::getFrameCount() const
+    {
+        assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(m_frames.size());
+    }
+
+    void Animation::setDirection(uint32_t direction)
+    {
+        m_direction = direction % 360;
+    }
+} // namespace FIFE

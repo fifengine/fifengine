@@ -5,7 +5,7 @@
 
 from fife import fifechan
 from fife.extensions import pychan
-from pychan_demo import PyChanExample
+from run import PyChanExample
 
 STYLES = {
     "new default": {

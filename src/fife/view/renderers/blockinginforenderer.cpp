@@ -1,0 +1,140 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "blockinginforenderer.h"
+
+// Standard C++ library includes
+#include <vector>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
+#include "model/structures/location.h"
+#include "util/log/logger.h"
+#include "util/math/fife_math.h"
+#include "video/renderbackend.h"
+#include "view/camera.h"
+
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_VIEWVIEW);
+
+    BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position) :
+        RendererBase(renderbackend, position), m_color{0, 255, 0, 255}
+    {
+        setEnabled(false);
+    }
+
+    BlockingInfoRenderer::BlockingInfoRenderer(BlockingInfoRenderer const & old) :
+        RendererBase(old), m_color(old.m_color)
+    {
+        setEnabled(false);
+    }
+
+    RendererBase* BlockingInfoRenderer::clone()
+    {
+        return new BlockingInfoRenderer(*this);
+    }
+
+    BlockingInfoRenderer::~BlockingInfoRenderer() = default;
+
+    BlockingInfoRenderer* BlockingInfoRenderer::getInstance(IRendererContainer* cnt)
+    {
+        return dynamic_cast<BlockingInfoRenderer*>(cnt->getRenderer("BlockingInfoRenderer"));
+    }
+
+    void BlockingInfoRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    {
+        CellGrid* cg = layer->getCellGrid();
+        if (cg == nullptr) {
+            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+            return;
+        }
+
+        Rect const cv    = cam->getViewPort();
+        CellCache* cache = layer->getCellCache();
+        if (cache != nullptr) {
+            std::vector<std::vector<Cell*>> const & cells = cache->getCells();
+            auto it                                       = cells.begin();
+            for (; it != cells.end(); ++it) {
+                auto cit = (*it).begin();
+                for (; cit != (*it).end(); ++cit) {
+                    ExactModelCoordinate const emc = FIFE::intPt2doublePt((*cit)->getLayerCoordinates());
+                    ScreenPoint const sp           = cam->toScreenCoordinates(cg->toMapCoordinates(emc));
+                    // if it is not in cameras view continue
+                    if (sp.x < cv.x || sp.x > cv.x + cv.w || sp.y < cv.y || sp.y > cv.y + cv.h) {
+                        continue;
+                    }
+                    if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
+                        std::vector<ExactModelCoordinate> vertices;
+                        cg->getVertices(vertices, (*cit)->getLayerCoordinates());
+                        auto vit                  = vertices.begin();
+                        std::size_t const halfind = vertices.size() / 2;
+                        ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                        Point pt1(firstpt.x, firstpt.y);
+                        Point pt2;
+                        ++vit;
+                        for (; vit != vertices.end(); vit++) {
+                            ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                            pt2.x                 = pts.x;
+                            pt2.y                 = pts.y;
+                            m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
+                            pt1 = pt2;
+                        }
+                        m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
+                        ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                        Point const pt3(spt1.x, spt1.y);
+                        ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                        Point const pt4(spt2.x, spt2.y);
+                        m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
+                    }
+                }
+            }
+        } else {
+            auto instance_it = instances.begin();
+            for (; instance_it != instances.end(); ++instance_it) {
+                Instance* instance = (*instance_it)->instance;
+                if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
+                    continue;
+                }
+                std::vector<ExactModelCoordinate> vertices;
+                cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
+                auto vit                  = vertices.begin();
+                std::size_t const halfind = vertices.size() / 2;
+                ScreenPoint const firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                Point pt1(firstpt.x, firstpt.y);
+                Point pt2;
+                ++vit;
+                for (; vit != vertices.end(); vit++) {
+                    ScreenPoint const pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                    pt2.x                 = pts.x;
+                    pt2.y                 = pts.y;
+                    m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
+                    pt1 = pt2;
+                }
+                m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
+                ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                Point const pt3(spt1.x, spt1.y);
+                ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                Point const pt4(spt2.x, spt2.y);
+                m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
+            }
+        }
+    }
+
+    void BlockingInfoRenderer::setColor(uint8_t r, uint8_t g, uint8_t b)
+    {
+        m_color.r = r;
+        m_color.g = g;
+        m_color.b = b;
+    }
+} // namespace FIFE

@@ -35,7 +35,7 @@ if [[ $# -gt 1 ]]; then
   exit 1
 fi
 
-PRESET="clang20-x64-linux-rel"
+PRESET="clang22-x64-linux-dbg-cov"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${SCRIPT_DIR}/.."
@@ -97,4 +97,11 @@ else
   fi
 fi
 
-"$CLANG_TIDY" -p "$BUILD_DIR" "${files[@]}"
+# 1. include fifechan
+# 2. include vcpkg dependencies
+# 3. include project headers
+# WTF is going on with stderr and stdout redirection here?
+"$CLANG_TIDY" -p "$BUILD_DIR" "${files[@]}" -- \
+  -I"$REPO_ROOT/out/fife-dependencies/x64-linux/install/include" \
+  -I"$REPO_ROOT/vcpkg_installed/x64-linux/include" \
+  -I"$REPO_ROOT/src/fife" > "$REPO_ROOT/tidy_err.log" 2> "$REPO_ROOT/tidy_run.log" || true

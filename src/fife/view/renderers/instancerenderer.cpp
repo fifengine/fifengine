@@ -1,0 +1,1547 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
+
+// Corresponding header include
+#include "instancerenderer.h"
+
+// Standard C++ library includes
+#include <algorithm>
+#include <cassert>
+#include <limits>
+#include <list>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+// 3rd party library includes
+
+// FIFE includes
+#include "model/metamodel/action.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
+#include "model/structures/location.h"
+#include "model/structures/map.h"
+#include "util/log/logger.h"
+#include "util/math/fife_math.h"
+#include "util/time/timemanager.h"
+#include "video/animation.h"
+#include "video/image.h"
+#include "video/imagemanager.h"
+#include "video/opengl/fife_opengl.h"
+#include "video/renderbackend.h"
+#include "video/sdl/sdlimage.h"
+#include "view/camera.h"
+#include "view/visual.h"
+
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_VIEWVIEW);
+
+    namespace
+    {
+        int32_t toInt32Dimension(uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        uint8_t toUint8Channel(int32_t value)
+        {
+            assert(value >= 0);
+            assert(value <= std::numeric_limits<uint8_t>::max());
+            return static_cast<uint8_t>(value);
+        }
+
+        uint8_t toUint8Channel(double value)
+        {
+            assert(value >= 0.0);
+            assert(value <= static_cast<double>(std::numeric_limits<uint8_t>::max()));
+            return static_cast<uint8_t>(value);
+        }
+
+        float alphaFraction(uint8_t alpha)
+        {
+            return static_cast<float>(alpha) / 255.0F;
+        }
+    } // namespace
+
+    class InstanceRendererDeleteListener : public InstanceDeleteListener
+    {
+        public:
+            explicit InstanceRendererDeleteListener(InstanceRenderer* r) : m_renderer(r)
+            {
+            }
+            ~InstanceRendererDeleteListener() override = default;
+
+            void onInstanceDeleted(Instance* instance) override
+            {
+                m_renderer->removeInstance(instance);
+            }
+
+        private:
+            InstanceRenderer* m_renderer;
+    };
+
+    InstanceRenderer::OutlineInfo::OutlineInfo(InstanceRenderer* r) :
+        r(0), g(0), b(0), width(1), threshold(1), dirty(false), curimg(nullptr), renderer(r)
+    {
+    }
+    InstanceRenderer::ColoringInfo::ColoringInfo(InstanceRenderer* r) :
+        r(0), g(0), b(0), a(128), dirty(false), curimg(nullptr), renderer(r)
+    {
+    }
+
+    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), w(1), h(1), trans(0), front(true), z(0)
+    {
+    }
+
+    InstanceRenderer::OutlineInfo::~OutlineInfo()
+    {
+        renderer->addToCheck(outline);
+    }
+
+    InstanceRenderer::ColoringInfo::~ColoringInfo()
+    {
+        if (renderer->needColorBinding()) {
+            renderer->addToCheck(overlay);
+        }
+    }
+
+    InstanceRenderer::AreaInfo::~AreaInfo() = default;
+
+    InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt)
+    {
+        return dynamic_cast<InstanceRenderer*>(cnt->getRenderer("InstanceRenderer"));
+    }
+
+    InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int32_t position) :
+        RendererBase(renderbackend, position), m_area_layer(false), m_interval(60 * 1000), m_timer_enabled(false)
+    {
+        setEnabled(true);
+        if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
+            m_need_sorting       = false;
+            m_need_bind_coloring = false;
+        } else {
+            m_need_sorting       = true;
+            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
+        }
+        // init timer
+        m_timer.setInterval(toInt32Dimension(m_interval));
+        m_timer.setCallback([this] {
+            check();
+        });
+        // create delete listener
+        m_delete_listener = new InstanceRendererDeleteListener(this);
+    }
+
+    InstanceRenderer::InstanceRenderer(InstanceRenderer const & old) :
+        RendererBase(old), m_area_layer(false), m_interval(old.m_interval), m_timer_enabled(false)
+    {
+        setEnabled(true);
+        if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
+            m_need_sorting       = false;
+            m_need_bind_coloring = false;
+        } else {
+            m_need_sorting       = true;
+            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
+        }
+        // init timer
+        m_timer.setInterval(toInt32Dimension(m_interval));
+        m_timer.setCallback([this] {
+            check();
+        });
+        // create delete listener
+        m_delete_listener = new InstanceRendererDeleteListener(this);
+    }
+
+    RendererBase* InstanceRenderer::clone()
+    {
+        return new InstanceRenderer(*this);
+    }
+
+    InstanceRenderer::~InstanceRenderer()
+    {
+        // remove listener from instances
+        if (!m_assigned_instances.empty()) {
+            reset();
+        }
+        // delete listener
+        delete m_delete_listener;
+    }
+
+    void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    {
+        //		FL_DBG(_log, "Iterating layer...");
+        CellGrid const * cg = layer->getCellGrid();
+        if (cg == nullptr) {
+            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
+            return;
+        }
+
+        if (m_need_sorting) {
+            renderAlreadySorted(cam, layer, instances);
+        } else {
+            renderUnsorted(cam, layer, instances);
+        }
+    }
+
+    void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
+    {
+        // FIXME: Unlit is currently broken, maybe it would be the best to change Lightsystem
+        bool const any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+        uint32_t const lm      = m_renderbackend->getLightingModel();
+        // thanks to multimap, we will have transparent instances already sorted by their z value (key)
+        std::multimap<float, RenderItem*> transparentInstances;
+
+        m_area_layer = false;
+        if (!m_instance_areas.empty()) {
+            auto area_it = m_instance_areas.begin();
+            for (; area_it != m_instance_areas.end(); area_it++) {
+                AreaInfo& info = area_it->second;
+                if (info.instance->getLocation().getLayer() == layer) {
+                    if (info.front) {
+                        DoublePoint3D const instance_posv =
+                            cam->toVirtualScreenCoordinates(info.instance->getLocation().getMapCoordinates());
+                        info.z = instance_posv.z;
+                    }
+                    m_area_layer = true;
+                }
+            }
+        }
+
+        auto instance_it = instances.begin();
+        for (; instance_it != instances.end(); ++instance_it) {
+            //			FL_DBG(_log, "Iterating instances...");
+            Instance* instance  = (*instance_it)->instance;
+            RenderItem& vc      = **instance_it;
+            float const vertexZ = vc.vertexZ;
+
+            if (m_area_layer) {
+                auto areas_it = m_instance_areas.begin();
+                for (; areas_it != m_instance_areas.end(); areas_it++) {
+                    AreaInfo& infoa = areas_it->second;
+                    if (infoa.front) {
+                        if (infoa.z >= vc.screenpoint.z) {
+                            continue;
+                        }
+                    }
+
+                    std::string const str_name = instance->getObject()->getNamespace();
+                    auto group_it              = infoa.groups.begin();
+                    for (; group_it != infoa.groups.end(); ++group_it) {
+                        if (str_name.find((*group_it)) != std::string::npos) {
+                            ScreenPoint p;
+                            Rect rec;
+                            int32_t const areaWidth  = toInt32Dimension(infoa.w);
+                            int32_t const areaHeight = toInt32Dimension(infoa.h);
+                            p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
+                            rec.x = p.x - (areaWidth / 2);
+                            rec.y = p.y - (areaHeight / 2);
+                            rec.w = areaWidth;
+                            rec.h = areaHeight;
+                            if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
+                                vc.transparency = toUint8Channel(255 - static_cast<int32_t>(infoa.trans));
+                                // dirty hack to reset the transparency on next pump
+                                auto* visual = instance->getVisual<InstanceVisual>();
+                                visual->setVisible(!visual->isVisible());
+                                visual->setVisible(!visual->isVisible());
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if instance is not opacous
+            if (vc.transparency != 255) {
+                transparentInstances.insert(std::pair<float, RenderItem*>(vertexZ, &vc));
+                continue;
+            }
+
+            uint8_t coloringColor[4] = {0};
+            Image* outlineImage      = nullptr;
+            bool recoloring          = false;
+            if (any_effects) {
+                // coloring
+                auto coloring_it    = m_instance_colorings.find(instance);
+                bool const coloring = coloring_it != m_instance_colorings.end();
+                if (coloring) {
+                    coloringColor[0] = coloring_it->second.r;
+                    coloringColor[1] = coloring_it->second.g;
+                    coloringColor[2] = coloring_it->second.b;
+                    coloringColor[3] = coloring_it->second.a;
+                    recoloring       = true;
+                }
+                // outline
+                auto outline_it    = m_instance_outlines.find(instance);
+                bool const outline = outline_it != m_instance_outlines.end();
+                if (outline) {
+                    if (lm != 0) {
+                        // first render normal image without stencil and alpha test (0)
+                        // so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+                        outlineImage = bindOutline(outline_it->second, vc, cam);
+                    } else {
+                        bindOutline(outline_it->second, vc, cam)
+                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
+                    }
+                }
+            }
+            //			if(lm != 0) {
+            //				if(unlit) {
+            //					bool found = false;
+            //					std::string lit_name = instance->getObject()->getNamespace();
+            //					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+            //					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+            //						if(lit_name.find(*unlit_it) != std::string::npos) {
+            //							found = true;
+            //							break;
+            //						}
+            //					}
+            //					vc.image->render(vc.dimensions, vc.transparency, recoloring ?
+            // coloringColor : 0); 					if (found) {
+            // m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ?
+            // OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE); 					} else {
+            //						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, ZERO,
+            // ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+            //					}
+            //					if (outlineImage) {
+            //						outlineImage->render(vc.dimensions, vc.transparency);
+            //						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255,
+            // REPLACE, ALWAYS);
+            //					}
+            //					continue;
+            //				}
+            //			}
+            // overlay
+            if (vc.m_overlay != nullptr) {
+                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
+                // no overlay
+            } else {
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+            }
+
+            if (outlineImage != nullptr) {
+                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
+                m_renderbackend->changeRenderInfos(RENDER_DATA_TEXTURE_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+            }
+        }
+        // iterate through all (semi) transparent instances
+        auto it = transparentInstances.begin();
+        for (; it != transparentInstances.end(); ++it) {
+            RenderItem& vc      = *(it->second);
+            Instance* instance  = vc.instance;
+            float const vertexZ = it->first;
+
+            uint8_t coloringColor[4] = {0};
+            Image* outlineImage      = nullptr;
+            bool recoloring          = false;
+            if (any_effects) {
+                // coloring
+                auto coloring_it    = m_instance_colorings.find(instance);
+                bool const coloring = coloring_it != m_instance_colorings.end();
+                if (coloring) {
+                    coloringColor[0] = coloring_it->second.r;
+                    coloringColor[1] = coloring_it->second.g;
+                    coloringColor[2] = coloring_it->second.b;
+                    coloringColor[3] = coloring_it->second.a;
+                    recoloring       = true;
+                }
+                // outline
+                auto outline_it    = m_instance_outlines.find(instance);
+                bool const outline = outline_it != m_instance_outlines.end();
+                if (outline) {
+                    if (lm != 0) {
+                        // first render normal image without stencil and alpha test (0)
+                        // so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+                        outlineImage = bindOutline(outline_it->second, vc, cam);
+                    } else {
+                        bindOutline(outline_it->second, vc, cam)
+                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
+                    }
+                }
+            }
+            // overlay
+            if (vc.m_overlay != nullptr) {
+                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
+                // no overlay
+            } else {
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+            }
+
+            if (outlineImage != nullptr) {
+                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
+                m_renderbackend->changeRenderInfos(RENDER_DATA_TEXCOLOR_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+            }
+        }
+    }
+
+    void InstanceRenderer::renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances)
+    {
+        bool const any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+        bool const unlit       = !m_unlit_groups.empty();
+        uint32_t const lm      = m_renderbackend->getLightingModel();
+
+        m_area_layer = false;
+        if (!m_instance_areas.empty()) {
+            auto area_it = m_instance_areas.begin();
+            for (; area_it != m_instance_areas.end(); area_it++) {
+                AreaInfo& info = area_it->second;
+                if (info.instance->getLocation().getLayer() == layer) {
+                    if (info.front) {
+                        DoublePoint3D const instance_posv =
+                            cam->toVirtualScreenCoordinates(info.instance->getLocation().getMapCoordinates());
+                        info.z = instance_posv.z;
+                    }
+                    m_area_layer = true;
+                }
+            }
+        }
+
+        auto instance_it = instances.begin();
+        for (; instance_it != instances.end(); ++instance_it) {
+            //			FL_DBG(_log, "Iterating instances...");
+            Instance* instance = (*instance_it)->instance;
+            RenderItem& vc     = **instance_it;
+
+            if (m_area_layer) {
+                auto areas_it = m_instance_areas.begin();
+                for (; areas_it != m_instance_areas.end(); areas_it++) {
+                    AreaInfo& infoa = areas_it->second;
+                    if (infoa.front) {
+                        if (infoa.z >= vc.screenpoint.z) {
+                            continue;
+                        }
+                    }
+
+                    std::string const str_name = instance->getObject()->getNamespace();
+                    auto group_it              = infoa.groups.begin();
+                    for (; group_it != infoa.groups.end(); ++group_it) {
+                        if (str_name.find((*group_it)) != std::string::npos) {
+                            ScreenPoint p;
+                            Rect rec;
+                            int32_t const areaWidth  = toInt32Dimension(infoa.w);
+                            int32_t const areaHeight = toInt32Dimension(infoa.h);
+                            p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
+                            rec.x = p.x - (areaWidth / 2);
+                            rec.y = p.y - (areaHeight / 2);
+                            rec.w = areaWidth;
+                            rec.h = areaHeight;
+                            if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
+                                vc.transparency = toUint8Channel(255 - static_cast<int32_t>(infoa.trans));
+                                // dirty hack to reset the transparency on next pump
+                                auto* visual = instance->getVisual<InstanceVisual>();
+                                visual->setVisible(!visual->isVisible());
+                                visual->setVisible(!visual->isVisible());
+                            }
+                        }
+                    }
+                }
+            }
+
+            //			FL_DBG(_log, LMsg("Instance layer coordinates = ") <<
+            // instance->getLocationRef().getLayerCoordinates());
+
+            uint8_t coloringColor[4] = {0};
+            Image* outlineImage      = nullptr;
+            bool recoloring          = false;
+            if (any_effects) {
+                // coloring
+                auto coloring_it    = m_instance_colorings.find(instance);
+                bool const coloring = coloring_it != m_instance_colorings.end();
+                if (coloring && !m_need_bind_coloring) {
+                    coloringColor[0] = coloring_it->second.r;
+                    coloringColor[1] = coloring_it->second.g;
+                    coloringColor[2] = coloring_it->second.b;
+                    coloringColor[3] = coloring_it->second.a;
+                    recoloring       = true;
+                }
+                // outline
+                auto outline_it    = m_instance_outlines.find(instance);
+                bool const outline = outline_it != m_instance_outlines.end();
+                if (outline) {
+                    if (lm != 0) {
+                        // first render normal image without stencil and alpha test (0)
+                        // so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+                        outlineImage = bindOutline(outline_it->second, vc, cam);
+                    } else {
+                        bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+                    }
+                }
+                // coloring for SDL
+                if (coloring && m_need_bind_coloring) {
+                    bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+                    m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS);
+                    continue;
+                }
+            }
+            if (lm != 0) {
+                if (unlit) {
+                    bool found                 = false;
+                    std::string const lit_name = instance->getObject()->getNamespace();
+                    auto unlit_it              = m_unlit_groups.begin();
+                    for (; unlit_it != m_unlit_groups.end(); ++unlit_it) {
+                        if (lit_name.find(*unlit_it) != std::string::npos) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    if (found) {
+                        m_renderbackend->changeRenderInfos(
+                            RENDER_DATA_WITHOUT_Z,
+                            1,
+                            4,
+                            5,
+                            false,
+                            true,
+                            255,
+                            REPLACE,
+                            ALWAYS,
+                            recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+                    } else {
+                        m_renderbackend->changeRenderInfos(
+                            RENDER_DATA_WITHOUT_Z,
+                            1,
+                            4,
+                            5,
+                            true,
+                            true,
+                            0,
+                            ZERO,
+                            ALWAYS,
+                            recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+                    }
+                    if (outlineImage != nullptr) {
+                        outlineImage->render(vc.dimensions, vc.transparency);
+                        m_renderbackend->changeRenderInfos(
+                            RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+                    }
+                    continue;
+                }
+            }
+            // overlay
+            if (vc.m_overlay != nullptr) {
+                renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor, recoloring);
+                // no overlay
+            } else {
+                vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+            }
+
+            if (outlineImage != nullptr) {
+                outlineImage->render(vc.dimensions, vc.transparency);
+                m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+            }
+        }
+    }
+
+    void InstanceRenderer::renderOverlay(
+        RenderDataType type, RenderItem* item, uint8_t const * coloringColor, bool recoloring)
+    {
+        RenderItem const & vc = *item;
+        bool const withZ      = type != RENDER_DATA_WITHOUT_Z;
+        float const vertexZ   = vc.vertexZ;
+
+        // animation overlay
+        std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
+        // animation color overlay
+        std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
+
+        // animation overlay without color overlay
+        if ((animationOverlay != nullptr) && (animationColorOverlay == nullptr)) {
+            if (withZ) {
+                for (auto& it : *animationOverlay) {
+                    it->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                }
+            } else {
+                for (auto& it : *animationOverlay) {
+                    it->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                }
+            }
+            // animation overlay with color overlay
+        } else if ((animationOverlay != nullptr) && (animationColorOverlay != nullptr)) {
+            auto ovit = animationColorOverlay->begin();
+            auto it   = animationOverlay->begin();
+            for (; it != animationOverlay->end(); ++it, ++ovit) {
+                OverlayColors* oc = (*ovit);
+                if (oc == nullptr) {
+                    if (withZ) {
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    } else {
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    }
+                } else {
+                    if (oc->getColors().size() > 1) {
+                        auto cit          = oc->getColors().begin();
+                        uint8_t factor[4] = {0, 0, 0, cit->second.getAlpha()};
+                        // multi color overlay
+                        ImagePtr multiColorOverlay;
+                        if (recoloring) {
+                            // create temp OverlayColors
+                            auto* temp        = new OverlayColors(oc->getColorOverlayImage());
+                            auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                            std::map<Color, Color> const & defaultColors = oc->getColors();
+                            for (auto const & defaultColor : defaultColors) {
+                                if (defaultColor.second.getAlpha() == 0) {
+                                    continue;
+                                }
+                                float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
+                                Color const c(
+                                    toUint8Channel(
+                                        (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
+                                    toUint8Channel(
+                                        (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
+                                    toUint8Channel(
+                                        (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
+                                    255);
+                                temp->changeColor(defaultColor.first, c);
+                            }
+                            // create new factor
+                            factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
+                            factor[3] = std::min(coloringColor[3], factor[3]);
+                            // get overlay image with temp colors
+                            multiColorOverlay = getMultiColorOverlay(vc, temp);
+                            delete temp;
+                        } else {
+                            multiColorOverlay = getMultiColorOverlay(vc, oc);
+                            factor[3]         = 0;
+                        }
+                        if (withZ) {
+                            (*it)->renderZ(
+                                vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                            (*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+                        } else {
+                            (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                            (*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+                        }
+                        continue;
+                    }
+                    // single color overlay
+                    auto color_it   = oc->getColors().begin();
+                    uint8_t rgba[4] = {
+                        color_it->second.getR(),
+                        color_it->second.getG(),
+                        color_it->second.getB(),
+                        toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
+                    bool const noOverlay = rgba[3] == 255;
+                    if (recoloring) {
+                        if (!noOverlay) {
+                            float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                            float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                            rgba[0]                  = toUint8Channel(
+                                (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
+                            rgba[1] = toUint8Channel(
+                                (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
+                            rgba[2] = toUint8Channel(
+                                (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
+                            rgba[3] = std::min(coloringColor[3], rgba[3]);
+                        }
+                    }
+                    if (withZ) {
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                        if (!noOverlay) {
+                            (*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
+                            m_renderbackend->changeRenderInfos(
+                                type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+                        }
+                    } else {
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                        if (!noOverlay) {
+                            (*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
+                            m_renderbackend->changeRenderInfos(
+                                type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+                        }
+                    }
+                }
+            }
+        } else {
+            OverlayColors* colorOverlay = vc.getColorOverlay();
+            if (colorOverlay->getColors().size() > 1) {
+                // multi color overlay
+                ImagePtr multiColorOverlay;
+                // interpolation factor
+                auto it           = colorOverlay->getColors().begin();
+                uint8_t factor[4] = {0, 0, 0, it->second.getAlpha()};
+                if (recoloring) {
+                    // create temp OverlayColors
+                    auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
+                    float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                    std::map<Color, Color> const & defaultColors = colorOverlay->getColors();
+                    for (auto const & defaultColor : defaultColors) {
+                        if (defaultColor.second.getAlpha() == 0) {
+                            continue;
+                        }
+                        float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
+                        Color const c(
+                            toUint8Channel(
+                                (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
+                            toUint8Channel(
+                                (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
+                            toUint8Channel(
+                                (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
+                            255);
+                        temp->changeColor(defaultColor.first, c);
+                    }
+                    // create new factor
+                    factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
+                    factor[3] = std::min(coloringColor[3], factor[3]);
+                    // get overlay image with temp colors
+                    multiColorOverlay = getMultiColorOverlay(vc, temp);
+                    delete temp;
+                }
+                if (!multiColorOverlay) {
+                    multiColorOverlay = getMultiColorOverlay(vc);
+                    factor[3]         = 0;
+                }
+                if (withZ) {
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+                } else {
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+                }
+            } else {
+                // single color overlay
+                auto color_it   = colorOverlay->getColors().begin();
+                uint8_t rgba[4] = {
+                    color_it->second.getR(),
+                    color_it->second.getG(),
+                    color_it->second.getB(),
+                    toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
+                bool const noOverlay = rgba[3] == 255;
+                if (recoloring) {
+                    if (!noOverlay) {
+                        float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                        float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                        rgba[0]                  = toUint8Channel(
+                            (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
+                        rgba[1] = toUint8Channel(
+                            (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
+                        rgba[2] = toUint8Channel(
+                            (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
+                        rgba[3] = std::min(coloringColor[3], rgba[3]);
+                    }
+                }
+                if (withZ) {
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    if (!noOverlay) {
+                        vc.image->renderZ(
+                            vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+                        m_renderbackend->changeRenderInfos(
+                            type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+                    }
+                } else {
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    if (!noOverlay) {
+                        vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+                        m_renderbackend->changeRenderInfos(
+                            type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+                    }
+                }
+            }
+        }
+    }
+
+    static inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
+    {
+        if (threshold > 1) {
+            return (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha));
+        }
+        return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
+    }
+
+    Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
+    {
+        static_cast<void>(cam);
+        bool const valid = isValidImage(info.outline);
+        if (!info.dirty && info.curimg == vc.image.get() && valid) {
+            removeFromCheck(info.outline);
+            // optimization for outline that has not changed
+            return info.outline.get();
+        }
+        info.curimg = vc.image.get();
+
+        // if outline has changed we can maybe free the old effect image
+        if (valid) {
+            addToCheck(info.outline);
+        }
+        // special case for animation overlay
+        if (vc.getAnimationOverlay() != nullptr) {
+            return bindMultiOutline(info, vc, cam);
+        }
+        // NOTE: Since r3721 outline is just the 'border' so to render everything correctly
+        // we need to first render normal image, and then its outline.
+        // This helps much with lighting stuff and doesn't require from us to copy image.
+
+        bool found = false;
+        // create name
+        std::stringstream sts;
+        sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << static_cast<uint32_t>(info.g)
+            << "," << static_cast<uint32_t>(info.b) << "," << info.width;
+        // search image
+        if (ImageManager::instance()->exists(sts.str())) {
+            info.outline = ImageManager::instance()->getPtr(sts.str());
+            if (isValidImage(info.outline)) {
+                removeFromCheck(info.outline);
+                // mark outline as not dirty since we found it here
+                info.dirty = false;
+                return info.outline.get();
+            }
+            found = true;
+        }
+
+        // With lazy loading we can come upon a situation where we need to generate outline from
+        // uninitialised shared image
+        if (vc.image->isSharedImage()) {
+            vc.image->forceLoadInternal();
+        }
+
+        int32_t const imageWidth     = toInt32Dimension(vc.image->getWidth());
+        int32_t const imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* outline_surface = SDL_CreateSurface(imageWidth, imageHeight, SDL_PIXELFORMAT_RGBA8888);
+
+        // TODO: optimize...
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 0;
+
+        // vertical sweep
+        for (int32_t x = 0; x < outline_surface->w; x++) {
+            int32_t prev_a = 0;
+            for (int32_t y = 0; y < outline_surface->h; y++) {
+                vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+                if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+                    if (std::cmp_less(a, prev_a)) {
+                        for (int32_t yy = y; yy < y + info.width; yy++) {
+                            Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
+                        }
+                    } else {
+                        for (int32_t yy = y - info.width; yy < y; yy++) {
+                            Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
+                        }
+                    }
+                }
+                prev_a = a;
+            }
+        }
+        // horizontal sweep
+        for (int32_t y = 0; y < outline_surface->h; y++) {
+            int32_t prev_a = 0;
+            for (int32_t x = 0; x < outline_surface->w; x++) {
+                vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+                if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+                    if (std::cmp_less(a, prev_a)) {
+                        for (int32_t xx = x; xx < x + info.width; xx++) {
+                            Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
+                        }
+                    } else {
+                        for (int32_t xx = x - info.width; xx < x; xx++) {
+                            Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
+                        }
+                    }
+                }
+                prev_a = a;
+            }
+        }
+
+        // In case of OpenGL backend, SDLImage needs to be converted
+        Image* img = m_renderbackend->createImage(sts.str(), outline_surface);
+        img->setState(IResource::RES_LOADED);
+
+        if (found) {
+            // image exists but is not "loaded"
+            removeFromCheck(info.outline);
+            ImagePtr const temp(img);
+            info.outline.get()->copySubimage(0, 0, temp);
+            info.outline.get()->setState(IResource::RES_LOADED);
+        } else {
+            // create and add image
+            info.outline = ImageManager::instance()->add(img);
+        }
+        // mark outline as not dirty since we created/recreated it here
+        info.dirty = false;
+
+        return info.outline.get();
+    }
+
+    Image* InstanceRenderer::bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
+    {
+        static_cast<void>(cam);
+        // NOTE: Since r3721 outline is just the 'border' so to render everything correctly
+        // we need to first render normal image, and then its outline.
+        // This helps much with lighting stuff and doesn't require from us to copy image.
+
+        bool found = false;
+        // create name
+        std::stringstream sts;
+        uint32_t mw                              = 0;
+        uint32_t mh                              = 0;
+        std::vector<ImagePtr>* animationOverlays = vc.getAnimationOverlay();
+        auto it                                  = animationOverlays->begin();
+        for (; it != animationOverlays->end(); ++it) {
+            // With lazy loading we can come upon a situation where we need to generate outline from
+            // uninitialised shared image
+            if ((*it)->isSharedImage()) {
+                (*it)->forceLoadInternal();
+            }
+            sts << (*it)->getName() << ",";
+            mw = std::max(mw, (*it)->getWidth());
+            mh = std::max(mh, (*it)->getHeight());
+        }
+        sts << static_cast<uint32_t>(info.r) << "," << static_cast<uint32_t>(info.g) << ","
+            << static_cast<uint32_t>(info.b) << "," << info.width;
+        // search image
+        if (ImageManager::instance()->exists(sts.str())) {
+            info.outline = ImageManager::instance()->getPtr(sts.str());
+            if (isValidImage(info.outline)) {
+                removeFromCheck(info.outline);
+                // mark outline as not dirty since we found it here
+                info.dirty = false;
+                return info.outline.get();
+            }
+            found = true;
+        }
+
+        int32_t const outlineWidth   = toInt32Dimension(mw);
+        int32_t const outlineHeight  = toInt32Dimension(mh);
+        SDL_Surface* outline_surface = SDL_CreateSurface(outlineWidth, outlineHeight, SDL_PIXELFORMAT_RGBA8888);
+
+        // TODO: optimize...
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 0;
+
+        it = animationOverlays->begin();
+        for (; it != animationOverlays->end(); ++it) {
+            int32_t const overlayWidth  = toInt32Dimension((*it)->getWidth());
+            int32_t const overlayHeight = toInt32Dimension((*it)->getHeight());
+            // vertical sweep
+            for (int32_t x = 0; x < overlayWidth; x++) {
+                int32_t prev_a = 0;
+                for (int32_t y = 0; y < overlayHeight; y++) {
+                    (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+                    if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+                        if (std::cmp_less(a, prev_a)) {
+                            for (int32_t yy = y; yy < y + info.width; yy++) {
+                                int32_t const tx = x + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = yy + ((outlineHeight / 2) - (overlayHeight / 2));
+                                Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
+                            }
+                        } else {
+                            for (int32_t yy = y - info.width; yy < y; yy++) {
+                                int32_t const tx = x + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = yy + ((outlineHeight / 2) - (overlayHeight / 2));
+                                Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
+                            }
+                        }
+                    }
+                    prev_a = a;
+                }
+            }
+
+            // horizontal sweep
+            for (int32_t y = 0; y < overlayHeight; y++) {
+                int32_t prev_a = 0;
+                for (int32_t x = 0; x < overlayWidth; x++) {
+                    (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+                    if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+                        if (std::cmp_less(a, prev_a)) {
+                            for (int32_t xx = x; xx < x + info.width; xx++) {
+                                int32_t const tx = xx + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = y + ((outlineHeight / 2) - (overlayHeight / 2));
+                                Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
+                            }
+                        } else {
+                            for (int32_t xx = x - info.width; xx < x; xx++) {
+                                int32_t const tx = xx + ((outlineWidth / 2) - (overlayWidth / 2));
+                                int32_t const ty = y + ((outlineHeight / 2) - (overlayHeight / 2));
+                                Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
+                            }
+                        }
+                    }
+                    prev_a = a;
+                }
+            }
+        }
+
+        // In case of OpenGL backend, SDLImage needs to be converted
+        Image* img = m_renderbackend->createImage(sts.str(), outline_surface);
+        img->setState(IResource::RES_LOADED);
+
+        if (found) {
+            // image exists but is not "loaded"
+            removeFromCheck(info.outline);
+            ImagePtr const temp(img);
+            info.outline.get()->copySubimage(0, 0, temp);
+            info.outline.get()->setState(IResource::RES_LOADED);
+        } else {
+            // create and add image
+            info.outline = ImageManager::instance()->add(img);
+        }
+        // mark outline as not dirty since we created/recreated it here
+        info.dirty = false;
+
+        return info.outline.get();
+    }
+
+    Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam)
+    {
+        static_cast<void>(cam);
+        bool valid = isValidImage(info.overlay);
+        if (!info.dirty && info.curimg == vc.image.get() && valid) {
+            removeFromCheck(info.overlay);
+            // optimization for coloring that has not changed
+            return info.overlay.get();
+        }
+        info.curimg = vc.image.get();
+
+        // if coloring has changed we can maybe free the old effect image
+        if (valid) {
+            addToCheck(info.overlay);
+        }
+
+        bool found = false;
+        // create name
+        std::stringstream sts;
+        sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << static_cast<uint32_t>(info.g)
+            << "," << static_cast<uint32_t>(info.b) << "," << static_cast<uint32_t>(info.a);
+        // search image
+        if (ImageManager::instance()->exists(sts.str())) {
+            info.overlay = ImageManager::instance()->getPtr(sts.str());
+            valid        = isValidImage(info.overlay);
+            if (valid) {
+                removeFromCheck(info.overlay);
+                // mark overlay as not dirty since we found it here
+                info.dirty = false;
+                return info.overlay.get();
+            }
+            found = true;
+        }
+
+        // With lazy loading we can come upon a situation where we need to generate coloring from
+        // uninitialised shared image
+        if (vc.image->isSharedImage()) {
+            vc.image->forceLoadInternal();
+        }
+
+        // not found so we create it
+        int32_t const imageWidth     = toInt32Dimension(vc.image->getWidth());
+        int32_t const imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* overlay_surface = SDL_CreateSurface(imageWidth, imageHeight, SDL_PIXELFORMAT_RGBA8888);
+
+        uint8_t r               = 0;
+        uint8_t g               = 0;
+        uint8_t b               = 0;
+        uint8_t a               = 0;
+        float const alphaFactor = alphaFraction(info.a);
+        for (int32_t x = 0; x < overlay_surface->w; x++) {
+            for (int32_t y = 0; y < overlay_surface->h; y++) {
+                vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+                if (a > 0) {
+                    Image::putPixel(
+                        overlay_surface,
+                        x,
+                        y,
+                        toUint8Channel((info.r * (1.0F - alphaFactor)) + (r * alphaFactor)),
+                        toUint8Channel((info.g * (1.0F - alphaFactor)) + (g * alphaFactor)),
+                        toUint8Channel((info.b * (1.0F - alphaFactor)) + (b * alphaFactor)),
+                        a);
+                }
+            }
+        }
+
+        // In case of OpenGL backend, SDLImage needs to be converted
+        Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+
+        if (found) {
+            // image exists but is not "loaded"
+            removeFromCheck(info.overlay);
+            ImagePtr const temp(img);
+            info.overlay.get()->copySubimage(0, 0, temp);
+            info.overlay.get()->setState(IResource::RES_LOADED);
+        } else {
+            // add image
+            img->setState(IResource::RES_LOADED);
+            info.overlay = ImageManager::instance()->add(img);
+        }
+        // mark overlay as not dirty since we created/recreated it here
+        info.dirty = false;
+
+        return info.overlay.get();
+    }
+
+    ImagePtr InstanceRenderer::getMultiColorOverlay(RenderItem const & vc, OverlayColors* colors)
+    {
+        // multi color overlay
+        std::map<Color, Color> const & colorMap =
+            (colors != nullptr) ? colors->getColors() : vc.getColorOverlay()->getColors();
+        auto it = colorMap.begin();
+        ImagePtr const colorOverlayImage =
+            (colors != nullptr) ? colors->getColorOverlayImage() : vc.getColorOverlay()->getColorOverlayImage();
+        ImagePtr colorOverlay;
+
+        // create name
+        std::stringstream sts;
+        sts << colorOverlayImage.get()->getName();
+        for (; it != colorMap.end(); ++it) {
+            sts << ","
+                << static_cast<uint32_t>(
+                       it->second.getR() | (it->second.getG() << 8) | (it->second.getB() << 16) |
+                       (it->second.getAlpha() << 24));
+        }
+        bool exist = false;
+        bool found = false;
+        if (ImageManager::instance()->exists(sts.str())) {
+            exist        = true;
+            colorOverlay = ImageManager::instance()->getPtr(sts.str());
+            if (isValidImage(colorOverlay)) {
+                removeFromCheck(colorOverlay);
+                found = true;
+            }
+        }
+        if (!exist || !found) {
+            // With lazy loading we can come upon a situation where we need to generate color overlay from
+            // uninitialised shared image
+            if (colorOverlayImage->isSharedImage()) {
+                colorOverlayImage->forceLoadInternal();
+            }
+
+            // not found so we create it
+            int32_t const overlayWidth   = toInt32Dimension(colorOverlayImage->getWidth());
+            int32_t const overlayHeight  = toInt32Dimension(colorOverlayImage->getHeight());
+            SDL_Surface* overlay_surface = SDL_CreateSurface(overlayWidth, overlayHeight, SDL_PIXELFORMAT_RGBA8888);
+
+            uint8_t r = 0;
+            uint8_t g = 0;
+            uint8_t b = 0;
+            uint8_t a = 0;
+            for (int32_t x = 0; x < overlay_surface->w; x++) {
+                for (int32_t y = 0; y < overlay_surface->h; y++) {
+                    colorOverlayImage->getPixelRGBA(x, y, &r, &g, &b, &a);
+                    Color const c(r, g, b, a);
+                    it = colorMap.find(c);
+                    if (it != colorMap.end()) {
+                        Image::putPixel(
+                            overlay_surface,
+                            x,
+                            y,
+                            it->second.getR(),
+                            it->second.getG(),
+                            it->second.getB(),
+                            it->second.getAlpha());
+                    } else {
+                        Image::putPixel(overlay_surface, x, y, r, g, b, a);
+                    }
+                }
+            }
+
+            // In case of OpenGL backend, SDLImage needs to be converted
+            Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+
+            if (exist) {
+                // image exists but is not "loaded"
+                removeFromCheck(colorOverlay);
+                ImagePtr const temp(img);
+                colorOverlay.get()->setSurface(img->detachSurface());
+                colorOverlay.get()->setState(IResource::RES_LOADED);
+            } else {
+                // add image
+                img->setState(IResource::RES_LOADED);
+                colorOverlay = ImageManager::instance()->add(img);
+            }
+        }
+        addToCheck(colorOverlay);
+        return colorOverlay;
+    }
+
+    void InstanceRenderer::addOutlined(
+        Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold)
+    {
+        OutlineInfo newinfo(this);
+        newinfo.r         = toUint8Channel(r);
+        newinfo.g         = toUint8Channel(g);
+        newinfo.b         = toUint8Channel(b);
+        newinfo.threshold = threshold;
+        newinfo.width     = width;
+        newinfo.dirty     = true;
+
+        // attempts to insert the element into the outline map
+        // will return false in the second value of the pair if the instance already exists
+        // in the map and the first value of the pair will then be an iterator to the
+        // existing data for the instance
+        std::pair<InstanceToOutlines_t::iterator, bool> const insertiter =
+            m_instance_outlines.insert(std::make_pair(instance, newinfo));
+
+        if (!insertiter.second) {
+            // the insertion did not happen because the instance
+            // already exists in the map so lets just update its outline info
+            OutlineInfo& info = insertiter.first->second;
+
+            if (std::cmp_not_equal(info.r, r) || std::cmp_not_equal(info.g, g) || std::cmp_not_equal(info.b, b) ||
+                info.width != width) {
+                // only update the outline info if its changed since the last call
+                // flag the outline info as dirty so it will get processed during rendering
+                info.r         = toUint8Channel(r);
+                info.b         = toUint8Channel(b);
+                info.g         = toUint8Channel(g);
+                info.width     = width;
+                info.threshold = threshold;
+                info.dirty     = true;
+            }
+        } else {
+            std::pair<InstanceToEffects_t::iterator, bool> const iter =
+                m_assigned_instances.insert(std::make_pair(instance, OUTLINE));
+            if (iter.second) {
+                instance->addDeleteListener(m_delete_listener);
+            } else {
+                Effect& effect = iter.first->second;
+                if ((effect & OUTLINE) != OUTLINE) {
+                    effect += OUTLINE;
+                }
+            }
+        }
+    }
+
+    void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a)
+    {
+        ColoringInfo newinfo(this);
+        newinfo.r     = toUint8Channel(r);
+        newinfo.g     = toUint8Channel(g);
+        newinfo.b     = toUint8Channel(b);
+        newinfo.a     = toUint8Channel(a);
+        newinfo.dirty = true;
+
+        // attempts to insert the element into the coloring map
+        // will return false in the second value of the pair if the instance already exists
+        // in the map and the first value of the pair will then be an iterator to the
+        // existing data for the instance
+        std::pair<InstanceToColoring_t::iterator, bool> const insertiter =
+            m_instance_colorings.insert(std::make_pair(instance, newinfo));
+
+        if (!insertiter.second) {
+            // the insertion did not happen because the instance
+            // already exists in the map so lets just update its coloring info
+            ColoringInfo& info = insertiter.first->second;
+
+            if (std::cmp_not_equal(info.r, r) || std::cmp_not_equal(info.g, g) || std::cmp_not_equal(info.b, b) ||
+                std::cmp_not_equal(info.a, a)) {
+                // only update the coloring info if its changed since the last call
+                info.r     = toUint8Channel(r);
+                info.b     = toUint8Channel(b);
+                info.g     = toUint8Channel(g);
+                info.a     = toUint8Channel(a);
+                info.dirty = true;
+            }
+        } else {
+            std::pair<InstanceToEffects_t::iterator, bool> const iter =
+                m_assigned_instances.insert(std::make_pair(instance, COLOR));
+            if (iter.second) {
+                instance->addDeleteListener(m_delete_listener);
+            } else {
+                Effect& effect = iter.first->second;
+                if ((effect & COLOR) != COLOR) {
+                    effect += COLOR;
+                }
+            }
+        }
+    }
+
+    void InstanceRenderer::addTransparentArea(
+        Instance* instance, std::list<std::string> const & groups, uint32_t w, uint32_t h, uint8_t trans, bool front)
+    {
+        AreaInfo newinfo;
+        newinfo.instance = instance;
+        newinfo.groups   = groups;
+
+        newinfo.w     = w;
+        newinfo.h     = h;
+        newinfo.trans = trans;
+        newinfo.front = front;
+
+        // attempts to insert the element into the area map
+        // will return false in the second value of the pair if the instance already exists
+        // in the map and the first value of the pair will then be an iterator to the
+        // existing data for the instance
+        std::pair<InstanceToAreas_t::iterator, bool> const insertiter =
+            m_instance_areas.insert(std::make_pair(instance, newinfo));
+
+        if (!insertiter.second) {
+            // the insertion did not happen because the instance
+            // already exists in the map so lets just update its area info
+            AreaInfo& info = insertiter.first->second;
+            info.groups    = groups;
+            info.w         = w;
+            info.h         = h;
+            info.trans     = trans;
+            info.front     = front;
+        } else {
+            std::pair<InstanceToEffects_t::iterator, bool> const iter =
+                m_assigned_instances.insert(std::make_pair(instance, AREA));
+            if (iter.second) {
+                instance->addDeleteListener(m_delete_listener);
+            } else {
+                Effect& effect = iter.first->second;
+                if ((effect & AREA) != AREA) {
+                    effect += AREA;
+                }
+            }
+        }
+    }
+
+    void InstanceRenderer::removeOutlined(Instance* instance)
+    {
+        auto it = m_assigned_instances.find(instance);
+        if (it != m_assigned_instances.end()) {
+            if (it->second == OUTLINE) {
+                instance->removeDeleteListener(m_delete_listener);
+                m_instance_outlines.erase(instance);
+                m_assigned_instances.erase(it);
+            } else if ((it->second & OUTLINE) == OUTLINE) {
+                it->second -= OUTLINE;
+                m_instance_outlines.erase(instance);
+            }
+        }
+    }
+
+    void InstanceRenderer::removeColored(Instance* instance)
+    {
+        auto it = m_assigned_instances.find(instance);
+        if (it != m_assigned_instances.end()) {
+            if (it->second == COLOR) {
+                instance->removeDeleteListener(m_delete_listener);
+                m_instance_colorings.erase(instance);
+                m_assigned_instances.erase(it);
+            } else if ((it->second & COLOR) == COLOR) {
+                it->second -= COLOR;
+                m_instance_colorings.erase(instance);
+            }
+        }
+    }
+
+    void InstanceRenderer::removeTransparentArea(Instance* instance)
+    {
+        auto it = m_assigned_instances.find(instance);
+        if (it != m_assigned_instances.end()) {
+            if (it->second == AREA) {
+                instance->removeDeleteListener(m_delete_listener);
+                m_instance_areas.erase(instance);
+                m_assigned_instances.erase(it);
+            } else if ((it->second & AREA) == AREA) {
+                it->second -= AREA;
+                m_instance_areas.erase(instance);
+            }
+        }
+    }
+
+    void InstanceRenderer::removeAllOutlines()
+    {
+        if (!m_instance_outlines.empty()) {
+            auto outline_it = m_instance_outlines.begin();
+            for (; outline_it != m_instance_outlines.end(); ++outline_it) {
+                auto it = m_assigned_instances.find((*outline_it).first);
+                if (it != m_assigned_instances.end()) {
+                    if (it->second == OUTLINE) {
+                        (*outline_it).first->removeDeleteListener(m_delete_listener);
+                        m_assigned_instances.erase(it);
+                    } else if ((it->second & OUTLINE) == OUTLINE) {
+                        it->second -= OUTLINE;
+                    }
+                }
+            }
+            m_instance_outlines.clear();
+        }
+    }
+
+    void InstanceRenderer::removeAllColored()
+    {
+        if (!m_instance_colorings.empty()) {
+            auto color_it = m_instance_colorings.begin();
+            for (; color_it != m_instance_colorings.end(); ++color_it) {
+                auto it = m_assigned_instances.find((*color_it).first);
+                if (it != m_assigned_instances.end()) {
+                    if (it->second == COLOR) {
+                        (*color_it).first->removeDeleteListener(m_delete_listener);
+                        m_assigned_instances.erase(it);
+                    } else if ((it->second & COLOR) == COLOR) {
+                        it->second -= COLOR;
+                    }
+                }
+            }
+            m_instance_colorings.clear();
+        }
+    }
+
+    void InstanceRenderer::removeAllTransparentAreas()
+    {
+        if (!m_instance_areas.empty()) {
+            auto area_it = m_instance_areas.begin();
+            for (; area_it != m_instance_areas.end(); ++area_it) {
+                auto it = m_assigned_instances.find((*area_it).first);
+                if (it != m_assigned_instances.end()) {
+                    if (it->second == AREA) {
+                        (*area_it).first->removeDeleteListener(m_delete_listener);
+                        m_assigned_instances.erase(it);
+                    } else if ((it->second & AREA) == AREA) {
+                        it->second -= AREA;
+                    }
+                }
+            }
+            m_instance_areas.clear();
+        }
+    }
+
+    void InstanceRenderer::addIgnoreLight(std::list<std::string> const & groups)
+    {
+        auto group_it = groups.begin();
+        for (; group_it != groups.end(); ++group_it) {
+            m_unlit_groups.push_back(*group_it);
+        }
+        m_unlit_groups.sort();
+        m_unlit_groups.unique();
+    }
+
+    void InstanceRenderer::removeIgnoreLight(std::list<std::string> const & groups)
+    {
+        auto group_it = groups.begin();
+        for (; group_it != groups.end(); ++group_it) {
+            auto unlit_it = m_unlit_groups.begin();
+            for (; unlit_it != m_unlit_groups.end(); ++unlit_it) {
+                if ((*group_it).find(*unlit_it) != std::string::npos) {
+                    m_unlit_groups.remove(*unlit_it);
+                    break;
+                }
+            }
+        }
+    }
+
+    void InstanceRenderer::removeAllIgnoreLight()
+    {
+        m_unlit_groups.clear();
+    }
+
+    void InstanceRenderer::reset()
+    {
+        // stop timer
+        if (m_timer_enabled) {
+            m_timer.stop();
+        }
+        // remove all effects and listener
+        removeAllOutlines();
+        removeAllColored();
+        removeAllTransparentAreas();
+        removeAllIgnoreLight();
+        // removes the references to the effect images
+        m_check_images.clear();
+    }
+
+    void InstanceRenderer::setRemoveInterval(uint32_t interval)
+    {
+        if (m_interval != interval * 1000) {
+            m_interval = interval * 1000;
+            m_timer.setInterval(toInt32Dimension(m_interval));
+        }
+    }
+
+    uint32_t InstanceRenderer::getRemoveInterval() const
+    {
+        return m_interval / 1000;
+    }
+
+    void InstanceRenderer::addToCheck(ImagePtr const & image)
+    {
+        if (isValidImage(image)) {
+            // if image is already inserted then return
+            auto it = m_check_images.begin();
+            for (; it != m_check_images.end(); ++it) {
+                if (it->image.get()->getName() == image.get()->getName()) {
+                    return;
+                }
+            }
+            s_image_entry entry;
+            entry.image     = image;
+            entry.timestamp = TimeManager::instance()->now64();
+            m_check_images.push_front(entry);
+
+            if (!m_timer_enabled) {
+                m_timer_enabled = true;
+                m_timer.start();
+            }
+        }
+    }
+
+    void InstanceRenderer::check()
+    {
+        uint64_t const now = TimeManager::instance()->now64();
+        auto it            = m_check_images.begin();
+        // free unused images
+        while (it != m_check_images.end()) {
+            if (now - it->timestamp > m_interval) {
+                if (isValidImage(it->image)) {
+                    ImageManager::instance()->free(it->image.get()->getName());
+                }
+                it = m_check_images.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        if (m_check_images.empty() && m_timer_enabled) {
+            m_timer_enabled = false;
+            m_timer.stop();
+        }
+    }
+
+    void InstanceRenderer::removeFromCheck(ImagePtr const & image)
+    {
+        if (isValidImage(image)) {
+            // if the image is used then remove it here
+            auto it = m_check_images.begin();
+            for (; it != m_check_images.end(); ++it) {
+                if (it->image.get()->getName() == image.get()->getName()) {
+                    m_check_images.erase(it);
+                    break;
+                }
+            }
+
+            if (m_check_images.empty() && m_timer_enabled) {
+                m_timer_enabled = false;
+                m_timer.stop();
+            }
+        }
+    }
+
+    void InstanceRenderer::removeInstance(Instance* instance)
+    {
+        auto it = m_assigned_instances.find(instance);
+        if (it != m_assigned_instances.end()) {
+            m_instance_outlines.erase(instance);
+            m_instance_colorings.erase(instance);
+            m_instance_areas.erase(instance);
+            instance->removeDeleteListener(m_delete_listener);
+            m_assigned_instances.erase(it);
+        }
+    }
+
+    bool InstanceRenderer::isValidImage(ImagePtr const & image)
+    {
+        if (image.get() != nullptr) {
+            if (image.get()->getState() == IResource::RES_LOADED) {
+                return true;
+            }
+        }
+        return false;
+    }
+} // namespace FIFE

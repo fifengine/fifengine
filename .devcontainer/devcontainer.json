@@ -1,7 +1,7 @@
 {
     "name": "Fife DevBox",
     //"image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-latest",
-    "image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-20260426",
+    "image": "ghcr.io/jakoch/cpp-devbox:trixie-with-vulkansdk-20260503",
     // To use the arch based Dockerfile uncomment the following section:
     //"build": {
     //    "dockerfile": "arch/Dockerfile",
@@ -27,6 +27,21 @@
                 "hbenl.vscode-test-explorer"
             ]
         }
+    },
+    "runArgs": [
+        "--runtime=nvidia",
+        "--gpus", "all",
+        "--network", "host"
+    ],
+    "mounts": [
+        "source=/run/desktop/mnt/host/wslg/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=/run/desktop/mnt/host/wslg,target=/mnt/wslg,type=bind,consistency=cached"
+    ],
+    "remoteEnv": {
+        "DISPLAY": ":0",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+        "PULSE_SERVER": "/mnt/wslg/PulseServer"
     },
     "postStartCommand": "chmod +x ./build-tools/setup-vcpkg.sh && ./build-tools/setup-vcpkg.sh"
 }

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -14,9 +15,6 @@
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/time/timemanager.h"
 #include "vfs/dat/dat2.h"
@@ -31,9 +29,10 @@ using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
 
-static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
-static const std::string RAW_FILE        = "tests/data/test.map";
-TEST_CASE("DAT2_test")
+static char const * const COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
+static char const * const RAW_FILE        = "tests/data/test.map";
+
+TEST_CASE("DAT2::open decompresses LZSS entry correctly", "[dat2][vfs]")
 {
 
     std::shared_ptr<TimeManager> timemanager = std::make_shared<TimeManager>();
@@ -53,8 +52,8 @@ TEST_CASE("DAT2_test")
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("dat2vfstest.map"));
 
-    FIFE::RawData* fraw  = vfs->open(RAW_FILE);
-    FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
+    auto fraw  = std::unique_ptr<FIFE::RawData>(vfs->open(RAW_FILE));
+    auto fcomp = std::unique_ptr<FIFE::RawData>(vfs->open("dat2vfstest.map"));
 
     CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
     // std::cout << "data length match, length = " << fcomp->getDataLength() << '\n';
@@ -64,10 +63,10 @@ TEST_CASE("DAT2_test")
         smaller_len = fcomp->getDataLength();
     }
 
-    uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
-    uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
-    fraw->readInto(d_raw, fraw->getDataLength());
-    fcomp->readInto(d_comp, fcomp->getDataLength());
+    std::vector<uint8_t> d_raw(fraw->getDataLength());
+    std::vector<uint8_t> d_comp(fcomp->getDataLength());
+    fraw->readInto(d_raw.data(), fraw->getDataLength());
+    fcomp->readInto(d_comp.data(), fcomp->getDataLength());
     // std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t rawc  = d_raw[i];
@@ -79,9 +78,4 @@ TEST_CASE("DAT2_test")
         break;
     }
     // std::cout << "scanning finished" << '\n';
-
-    delete[] d_raw;
-    delete[] d_comp;
-    delete fraw;
-    delete fcomp;
 }
