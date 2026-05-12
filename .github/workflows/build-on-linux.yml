@@ -118,7 +118,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -223,8 +223,21 @@ jobs:
                 --prefix ${{ env.INSTALL_DIR }} \
                 --verbose
 
+      - name: 🖥️ Setup Headless Display
+        run: |
+          {
+            echo "SDL_VIDEODRIVER=x11"
+            echo "SDL_AUDIODRIVER=dummy"
+            echo "LIBGL_ALWAYS_SOFTWARE=1"
+            echo "GALLIUM_DRIVER=llvmpipe"
+            echo "MESA_GL_VERSION_OVERRIDE=3.3"
+          } >> "$GITHUB_ENV"
+
       - name: 🧪 CTest ➔ Run Tests
         run: |
+          xvfb-run \
+            --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
           ctest \
             --test-dir "${{ env.BUILD_DIR }}" \
             --output-on-failure
@@ -328,7 +341,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
 
       # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
@@ -436,8 +449,21 @@ jobs:
           mkdir -p "${BUILD_DIR}/coverage"
           echo "LLVM_PROFILE_FILE=${GITHUB_WORKSPACE}/${BUILD_DIR}/coverage/%p.profraw" >> "$GITHUB_ENV"
 
+      - name: 🖥️ Setup Headless Display
+        run: |
+          {
+            echo "SDL_VIDEODRIVER=x11"
+            echo "SDL_AUDIODRIVER=dummy"
+            echo "LIBGL_ALWAYS_SOFTWARE=1"
+            echo "GALLIUM_DRIVER=llvmpipe"
+            echo "MESA_GL_VERSION_OVERRIDE=3.3"
+          } >> "$GITHUB_ENV"
+
       - name: 🧪 CTest ➔ Run Tests
         run: |
+          xvfb-run \
+            --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
           ctest \
             --test-dir "${BUILD_DIR}" \
             --output-on-failure
