@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <memory>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>
@@ -24,9 +25,9 @@ namespace FIFE
 
         std::unique_ptr<RawData> data(vfs->open(filename));
         size_t const datalen = data->getDataLength();
-        std::unique_ptr<uint8_t[]> const darray(new uint8_t[datalen]);
-        data->readInto(darray.get(), datalen);
-        SDL_IOStream* iostream = SDL_IOFromConstMem(darray.get(), datalen);
+        std::vector<uint8_t> darray(datalen);
+        data->readInto(darray.data(), datalen);
+        SDL_IOStream* iostream = SDL_IOFromConstMem(darray.data(), datalen);
         if (SDL_AddGamepadMappingsFromIO(iostream, false) == -1) {
             throw SDLException(std::string("Error when loading gamepad mappings: ") + SDL_GetError());
         }

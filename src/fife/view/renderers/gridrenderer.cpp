@@ -25,10 +25,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position) :
-        RendererBase(renderbackend, position), m_color{0, 255, 0, 255}
+        RendererBase(renderbackend, position), m_color{.r = 0, .g = 255, .b = 0, .a = 255}
     {
         setEnabled(false);
     }

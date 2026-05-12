@@ -20,7 +20,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     class SoundChangeListener : public InstanceChangeListener
     {
@@ -28,7 +31,11 @@ namespace FIFE
             explicit SoundChangeListener(SoundSource* source) : m_source(source)
             {
             }
-            ~SoundChangeListener() override = default;
+            ~SoundChangeListener() override                             = default;
+            SoundChangeListener(SoundChangeListener const &)            = delete;
+            SoundChangeListener& operator=(SoundChangeListener const &) = delete;
+            SoundChangeListener(SoundChangeListener&&)                  = delete;
+            SoundChangeListener& operator=(SoundChangeListener&&)       = delete;
 
             void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
             {

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <array>
 #include <string>
 #include <vector>
 
@@ -215,56 +216,56 @@ namespace FIFE
             // for regular primitives with color and alpha
             struct FIFE_API renderDataP
             {
-                    GLfloat vertex[2];
-                    GLubyte color[4];
+                    std::array<GLfloat, 2> vertex;
+                    std::array<GLubyte, 4> color;
             };
 
             // for regular textured quads
             struct FIFE_API renderDataT
             {
-                    GLfloat vertex[2];
-                    GLfloat texel[2];
+                    std::array<GLfloat, 2> vertex;
+                    std::array<GLfloat, 2> texel;
             };
 
             // for textured quads with alpha
             struct FIFE_API renderDataTC
             {
-                    GLfloat vertex[2];
-                    GLfloat texel[2];
-                    GLubyte color[4];
+                    std::array<GLfloat, 2> vertex;
+                    std::array<GLfloat, 2> texel;
+                    std::array<GLubyte, 4> color;
             };
 
             // for multitextured quads
             struct FIFE_API renderData2TC
             {
-                    GLfloat vertex[2];
-                    GLfloat texel[2];
-                    GLfloat texel2[2];
-                    GLubyte color[4];
+                    std::array<GLfloat, 2> vertex;
+                    std::array<GLfloat, 2> texel;
+                    std::array<GLfloat, 2> texel2;
+                    std::array<GLubyte, 4> color;
             };
 
             // for regular textured quads with z
             struct FIFE_API renderDataZ
             {
-                    GLfloat vertex[3];
-                    GLfloat texel[2];
+                    std::array<GLfloat, 3> vertex;
+                    std::array<GLfloat, 2> texel;
             };
 
             // for textured quads with alpha and z
             struct FIFE_API renderDataColorZ
             {
-                    GLfloat vertex[3];
-                    GLfloat texel[2];
-                    GLubyte color[4];
+                    std::array<GLfloat, 3> vertex;
+                    std::array<GLfloat, 2> texel;
+                    std::array<GLubyte, 4> color;
             };
 
             // for multitextured quads with z
             struct FIFE_API renderData2TCZ
             {
-                    GLfloat vertex[3];
-                    GLfloat texel[2];
-                    GLfloat texel2[2];
-                    GLubyte color[4];
+                    std::array<GLfloat, 3> vertex;
+                    std::array<GLfloat, 2> texel;
+                    std::array<GLfloat, 2> texel2;
+                    std::array<GLubyte, 4> color;
             };
 
             struct FIFE_API RenderZObjectTest
@@ -321,8 +322,8 @@ namespace FIFE
             struct FIFE_API currentState
             {
                     // Textures
-                    bool tex_enabled[4];
-                    GLuint texture[4];
+                    std::array<bool, 4> tex_enabled{};
+                    std::array<GLuint, 4> texture{};
                     uint32_t active_tex;
                     uint32_t active_client_tex;
                     float alpha_test;
@@ -330,7 +331,7 @@ namespace FIFE
 
                     // Pointers
                     void const * vertex_pointer;
-                    void const * tex_pointer[4];
+                    std::array<void const *, 4> tex_pointer{};
                     void const * color_pointer;
 
                     // Stencil
@@ -345,7 +346,7 @@ namespace FIFE
                     bool light_enabled;
 
                     // The rest
-                    uint8_t env_color[4];
+                    std::array<uint8_t, 4> env_color{};
                     GLenum blend_src;
                     GLenum blend_dst;
                     bool alpha_enabled;

@@ -30,7 +30,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_MODEL);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_MODEL);
+        return log;
+    }();
 
     class ModelMapObserver : public MapChangeListener
     {
@@ -40,7 +43,11 @@ namespace FIFE
             explicit ModelMapObserver(Model* model) : m_model(model)
             {
             }
-            ~ModelMapObserver() override = default;
+            ~ModelMapObserver() override                          = default;
+            ModelMapObserver(ModelMapObserver const &)            = delete;
+            ModelMapObserver& operator=(ModelMapObserver const &) = delete;
+            ModelMapObserver(ModelMapObserver&&)                  = delete;
+            ModelMapObserver& operator=(ModelMapObserver&&)       = delete;
 
             void onMapChanged([[maybe_unused]] Map* map, [[maybe_unused]] std::vector<Layer*>& changedLayers) override
             {

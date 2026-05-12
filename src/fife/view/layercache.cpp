@@ -38,7 +38,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_CAMERA);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CAMERA);
+        return log;
+    }();
 
     class CacheLayerChangeListener : public LayerChangeListener
     {
@@ -46,7 +49,11 @@ namespace FIFE
             explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache)
             {
             }
-            ~CacheLayerChangeListener() override = default;
+            ~CacheLayerChangeListener() override                                  = default;
+            CacheLayerChangeListener(CacheLayerChangeListener const &)            = delete;
+            CacheLayerChangeListener& operator=(CacheLayerChangeListener const &) = delete;
+            CacheLayerChangeListener(CacheLayerChangeListener&&)                  = delete;
+            CacheLayerChangeListener& operator=(CacheLayerChangeListener&&)       = delete;
 
             void onLayerChanged([[maybe_unused]] Layer* layer, std::vector<Instance*>& instances) override
             {

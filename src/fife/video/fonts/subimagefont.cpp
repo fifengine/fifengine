@@ -29,9 +29,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_GUI);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_GUI);
+        return log;
+    }();
 
-    SubImageFont::SubImageFont(std::string const & filename, std::string const & glyphs) : m_colorkey{0, 0, 0, 0}
+    SubImageFont::SubImageFont(std::string const & filename, std::string const & glyphs) :
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0}
     {
 
         FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);

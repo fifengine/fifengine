@@ -49,7 +49,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_NATIVE_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_LOADERS);
+        return log;
+    }();
 
     MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend) :
         m_model(model),
@@ -384,7 +387,9 @@ namespace FIFE
 
                                                         if (cellStackRetVal == XML::SUCCESS) {
                                                             assert(cellStack >= 0);
-                                                            assert(cellStack <= std::numeric_limits<uint8_t>::max());
+                                                            assert(
+                                                                std::cmp_less_equal(
+                                                                    cellStack, std::numeric_limits<uint8_t>::max()));
                                                             inst->setCellStackPosition(static_cast<uint8_t>(cellStack));
                                                         }
 

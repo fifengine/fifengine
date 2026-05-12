@@ -52,13 +52,14 @@ namespace FIFE
         auto const * fmt = SDL_GetPixelFormatDetails(surface->format);
 
         for (int y = 0; y < surface->h; ++y) {
-            auto* row = reinterpret_cast<Uint32*>(static_cast<uint8_t*>(surface->pixels) + (y * surface->pitch));
+            auto* row = reinterpret_cast<Uint32*>(
+                static_cast<uint8_t*>(surface->pixels) + (static_cast<ptrdiff_t>(y) * surface->pitch));
 
             for (int x = 0; x < surface->w; ++x) {
-                Uint8 r;
-                Uint8 g;
-                Uint8 b;
-                Uint8 a;
+                Uint8 r = 0;
+                Uint8 g = 0;
+                Uint8 b = 0;
+                Uint8 a = 0;
                 SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
                 if (a == 0) {
                     row[x] = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
@@ -69,17 +70,17 @@ namespace FIFE
     }
 
     // Helper: load surface from file or memory buffer
-    SDL_SurfacePtr loadSurface(std::string_view filename, std::string& outError)
+    SDL_SurfacePtr loadSurface(std::string const & filename, std::string& outError)
     {
         // Try direct file load first
-        if (auto* surface = IMG_Load(filename.data())) {
+        if (auto* surface = IMG_Load(filename.c_str())) {
             return SDL_SurfacePtr{surface};
         }
         outError = SDL_GetError();
 
         // Fallback: load from VFS memory buffer
         auto* vfs          = VFS::instance();
-        auto* data         = vfs->open(filename.data());
+        auto* data         = vfs->open(filename.c_str());
         auto const datalen = data->getDataLength();
 
         std::vector<uint8_t> buffer(datalen);

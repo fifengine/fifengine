@@ -15,7 +15,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_CELLGRID);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CELLGRID);
+        return log;
+    }();
 
     CellGrid::CellGrid() :
         m_matrix(),

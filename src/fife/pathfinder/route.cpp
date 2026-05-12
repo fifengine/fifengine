@@ -24,7 +24,10 @@
 namespace FIFE
 {
 
-    static Logger _log(LM_STRUCTURES);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_STRUCTURES);
+        return log;
+    }();
 
     Route::Route(Location const & start, Location const & end) :
         m_status(ROUTE_CREATED),
@@ -138,7 +141,7 @@ namespace FIFE
         }
 
         int64_t const pos = static_cast<int64_t>(m_walked) + static_cast<int64_t>(step);
-        if (pos < 0 || pos >= static_cast<int64_t>(m_path.size())) {
+        if (pos < 0 || std::cmp_greater_equal(pos, m_path.size())) {
             return false;
         }
 

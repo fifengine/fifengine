@@ -31,7 +31,11 @@ namespace FIFE
             explicit TriggerChangeListener(Trigger* trigger) : m_trigger(trigger)
             {
             }
-            ~TriggerChangeListener() override = default;
+            ~TriggerChangeListener() override                               = default;
+            TriggerChangeListener(TriggerChangeListener const &)            = delete;
+            TriggerChangeListener& operator=(TriggerChangeListener const &) = delete;
+            TriggerChangeListener(TriggerChangeListener&&)                  = delete;
+            TriggerChangeListener& operator=(TriggerChangeListener&&)       = delete;
 
             // InstanceDeleteListener callback
             void onInstanceDeleted([[maybe_unused]] Instance* instance) override

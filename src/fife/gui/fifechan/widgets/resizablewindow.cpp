@@ -136,8 +136,6 @@ namespace fcn
         case FIFE::CURSOR_ANIMATION:
             m_cursor->set(m_saved.cursorAnimation);
             break;
-        case FIFE::CURSOR_NONE:
-            return;
         default:
             return;
         }
@@ -377,8 +375,6 @@ namespace fcn
                     break;
                 case FIFE::CURSOR_ANIMATION:
                     m_cursor->set(state.cursorAnimation);
-                    break;
-                case FIFE::CURSOR_NONE:
                     break;
                 default:
                     break;

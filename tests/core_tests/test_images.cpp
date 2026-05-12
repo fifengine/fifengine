@@ -35,14 +35,14 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
 
     {
-        SDL_Rect rect     = {0, 0, 1, 1};
+        SDL_Rect rect     = {.x = 0, .y = 0, .w = 1, .h = 1};
         SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        uint8_t a;
+        uint8_t r                          = 0;
+        uint8_t g                          = 0;
+        uint8_t b                          = 0;
+        uint8_t a                          = 0;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
         CHECK_EQ(r, 0);
         CHECK_EQ(g, 0);
@@ -55,17 +55,20 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
     REQUIRE(img);
 
     // Read pixel (134,172) from the loaded surface for ground truth
-    uint8_t surf_r;
-    uint8_t surf_g;
-    uint8_t surf_b;
-    uint8_t surf_a;
+    uint8_t surf_r = 0;
+    uint8_t surf_g = 0;
+    uint8_t surf_b = 0;
+    uint8_t surf_a = 0;
     {
         SDL_Surface const * s = img->getSurface();
         REQUIRE(s->w > 134);
         REQUIRE(s->h > 172);
         SDL_PixelFormatDetails const * f = SDL_GetPixelFormatDetails(s->format);
-        uint32_t pix;
-        std::memcpy(&pix, static_cast<uint8_t const *>(s->pixels) + (172 * s->pitch) + (134 * 4), sizeof(pix));
+        uint32_t pix                     = 0;
+        std::memcpy(
+            &pix,
+            static_cast<uint8_t const *>(s->pixels) + (172 * static_cast<ptrdiff_t>(s->pitch)) + (134 * 4),
+            sizeof(pix));
         SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
     }
 
@@ -77,14 +80,14 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
     img->render(FIFE::Rect(0, 0, w, h));
 
     {
-        SDL_Rect rect     = {134, 172, 1, 1};
+        SDL_Rect rect     = {.x = 134, .y = 172, .w = 1, .h = 1};
         SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        uint8_t a;
+        uint8_t r                          = 0;
+        uint8_t g                          = 0;
+        uint8_t b                          = 0;
+        uint8_t a                          = 0;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
         CHECK_EQ(r, surf_r);
         CHECK_EQ(g, surf_g);

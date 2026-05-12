@@ -29,7 +29,11 @@ class Data
         {
         }
 
-        virtual ~Data() = default;
+        virtual ~Data()               = default;
+        Data(Data const &)            = default;
+        Data& operator=(Data const &) = default;
+        Data(Data&&)                  = default;
+        Data& operator=(Data&&)       = default;
 
         virtual int32_t total()
         {
@@ -49,7 +53,11 @@ class SubData : public Data
         {
         }
 
-        ~SubData() override = default;
+        ~SubData() override                 = default;
+        SubData(SubData const &)            = default;
+        SubData& operator=(SubData const &) = default;
+        SubData(SubData&&)                  = default;
+        SubData& operator=(SubData&&)       = default;
 
         int32_t total() override
         {

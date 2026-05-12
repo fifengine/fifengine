@@ -37,7 +37,7 @@ namespace FIFE
         [[nodiscard]] uint16_t toRectExtent(int32_t const value)
         {
             assert(value >= 0);
-            assert(value <= std::numeric_limits<uint16_t>::max());
+            assert(std::cmp_less_equal(value, std::numeric_limits<uint16_t>::max()));
             return static_cast<uint16_t>(value);
         }
     } // namespace
@@ -45,18 +45,21 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
         m_renderbackend(renderbackend),
         m_font(nullptr),
         m_font_color(false),
-        m_color{255, 255, 255, 255},
+        m_color{.r = 255, .g = 255, .b = 255, .a = 255},
         m_background(false),
         m_backborder(false),
-        m_backcolor{0, 0, 0, 255},
-        m_backbordercolor{255, 255, 255, 255}
+        m_backcolor{.r = 0, .g = 0, .b = 0, .a = 255},
+        m_backbordercolor{.r = 255, .g = 255, .b = 255, .a = 255}
     {
         setEnabled(false);
     }

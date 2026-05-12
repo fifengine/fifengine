@@ -32,12 +32,15 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
-        m_blockerColor{255, 0, 0, 255},
-        m_pathColor{0, 0, 255, 255},
+        m_blockerColor{.r = 255, .g = 0, .b = 0, .a = 255},
+        m_pathColor{.r = 0, .g = 0, .b = 255, .a = 255},
         m_blockingEnabled(false),
         m_pathVisualEnabled(false),
         m_font(nullptr)

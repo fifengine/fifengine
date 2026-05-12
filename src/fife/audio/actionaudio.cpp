@@ -17,7 +17,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     ActionAudio::ActionAudio() :
 

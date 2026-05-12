@@ -22,7 +22,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEW);
+        return log;
+    }();
 
     OverlayColors::OverlayColors(ImagePtr const & image) : m_image(image)
     {

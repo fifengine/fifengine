@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <deque>
 #include <iostream>
 #include <limits>
@@ -27,7 +28,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_EVTCHANNEL);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_EVTCHANNEL);
+        return log;
+    }();
 
     namespace
     {
@@ -59,7 +63,7 @@ namespace FIFE
         m_mappingSaver  = ControllerMappingSaver();
 
         // add already connected joysticks / controllers
-        int count;
+        int count                 = 0;
         SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
         for (int32_t i = 0; i < count; ++i) {
             addJoystick(i);
@@ -382,17 +386,17 @@ namespace FIFE
 
     std::string JoystickManager::getGuidString(int32_t deviceIndex)
     {
-        char tmp[33];
+        std::array<char, 33> tmp;
         auto const sdlDeviceIndex = toSdlJoystickId(deviceIndex);
         SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
         if (joy != nullptr) {
             SDL_GUID guid = SDL_GetJoystickGUID(joy);
-            SDL_GUIDToString(guid, &tmp[0], sizeof(tmp));
+            SDL_GUIDToString(guid, tmp.data(), tmp.size());
             SDL_CloseJoystick(joy);
         } else {
             tmp[0] = '\0';
         }
-        std::string guidString(&tmp[0]);
+        std::string guidString(tmp.data());
         return guidString;
     }
 

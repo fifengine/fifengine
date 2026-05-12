@@ -5,6 +5,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <limits>
@@ -30,7 +31,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIDEO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIDEO);
+        return log;
+    }();
 
     namespace
     {
@@ -73,7 +77,7 @@ namespace FIFE
         uint16_t toRenderObjectSize(int32_t value)
         {
             assert(value >= 0);
-            assert(value <= std::numeric_limits<uint16_t>::max());
+            assert(std::cmp_less_equal(value, std::numeric_limits<uint16_t>::max()));
             return static_cast<uint16_t>(value);
         }
 
@@ -129,8 +133,8 @@ namespace FIFE
             bool light               = true;
             bool stencil_test        = false;
             bool color               = true;
-            uint8_t rgba[4]          = {};
-            uint8_t reserved[2]{0, 0};
+            std::array<uint8_t, 4> rgba{};
+            std::array<uint8_t, 2> reserved{};
     };
 
     RenderBackendOpenGL::RenderBackendOpenGL(SDL_Color const & colorkey) :
@@ -269,9 +273,10 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        int displayCount            = 0;
-        SDL_DisplayID* displays     = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID displayId     = (displayIndex < displayCount) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
+        int displayCount        = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
+        SDL_DisplayID displayId =
+            (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
         uint16_t createHeight       = height;
@@ -327,11 +332,7 @@ namespace FIFE
         }
         SDL_free(displays);
 
-        if (mode.isFullScreen() && !pseudoFullscreen) {
-            m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
-        } else {
-            m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
-        }
+        m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
 
         if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
@@ -654,8 +655,8 @@ namespace FIFE
     void RenderBackendOpenGL::setLighting(float red, float green, float blue)
     {
         if (m_state.lightmodel != 0) {
-            GLfloat const lightDiffuse[] = {red, green, blue, 1.0F};
-            glLightfv(GL_LIGHT0, GL_DIFFUSE, &lightDiffuse[0]);
+            std::array<GLfloat, 4> const lightDiffuse{red, green, blue, 1.0F};
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse.data());
         }
     }
 
@@ -773,10 +774,10 @@ namespace FIFE
 
     void RenderBackendOpenGL::setEnvironmentalColor(uint32_t texUnit, uint8_t const * rgba)
     {
-        if ((memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4) != 0) || m_state.active_tex != texUnit) {
+        if ((memcmp(m_state.env_color.data(), rgba, sizeof(uint8_t) * 4) != 0) || m_state.active_tex != texUnit) {
 
-            memcpy(m_state.env_color, rgba, sizeof(uint8_t) * 4);
-            GLfloat const rgbaf[4] = {
+            memcpy(m_state.env_color.data(), rgba, sizeof(uint8_t) * 4);
+            std::array<GLfloat, 4> const rgbaf = {
                 static_cast<float>(m_state.env_color[0]) / 255.0F,
                 static_cast<float>(m_state.env_color[1]) / 255.0F,
                 static_cast<float>(m_state.env_color[2]) / 255.0F,
@@ -1001,7 +1002,7 @@ namespace FIFE
         // overlay type
         OverlayType overlay_type = OVERLAY_TYPE_NONE;
         // overlay color
-        uint8_t rgba[4] = {0};
+        std::array<uint8_t, 4> rgba{};
 
         // array indices
         int32_t indexP   = 0;
@@ -1090,7 +1091,7 @@ namespace FIFE
             }
             if (ro.overlay_type != overlay_type ||
                 (ro.overlay_type != OVERLAY_TYPE_NONE &&
-                 ((memcmp(rgba, ro.rgba, sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
+                 ((memcmp(rgba.data(), ro.rgba.data(), sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
                 mt     = true;
                 render = true;
             }
@@ -1247,7 +1248,7 @@ namespace FIFE
                         currentIndex    = &index2TC;
                         break;
                     }
-                    memcpy(rgba, ro.rgba, sizeof(uint8_t) * 4);
+                    memcpy(rgba.data(), ro.rgba.data(), sizeof(uint8_t) * 4);
                     overlay_type = ro.overlay_type;
                     mt           = false;
                 }
@@ -1554,7 +1555,7 @@ namespace FIFE
         // overlay type
         OverlayType overlay_type = OVERLAY_TYPE_NONE;
         // overlay color
-        uint8_t color[4] = {0};
+        std::array<uint8_t, 4> color{};
 
         int32_t* currentIndex     = &index;
         uint32_t* currentElements = &elements;
@@ -1572,7 +1573,7 @@ namespace FIFE
             }
             if (ro.overlay_type != overlay_type ||
                 (ro.overlay_type != OVERLAY_TYPE_NONE &&
-                 ((memcmp(color, ro.rgba, sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
+                 ((memcmp(color.data(), ro.rgba.data(), sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
                 mt     = true;
                 render = true;
             }
@@ -1627,7 +1628,7 @@ namespace FIFE
                         texture_id2 = ro.overlay_id;
                         break;
                     }
-                    memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
+                    memcpy(color.data(), ro.rgba.data(), sizeof(uint8_t) * 4);
                     overlay_type = ro.overlay_type;
                     mt           = false;
                 }
@@ -1773,8 +1774,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
+        std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
@@ -1880,8 +1881,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
+        std::array<uint32_t, 3> indices{index, index + 1, index + 2};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_TRIANGLES, 3);
         m_renderObjects.push_back(ro);
@@ -1909,8 +1910,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2, index + 3};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
+        std::array<uint32_t, 4> indices{index, index + 1, index + 2, index + 3};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_LINE_LOOP, 4);
         m_renderObjects.push_back(ro);
@@ -1938,8 +1939,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
+        std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
@@ -1977,8 +1978,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
+        std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_TRIANGLES, 6);
         m_renderObjects.push_back(ro);
@@ -2006,8 +2007,8 @@ namespace FIFE
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t indices[]   = {index, index + 1, index + 2, index + 3};
-        m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
+        std::array<uint32_t, 4> indices{index, index + 1, index + 2, index + 3};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
 
         RenderObject const ro(GL_LINE_LOOP, 4);
         m_renderObjects.push_back(ro);
@@ -2067,8 +2068,8 @@ namespace FIFE
             m_renderPrimitiveDatas.push_back(rd);
             angle -= step;
             // forms triangle with start index, the last and a new one
-            uint32_t indices[] = {index, lastIndex, ++lastIndex};
-            m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
+            std::array<uint32_t, 3> indices{index, lastIndex, ++lastIndex};
+            m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
         }
         RenderObject const ro(GL_TRIANGLES, toRenderObjectSize((subdivisions + 1) * 3));
         m_renderObjects.push_back(ro);
@@ -2140,8 +2141,8 @@ namespace FIFE
 
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index, the last and a new one
-            uint32_t indices[] = {index, lastIndex, ++lastIndex};
-            m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
+            std::array<uint32_t, 3> indices{index, lastIndex, ++lastIndex};
+            m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
         }
 
         RenderObject const ro(GL_TRIANGLES, toRenderObjectSize(elements * 3));
@@ -2185,8 +2186,8 @@ namespace FIFE
             rd.vertex[1] = (radius * Mathf::Sin(angle) * ystretch) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index and two new ones
-            uint32_t indices[] = {index, ++lastIndex, ++lastIndex};
-            m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
+            std::array<uint32_t, 3> indices{index, ++lastIndex, ++lastIndex};
+            m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
         }
         RenderObject const ro(GL_TRIANGLES, toRenderObjectSize(elements));
         m_renderObjects.push_back(ro);
@@ -2224,8 +2225,8 @@ namespace FIFE
             ro.color = false;
 
             uint32_t const index = m_tIndices.empty() ? 0 : m_tIndices.back() + 1;
-            uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-            m_tIndices.insert(m_tIndices.end(), indices, indices + 6);
+            std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+            m_tIndices.insert(m_tIndices.end(), indices.begin(), indices.end());
         } else {
             if (rgba != nullptr) {
                 renderData2TC rd{};
@@ -2267,8 +2268,8 @@ namespace FIFE
                 ro.rgba[3]      = rgba[3];
 
                 uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
-                uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-                m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
+                std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+                m_tc2Indices.insert(m_tc2Indices.end(), indices.begin(), indices.end());
                 // texture quad with alpha
             } else {
                 renderDataTC rd{};
@@ -2300,8 +2301,8 @@ namespace FIFE
                 ro.color = true;
 
                 uint32_t const index = m_tcIndices.empty() ? 0 : m_tcIndices.back() + 1;
-                uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-                m_tcIndices.insert(m_tcIndices.end(), indices, indices + 6);
+                std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+                m_tcIndices.insert(m_tcIndices.end(), indices.begin(), indices.end());
             }
         }
         m_renderObjects.push_back(ro);
@@ -2349,8 +2350,8 @@ namespace FIFE
             m_renderMultitextureDatas.push_back(rd);
 
             uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
-            uint32_t indices[]   = {index, index + 1, index + 2, index, index + 2, index + 3};
-            m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
+            std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
+            m_tc2Indices.insert(m_tc2Indices.end(), indices.begin(), indices.end());
 
             RenderObject ro(GL_TRIANGLES, 6, id1, id2);
             ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
@@ -2592,13 +2593,13 @@ namespace FIFE
             // Constant texture - can be constant across every tilesets
             glGenTextures(1, &m_maskOverlay);
 
-            uint8_t dummydata[3] = {127, 127, 127};
+            std::array<uint8_t, 3> dummydata{127, 127, 127};
             glBindTexture(GL_TEXTURE_2D, m_maskOverlay);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dummydata);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dummydata.data());
         } else {
             glBindTexture(GL_TEXTURE_2D, m_maskOverlay);
         }
@@ -2915,11 +2916,11 @@ namespace FIFE
         // quick & dirty hack for attaching compressed texture
         if (glimage->isCompressed()) {
             bindTexture(targetid);
-            auto* pixels = new GLubyte[static_cast<size_t>(w) * static_cast<size_t>(h) * 4U];
+            std::vector<GLubyte> pixels(static_cast<size_t>(w) * static_cast<size_t>(h) * 4U);
             // here we get decompressed pixels
-            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, toGLsizei(w), toGLsizei(h), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-            delete[] pixels;
+            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+            glTexImage2D(
+                GL_TEXTURE_2D, 0, GL_RGBA8, toGLsizei(w), toGLsizei(h), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
             glimage->setCompressed(false);
         }
 

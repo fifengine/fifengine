@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -26,37 +27,37 @@ struct ModuleInfo
         char const * name;
 };
 
-static ModuleInfo moduleInfos[] = {
-    {.module = LM_AUDIO, .parent = LM_CORE, .name = "Audio"},
-    {.module = LM_CONTROLLER, .parent = LM_CORE, .name = "Controller"},
-    {.module = LM_EVTCHANNEL, .parent = LM_CORE, .name = "Event Channel"},
-    {.module = LM_GUI, .parent = LM_CORE, .name = "GUI"},
-    {.module = LM_CONSOLE, .parent = LM_GUI, .name = "Console"},
-    {.module = LM_LOADERS, .parent = LM_CORE, .name = "Loaders"},
-    {.module = LM_NATIVE_LOADERS, .parent = LM_LOADERS, .name = "Native loaders"},
-    {.module = LM_FO_LOADERS, .parent = LM_LOADERS, .name = "Fallout loaders"},
-    {.module = LM_SAVERS, .parent = LM_CORE, .name = "Savers"},
-    {.module = LM_NATIVE_SAVERS, .parent = LM_CORE, .name = "Native savers"},
-    {.module = LM_MODEL, .parent = LM_CORE, .name = "Model"},
-    {.module = LM_STRUCTURES, .parent = LM_MODEL, .name = "Structures"},
-    {.module = LM_INSTANCE, .parent = LM_STRUCTURES, .name = "Instance"},
-    {.module = LM_LOCATION, .parent = LM_STRUCTURES, .name = "Location"},
-    {.module = LM_METAMODEL, .parent = LM_MODEL, .name = "Metamodel"},
-    {.module = LM_CELLGRID, .parent = LM_METAMODEL, .name = "Cellgrid"},
-    {.module = LM_SQUAREGRID, .parent = LM_METAMODEL, .name = "Squaregrid"},
-    {.module = LM_HEXGRID, .parent = LM_METAMODEL, .name = "Hexgrid"},
-    {.module = LM_PATHFINDER, .parent = LM_CORE, .name = "Pathfinder"},
-    {.module = LM_UTIL, .parent = LM_CORE, .name = "Util"},
-    {.module = LM_RESMGR, .parent = LM_UTIL, .name = "Resource Manager"},
-    {.module = LM_VFS, .parent = LM_CORE, .name = "VFS"},
-    {.module = LM_VIDEO, .parent = LM_CORE, .name = "Video"},
-    {.module = LM_VIEW, .parent = LM_CORE, .name = "View"},
-    {.module = LM_CAMERA, .parent = LM_VIEW, .name = "Camera"},
-    {.module = LM_VIEWVIEW, .parent = LM_VIEW, .name = "View::View"},
-    {.module = LM_XML, .parent = LM_CORE, .name = "XML"},
-    {.module = LM_EXCEPTION, .parent = LM_CORE, .name = "Exception"},
-    {.module = LM_SCRIPT, .parent = LM_CORE, .name = "Script"},
-    {.module = LM_CURSOR, .parent = LM_CORE, .name = "Cursor"}};
+static constexpr auto moduleInfos = std::to_array<ModuleInfo>(
+    {{.module = LM_AUDIO, .parent = LM_CORE, .name = "Audio"},
+     {.module = LM_CONTROLLER, .parent = LM_CORE, .name = "Controller"},
+     {.module = LM_EVTCHANNEL, .parent = LM_CORE, .name = "Event Channel"},
+     {.module = LM_GUI, .parent = LM_CORE, .name = "GUI"},
+     {.module = LM_CONSOLE, .parent = LM_GUI, .name = "Console"},
+     {.module = LM_LOADERS, .parent = LM_CORE, .name = "Loaders"},
+     {.module = LM_NATIVE_LOADERS, .parent = LM_LOADERS, .name = "Native loaders"},
+     {.module = LM_FO_LOADERS, .parent = LM_LOADERS, .name = "Fallout loaders"},
+     {.module = LM_SAVERS, .parent = LM_CORE, .name = "Savers"},
+     {.module = LM_NATIVE_SAVERS, .parent = LM_CORE, .name = "Native savers"},
+     {.module = LM_MODEL, .parent = LM_CORE, .name = "Model"},
+     {.module = LM_STRUCTURES, .parent = LM_MODEL, .name = "Structures"},
+     {.module = LM_INSTANCE, .parent = LM_STRUCTURES, .name = "Instance"},
+     {.module = LM_LOCATION, .parent = LM_STRUCTURES, .name = "Location"},
+     {.module = LM_METAMODEL, .parent = LM_MODEL, .name = "Metamodel"},
+     {.module = LM_CELLGRID, .parent = LM_METAMODEL, .name = "Cellgrid"},
+     {.module = LM_SQUAREGRID, .parent = LM_METAMODEL, .name = "Squaregrid"},
+     {.module = LM_HEXGRID, .parent = LM_METAMODEL, .name = "Hexgrid"},
+     {.module = LM_PATHFINDER, .parent = LM_CORE, .name = "Pathfinder"},
+     {.module = LM_UTIL, .parent = LM_CORE, .name = "Util"},
+     {.module = LM_RESMGR, .parent = LM_UTIL, .name = "Resource Manager"},
+     {.module = LM_VFS, .parent = LM_CORE, .name = "VFS"},
+     {.module = LM_VIDEO, .parent = LM_CORE, .name = "Video"},
+     {.module = LM_VIEW, .parent = LM_CORE, .name = "View"},
+     {.module = LM_CAMERA, .parent = LM_VIEW, .name = "Camera"},
+     {.module = LM_VIEWVIEW, .parent = LM_VIEW, .name = "View::View"},
+     {.module = LM_XML, .parent = LM_CORE, .name = "XML"},
+     {.module = LM_EXCEPTION, .parent = LM_CORE, .name = "Exception"},
+     {.module = LM_SCRIPT, .parent = LM_CORE, .name = "Script"},
+     {.module = LM_CURSOR, .parent = LM_CORE, .name = "Cursor"}});
 // end
 
 namespace FIFE
@@ -214,7 +215,7 @@ namespace FIFE
     void LogManager::validateModule(logmodule_t m)
     {
         if ((m <= LM_CORE) || (m >= LM_MODULE_MAX)) {
-            std::cout << "Invalid module received in LogManager: " << m << ", aborting\n";
+            std::cout << "Invalid module received in LogManager: " << static_cast<int>(m) << ", aborting\n";
             abort();
         }
     }

@@ -15,7 +15,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_GUI);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_GUI);
+        return log;
+    }();
 
     GuiImage::GuiImage() = default;
 

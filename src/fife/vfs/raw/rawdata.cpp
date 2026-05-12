@@ -19,7 +19,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_VFS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VFS);
+        return log;
+    }();
 
     RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0)
     {
@@ -155,7 +158,7 @@ namespace FIFE
         outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(static_cast<uint8_t*>(static_cast<void*>(outbuffer.data())), static_cast<size_t>(size));
+        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)

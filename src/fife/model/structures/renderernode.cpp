@@ -19,7 +19,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     class NodeInstanceDeleteListener : public InstanceDeleteListener
     {
@@ -27,7 +30,11 @@ namespace FIFE
             explicit NodeInstanceDeleteListener(RendererNode* node) : m_node(node)
             {
             }
-            ~NodeInstanceDeleteListener() override = default;
+            ~NodeInstanceDeleteListener() override                                    = default;
+            NodeInstanceDeleteListener(NodeInstanceDeleteListener const &)            = delete;
+            NodeInstanceDeleteListener& operator=(NodeInstanceDeleteListener const &) = delete;
+            NodeInstanceDeleteListener(NodeInstanceDeleteListener&&)                  = delete;
+            NodeInstanceDeleteListener& operator=(NodeInstanceDeleteListener&&)       = delete;
 
             void onInstanceDeleted(Instance* instance) override
             {

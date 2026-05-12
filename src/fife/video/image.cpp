@@ -330,34 +330,34 @@ namespace FIFE
         if (this->isSharedImage()) {
             Rect const & rect = this->getSubImageRect();
             SDL_Rect dstrect  = {
-                static_cast<int>(rect.x) + static_cast<int>(xoffset),
-                static_cast<int>(rect.y) + static_cast<int>(yoffset),
-                static_cast<Uint16>(srcimg->getWidth()),
-                static_cast<Uint16>(srcimg->getHeight())};
+                .x = static_cast<int>(rect.x) + static_cast<int>(xoffset),
+                .y = static_cast<int>(rect.y) + static_cast<int>(yoffset),
+                .w = static_cast<Uint16>(srcimg->getWidth()),
+                .h = static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {
                 Rect const & srcRect   = srcimg->getSubImageRect();
                 SDL_Rect const srcrect = {
-                    static_cast<Sint16>(srcRect.x),
-                    static_cast<Sint16>(srcRect.y),
-                    static_cast<Uint16>(srcRect.w),
-                    static_cast<Uint16>(srcRect.h)};
+                    .x = static_cast<Sint16>(srcRect.x),
+                    .y = static_cast<Sint16>(srcRect.y),
+                    .w = static_cast<Uint16>(srcRect.w),
+                    .h = static_cast<Uint16>(srcRect.h)};
                 SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
             } else {
                 SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);
             }
         } else {
             SDL_Rect dstrect = {
-                static_cast<Sint16>(xoffset),
-                static_cast<Sint16>(yoffset),
-                static_cast<Uint16>(srcimg->getWidth()),
-                static_cast<Uint16>(srcimg->getHeight())};
+                .x = static_cast<Sint16>(xoffset),
+                .y = static_cast<Sint16>(yoffset),
+                .w = static_cast<Uint16>(srcimg->getWidth()),
+                .h = static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {
                 Rect const & rect      = srcimg->getSubImageRect();
                 SDL_Rect const srcrect = {
-                    static_cast<Sint16>(rect.x),
-                    static_cast<Sint16>(rect.y),
-                    static_cast<Uint16>(rect.w),
-                    static_cast<Uint16>(rect.h)};
+                    .x = static_cast<Sint16>(rect.x),
+                    .y = static_cast<Sint16>(rect.y),
+                    .w = static_cast<Uint16>(rect.w),
+                    .h = static_cast<Uint16>(rect.h)};
                 SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
             } else {
                 SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);

@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <vector>
 
 // 3rd party library includes
@@ -50,7 +51,7 @@ namespace FIFE
         constexpr int64_t kMatchLengthUpperLimit = 18;
         constexpr int64_t kThreshold             = 2;
 
-        char buffer[kRingBufferSize + kMatchLengthUpperLimit - 1];
+        std::array<char, kRingBufferSize + kMatchLengthUpperLimit - 1> buffer{};
         int32_t ibuf = 0;
         int32_t c    = 0;
 

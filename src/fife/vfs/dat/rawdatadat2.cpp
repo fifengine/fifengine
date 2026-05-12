@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <zlib.h>
@@ -28,11 +29,11 @@ namespace FIFE
         input->setIndex(info.offset);
 
         if (info.type == 1) { // compressed
-            std::unique_ptr<uint8_t[]> const compressed(new uint8_t[info.packedLength]);
-            input->readInto(compressed.get(), info.packedLength);
+            std::vector<uint8_t> compressed(info.packedLength);
+            input->readInto(compressed.data(), info.packedLength);
 
             uLongf dstlen = info.unpackedLength;
-            if (uncompress(getRawData(), &dstlen, compressed.get(), info.packedLength) != Z_OK ||
+            if (uncompress(getRawData(), &dstlen, compressed.data(), info.packedLength) != Z_OK ||
                 dstlen != info.unpackedLength) {
                 throw InvalidFormat("failed to decompress " + info.name + " (inside: " + datfile + ")");
             }

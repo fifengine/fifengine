@@ -28,7 +28,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position)

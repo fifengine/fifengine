@@ -28,7 +28,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_NATIVE_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_LOADERS);
+        return log;
+    }();
 
     AnimationLoader::AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager) :
         m_vfs(vfs), m_imageManager(imageManager), m_animationManager(animationManager)

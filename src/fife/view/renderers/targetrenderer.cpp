@@ -23,7 +23,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     RenderTarget::RenderTarget(RenderBackend* rb, std::string const & name, uint32_t width, uint32_t height) :
         m_renderbackend(rb), m_target(ImageManager::instance()->loadBlank(name, width, height))

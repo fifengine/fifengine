@@ -40,7 +40,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_CAMERA);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CAMERA);
+        return log;
+    }();
 
     // to avoid std::bad_alloc errors, we determine the maximum size of batches
     uint32_t const MAX_BATCH_SIZE = 100000;
@@ -112,7 +115,7 @@ namespace FIFE
         m_col_overlay(false),
         m_img_overlay(false),
         m_ani_overlay(false),
-        m_overlay_color{0, 0, 0, 0},
+        m_overlay_color{.r = 0, .g = 0, .b = 0, .a = 0},
         m_img_id(-1),
         m_img_fill(false),
         m_ani_fill(false),
@@ -935,8 +938,8 @@ found_non_transparent_pixel:;
         if (!m_col_overlay && !m_img_overlay && !m_ani_overlay) {
             return;
         }
-        assert(m_viewport.w >= 0 && m_viewport.w <= std::numeric_limits<uint16_t>::max());
-        assert(m_viewport.h >= 0 && m_viewport.h <= std::numeric_limits<uint16_t>::max());
+        assert(m_viewport.w >= 0 && std::cmp_less_equal(m_viewport.w, std::numeric_limits<uint16_t>::max()));
+        assert(m_viewport.h >= 0 && std::cmp_less_equal(m_viewport.h, std::numeric_limits<uint16_t>::max()));
         uint16_t const width  = static_cast<uint16_t>(m_viewport.w);
         uint16_t const height = static_cast<uint16_t>(m_viewport.h);
         Point const pm        = Point(m_viewport.x + (width / 2), m_viewport.y + (height / 2));

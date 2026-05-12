@@ -22,7 +22,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_CONTROLLER);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CONTROLLER);
+        return log;
+    }();
 
     constexpr float MAXIMUM_VOLUME = 10.0F;
 
@@ -54,7 +57,7 @@ namespace FIFE
         m_defaultfontsize(8),
         m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
         m_iscolorkeyenabled(false),
-        m_colorkey{255, 0, 255, 255},
+        m_colorkey{.r = 255, .g = 0, .b = 255, .a = 255},
         m_videodriver(
 #ifdef FIFE_OS_LINUX
             "x11"

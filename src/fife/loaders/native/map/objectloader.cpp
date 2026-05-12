@@ -33,7 +33,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_NATIVE_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_LOADERS);
+        return log;
+    }();
 
     ObjectLoader::ObjectLoader(
         Model* model,
@@ -315,7 +318,7 @@ namespace FIFE
                     int cellStack = 0;
                     objectElem->QueryIntAttribute("cellstack", &cellStack);
                     assert(cellStack >= 0);
-                    assert(cellStack <= std::numeric_limits<uint8_t>::max());
+                    assert(std::cmp_less_equal(cellStack, std::numeric_limits<uint8_t>::max()));
                     obj->setCellStackPosition(static_cast<uint8_t>(cellStack));
 
                     double ax       = 0;

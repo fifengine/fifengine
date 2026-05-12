@@ -24,10 +24,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int32_t position) :
-        RendererBase(renderbackend, position), m_color{255, 0, 0, 255}
+        RendererBase(renderbackend, position), m_color{.r = 255, .g = 0, .b = 0, .a = 255}
     {
         setEnabled(false);
     }

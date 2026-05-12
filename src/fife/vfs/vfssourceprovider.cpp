@@ -19,7 +19,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VFS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VFS);
+        return log;
+    }();
 
     VFSSourceProvider::VFSSourceProvider(std::string name) : m_vfs(nullptr), m_name(std::move(name))
     {

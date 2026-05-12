@@ -30,7 +30,7 @@ namespace FIFE
         m_colorkey(colorkey),
         m_rgba_format{},
         m_isbackgroundcolor(false),
-        m_backgroundcolor{0, 0, 0, 0},
+        m_backgroundcolor{.r = 0, .g = 0, .b = 0, .a = 0},
         m_isMipmapping(false),
         m_textureFilter(TEXTURE_FILTER_NONE),
         m_maxAnisotropy(0),

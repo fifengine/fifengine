@@ -37,7 +37,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     LightRendererElementInfo::LightRendererElementInfo(RendererNode const & n, int32_t src, int32_t dst) :
         m_anchor(n), m_src(src), m_dst(dst), m_stencil(false), m_stencil_ref(0)

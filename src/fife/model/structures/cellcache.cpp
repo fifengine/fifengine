@@ -31,7 +31,10 @@
 namespace FIFE
 {
 
-    static Logger _log(LM_STRUCTURES);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_STRUCTURES);
+        return log;
+    }();
 
     class CellCacheChangeListener : public LayerChangeListener
     {
@@ -39,7 +42,11 @@ namespace FIFE
             explicit CellCacheChangeListener(Layer* layer) : m_layer(layer)
             {
             }
-            ~CellCacheChangeListener() override = default;
+            ~CellCacheChangeListener() override                                 = default;
+            CellCacheChangeListener(CellCacheChangeListener const &)            = delete;
+            CellCacheChangeListener& operator=(CellCacheChangeListener const &) = delete;
+            CellCacheChangeListener(CellCacheChangeListener&&)                  = delete;
+            CellCacheChangeListener& operator=(CellCacheChangeListener&&)       = delete;
 
             void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
             {
@@ -338,7 +345,11 @@ namespace FIFE
             explicit ZoneCellChangeListener(CellCache* cache) : m_cache(cache)
             {
             }
-            ~ZoneCellChangeListener() override = default;
+            ~ZoneCellChangeListener() override                                = default;
+            ZoneCellChangeListener(ZoneCellChangeListener const &)            = delete;
+            ZoneCellChangeListener& operator=(ZoneCellChangeListener const &) = delete;
+            ZoneCellChangeListener(ZoneCellChangeListener&&)                  = delete;
+            ZoneCellChangeListener& operator=(ZoneCellChangeListener&&)       = delete;
 
             void onInstanceEnteredCell([[maybe_unused]] Cell* cell, [[maybe_unused]] Instance* instance) override
             {

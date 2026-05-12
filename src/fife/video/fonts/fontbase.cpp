@@ -243,7 +243,7 @@ namespace FIFE
 
         int32_t ypos = 0;
         for (auto* line_surf : lines) {
-            SDL_Rect dst_rect{0, ypos, line_surf->w, line_surf->h};
+            SDL_Rect dst_rect{.x = 0, .y = ypos, .w = line_surf->w, .h = line_surf->h};
 
             // Disable alpha blending
             // SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);

@@ -24,7 +24,10 @@
 namespace FIFE
 {
 
-    static Logger _log(LM_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_LOADERS);
+        return log;
+    }();
 
     ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) :
         VFSSource(vfs), m_zipfile(vfs->open(zip_file)), m_centralDirOffset(0), m_centralDirCount(0)
@@ -60,11 +63,11 @@ namespace FIFE
                 FL_DBG(
                     _log,
                     LMsg("trying to uncompress file ") << path << " (compressed with method " << entryData.comp << ")");
-                std::unique_ptr<uint8_t[]> const compdata(new uint8_t[entryData.size_comp]);
-                m_zipfile->readInto(compdata.get(), entryData.size_comp);
+                std::vector<uint8_t> compdata(entryData.size_comp);
+                m_zipfile->readInto(compdata.data(), entryData.size_comp);
 
                 z_stream zstream;
-                zstream.next_in   = compdata.get();
+                zstream.next_in   = compdata.data();
                 zstream.avail_in  = entryData.size_comp;
                 zstream.zalloc    = Z_NULL;
                 zstream.zfree     = Z_NULL;

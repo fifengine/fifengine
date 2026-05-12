@@ -20,7 +20,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_NATIVE_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_LOADERS);
+        return log;
+    }();
 
     void OggLoader::load(IResource* res)
     {

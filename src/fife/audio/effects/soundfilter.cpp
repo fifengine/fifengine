@@ -21,7 +21,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     SoundFilter::SoundFilter(SoundFilterType type) :
         m_filter(0), m_type(SF_FILTER_NULL), m_enabled(false), m_gain(1.0), m_hGain(1.0), m_lGain(1.0)

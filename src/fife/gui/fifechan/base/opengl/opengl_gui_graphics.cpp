@@ -25,7 +25,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_GUI);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_GUI);
+        return log;
+    }();
 
     OpenGLGuiGraphics::OpenGLGuiGraphics() :
         m_renderbackend(dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance()))
@@ -236,7 +239,7 @@ namespace FIFE
 
         // Use the generic fcn clip-stack logic. The fcn::opengl::Graphics
         // popClipArea implementation in current dependencies is recursive.
-        fcn::Graphics::pushClipArea(area);
+        fcn::opengl::Graphics::pushClipArea(area);
 
         // Due to some odd conception in guiChan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -255,7 +258,7 @@ namespace FIFE
 
         // Use the generic fcn clip-stack logic. The fcn::opengl::Graphics
         // popClipArea implementation in current dependencies is recursive.
-        fcn::Graphics::popClipArea();
+        fcn::opengl::Graphics::popClipArea();
 
         m_renderbackend->popClipArea();
     }

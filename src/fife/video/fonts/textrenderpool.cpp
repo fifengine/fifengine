@@ -106,7 +106,7 @@ namespace FIFE
         auto it            = m_pool.begin();
         uint64_t const now = TimeManager::instance()->now64();
         while (it != m_pool.end()) {
-            if ((now - it->timestamp) > 1000 * 60) {
+            if ((now - it->timestamp) > 1000ULL * 60) {
                 delete it->image;
                 it = m_pool.erase(it);
                 --m_poolSize;

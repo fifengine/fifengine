@@ -23,7 +23,10 @@
 namespace FIFE
 {
 
-    static Logger _log(LM_STRUCTURES);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_STRUCTURES);
+        return log;
+    }();
 
     Cell::Cell(int32_t coordint, ModelCoordinate const & coordinate, Layer* layer) :
         m_coordId(coordint),

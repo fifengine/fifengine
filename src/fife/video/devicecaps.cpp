@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <iostream>
 #include <limits>
@@ -167,8 +168,7 @@ namespace FIFE
         fillAvailableDrivers();
         // FLAGS
 #ifdef HAVE_OPENGL
-        constexpr uint32_t kNumFlags = 4;
-        uint32_t flags[kNumFlags];
+        std::array<uint32_t, 4> flags{};
 
         // OpenGL, windowed
         flags[0] = SDL_WINDOW_OPENGL;
@@ -180,8 +180,7 @@ namespace FIFE
         flags[3] = SDL_WINDOW_FULLSCREEN;
 
 #else
-        constexpr uint32_t kNumFlags = 2;
-        uint32_t flags[kNumFlags];
+        std::array<uint32_t, 2> flags{};
 
         // SDL, windowed
         flags[0] = 0;
@@ -190,8 +189,7 @@ namespace FIFE
 #endif
 
         // BITS PER PIXEL
-        constexpr uint32_t kNumBPP = 3;
-        int16_t bpps[kNumBPP];
+        std::array<int16_t, 3> bpps{};
 
         bpps[0] = 16;
         bpps[1] = 24;
@@ -201,7 +199,7 @@ namespace FIFE
         int displayCount        = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
         for (int i = 0; i < displayCount; ++i) {
-            int numModes;
+            int numModes            = 0;
             SDL_DisplayMode** modes = SDL_GetFullscreenDisplayModes(displays[i], &numModes);
             for (int m = 0; m < numModes; ++m) {
                 SDL_DisplayMode mode = *modes[m];
@@ -219,7 +217,7 @@ namespace FIFE
                             static_cast<int>(std::numeric_limits<uint16_t>::max())));
                         ScreenMode sm(modeW, modeH, static_cast<uint16_t>(bpp), modeRefresh, flag);
                         sm.setFormat(mode.format);
-                        assert(i <= std::numeric_limits<uint8_t>::max());
+                        assert(std::cmp_less_equal(i, std::numeric_limits<uint8_t>::max()));
                         sm.setDisplay(static_cast<uint8_t>(i));
                         if (renderDriver) {
                             sm.setRenderDriverName(m_renderDriverName);
@@ -368,7 +366,7 @@ namespace FIFE
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
         SDL_free(displays);
         assert(displayCount >= 0);
-        assert(displayCount <= std::numeric_limits<uint8_t>::max());
+        assert(std::cmp_less_equal(displayCount, std::numeric_limits<uint8_t>::max()));
         return static_cast<uint8_t>(displayCount);
     }
 
@@ -378,7 +376,7 @@ namespace FIFE
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
         if (displays == nullptr || count <= 0 || display >= static_cast<uint8_t>(count)) {
             if (displays != nullptr) {
-                SDL_free(displays);
+                SDL_free(static_cast<void*>(displays));
             }
             throw NotSupported("Could not find a matching display!");
         }

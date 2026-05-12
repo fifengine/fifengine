@@ -28,7 +28,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_NATIVE_SAVERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_SAVERS);
+        return log;
+    }();
 
     MapSaver::MapSaver() = default;
 

@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <limits>
@@ -26,7 +27,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     namespace
     {
@@ -224,11 +228,11 @@ namespace FIFE
     void SoundEmitter::setDirection(AudioSpaceCoordinate const & direction)
     {
         if (isActive()) {
-            ALfloat const vec[3] = {
+            std::array<ALfloat, 3> const vec{
                 static_cast<ALfloat>(direction.x),
                 static_cast<ALfloat>(direction.y),
                 static_cast<ALfloat>(direction.z)};
-            alSourcefv(m_source, AL_DIRECTION, &vec[0]);
+            alSourcefv(m_source, AL_DIRECTION, vec.data());
         }
         m_internData.direction = direction;
     }

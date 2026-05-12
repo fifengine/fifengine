@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <limits>
 #include <map>
@@ -30,7 +31,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     SoundManager::SoundManager() :
         m_context(nullptr),
@@ -106,8 +110,8 @@ namespace FIFE
 
         // set listener position
         alListener3f(AL_POSITION, 0.0, 0.0, 0.0);
-        ALfloat const vec1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-        alListenerfv(AL_ORIENTATION, &vec1[0]);
+        std::array<ALfloat, 6> const vec1{0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+        alListenerfv(AL_ORIENTATION, vec1.data());
 
         // set volume
         alListenerf(AL_GAIN, m_volume);
@@ -260,8 +264,8 @@ namespace FIFE
     AudioSpaceCoordinate SoundManager::getListenerPosition() const
     {
         if (isActive()) {
-            ALfloat vec[3];
-            alGetListenerfv(AL_POSITION, &vec[0]);
+            std::array<ALfloat, 3> vec{};
+            alGetListenerfv(AL_POSITION, vec.data());
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();
@@ -270,22 +274,22 @@ namespace FIFE
     void SoundManager::setListenerOrientation(AudioSpaceCoordinate const & orientation) const
     {
         if (isActive()) {
-            ALfloat const vec[6] = {
+            std::array<ALfloat, 6> const vec{
                 static_cast<ALfloat>(orientation.x),
                 static_cast<ALfloat>(orientation.y),
                 static_cast<ALfloat>(orientation.z),
                 0.0,
                 0.0,
                 1.0};
-            alListenerfv(AL_ORIENTATION, &vec[0]);
+            alListenerfv(AL_ORIENTATION, vec.data());
         }
     }
 
     AudioSpaceCoordinate SoundManager::getListenerOrientation() const
     {
         if (isActive()) {
-            ALfloat vec[6];
-            alGetListenerfv(AL_ORIENTATION, &vec[0]);
+            std::array<ALfloat, 6> vec{};
+            alGetListenerfv(AL_ORIENTATION, vec.data());
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();
@@ -305,8 +309,8 @@ namespace FIFE
     AudioSpaceCoordinate SoundManager::getListenerVelocity() const
     {
         if (isActive()) {
-            ALfloat vec[3];
-            alGetListenerfv(AL_VELOCITY, &vec[0]);
+            std::array<ALfloat, 3> vec{};
+            alGetListenerfv(AL_VELOCITY, vec.data());
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();

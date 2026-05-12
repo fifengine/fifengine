@@ -29,7 +29,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_NATIVE_LOADERS);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_NATIVE_LOADERS);
+        return log;
+    }();
 
     size_t Atlas::getImageCount() const
     {

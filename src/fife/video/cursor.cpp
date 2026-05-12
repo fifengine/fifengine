@@ -26,7 +26,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_CURSOR);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CURSOR);
+        return log;
+    }();
 
     Cursor::Cursor(RenderBackend* renderbackend) :
         m_cursor_id(NC_ARROW),
@@ -187,8 +190,8 @@ namespace FIFE
             m_invalidated = false;
         }
 
-        float mx_float;
-        float my_float;
+        float mx_float = 0.0F;
+        float my_float = 0.0F;
         SDL_GetMouseState(&mx_float, &my_float);
         m_mx = static_cast<int32_t>(mx_float);
         m_my = static_cast<int32_t>(my_float);

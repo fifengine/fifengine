@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <array>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -27,27 +28,27 @@ namespace
 TEST_CASE("utf8_russian_hello", "[core][utf]")
 {
     // "Привет мир" (Hello world in Russian)
-    static constexpr unsigned char russian[] = {
-        0xD0,
-        0x9F,
-        0xD1,
-        0x80,
-        0xD0,
-        0xB8,
-        0xD0,
-        0xB2,
-        0xD0,
-        0xB5,
-        0xD1,
-        0x82,
-        0x20,
-        0xD0,
-        0xBC,
-        0xD0,
-        0xB8,
-        0xD1,
-        0x80};
-    std::string s = make_utf8(russian, sizeof(russian));
+    static constexpr auto russian = std::to_array<unsigned char>(
+        {0xD0,
+         0x9F,
+         0xD1,
+         0x80,
+         0xD0,
+         0xB8,
+         0xD0,
+         0xB2,
+         0xD0,
+         0xB5,
+         0xD1,
+         0x82,
+         0x20,
+         0xD0,
+         0xBC,
+         0xD0,
+         0xB8,
+         0xD1,
+         0x80});
+    std::string s = make_utf8(russian.data(), russian.size());
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x041F); // П
@@ -62,9 +63,9 @@ TEST_CASE("utf8_russian_hello", "[core][utf]")
 TEST_CASE("utf8_french_hello", "[core][utf]")
 {
     // "Bonjour le monde" (Hello world in French)
-    static constexpr unsigned char french[] = {
-        0x42, 0x6f, 0x6e, 0x6a, 0x6f, 0x75, 0x72, 0x20, 0x6c, 0x65, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x65};
-    std::string s = make_utf8(french, sizeof(french));
+    static constexpr auto french = std::to_array<unsigned char>(
+        {0x42, 0x6f, 0x6e, 0x6a, 0x6f, 0x75, 0x72, 0x20, 0x6c, 0x65, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x65});
+    std::string s = make_utf8(french.data(), french.size());
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 16);
     CHECK_EQ(utf8::unchecked::peek_next(s.data()), 0x0042); // B
@@ -73,8 +74,8 @@ TEST_CASE("utf8_french_hello", "[core][utf]")
 TEST_CASE("utf8_french_accents", "[core][utf]")
 {
     // "él" - é = C3 A9, l = 6C
-    static constexpr unsigned char french[] = {0xc3, 0xa9, 0x6c};
-    std::string s                           = make_utf8(french, sizeof(french));
+    static constexpr auto french = std::to_array<unsigned char>({0xc3, 0xa9, 0x6c});
+    std::string s                = make_utf8(french.data(), french.size());
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x00E9); // é
@@ -85,8 +86,9 @@ TEST_CASE("utf8_french_accents", "[core][utf]")
 TEST_CASE("utf8_italian_hello", "[core][utf]")
 {
     // "Ciao mondo" (Hello world in Italian)
-    static constexpr unsigned char italian[] = {0x43, 0x69, 0x61, 0x6f, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x6f};
-    std::string s                            = make_utf8(italian, sizeof(italian));
+    static constexpr auto italian =
+        std::to_array<unsigned char>({0x43, 0x69, 0x61, 0x6f, 0x20, 0x6d, 0x6f, 0x6e, 0x64, 0x6f});
+    std::string s = make_utf8(italian.data(), italian.size());
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 10);
 
@@ -100,9 +102,9 @@ TEST_CASE("utf8_italian_hello", "[core][utf]")
 TEST_CASE("utf8_hebrew_hello", "[core][utf]")
 {
     // "שלום עולם" (Hello world in Hebrew - RTL)
-    static constexpr unsigned char hebrew[] = {
-        0xd7, 0xa9, 0xd7, 0x9c, 0xd7, 0x95, 0xd7, 0x9d, 0x20, 0xd7, 0xa2, 0xd7, 0x95, 0xd7, 0x9c, 0xd7, 0x9d, 0x00};
-    std::string s = make_utf8(hebrew, sizeof(hebrew) - 1);
+    static constexpr auto hebrew = std::to_array<unsigned char>(
+        {0xd7, 0xa9, 0xd7, 0x9c, 0xd7, 0x95, 0xd7, 0x9d, 0x20, 0xd7, 0xa2, 0xd7, 0x95, 0xd7, 0x9c, 0xd7, 0x9d, 0x00});
+    std::string s = make_utf8(hebrew.data(), hebrew.size() - 1);
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 9);
 
@@ -116,8 +118,8 @@ TEST_CASE("utf8_hebrew_hello", "[core][utf]")
 TEST_CASE("utf8_japanese_hello", "[core][utf]")
 {
     // "日本" (Japan/Nihon in Japanese)
-    static constexpr unsigned char japanese[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac};
-    std::string s                             = make_utf8(japanese, sizeof(japanese));
+    static constexpr auto japanese = std::to_array<unsigned char>({0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac});
+    std::string s                  = make_utf8(japanese.data(), japanese.size());
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x65E5); // 日
@@ -133,8 +135,8 @@ TEST_CASE("utf8_japanese_hello", "[core][utf]")
 TEST_CASE("utf8_emoji_wave_globe", "[core][utf]")
 {
     // "👋🌍" (waving hand + earth globe)
-    static constexpr unsigned char emoji[] = {0xf0, 0x9f, 0x91, 0x8b, 0xf0, 0x9f, 0x8c, 0x8d};
-    std::string s                          = make_utf8(emoji, sizeof(emoji));
+    static constexpr auto emoji = std::to_array<unsigned char>({0xf0, 0x9f, 0x91, 0x8b, 0xf0, 0x9f, 0x8c, 0x8d});
+    std::string s               = make_utf8(emoji.data(), emoji.size());
 
     char const * it = s.data();
     CHECK_EQ(utf8::unchecked::next(it), 0x0001F44B); // 👋
@@ -148,8 +150,9 @@ TEST_CASE("utf8_emoji_wave_globe", "[core][utf]")
 TEST_CASE("utf8_mixed_languages", "[core][utf]")
 {
     // "Hello 世界" - H, e, l, l, o, space, 世, 界
-    static constexpr unsigned char mixed[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c};
-    std::string s                          = make_utf8(mixed, sizeof(mixed));
+    static constexpr auto mixed =
+        std::to_array<unsigned char>({0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c});
+    std::string s = make_utf8(mixed.data(), mixed.size());
 
     CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 8);
 
@@ -186,16 +189,17 @@ TEST_CASE("utf8_append_russian", "[core][utf]")
     utf8::unchecked::append(0x0435, std::back_inserter(result)); // е
     utf8::unchecked::append(0x0442, std::back_inserter(result)); // т
 
-    static constexpr unsigned char expected[] = {
-        0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
+    static constexpr auto expected =
+        std::to_array<unsigned char>({0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82});
     CHECK_EQ(result.size(), 12U);
-    CHECK_EQ(std::memcmp(result.data(), expected, 12), 0);
+    CHECK_EQ(std::memcmp(result.data(), expected.data(), 12), 0);
 }
 
 TEST_CASE("utf8_roundtrip_russian", "[core][utf]")
 {
-    static constexpr unsigned char russian[] = {0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82};
-    std::string s                            = make_utf8(russian, sizeof(russian));
+    static constexpr auto russian =
+        std::to_array<unsigned char>({0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82});
+    std::string s = make_utf8(russian.data(), russian.size());
 
     std::vector<uint32_t> utf32;
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(utf32));
@@ -210,9 +214,9 @@ TEST_CASE("utf8_roundtrip_russian", "[core][utf]")
 TEST_CASE("utf8_prior_navigation", "[core][utf]")
 {
     // Navigate backwards through "日本語"
-    static constexpr unsigned char text[] = {0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac, 0xe8, 0xaa, 0x9e};
-    std::string s                         = make_utf8(text, sizeof(text));
-    char const * it                       = s.data() + s.size();
+    static constexpr auto text = std::to_array<unsigned char>({0xe6, 0x97, 0xa5, 0xe6, 0x9c, 0xac, 0xe8, 0xaa, 0x9e});
+    std::string s              = make_utf8(text.data(), text.size());
+    char const * it            = s.data() + s.size();
 
     CHECK_EQ(utf8::unchecked::prior(it), 0x8A9E); // 語
     CHECK_EQ(utf8::unchecked::prior(it), 0x672C); // 本
@@ -222,8 +226,8 @@ TEST_CASE("utf8_prior_navigation", "[core][utf]")
 TEST_CASE("utf8_advance_through_languages", "[core][utf]")
 {
     // "HelloПри" - 5 ASCII + 2 Cyrillic (each 2 bytes)
-    static constexpr unsigned char text[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0xD0, 0x9F, 0xD1, 0x80};
-    std::string s                         = make_utf8(text, sizeof(text));
+    static constexpr auto text = std::to_array<unsigned char>({0x48, 0x65, 0x6c, 0x6c, 0x6f, 0xD0, 0x9F, 0xD1, 0x80});
+    std::string s              = make_utf8(text.data(), text.size());
 
     // "HelloПри" = H(0), e(1), l(2), l(3), o(4), П(5), р(6)
     char const * it1 = s.data();

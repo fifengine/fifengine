@@ -26,7 +26,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     // Effect Slots
     static LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
@@ -95,17 +98,26 @@ namespace FIFE
         }
 
         // Slot functions
-        alGenAuxiliaryEffectSlots    = (LPALGENAUXILIARYEFFECTSLOTS)alGetProcAddress("alGenAuxiliaryEffectSlots");
-        alDeleteAuxiliaryEffectSlots = (LPALDELETEAUXILIARYEFFECTSLOTS)alGetProcAddress("alDeleteAuxiliaryEffectSlots");
-        alIsAuxiliaryEffectSlot      = (LPALISAUXILIARYEFFECTSLOT)alGetProcAddress("alIsAuxiliaryEffectSlot");
-        alAuxiliaryEffectSloti       = (LPALAUXILIARYEFFECTSLOTI)alGetProcAddress("alAuxiliaryEffectSloti");
-        alAuxiliaryEffectSlotiv      = (LPALAUXILIARYEFFECTSLOTIV)alGetProcAddress("alAuxiliaryEffectSlotiv");
-        alAuxiliaryEffectSlotf       = (LPALAUXILIARYEFFECTSLOTF)alGetProcAddress("alAuxiliaryEffectSlotf");
-        alAuxiliaryEffectSlotfv      = (LPALAUXILIARYEFFECTSLOTFV)alGetProcAddress("alAuxiliaryEffectSlotfv");
-        alGetAuxiliaryEffectSloti    = (LPALGETAUXILIARYEFFECTSLOTI)alGetProcAddress("alGetAuxiliaryEffectSloti");
-        alGetAuxiliaryEffectSlotiv   = (LPALGETAUXILIARYEFFECTSLOTIV)alGetProcAddress("alGetAuxiliaryEffectSlotiv");
-        alGetAuxiliaryEffectSlotf    = (LPALGETAUXILIARYEFFECTSLOTF)alGetProcAddress("alGetAuxiliaryEffectSlotf");
-        alGetAuxiliaryEffectSlotfv   = (LPALGETAUXILIARYEFFECTSLOTFV)alGetProcAddress("alGetAuxiliaryEffectSlotfv");
+        alGenAuxiliaryEffectSlots =
+            reinterpret_cast<LPALGENAUXILIARYEFFECTSLOTS>(alGetProcAddress("alGenAuxiliaryEffectSlots"));
+        alDeleteAuxiliaryEffectSlots =
+            reinterpret_cast<LPALDELETEAUXILIARYEFFECTSLOTS>(alGetProcAddress("alDeleteAuxiliaryEffectSlots"));
+        alIsAuxiliaryEffectSlot =
+            reinterpret_cast<LPALISAUXILIARYEFFECTSLOT>(alGetProcAddress("alIsAuxiliaryEffectSlot"));
+        alAuxiliaryEffectSloti = reinterpret_cast<LPALAUXILIARYEFFECTSLOTI>(alGetProcAddress("alAuxiliaryEffectSloti"));
+        alAuxiliaryEffectSlotiv =
+            reinterpret_cast<LPALAUXILIARYEFFECTSLOTIV>(alGetProcAddress("alAuxiliaryEffectSlotiv"));
+        alAuxiliaryEffectSlotf = reinterpret_cast<LPALAUXILIARYEFFECTSLOTF>(alGetProcAddress("alAuxiliaryEffectSlotf"));
+        alAuxiliaryEffectSlotfv =
+            reinterpret_cast<LPALAUXILIARYEFFECTSLOTFV>(alGetProcAddress("alAuxiliaryEffectSlotfv"));
+        alGetAuxiliaryEffectSloti =
+            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTI>(alGetProcAddress("alGetAuxiliaryEffectSloti"));
+        alGetAuxiliaryEffectSlotiv =
+            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTIV>(alGetProcAddress("alGetAuxiliaryEffectSlotiv"));
+        alGetAuxiliaryEffectSlotf =
+            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTF>(alGetProcAddress("alGetAuxiliaryEffectSlotf"));
+        alGetAuxiliaryEffectSlotfv =
+            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTFV>(alGetProcAddress("alGetAuxiliaryEffectSlotfv"));
         if (alGenAuxiliaryEffectSlots == nullptr || alDeleteAuxiliaryEffectSlots == nullptr ||
             alIsAuxiliaryEffectSlot == nullptr || alAuxiliaryEffectSloti == nullptr ||
             alAuxiliaryEffectSlotiv == nullptr || alAuxiliaryEffectSlotf == nullptr ||
@@ -119,17 +131,17 @@ namespace FIFE
         }
 
         // Effect functions
-        alGenEffects    = (LPALGENEFFECTS)alGetProcAddress("alGenEffects");
-        alDeleteEffects = (LPALDELETEEFFECTS)alGetProcAddress("alDeleteEffects");
-        alIsEffect      = (LPALISEFFECT)alGetProcAddress("alIsEffect");
-        alEffecti       = (LPALEFFECTI)alGetProcAddress("alEffecti");
-        alEffectiv      = (LPALEFFECTIV)alGetProcAddress("alEffectiv");
-        alEffectf       = (LPALEFFECTF)alGetProcAddress("alEffectf");
-        alEffectfv      = (LPALEFFECTFV)alGetProcAddress("alEffectfv");
-        alGetEffecti    = (LPALGETEFFECTI)alGetProcAddress("alGetEffecti");
-        alGetEffectiv   = (LPALGETEFFECTIV)alGetProcAddress("alGetEffectiv");
-        alGetEffectf    = (LPALGETEFFECTF)alGetProcAddress("alGetEffectf");
-        alGetEffectfv   = (LPALGETEFFECTFV)alGetProcAddress("alGetEffectfv");
+        alGenEffects    = reinterpret_cast<LPALGENEFFECTS>(alGetProcAddress("alGenEffects"));
+        alDeleteEffects = reinterpret_cast<LPALDELETEEFFECTS>(alGetProcAddress("alDeleteEffects"));
+        alIsEffect      = reinterpret_cast<LPALISEFFECT>(alGetProcAddress("alIsEffect"));
+        alEffecti       = reinterpret_cast<LPALEFFECTI>(alGetProcAddress("alEffecti"));
+        alEffectiv      = reinterpret_cast<LPALEFFECTIV>(alGetProcAddress("alEffectiv"));
+        alEffectf       = reinterpret_cast<LPALEFFECTF>(alGetProcAddress("alEffectf"));
+        alEffectfv      = reinterpret_cast<LPALEFFECTFV>(alGetProcAddress("alEffectfv"));
+        alGetEffecti    = reinterpret_cast<LPALGETEFFECTI>(alGetProcAddress("alGetEffecti"));
+        alGetEffectiv   = reinterpret_cast<LPALGETEFFECTIV>(alGetProcAddress("alGetEffectiv"));
+        alGetEffectf    = reinterpret_cast<LPALGETEFFECTF>(alGetProcAddress("alGetEffectf"));
+        alGetEffectfv   = reinterpret_cast<LPALGETEFFECTFV>(alGetProcAddress("alGetEffectfv"));
         if (alGenEffects == nullptr || alDeleteEffects == nullptr || alIsEffect == nullptr || alEffecti == nullptr ||
             alEffectiv == nullptr || alEffectf == nullptr || alEffectfv == nullptr || alGetEffecti == nullptr ||
             alGetEffectiv == nullptr || alGetEffectf == nullptr || alGetEffectfv == nullptr) {
@@ -140,17 +152,17 @@ namespace FIFE
         }
 
         // Filter functions
-        alGenFilters    = (LPALGENFILTERS)alGetProcAddress("alGenFilters");
-        alDeleteFilters = (LPALDELETEFILTERS)alGetProcAddress("alDeleteFilters");
-        alIsFilter      = (LPALISFILTER)alGetProcAddress("alIsFilter");
-        alFilteri       = (LPALFILTERI)alGetProcAddress("alFilteri");
-        alFilteriv      = (LPALFILTERIV)alGetProcAddress("alFilteriv");
-        alFilterf       = (LPALFILTERF)alGetProcAddress("alFilterf");
-        alFilterfv      = (LPALFILTERFV)alGetProcAddress("alFilterfv");
-        alGetFilteri    = (LPALGETFILTERI)alGetProcAddress("alGetFilteri");
-        alGetFilteriv   = (LPALGETFILTERIV)alGetProcAddress("alGetFilteriv");
-        alGetFilterf    = (LPALGETFILTERF)alGetProcAddress("alGetFilterf");
-        alGetFilterfv   = (LPALGETFILTERFV)alGetProcAddress("alGetFilterfv");
+        alGenFilters    = reinterpret_cast<LPALGENFILTERS>(alGetProcAddress("alGenFilters"));
+        alDeleteFilters = reinterpret_cast<LPALDELETEFILTERS>(alGetProcAddress("alDeleteFilters"));
+        alIsFilter      = reinterpret_cast<LPALISFILTER>(alGetProcAddress("alIsFilter"));
+        alFilteri       = reinterpret_cast<LPALFILTERI>(alGetProcAddress("alFilteri"));
+        alFilteriv      = reinterpret_cast<LPALFILTERIV>(alGetProcAddress("alFilteriv"));
+        alFilterf       = reinterpret_cast<LPALFILTERF>(alGetProcAddress("alFilterf"));
+        alFilterfv      = reinterpret_cast<LPALFILTERFV>(alGetProcAddress("alFilterfv"));
+        alGetFilteri    = reinterpret_cast<LPALGETFILTERI>(alGetProcAddress("alGetFilteri"));
+        alGetFilteriv   = reinterpret_cast<LPALGETFILTERIV>(alGetProcAddress("alGetFilteriv"));
+        alGetFilterf    = reinterpret_cast<LPALGETFILTERF>(alGetProcAddress("alGetFilterf"));
+        alGetFilterfv   = reinterpret_cast<LPALGETFILTERFV>(alGetProcAddress("alGetFilterfv"));
         if (alGenFilters == nullptr || alDeleteFilters == nullptr || alIsFilter == nullptr || alFilteri == nullptr ||
             alFilteriv == nullptr || alFilterf == nullptr || alFilterfv == nullptr || alGetFilteri == nullptr ||
             alGetFilteriv == nullptr || alGetFilterf == nullptr || alGetFilterfv == nullptr) {

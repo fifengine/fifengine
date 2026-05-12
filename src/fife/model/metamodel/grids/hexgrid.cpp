@@ -19,15 +19,30 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_HEXGRID);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_HEXGRID);
+        return log;
+    }();
 
-    static double const HEX_WIDTH           = 1;
-    static double const HEX_TO_EDGE         = HEX_WIDTH / 2;
-    static double const HEX_TO_CORNER       = 0.5 / Mathd::Cos(Mathd::pi() / 6);
-    static double const HEX_EDGE_HALF       = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
-    static double const VERTICAL_MULTIP     = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
+    static double const HEX_WIDTH       = 1;
+    static double const HEX_TO_EDGE     = HEX_WIDTH / 2;
+    static double const & HEX_TO_CORNER = []() -> double const & {
+        static double const val = 0.5 / Mathd::Cos(Mathd::pi() / 6);
+        return val;
+    }();
+    static double const & HEX_EDGE_HALF = []() -> double const & {
+        static double const val = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
+        return val;
+    }();
+    static double const & VERTICAL_MULTIP = []() -> double const & {
+        static double const val = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
+        return val;
+    }();
     static double const VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
-    static double const HEX_EDGE_GRADIENT   = 1 / Mathd::Sqrt(3);
+    static double const & HEX_EDGE_GRADIENT = []() -> double const & {
+        static double const val = 1 / Mathd::Sqrt(3);
+        return val;
+    }();
 
     HexGrid::HexGrid(bool axial) : m_axial(axial)
     {

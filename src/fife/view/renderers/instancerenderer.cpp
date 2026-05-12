@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <limits>
 #include <list>
@@ -42,7 +43,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     namespace
     {
@@ -55,7 +59,7 @@ namespace FIFE
         uint8_t toUint8Channel(int32_t value)
         {
             assert(value >= 0);
-            assert(value <= std::numeric_limits<uint8_t>::max());
+            assert(std::cmp_less_equal(value, std::numeric_limits<uint8_t>::max()));
             return static_cast<uint8_t>(value);
         }
 
@@ -78,7 +82,11 @@ namespace FIFE
             explicit InstanceRendererDeleteListener(InstanceRenderer* r) : m_renderer(r)
             {
             }
-            ~InstanceRendererDeleteListener() override = default;
+            ~InstanceRendererDeleteListener() override                                        = default;
+            InstanceRendererDeleteListener(InstanceRendererDeleteListener const &)            = delete;
+            InstanceRendererDeleteListener& operator=(InstanceRendererDeleteListener const &) = delete;
+            InstanceRendererDeleteListener(InstanceRendererDeleteListener&&)                  = delete;
+            InstanceRendererDeleteListener& operator=(InstanceRendererDeleteListener&&)       = delete;
 
             void onInstanceDeleted(Instance* instance) override
             {
@@ -264,9 +272,9 @@ namespace FIFE
                 continue;
             }
 
-            uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = nullptr;
-            bool recoloring          = false;
+            std::array<uint8_t, 4> coloringColor{};
+            Image* outlineImage = nullptr;
+            bool recoloring     = false;
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
@@ -304,7 +312,7 @@ namespace FIFE
             //						}
             //					}
             //					vc.image->render(vc.dimensions, vc.transparency, recoloring ?
-            // coloringColor : 0); 					if (found) {
+            // coloringColor.data() : 0); 					if (found) {
             // m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ?
             // OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE); 					} else {
             //						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, ZERO,
@@ -320,10 +328,10 @@ namespace FIFE
             //			}
             // overlay
             if (vc.m_overlay != nullptr) {
-                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
+                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor.data(), recoloring);
                 // no overlay
             } else {
-                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor.data() : nullptr);
             }
 
             if (outlineImage != nullptr) {
@@ -338,9 +346,9 @@ namespace FIFE
             Instance* instance  = vc.instance;
             float const vertexZ = it->first;
 
-            uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = nullptr;
-            bool recoloring          = false;
+            std::array<uint8_t, 4> coloringColor{};
+            Image* outlineImage = nullptr;
+            bool recoloring     = false;
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
@@ -368,10 +376,10 @@ namespace FIFE
             }
             // overlay
             if (vc.m_overlay != nullptr) {
-                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
+                renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor.data(), recoloring);
                 // no overlay
             } else {
-                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor.data() : nullptr);
             }
 
             if (outlineImage != nullptr) {
@@ -447,9 +455,9 @@ namespace FIFE
             //			FL_DBG(_log, LMsg("Instance layer coordinates = ") <<
             // instance->getLocationRef().getLayerCoordinates());
 
-            uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = nullptr;
-            bool recoloring          = false;
+            std::array<uint8_t, 4> coloringColor{};
+            Image* outlineImage = nullptr;
+            bool recoloring     = false;
             if (any_effects) {
                 // coloring
                 auto coloring_it    = m_instance_colorings.find(instance);
@@ -491,7 +499,7 @@ namespace FIFE
                             break;
                         }
                     }
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor.data() : nullptr);
                     if (found) {
                         m_renderbackend->changeRenderInfos(
                             RENDER_DATA_WITHOUT_Z,
@@ -527,10 +535,10 @@ namespace FIFE
             }
             // overlay
             if (vc.m_overlay != nullptr) {
-                renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor, recoloring);
+                renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor.data(), recoloring);
                 // no overlay
             } else {
-                vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor.data() : nullptr);
             }
 
             if (outlineImage != nullptr) {
@@ -577,8 +585,8 @@ namespace FIFE
                     }
                 } else {
                     if (oc->getColors().size() > 1) {
-                        auto cit          = oc->getColors().begin();
-                        uint8_t factor[4] = {0, 0, 0, cit->second.getAlpha()};
+                        auto cit = oc->getColors().begin();
+                        std::array<uint8_t, 4> factor{0, 0, 0, cit->second.getAlpha()};
                         // multi color overlay
                         ImagePtr multiColorOverlay;
                         if (recoloring) {
@@ -617,16 +625,16 @@ namespace FIFE
                         if (withZ) {
                             (*it)->renderZ(
                                 vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
-                            (*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+                            (*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor.data());
                         } else {
                             (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
-                            (*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+                            (*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor.data());
                         }
                         continue;
                     }
                     // single color overlay
-                    auto color_it   = oc->getColors().begin();
-                    uint8_t rgba[4] = {
+                    auto color_it = oc->getColors().begin();
+                    std::array<uint8_t, 4> rgba{
                         color_it->second.getR(),
                         color_it->second.getG(),
                         color_it->second.getB(),
@@ -648,14 +656,15 @@ namespace FIFE
                     if (withZ) {
                         (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                         if (!noOverlay) {
-                            (*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
+                            (*it)->renderZ(
+                                vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba.data());
                             m_renderbackend->changeRenderInfos(
                                 type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                         }
                     } else {
                         (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                         if (!noOverlay) {
-                            (*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
+                            (*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba.data());
                             m_renderbackend->changeRenderInfos(
                                 type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                         }
@@ -668,8 +677,8 @@ namespace FIFE
                 // multi color overlay
                 ImagePtr multiColorOverlay;
                 // interpolation factor
-                auto it           = colorOverlay->getColors().begin();
-                uint8_t factor[4] = {0, 0, 0, it->second.getAlpha()};
+                auto it = colorOverlay->getColors().begin();
+                std::array<uint8_t, 4> factor{0, 0, 0, it->second.getAlpha()};
                 if (recoloring) {
                     // create temp OverlayColors
                     auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
@@ -706,15 +715,15 @@ namespace FIFE
                 }
                 if (withZ) {
                     vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
-                    vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+                    vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor.data());
                 } else {
                     vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
-                    vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+                    vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor.data());
                 }
             } else {
                 // single color overlay
-                auto color_it   = colorOverlay->getColors().begin();
-                uint8_t rgba[4] = {
+                auto color_it = colorOverlay->getColors().begin();
+                std::array<uint8_t, 4> rgba{
                     color_it->second.getR(),
                     color_it->second.getG(),
                     color_it->second.getB(),
@@ -737,14 +746,15 @@ namespace FIFE
                     vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                     if (!noOverlay) {
                         vc.image->renderZ(
-                            vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+                            vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba.data());
                         m_renderbackend->changeRenderInfos(
                             type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                     }
                 } else {
                     vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                     if (!noOverlay) {
-                        vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+                        vc.image->render(
+                            vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba.data());
                         m_renderbackend->changeRenderInfos(
                             type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                     }

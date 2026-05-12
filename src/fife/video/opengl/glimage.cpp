@@ -27,7 +27,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
         resetGlimage();
@@ -40,7 +40,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
         resetGlimage();
@@ -53,7 +53,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
         resetGlimage();
@@ -66,7 +66,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
         resetGlimage();
@@ -79,7 +79,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
 
@@ -94,7 +94,7 @@ namespace FIFE
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
-        m_colorkey{0, 0, 0, 0},
+        m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0},
         m_compressed(false)
     {
 
@@ -482,7 +482,7 @@ namespace FIFE
                 // SDL3 surfaces may have padded row pitch; OpenGL expects contiguous rows when
                 // uploading with GL_RGBA/GL_UNSIGNED_BYTE in this path, so repack when needed.
                 uint32_t const tightPitch = width * 4U;
-                if (static_cast<uint32_t>(pitch) == tightPitch) {
+                if (std::cmp_equal(pitch, tightPitch)) {
                     // Fast path for tightly packed RGBA rows.
                     glTexImage2D(
                         GL_TEXTURE_2D,

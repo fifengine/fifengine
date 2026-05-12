@@ -35,7 +35,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_INSTANCE);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_INSTANCE);
+        return log;
+    }();
 
     class ActionInfo
     {
@@ -58,6 +61,10 @@ namespace FIFE
                 }
                 delete m_target;
             }
+            ActionInfo(ActionInfo const &)            = delete;
+            ActionInfo& operator=(ActionInfo const &) = delete;
+            ActionInfo(ActionInfo&&)                  = delete;
+            ActionInfo& operator=(ActionInfo&&)       = delete;
 
             // Current action, owned by object
             Action* m_action{nullptr};

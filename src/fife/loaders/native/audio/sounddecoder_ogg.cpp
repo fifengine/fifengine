@@ -21,7 +21,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     /* OggVorbis Callback functions
      */
@@ -88,7 +91,11 @@ namespace FIFE
     SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp), m_ovf{}
     {
 
-        ov_callbacks const ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
+        ov_callbacks const ocb = {
+            .read_func  = OGG_cb::read,
+            .seek_func  = OGG_cb::seek,
+            .close_func = OGG_cb::close,
+            .tell_func  = OGG_cb::tell};
 
         if (0 > ov_open_callbacks(m_file.get(), &m_ovf, nullptr, 0, ocb)) {
             throw InvalidFormat("Error opening OggVorbis file");

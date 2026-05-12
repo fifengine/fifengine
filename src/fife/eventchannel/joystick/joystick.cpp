@@ -5,6 +5,7 @@
 #include "joystick.h"
 
 // Standard C++ library includes
+#include <array>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -20,7 +21,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_EVTCHANNEL);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_EVTCHANNEL);
+        return log;
+    }();
 
     namespace
     {
@@ -41,7 +45,7 @@ namespace FIFE
     Joystick::Joystick(int32_t joystickId, int32_t deviceIndex) :
         m_joystickHandle(nullptr),
         m_controllerHandle(nullptr),
-        m_instanceId(SDL_JoystickID(-1)),
+        m_instanceId(static_cast<SDL_JoystickID>(-1)),
         m_joystickId(joystickId),
         m_deviceIndex(deviceIndex)
 
@@ -93,10 +97,10 @@ namespace FIFE
         if (m_joystickHandle != nullptr) {
             m_instanceId = SDL_GetJoystickID(m_joystickHandle);
 
-            char tmp[33];
+            std::array<char, 33> tmp;
             SDL_GUID guid = SDL_GetJoystickGUID(m_joystickHandle);
-            SDL_GUIDToString(guid, tmp, sizeof(tmp));
-            m_guidStr = std::string(tmp);
+            SDL_GUIDToString(guid, tmp.data(), tmp.size());
+            m_guidStr = std::string(tmp.data());
 
             openController();
             char const * name = SDL_GetJoystickName(m_joystickHandle);
@@ -116,7 +120,7 @@ namespace FIFE
             SDL_CloseJoystick(m_joystickHandle);
             m_joystickHandle = nullptr;
         }
-        m_instanceId  = SDL_JoystickID(-1);
+        m_instanceId  = static_cast<SDL_JoystickID>(-1);
         m_deviceIndex = -1;
     }
 

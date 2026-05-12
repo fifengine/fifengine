@@ -39,14 +39,17 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIEWVIEW);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIEWVIEW);
+        return log;
+    }();
 
     CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
 
         m_font(nullptr),
         m_font_color(false),
-        m_color{255, 255, 255, 255},
+        m_color{.r = 255, .g = 255, .b = 255, .a = 255},
         m_zoom(true)
     {
         setEnabled(false);

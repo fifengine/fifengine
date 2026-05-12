@@ -21,7 +21,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_SQUAREGRID);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_SQUAREGRID);
+        return log;
+    }();
 
     SquareGrid::SquareGrid() = default;
 

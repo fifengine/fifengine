@@ -198,8 +198,7 @@ namespace FIFE
             {
                 try {
                     m_rd->setIndex(m_index);
-                } catch (IndexOverflow const & err) {
-                    (void)err;
+                } catch (...) {
                 }
             }
 

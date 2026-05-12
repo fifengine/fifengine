@@ -22,7 +22,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_CONSOLE);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_CONSOLE);
+        return log;
+    }();
 
     Console::Console() :
 

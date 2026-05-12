@@ -27,7 +27,10 @@
 
 namespace FIFE
 {
-    static Logger _log(LM_EVTCHANNEL);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_EVTCHANNEL);
+        return log;
+    }();
 
     EventManager::EventManager() :
 

@@ -28,7 +28,7 @@ namespace FIFE
         m_stream.seekg(0, std::ios::end);
         std::streamoff const streamSize = m_stream.tellg();
         assert(streamSize >= 0);
-        if (streamSize < 0 || streamSize > static_cast<std::streamoff>(std::numeric_limits<uint32_t>::max())) {
+        if (streamSize < 0 || std::cmp_greater(streamSize, std::numeric_limits<uint32_t>::max())) {
             throw Exception("RawDataFile: file size does not fit into uint32_t: " + m_file);
         }
         m_filesize = static_cast<uint32_t>(streamSize);
@@ -45,7 +45,7 @@ namespace FIFE
     void RawDataFile::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
     {
         m_stream.seekg(start);
-        m_stream.read(static_cast<char*>(static_cast<void*>(buffer)), length);
+        m_stream.read(reinterpret_cast<char*>(buffer), length);
     }
 
 } // namespace FIFE

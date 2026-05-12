@@ -32,7 +32,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_STRUCTURES);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_STRUCTURES);
+        return log;
+    }();
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_id(std::move(identifier)),

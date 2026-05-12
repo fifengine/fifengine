@@ -29,7 +29,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_VIDEO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_VIDEO);
+        return log;
+    }();
 
     namespace
     {
@@ -112,9 +115,10 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        int displayCount            = 0;
-        SDL_DisplayID* displays     = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID displayId     = (displayIndex < displayCount) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
+        int displayCount        = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
+        SDL_DisplayID displayId =
+            (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
         uint16_t createHeight       = height;
@@ -622,7 +626,7 @@ namespace FIFE
     void RenderBackendSDL::drawFillCircle(Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         float const rad = static_cast<float>(radius);
-        for (float dy = 1.0F; dy <= rad; dy += 1.0F) {
+        for (int32_t dy = 1; static_cast<float>(dy) <= rad; ++dy) {
             float const dx = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dy) - (dy * dy)));
             int32_t x      = p.x - static_cast<int32_t>(dx);
             for (; static_cast<float>(x) <= static_cast<float>(p.x) + dx; x++) {
@@ -856,9 +860,9 @@ namespace FIFE
                     dst_pointer++;
                 }
                 sy_ca++;
-                auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+                auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
                 size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-                src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
+                src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
             }
 
             if (SDL_MUSTLOCK(dst)) {

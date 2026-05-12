@@ -5,11 +5,8 @@
 #include "soundeffect.h"
 
 // Standard C++ library includes
-#if defined(_WIN32) && !defined(FIFE_EXPORTING)
-    #define FIFE_EXPORTING
-#endif
-
 #include <algorithm>
+#include <array>
 
 // Platform specific includes
 
@@ -24,7 +21,10 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger _log(LM_AUDIO);
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_AUDIO);
+        return log;
+    }();
 
     SoundEffect::SoundEffect() :
         m_effect(0), m_slot(0), m_effectType(SE_EFFECT_NULL), m_enabled(false), m_filter(nullptr)
@@ -1176,11 +1176,11 @@ namespace FIFE
         m_reflectionsPan.z = std::min(coordinate.z, 1.0);
         m_reflectionsPan.z = std::max(coordinate.z, (-1.0));
 
-        ALfloat const vec[3] = {
+        std::array<ALfloat, 3> const vec{
             static_cast<ALfloat>(m_reflectionsPan.x),
             static_cast<ALfloat>(m_reflectionsPan.y),
             static_cast<ALfloat>(m_reflectionsPan.z)};
-        alEffectfv(m_effect, AL_EAXREVERB_REFLECTIONS_PAN, &vec[0]);
+        alEffectfv(m_effect, AL_EAXREVERB_REFLECTIONS_PAN, vec.data());
     }
 
     AudioSpaceCoordinate EaxReverb::getReflectionsPan() const
@@ -1223,11 +1223,11 @@ namespace FIFE
         m_lateReverbPan.z = std::min(coordinate.z, 1.0);
         m_lateReverbPan.z = std::max(coordinate.z, (-1.0));
 
-        ALfloat const vec[3] = {
+        std::array<ALfloat, 3> const vec{
             static_cast<ALfloat>(m_lateReverbPan.x),
             static_cast<ALfloat>(m_lateReverbPan.y),
             static_cast<ALfloat>(m_lateReverbPan.z)};
-        alEffectfv(m_effect, AL_EAXREVERB_LATE_REVERB_PAN, &vec[0]);
+        alEffectfv(m_effect, AL_EAXREVERB_LATE_REVERB_PAN, vec.data());
     }
 
     AudioSpaceCoordinate EaxReverb::getLateReverbPan() const
