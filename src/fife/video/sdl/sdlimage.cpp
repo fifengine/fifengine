@@ -158,15 +158,26 @@ namespace FIFE
         if (shared->getState() != IResource::RES_LOADED) {
             shared->load();
         }
+
         SDL_Surface* surface = shared->getSurface();
+
         if (surface == nullptr) {
             shared->load();
             surface = shared->getSurface();
         }
+
         auto* image = dynamic_cast<SDLImage*>(shared.get());
-        m_texture   = image->getTexture();
+
+        setSurface(surface);
+        m_shared       = true;
+        m_subimagerect = region;
+        m_atlas_img    = shared;
+        m_atlas_name   = shared->getName();
+
+        m_texture = image->getTexture();
+
         if (m_texture == nullptr) {
-            // create atlas texture
+            // create atlas texture once and share it across subimages
             SDL_Renderer* renderer = dynamic_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
             m_texture =
                 SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, surface->w, surface->h);
@@ -174,11 +185,6 @@ namespace FIFE
             SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
             image->setTexture(m_texture);
         }
-        setSurface(surface);
-        m_shared       = true;
-        m_subimagerect = region;
-        m_atlas_img    = shared;
-        m_atlas_name   = shared->getName();
         setState(IResource::RES_LOADED);
     }
 

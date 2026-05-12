@@ -2,16 +2,20 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <SDL3/SDL.h>
-
 #include <cstdint>
 #include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
 
+// Platform specific includes
 #include "fife_unittest.h"
 #include "fixture.h"
+
+// 3rd party library includes
+#include <SDL3/SDL.h>
+
+// FIFE includes
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/imagemanager.h"

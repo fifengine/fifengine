@@ -8,6 +8,7 @@
 #include <fstream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>

@@ -86,6 +86,8 @@ endif()
 # Copy test resources to the build directory
 set(RESOURCES_SRC_DIR "${CMAKE_SOURCE_DIR}/tests/data")
 set(RESOURCES_DST_DIR "${CMAKE_CURRENT_BINARY_DIR}/tests/data")
+set(LOGO_SRC_DIR "${CMAKE_SOURCE_DIR}/docs/logo")
+set(LOGO_DST_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/logo")
 
 if(NOT EXISTS "${RESOURCES_DST_DIR}")
   file(MAKE_DIRECTORY "${RESOURCES_DST_DIR}")
@@ -102,6 +104,11 @@ foreach(file IN LISTS RESOURCE_FILES)
     file(COPY "${file}" DESTINATION "${target_dir}")
   endif()
 endforeach()
+
+file(MAKE_DIRECTORY "${LOGO_DST_DIR}")
+if(EXISTS "${LOGO_SRC_DIR}/FIFE_small_c3.png" AND NOT EXISTS "${LOGO_DST_DIR}/FIFE_small_c3.png")
+  file(COPY "${LOGO_SRC_DIR}/FIFE_small_c3.png" DESTINATION "${LOGO_DST_DIR}")
+endif()
 
 add_test(NAME all_tests COMMAND all_tests)
 set_tests_properties(all_tests PROPERTIES LABELS core WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})

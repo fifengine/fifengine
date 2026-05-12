@@ -8,8 +8,11 @@
 #include <memory>
 #include <string>
 
+// Platform specific includes
 #include "fife_unittest.h"
 #include "fixture.h"
+
+// FIFE includes
 #include "gui/fifechan/base/gui_image.h"
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/opengl/opengl_gui_graphics.h"

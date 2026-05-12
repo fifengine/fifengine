@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Standard C++ library includes
 #include <cstdint>
 #include <iostream>
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
 
+// Platform specific includes
 #include "fife_unittest.h"
+
+// FIFE includes
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"

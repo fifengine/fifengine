@@ -6,8 +6,11 @@
 #include <memory>
 #include <string>
 
+// Platform specific includes
 #include "fife_unittest.h"
 #include "fixture.h"
+
+// FIFE includes
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
