@@ -560,8 +560,8 @@ namespace FIFE
             int32_t const tmp_yrel = tmp_y - m_oldY;
             if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
                 Rect const screen    = RenderBackend::instance()->getArea();
-                int32_t const x_fact = static_cast<int32_t>(round(static_cast<float>(tmp_xrel) * modifier));
-                int32_t const y_fact = static_cast<int32_t>(round(static_cast<float>(tmp_yrel) * modifier));
+                int32_t const x_fact = static_cast<int32_t>(roundf(static_cast<float>(tmp_xrel) * modifier));
+                int32_t const y_fact = static_cast<int32_t>(roundf(static_cast<float>(tmp_yrel) * modifier));
                 if ((tmp_x + x_fact) > screen.w) {
                     tmp_x = screen.w;
                 } else if ((tmp_x + x_fact) < screen.x) {

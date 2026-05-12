@@ -784,7 +784,7 @@ namespace FIFE
         if (!m_needSorting && !m_layer->isStatic()) {
             // if (!m_needSorting) {
             float const det = static_cast<float>(m_zMin - m_zMax);
-            if (fabs(det) > FLT_EPSILON) {
+            if (fabsf(det) > FLT_EPSILON) {
                 static float const globalrange = 200.0;
                 static float const stackdelta  = (FLT_EPSILON * 100.0);
                 int32_t const numlayers        = static_cast<int32_t>(m_layer->getLayerCount());

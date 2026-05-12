@@ -385,9 +385,8 @@ namespace FIFE
         m_sizeUpdate(false),
         m_searchNarrow(true),
         m_staticSize(false),
-        m_cellZoneListener(nullptr)
+        m_cellZoneListener(new ZoneCellChangeListener(this))
     {
-        m_cellZoneListener = new ZoneCellChangeListener(this);
         // set base size
         ModelCoordinate min;
         ModelCoordinate max;

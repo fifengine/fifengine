@@ -63,7 +63,7 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
 
     for (int k = 0; k < 3; k++) {
         for (int j = 0; j < 3; j++) {
-            Image* r   = image.get();
+            Image* r = image.get();
             if (j == 1) {
                 r = atlas.get();
             } else if (j == 2) {

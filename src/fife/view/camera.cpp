@@ -107,7 +107,7 @@ namespace FIFE
         m_transform(NoneTransform),
 
         m_updated(false),
-        m_map_observer(nullptr),
+        m_map_observer(new MapObserver(this)),
         m_lighting(false),
         m_col_overlay(false),
         m_img_overlay(false),
@@ -118,7 +118,6 @@ namespace FIFE
         m_ani_fill(false),
         m_start_time(0)
     {
-        m_map_observer = new MapObserver(this);
         init();
     }
 
@@ -1022,7 +1021,7 @@ found_non_transparent_pixel:;
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
                 uint8_t const batches = static_cast<uint8_t>(
-                    ceil(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
+                    ceilf(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
                 uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
                     uint32_t const start = i * MAX_BATCH_SIZE;
@@ -1115,7 +1114,7 @@ found_non_transparent_pixel:;
             // split the RenderList into smaller parts
             if (instancesToRender.size() > MAX_BATCH_SIZE) {
                 uint8_t const batches = static_cast<uint8_t>(
-                    ceil(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
+                    ceilf(static_cast<float>(instancesToRender.size()) / static_cast<float>(MAX_BATCH_SIZE)));
                 uint32_t const residual = instancesToRender.size() % MAX_BATCH_SIZE;
                 for (uint8_t i = 0; i < batches; ++i) {
                     uint32_t const start = i * MAX_BATCH_SIZE;

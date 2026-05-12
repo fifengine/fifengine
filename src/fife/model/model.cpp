@@ -57,13 +57,12 @@ namespace FIFE
     };
 
     Model::Model(RenderBackend* renderbackend, std::vector<RendererBase*> const & renderers) :
-        m_mapObserver(nullptr),
+        m_mapObserver(new ModelMapObserver(this)),
         m_lastNamespace(nullptr),
         m_timeprovider(nullptr),
         m_renderbackend(renderbackend),
         m_renderers(renderers)
     {
-        m_mapObserver = new ModelMapObserver(this);
     }
 
     Model::~Model()

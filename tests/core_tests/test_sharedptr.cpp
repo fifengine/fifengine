@@ -49,9 +49,9 @@ class SubData : public Data
         {
         }
 
-        virtual ~SubData() = default;
+        ~SubData() override = default;
 
-        virtual int32_t total()
+        int32_t total() override
         {
             return x + y + z;
         }
@@ -154,7 +154,7 @@ TEST_CASE("SharedPtr::unique reports single vs shared ownership", "[core][shared
     SharedPtr<Data> shptr(new Data());
     CHECK(shptr.unique());
 
-    SharedPtr<Data> copy(shptr);
+    SharedPtr<Data> copy(shptr); // NOLINT(performance-unnecessary-copy-initialization)
 
     CHECK(!shptr.unique());
     CHECK(!copy.unique());

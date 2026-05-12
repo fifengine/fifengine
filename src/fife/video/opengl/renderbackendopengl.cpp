@@ -112,38 +112,24 @@ namespace FIFE
     {
         public:
             RenderObject(GLenum m, uint16_t s, uint32_t t1 = 0, uint32_t t2 = 0) :
-                mode(m),
-                texture_id(t1),
-                overlay_id(t2),
-                src(4),
-                dst(5),
-                overlay_type(OVERLAY_TYPE_NONE),
-                stencil_op(0),
-                stencil_func(0),
-                size(s),
-                stencil_ref(0),
-                light(true),
-                stencil_test(false),
-                color(true),
-                rgba{0}
-
+                mode(m), texture_id(t1), overlay_id(t2), size(s)
             {
             }
 
-            GLenum mode;
-            uint32_t texture_id;
-            uint32_t overlay_id;
-            int32_t src;
-            int32_t dst;
-            OverlayType overlay_type;
-            GLenum stencil_op;
-            GLenum stencil_func;
-            uint16_t size;
-            uint8_t stencil_ref;
-            bool light;
-            bool stencil_test;
-            bool color;
-            uint8_t rgba[4];
+            GLenum mode              = GL_NONE;
+            uint32_t texture_id      = 0;
+            uint32_t overlay_id      = 0;
+            int32_t src              = 4;
+            int32_t dst              = 5;
+            OverlayType overlay_type = OVERLAY_TYPE_NONE;
+            GLenum stencil_op        = 0;
+            GLenum stencil_func      = 0;
+            uint16_t size            = 0;
+            uint8_t stencil_ref      = 0;
+            bool light               = true;
+            bool stencil_test        = false;
+            bool color               = true;
+            uint8_t rgba[4]          = {};
             uint8_t reserved[2]{0, 0};
     };
 
@@ -2030,7 +2016,7 @@ namespace FIFE
     void RenderBackendOpenGL::drawCircle(Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         // set side length to 5 and calculate needed divisions
-        int32_t subdivisions = static_cast<int32_t>(round(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
+        int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
         float const radiusF  = static_cast<float>(radius);
         float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
@@ -2057,7 +2043,7 @@ namespace FIFE
         Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         // set side length to 5 and calculate needed divisions
-        int32_t subdivisions = static_cast<int32_t>(round(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
+        int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
         float const radiusF  = static_cast<float>(radius);
         float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);

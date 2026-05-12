@@ -155,7 +155,7 @@ namespace FIFE
         for (int i = 0; i < renderDriverCount; ++i) {
             char const * name = SDL_GetRenderDriver(i);
             if (name != nullptr) {
-                m_availableRenderDrivers.push_back(std::string(name));
+                m_availableRenderDrivers.emplace_back(name);
             }
         }
     }
