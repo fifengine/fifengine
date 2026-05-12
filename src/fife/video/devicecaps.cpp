@@ -154,7 +154,7 @@ namespace FIFE
         int const renderDriverCount = SDL_GetNumRenderDrivers();
         for (int i = 0; i < renderDriverCount; ++i) {
             char const * name = SDL_GetRenderDriver(i);
-            if (name) {
+            if (name != nullptr) {
                 m_availableRenderDrivers.push_back(std::string(name));
             }
         }
@@ -399,7 +399,7 @@ namespace FIFE
 
     std::string DeviceCaps::getDisplayName(uint8_t display) const
     {
-        return std::string(SDL_GetDisplayName(getDisplayId(display)));
+        return {SDL_GetDisplayName(getDisplayId(display))};
     }
 
     uint32_t DeviceCaps::getDesktopFormat(uint8_t display) const

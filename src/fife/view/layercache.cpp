@@ -244,7 +244,7 @@ namespace FIFE
 
     void LayerCache::addInstance(Instance* instance)
     {
-        assert(m_instance_map.find(instance) == m_instance_map.end());
+        assert(!m_instance_map.contains(instance));
 
         RenderItem* item = nullptr;
         Entry* entry     = nullptr;
@@ -285,7 +285,7 @@ namespace FIFE
 
     void LayerCache::removeInstance(Instance* instance)
     {
-        assert(m_instance_map.find(instance) != m_instance_map.end());
+        assert(m_instance_map.contains(instance));
 
         Entry* entry = m_entries[static_cast<size_t>(m_instance_map[instance])];
         assert(entry->instanceIndex == m_instance_map[instance]);

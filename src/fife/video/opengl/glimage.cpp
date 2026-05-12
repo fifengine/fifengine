@@ -581,10 +581,10 @@ namespace FIFE
         if (RenderBackend::instance()->getTextureFiltering() != TEXTURE_FILTER_NONE ||
             RenderBackend::instance()->isMipmappingEnabled()) {
             // half pixel correction
-            m_tex_coords[0] = (static_cast<GLfloat>(region.x) + 0.5f) / static_cast<GLfloat>(width);
-            m_tex_coords[1] = (static_cast<GLfloat>(region.y) + 0.5f) / static_cast<GLfloat>(height);
-            m_tex_coords[2] = (static_cast<GLfloat>(region.x + region.w) - 0.5f) / static_cast<GLfloat>(width);
-            m_tex_coords[3] = (static_cast<GLfloat>(region.y + region.h) - 0.5f) / static_cast<GLfloat>(height);
+            m_tex_coords[0] = (static_cast<GLfloat>(region.x) + 0.5F) / static_cast<GLfloat>(width);
+            m_tex_coords[1] = (static_cast<GLfloat>(region.y) + 0.5F) / static_cast<GLfloat>(height);
+            m_tex_coords[2] = (static_cast<GLfloat>(region.x + region.w) - 0.5F) / static_cast<GLfloat>(width);
+            m_tex_coords[3] = (static_cast<GLfloat>(region.y + region.h) - 0.5F) / static_cast<GLfloat>(height);
         } else {
             m_tex_coords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
             m_tex_coords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);

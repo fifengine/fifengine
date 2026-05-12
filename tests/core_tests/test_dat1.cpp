@@ -48,10 +48,7 @@ TEST_CASE("DAT1::open decompresses stored entry correctly", "[dat1][vfs]")
     CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
     // std::cout << "data length match, length = " << fcomp->getDataLength() << '\n';
 
-    unsigned int smaller_len = fraw->getDataLength();
-    if (fcomp->getDataLength() < smaller_len) {
-        smaller_len = fcomp->getDataLength();
-    }
+    auto smaller_len = std::min(fraw->getDataLength(), fcomp->getDataLength());
 
     std::vector<uint8_t> d_raw(fraw->getDataLength());
     std::vector<uint8_t> d_comp(fcomp->getDataLength());

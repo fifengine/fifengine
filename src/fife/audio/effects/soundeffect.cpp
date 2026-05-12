@@ -1169,11 +1169,11 @@ namespace FIFE
 
     void EaxReverb::setReflectionsPan(AudioSpaceCoordinate const & coordinate)
     {
-        m_reflectionsPan.x = std::min(coordinate.x, (1.0));
+        m_reflectionsPan.x = std::min(coordinate.x, 1.0);
         m_reflectionsPan.x = std::max(coordinate.x, (-1.0));
-        m_reflectionsPan.y = std::min(coordinate.y, (1.0));
+        m_reflectionsPan.y = std::min(coordinate.y, 1.0);
         m_reflectionsPan.y = std::max(coordinate.y, (-1.0));
-        m_reflectionsPan.z = std::min(coordinate.z, (1.0));
+        m_reflectionsPan.z = std::min(coordinate.z, 1.0);
         m_reflectionsPan.z = std::max(coordinate.z, (-1.0));
 
         ALfloat const vec[3] = {
@@ -1216,11 +1216,11 @@ namespace FIFE
 
     void EaxReverb::setLateReverbPan(AudioSpaceCoordinate const & coordinate)
     {
-        m_lateReverbPan.x = std::min(coordinate.x, (1.0));
+        m_lateReverbPan.x = std::min(coordinate.x, 1.0);
         m_lateReverbPan.x = std::max(coordinate.x, (-1.0));
-        m_lateReverbPan.y = std::min(coordinate.y, (1.0));
+        m_lateReverbPan.y = std::min(coordinate.y, 1.0);
         m_lateReverbPan.y = std::max(coordinate.y, (-1.0));
-        m_lateReverbPan.z = std::min(coordinate.z, (1.0));
+        m_lateReverbPan.z = std::min(coordinate.z, 1.0);
         m_lateReverbPan.z = std::max(coordinate.z, (-1.0));
 
         ALfloat const vec[3] = {

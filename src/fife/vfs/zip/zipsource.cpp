@@ -191,7 +191,7 @@ namespace FIFE
         if (!name.empty() && name.back() == '/') {
             return ZipEntryType::Directory;
         }
-        if (externalAttrs & 0x4000) {
+        if ((externalAttrs & 0x4000) != 0U) {
             return ZipEntryType::Directory;
         }
         if ((externalAttrs & 0xF000) == 0xA000) {

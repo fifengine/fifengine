@@ -19,8 +19,7 @@ namespace
 
     std::string make_utf8(unsigned char const * bytes, size_t len)
     {
-        return std::string(
-            reinterpret_cast<char const *>(bytes), len); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        return {reinterpret_cast<char const *>(bytes), len}; // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     }
 
 } // namespace

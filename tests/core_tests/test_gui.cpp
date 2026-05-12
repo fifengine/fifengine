@@ -24,7 +24,6 @@
 #include "video/sdl/renderbackendsdl.h"
 
 using FIFE::GuiImageLoader;
-using FIFE::Image;
 using FIFE::ImageManager;
 using FIFE::ImagePtr;
 using FIFE::OpenGLGuiGraphics;

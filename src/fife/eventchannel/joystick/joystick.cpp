@@ -203,11 +203,11 @@ namespace FIFE
             return false;
         }
         if (!isController()) {
-            return SDL_GetJoystickButton(m_joystickHandle, button) == 1;
+            return SDL_GetJoystickButton(m_joystickHandle, button);
         }
 
         auto sdlButton = static_cast<SDL_GamepadButton>(button);
-        return SDL_GetGamepadButton(m_controllerHandle, sdlButton) == 1;
+        return SDL_GetGamepadButton(m_controllerHandle, sdlButton);
     }
 
     float Joystick::convertRange(int16_t value) const

@@ -64,10 +64,7 @@ TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", 
 
     CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
     std::cout << "9" << '\n';
-    unsigned int smaller_len = fraw->getDataLength();
-    if (fcomp->getDataLength() < smaller_len) {
-        smaller_len = fcomp->getDataLength();
-    }
+    auto smaller_len = std::min(fraw->getDataLength(), fcomp->getDataLength());
 
     std::vector<uint8_t> d_raw(fraw->getDataLength());
     std::vector<uint8_t> d_comp(fcomp->getDataLength());

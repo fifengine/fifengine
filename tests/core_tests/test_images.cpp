@@ -39,7 +39,10 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
-        uint8_t r, g, b, a;
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
         CHECK_EQ(r, 0);
         CHECK_EQ(g, 0);
@@ -52,7 +55,10 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
     REQUIRE(img);
 
     // Read pixel (134,172) from the loaded surface for ground truth
-    uint8_t surf_r, surf_g, surf_b, surf_a;
+    uint8_t surf_r;
+    uint8_t surf_g;
+    uint8_t surf_b;
+    uint8_t surf_a;
     {
         SDL_Surface const * s = img->getSurface();
         REQUIRE(s->w > 134);
@@ -75,7 +81,10 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
-        uint8_t r, g, b, a;
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
         CHECK_EQ(r, surf_r);
         CHECK_EQ(g, surf_g);

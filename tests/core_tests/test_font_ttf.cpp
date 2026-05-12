@@ -164,7 +164,10 @@ TEST_CASE("TrueTypeFont::renderString with different colors", "[font][ttf]")
     for (int32_t y = 0; y < surf_white->h && (!found_colored_transparent || !found_opaque_not_white); ++y) {
         uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surf_white->w && (!found_colored_transparent || !found_opaque_not_white); ++x) {
-            uint8_t r, g, b, a;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
             SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
             if (a == 0) {
                 if (r != 0 || g != 0 || b != 0) {
@@ -216,7 +219,10 @@ TEST_CASE("TrueTypeFont::renderString pixel-perfect verification", "[font][ttf]"
     for (int32_t y = 0; y < surface->h; ++y) {
         uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surface->w; ++x) {
-            uint8_t r, g, b, a;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
             SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
             if (a > 0) {
                 ++opaque_count;

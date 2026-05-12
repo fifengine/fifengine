@@ -55,7 +55,10 @@ namespace FIFE
             auto* row = reinterpret_cast<Uint32*>(static_cast<uint8_t*>(surface->pixels) + (y * surface->pitch));
 
             for (int x = 0; x < surface->w; ++x) {
-                Uint8 r, g, b, a;
+                Uint8 r;
+                Uint8 g;
+                Uint8 b;
+                Uint8 a;
                 SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
                 if (a == 0) {
                     row[x] = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
@@ -76,20 +79,20 @@ namespace FIFE
 
         // Fallback: load from VFS memory buffer
         auto* vfs          = VFS::instance();
-        auto data          = vfs->open(filename.data());
+        auto* data          = vfs->open(filename.data());
         auto const datalen = data->getDataLength();
 
         std::vector<uint8_t> buffer(datalen);
         data->readInto(buffer.data(), datalen);
 
-        auto iostream = SDL_IOFromConstMem(buffer.data(), datalen);
-        if (!iostream) {
+        auto* iostream = SDL_IOFromConstMem(buffer.data(), datalen);
+        if (iostream == nullptr) {
             return nullptr;
         }
         SDL_IOStreamPtr ioGuard{iostream};
 
         auto* surface = IMG_Load_IO(iostream, false);
-        if (!surface) {
+        if (surface == nullptr) {
             return nullptr;
         }
         return SDL_SurfacePtr{surface};

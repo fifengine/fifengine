@@ -292,8 +292,8 @@ namespace FIFE
 
     void Image::saveAsPng(std::string const & filename, SDL_Surface& surface)
     {
-        if (IMG_SavePNG(&surface, filename.c_str()) != 0) {
-            std::cerr << "Failed to save PNG '" << filename << "': " << SDL_GetError() << std::endl;
+        if (!IMG_SavePNG(&surface, filename.c_str())) {
+            std::cerr << "Failed to save PNG '" << filename << "': " << SDL_GetError() << '\n';
         }
     }
 

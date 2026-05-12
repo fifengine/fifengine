@@ -385,7 +385,7 @@ namespace FIFE
         char tmp[33];
         auto const sdlDeviceIndex = toSdlJoystickId(deviceIndex);
         SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
-        if (joy) {
+        if (joy != nullptr) {
             SDL_GUID guid = SDL_GetJoystickGUID(joy);
             SDL_GUIDToString(guid, &tmp[0], sizeof(tmp));
             SDL_CloseJoystick(joy);

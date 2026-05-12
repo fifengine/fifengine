@@ -792,7 +792,8 @@ found_non_transparent_pixel:;
 
     void Camera::onRendererEnabledChanged(RendererBase* renderer)
     {
-        assert(m_renderers.find(renderer->getName()) != m_renderers.end());
+        assert(m_renderers.contains(renderer->getName()));
+
         if (renderer->isEnabled()) {
             FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
             m_pipeline.push_back(renderer);

@@ -187,7 +187,8 @@ namespace FIFE
             m_invalidated = false;
         }
 
-        float mx_float, my_float;
+        float mx_float;
+        float my_float;
         SDL_GetMouseState(&mx_float, &my_float);
         m_mx = static_cast<int32_t>(mx_float);
         m_my = static_cast<int32_t>(my_float);

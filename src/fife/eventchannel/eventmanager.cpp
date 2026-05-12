@@ -775,7 +775,7 @@ namespace FIFE
         std::string text;
         if (SDL_HasClipboardText()) {
             char* clipboard = SDL_GetClipboardText();
-            if (clipboard) {
+            if (clipboard != nullptr) {
                 text = std::string(clipboard);
                 SDL_free(clipboard);
             }
