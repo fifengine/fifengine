@@ -495,6 +495,29 @@ jobs:
           path: ${{ env.INSTALL_DIR }}/**/*
 
       # ------------------------------------------------------------------------
+      # Count Lines of Code
+      # ------------------------------------------------------------------------
+
+      - name: 🔽 Install scc
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          SCC_VERSION=v3.7.0
+          curl -fL --retry 3 \
+            -o scc.tar.gz \
+            https://github.com/boyter/scc/releases/download/${SCC_VERSION}/scc_Linux_x86_64.tar.gz
+          tar -xzf scc.tar.gz
+          sudo mv scc /usr/local/bin/
+
+      - name: 📊 Count LOC
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          scc . \
+            --exclude-dir .git,build,out,vcpkg_installed \
+            --no-cocomo --no-complexity --no-duplicates --no-size \
+            --sort code \
+            --format tabular
+
+      # ------------------------------------------------------------------------
       # Code Coverage Steps (only for "clang22-x64-linux-dbg-cov" preset)
       # ------------------------------------------------------------------------
 
