@@ -36,3 +36,5 @@
 
 - Baseline, 10.05.2026, L9149
   - https://github.com/fifengine/fifengine/actions/runs/25628339279/job/75227331476#step:21:9149
+- 12.05.2026: L8023
+  - https://github.com/fifengine/fifengine/actions/runs/25735020103/job/75569611392#step:22:8024
