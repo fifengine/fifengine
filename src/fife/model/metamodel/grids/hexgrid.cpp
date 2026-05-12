@@ -254,7 +254,7 @@ namespace FIFE
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
-        ty = y - VERTICAL_MULTIP_INV * HEX_TO_CORNER;
+        ty = y - (VERTICAL_MULTIP_INV * HEX_TO_CORNER);
         tx = x - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
@@ -262,15 +262,15 @@ namespace FIFE
         tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
-        ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
+        ty = y + (VERTICAL_MULTIP_INV * HEX_EDGE_HALF);
         tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
-        ty = y + VERTICAL_MULTIP_INV * HEX_TO_CORNER;
+        ty = y + (VERTICAL_MULTIP_INV * HEX_TO_CORNER);
         tx = x - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
 
-        ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
+        ty = y + (VERTICAL_MULTIP_INV * HEX_EDGE_HALF);
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);
     }

@@ -59,7 +59,7 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         REQUIRE(s->h > 172);
         SDL_PixelFormatDetails const * f = SDL_GetPixelFormatDetails(s->format);
         uint32_t pix;
-        std::memcpy(&pix, static_cast<uint8_t const *>(s->pixels) + 172 * s->pitch + 134 * 4, sizeof(pix));
+        std::memcpy(&pix, static_cast<uint8_t const *>(s->pixels) + (172 * s->pitch) + (134 * 4), sizeof(pix));
         SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
     }
 

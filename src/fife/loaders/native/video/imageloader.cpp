@@ -52,7 +52,7 @@ namespace FIFE
         auto const * fmt = SDL_GetPixelFormatDetails(surface->format);
 
         for (int y = 0; y < surface->h; ++y) {
-            auto* row = reinterpret_cast<Uint32*>(static_cast<uint8_t*>(surface->pixels) + y * surface->pitch);
+            auto* row = reinterpret_cast<Uint32*>(static_cast<uint8_t*>(surface->pixels) + (y * surface->pitch));
 
             for (int x = 0; x < surface->w; ++x) {
                 Uint8 r, g, b, a;
