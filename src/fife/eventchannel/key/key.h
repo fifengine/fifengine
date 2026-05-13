@@ -116,6 +116,8 @@ namespace FIFE
                 return !name.empty();
             }
 
+            bool is_printable() const { return isPrintable(); }
+
             bool isFunctionKey() const
             {
                 return (m_key >= Keys::F1 && m_key <= Keys::F24);
@@ -135,6 +137,8 @@ namespace FIFE
                 std::string name(SDL_GetKeyName(static_cast<SDL_Keycode>(m_key)));
                 return name;
             }
+
+            std::string get_name() const { return getAsString(); }
 
         private:
             KeyType m_key;

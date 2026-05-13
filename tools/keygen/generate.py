@@ -5,12 +5,17 @@ Usage:
     generate.py /path/to/SDL_keycode.h -o key_gen.h
 
 Reads SDL3 version from SDL_version.h alongside SDL_keycode.h.
+Writes to a temp file first, then copies only if content differs,
+to avoid unnecessary rebuilds when nothing changed.
 """
 
 import argparse
+import filecmp
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -41,9 +46,20 @@ def main():
         print('Error generating key header:', gen_proc.stderr, file=sys.stderr)
         sys.exit(1)
 
-    with open(args.output, 'w') as f:
-        f.write(gen_proc.stdout)
-    print(f'Wrote {args.output}', file=sys.stderr)
+    # Write to a temp file, then copy only if different
+    fd, tmp_path = tempfile.mkstemp(suffix='.h', prefix='key_gen_')
+    try:
+        with os.fdopen(fd, 'w') as f:
+            f.write(gen_proc.stdout)
+
+        dst = args.output
+        if os.path.isfile(dst) and filecmp.cmp(tmp_path, dst, shallow=False):
+            print(f'unchanged {dst}', file=sys.stderr)
+        else:
+            shutil.copy2(tmp_path, dst)
+            print(f'Wrote {dst}', file=sys.stderr)
+    finally:
+        os.unlink(tmp_path)
 
 
 if __name__ == '__main__':
