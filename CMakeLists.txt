@@ -928,6 +928,49 @@ if(ENABLE_OPENGL)
 endif()
 
 #------------------------------------------------------------------------------
+# Auto-regenerate key_gen.h when SDL3 headers change
+#------------------------------------------------------------------------------
+
+if(Python3_EXECUTABLE AND TARGET SDL3::SDL3)
+
+  get_target_property(_SDL3_INC_DIRS SDL3::SDL3 INTERFACE_INCLUDE_DIRECTORIES)
+
+  find_path(SDL3_INCLUDE_DIR
+    NAMES SDL_keycode.h
+    HINTS ${_SDL3_INC_DIRS}
+    PATH_SUFFIXES SDL3
+  )
+
+  if(SDL3_INCLUDE_DIR)
+
+    set(KEYGEN_HDR    "${PROJECT_BINARY_DIR}/generated/key/key_gen.h")
+    set(KEYGEN_SCRIPT "${PROJECT_SOURCE_DIR}/tools/keygen/generate.py")
+    set(SDL3_KEYCODE  "${SDL3_INCLUDE_DIR}/SDL_keycode.h")
+    set(SDL3_VERSION  "${SDL3_INCLUDE_DIR}/SDL_version.h")
+
+    add_custom_command(
+      OUTPUT  "${KEYGEN_HDR}"
+      COMMAND ${Python3_EXECUTABLE}
+              "${KEYGEN_SCRIPT}"
+              "${SDL3_KEYCODE}"
+              -o "${KEYGEN_HDR}"
+      DEPENDS
+        "${KEYGEN_SCRIPT}"
+        "${SDL3_KEYCODE}"
+        "${SDL3_VERSION}"
+      COMMENT "Checking SDL3 keycode bindings"
+      VERBATIM
+    )
+
+    add_custom_target(sync_keys_with_SDL3 DEPENDS "${KEYGEN_HDR}")
+
+    # key.h uses `#include "key_gen.h"
+    include_directories("${PROJECT_BINARY_DIR}/generated")
+
+  endif()
+endif()
+
+#------------------------------------------------------------------------------
 # Build extensions (fifegui) as a Python extension module using SWIG
 #------------------------------------------------------------------------------
 
@@ -1232,6 +1275,10 @@ if(BUILD_LIBRARY)
     CXX_STANDARD_REQUIRED     ON
     POSITION_INDEPENDENT_CODE ON
   )
+
+  if(TARGET sync_keys_with_SDL3)
+    add_dependencies(fife_lib sync_keys_with_SDL3)
+  endif()
 
   target_sources(fife_lib
     PRIVATE
