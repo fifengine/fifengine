@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 ## Changed
 
 - migration from SDL2 to SDL3
+- implemented issue #981: refactored key system with auto-generator for SDL3 keycodes
+  - added `tools/keygen/` with `parse_sdl3.py` + `generate_enum.py` (C++ enum from SDL_keycode.h)
+  - keys live in `FIFE::Keys` namespace; `FIFE::Key` class provides backward-compatibility aliases
+  - updated SWIG bindings and Python API to expose `FIFE::Keys::*` and `fife.Key.*` accordingly
 - removed dependency on boost
   - removed dependencies boost::system, boost::filesystem
   - removed usage of boost::shared_ptr, boost::scoped_ptr, boost::tokenizer, etc.

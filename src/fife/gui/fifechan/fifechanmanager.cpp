@@ -434,109 +434,109 @@ namespace FIFE
 
         switch (value) {
         case fcn::Key::Tab:
-            value = Key::TAB;
+            value = Keys::TAB;
             break;
         case fcn::Key::LeftAlt:
-            value = Key::LEFT_ALT;
+            value = Keys::LALT;
             break;
         case fcn::Key::RightAlt:
-            value = Key::RIGHT_ALT;
+            value = Keys::RALT;
             break;
         case fcn::Key::LeftShift:
-            value = Key::LEFT_SHIFT;
+            value = Keys::LSHIFT;
             break;
         case fcn::Key::RightShift:
-            value = Key::RIGHT_SHIFT;
+            value = Keys::RSHIFT;
             break;
         case fcn::Key::LeftControl:
-            value = Key::LEFT_CONTROL;
+            value = Keys::LCTRL;
             break;
         case fcn::Key::RightControl:
-            value = Key::RIGHT_CONTROL;
+            value = Keys::RCTRL;
             break;
         case fcn::Key::Backspace:
-            value = Key::BACKSPACE;
+            value = Keys::BACKSPACE;
             break;
         case fcn::Key::Pause:
-            value = Key::PAUSE;
+            value = Keys::PAUSE;
             break;
         case fcn::Key::Space:
-            value = Key::SPACE;
+            value = Keys::SPACE;
             break;
         case fcn::Key::Escape:
-            value = Key::ESCAPE;
+            value = Keys::ESCAPE;
             break;
         case fcn::Key::Delete:
-            value = Key::KEY_DELETE;
+            value = Keys::DELETE;
             break;
         case fcn::Key::Insert:
-            value = Key::INSERT;
+            value = Keys::INSERT;
             break;
         case fcn::Key::Home:
-            value = Key::HOME;
+            value = Keys::HOME;
             break;
         case fcn::Key::End:
-            value = Key::END;
+            value = Keys::END;
             break;
         case fcn::Key::PageUp:
-            value = Key::PAGE_UP;
+            value = Keys::PAGEUP;
             break;
         case fcn::Key::PrintScreen:
-            value = Key::PRINT_SCREEN;
+            value = Keys::PRINTSCREEN;
             break;
         case fcn::Key::PageDown:
-            value = Key::PAGE_DOWN;
+            value = Keys::PAGEDOWN;
             break;
         case fcn::Key::F1:
-            value = Key::F1;
+            value = Keys::F1;
             break;
         case fcn::Key::F2:
-            value = Key::F2;
+            value = Keys::F2;
             break;
         case fcn::Key::F3:
-            value = Key::F3;
+            value = Keys::F3;
             break;
         case fcn::Key::F4:
-            value = Key::F4;
+            value = Keys::F4;
             break;
         case fcn::Key::F5:
-            value = Key::F5;
+            value = Keys::F5;
             break;
         case fcn::Key::F6:
-            value = Key::F6;
+            value = Keys::F6;
             break;
         case fcn::Key::F7:
-            value = Key::F7;
+            value = Keys::F7;
             break;
         case fcn::Key::F8:
-            value = Key::F8;
+            value = Keys::F8;
             break;
         case fcn::Key::F9:
-            value = Key::F9;
+            value = Keys::F9;
             break;
         case fcn::Key::NumLock:
-            value = Key::NUM_LOCK;
+            value = Keys::NUMLOCKCLEAR;
             break;
         case fcn::Key::CapsLock:
-            value = Key::CAPS_LOCK;
+            value = Keys::CAPSLOCK;
             break;
         case fcn::Key::ScrollLock:
-            value = Key::SCROLL_LOCK;
+            value = Keys::SCROLLLOCK;
             break;
         case fcn::Key::Up:
-            value = Key::UP;
+            value = Keys::UP;
             break;
         case fcn::Key::Down:
-            value = Key::DOWN;
+            value = Keys::DOWN;
             break;
         case fcn::Key::Left:
-            value = Key::LEFT;
+            value = Keys::LEFT;
             break;
         case fcn::Key::Right:
-            value = Key::RIGHT;
+            value = Keys::RIGHT;
             break;
         case fcn::Key::Enter:
-            value = Key::ENTER;
+            value = Keys::RETURN;
             break;
 
         default:

@@ -14,272 +14,90 @@
 #include <SDL3/SDL.h>
 
 // FIFE includes
+#include "key_gen.h"
 
 namespace FIFE
 {
 
     /** Represents a key.
+     *
+     * The KeyType enum is auto-generated from SDL3's SDL_keycode.h
+     * (see key_gen.h).  All SDLK_* constants are mirrored 1:1.
+     * Old spellings (ENTER, INVALID_KEY) are provided as aliases
+     * for backward compatibility.
      */
     class FIFE_API Key
     {
         public:
-            /** Codes for different keys
-             */
-            enum KeyType
-            {
-                INVALID_KEY  = SDLK_UNKNOWN,
-                ENTER        = SDLK_RETURN,
-                ESCAPE       = SDLK_ESCAPE,
-                BACKSPACE    = SDLK_BACKSPACE,
-                TAB          = SDLK_TAB,
-                SPACE        = SDLK_SPACE,
-                EXCLAIM      = SDLK_EXCLAIM,
-                QUOTEDBL     = SDLK_DBLAPOSTROPHE,
-                HASH         = SDLK_HASH,
-                PERCENT      = SDLK_PERCENT,
-                DOLLAR       = SDLK_DOLLAR,
-                AMPERSAND    = SDLK_AMPERSAND,
-                QUOTE        = SDLK_APOSTROPHE,
-                LEFTPAREN    = SDLK_LEFTPAREN,
-                RIGHTPAREN   = SDLK_RIGHTPAREN,
-                ASTERISK     = SDLK_ASTERISK,
-                PLUS         = SDLK_PLUS,
-                COMMA        = SDLK_COMMA,
-                MINUS        = SDLK_MINUS,
-                PERIOD       = SDLK_PERIOD,
-                SLASH        = SDLK_SLASH,
-                NUM_0        = SDLK_0,
-                NUM_1        = SDLK_1,
-                NUM_2        = SDLK_2,
-                NUM_3        = SDLK_3,
-                NUM_4        = SDLK_4,
-                NUM_5        = SDLK_5,
-                NUM_6        = SDLK_6,
-                NUM_7        = SDLK_7,
-                NUM_8        = SDLK_8,
-                NUM_9        = SDLK_9,
-                COLON        = SDLK_COLON,
-                SEMICOLON    = SDLK_SEMICOLON,
-                LESS         = SDLK_LESS,
-                EQUALS       = SDLK_EQUALS,
-                GREATER      = SDLK_GREATER,
-                QUESTION     = SDLK_QUESTION,
-                AT           = SDLK_AT,
-                LEFTBRACKET  = SDLK_LEFTBRACKET,
-                BACKSLASH    = SDLK_BACKSLASH,
-                RIGHTBRACKET = SDLK_RIGHTBRACKET,
-                CARET        = SDLK_CARET,
-                UNDERSCORE   = SDLK_UNDERSCORE,
-                BACKQUOTE    = SDLK_GRAVE,
-                A            = SDLK_A,
-                B            = SDLK_B,
-                C            = SDLK_C,
-                D            = SDLK_D,
-                E            = SDLK_E,
-                F            = SDLK_F,
-                G            = SDLK_G,
-                H            = SDLK_H,
-                I            = SDLK_I,
-                J            = SDLK_J,
-                K            = SDLK_K,
-                L            = SDLK_L,
-                M            = SDLK_M,
-                N            = SDLK_N,
-                O            = SDLK_O,
-                P            = SDLK_P,
-                Q            = SDLK_Q,
-                R            = SDLK_R,
-                S            = SDLK_S,
-                T            = SDLK_T,
-                U            = SDLK_U,
-                V            = SDLK_V,
-                W            = SDLK_W,
-                X            = SDLK_X,
-                Y            = SDLK_Y,
-                Z            = SDLK_Z,
+            using KeyType = FIFE::Keys::KeyType;
 
-                CAPS_LOCK = SDLK_CAPSLOCK,
-
-                F1  = SDLK_F1,
-                F2  = SDLK_F2,
-                F3  = SDLK_F3,
-                F4  = SDLK_F4,
-                F5  = SDLK_F5,
-                F6  = SDLK_F6,
-                F7  = SDLK_F7,
-                F8  = SDLK_F8,
-                F9  = SDLK_F9,
-                F10 = SDLK_F10,
-                F11 = SDLK_F11,
-                F12 = SDLK_F12,
-
-                PRINT_SCREEN = SDLK_PRINTSCREEN,
-                SCROLL_LOCK  = SDLK_SCROLLLOCK,
-                PAUSE        = SDLK_PAUSE,
-                INSERT       = SDLK_INSERT,
-                HOME         = SDLK_HOME,
-                PAGE_UP      = SDLK_PAGEUP,
-                KEY_DELETE   = SDLK_DELETE,
-                END          = SDLK_END,
-                PAGE_DOWN    = SDLK_PAGEDOWN,
-                RIGHT        = SDLK_RIGHT,
-                LEFT         = SDLK_LEFT,
-                DOWN         = SDLK_DOWN,
-                UP           = SDLK_UP,
-
-                NUM_LOCK    = SDLK_NUMLOCKCLEAR,
-                KP_DIVIDE   = SDLK_KP_DIVIDE,
-                KP_MULTIPLY = SDLK_KP_MULTIPLY,
-                KP_MINUS    = SDLK_KP_MINUS,
-                KP_PLUS     = SDLK_KP_PLUS,
-                KP_ENTER    = SDLK_KP_ENTER,
-                KP_0        = SDLK_KP_0,
-                KP_1        = SDLK_KP_1,
-                KP_2        = SDLK_KP_2,
-                KP_3        = SDLK_KP_3,
-                KP_4        = SDLK_KP_4,
-                KP_5        = SDLK_KP_5,
-                KP_6        = SDLK_KP_6,
-                KP_7        = SDLK_KP_7,
-                KP_8        = SDLK_KP_8,
-                KP_9        = SDLK_KP_9,
-                KP_PERIOD   = SDLK_KP_PERIOD,
-
-                APPLICATION    = SDLK_APPLICATION,
-                POWER          = SDLK_POWER,
-                KP_EQUALS      = SDLK_KP_EQUALS,
-                F13            = SDLK_F13,
-                F14            = SDLK_F14,
-                F15            = SDLK_F15,
-                F16            = SDLK_F16,
-                F17            = SDLK_F17,
-                F18            = SDLK_F18,
-                F19            = SDLK_F19,
-                F20            = SDLK_F20,
-                F21            = SDLK_F21,
-                F22            = SDLK_F22,
-                F23            = SDLK_F23,
-                F24            = SDLK_F24,
-                EXECUTE        = SDLK_EXECUTE,
-                HELP           = SDLK_HELP,
-                MENU           = SDLK_MENU,
-                SELECT         = SDLK_SELECT,
-                STOP           = SDLK_STOP,
-                AGAIN          = SDLK_AGAIN,
-                UNDO           = SDLK_UNDO,
-                CUT            = SDLK_CUT,
-                COPY           = SDLK_COPY,
-                PASTE          = SDLK_PASTE,
-                FIND           = SDLK_FIND,
-                MUTE           = SDLK_MUTE,
-                VOLUME_UP      = SDLK_VOLUMEUP,
-                VOLUME_DOWN    = SDLK_VOLUMEDOWN,
-                KP_COMMA       = SDLK_KP_COMMA,
-                KP_EQUALSAS400 = SDLK_KP_EQUALSAS400,
-
-                ERASE       = SDLK_ALTERASE,
-                SYS_REQ     = SDLK_SYSREQ,
-                CANCEL      = SDLK_CANCEL,
-                CLEAR       = SDLK_CLEAR,
-                PRIOR       = SDLK_PRIOR,
-                RETURN      = SDLK_RETURN2,
-                SEPARATOR   = SDLK_SEPARATOR,
-                FORTH       = SDLK_OUT,
-                OPER        = SDLK_OPER,
-                CLEAR_AGAIN = SDLK_CLEARAGAIN,
-                CR_SEL      = SDLK_CRSEL,
-                EX_SEL      = SDLK_EXSEL,
-
-                KP_00               = SDLK_KP_00,
-                KP_000              = SDLK_KP_000,
-                THOUSANDS_SEPARATOR = SDLK_THOUSANDSSEPARATOR,
-                DECIMAL_SEPARATOR   = SDLK_DECIMALSEPARATOR,
-                CURRENCY_UNIT       = SDLK_CURRENCYUNIT,
-                CURRENCY_SUBUNIT    = SDLK_CURRENCYSUBUNIT,
-                KP_LEFTPAREN        = SDLK_KP_LEFTPAREN,
-                KP_RIGHTPAREN       = SDLK_KP_RIGHTPAREN,
-                KP_LEFTBRACE        = SDLK_KP_LEFTBRACE,
-                KP_RIGHTBRACE       = SDLK_KP_RIGHTBRACE,
-                KP_TAB              = SDLK_KP_TAB,
-                KP_BACKSPACE        = SDLK_KP_BACKSPACE,
-                KP_A                = SDLK_KP_A,
-                KP_B                = SDLK_KP_B,
-                KP_C                = SDLK_KP_C,
-                KP_D                = SDLK_KP_D,
-                KP_E                = SDLK_KP_E,
-                KP_F                = SDLK_KP_F,
-                KP_XOR              = SDLK_KP_XOR,
-                KP_POWER            = SDLK_KP_POWER,
-                KP_PERCENT          = SDLK_KP_PERCENT,
-                KP_LESS             = SDLK_KP_LESS,
-                KP_GREATER          = SDLK_KP_GREATER,
-                KP_AMPERSAND        = SDLK_KP_AMPERSAND,
-                KP_DBLAMPERSAND     = SDLK_KP_DBLAMPERSAND,
-                KP_VERTICALBAR      = SDLK_KP_VERTICALBAR,
-                KP_DBLVERTICALBAR   = SDLK_KP_DBLVERTICALBAR,
-                KP_COLON            = SDLK_KP_COLON,
-                KP_HASH             = SDLK_KP_HASH,
-                KP_SPACE            = SDLK_KP_SPACE,
-                KP_AT               = SDLK_KP_AT,
-                KP_EXCLAM           = SDLK_KP_EXCLAM,
-                KP_MEMSTORE         = SDLK_KP_MEMSTORE,
-                KP_MEMRECALL        = SDLK_KP_MEMRECALL,
-                KP_MEMCLEAR         = SDLK_KP_MEMCLEAR,
-                KP_MEMADD           = SDLK_KP_MEMADD,
-                KP_MEMSUBSTRACT     = SDLK_KP_MEMSUBTRACT,
-                KP_MEMMULTIPLY      = SDLK_KP_MEMMULTIPLY,
-                KP_MEMDIVIDE        = SDLK_KP_MEMDIVIDE,
-                KP_PLUSMINUS        = SDLK_KP_PLUSMINUS,
-                KP_CLEAR            = SDLK_KP_CLEAR,
-                KP_CLEARENTRY       = SDLK_KP_CLEARENTRY,
-                KP_BINARY           = SDLK_KP_BINARY,
-                KP_OCTAL            = SDLK_KP_OCTAL,
-                KP_DECIMAL          = SDLK_KP_DECIMAL,
-                KP_HEXADECIMAL      = SDLK_KP_HEXADECIMAL,
-
-                LEFT_CONTROL  = SDLK_LCTRL,
-                LEFT_SHIFT    = SDLK_LSHIFT,
-                LEFT_ALT      = SDLK_LALT,
-                LEFT_SUPER    = SDLK_LGUI,
-                RIGHT_CONTROL = SDLK_RCTRL,
-                RIGHT_SHIFT   = SDLK_RSHIFT,
-                RIGHT_ALT     = SDLK_RALT,
-                RIGHT_SUPER   = SDLK_RGUI,
-
-                ALT_GR = SDLK_MODE,
-
-                AUDIO_NEXT   = SDLK_MEDIA_NEXT_TRACK,
-                AUDIO_PREV   = SDLK_MEDIA_PREVIOUS_TRACK,
-                AUDIO_STOP   = SDLK_MEDIA_STOP,
-                AUDIO_PLAY   = SDLK_MEDIA_PLAY,
-                AUDIO_MUTE   = SDLK_MUTE,
-                MEDIASELECT  = SDLK_MEDIA_SELECT,
-                WWW          = SDLK_UNKNOWN,
-                MAIL         = SDLK_UNKNOWN,
-                CALCULATOR   = SDLK_UNKNOWN,
-                COMPUTER     = SDLK_UNKNOWN,
-                AC_SEARCH    = SDLK_AC_SEARCH,
-                AC_HOME      = SDLK_AC_HOME,
-                AC_BACK      = SDLK_AC_BACK,
-                AC_FORWARD   = SDLK_AC_FORWARD,
-                AC_STOP      = SDLK_AC_STOP,
-                AC_REFRESH   = SDLK_AC_REFRESH,
-                AC_BOOKMARKS = SDLK_AC_BOOKMARKS,
-
-                BRIGHTNESS_DOWN = SDLK_UNKNOWN,
-                BRIGHTNESS_UP   = SDLK_UNKNOWN,
-                DISPLAY_SWITCH  = SDLK_UNKNOWN,
-                ILLUM_TOGGLE    = SDLK_UNKNOWN,
-                ILLUM_DOWN      = SDLK_UNKNOWN,
-                ILLUM_UP        = SDLK_UNKNOWN,
-                EJECT           = SDLK_MEDIA_EJECT,
-                SLEEP           = SDLK_SLEEP
-            };
+            // ── Backward-compatibility aliases ────────────────────────────
+            static constexpr KeyType INVALID_KEY         = Keys::KEY_UNKNOWN;
+            static constexpr KeyType ENTER               = Keys::RETURN;
+            static constexpr KeyType ESCAPE              = Keys::ESCAPE;
+            static constexpr KeyType BACKSPACE           = Keys::BACKSPACE;
+            static constexpr KeyType TAB                 = Keys::TAB;
+            static constexpr KeyType SPACE               = Keys::SPACE;
+            static constexpr KeyType DELETE              = Keys::DELETE;
+            static constexpr KeyType INSERT              = Keys::INSERT;
+            static constexpr KeyType HOME                = Keys::HOME;
+            static constexpr KeyType END                 = Keys::END;
+            static constexpr KeyType PAGE_UP             = Keys::PAGEUP;
+            static constexpr KeyType PAGE_DOWN           = Keys::PAGEDOWN;
+            static constexpr KeyType KEY_DELETE          = Keys::DELETE;
+            static constexpr KeyType BACKQUOTE           = Keys::GRAVE;
+            static constexpr KeyType QUOTE               = Keys::APOSTROPHE;
+            static constexpr KeyType QUOTEDBL            = Keys::DBLAPOSTROPHE;
+            static constexpr KeyType NUM_LOCK            = Keys::NUMLOCKCLEAR;
+            static constexpr KeyType PRINT_SCREEN        = Keys::PRINTSCREEN;
+            static constexpr KeyType SCROLL_LOCK         = Keys::SCROLLLOCK;
+            static constexpr KeyType CAPS_LOCK           = Keys::CAPSLOCK;
+            static constexpr KeyType NUM_0               = Keys::_0;
+            static constexpr KeyType NUM_1               = Keys::_1;
+            static constexpr KeyType NUM_2               = Keys::_2;
+            static constexpr KeyType NUM_3               = Keys::_3;
+            static constexpr KeyType NUM_4               = Keys::_4;
+            static constexpr KeyType NUM_5               = Keys::_5;
+            static constexpr KeyType NUM_6               = Keys::_6;
+            static constexpr KeyType NUM_7               = Keys::_7;
+            static constexpr KeyType NUM_8               = Keys::_8;
+            static constexpr KeyType NUM_9               = Keys::_9;
+            static constexpr KeyType LEFT_CONTROL        = Keys::LCTRL;
+            static constexpr KeyType RIGHT_CONTROL       = Keys::RCTRL;
+            static constexpr KeyType LEFT_SHIFT          = Keys::LSHIFT;
+            static constexpr KeyType RIGHT_SHIFT         = Keys::RSHIFT;
+            static constexpr KeyType LEFT_ALT            = Keys::LALT;
+            static constexpr KeyType RIGHT_ALT           = Keys::RALT;
+            static constexpr KeyType LEFT_SUPER          = Keys::LGUI;
+            static constexpr KeyType RIGHT_SUPER         = Keys::RGUI;
+            static constexpr KeyType ALT_GR              = Keys::MODE;
+            static constexpr KeyType AUDIO_NEXT          = Keys::MEDIA_NEXT_TRACK;
+            static constexpr KeyType AUDIO_PREV          = Keys::MEDIA_PREVIOUS_TRACK;
+            static constexpr KeyType AUDIO_STOP          = Keys::MEDIA_STOP;
+            static constexpr KeyType AUDIO_PLAY          = Keys::MEDIA_PLAY;
+            static constexpr KeyType AUDIO_MUTE          = Keys::MUTE;
+            static constexpr KeyType MEDIASELECT         = Keys::MEDIA_SELECT;
+            static constexpr KeyType VOLUME_UP           = Keys::VOLUMEUP;
+            static constexpr KeyType VOLUME_DOWN         = Keys::VOLUMEDOWN;
+            static constexpr KeyType SYS_REQ             = Keys::SYSREQ;
+            static constexpr KeyType ERASE               = Keys::ALTERASE;
+            static constexpr KeyType CLEAR_AGAIN         = Keys::CLEARAGAIN;
+            static constexpr KeyType CR_SEL              = Keys::CRSEL;
+            static constexpr KeyType EX_SEL              = Keys::EXSEL;
+            static constexpr KeyType FORTH               = Keys::OUT;
+            static constexpr KeyType NUM_LOCK_CLEAR      = Keys::NUMLOCKCLEAR;
+            static constexpr KeyType THOUSANDS_SEPARATOR = Keys::THOUSANDSSEPARATOR;
+            static constexpr KeyType DECIMAL_SEPARATOR   = Keys::DECIMALSEPARATOR;
+            static constexpr KeyType CURRENCY_UNIT       = Keys::CURRENCYUNIT;
+            static constexpr KeyType CURRENCY_SUBUNIT    = Keys::CURRENCYSUBUNIT;
+            static constexpr KeyType KP_MEMSUBSTRACT     = Keys::KP_MEMSUBTRACT;
+            static constexpr KeyType LESS                = Keys::KEY_LESS;
+            static constexpr KeyType GREATER             = Keys::KEY_GREATER;
 
             /** Constructor
              * @param key value of the key
              */
-            explicit Key(KeyType key = INVALID_KEY) : m_key(key)
+            explicit Key(KeyType key = KeyType(0)) : m_key(key)
             {
             }
 
@@ -300,8 +118,7 @@ namespace FIFE
 
             bool isFunctionKey() const
             {
-                // ToDo
-                return (m_key >= F1 && m_key <= F12) || (m_key >= F13 && m_key <= F24);
+                return (m_key >= Keys::F1 && m_key <= Keys::F24);
             }
 
             /** Gets the value of the key.

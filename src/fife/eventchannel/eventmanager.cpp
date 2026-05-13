@@ -508,7 +508,7 @@ namespace FIFE
         KeyEvent keyevt;
         keyevt.setSource(this);
         fillKeyEvent(event, keyevt);
-        m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
+        m_keystatemap[static_cast<int32_t>(keyevt.getKey().getValue())] = (keyevt.getType() == KeyEvent::PRESSED);
         // if event is not filtered it gets dispatched, even it is a function key
         if ((m_keyfilter == nullptr) || !m_keyfilter->isFiltered(keyevt)) {
             if (dispatchSdlEvent(event)) {
