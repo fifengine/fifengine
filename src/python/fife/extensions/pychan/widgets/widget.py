@@ -3,6 +3,8 @@
 
 """Common PyChan widget base classes and utilities."""
 
+import warnings
+
 import weakref
 
 from fife import fife, fifechan
@@ -341,6 +343,10 @@ class Widget:
         if self.isVisible():
             self.real_widget.requestFocus()
 
+    def _focusHandler(self):
+        """Resolve the active FocusHandler from the widget."""
+        return self.real_widget._getFocusHandler()
+
     def isModalFocusable(self):
         """Check if a widget is modal focusable.
 
@@ -365,20 +371,39 @@ class Widget:
         """
         Request modal focus.
 
+        .. deprecated::
+            Use FocusHandler.pushModal() instead.
+
         When a widget has modal focus, only that widget and its children may receive input.
 
         The widget must be modal focusable in order for this to work. Therefore,
         no other widget should have modal focus.
 
         """
+        warnings.warn(
+            "Widget.requestModalFocus() is deprecated. "
+            "Use Widget._focusHandler().pushModal(widget) instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if self.isVisible():
             if self.isModalFocusable():
-                self.real_widget.requestModalFocus()
+                self._focusHandler().pushModal(self.real_widget)
 
     def releaseModalFocus(self):
-        """Release modal focus."""
+        """Release modal focus.
+
+        .. deprecated::
+            Use FocusHandler.popModal() instead.
+        """
+        warnings.warn(
+            "Widget.releaseModalFocus() is deprecated. "
+            "Use Widget._focusHandler().popModal() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if self.isModalFocused():
-            self.real_widget.releaseModalFocus()
+            self._focusHandler().popModal()
 
     def isModalMouseInputFocusable(self):
         """Check if a widget is modal mouse input focusable.
@@ -390,19 +415,41 @@ class Widget:
         """
         return self.real_widget.isModalMouseInputFocusable()
 
-    def isModalMouseInputFocused(self):
-        """Check if the widget or its parent has modal mouse input focus.
+    def isUnderMouseModal(self):
+        """Check if the widget or its parent is under a mouse modal.
 
         Returns
         -------
         bool
             True if this widget or an ancestor has modal mouse input focus.
         """
-        return self.real_widget.isModalMouseInputFocused()
+        return self.real_widget.isUnderMouseModal()
+
+    def isModalMouseInputFocused(self):
+        """Check if the widget or its parent has modal mouse input focus.
+
+        .. deprecated::
+            Use isUnderMouseModal() instead. This method may be removed in a future release.
+
+        Returns
+        -------
+        bool
+            True if this widget or an ancestor has modal mouse input focus.
+        """
+        warnings.warn(
+            "Widget.isModalMouseInputFocused() is deprecated. "
+            "Use Widget.isUnderMouseModal() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.isUnderMouseModal()
 
     def requestModalMouseInputFocus(self):
         """
         Request modal mouse input focus.
+
+        .. deprecated::
+            Use FocusHandler.pushModal() instead.
 
         When a widget has modal input focus, that widget will be the only widget
         receiving input even if the input occurs outside of the widget and
@@ -412,14 +459,30 @@ class Widget:
         Therefore, no other widget should have modal input focus.
 
         """
+        warnings.warn(
+            "Widget.requestModalMouseInputFocus() is deprecated. "
+            "Use Widget._focusHandler().pushModal(widget) instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if self.isVisible():
             if self.isModalMouseInputFocusable():
-                self.real_widget.requestModalMouseInputFocus()
+                self._focusHandler().pushModal(self.real_widget)
 
     def releaseModalMouseInputFocus(self):
-        """Release modal mouse input focus."""
-        if self.isModalMouseInputFocused():
-            self.real_widget.releaseModalMouseInputFocus()
+        """Release modal mouse input focus.
+
+        .. deprecated::
+            Use FocusHandler.popModal() instead.
+        """
+        warnings.warn(
+            "Widget.releaseModalMouseInputFocus() is deprecated. "
+            "Use Widget._focusHandler().popModal() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if self.isUnderMouseModal():
+            self._focusHandler().popModal()
 
     def match(self, **kwargs):
         """Match the widget against a list of key-value pairs.

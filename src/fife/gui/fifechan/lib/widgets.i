@@ -24,6 +24,7 @@ namespace fcn {
 	class ActionListener;
 	class MouseListener;
 	class KeyListener;
+	class FocusHandler;
 
 	%nodefaultctor;
 	class Graphics {
@@ -181,6 +182,9 @@ namespace fcn {
 		virtual void setTabOutEnabled(bool enabled);
 		virtual bool isModalFocusable() const;
 		virtual bool isModalMouseInputFocusable() const;
+		virtual bool isModalFocused() const;
+		virtual bool isUnderMouseModal() const;
+		virtual FocusHandler* _getFocusHandler();
 		virtual Widget *getWidgetAt(int32_t x, int32_t y);
 		virtual void moveToTop(Widget* widget) { }
 		virtual void moveToBottom(Widget* widget) { }
@@ -196,6 +200,12 @@ namespace fcn {
 		virtual void removeWidgetListener(WidgetListener* widgetListener);
 /* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
+	};
+
+	class FocusHandler {
+	public:
+		virtual void pushModal(Widget* focusOwner, Widget* mouseOwner = nullptr);
+		virtual void popModal() noexcept;
 	};
 
 	%feature("notabstract") Spacer;

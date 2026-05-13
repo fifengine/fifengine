@@ -46,72 +46,80 @@ class ModalFocusExample(PyChanExample):
         """Update widget colors based on their modal focus state."""
         for widget in self.widgets:
             if widget.isModalFocused():
-                if widget.isModalMouseInputFocused():
+                if widget.isUnderMouseModal():
                     widget.base_color = (0, 128, 128)
                 else:
                     widget.base_color = (0, 128, 0)
             else:
-                if widget.isModalMouseInputFocused():
+                if widget.isUnderMouseModal():
                     widget.base_color = (128, 0, 128)
                 else:
                     widget.base_color = (128, 0, 0)
 
+    def _pushModal(self, widget):
+        """Push modal focus for the given widget."""
+        widget._focusHandler().pushModal(widget.real_widget)
+        self.updateColor()
+
+    def _popModal(self, widget):
+        """Pop modal focus for the given widget."""
+        widget._focusHandler().popModal()
+        self.updateColor()
+
+    def _pushMouseModal(self, widget):
+        """Push modal mouse input focus for the given widget."""
+        widget._focusHandler().pushModal(None, widget.real_widget)
+        self.updateColor()
+
+    def _popMouseModal(self, widget):
+        """Pop modal mouse input focus for the given widget."""
+        widget._focusHandler().popModal()
+        self.updateColor()
+
     def requestModalWindow(self):
         """Request modal focus for the window."""
-        self.window.requestModalFocus()
-        self.updateColor()
+        self._pushModal(self.window)
 
     def releaseModalWindow(self):
         """Release modal focus for the window."""
-        self.window.releaseModalFocus()
-        self.updateColor()
+        self._popModal(self.window)
 
     def requestMouseModalWindow(self):
         """Request modal mouse input focus for the window."""
-        self.window.requestModalMouseInputFocus()
-        self.updateColor()
+        self._pushMouseModal(self.window)
 
     def releaseMouseModalWindow(self):
         """Release modal mouse input focus for the window."""
-        self.window.releaseModalMouseInputFocus()
-        self.updateColor()
+        self._popMouseModal(self.window)
 
     def requestModalHBox1(self):
         """Request modal focus for hbox1."""
-        self.hbox1.requestModalFocus()
-        self.updateColor()
+        self._pushModal(self.hbox1)
 
     def releaseModalHBox1(self):
         """Release modal focus for hbox1."""
-        self.hbox1.releaseModalFocus()
-        self.updateColor()
+        self._popModal(self.hbox1)
 
     def requestMouseModalHBox1(self):
         """Request modal mouse input focus for hbox1."""
-        self.hbox1.requestModalMouseInputFocus()
-        self.updateColor()
+        self._pushMouseModal(self.hbox1)
 
     def releaseMouseModalHBox1(self):
         """Release modal mouse input focus for hbox1."""
-        self.hbox1.releaseModalMouseInputFocus()
-        self.updateColor()
+        self._popMouseModal(self.hbox1)
 
     def requestModalHBox2(self):
         """Request modal focus for hbox2."""
-        self.hbox2.requestModalFocus()
-        self.updateColor()
+        self._pushModal(self.hbox2)
 
     def releaseModalHBox2(self):
         """Release modal focus for hbox2."""
-        self.hbox2.releaseModalFocus()
-        self.updateColor()
+        self._popModal(self.hbox2)
 
     def requestMouseModalHBox2(self):
         """Request modal mouse input focus for hbox2."""
-        self.hbox2.requestModalMouseInputFocus()
-        self.updateColor()
+        self._pushMouseModal(self.hbox2)
 
     def releaseMouseModalHBox2(self):
         """Release modal mouse input focus for hbox2."""
-        self.hbox2.releaseModalMouseInputFocus()
-        self.updateColor()
+        self._popMouseModal(self.hbox2)

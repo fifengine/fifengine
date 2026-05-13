@@ -116,7 +116,10 @@ namespace FIFE
                 return !name.empty();
             }
 
-            bool is_printable() const { return isPrintable(); }
+            bool is_printable() const
+            {
+                return isPrintable();
+            }
 
             bool isFunctionKey() const
             {
@@ -138,7 +141,10 @@ namespace FIFE
                 return name;
             }
 
-            std::string get_name() const { return getAsString(); }
+            std::string get_name() const
+            {
+                return getAsString();
+            }
 
         private:
             KeyType m_key;
