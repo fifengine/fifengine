@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <format>
 #include <iostream>
 #include <map>
 #include <set>
@@ -485,8 +486,14 @@ namespace FIFE
         m_activity->m_actionInfo->m_speed  = speed;
         FL_DBG(
             _log,
-            LMsg("starting action ") << actionName << " from" << m_location << " to " << target << " with speed "
-                                     << speed);
+            std::format(
+                "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
+                actionName,
+                m_location.getExactLayerCoordinates().x,
+                m_location.getExactLayerCoordinates().y,
+                target.getExactLayerCoordinates().x,
+                target.getExactLayerCoordinates().y,
+                speed));
 
         Route* route = m_activity->m_actionInfo->m_route;
         if (route == nullptr) {
@@ -519,8 +526,14 @@ namespace FIFE
         leader->addDeleteListener(this);
         FL_DBG(
             _log,
-            LMsg("starting action ") << actionName << " from" << m_location << " to "
-                                     << *m_activity->m_actionInfo->m_target << " with speed " << speed);
+            std::format(
+                "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
+                actionName,
+                m_location.getExactLayerCoordinates().x,
+                m_location.getExactLayerCoordinates().y,
+                m_activity->m_actionInfo->m_target->getExactLayerCoordinates().x,
+                m_activity->m_actionInfo->m_target->getExactLayerCoordinates().y,
+                speed));
     }
 
     void Instance::follow(std::string const & actionName, Route* route, double const speed)
@@ -539,8 +552,14 @@ namespace FIFE
         }
         FL_DBG(
             _log,
-            LMsg("starting action ") << actionName << " from" << m_location << " to "
-                                     << *m_activity->m_actionInfo->m_target << " with speed " << speed);
+            std::format(
+                "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
+                actionName,
+                m_location.getExactLayerCoordinates().x,
+                m_location.getExactLayerCoordinates().y,
+                m_activity->m_actionInfo->m_target->getExactLayerCoordinates().x,
+                m_activity->m_actionInfo->m_target->getExactLayerCoordinates().y,
+                speed));
     }
 
     void Instance::cancelMovement(uint32_t length)

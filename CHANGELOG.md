@@ -17,6 +17,17 @@ All notable changes to this project will be documented in this file.
   - removed all code related to cegui
 - transition dependencies to vcpkg
   - removed `get-*.cmake` scripts for dependencies that are now provided by vcpkg
+- replaced custom logging system with spdlog
+  - replaced custom `LogManager`/`Logger`/`LMsg` with spdlog (header-only, C++20 `std::format`)
+  - thread-safe singleton via leaky pointer (avoids static destruction order issues)
+  - rotating file sink (5MB x 3 files) replaces unbounded `fife.log`
+  - color console output via `spdlog::sinks::stdout_color_sink_mt`
+  - module visibility system preserved unchanged (`modules.h` enum + bitmask)
+  - `SPDLOG_USE_STD_FORMAT` for standard library format strings
+  - fixed `setLogToFile` leak (was `new ofstream` without cleanup)
+  - fixed `~LogManager()` self-delete UB
+  - fixed SWIG `getModuleName` heap corruption under `RTLD_GLOBAL` (static Python lookup)
+  - removed dead `pprint` helper
 
 ## [0.4.2] - 2019-01-11
 

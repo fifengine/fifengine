@@ -5,6 +5,7 @@
 #include "imagemanager.h"
 
 // Standard C++ library includes
+#include <format>
 #include <map>
 #include <string>
 #include <utility>
@@ -89,8 +90,10 @@ namespace FIFE
         if (exists(name)) {
             FL_WARN(
                 _log,
-                LMsg("ImageManager::create(std::string, IResourceLoader* loader) - ")
-                    << "Resource name " << name << " was previously created.  Returning original Image...");
+                std::format(
+                    "ImageManager::create(std::string, IResourceLoader* loader) - Resource name {} was previously "
+                    "created.  Returning original Image...",
+                    name));
             return getPtr(name);
         }
 
@@ -117,8 +120,8 @@ namespace FIFE
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
             FL_WARN(
                 _log,
-                LMsg("ImageManager::load(std::string) - ")
-                    << "Resource name " << name << " was not found and could not be loaded.");
+                std::format(
+                    "ImageManager::load(std::string) - Resource name {} was not found and could not be loaded.", name));
             remove(name);
         }
 
@@ -168,8 +171,8 @@ namespace FIFE
         } else {
             FL_WARN(
                 _log,
-                LMsg("ImageManager::add(IResource*) - ")
-                    << "Resource " << res->getName() << " already exists.... ignoring.");
+                std::format(
+                    "ImageManager::add(IResource*) - Resource {} already exists.... ignoring.", res->getName()));
         }
 
         return returnValue.first->second;
@@ -199,7 +202,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::reload(std::string) - ") << "Resource name " << name << " not found.");
+        FL_WARN(_log, std::format("ImageManager::reload(std::string) - Resource name {} not found.", name));
     }
 
     void ImageManager::reload(ResourceHandle handle)
@@ -214,7 +217,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::reload(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        FL_WARN(_log, std::format("ImageManager::reload(ResourceHandle) - Resource handle {} not found.", handle));
     }
 
     void ImageManager::reloadAll()
@@ -242,7 +245,7 @@ namespace FIFE
                 count++;
             }
         }
-        FL_DBG(_log, LMsg("ImageManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("ImageManager::loadUnreferenced() - Loaded {} unreferenced resources.", count));
     }
 
     void ImageManager::free(std::string const & name)
@@ -256,7 +259,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::free(std::string) - ") << "Resource name " << name << " not found.");
+        FL_WARN(_log, std::format("ImageManager::free(std::string) - Resource name {} not found.", name));
     }
 
     void ImageManager::free(ResourceHandle handle)
@@ -269,7 +272,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::free(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        FL_WARN(_log, std::format("ImageManager::free(ResourceHandle) - Resource handle {} not found.", handle));
     }
 
     void ImageManager::freeAll()
@@ -286,7 +289,7 @@ namespace FIFE
             }
         }
 
-        FL_DBG(_log, LMsg("ImageManager::freeAll() - ") << "Freed all " << count << " resources.");
+        FL_DBG(_log, std::format("ImageManager::freeAll() - Freed all {} resources.", count));
     }
 
     void ImageManager::freeUnreferenced()
@@ -302,7 +305,7 @@ namespace FIFE
             }
         }
 
-        FL_DBG(_log, LMsg("ImageManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("ImageManager::freeUnreferenced() - Freed {} unreferenced resources.", count));
     }
 
     void ImageManager::remove(ImagePtr& resource)
@@ -321,8 +324,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
-            LMsg("ImageManager::remove(ResourcePtr&) - ") << "Resource " << resource->getName() << " was not found.");
+            _log, std::format("ImageManager::remove(ResourcePtr&) - Resource {} was not found.", resource->getName()));
     }
 
     void ImageManager::remove(std::string const & name)
@@ -334,7 +336,7 @@ namespace FIFE
             handle = nit->second->getHandle();
             m_imgNameMap.erase(nit);
         } else {
-            FL_WARN(_log, LMsg("ImageManager::remove(std::string) - ") << "Resource " << name << " was not found.");
+            FL_WARN(_log, std::format("ImageManager::remove(std::string) - Resource {} was not found.", name));
             return;
         }
 
@@ -358,8 +360,7 @@ namespace FIFE
             m_imgHandleMap.erase(it);
         } else {
             FL_WARN(
-                _log,
-                LMsg("ImageManager::remove(ResourceHandle) - ") << "Resource handle " << handle << " was not found.");
+                _log, std::format("ImageManager::remove(ResourceHandle) - Resource handle {} was not found.", handle));
             return;
         }
 
@@ -382,7 +383,7 @@ namespace FIFE
         m_imgHandleMap.clear();
         m_imgNameMap.clear();
 
-        FL_DBG(_log, LMsg("ImageManager::removeAll() - ") << "Removed all " << count << " resources.");
+        FL_DBG(_log, std::format("ImageManager::removeAll() - Removed all {} resources.", count));
     }
 
     void ImageManager::removeUnreferenced()
@@ -404,8 +405,7 @@ namespace FIFE
             remove(imgHandle);
         }
 
-        FL_DBG(
-            _log, LMsg("ImageManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("ImageManager::removeUnreferenced() - Removed {} unreferenced resources.", count));
     }
 
     ImagePtr ImageManager::get(std::string const & name)
@@ -436,7 +436,7 @@ namespace FIFE
             return it->second;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+        FL_WARN(_log, std::format("ImageManager::get(ResourceHandle) - Resource handle {} is undefined.", handle));
 
         return {};
     }
@@ -449,7 +449,7 @@ namespace FIFE
             return nit->second;
         }
 
-        FL_WARN(_log, LMsg("ImageManager::getPtr(std::string) - ") << "Resource " << name << " is undefined.");
+        FL_WARN(_log, std::format("ImageManager::getPtr(std::string) - Resource {} is undefined.", name));
 
         return {};
     }
@@ -461,8 +461,7 @@ namespace FIFE
             return it->second;
         }
 
-        FL_WARN(
-            _log, LMsg("ImageManager::getPtr(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+        FL_WARN(_log, std::format("ImageManager::getPtr(ResourceHandle) - Resource handle {} is undefined.", handle));
 
         return {};
     }
@@ -474,8 +473,7 @@ namespace FIFE
             return nit->second->getHandle();
         }
 
-        FL_WARN(
-            _log, LMsg("ImageManager::getResourceHandle(std::string) - ") << "Resource " << name << " is undefined.");
+        FL_WARN(_log, std::format("ImageManager::getResourceHandle(std::string) - Resource {} is undefined.", name));
 
         return 0;
     }

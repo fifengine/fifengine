@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <format>
 #include <limits>
 #include <vector>
 
@@ -124,7 +125,7 @@ namespace FIFE
 
     void TimeManager::printStatistics() const
     {
-        FL_LOG(_log, LMsg("Timers: ") << m_events_list.size());
+        FL_LOG(_log, std::format("Timers: {}", m_events_list.size()));
     }
 
 } // namespace FIFE

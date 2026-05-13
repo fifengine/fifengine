@@ -5,6 +5,7 @@
 #include "subimagefont.h"
 
 // Standard C++ library includes
+#include <format>
 #include <string>
 
 // Platform specific includes
@@ -38,7 +39,7 @@ namespace FIFE
         m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0}
     {
 
-        FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);
+        FL_LOG(_log, std::format("fifechan_image_font, loading {} glyphs {}", filename, glyphs));
 
         ImagePtr const img   = ImageManager::instance()->load(filename);
         SDL_Surface* surface = img->getSurface();
@@ -83,7 +84,7 @@ namespace FIFE
         // SDL_SetAlpha(surface,0,255);
         // SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
-        FL_DBG(_log, LMsg("image_font") << " glyph separator is " << separator << " transparent color is " << colorkey);
+        FL_DBG(_log, std::format("image_font glyph separator is {} transparent color is {}", separator, colorkey));
 
         // Finally extract all glyphs
         std::string::const_iterator text_it = glyphs.begin();

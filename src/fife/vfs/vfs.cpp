@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <format>
 #include <regex>
 #include <set>
 #include <string>
@@ -56,14 +57,14 @@ namespace FIFE
     {
         provider->setVFS(this);
         m_providers.push_back(provider);
-        FL_LOG(_log, LMsg("new provider: ") << provider->getName());
+        FL_LOG(_log, std::format("new provider: {}", provider->getName()));
     }
 
     VFSSource* VFS::createSource(std::string const & path)
     {
 
         if (hasSource(path)) {
-            FL_WARN(_log, LMsg(path) << " is already used as VFS source");
+            FL_WARN(_log, std::format("{} is already used as VFS source", path));
             return nullptr;
         }
 
@@ -80,19 +81,21 @@ namespace FIFE
             } catch (Exception const & ex) {
                 FL_WARN(
                     _log,
-                    LMsg(provider->getName())
-                        << " thought it could load " << path << " but didn't succeed (" << ex.what() << ")");
+                    std::format(
+                        "{} thought it could load {} but didn't succeed ({})", provider->getName(), path, ex.what()));
                 continue;
             } catch (...) {
                 FL_WARN(
                     _log,
-                    LMsg(provider->getName())
-                        << " thought it could load " << path << " but didn't succeed (unknown exception)");
+                    std::format(
+                        "{} thought it could load {} but didn't succeed (unknown exception)",
+                        provider->getName(),
+                        path));
                 continue;
             }
         }
 
-        FL_WARN(_log, LMsg("no provider for ") << path << " found");
+        FL_WARN(_log, std::format("no provider for {} found", path));
         return nullptr;
     }
 
@@ -102,7 +105,7 @@ namespace FIFE
         if (source != nullptr) {
             addSource(source);
         } else {
-            FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
+            FL_WARN(_log, std::format("Failed to add new VFS source: {}", path));
         }
     }
 
@@ -147,7 +150,7 @@ namespace FIFE
             return *it;
         }
 
-        FL_WARN(_log, LMsg("no source for ") << file << " found");
+        FL_WARN(_log, std::format("no source for {} found", file));
         return nullptr;
     }
 
@@ -192,7 +195,7 @@ namespace FIFE
 
     RawData* VFS::open(std::string const & path)
     {
-        FL_DBG(_log, LMsg("Opening: ") << path);
+        FL_DBG(_log, std::format("Opening: {}", path));
 
         VFSSource const * source = getSourceForFile(path);
         if (source == nullptr) {

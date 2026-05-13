@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
+#include <format>
 #include <memory>
 #include <set>
 #include <string>
@@ -62,7 +63,7 @@ namespace FIFE
             if (entryData.comp == 8) {
                 FL_DBG(
                     _log,
-                    LMsg("trying to uncompress file ") << path << " (compressed with method " << entryData.comp << ")");
+                    std::format("trying to uncompress file {} (compressed with method {})", path, entryData.comp));
                 std::vector<uint8_t> compdata(entryData.size_comp);
                 m_zipfile->readInto(compdata.data(), entryData.size_comp);
 
@@ -76,7 +77,7 @@ namespace FIFE
                 zstream.avail_out = entryData.size_real;
 
                 if (inflateInit2(&zstream, -15) != Z_OK) {
-                    FL_ERR(_log, LMsg("inflateInit2 failed"));
+                    FL_ERR(_log, "inflateInit2 failed");
                     delete[] data;
                     return nullptr;
                 }
@@ -84,9 +85,9 @@ namespace FIFE
                 int32_t const err = inflate(&zstream, Z_FINISH);
                 if (err != Z_STREAM_END) {
                     if (zstream.msg != nullptr) {
-                        FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
+                        FL_ERR(_log, std::format("inflate failed: {}", zstream.msg));
                     } else {
-                        FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
+                        FL_ERR(_log, std::format("inflate failed without msg, err: {}", err));
                     }
                     inflateEnd(&zstream);
                     delete[] data;
@@ -97,7 +98,7 @@ namespace FIFE
             } else if (entryData.comp == 0) {
                 m_zipfile->readInto(data, entryData.size_real);
             } else {
-                FL_ERR(_log, LMsg("unsupported compression"));
+                FL_ERR(_log, "unsupported compression");
                 delete[] data;
                 return nullptr;
             }

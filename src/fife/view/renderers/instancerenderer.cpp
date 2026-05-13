@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <format>
 #include <limits>
 #include <list>
 #include <map>
@@ -452,8 +453,8 @@ namespace FIFE
                 }
             }
 
-            //			FL_DBG(_log, LMsg("Instance layer coordinates = ") <<
-            // instance->getLocationRef().getLayerCoordinates());
+            //			FL_DBG(_log, std::format("Instance layer coordinates = {}",
+            // instance->getLocationRef().getLayerCoordinates()));
 
             std::array<uint8_t, 4> coloringColor{};
             Image* outlineImage = nullptr;

@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <format>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -144,7 +145,7 @@ namespace FIFE
     {
         m_destroyed = false;
 
-        FL_LOG(_log, LMsg("Fifengine v") << FIFE::app_version::get_version());
+        FL_LOG(_log, std::format("Fifengine v{}", FIFE::app_version::get_version()));
         FL_LOG(_log, "================== Engine initialize start =================");
         m_timemanager = new TimeManager();
         FL_LOG(_log, "Time manager created");
@@ -256,8 +257,10 @@ namespace FIFE
         if (requestedDisplay >= displayCount) {
             FL_WARN(
                 _log,
-                LMsg("Selected display index ") << int32_t(requestedDisplay) << " is out of range [0, "
-                                                << int32_t(displayCount - 1) << "] and will fall back to display 0.");
+                std::format(
+                    "Selected display index {} is out of range [0, {}] and will fall back to display 0.",
+                    int32_t(requestedDisplay),
+                    int32_t(displayCount - 1)));
             selectedDisplay = 0;
         }
 
@@ -275,16 +278,24 @@ namespace FIFE
 
             FL_WARN(
                 _log,
-                LMsg("Requested resolution ")
-                    << requestedWidth << "x" << requestedHeight << " exceeds selected display bounds "
-                    << displayBounds.w << "x" << displayBounds.h << ". Clamping to " << selectedWidth << "x"
-                    << selectedHeight << ".");
+                std::format(
+                    "Requested resolution {}x{} exceeds selected display bounds {}x{}. Clamping to {}x{}.",
+                    requestedWidth,
+                    requestedHeight,
+                    displayBounds.w,
+                    displayBounds.h,
+                    selectedWidth,
+                    selectedHeight));
         }
 
         FL_LOG(
             _log,
-            LMsg("Using display index ") << int32_t(selectedDisplay) << " out of " << int32_t(displayCount)
-                                         << " displays with resolution " << selectedWidth << "x" << selectedHeight);
+            std::format(
+                "Using display index {} out of {} displays with resolution {}x{}",
+                int32_t(selectedDisplay),
+                int32_t(displayCount),
+                selectedWidth,
+                selectedHeight));
 
         uint16_t const bpp = m_settings.getBitsPerPixel();
 

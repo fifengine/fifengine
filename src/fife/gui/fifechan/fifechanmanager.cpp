@@ -5,6 +5,7 @@
 #include "fifechanmanager.h"
 
 // Standard C++ library includes
+#include <format>
 #include <string>
 #include <vector>
 
@@ -323,7 +324,10 @@ namespace FIFE
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(
-                _log, LMsg("FifechanManager::translateKeyEvent() - ") << "Unknown event type: " << fcnevt.getType());
+                _log,
+                std::format(
+                    "FifechanManager::translateKeyEvent() - Unknown event type: {}",
+                    static_cast<int>(fcnevt.getType())));
             keyevt.setType(KeyEvent::UNKNOWN);
         }
         keyevt.setShiftPressed(fcnevt.isShiftPressed());

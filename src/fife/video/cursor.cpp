@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <format>
 #include <limits>
 
 // 3rd party library includes
@@ -325,7 +326,7 @@ namespace FIFE
         SDL_Cursor* cursor = SDL_CreateColorCursor(temp_image->getSurface(), -image->getXShift(), -image->getYShift());
         if (cursor == nullptr) {
             FL_WARN(
-                _log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() << "\". Falling back to software cursor.");
+                _log, std::format("SDL_CreateColorCursor: \"{}\". Falling back to software cursor.", SDL_GetError()));
             if (image->isSharedImage()) {
                 ImageManager::instance()->remove(temp_image);
             }

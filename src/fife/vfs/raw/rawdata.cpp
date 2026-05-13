@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <format>
 #include <limits>
 #include <string>
 #include <vector>
@@ -95,7 +96,7 @@ namespace FIFE
         uint32_t const checkedLen = static_cast<uint32_t>(len);
 
         if (m_index_current + checkedLen > getDataLength()) {
-            FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << checkedLen << " : " << getDataLength());
+            FL_LOG(_log, std::format("RawData{} : {} : {}", m_index_current, checkedLen, getDataLength()));
             throw IndexOverflow(__FUNCTION__);
         }
 
@@ -184,9 +185,7 @@ namespace FIFE
             uint8_t firstByte = 0;
             std::memcpy(&firstByte, &value, sizeof(firstByte));
             endian = static_cast<int32_t>(firstByte);
-            FL_LOG(
-                _log,
-                LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");
+            FL_LOG(_log, std::format("RawDatawe are on a {} machine", (endian == 1 ? "little endian" : "big endian")));
         }
 
         return endian == 1;

@@ -139,7 +139,10 @@ if(WIN32)
 endif()
 
 if(ENABLE_LOGGING)
-  target_compile_definitions(fife_options INTERFACE LOG_ENABLED)
+  target_compile_definitions(fife_options INTERFACE
+    LOG_ENABLED
+    SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE
+  )
 endif()
 
 if(ENABLE_OPENGL)
@@ -785,6 +788,7 @@ find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 
@@ -1255,6 +1259,7 @@ if(BUILD_LIBRARY)
       Vorbis::vorbisenc
       OpenAL::OpenAL
       tinyxml2::tinyxml2
+      $<$<BOOL:${ENABLE_LOGGING}>:spdlog::spdlog>
       utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
@@ -1337,6 +1342,7 @@ if(BUILD_LIBRARY)
       Vorbis::vorbisenc
       OpenAL::OpenAL
       tinyxml2::tinyxml2
+      $<$<BOOL:${ENABLE_LOGGING}>:spdlog::spdlog>
       utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>

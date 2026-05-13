@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <format>
 #include <vector>
 
 // 3rd party library includes
@@ -88,7 +89,21 @@ namespace FIFE
         bool const result = (o1 == o2) && (o2 == o3);
         FL_DBG(
             _log,
-            LMsg("ptInTriangle, pt=") << pt << " pt1=" << pt1 << " pt2=" << pt2 << " pt3=" << pt3 << " in=" << result);
+            std::format(
+                "ptInTriangle, pt=({}, {}, {}) pt1=({}, {}, {}) pt2=({}, {}, {}) pt3=({}, {}, {}) in={}",
+                pt.x,
+                pt.y,
+                pt.z,
+                pt1.x,
+                pt1.y,
+                pt1.z,
+                pt2.x,
+                pt2.y,
+                pt2.z,
+                pt3.x,
+                pt3.y,
+                pt3.z,
+                result));
         return result;
     }
 } // namespace FIFE

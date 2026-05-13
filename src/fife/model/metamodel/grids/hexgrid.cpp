@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <string>
 #include <vector>
 
@@ -47,11 +48,11 @@ namespace FIFE
     HexGrid::HexGrid(bool axial) : m_axial(axial)
     {
         FL_DBG(_log, "Constructing new HexGrid");
-        FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);
-        FL_DBG(_log, LMsg("HEX_TO_EDGE ") << HEX_TO_EDGE);
-        FL_DBG(_log, LMsg("HEX_TO_CORNER ") << HEX_TO_CORNER);
-        FL_DBG(_log, LMsg("HEX_EDGE_HALF ") << HEX_EDGE_HALF);
-        FL_DBG(_log, LMsg("VERTICAL_MULTIP ") << VERTICAL_MULTIP);
+        FL_DBG(_log, std::format("HEX_WIDTH {}", HEX_WIDTH));
+        FL_DBG(_log, std::format("HEX_TO_EDGE {}", HEX_TO_EDGE));
+        FL_DBG(_log, std::format("HEX_TO_CORNER {}", HEX_TO_CORNER));
+        FL_DBG(_log, std::format("HEX_EDGE_HALF {}", HEX_EDGE_HALF));
+        FL_DBG(_log, std::format("VERTICAL_MULTIP {}", VERTICAL_MULTIP));
     }
 
     CellGrid* HexGrid::clone()
@@ -149,7 +150,16 @@ namespace FIFE
         tranformed_coords.x += getXZigzagOffset(layer_coords.y);
         tranformed_coords.y *= VERTICAL_MULTIP;
         ExactModelCoordinate const result = m_matrix * tranformed_coords;
-        FL_DBG(_log, LMsg("layercoords ") << layer_coords << " converted to map: " << result);
+        FL_DBG(
+            _log,
+            std::format(
+                "layercoords ({}, {}, {}) converted to map: ({}, {}, {})",
+                layer_coords.x,
+                layer_coords.y,
+                layer_coords.z,
+                result.x,
+                result.y,
+                result.z));
         return result;
     }
 
@@ -158,13 +168,28 @@ namespace FIFE
         ExactModelCoordinate layer_coords = m_inverse_matrix * map_coord;
         layer_coords.y /= VERTICAL_MULTIP;
         layer_coords.x -= getXZigzagOffset(layer_coords.y);
-        FL_DBG(_log, LMsg("mapcoords ") << map_coord << " converted to layer: " << layer_coords);
+        FL_DBG(
+            _log,
+            std::format(
+                "mapcoords ({}, {}, {}) converted to layer: ({}, {}, {})",
+                map_coord.x,
+                map_coord.y,
+                map_coord.z,
+                layer_coords.x,
+                layer_coords.y,
+                layer_coords.z));
         return layer_coords;
     }
 
     ModelCoordinate HexGrid::toLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
-        FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
+        FL_DBG(
+            _log,
+            std::format(
+                "==============\nConverting map coords ({}, {}, {}) to int32_t layer coords...",
+                map_coord.x,
+                map_coord.y,
+                map_coord.z));
         ExactModelCoordinate elc = m_inverse_matrix * map_coord;
         elc.y *= VERTICAL_MULTIP_INV;
         return toLayerCoordinatesHelper(elc);
@@ -244,7 +269,7 @@ namespace FIFE
 
     void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, ModelCoordinate const & cell)
     {
-        FL_DBG(_log, LMsg("===============\ngetting vertices for ") << cell);
+        FL_DBG(_log, std::format("===============\ngetting vertices for ({}, {}, {})", cell.x, cell.y, cell.z));
         vtx.clear();
         auto x             = static_cast<double>(cell.x);
         auto y             = static_cast<double>(cell.y);

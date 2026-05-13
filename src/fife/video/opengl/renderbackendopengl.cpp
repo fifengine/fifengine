@@ -8,6 +8,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <format>
 #include <limits>
 #include <string>
 #include <utility>
@@ -377,13 +378,21 @@ namespace FIFE
         glewExperimental       = GL_TRUE;
         GLenum const glewError = glewInit();
         if (glewError != GLEW_OK) {
-            FL_LOG(_log, LMsg("RenderBackendOpenGL") << "Error initializing GLEW!" << glewGetErrorString(glewError));
+            FL_LOG(
+                _log,
+                std::format(
+                    "RenderBackendOpenGLError initializing GLEW!{}",
+                    reinterpret_cast<char const *>(glewGetErrorString(glewError))));
         }
 
         FL_LOG(
             _log,
-            LMsg("RenderBackendOpenGL") << "Videomode " << width << "x" << height << " at " << int32_t(bitsPerPixel)
-                                        << " bpp with " << displayMode.refresh_rate << " Hz");
+            std::format(
+                "RenderBackendOpenGLVideomode {}x{} at {} bpp with {} Hz",
+                width,
+                height,
+                int32_t(bitsPerPixel),
+                displayMode.refresh_rate));
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
         // our texture generation. 32 bit surfaces to BitsPerPixel texturen.

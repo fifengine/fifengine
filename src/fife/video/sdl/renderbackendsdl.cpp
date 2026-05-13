@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <format>
 #include <limits>
 #include <string>
 #include <utility>
@@ -226,8 +227,12 @@ namespace FIFE
 
         FL_LOG(
             _log,
-            LMsg("RenderBackendSDL") << "Videomode " << width << "x" << height << " at " << int32_t(bitsPerPixel)
-                                     << " bpp with " << displayMode.refresh_rate << " Hz");
+            std::format(
+                "RenderBackendSDLVideomode {}x{} at {} bpp with {} Hz",
+                width,
+                height,
+                int32_t(bitsPerPixel),
+                displayMode.refresh_rate));
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
         // our texture generation. 32 bit surfaces to BitsPerPixel texturen.

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <limits>
 #include <list>
 #include <map>
@@ -447,9 +448,9 @@ namespace FIFE
         m_screen_2_vscreen              = m_vscreen_2_screen.inverse();
 
         m_mapViewPortUpdated = false;
-        // FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));
-        // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " <<
-        // m_screen_2_vscreen);
+        // FL_WARN(_log, std::format("matrix: {} 1: {}", m_matrix, m_matrix.inverse().mult4by4(m_matrix)));
+        // 		FL_WARN(_log, std::format("vs2s matrix: {} s2vs matrix: {}", m_vscreen_2_screen,
+        // m_screen_2_vscreen));
     }
 
     void Camera::calculateZValue(DoublePoint3D& screen_coords)
@@ -563,11 +564,11 @@ namespace FIFE
         m_referenceScaleY     = static_cast<double>(m_screenCellHeight) / dim.y;
 
         FL_DBG(_log, "Updating reference scale");
-        FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
-        FL_DBG(_log, LMsg("   m_screenCellWidth=") << m_screenCellWidth);
-        FL_DBG(_log, LMsg("   m_screenCellHeight=") << m_screenCellHeight);
-        FL_DBG(_log, LMsg("   m_referenceScaleX=") << m_referenceScaleX);
-        FL_DBG(_log, LMsg("   m_referenceScaleY=") << m_referenceScaleY);
+        FL_DBG(_log, std::format("   tilt={} rot={}", m_tilt, m_rotation));
+        FL_DBG(_log, std::format("   m_screenCellWidth={}", m_screenCellWidth));
+        FL_DBG(_log, std::format("   m_screenCellHeight={}", m_screenCellHeight));
+        FL_DBG(_log, std::format("   m_referenceScaleX={}", m_referenceScaleX));
+        FL_DBG(_log, std::format("   m_referenceScaleY={}", m_referenceScaleY));
     }
 
     RenderList& Camera::getRenderListRef(Layer* layer)
@@ -797,7 +798,7 @@ found_non_transparent_pixel:;
         assert(m_renderers.contains(renderer->getName()));
 
         if (renderer->isEnabled()) {
-            FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
+            FL_LOG(_log, std::format("Enabling renderer {}", renderer->getName()));
             m_pipeline.push_back(renderer);
             m_pipeline.sort(pipelineSort);
         } else {
@@ -1066,7 +1067,7 @@ found_non_transparent_pixel:;
             if (cache == nullptr) {
                 addLayer(*layer_it);
                 cache = m_cache[*layer_it];
-                FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
+                FL_ERR(_log, std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getId()));
             }
             RenderList& instancesToRender = m_layerToInstances[*layer_it];
             if ((*layer_it)->isStatic() && m_transform == NoneTransform) {

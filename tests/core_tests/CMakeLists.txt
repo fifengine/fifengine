@@ -16,15 +16,16 @@ set(
   FIFE_CORE_TEST_SOURCES
   test_dat1.cpp
   test_dat2.cpp
+  test_font_ttf.cpp
+  test_gui.cpp
+  test_imagepool.cpp
+  test_images.cpp
+  test_logger.cpp
   test_rect.cpp
   test_sharedptr.cpp
   test_utf.cpp
   test_vfs.cpp
-  test_font_ttf.cpp
   test_zip.cpp
-  test_gui.cpp
-  test_imagepool.cpp
-  test_images.cpp
 )
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")
@@ -52,6 +53,7 @@ target_link_options(all_tests PRIVATE -Wl,--no-as-needed)
 target_link_libraries(
   all_tests
     PRIVATE
+      fife_options
       Catch2::Catch2WithMain
       PNG::PNG
       ZLIB::ZLIB
@@ -62,6 +64,7 @@ target_link_libraries(
       Vorbis::vorbisenc
       OpenAL::OpenAL
       tinyxml2::tinyxml2
+      $<$<BOOL:${ENABLE_LOGGING}>:spdlog::spdlog>
       utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>

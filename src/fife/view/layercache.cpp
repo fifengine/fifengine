@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cfloat>
+#include <format>
 #include <limits>
 #include <map>
 #include <set>
@@ -443,7 +444,7 @@ namespace FIFE
             m_zMin     = 0.0;
             m_zMax     = 0.0;
 
-            // FL_LOG(_log, LMsg("camera-update viewport") << viewport);
+            // FL_LOG(_log, std::format("camera-update viewport{}", viewport));
             std::vector<int32_t> index_list;
             collect(viewport, index_list);
             // fill renderlist

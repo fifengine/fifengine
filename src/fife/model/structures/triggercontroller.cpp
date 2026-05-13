@@ -5,6 +5,7 @@
 #include "triggercontroller.h"
 
 // Standard C++ library includes
+#include <format>
 #include <string>
 #include <utility>
 #include <vector>
@@ -52,8 +53,8 @@ namespace FIFE
             delete trigger;
             FL_WARN(
                 _log,
-                LMsg("TriggerController::createTrigger() - ")
-                    << "Trigger " << triggerName << " already exists.... ignoring.");
+                std::format(
+                    "TriggerController::createTrigger() - Trigger {} already exists.... ignoring.", triggerName));
         }
 
         return returnValue.first->second;

@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <format>
 #include <string>
 #include <vector>
 
@@ -225,7 +226,7 @@ namespace FIFE
 
     void Console::execute(std::string const & cmd)
     {
-        FL_DBG(_log, LMsg("in execute with command ") << cmd);
+        FL_DBG(_log, std::format("in execute with command {}", cmd));
         if (cmd.empty()) {
             return;
         }
@@ -239,10 +240,10 @@ namespace FIFE
                 std::string const resp = m_consoleexec->onConsoleCommand(cmd);
                 println(resp);
             } else {
-                FL_WARN(_log, LMsg("ConsoleExecuter not bind, but command received: ") << cmd.c_str());
+                FL_WARN(_log, std::format("ConsoleExecuter not bind, but command received: {}", cmd));
             }
         } catch (FIFE::Exception const & e) {
-            FL_WARN(_log, LMsg("Console caught exception: ") << e.what());
+            FL_WARN(_log, std::format("Console caught exception: {}", e.what()));
             println(e.what());
         }
     }

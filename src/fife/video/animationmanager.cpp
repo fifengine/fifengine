@@ -5,6 +5,7 @@
 #include "animationmanager.h"
 
 // Standard C++ library includes
+#include <format>
 #include <map>
 #include <string>
 #include <utility>
@@ -88,8 +89,10 @@ namespace FIFE
         if (exists(name)) {
             FL_WARN(
                 _log,
-                LMsg("AnimationManager::create(std::string, IResourceLoader* loader) - ")
-                    << "Resource name " << name << " was previously created.  Returning original Animation...");
+                std::format(
+                    "AnimationManager::create(std::string, IResourceLoader* loader) - Resource name {} was previously "
+                    "created.  Returning original Animation...",
+                    name));
             return getPtr(name);
         }
 
@@ -116,8 +119,9 @@ namespace FIFE
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
             FL_WARN(
                 _log,
-                LMsg("AnimationManager::load(std::string) - ")
-                    << "Resource name " << name << " was not found and could not be loaded.");
+                std::format(
+                    "AnimationManager::load(std::string) - Resource name {} was not found and could not be loaded.",
+                    name));
             remove(name);
         }
 
@@ -139,8 +143,8 @@ namespace FIFE
         } else {
             FL_WARN(
                 _log,
-                LMsg("AnimationManager::add(IResource*) - ")
-                    << "Resource " << res->getName() << " already exists.... ignoring.");
+                std::format(
+                    "AnimationManager::add(IResource*) - Resource {} already exists.... ignoring.", res->getName()));
         }
 
         return returnValue.first->second;
@@ -170,7 +174,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("AnimationManager::reload(std::string) - ") << "Resource name " << name << " not found.");
+        FL_WARN(_log, std::format("AnimationManager::reload(std::string) - Resource name {} not found.", name));
     }
 
     void AnimationManager::reload(ResourceHandle handle)
@@ -185,8 +189,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log, LMsg("AnimationManager::reload(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        FL_WARN(_log, std::format("AnimationManager::reload(ResourceHandle) - Resource handle {} not found.", handle));
     }
 
     void AnimationManager::reloadAll()
@@ -214,8 +217,7 @@ namespace FIFE
                 count++;
             }
         }
-        FL_DBG(
-            _log, LMsg("AnimationManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("AnimationManager::loadUnreferenced() - Loaded {} unreferenced resources.", count));
     }
 
     void AnimationManager::free(std::string const & name)
@@ -229,7 +231,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(_log, LMsg("AnimationManager::free(std::string) - ") << "Resource name " << name << " not found.");
+        FL_WARN(_log, std::format("AnimationManager::free(std::string) - Resource name {} not found.", name));
     }
 
     void AnimationManager::free(ResourceHandle handle)
@@ -242,8 +244,7 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log, LMsg("AnimationManager::free(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+        FL_WARN(_log, std::format("AnimationManager::free(ResourceHandle) - Resource handle {} not found.", handle));
     }
 
     void AnimationManager::freeAll()
@@ -260,7 +261,7 @@ namespace FIFE
             }
         }
 
-        FL_DBG(_log, LMsg("AnimationManager::freeAll() - ") << "Freed all " << count << " resources.");
+        FL_DBG(_log, std::format("AnimationManager::freeAll() - Freed all {} resources.", count));
     }
 
     void AnimationManager::freeUnreferenced()
@@ -276,8 +277,7 @@ namespace FIFE
             }
         }
 
-        FL_DBG(
-            _log, LMsg("AnimationManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("AnimationManager::freeUnreferenced() - Freed {} unreferenced resources.", count));
     }
 
     void AnimationManager::remove(AnimationPtr& resource)
@@ -297,8 +297,7 @@ namespace FIFE
 
         FL_WARN(
             _log,
-            LMsg("AnimationManager::remove(ResourcePtr&) - ")
-                << "Resource " << resource->getName() << " was not found.");
+            std::format("AnimationManager::remove(ResourcePtr&) - Resource {} was not found.", resource->getName()));
     }
 
     void AnimationManager::remove(std::string const & name)
@@ -310,7 +309,7 @@ namespace FIFE
             handle = nit->second->getHandle();
             m_animNameMap.erase(nit);
         } else {
-            FL_WARN(_log, LMsg("AnimationManager::remove(std::string) - ") << "Resource " << name << " was not found.");
+            FL_WARN(_log, std::format("AnimationManager::remove(std::string) - Resource {} was not found.", name));
             return;
         }
 
@@ -335,8 +334,7 @@ namespace FIFE
         } else {
             FL_WARN(
                 _log,
-                LMsg("AnimationManager::remove(ResourceHandle) - ")
-                    << "Resource handle " << handle << " was not found.");
+                std::format("AnimationManager::remove(ResourceHandle) - Resource handle {} was not found.", handle));
             return;
         }
 
@@ -359,7 +357,7 @@ namespace FIFE
         m_animHandleMap.clear();
         m_animNameMap.clear();
 
-        FL_DBG(_log, LMsg("AnimationManager::removeAll() - ") << "Removed all " << count << " resources.");
+        FL_DBG(_log, std::format("AnimationManager::removeAll() - Removed all {} resources.", count));
     }
 
     void AnimationManager::removeUnreferenced()
@@ -381,9 +379,7 @@ namespace FIFE
             remove(imgHandle);
         }
 
-        FL_DBG(
-            _log,
-            LMsg("AnimationManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
+        FL_DBG(_log, std::format("AnimationManager::removeUnreferenced() - Removed {} unreferenced resources.", count));
     }
 
     AnimationPtr AnimationManager::get(std::string const & name)
@@ -414,8 +410,7 @@ namespace FIFE
             return it->second;
         }
 
-        FL_WARN(
-            _log, LMsg("AnimationManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+        FL_WARN(_log, std::format("AnimationManager::get(ResourceHandle) - Resource handle {} is undefined.", handle));
 
         return {};
     }
@@ -428,7 +423,7 @@ namespace FIFE
             return nit->second;
         }
 
-        FL_WARN(_log, LMsg("AnimationManager::getPtr(std::string) - ") << "Resource " << name << " is undefined.");
+        FL_WARN(_log, std::format("AnimationManager::getPtr(std::string) - Resource {} is undefined.", name));
 
         return {};
     }
@@ -441,8 +436,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
-            LMsg("AnimationManager::getPtr(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+            _log, std::format("AnimationManager::getPtr(ResourceHandle) - Resource handle {} is undefined.", handle));
 
         return {};
     }
@@ -455,8 +449,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
-            LMsg("AnimationManager::getResourceHandle(std::string) - ") << "Resource " << name << " is undefined.");
+            _log, std::format("AnimationManager::getResourceHandle(std::string) - Resource {} is undefined.", name));
 
         return 0;
     }

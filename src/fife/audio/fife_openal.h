@@ -22,19 +22,20 @@
 // clang-format off
 #ifdef LOG_ENABLED
 
+    #include <format>
+
     #define CHECK_OPENAL_LOG(logger, level, msg) /* NOLINT(cppcoreguidelines-macro-usage) */ \
         if (AL_NO_ERROR != alGetError()) {       \
             (logger).log((level), (msg));        \
         }
 
     #define CHECK_OPENAL_LOG_DETAIL(logger, level, msg) /* NOLINT(cppcoreguidelines-macro-usage) */ \
-        {                                                                    \
-            ALenum error;                                                    \
-            error = alGetError();                                            \
-            if (AL_NO_ERROR != error) {                                      \
-                (logger).log((level), LMsg() << (msg) << ", Error#: " << error); \
-            }                                                                    \
-        }
+        do {                                                                                       \
+            ALenum _fife_err = alGetError();                                                        \
+            if (AL_NO_ERROR != _fife_err) {                                                         \
+                (logger).log((level), std::format("{}" ", Error#: {}", (msg), _fife_err));          \
+            }                                                                                       \
+        } while (0)
 
 #else
 

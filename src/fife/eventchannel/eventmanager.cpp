@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <deque>
+#include <format>
 #include <iostream>
 #include <string>
 
@@ -692,7 +693,9 @@ namespace FIFE
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(
-                _log, LMsg("fillKeyEvent()") << " Invalid key event type of " << sdlevt.type << ".  Ignoring event.");
+                _log,
+                std::format(
+                    "fillKeyEvent() Invalid key event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
             return;
         }
 
@@ -716,7 +719,9 @@ namespace FIFE
             txtevt.setText(t);
         } else {
             FL_WARN(
-                _log, LMsg("fillTextEvent()") << " Invalid text event type of " << sdlevt.type << ".  Ignoring event.");
+                _log,
+                std::format(
+                    "fillTextEvent() Invalid text event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
         }
     }
 

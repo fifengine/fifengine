@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <format>
 
 // Platform specific includes
 #include <algorithm>
@@ -80,11 +81,7 @@ namespace FIFE
                 OggLoader loader;
                 loader.load(this);
             } else {
-                LMsg msg;
-                msg << "No audio-decoder available for file \"";
-                msg << m_name;
-                msg << "\"!";
-                FL_WARN(_log, msg);
+                FL_WARN(_log, std::format("No audio-decoder available for file \"{}\"!", m_name));
                 throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
             }
         }

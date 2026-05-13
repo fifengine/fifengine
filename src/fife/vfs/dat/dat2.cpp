@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <format>
 #include <set>
 #include <string>
 #include <utility>
@@ -30,13 +31,13 @@ namespace FIFE
     DAT2::DAT2(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
 
-        FL_LOG(_log, LMsg("MFFalloutDAT2") << "loading: " << file << " filesize: " << m_data->getDataLength());
+        FL_LOG(_log, std::format("MFFalloutDAT2loading: {} filesize: {}", file, m_data->getDataLength()));
 
         m_data->setIndex(m_data->getDataLength() - 8);
         uint32_t const fileListLength = m_data->read32Little();
         uint32_t const archiveSize    = m_data->read32Little();
 
-        FL_LOG(_log, LMsg("MFFalloutDAT2") << "FileListLength: " << fileListLength << " ArchiveSize: " << archiveSize);
+        FL_LOG(_log, std::format("MFFalloutDAT2FileListLength: {} ArchiveSize: {}", fileListLength, archiveSize));
 
         if (archiveSize != m_data->getDataLength()) {
             throw InvalidFormat("size mismatch");
@@ -46,7 +47,7 @@ namespace FIFE
         m_filecount    = m_data->read32Little();
         m_currentIndex = m_data->getCurrentIndex();
 
-        FL_LOG(_log, LMsg("MFFalloutDAT2 FileCount: ") << m_filecount);
+        FL_LOG(_log, std::format("MFFalloutDAT2 FileCount: {}", m_filecount));
 
         // Do not read the complete file list at startup.
         // Instead read a chunk each frame.
@@ -88,7 +89,7 @@ namespace FIFE
 
         // Finally log on completion and stop the timer.
         if (m_filecount == 0) {
-            FL_LOG(_log, LMsg("MFFalloutDAT2, All file entries in '") << m_datpath << "' loaded.");
+            FL_LOG(_log, std::format("MFFalloutDAT2, All file entries in '{}' loaded.", m_datpath));
             m_timer.stop();
         }
     }
@@ -134,8 +135,7 @@ namespace FIFE
         if ((m_filecount != 0U) && i == m_filelist.end()) {
             FL_LOG(
                 _log,
-                LMsg("MFFalloutDAT2") << "Missing '" << name << "' in partially(" << m_filecount << ") loaded "
-                                      << m_datpath);
+                std::format("MFFalloutDAT2Missing '{}' in partially({}) loaded {}", name, m_filecount, m_datpath));
             while ((m_filecount != 0U) && i == m_filelist.end()) {
                 readFileEntry();
                 i = m_filelist.find(name);

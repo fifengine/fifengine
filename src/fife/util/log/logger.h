@@ -9,79 +9,111 @@
 
 // Standard C++ library includes
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
-#include <list>
-#include <map>
 #include <memory>
-#include <set>
-#include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
 
 // 3rd party library includes
+#ifdef LOG_ENABLED
+    #include <spdlog/common.h>
+    #include <spdlog/logger.h>
+    #include <spdlog/sinks/sink.h>
+#endif
 
 // FIFE includes
 #include "modules.h"
 #include "util/base/fife_stdint.h"
 
+/**
+ * @def   FL_DBG
+ *  Logs a debug-level message.
+ * @param logger Logger instance (e.g. the static @c _log declared per .cpp file).
+ * @param msg    Message to log (string literal, std::string, or std::format result).
+ *
+ * This macro first checks whether the logger's module is visible via
+ * LogManager::isVisible(). If so, it forwards to Logger::log() with level
+ * LogManager::LEVEL_DEBUG.
+ */
 #ifdef LOG_ENABLED
-
-    // TODO(jakoch): Try to remove macros and use functions instead.
-
-    /**
-     * Logs given message with log level "debug" using given logger instance
-     */
     #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
                 (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));                                          \
         } while (0)
+#else
+    #define FL_DBG(logger, msg)
+#endif
 
-    /**
-     * Logs given message with log level "log" using given logger instance
-     */
+/**
+ * @def   FL_LOG
+ *  Logs a standard log-level message.
+ * @param logger Logger instance.
+ * @param msg    Message to log.
+ *
+ * @see FL_DBG
+ */
+#ifdef LOG_ENABLED
     #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
                 (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));                                            \
         } while (0)
+#else
+    #define FL_LOG(logger, msg)
+#endif
 
-    /**
-     * Logs given message with log level "warning" using given logger instance
-     */
+/**
+ * @def   FL_WARN
+ *  Logs a warning-level message.
+ * @param logger Logger instance.
+ * @param msg    Message to log.
+ *
+ * @see FL_DBG
+ */
+#ifdef LOG_ENABLED
     #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                  \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                \
                 (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));                                            \
         } while (0)
+#else
+    #define FL_WARN(logger, msg)
+#endif
 
-    /**
-     * Logs given message with log level "error" using given logger instance
-     */
+/**
+ * @def   FL_ERR
+ *  Logs an error-level message.
+ * @param logger Logger instance.
+ * @param msg    Message to log.
+ *
+ * @see FL_DBG
+ */
+#ifdef LOG_ENABLED
     #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
                 (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));                                          \
         } while (0)
+#else
+    #define FL_ERR(logger, msg)
+#endif
 
-    /**
-     * Logs given message with log level "pacic" using given logger instance.
-     * Causes also program to abort
-     */
+/**
+ * @def   FL_PANIC
+ *  Logs a panic-level message and aborts the program.
+ * @param logger Logger instance.
+ * @param msg    Message to log.
+ *
+ * After logging, the process is terminated via std::abort().
+ * @see FL_DBG
+ */
+#ifdef LOG_ENABLED
     #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                 \
                 (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));                                            \
         } while (0)
-
 #else
-    // empty definitions in case logs are turned off for speed
-    #define FL_DBG(logger, msg)
-    #define FL_LOG(logger, msg)
-    #define FL_WARN(logger, msg)
-    #define FL_ERR(logger, msg)
     #define FL_PANIC(logger, msg)
 #endif
 
@@ -89,199 +121,209 @@ namespace FIFE
 {
 
     /**
-     * Helper class to create log strings out from separate parts
-     * Usage: LMsg("some text") << variable << ", " << other variable
-     */
-    class FIFE_API LMsg
-    {
-        public:
-            explicit LMsg(std::string msg = "") : str(std::move(msg))
-            {
-            }
-            ~LMsg() = default;
-
-            template <typename T>
-            LMsg& operator<<(T const & t)
-            {
-                std::ostringstream stream;
-                if constexpr (std::is_enum_v<T>) {
-                    stream << static_cast<std::underlying_type_t<T>>(t);
-                } else {
-                    stream << t;
-                }
-                str += stream.str();
-                return *this;
-            }
-
-            LMsg(LMsg const &)            = default;
-            LMsg& operator=(LMsg const &) = default;
-
-            std::string str;
-    };
-
-    /**
-     * Logmanager takes care of log filtering and output direction
+     *  Central logging controller.
+     *
+     * LogManager is a singleton that owns all log sinks (console, file) and
+     * maintains the module-visibility bitmask.  Its primary responsibilities:
+     *   - Filter messages by severity level (LogLevel).
+     *   - Filter messages by module visibility (modules.h).
+     *   - Route visible messages to spdlog sinks (color console, rotating file).
+     *
+     * Use the FL_DBG / FL_LOG / FL_WARN / FL_ERR / FL_PANIC macros instead
+     * of calling LogManager or Logger methods directly.
      */
     class FIFE_API LogManager
     {
         public:
             /**
-             * Loglevel is used to set a treshold for output messages + related filter
-             * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
-             * log message is not outputted
+             *  Log severity levels, in increasing priority.
+             *
+             * Messages below the active level filter are silently discarded.
              */
             enum LogLevel : uint8_t
             {
-                LEVEL_DEBUG = 0,
-                LEVEL_LOG   = 1,
-                LEVEL_WARN  = 2,
-                LEVEL_ERROR = 3,
-                LEVEL_PANIC = 4
+                LEVEL_DEBUG = 0, /**< Detailed debug information.           */
+                LEVEL_LOG   = 1, /**< Standard informational message.       */
+                LEVEL_WARN  = 2, /**< Warning – something unexpected.       */
+                LEVEL_ERROR = 3, /**< Error – operation likely failed.       */
+                LEVEL_PANIC = 4  /**< Fatal error – program aborts after log. */
             };
 
             /**
-             * Returns instance to log manager. Log manager is a singleton class
+             *  Returns the singleton instance.
+             * @return Pointer to the global LogManager.
+             *
+             * The instance is created on first call and intentionally leaked
+             * to avoid static-destruction-order issues with the spdlog registry.
              */
             static LogManager* instance();
 
-            /**
-             * Destructor
-             */
+            /// Destructor (no-op – singleton is intentionally leaked).
             ~LogManager();
 
-            /**
-             * Logs given message
-             * @param level level of this log (e.g. warning)
-             * @param module module where this log message is coming from. Modules are defined in modules.h-file
-             * @param msg message to log
-             * @note do not use this method directly, instead use FL_WARN (or any other FL_XXX) macro
-             */
-            void log(LogLevel level, logmodule_t module, std::string const & msg);
+            LogManager(LogManager const &)            = delete;
+            LogManager& operator=(LogManager const &) = delete;
 
             /**
-             * Sets currently used level filter.
-             * For usage, @see LogManager::LogLevel
+             *  Sets the minimum log level that will be output.
+             * @param level  New severity threshold.
+             *
+             * Messages below @p level are silently discarded.
+             * Example: setting LEVEL_WARN suppresses LEVEL_DEBUG and LEVEL_LOG.
              */
             void setLevelFilter(LogLevel level);
 
             /**
-             * Gets currently used level filter.
-             * @see LogManager::LogLevel
+             *  Returns the current minimum log level.
+             * @return Active LogLevel threshold.
+             * @see setLevelFilter
              */
             LogLevel getLevelFilter();
 
             /**
-             * Adds visible module into logmanager
-             * Module corresponds some module in the engine. Modules may contain other modules.
-             * Modules and their structure is defined in file modules.h.
-             * In case module is not visible, LogManager filters corresponding log messages
-             * from output. In case some lower-level module is set visible, it also sets
-             * all upper level modules visible
-             * @param module module to set visible
+             *  Makes a module (and its ancestors) visible.
+             * @param module  Module to enable (e.g. LM_AUDIO, LM_VIEWVIEW).
+             *
+             * If the module has a parent, that parent is also made visible
+             * recursively, ensuring the hierarchy is fully enabled.
+             * By default all modules are invisible.
              */
             void addVisibleModule(logmodule_t module);
 
             /**
-             * Removes visible module, @see addVisibleModule
+             *  Makes a module invisible.
+             * @param module  Module to disable.
+             * @see addVisibleModule
              */
             void removeVisibleModule(logmodule_t module);
 
             /**
-             * Removes all visible modules, @see addVisibleModule
+             *  Hides all modules.
+             * @see addVisibleModule
              */
             void clearVisibleModules();
 
             /**
-             * Tells if given module is visible
+             *  Checks whether a module (and its ancestors) is visible.
+             * @param module  Module to query.
+             * @return true if the module and all its ancestors are visible.
+             *
+             * Visibility propagates upward: if LM_VIEWVIEW is visible then
+             * LM_VIEW and LM_CORE are implicitly visible.
              */
             bool isVisible(logmodule_t module);
 
             /**
-             * Sets LogManager to log to prompt
+             *  Enables or disables console output.
+             * @param logtoprompt  true to enable the color console sink.
              */
             void setLogToPrompt(bool logtoprompt);
 
             /**
-            Returns if LogManager is set to log to prompt
+             *  Returns whether console output is enabled.
+             * @return true if the console sink is active.
              */
             bool isLogToPrompt() const;
 
             /**
-             * Sets LogManager to log to a file
+             *  Enables or disables file output.
+             * @param logtofile  true to enable the rotating file sink.
+             *
+             * The file sink writes to @c fife.log with a 5 MB size limit
+             * and 3 rotated backups.
              */
             void setLogToFile(bool logtofile);
 
             /**
-             * Returns if LogManager is set to log to a file
+             *  Returns whether file output is enabled.
+             * @return true if the file sink is active.
              */
             bool isLogToFile() const;
 
             /**
-             * Gets display name for given module id
-             * E.g. LM_AUDIO -> "Audio"
+             *  Returns the human-readable display name of a module.
+             * @param module  Module identifier.
+             * @return Display name (e.g. "Audio", "View::View").
+             *
+             * Returns "Unknown" for out-of-range module IDs.
              */
-            std::string getModuleName(logmodule_t module);
+            char const * getModuleName(logmodule_t module);
+
+#ifdef LOG_ENABLED
+            /**
+             *  Returns the spdlog logger for a module.
+             * @param module  Module identifier.
+             * @return Pointer to the spdlog::logger, or nullptr if invalid.
+             *
+             * @internal Used internally by the Logger class.
+             */
+            spdlog::logger* getSpdlogLogger(logmodule_t module);
+#endif
 
         private:
-            void validateModule(logmodule_t m);
-
-            // hidden constructor for singleton
             LogManager();
-            // validates if definitions in module.h are valid
             void validateModuleDescription(logmodule_t module);
+            static bool isValidModule(logmodule_t module);
 
-            // singleton instance (inline to avoid separate definition across TUs)
-            static inline LogManager* m_instance = nullptr;
-            // current filter level
             LogLevel m_level;
-            // used during module description validation to check cycles in hierarchy
-            std::vector<logmodule_t, std::allocator<logmodule_t>> module_check_stack;
-
-            std::ofstream* m_logfile;
-
-            // visibility array for modules
             bool m_modules[LM_MODULE_MAX];
 
-            bool m_logtofile;
-            bool m_logtoprompt;
+#ifdef LOG_ENABLED
+            spdlog::logger* m_loggers[LM_MODULE_MAX];
+            std::shared_ptr<spdlog::sinks::sink> m_console_sink;
+            std::shared_ptr<spdlog::sinks::sink> m_file_sink;
+#endif
     };
 
     /**
-     * Create a Logger instance to communicate with LogManager
-     * Logger stores information about the current module thus reducing
-     * the typing needed for individual traces
-     * Common way of doing things is to instantiate a static Logger on
-     * top of .cpp file and then use that in .cpp-file's methods
+     *  Per-module logger handle.
+     *
+     * Each .cpp file typically declares a file-static Logger at namespace
+     * scope using the lambda-init pattern:
+     *
+     * @code
+     * static Logger& _log = []() -> Logger& {
+     *     static Logger log(LM_AUDIO);
+     *     return log;
+     * }();
+     * @endcode
+     *
+     * The Logger stores its module identifier and a cached pointer to the
+     * corresponding spdlog::logger.  The FL_* macros should be used for
+     * all logging; direct calls to Logger::log are uncommon.
      */
     class FIFE_API Logger
     {
         public:
             /**
-             * Creates new logger and associates it with given module
+             *  Constructs a logger for the given module.
+             * @param module  Module identifier (e.g. LM_CONTROLLER, LM_VIEW).
+             *
+             * The constructor looks up the spdlog logger from LogManager
+             * by module ID.  This is a cheap O(1) array lookup.
              */
             explicit Logger(logmodule_t module);
 
-            /**
-             * Destructor
-             */
             ~Logger() = default;
 
             Logger(Logger const &)            = default;
             Logger& operator=(Logger const &) = default;
 
             /**
-             * logs given message with given log level
+             *  Logs a message at the given severity.
+             * @param level  Severity level.
+             * @param msg    The message string (or std::format result).
+             *
+             * When LOG_ENABLED is not defined this function is a no-op
+             * and the compiler may elide the call entirely.
+             * If @p level is LEVEL_PANIC the process calls std::abort()
+             * after flushing the log.
              */
             void log(LogManager::LogLevel level, std::string const & msg);
 
             /**
-             * logs given message with given log level.
-             * Message is wrapped into LMsg instance for easy formatting
-             */
-            void log(LogManager::LogLevel level, LMsg const & msg);
-
-            /**
-             * gets module where this logger is associated to
+             *  Returns the module associated with this logger.
+             * @return The logmodule_t value passed at construction.
              */
             logmodule_t getModule() const
             {
@@ -290,47 +332,11 @@ namespace FIFE
 
         private:
             logmodule_t m_module;
+#ifdef LOG_ENABLED
+            spdlog::logger* m_logger;
+#endif
     };
 
-    /**
-     * Helper for printing a pointer
-     *
-     * This is a helper structure that allows printing any kind of pointer
-     * on (hopefully) any platform in hex, kind of like the %p format
-     * string of printf.
-     *
-     * The mechanism is used by calling something like:
-     *  somestream << pprint(ptr);
-     **/
-    struct FIFE_API pprint
-    {
-            void* p;
-            explicit pprint(void* _p) : p(_p)
-            {
-            }
-    };
 } // namespace FIFE
-
-namespace std
-{
-    /**
-     * Print a pprint object to an ostream.
-     *
-     * This is pure Stroustrup, overloading the ostream operator<< to print
-     * a formatted pointer from a pprint object to an ostream.
-     *
-     * \param s output stream
-     * \param p pointer to print
-     * \return reference to the modified stream
-     * */
-    template <class Ch, class Tr>
-    basic_ostream<Ch, Tr>& operator<<(basic_ostream<Ch, Tr>& s, FIFE::pprint const & p)
-    {
-        s << "0x" << hex << setw(2 * sizeof(void*)) << setfill('0')
-          << reinterpret_cast<std::uintptr_t>(p.p); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-
-        return s;
-    }
-} // namespace std
 
 #endif

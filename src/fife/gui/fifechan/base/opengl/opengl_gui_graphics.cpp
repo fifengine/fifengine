@@ -5,6 +5,7 @@
 #include "opengl_gui_graphics.h"
 
 // Standard C++ library includes
+#include <format>
 #include <string>
 #include <vector>
 
@@ -77,7 +78,8 @@ namespace FIFE
             break;
         default:
             FL_WARN(
-                _log, LMsg("OpenGLGuiGraphics::drawText() - ") << "Unknown alignment: " << static_cast<int>(alignment));
+                _log,
+                std::format("OpenGLGuiGraphics::drawText() - Unknown alignment: {}", static_cast<int>(alignment)));
             mFont->drawString(this, text, x, y);
         }
     }

@@ -91,9 +91,7 @@ namespace FIFE
         m_device = device;
 
         if (alcIsExtensionPresent(m_device, "ALC_EXT_EFX") == AL_FALSE) {
-            LMsg msg;
-            msg << "ALC_EXT_EFX not supported!\n";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "ALC_EXT_EFX not supported!\n");
             return;
         }
 
@@ -124,9 +122,7 @@ namespace FIFE
             alAuxiliaryEffectSlotfv == nullptr || alGetAuxiliaryEffectSloti == nullptr ||
             alGetAuxiliaryEffectSlotiv == nullptr || alGetAuxiliaryEffectSlotf == nullptr ||
             alGetAuxiliaryEffectSlotfv == nullptr) {
-            LMsg msg;
-            msg << "Failed initializing slot function pointers\n";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "Failed initializing slot function pointers\n");
             return;
         }
 
@@ -145,9 +141,7 @@ namespace FIFE
         if (alGenEffects == nullptr || alDeleteEffects == nullptr || alIsEffect == nullptr || alEffecti == nullptr ||
             alEffectiv == nullptr || alEffectf == nullptr || alEffectfv == nullptr || alGetEffecti == nullptr ||
             alGetEffectiv == nullptr || alGetEffectf == nullptr || alGetEffectfv == nullptr) {
-            LMsg msg;
-            msg << "Failed initializing effect function pointers\n";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "Failed initializing effect function pointers\n");
             return;
         }
 
@@ -166,9 +160,7 @@ namespace FIFE
         if (alGenFilters == nullptr || alDeleteFilters == nullptr || alIsFilter == nullptr || alFilteri == nullptr ||
             alFilteriv == nullptr || alFilterf == nullptr || alFilterfv == nullptr || alGetFilteri == nullptr ||
             alGetFilteriv == nullptr || alGetFilterf == nullptr || alGetFilterfv == nullptr) {
-            LMsg msg;
-            msg << "Failed initializing filter function pointers\n";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "Failed initializing filter function pointers\n");
             return;
         }
 
@@ -272,9 +264,7 @@ namespace FIFE
     {
         if (m_freeSlots.empty() || effect->isEnabled()) {
             if (m_freeSlots.empty()) {
-                LMsg msg;
-                msg << "No free auxiliary slot available";
-                FL_WARN(_log, msg);
+                FL_WARN(_log, "No free auxiliary slot available");
             }
             return;
         }
@@ -318,9 +308,7 @@ namespace FIFE
     void SoundEffectManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
         if (std::cmp_equal(emitter->getEffectCount(), m_maxSlots)) {
-            LMsg msg;
-            msg << "Maximal effect number for SoundEmitter reached";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "Maximal effect number for SoundEmitter reached");
             return;
         }
         m_effectEmitters[effect].push_back(emitter);
@@ -334,9 +322,7 @@ namespace FIFE
     {
         auto effectIt = m_effectEmitters.find(effect);
         if (effectIt == m_effectEmitters.end()) {
-            LMsg msg;
-            msg << "SoundEmitter can not removed from unknown effect";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEmitter can not removed from unknown effect");
             return;
         }
         bool found      = false;
@@ -355,9 +341,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            LMsg msg;
-            msg << "SoundEmitter could not be found for the given effect.";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEmitter could not be found for the given effect.");
             return;
         }
     }
@@ -365,9 +349,7 @@ namespace FIFE
     void SoundEffectManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
         if (effect->getFilter() != nullptr) {
-            LMsg msg;
-            msg << "SoundEffect already has a filter";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEffect already has a filter");
             return;
         }
         effect->setFilter(filter);
@@ -382,9 +364,7 @@ namespace FIFE
     {
         auto filterIt = m_filterdEffects.find(filter);
         if (filterIt == m_filterdEffects.end()) {
-            LMsg msg;
-            msg << "SoundEffect can not removed from unknown filter";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEffect can not removed from unknown filter");
             return;
         }
         bool found     = false;
@@ -404,9 +384,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            LMsg msg;
-            msg << "SoundEffect could not be found for the given filter.";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEffect could not be found for the given filter.");
             return;
         }
     }
@@ -515,9 +493,7 @@ namespace FIFE
     void SoundEffectManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
         if (emitter->getDirectFilter() != nullptr) {
-            LMsg msg;
-            msg << "SoundEmitter already has a direct filter";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEmitter already has a direct filter");
             return;
         }
         emitter->setDirectFilter(filter);
@@ -531,9 +507,7 @@ namespace FIFE
     {
         auto filterIt = m_filterdEmitters.find(filter);
         if (filterIt == m_filterdEmitters.end()) {
-            LMsg msg;
-            msg << "SoundEmitter can not removed from unknown filter";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEmitter can not removed from unknown filter");
             return;
         }
         bool found      = false;
@@ -552,9 +526,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            LMsg msg;
-            msg << "SoundEmitter could not be found for the given filter.";
-            FL_WARN(_log, msg);
+            FL_WARN(_log, "SoundEmitter could not be found for the given filter.");
             return;
         }
     }
