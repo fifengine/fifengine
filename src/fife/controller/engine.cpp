@@ -316,6 +316,8 @@ namespace FIFE
         m_renderbackend->createMainScreen(m_screenMode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
         FL_LOG(_log, "Main screen created");
 
+        SDL_StartTextInput(RenderBackend::instance()->getWindow());
+
 #ifdef HAVE_OPENGL
         if (m_settings.getLightingModel() != 0) {
             m_renderbackend->setLightingModel(m_settings.getLightingModel());
