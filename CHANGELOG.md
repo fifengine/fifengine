@@ -32,6 +32,8 @@ All notable changes to this project will be documented in this file.
   - fixed `~LogManager()` self-delete UB
   - fixed SWIG `getModuleName` heap corruption under `RTLD_GLOBAL` (static Python lookup)
   - removed dead `pprint` helper
+- dependencies: remove `FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE` option and clean up related code and build workflows
+  - we always build non-vcpkg dependencies from source. = we no longer fetch pre-built binaries for windows.
 
 ## [0.4.2] - 2019-01-11
 

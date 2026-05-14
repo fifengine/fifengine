@@ -192,8 +192,7 @@ jobs:
             -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
-            -DFIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE=ON
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
         #if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -411,8 +410,7 @@ jobs:
             -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
-            -DFIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE=ON
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
         #if: steps.cache-deps.outputs.cache-hit != 'true'

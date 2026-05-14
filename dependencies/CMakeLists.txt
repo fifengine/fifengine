@@ -54,8 +54,6 @@ endif()
 option(FIFE_DEPENDENCY_FIFEGUI  "Build and install dependency: FIFECHAN"     ON)
 option(FIFE_DEPENDENCY_SWIG     "Build and install dependency: SWIG"         ON)
 
-option(FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE "Build FifeGUI from source instead of using pre-built binaries (Windows)" OFF)
-
 #------------------------------------------------------------------------------
 # Display Status
 #------------------------------------------------------------------------------
@@ -75,8 +73,6 @@ message(STATUS "Build Options")
 message(STATUS "")
 message(STATUS "[INFO] FIFE_DEPENDENCY_FIFEGUI    -> '${FIFE_DEPENDENCY_FIFEGUI}'")
 message(STATUS "[INFO] FIFE_DEPENDENCY_SWIG       -> '${FIFE_DEPENDENCY_SWIG}'")
-message(STATUS "")
-message(STATUS "[INFO] FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE -> '${FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE}'")
 message(STATUS "---------------------------------------------------------------------")
 
 #------------------------------------------------------------------------------

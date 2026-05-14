@@ -2,7 +2,6 @@
 build/
 out/
 vcpkg_installed/
-dependencies/
 
 # Generated Doxygen files (C++ API docs)
 docs/doxygen/html/
