@@ -137,7 +137,7 @@ sphinx-build --version
 echo "Building API documentation from ${DOXYFILE_PATH}"
 (
   cd "$REPO_ROOT"
-  doxygen doxygen.conf
+  doxygen doxygen.conf > doxygen.log 2> doxygen_error.log
 )
 
 if [[ -d "$OUTPUT_DIR" ]]; then

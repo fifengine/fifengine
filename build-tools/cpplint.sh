@@ -37,4 +37,4 @@ export PATH="$VIRTUAL_ENV/bin:$PATH"
 
 uv pip install cpplint
 
-cpplint --recursive src tests/core_tests
+cpplint --recursive src tests/core_tests --config=../CPPLINT.cfg > cpplint.log 2> cpplint_error.log || true

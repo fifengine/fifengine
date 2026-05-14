@@ -104,4 +104,4 @@ fi
 "$CLANG_TIDY" -p "$BUILD_DIR" "${files[@]}" -- \
   -I"$REPO_ROOT/out/fife-dependencies/x64-linux/install/include" \
   -I"$REPO_ROOT/vcpkg_installed/x64-linux/include" \
-  -I"$REPO_ROOT/src/fife" > "$REPO_ROOT/tidy_err.log" 2> "$REPO_ROOT/tidy_run.log" || true
+  -I"$REPO_ROOT/src/fife" > "$REPO_ROOT/tidy_error.log" 2> "$REPO_ROOT/tidy.log" || true

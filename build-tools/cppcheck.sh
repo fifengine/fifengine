@@ -10,4 +10,4 @@ cppcheck \
     --quiet \
     --inline-suppr \
     --error-exitcode=1 \
-    src/fife tests/core_tests > cppcheck_run.log 2> cppcheck_err.log || true
+    src/fife tests/core_tests > cppcheck.log 2> cppcheck_error.log || true
