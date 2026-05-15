@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cstdint>
 #include <limits>
 
 // Platform specific includes
@@ -136,7 +137,7 @@ namespace FIFE
     bool SoundDecoderOgg::decode(uint64_t length)
     {
         int32_t stream = 0;
-        long ret       = 0;
+        int64_t ret    = 0;
 
         // release buffer and allocate new memory
         releaseBuffer();
