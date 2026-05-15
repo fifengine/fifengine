@@ -35,6 +35,17 @@ All notable changes to this project will be documented in this file.
   - removed dead `pprint` helper
 - dependencies: remove `FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE` option and clean up related code and build workflows
   - we always build non-vcpkg dependencies from source. = we no longer fetch pre-built binaries for windows.
+- standardized object ID naming (issue #517)
+  - getId() returns the unique runtime ID
+  - getName() returns the label
+  - FifeClass::getFifeId() → FifeClass::getId() = auto-generated unique runtime ID for all FifeClass subclasses
+  - Instance::getId()/setId() → Instance::getName()/setName()
+  - Layer::getId()/setId() → Layer::getName()/setName()
+  - Map::getId()/setId() → Map::getName()/setName()
+  - Camera::getId()/setId() → Camera::getName()/setName()
+  - Object::getId()/setId() → Object::getName()/setName()
+  - Action::getId() → Action::getName() (no setter)
+  - updated the codebase accordingly
 
 ## Fixed
 
