@@ -43,6 +43,7 @@ All notable changes to this project will be documented in this file.
     - block headers are now parsed as signed 16-bit integers
   - Documented DAT1 and DAT2 file format structures in their respective headers.
   - Regenerated test data (dat1vfstest.dat) with correct LZSS block format.
+- fixed applyOnlySuitable to work on functools.partial objects by unwrapping them, issue #638
 
 ## [0.4.2] - 2019-01-11
 

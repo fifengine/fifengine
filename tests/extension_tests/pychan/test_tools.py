@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+from functools import partial
+
 import pytest
 from fife.extensions.pychan import tools
 from fife.extensions.pychan.exceptions import PrivateFunctionalityError
@@ -27,6 +29,31 @@ class TestPychanTools:
 
         result = tools.applyOnlySuitable(func, 1, 2, 3, 4)
         assert result == 10
+
+    def test_apply_only_suitable_with_partial(self):
+        def func(a, b, event=None):
+            return a + b
+
+        cb = partial(func, 1, b=2)
+        result = tools.applyOnlySuitable(cb, event="test")
+        assert result == 3
+
+    def test_apply_only_suitable_with_partial_kwargs_filtered(self):
+        def func(a, b):
+            return a + b
+
+        cb = partial(func, 1, b=2)
+        result = tools.applyOnlySuitable(cb, unknown="ignored")
+        assert result == 3
+
+    def test_apply_only_suitable_with_nested_partial(self):
+        def func(a, b, event=None):
+            return a + b
+
+        inner = partial(func, 1)
+        outer = partial(inner, b=2)
+        result = tools.applyOnlySuitable(outer, event="test")
+        assert result == 3
 
     def test_callback_with_arguments(self):
         calls = []

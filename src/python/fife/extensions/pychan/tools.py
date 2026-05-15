@@ -2,7 +2,10 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Functional utilities designed for pychan use cases."""
 
+from functools import partial
+
 from . import exceptions
+
 
 # Functools ###
 
@@ -21,8 +24,16 @@ def applyOnlySuitable(func, *args, **kwargs):
     Any
         The return value of `func(*args, **filtered_kwargs)`.
     """
+    # Unwrap functools.partial to inspect the underlying function's signature.
+    # We keep the original func for the actual call to preserve partial's argument binding.
+    original_func = func
+    while isinstance(func, partial):
+        func = func.func
+
     func_name = "__func__"
     code_name = "__code__"
+    code = None
+    varnames = None
     if hasattr(func, func_name):
         code = func.__func__.__code__
         varnames = code.co_varnames[1 : code.co_argcount]  # ditch bound instance
@@ -30,21 +41,23 @@ def applyOnlySuitable(func, *args, **kwargs):
         code = func.__code__
         varnames = code.co_varnames[0 : code.co_argcount]
     elif hasattr(func, "__call__"):
-        func = func.__call__
-        if hasattr(func, func_name):
-            code = func.__func__.__code__
+        call_func = func.__call__
+        if hasattr(call_func, func_name):
+            code = call_func.__func__.__code__
             varnames = code.co_varnames[1 : code.co_argcount]  # ditch bound instance
-        elif hasattr(func, code_name):
-            code = func.__code__
+        elif hasattr(call_func, code_name):
+            code = call_func.__code__
             varnames = code.co_varnames[0 : code.co_argcount]
 
-    # http://docs.python.org/lib/inspect-types.html
+    if code is None:
+        # http://docs.python.org/lib/inspect-types.html
+        return original_func(*args, **kwargs)
     if code.co_flags & 8:
-        return func(*args, **kwargs)
+        return original_func(*args, **kwargs)
     for name, value in list(kwargs.items()):
         if name not in varnames:
             del kwargs[name]
-    return func(*args, **kwargs)
+    return original_func(*args, **kwargs)
 
 
 def callbackWithArguments(callback, *args, **kwargs):
