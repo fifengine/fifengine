@@ -119,7 +119,11 @@ TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
     TestFixture const _init;
     FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    try {
+        renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    } catch (FIFE::SDLException const&) {
+        SKIP("OpenGL not available in this environment");
+    }
 
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
@@ -169,7 +173,11 @@ TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core]
     TestFixture const _init;
     FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    try {
+        renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    } catch (FIFE::SDLException const&) {
+        SKIP("OpenGL not available in this environment");
+    }
 
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
