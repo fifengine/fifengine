@@ -16,23 +16,31 @@
 
 namespace FIFE
 {
-    /** A helper class for unpacking LZSS encoded data
-     * @bug just a quick&dirty LZSS implementation, optimized a bit
-     *      see revision 719 for the original one and 795 for the broken optimized one
-     * @bug the lzss decoder might very well crash on corrupt data.
+    /**
+     * The LZSSDecoder class is responsible for unpacking LZSS encoded data.
+     *
+     * Implements the Fallout 1 LZSS decompression algorithm.
+     * Block headers are signed 16-bit big-endian integers:
+     *   N == 0: end of stream
+     *   N < 0:  raw block, copy -N bytes as-is
+     *   N > 0:  LZSS compressed block, next N bytes are compressed
      */
     class FIFE_API LZSSDecoder
     {
         public:
-            /** Constructor
+            /**
+             * Constructor
              */
             LZSSDecoder();
 
-            /** Destructor
+            /**
+             * Destructor
              */
             ~LZSSDecoder() = default;
 
-            /** Decodes from a file into a pointer.
+            /**
+             * Decodes from a file into a pointer.
+             *
              * @param input The VFS file to read from
              * @param output The memory location to write to
              * @param outputsize The size of the memory location in byte

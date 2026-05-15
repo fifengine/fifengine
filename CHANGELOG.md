@@ -36,6 +36,14 @@ All notable changes to this project will be documented in this file.
 - dependencies: remove `FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE` option and clean up related code and build workflows
   - we always build non-vcpkg dependencies from source. = we no longer fetch pre-built binaries for windows.
 
+## Fixed
+
+- fixed broken lzssdecoder, issue #865:
+    - block headers were previously treated as unsigned with bit-15 flag, producing wrong sizes for raw blocks.
+    - block headers are now parsed as signed 16-bit integers
+  - Documented DAT1 and DAT2 file format structures in their respective headers.
+  - Regenerated test data (dat1vfstest.dat) with correct LZSS block format.
+
 ## [0.4.2] - 2019-01-11
 
 ### Engine

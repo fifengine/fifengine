@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <vector>
 
 // 3rd party library includes
@@ -13,7 +14,6 @@
 #include "util/base/exception.h"
 #include "vfs/raw/rawdata.h"
 
-// just a quick&dirty wrapper around anchorites implementation - needs to be replaced with our own LZSS implementation
 namespace FIFE
 {
 
@@ -28,18 +28,26 @@ namespace FIFE
         m_outlen   = outputsize;
 
         while (m_outindex < outputsize) {
-            uint16_t const blockdesc   = input->read16Big();
-            uint16_t const bytesToRead = static_cast<uint16_t>(blockdesc & 0x7fffU);
+            // Block header: signed 16-bit big-endian integer N.
+            //   N == 0: end of stream
+            //   N < 0:  raw block, copy -N bytes as-is
+            //   N > 0:  LZSS compressed block, next N bytes are compressed
+            int16_t const n = static_cast<int16_t>(input->read16Big());
 
-            if ((blockdesc & 0x8000) != 0) { // uncompressed
-                input->readInto(output + m_outindex, bytesToRead);
-                m_outindex += bytesToRead;
+            if (n == 0) {
+                break;
+            }
+
+            if (n < 0) {
+                uint16_t const rawSize = static_cast<uint16_t>(-n);
+                input->readInto(output + m_outindex, rawSize);
+                m_outindex += rawSize;
             } else {
                 // Allocate +2 bytes so that on corrupt data the LZSS
                 // decoder won't crash the input buffer.
-                std::vector<uint8_t> indata(static_cast<size_t>(bytesToRead) + 2U);
-                input->readInto(indata.data(), bytesToRead);
-                LZSSDecode(indata.data(), bytesToRead, output);
+                std::vector<uint8_t> indata(static_cast<size_t>(n) + 2U);
+                input->readInto(indata.data(), static_cast<uint32_t>(n));
+                LZSSDecode(indata.data(), n, output);
                 // Note outindex is advanced inside LZSSDecode.
             }
         }

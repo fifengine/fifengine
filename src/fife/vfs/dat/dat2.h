@@ -27,7 +27,35 @@ namespace FIFE
 {
     class RawData;
 
-    /** VFSource for the Fallout2 DAT file format
+    /** VFSource for the Fallout2 DAT file format.
+     *
+     * DAT2 files are the data archive format used by Fallout 2 (master.dat,
+     * critter.dat, patch000.dat). Unlike DAT1, the directory tree is at
+     * the END of the file. All multi-byte integers are little-endian.
+     *
+     * File structure:
+     *
+     *   [Data block] (from offset 0)
+     *     byte[]  file_data (all files concatenated)
+     *
+     *   [Directory tree] (at end of file)
+     *     uint32  file_count
+     *
+     *     [File entry] (file_count times)
+     *       uint32  filename_len
+     *       char[]  filename (DOS 8.3, sorted descending)
+     *       uint8   compressed   (1 = zlib, 0 = none)
+     *       uint32  unpacked_size
+     *       uint32  packed_size
+     *       uint32  offset
+     *
+     *   [Footer] (last 12 bytes)
+     *     uint32  tree_size   (at file_size - 8)
+     *     uint32  file_size   (at file_size - 4)
+     *
+     * Compressed entries use standard zlib deflate (RFC-1950). The 0x78DA
+     * signature identifies compressed data. The engine checks the type flag
+     * rather than the signature.
      *
      *  Implements a kind of lazy initializing, by reading the file list
      *  in chunks. Behaviour is the same as if it wouldn't do this,

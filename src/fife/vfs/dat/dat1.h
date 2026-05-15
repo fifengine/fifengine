@@ -24,6 +24,36 @@ namespace FIFE
 {
 
     /** VFSource for the Fallout1 DAT file format.
+     *
+     * DAT1 files are the data archive format used by Fallout 1 (master.dat,
+     * critter.dat). File structure (all integers big-endian):
+     *
+     *   [Header]
+     *     uint32  folder_count
+     *     uint32  unknown (same as folder_count)
+     *     uint32  unknown
+     *     uint32  unknown (timestamp)
+     *
+     *   [Folder names] (folder_count times)
+     *     uint8   name_length
+     *     char[]  name
+     *
+     *   [Folder content] (folder_count times)
+     *     uint32  file_count
+     *     uint32  unknown (same as file_count)
+     *     uint32  flags
+     *     uint32  unknown (timestamp)
+     *
+     *     [File entry] (file_count times)
+     *       uint8   name_length
+     *       char[]  name
+     *       uint32  type      (0x20 = none, 0x40 = LZSS)
+     *       uint32  offset
+     *       uint32  unpacked_size
+     *       uint32  packed_size
+     *
+     *   [Data] file data at the offsets specified above. Compressed entries
+     *   use the LZSS format decoded by LZSSDecoder.
      */
     class FIFE_API DAT1 : public VFSSource
     {
