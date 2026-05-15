@@ -62,41 +62,6 @@ def test_module_key_values_unique():
         seen[val] = name
 
 
-# -- Backward-compat Key class aliases ----------------------------------------
-
-KEY_ALIASES = {
-    "INVALID_KEY": "KEY_UNKNOWN", "ENTER": "RETURN",
-    "ESCAPE": "ESCAPE", "BACKSPACE": "BACKSPACE",
-    "TAB": "TAB", "SPACE": "SPACE",
-    "DELETE": "DELETE", "INSERT": "INSERT",
-    "HOME": "HOME", "END": "END",
-    "PAGE_UP": "PAGEUP", "PAGE_DOWN": "PAGEDOWN",
-    "NUM_0": "_0", "NUM_9": "_9",
-    "LEFT_CONTROL": "LCTRL", "RIGHT_CONTROL": "RCTRL",
-    "LEFT_SHIFT": "LSHIFT", "RIGHT_SHIFT": "RSHIFT",
-    "LEFT_ALT": "LALT", "RIGHT_ALT": "RALT",
-    "LEFT_SUPER": "LGUI", "RIGHT_SUPER": "RGUI",
-    "CAPS_LOCK": "CAPSLOCK", "NUM_LOCK": "NUMLOCKCLEAR",
-    "SCROLL_LOCK": "SCROLLLOCK", "PRINT_SCREEN": "PRINTSCREEN",
-    "VOLUME_UP": "VOLUMEUP", "VOLUME_DOWN": "VOLUMEDOWN",
-    "AUDIO_NEXT": "MEDIA_NEXT_TRACK", "AUDIO_PREV": "MEDIA_PREVIOUS_TRACK",
-    "AUDIO_STOP": "MEDIA_STOP", "AUDIO_PLAY": "MEDIA_PLAY",
-    "AUDIO_MUTE": "MUTE", "MEDIASELECT": "MEDIA_SELECT",
-    "ALT_GR": "MODE", "SYS_REQ": "SYSREQ",
-    "LESS": "KEY_LESS", "GREATER": "KEY_GREATER",
-    "KP_MEMSUBSTRACT": "KP_MEMSUBTRACT",
-}
-
-
-def test_key_class_aliases():
-    for alias_name, target_name in KEY_ALIASES.items():
-        alias_val = getattr(fife.Key, alias_name)
-        target_val = getattr(fife, target_name)
-        assert alias_val == target_val, (
-            f"fife.Key.{alias_name}={alias_val} != fife.{target_name}={target_val}"
-        )
-
-
 # -- Key construction and helpers ---------------------------------------------
 
 

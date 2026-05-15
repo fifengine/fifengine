@@ -28,31 +28,33 @@ HEADER = """\
 
 #include <cstdint>
 
-/** SDL3 version used to generate this key map. */
+// SDL3 version used to generate this key map.
 #define FIFE_SDL_KEYMAP_VERSION {version_num}u
 
-namespace FIFE {{
+namespace FIFE
+{{
 
-/**
- * Mirrors SDL3 `SDLK_*` constants as `uint32_t`.
- *
- * Keycodes are semantic and represent the intended character or symbol.
- * `SDLK_a` refers to the logical "A" key regardless of keyboard layout.
- *
- * Scancodes are physical and identify a fixed key position.
- * `SDL_SCANCODE_A` always refers to the same physical key.
- * The OS maps scancodes to keycodes using the active keyboard layout.
- */
-namespace Keys {{
+    /**
+     * Mirrors SDL3 `SDLK_*` constants as `uint32_t`.
+     *
+     * Keycodes are semantic and represent the intended character or symbol.
+     * `SDLK_a` refers to the logical "A" key regardless of keyboard layout.
+     *
+     * Scancodes are physical and identify a fixed key position.
+     * `SDL_SCANCODE_A` always refers to the same physical key.
+     * The OS maps scancodes to keycodes using the active keyboard layout.
+     */
+    namespace Keys
+    {{
 
-enum KeyType : uint32_t {{
+        enum KeyType : uint32_t
+        {{
 {body}
-}};
+        }};
 
-}} // namespace Keys
+    }} // namespace Keys
 
-static_assert(sizeof(Keys::KeyType) == sizeof(uint32_t),
-              "KeyType must be 32-bit to match SDL_Keycode");
+    static_assert(sizeof(Keys::KeyType) == sizeof(uint32_t), "KeyType must be 32-bit to match SDL_Keycode");
 
 }} // namespace FIFE
 
@@ -100,9 +102,9 @@ def generate(data: dict) -> str:
         comment = k['comment']
         enum_entry = to_enum_name(name)
         if comment:
-            lines.append(f'    {enum_entry:45s} = {value}u, // {comment}')
+            lines.append(f'            {enum_entry:20s} = {value}u, // {comment}')
         else:
-            lines.append(f'    {enum_entry:45s} = {value}u,')
+            lines.append(f'            {enum_entry:20s} = {value}u,')
 
     body = '\n'.join(lines)
 

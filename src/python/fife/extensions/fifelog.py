@@ -36,6 +36,7 @@ class LogManager:
             if k.startswith("LM_") and k not in ("LM_CORE", "LM_MODULE_MAX"):
                 self.mod2name[v] = self.lm.getModuleName(v)
         self.name2mod = {v.lower(): k for k, v in list(self.mod2name.items())}
+        self.script_logger = fife.Logger(self.name2mod["script"])
 
     def addVisibleModules(self, *names):
         """
@@ -183,16 +184,16 @@ class LogManager:
 
     def log_debug(self, message):
         """Log a debug message."""
-        self.lm.log(0, self.name2mod["script"], message)
+        self.script_logger.log(fife.LogManager.LEVEL_DEBUG, message)
 
     def log_log(self, message):
         """Log a standard message."""
-        self.lm.log(1, self.name2mod["script"], message)
+        self.script_logger.log(fife.LogManager.LEVEL_LOG, message)
 
     def log_warn(self, message):
         """Log a warning message."""
-        self.lm.log(2, self.name2mod["script"], message)
+        self.script_logger.log(fife.LogManager.LEVEL_WARN, message)
 
     def log_error(self, message):
         """Log an error message."""
-        self.lm.log(3, self.name2mod["script"], message)
+        self.script_logger.log(fife.LogManager.LEVEL_ERROR, message)

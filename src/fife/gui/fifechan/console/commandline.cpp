@@ -16,7 +16,7 @@
 
 namespace FIFE
 {
-    using fcn::Key;
+    // Key values are accessed via fcn::Key::XXX from the generated enum.
 
     CommandLine::CommandLine() : m_history_position(0), m_caretVisible(true)
     {
@@ -57,15 +57,15 @@ namespace FIFE
     {
         fcn::Key const key      = keyEvent.getKey();
         int32_t const keyType   = key.getValue();
-        bool const editInBounds = (keyType == Key::Left && getCaretPosition() > 0) ||
-                                  (keyType == Key::Right && getCaretPosition() < getText().size()) ||
-                                  (keyType == Key::Delete && getCaretPosition() < getText().size()) ||
-                                  (keyType == Key::Backspace && getCaretPosition() > 0) || key.isCharacter() ||
+        bool const editInBounds = (keyType == fcn::Key::LEFT && getCaretPosition() > 0) ||
+                                  (keyType == fcn::Key::RIGHT && getCaretPosition() < getText().size()) ||
+                                  (keyType == fcn::Key::KEY_DELETE && getCaretPosition() < getText().size()) ||
+                                  (keyType == fcn::Key::BACKSPACE && getCaretPosition() > 0) || key.isCharacter() ||
                                   static_cast<uint32_t>(key.getValue()) > 255;
 
         if (editInBounds) {
             TextField::keyPressed(keyEvent);
-        } else if (keyType == Key::Down && !m_history.empty()) {
+        } else if (keyType == fcn::Key::DOWN && !m_history.empty()) {
             if (m_history_position < m_history.size()) {
 
                 if (++m_history_position == m_history.size()) {
@@ -74,7 +74,7 @@ namespace FIFE
                     setText(m_history[m_history_position]);
                 }
             }
-        } else if (keyType == Key::Up && !m_history.empty()) {
+        } else if (keyType == fcn::Key::UP && !m_history.empty()) {
             if (m_history_position > 0) {
                 if (m_history_position == m_history.size()) {
                     m_cmdline = getText();
@@ -82,7 +82,7 @@ namespace FIFE
                 --m_history_position;
                 setText(m_history[m_history_position]);
             }
-        } else if (keyType == Key::Enter) {
+        } else if (keyType == fcn::Key::KEY_RETURN) {
             if (!getText().empty()) {
                 if (m_callback) {
                     m_callback(getText());
@@ -91,9 +91,9 @@ namespace FIFE
                 m_history_position = m_history.size();
                 setText("");
             }
-        } else if (keyType == Key::Home) {
+        } else if (keyType == fcn::Key::HOME) {
             setCaretPosition(0);
-        } else if (keyType == Key::End) {
+        } else if (keyType == fcn::Key::END) {
             assert(getText().size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
             setCaretPosition(static_cast<unsigned int>(getText().size()));
         }

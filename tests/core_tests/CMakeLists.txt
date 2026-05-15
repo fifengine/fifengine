@@ -20,6 +20,7 @@ set(
   test_gui.cpp
   test_imagepool.cpp
   test_images.cpp
+  test_key.cpp
   test_logger.cpp
   test_rect.cpp
   test_sharedptr.cpp

@@ -8,13 +8,10 @@
 #include "platform.h"
 
 // Standard C++ library includes
-//
 
 // 3rd party library includes
-//
 
 // FIFE includes
-//
 
 namespace FIFE
 {

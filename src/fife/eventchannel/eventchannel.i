@@ -33,7 +33,7 @@
 %include "eventchannel/key/key.h"
 %include "eventchannel/key/key_gen.h"
 // The generated enum has DELETE (SDLK_DELETE), which clashes with C++ delete.
-%rename(DELETE) FIFE::Keys::DELETE;
+%rename(DELETE) FIFE::Keys::KEY_DELETE;
 // ignore overload operator
 %ignore FIFE::Text::operator=;
 %include "eventchannel/text/text.h"
@@ -98,6 +98,20 @@ namespace FIFE {
 		virtual void onCommand(Command& command) = 0;
 		virtual ~ICommandListener() {}
 	};
+
+%feature("docstring") FIFE::KeyEvent "Represents a keyboard key press or release event.
+
+Carries a semantic :class:`fife.Key` (layout-independent SDL3 keycode)
+and modifier state.
+
+Example::
+
+    def keyPressed(self, evt):
+        if evt.getKey().getValue() == fife.RETURN:
+            print(\"Enter pressed\")
+        if evt.isShiftPressed():
+            print(\"with Shift\")
+"
 
 	class KeyEvent: public InputEvent  {
 	public:

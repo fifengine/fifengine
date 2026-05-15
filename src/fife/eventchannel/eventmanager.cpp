@@ -728,14 +728,12 @@ namespace FIFE
     void EventManager::fillModifiers(InputEvent& evt)
     {
         evt.setAltPressed(
-            (static_cast<int>(m_keystatemap[Key::ALT_GR]) | static_cast<int>(m_keystatemap[Key::LEFT_ALT]) |
-             static_cast<int>(m_keystatemap[Key::RIGHT_ALT])) != 0);
+            (static_cast<int>(m_keystatemap[Keys::MODE]) | static_cast<int>(m_keystatemap[Keys::LALT]) |
+             static_cast<int>(m_keystatemap[Keys::RALT])) != 0);
         evt.setControlPressed(
-            (static_cast<int>(m_keystatemap[Key::LEFT_CONTROL]) |
-             static_cast<int>(m_keystatemap[Key::RIGHT_CONTROL])) != 0);
+            (static_cast<int>(m_keystatemap[Keys::LCTRL]) | static_cast<int>(m_keystatemap[Keys::RCTRL])) != 0);
         evt.setShiftPressed(
-            (static_cast<int>(m_keystatemap[Key::LEFT_SHIFT]) | static_cast<int>(m_keystatemap[Key::RIGHT_SHIFT])) !=
-            0);
+            (static_cast<int>(m_keystatemap[Keys::LSHIFT]) | static_cast<int>(m_keystatemap[Keys::RSHIFT])) != 0);
     }
 
     EventSourceType EventManager::getEventSourceType()
