@@ -6,8 +6,10 @@
 include(ExternalProject)
 
 # For development use "origin/main" to always get the latest code.
+set(FIFECHAN_VERSION "origin/main" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
+
 # For release use the specific tag, e.g. "v0.2.0".
-set(FIFECHAN_VERSION "v0.2.0" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
+#set(FIFECHAN_VERSION "v0.2.0" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
 
 set(FIFECHAN_GIT_REPO "https://github.com/fifengine/fifechan.git" CACHE STRING "FifeChan git repository URL")
 
