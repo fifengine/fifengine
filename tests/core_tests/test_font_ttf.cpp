@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #include <string>
 
@@ -33,6 +34,7 @@ TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf
     REQUIRE(surface->h > 0);
 
     // Save for visual inspection
+    std::filesystem::create_directories("test_output");
     FIFE::Image::saveAsPng("test_output/ttf_test_sanitized.png", *surface);
 
     SDL_LockSurface(surface);
@@ -97,6 +99,7 @@ TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", 
     REQUIRE(surface != nullptr);
 
     // Save for visual inspection
+    std::filesystem::create_directories("test_output");
     FIFE::Image::saveAsPng("test_output/ttf_test_cyan.png", *surface);
 
     SDL_LockSurface(surface);
@@ -134,6 +137,8 @@ TEST_CASE("TrueTypeFont::renderString with different colors", "[font][ttf]")
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 20);
     REQUIRE(font != nullptr);
+
+    std::filesystem::create_directories("test_output");
 
     // Test white text
     font->setColor(255, 255, 255, 255);
@@ -205,6 +210,7 @@ TEST_CASE("TrueTypeFont::renderString pixel-perfect verification", "[font][ttf]"
     REQUIRE(surface != nullptr);
 
     // Save for visual inspection and regression testing
+    std::filesystem::create_directories("test_output");
     FIFE::Image::saveAsPng("test_output/ttf_letter_X.png", *surface);
 
     // Verify we have opaque (non-transparent) pixels - the "X" glyph
