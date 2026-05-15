@@ -259,8 +259,8 @@ namespace FIFE
                 _log,
                 std::format(
                     "Selected display index {} is out of range [0, {}] and will fall back to display 0.",
-                    int32_t(requestedDisplay),
-                    int32_t(displayCount - 1)));
+                    static_cast<int32_t>(requestedDisplay),
+                    static_cast<int32_t>(displayCount - 1)));
             selectedDisplay = 0;
         }
 
@@ -292,8 +292,8 @@ namespace FIFE
             _log,
             std::format(
                 "Using display index {} out of {} displays with resolution {}x{}",
-                int32_t(selectedDisplay),
-                int32_t(displayCount),
+                static_cast<int32_t>(selectedDisplay),
+                static_cast<int32_t>(displayCount),
                 selectedWidth,
                 selectedHeight));
 

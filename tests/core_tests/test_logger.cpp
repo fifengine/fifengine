@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-// Standard C++ library includes
+// Corresponding header include
+#include "util/log/logger.h"
 
-// 3rd party library includes
+// Standard C++ library includes
+#include <string>
+
+// Platform specific includes
+#include "fife_unittest.h"
 
 // FIFE includes
-#include "fife_unittest.h"
 #include "modules.h"
-#include "util/log/logger.h"
 
 using FIFE::Logger;
 using FIFE::LogManager;
