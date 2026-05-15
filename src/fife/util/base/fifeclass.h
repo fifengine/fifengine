@@ -32,7 +32,7 @@ namespace FIFE
 
             /** Gets unique id of this instance inside the engine
              */
-            fifeid_t getFifeId() const
+            fifeid_t getId() const
             {
                 return m_fifeid;
             }

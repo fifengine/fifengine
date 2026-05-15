@@ -77,7 +77,7 @@ namespace FIFE
     };
 
     Camera::Camera(std::string id, Map* map, Rect const & viewport, RenderBackend* renderbackend) :
-        m_id(std::move(id)),
+        m_name(std::move(id)),
         m_map(map),
         m_viewport(viewport),
         m_renderbackend(renderbackend),
@@ -1004,7 +1004,7 @@ found_non_transparent_pixel:;
         if (cacheImage.get() == nullptr) {
             // the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
             cacheImage = ImageManager::instance()->loadBlank(
-                m_id + "_virtual_layer_image_" + layer->getId(),
+                m_name + "_virtual_layer_image_" + layer->getName(),
                 static_cast<uint32_t>(m_viewport.w),
                 static_cast<uint32_t>(m_viewport.h));
             cache->setCacheImage(cacheImage);
@@ -1067,7 +1067,7 @@ found_non_transparent_pixel:;
             if (cache == nullptr) {
                 addLayer(*layer_it);
                 cache = m_cache[*layer_it];
-                FL_ERR(_log, std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getId()));
+                FL_ERR(_log, std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getName()));
             }
             RenderList& instancesToRender = m_layerToInstances[*layer_it];
             if ((*layer_it)->isStatic() && m_transform == NoneTransform) {

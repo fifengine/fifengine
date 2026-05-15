@@ -111,14 +111,14 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             if actor_instances:
                 actor_instance = None
                 for actor in actor_instances:
-                    if actor.getId() == "player":
+                    if actor.getName() == "player":
                         continue
                     else:
                         actor_instance = actor
                         break
 
                 if actor_instance:
-                    obj = self._gamecontroller.scene.objectlist[actor_instance.getId()]
+                    obj = self._gamecontroller.scene.objectlist[actor_instance.getName()]
                     if obj.type == GameObjectTypes["QUESTGIVER"]:
                         action = TalkAction(self._gamecontroller.scene.player, obj)
                         self._gamecontroller.scene.player.nextaction = action
@@ -130,7 +130,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
                         self._gamecontroller.scene.player.nextaction = action
 
             if item_instances:
-                obj = self._gamecontroller.scene.objectlist[item_instances[0].getId()]
+                obj = self._gamecontroller.scene.objectlist[item_instances[0].getName()]
                 if obj.type == GameObjectTypes["ITEM"]:
                     action = PickUpItemAction(self._gamecontroller.scene.player, obj)
                     self._gamecontroller.scene.player.nextaction = action
@@ -144,7 +144,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             )
             if instances:
                 self._gamecontroller.logger.log_debug(
-                    "Selected instance on actor layer: " + instances[0].getId()
+                    "Selected instance on actor layer: " + instances[0].getName()
                 )
 
     def mouseReleased(self, event):
@@ -167,7 +167,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
             pt, self._gamecontroller.scene.itemlayer
         )
         for i in actor_instances:
-            if i.getId() != "player":
+            if i.getName() != "player":
                 renderer.addOutlined(i, 173, 255, 47, 2)
 
         for j in item_instances:

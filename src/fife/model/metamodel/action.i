@@ -15,7 +15,7 @@ namespace FIFE {
 	public:
 		Action(const std::string& identifier);
 		virtual ~Action();
-		const std::string& getId();
+		const std::string& getName();
 		void adoptVisual(IVisual* visual);
 		template<typename T> T* getVisual() const;
 		void setDuration(uint32_t duration);

@@ -70,18 +70,18 @@ namespace FIFE
             Camera(Camera const &)            = delete;
             Camera& operator=(Camera const &) = delete;
 
-            /** Gets the identifier for this camera.
+            /** Gets the name for this camera.
              */
-            std::string const & getId() const
+            std::string const & getName() const
             {
-                return m_id;
+                return m_name;
             }
 
-            /** Sets the identifier for this camera.
+            /** Sets the name for this camera.
              */
-            void setId(std::string const & id)
+            void setName(std::string const & name)
             {
-                m_id = id;
+                m_name = name;
             }
 
             /** Gets the map where camera is bound.
@@ -428,7 +428,7 @@ namespace FIFE
             void removeLayer(Layer* layer);
 
             void init();
-            std::string m_id;
+            std::string m_name;
             Map* m_map;
             Rect m_viewport;
             RenderBackend* m_renderbackend;

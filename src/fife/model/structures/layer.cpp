@@ -38,7 +38,7 @@ namespace FIFE
     }();
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
-        m_id(std::move(identifier)),
+        m_name(std::move(identifier)),
         m_map(map),
         m_instanceTree(new InstanceTree()),
         m_grid(grid),
@@ -70,14 +70,14 @@ namespace FIFE
         delete m_instanceTree;
     }
 
-    std::string const & Layer::getId() const
+    std::string const & Layer::getName() const
     {
-        return m_id;
+        return m_name;
     }
 
-    void Layer::setId(std::string const & id)
+    void Layer::setName(std::string const & name)
     {
-        m_id = id;
+        m_name = name;
     }
 
     Map* Layer::getMap() const
@@ -248,7 +248,7 @@ namespace FIFE
     {
         auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
-            if ((*it)->getId() == id) {
+            if ((*it)->getName() == id) {
                 return *it;
             }
         }
@@ -261,7 +261,7 @@ namespace FIFE
         std::vector<Instance*> matching_instances;
         auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
-            if ((*it)->getId() == id) {
+            if ((*it)->getName() == id) {
                 matching_instances.push_back(*it);
             }
         }

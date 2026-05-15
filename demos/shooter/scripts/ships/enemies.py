@@ -38,7 +38,7 @@ class BossActionListener(ShipActionListener):
         """Handle completion of boss-specific instance actions."""
         super().onInstanceActionFinished(instance, action)
 
-        if action.getId() == "explode":
+        if action.getName() == "explode":
             self.delayed = fife_timer.delayCall(5000, self._ship.endLevel())
 
     def onInstanceActionCancelled(self, instance, action):

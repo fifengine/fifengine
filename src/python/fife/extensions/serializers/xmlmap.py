@@ -366,7 +366,7 @@ class XMLMapLoader:
         print("Processing lights ... ")
         lightelt = layerelt.find("lights")
         if not lightelt:
-            print(f"\tno lights found on layer {layer.getId()}")
+            print(f"\tno lights found on layer {layer.getName()}")
             return
 
         lights = []
@@ -399,7 +399,7 @@ class XMLMapLoader:
             node = {}
             node["blending_src"] = int(blending_src)
             node["blending_dst"] = int(blending_dst)
-            node["layer"] = layer.getId()
+            node["layer"] = layer.getName()
             node["position"] = int(_x), int(_y), int(_z)
 
             # where is the light? *sing*
@@ -707,9 +707,9 @@ class XMLMapLoader:
         map : object
             FIFE map object
         """
-        cameras = [i.getId() for i in map.getCameras()]
+        cameras = [i.getName() for i in map.getCameras()]
         renderers = {}
-        default_cam = map.getCameras()[0].getId()
+        default_cam = map.getCameras()[0].getName()
 
         def add_simple_light(group, renderer, node, data):
             """Add a node as simple light to the renderer.

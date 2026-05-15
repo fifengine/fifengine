@@ -67,8 +67,8 @@ namespace FIFE {
 	public:
 		Instance(Object* object, const Location& location, const std::string& identifier="");
 		virtual ~Instance();
-		const std::string& getId();
-		void setId(const std::string& identifier="");
+		const std::string& getName();
+		void setName(const std::string& identifier="");
 		Object* getObject();
 		void setLocation(const Location& loc);
 		Location getLocation() const;

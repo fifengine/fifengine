@@ -11,10 +11,10 @@ def test_model(engine_minimized):
     map2 = model.createMap("map002")
 
     query = model.getMap("map001")
-    assert map1.getId() == query.getId()
+    assert map1.getName() == query.getName()
 
     query = model.getMap("map002")
-    assert map2.getId() == query.getId()
+    assert map2.getName() == query.getName()
 
     query = model.getMaps()
     assert len(query) == 2
@@ -50,8 +50,8 @@ def test_maps(engine_minimized):
     layer1 = map_obj.createLayer("layer001", grid)
     layer2 = map_obj.createLayer("layer002", grid)
 
-    assert layer1.getId() == "layer001"
-    assert layer2.getId() == "layer002"
+    assert layer1.getName() == "layer001"
+    assert layer2.getName() == "layer002"
 
     assert len(map_obj.getLayers()) == 2
 
@@ -70,13 +70,13 @@ def test_layers(engine_minimized):
     obj1 = model.createObject("object001", "test_nspace")
     obj2 = model.createObject("object002", "test_nspace")
 
-    assert obj1.getId() == "object001"
-    assert obj2.getId() == "object002"
+    assert obj1.getName() == "object001"
+    assert obj2.getName() == "object002"
 
     layer = map_obj.createLayer("layer003", grid)
 
     assert layer.hasInstances() == 0
-    assert layer.getMap().getId() == map_obj.getId()
+    assert layer.getMap().getName() == map_obj.getName()
 
     inst = layer.createInstance(obj1, fife.ModelCoordinate(4, 4))
     layer.createInstance(obj2, fife.ModelCoordinate(5, 6))

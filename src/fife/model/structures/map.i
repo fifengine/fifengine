@@ -38,8 +38,8 @@ namespace FIFE {
 			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, TimeProvider* tp_master=NULL);
 			~Map();
 
-			const std::string& getId() const;
-			void setId(const std::string& id);
+            const std::string& getName() const;
+            void setName(const std::string& name);
 
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 			void deleteLayer(Layer* index);

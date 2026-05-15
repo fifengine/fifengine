@@ -356,7 +356,7 @@ class OverlayTest(test.Test):
         pt = fife.ScreenPoint(event.getX(), event.getY())
         instances = self._camera.getMatchingInstances(pt, self._actorlayer)
         for i in instances:
-            if i.getId() == "player":
+            if i.getName() == "player":
                 self._instance_renderer.addOutlined(i, 173, 255, 47, 2)
                 break
 

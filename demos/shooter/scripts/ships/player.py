@@ -42,7 +42,7 @@ class PlayerActionListener(ShipActionListener):
         """
         super().onInstanceActionFinished(instance, action)
 
-        if action.getId() == "explode":
+        if action.getName() == "explode":
             self._ship.respawn()
 
     def onInstanceActionCancelled(self, instance, action):

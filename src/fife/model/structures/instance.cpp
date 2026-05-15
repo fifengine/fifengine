@@ -184,7 +184,7 @@ namespace FIFE
     }
 
     Instance::Instance(Object* object, Location const & location, std::string const & identifier) :
-        m_id(identifier),
+        m_name(identifier),
         m_rotation(0),
         m_location(location),
         m_costId(object->getCostId()),
@@ -333,14 +333,14 @@ namespace FIFE
         return m_rotation;
     }
 
-    void Instance::setId(std::string const & identifier)
+    void Instance::setName(std::string const & identifier)
     {
-        m_id = identifier;
+        m_name = identifier;
     }
 
-    std::string const & Instance::getId()
+    std::string const & Instance::getName()
     {
-        return m_id;
+        return m_name;
     }
 
     void Instance::setBlocking(bool blocking)
@@ -1351,7 +1351,7 @@ namespace FIFE
             m_ownObject       = true;
             auto* ov          = m_object->getVisual<ObjectVisual>();
             ObjectVisual* nov = nullptr;
-            m_object          = new Object(m_object->getId(), m_object->getNamespace(), m_object);
+            m_object          = new Object(m_object->getName(), m_object->getNamespace(), m_object);
             if (ov == nullptr) {
                 ObjectVisual::create(m_object);
             } else {

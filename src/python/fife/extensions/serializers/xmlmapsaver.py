@@ -74,7 +74,7 @@ class XMLMapSaver:
         assert self.state == self.SModel, "Declaration of <map> not at the top level."
 
         attr_vals = {
-            (None, "id"): self.map.getId(),
+            (None, "id"): self.map.getName(),
             (None, "format"): MAPFORMAT,
         }
         attr_names = {
@@ -199,7 +199,7 @@ class XMLMapSaver:
         for layer in map.getLayers():
             cellgrid = layer.getCellGrid()
             attr_vals = {
-                (None, "id"): layer.getId(),
+                (None, "id"): layer.getName(),
                 (None, "grid_type"): cellgrid.getType(),
                 (None, "x_scale"): str(cellgrid.getXScale()),
                 (None, "y_scale"): str(cellgrid.getYScale()),
@@ -239,7 +239,7 @@ class XMLMapSaver:
             position = inst.getLocationRef().getExactLayerCoordinates()
 
             attr_vals = {
-                (None, "o"): inst.getObject().getId(),
+                (None, "o"): inst.getObject().getName(),
                 (None, "x"): str(position.x),
                 (None, "y"): str(position.y),
                 (None, "z"): str(position.z),
@@ -264,9 +264,9 @@ class XMLMapSaver:
                 attr_names[(None, "ns")] = "ns"
                 self.nspace = nspace
 
-            instId = inst.getId()
+            instId = inst.getName()
             if instId:
-                attr_vals[(None, "id")] = inst.getId()
+                attr_vals[(None, "id")] = inst.getName()
                 attr_names[(None, "id")] = "id"
 
             if inst.isOverrideBlocking():
@@ -296,7 +296,7 @@ class XMLMapSaver:
             hit = False
             layers = cam.getRenderer("LightRenderer").getActiveLayers()
             for lay in layers:
-                if lay.getId() == layer.getId():
+                if lay.getName() == layer.getName():
                     hit = True
 
             if not hit:
@@ -315,7 +315,7 @@ class XMLMapSaver:
                     attr_vals[(None, "type")] = str(type)
                     attr_names[(None, "type")] = "type"
                     attr_vals[(None, "instance")] = str(
-                        info.getNode().getInstance().getId()
+                        info.getNode().getInstance().getName()
                     )
                     attr_names[(None, "instance")] = "instance"
                     if info.getSrcBlend() > -1:
@@ -397,7 +397,7 @@ class XMLMapSaver:
         cameralist = map.getCameras()
 
         for cam in cameralist:
-            if cam.getLocation().getMap().getId() == map.getId():
+            if cam.getLocation().getMap().getName() == map.getName():
                 celldimensions = cam.getCellImageDimensions()
                 viewport = cam.getViewPort()
 
@@ -411,7 +411,7 @@ class XMLMapSaver:
                 }
 
                 attr_vals = {
-                    (None, "id"): cam.getId(),
+                    (None, "id"): cam.getName(),
                     (None, "zoom"): str(cam.getZoom()),
                     (None, "tilt"): str(cam.getTilt()),
                     (None, "rotation"): str(cam.getRotation()),

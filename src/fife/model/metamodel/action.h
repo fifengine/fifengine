@@ -36,11 +36,11 @@ namespace FIFE
              */
             virtual ~Action();
 
-            /** Get the identifier for this action.
+            /** Get the name for this action.
              */
-            std::string const & getId()
+            std::string const & getName()
             {
-                return m_id;
+                return m_name;
             }
 
             /** Sets the duration for this action
@@ -89,7 +89,7 @@ namespace FIFE
             }
 
         private:
-            std::string m_id;
+            std::string m_name;
 
             // duration of the action
             uint32_t m_duration;

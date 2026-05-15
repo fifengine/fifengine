@@ -95,13 +95,13 @@ namespace FIFE
              */
             ~Layer();
 
-            /** Get the id of this layer.
+            /** Get the name of this layer.
              */
-            std::string const & getId() const;
+            std::string const & getName() const;
 
-            /** Sets the identifier for this layer.
+            /** Sets the name for this layer.
              */
-            void setId(std::string const & id);
+            void setName(std::string const & name);
 
             /** Get the map this layer is contained in
              */
@@ -368,7 +368,7 @@ namespace FIFE
 
         protected:
             //! string identifier
-            std::string m_id;
+            std::string m_name;
             //! all the instances on this layer
             std::vector<Instance*> m_instances;
             //! all the active instances on this layer

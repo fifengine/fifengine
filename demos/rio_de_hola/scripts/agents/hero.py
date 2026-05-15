@@ -27,7 +27,7 @@ class Hero(Agent):
     def onInstanceActionFinished(self, instance, action):
         """Handle a finished instance action and occasionally speak."""
         self.idle()
-        if action.getId() != "stand":
+        if action.getName() != "stand":
             self.idlecounter = 1
         else:
             self.idlecounter += 1

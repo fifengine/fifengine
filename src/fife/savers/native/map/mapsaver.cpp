@@ -60,7 +60,7 @@ namespace FIFE
 
         // add map element
         XML::Element* mapElement = doc.NewElement("map");
-        mapElement->SetAttribute("id", map.getId().c_str());
+        mapElement->SetAttribute("id", map.getName().c_str());
         mapElement->SetAttribute("format", "1.0");
         doc.InsertEndChild(mapElement);
 
@@ -77,7 +77,7 @@ namespace FIFE
         for (auto& layer : layers) {
             XML::Element* layerElement = doc.NewElement("layer");
             CellGrid* grid             = layer->getCellGrid();
-            layerElement->SetAttribute("id", layer->getId().c_str());
+            layerElement->SetAttribute("id", layer->getName().c_str());
             layerElement->SetAttribute("x_offset", grid->getXShift());
             layerElement->SetAttribute("y_offset", grid->getYShift());
             layerElement->SetAttribute("z_offset", grid->getZShift());
@@ -152,11 +152,11 @@ namespace FIFE
                     currentNamespace = obj->getNamespace();
                 }
 
-                if (!instance->getId().empty()) {
-                    instanceElement->SetAttribute("id", instance->getId().c_str());
+                if (!instance->getName().empty()) {
+                    instanceElement->SetAttribute("id", instance->getName().c_str());
                 }
 
-                instanceElement->SetAttribute("o", obj->getId().c_str());
+                instanceElement->SetAttribute("o", obj->getName().c_str());
 
                 ExactModelCoordinate const position = instance->getLocationRef().getExactLayerCoordinates();
                 instanceElement->SetAttribute("x", position.x);
@@ -194,7 +194,7 @@ namespace FIFE
             }
             // add cellcache tag to document
             XML::Element* cellcacheElement = doc.NewElement("cellcache");
-            cellcacheElement->SetAttribute("id", layer->getId().c_str());
+            cellcacheElement->SetAttribute("id", layer->getName().c_str());
             cellcacheElement->SetAttribute("default_cost", cache->getDefaultCostMultiplier());
             cellcacheElement->SetAttribute("default_speed", cache->getDefaultSpeedMultiplier());
             cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
@@ -300,7 +300,7 @@ namespace FIFE
                     // add transition tag
                     if (transition != nullptr) {
                         XML::Element* transitionElement = doc.NewElement("transition");
-                        transitionElement->SetAttribute("id", transition->m_layer->getId().c_str());
+                        transitionElement->SetAttribute("id", transition->m_layer->getName().c_str());
                         transitionElement->SetAttribute("x", transition->m_mc.x);
                         transitionElement->SetAttribute("y", transition->m_mc.y);
                         if (transition->m_mc.z != 0) {
@@ -332,15 +332,15 @@ namespace FIFE
                 triggerElement->SetAttribute("triggered", trigger->isTriggered());
                 triggerElement->SetAttribute("all_instances", trigger->isEnabledForAllInstances());
                 if (trigger->getAttached() != nullptr) {
-                    triggerElement->SetAttribute("attached_instance", trigger->getAttached()->getId().c_str());
+                    triggerElement->SetAttribute("attached_instance", trigger->getAttached()->getName().c_str());
                     triggerElement->SetAttribute(
-                        "attached_layer", trigger->getAttached()->getLocationRef().getLayer()->getId().c_str());
+                        "attached_layer", trigger->getAttached()->getLocationRef().getLayer()->getName().c_str());
                 }
                 std::vector<Cell*> const & cells = trigger->getAssignedCells();
                 if (!cells.empty()) {
                     for (auto* cell : cells) {
                         XML::Element* cellElement = doc.NewElement("assign");
-                        cellElement->SetAttribute("layer_id", cell->getLayer()->getId().c_str());
+                        cellElement->SetAttribute("layer_id", cell->getLayer()->getName().c_str());
                         cellElement->SetAttribute("x", cell->getLayerCoordinates().x);
                         cellElement->SetAttribute("y", cell->getLayerCoordinates().y);
                         triggerElement->InsertEndChild(cellElement);
@@ -351,8 +351,8 @@ namespace FIFE
                     for (auto* instance : instances) {
                         XML::Element* instanceElement = doc.NewElement("enabled");
                         instanceElement->SetAttribute(
-                            "layer_id", instance->getLocationRef().getLayer()->getId().c_str());
-                        instanceElement->SetAttribute("instance_id", instance->getId().c_str());
+                            "layer_id", instance->getLocationRef().getLayer()->getName().c_str());
+                        instanceElement->SetAttribute("instance_id", instance->getName().c_str());
                         triggerElement->InsertEndChild(instanceElement);
                     }
                 }
@@ -371,10 +371,10 @@ namespace FIFE
         using CameraContainer   = std::vector<Camera*>;
         CameraContainer cameras = map.getCameras();
         for (auto& camera : cameras) {
-            if (camera->getMap()->getId() == map.getId()) {
+            if (camera->getMap()->getName() == map.getName()) {
                 XML::Element* cameraElement = doc.NewElement("camera");
 
-                cameraElement->SetAttribute("id", camera->getId().c_str());
+                cameraElement->SetAttribute("id", camera->getName().c_str());
                 cameraElement->SetAttribute("zoom", camera->getZoom());
                 cameraElement->SetAttribute("tilt", camera->getTilt());
                 cameraElement->SetAttribute("rotation", camera->getRotation());

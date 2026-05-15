@@ -32,13 +32,13 @@ class MapListener(fife.MapChangeListener):
     def onMapChanged(self, map, changedLayers):
         """Handle map-changed events (debug; no-op in normal demo)."""
         return
-        print("Changes on map ", map.getId())
+        print("Changes on map ", map.getName())
         for layer in map.getLayers():
-            print(layer.getId())
+            print(layer.getName())
             print(
                 "    ",
                 [
-                    f"{i.getObject().getId()}, {i.getChangeInfo():x}"
+                    f"{i.getObject().getName()}, {i.getChangeInfo():x}"
                     for i in layer.getChangedInstances()
                 ],
             )
@@ -87,7 +87,7 @@ class World(EventListenerBase):
 
     def show_instancemenu(self, clickpoint, instance):
         """Build and show a popup menu for the clicked instance."""
-        if instance.getFifeId() == self.hero.agent.getFifeId():
+        if instance.getId() == self.hero.agent.getId():
             return
 
         # Create the popup.
@@ -103,7 +103,7 @@ class World(EventListenerBase):
         if target_distance > 3.0:
             self.instancemenu.addChild(self.dynamic_widgets["moveButton"])
         else:
-            if instance.getFifeId() in self.instance_to_agent:
+            if instance.getId() in self.instance_to_agent:
                 self.instancemenu.addChild(self.dynamic_widgets["talkButton"])
                 self.instancemenu.addChild(self.dynamic_widgets["kickButton"])
         # And show it :)
@@ -180,18 +180,18 @@ class World(EventListenerBase):
         """Create and start agents for the map and populate the instance mapping."""
         self.agentlayer = self.map.getLayer("TechdemoMapGroundObjectLayer")
         self.hero = Hero(TDS, self.model, "PC", self.agentlayer)
-        self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
+        self.instance_to_agent[self.hero.agent.getId()] = self.hero
         self.hero.start()
 
         self.girl = Girl(TDS, self.model, "NPC:girl", self.agentlayer)
-        self.instance_to_agent[self.girl.agent.getFifeId()] = self.girl
+        self.instance_to_agent[self.girl.agent.getId()] = self.girl
         self.girl.start()
 
         self.beekeepers = create_anonymous_agents(
             TDS, self.model, "beekeeper", self.agentlayer, Beekeeper
         )
         for beekeeper in self.beekeepers:
-            self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
+            self.instance_to_agent[beekeeper.agent.getId()] = beekeeper
             beekeeper.start()
 
         # Clouds are currently defunct.
@@ -207,7 +207,7 @@ class World(EventListenerBase):
         camera_prefix += "_"
 
         for cam in self.map.getCameras():
-            camera_id = cam.getId().replace(camera_prefix, "")
+            camera_id = cam.getName().replace(camera_prefix, "")
             self.cameras[camera_id] = cam
             cam.resetRenderers()
 
@@ -367,7 +367,7 @@ class World(EventListenerBase):
             instances = self.getInstancesAt(clickpoint)
             print(
                 "selected instances on agent layer: ",
-                [i.getObject().getId() for i in instances],
+                [i.getObject().getName() for i in instances],
             )
             if instances:
                 self.show_instancemenu(clickpoint, instances[0])
@@ -380,7 +380,7 @@ class World(EventListenerBase):
         pt = fife.Point3D(evt.getX(), evt.getY())
         instances = self.getInstancesAt(pt)
         for i in instances:
-            if i.getObject().getId() in ("girl", "beekeeper"):
+            if i.getObject().getName() in ("girl", "beekeeper"):
                 renderer.addOutlined(i, 173, 255, 47, 2)
 
     def lightIntensity(self, value):
@@ -473,10 +473,10 @@ class World(EventListenerBase):
         self.hide_instancemenu()
         instance = self.instancemenu.instance
         self.hero.talk(instance.getLocationRef())
-        if instance.getObject().getId() == "beekeeper":
+        if instance.getObject().getName() == "beekeeper":
             beekeeperTexts = TDS.get("rio", "beekeeperTexts")
             instance.say(random.choice(beekeeperTexts), 5000)
-        if instance.getObject().getId() == "girl":
+        if instance.getObject().getName() == "girl":
             girlTexts = TDS.get("rio", "girlTexts")
             instance.say(random.choice(girlTexts), 5000)
 
@@ -491,10 +491,10 @@ class World(EventListenerBase):
         self.hide_instancemenu()
         inst = self.instancemenu.instance
         saytext = ["Engine told me that this instance has"]
-        if inst.getId():
-            saytext.append(f" name {inst.getId()},")
-        saytext.append(f" ID {inst.getFifeId()} and")
-        saytext.append(f" object name {inst.getObject().getId()}")
+        if inst.getName():
+            saytext.append(f" name {inst.getName()},")
+        saytext.append(f" ID {inst.getId()} and")
+        saytext.append(f" object name {inst.getObject().getName()}")
         self.hero.agent.say("\n".join(saytext), 3500)
 
     def pump(self):

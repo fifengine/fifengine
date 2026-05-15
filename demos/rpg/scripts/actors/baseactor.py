@@ -99,7 +99,7 @@ class ActorActionListener(ObjectActionListener):
 
     def onInstanceActionFinished(self, instance, action):
         """Handle finished instance actions, transition actor state when walking."""
-        if action.getId() == "walk":
+        if action.getName() == "walk":
             self._object.stand()
             self._object.performNextAction()
 

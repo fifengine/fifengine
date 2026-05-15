@@ -261,7 +261,7 @@ class World(EventListenerBase):
     def initCameras(self):
         """Initialize camera setup and attach the main camera to the scene."""
         for cam in self._map.getCameras():
-            if cam.getId() == "main":
+            if cam.getName() == "main":
                 self.cameras["main"] = cam
 
         # pass the camera to the scene as the scene controls the cameras position

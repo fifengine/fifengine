@@ -203,23 +203,23 @@ class PathfinderTest(test.Test):
             instances = layer.getInstancesAt(loc)
             if len(instances) > 0:
                 if (
-                    layer.getId() == "peak_item_layer"
-                    or layer.getId() == "peak_ground_layer"
+                    layer.getName() == "peak_item_layer"
+                    or layer.getName() == "peak_ground_layer"
                 ):
                     loc.setLayer(self._peakactorlayer)
                     location = loc
                     break
                 if (
-                    layer.getId() == "top_item_layer"
-                    or layer.getId() == "top_ground_layer"
+                    layer.getName() == "top_item_layer"
+                    or layer.getName() == "top_ground_layer"
                 ):
                     loc.setLayer(self._topactorlayer)
                     location = loc
                     break
                 if (
-                    layer.getId() == "item_layer"
-                    or layer.getId() == "ground_layer"
-                    or layer.getId() == "water_layer"
+                    layer.getName() == "item_layer"
+                    or layer.getName() == "ground_layer"
+                    or layer.getName() == "water_layer"
                 ):
                     loc.setLayer(self._actorlayer)
                     location = loc

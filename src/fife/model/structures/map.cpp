@@ -36,7 +36,7 @@ namespace FIFE
         RenderBackend* renderBackend,
         std::vector<RendererBase*> const & renderers,
         TimeProvider* tp_master) :
-        m_id(std::move(identifier)),
+        m_name(std::move(identifier)),
 
         m_timeProvider(tp_master),
 
@@ -64,7 +64,7 @@ namespace FIFE
     {
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
-            if ((*it)->getId() == id) {
+            if ((*it)->getName() == id) {
                 return *it;
             }
         }
@@ -81,7 +81,7 @@ namespace FIFE
     {
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
-            if (identifier == (*it)->getId()) {
+            if (identifier == (*it)->getName()) {
                 throw NameClash(identifier);
             }
         }
@@ -259,7 +259,7 @@ namespace FIFE
     {
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
-            if ((*iter)->getId() == id) {
+            if ((*iter)->getName() == id) {
                 // camera has been found delete it
                 delete *iter;
 
@@ -277,7 +277,7 @@ namespace FIFE
     {
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
-            if ((*iter)->getId() == id) {
+            if ((*iter)->getName() == id) {
                 return *iter;
             }
         }

@@ -18,7 +18,7 @@ class PlayerActionListener(ActorActionListener):
     def onInstanceActionFinished(self, instance, action):
         """Handle finished instance actions for the player (no-op by default)."""
         super().onInstanceActionFinished(instance, action)
-        if action.getId() == "walk":
+        if action.getName() == "walk":
             pass
 
     def onInstanceActionCancelled(self, instance, action):

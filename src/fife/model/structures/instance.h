@@ -91,13 +91,13 @@ namespace FIFE
              */
             ~Instance() override;
 
-            /** Get the identifier for this instance; possibly null.
+            /** Get the name for this instance; possibly null.
              */
-            std::string const & getId();
+            std::string const & getName();
 
-            /** Set the identifier for this instance.
+            /** Set the name for this instance.
              */
-            void setId(std::string const & identifier = "");
+            void setName(std::string const & identifier = "");
 
             /** Gets object where this instance is instantiated from
              */
@@ -523,7 +523,7 @@ namespace FIFE
             bool isColorOverlay(std::string const & actionName);
 
         private:
-            std::string m_id;
+            std::string m_name;
 
             //! The rotation offset of this instance. This is in addition to possible camera rotation and
             //! intended for setting, for example, a rotation of a tile.

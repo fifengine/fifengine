@@ -190,7 +190,7 @@ class Scene(Serializer):
         self._modelsettings = SimpleXMLSerializer(modelfile)
 
         for cam in self._map.getCameras():
-            self._cameras[cam.getId()] = cam
+            self._cameras[cam.getName()] = cam
 
         self._cameras[self._maincameraname].setZoom(
             self._gamecontroller.settings.get("RPG", "DefaultZoom", 1.0)

@@ -102,7 +102,7 @@ class XMLObjectSaver:
         tree = ET.parse(file_handle)
         root = tree.getroot()
 
-        object_id = object.getId()
+        object_id = object.getName()
         blocking = object.isBlocking()
         static = object.isStatic()
 

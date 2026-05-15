@@ -53,20 +53,20 @@ namespace FIFE
              */
             ~Object();
 
-            std::string const & getId() const
+            std::string const & getName() const
             {
-                return m_id;
+                return m_name;
             }
             std::string const & getNamespace() const
             {
                 return m_namespace;
             }
 
-            /** Sets the identifier for this object.
+            /** Sets the name for this object.
              */
-            void setId(std::string const & id)
+            void setName(std::string const & name)
             {
-                m_id = id;
+                m_name = name;
             }
 
             /** Adds new action with given id. In case there is action already
@@ -344,7 +344,7 @@ namespace FIFE
 
         private:
             //! identifier
-            std::string m_id;
+            std::string m_name;
 
             //! namespace
             std::string m_namespace;

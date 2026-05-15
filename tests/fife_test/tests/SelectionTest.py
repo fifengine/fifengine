@@ -265,7 +265,7 @@ class SelectionTest(test.Test):
         instances = self._camera.getMatchingInstances(rect, layer, False)
 
         for instance in instances:
-            print(instance, instance.getId())
+            print(instance, instance.getName())
 
     def getLocationAt(self, screenpoint):
         """

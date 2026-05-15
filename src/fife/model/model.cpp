@@ -93,7 +93,7 @@ namespace FIFE
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
-            if (identifier == (*it)->getId()) {
+            if (identifier == (*it)->getName()) {
                 throw NameClash(identifier);
             }
         }
@@ -158,7 +158,7 @@ namespace FIFE
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
-            if ((*it)->getId() == identifier) {
+            if ((*it)->getName() == identifier) {
                 return *it;
             }
         }
@@ -262,7 +262,7 @@ namespace FIFE
         }
 
         // If yes - delete+erase object.
-        auto it = nspace->second.find(object->getId());
+        auto it = nspace->second.find(object->getName());
         if (it != nspace->second.end()) {
             delete it->second;
             nspace->second.erase(it);

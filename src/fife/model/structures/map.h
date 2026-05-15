@@ -85,18 +85,18 @@ namespace FIFE
              */
             ~Map();
 
-            /** Get the identifier for this map.
+            /** Get the name for this map.
              */
-            std::string const & getId() const
+            std::string const & getName() const
             {
-                return m_id;
+                return m_name;
             }
 
-            /** Sets the identifier for this map.
+            /** Sets the name for this map.
              */
-            void setId(std::string const & id)
+            void setName(std::string const & name)
             {
-                m_id = id;
+                m_name = name;
             }
 
             /** Add a Layer to this Map. Map owns the returned pointer to the new Layer, so don't delete it!
@@ -239,7 +239,7 @@ namespace FIFE
             };
 
         private:
-            std::string m_id;
+            std::string m_name;
             std::string m_filename;
 
             std::list<Layer*> m_layers;

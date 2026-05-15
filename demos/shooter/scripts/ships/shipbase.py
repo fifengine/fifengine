@@ -25,7 +25,7 @@ class ShipActionListener(fife.InstanceActionListener):
 
     def onInstanceActionFinished(self, instance, action):
         """Handle a finished action for the instance."""
-        if action.getId() == "flash":
+        if action.getName() == "flash":
             if self._ship._flashing and self._ship._flashnumber > 0:
                 self._ship.instance.actOnce(
                     "flash", self._ship.instance.getFacingLocation()
@@ -35,7 +35,7 @@ class ShipActionListener(fife.InstanceActionListener):
                 self._ship._flashing = False
                 self._ship._flashnumber = 0
 
-        if action.getId() == "explode" and not self._ship.type == SHTR_PLAYER:
+        if action.getName() == "explode" and not self._ship.type == SHTR_PLAYER:
             self._ship.removeFromScene()
 
     def onInstanceActionCancelled(self, instance, action):

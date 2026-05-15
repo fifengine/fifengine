@@ -45,8 +45,8 @@ namespace FIFE {
 			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
 			~Layer();
 
-			const std::string& getId() const;
-			void setId(const std::string& id);
+			const std::string& getName() const;
+			void setName(const std::string& name);
 
 			CellGrid* getCellGrid() const;
 			void setCellGrid(CellGrid* grid);

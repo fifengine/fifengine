@@ -771,7 +771,7 @@ namespace FIFE
 
     void CellCache::addInteractOnRuntime(Layer* interact)
     {
-        interact->setInteract(true, m_layer->getId());
+        interact->setInteract(true, m_layer->getName());
         m_layer->addInteractLayer(interact);
         interact->addChangeListener(m_cellListener);
         Rect const newsize = calculateCurrentSize();

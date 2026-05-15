@@ -167,7 +167,7 @@ class Scene:
         powerups.extend(temp)
 
         for instance in enemies:
-            objectName = instance.getId()
+            objectName = instance.getName()
 
             if objectName == "dodge1":
                 enemy = Saucer1(self, "enemy", instance, False)
@@ -192,7 +192,7 @@ class Scene:
             self._nodes[nodeindex].spaceobjects.append(enemy)
 
         for instance in powerups:
-            objectName = instance.getId()
+            objectName = instance.getName()
 
             if objectName == "cannonspread5":
                 powerup = CannonSpread5PU(self, "cannonspread5", instance, False)

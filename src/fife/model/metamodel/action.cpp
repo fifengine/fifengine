@@ -18,7 +18,7 @@
 namespace FIFE
 {
     Action::Action(std::string identifier) :
-        m_id(std::move(identifier)), m_duration(0), m_visual(nullptr), m_audio(nullptr)
+        m_name(std::move(identifier)), m_duration(0), m_visual(nullptr), m_audio(nullptr)
     {
     }
 

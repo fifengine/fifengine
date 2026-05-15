@@ -75,7 +75,7 @@ def create_anonymous_agents(settings, model, objectName, layer, agentClass):
         List of created agent instances.
     """
     agents = []
-    instances = [a for a in layer.getInstances() if a.getObject().getId() == objectName]
+    instances = [a for a in layer.getInstances() if a.getObject().getName() == objectName]
     i = 0
     for a in instances:
         agentName = f"{objectName}:i:{i}"

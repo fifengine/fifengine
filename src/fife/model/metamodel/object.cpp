@@ -58,7 +58,7 @@ namespace FIFE
     Object::MultiObjectProperty::~MultiObjectProperty() = default;
 
     Object::Object(std::string identifier, std::string name_space, Object* inherited) :
-        m_id(std::move(identifier)),
+        m_name(std::move(identifier)),
         m_namespace(std::move(name_space)),
 
         m_inherited(inherited),
@@ -91,7 +91,7 @@ namespace FIFE
 
         auto it = actions->begin();
         for (; it != actions->end(); ++it) {
-            if (identifier == it->second->getId()) {
+            if (identifier == it->second->getName()) {
                 throw NameClash(identifier);
             }
         }
@@ -658,12 +658,12 @@ namespace FIFE
 
     bool Object::operator==(Object const & obj) const
     {
-        return m_id == obj.getId() && m_namespace == obj.getNamespace();
+        return m_name == obj.getName() && m_namespace == obj.getNamespace();
     }
 
     bool Object::operator!=(Object const & obj) const
     {
-        return m_id != obj.getId() || m_namespace != obj.getNamespace();
+        return m_name != obj.getName() || m_namespace != obj.getNamespace();
     }
 
 } // namespace FIFE

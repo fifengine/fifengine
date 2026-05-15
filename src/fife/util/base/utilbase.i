@@ -18,7 +18,7 @@ namespace FIFE {
 	class FifeClass{
 	public:
 		virtual ~FifeClass();
-		fifeid_t getFifeId();
+		fifeid_t getId();
 	};
 
 	%extend FifeClass {
@@ -27,13 +27,13 @@ namespace FIFE {
 		bool __eq__(FifeClass *other)
 		{
 			if (!other) return false;
-			return $self->getFifeId() == other->getFifeId();
+			return $self->getId() == other->getId();
 		}
 		bool __ne__(FifeClass *other)
 		{
 			if (!other) return true;
-			return $self->getFifeId() != other->getFifeId();
+			return $self->getId() != other->getId();
 		}
-		fifeid_t __hash__() { return $self->getFifeId(); }
+		fifeid_t __hash__() { return $self->getId(); }
 	}
 }
