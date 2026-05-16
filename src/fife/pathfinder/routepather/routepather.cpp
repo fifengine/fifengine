@@ -238,9 +238,8 @@ namespace FIFE
             if (route->getObject() != nullptr) {
                 CellGrid* destGrid = endCache->getLayer()->getCellGrid();
                 if (destGrid != nullptr) {
-                    std::vector<ModelCoordinate> destFootprint =
-                        destGrid->toMultiCoordinates(end.getLayerCoordinates(),
-                                                     route->getOccupiedCells(route->getRotation()));
+                    std::vector<ModelCoordinate> destFootprint = destGrid->toMultiCoordinates(
+                        end.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
                     for (auto const & fc : destFootprint) {
                         Location fcLoc(endCache->getLayer());
                         fcLoc.setLayerCoordinates(fc);
@@ -507,9 +506,8 @@ namespace FIFE
             Layer* endLayer = route->getEndNode().getLayer();
             CellGrid* grid  = (endLayer != nullptr) ? endLayer->getCellGrid() : nullptr;
             if (grid != nullptr) {
-                std::vector<ModelCoordinate> destFootprint =
-                    grid->toMultiCoordinates(route->getEndNode().getLayerCoordinates(),
-                                             route->getOccupiedCells(route->getRotation()));
+                std::vector<ModelCoordinate> destFootprint = grid->toMultiCoordinates(
+                    route->getEndNode().getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
                 ModelCoordinate const blockerMc = blockerCell->getLayerCoordinates();
                 for (auto const & fc : destFootprint) {
                     if (fc == blockerMc) {
@@ -529,8 +527,9 @@ namespace FIFE
     bool RoutePather::replanRoute(Route* route, Location const & currentPos)
     {
         assert("route must be valid and active" && route != nullptr);
-        assert("route must have an active solved path" &&
-               (route->getRouteStatus() == ROUTE_SOLVED || route->getRouteStatus() == ROUTE_CREATED));
+        assert(
+            "route must have an active solved path" &&
+            (route->getRouteStatus() == ROUTE_SOLVED || route->getRouteStatus() == ROUTE_CREATED));
         assert("cost ratio threshold must be >= 1.0" && MAX_COST_INCREASE_RATIO >= 1.0f);
 
         // Solve new route from current position to original destination
@@ -543,7 +542,7 @@ namespace FIFE
 
         // Cost threshold: only accept if the new path is not drastically worse
         double const originalRemainingCost = route->getRemainingCostFrom(currentPos);
-        double const newCost              = newRoute->getTotalCost();
+        double const newCost               = newRoute->getTotalCost();
 
         assert("new route cost must be finite" && std::isfinite(newCost));
         assert("original remaining cost must be non-negative" && originalRemainingCost >= 0.0);

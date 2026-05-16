@@ -121,7 +121,7 @@ TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
     renderbackend.init("");
     try {
         renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
-    } catch (FIFE::SDLException const&) {
+    } catch (FIFE::SDLException const &) {
         SKIP("OpenGL not available in this environment");
     }
 
@@ -175,7 +175,7 @@ TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core]
     renderbackend.init("");
     try {
         renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
-    } catch (FIFE::SDLException const&) {
+    } catch (FIFE::SDLException const &) {
         SKIP("OpenGL not available in this environment");
     }
 

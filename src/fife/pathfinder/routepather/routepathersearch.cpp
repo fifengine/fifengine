@@ -42,14 +42,14 @@ namespace FIFE
             }
             if (m_footprintOffsets.empty()) {
                 // Fallback: compute from occupied area
-                Location const loc = route->getStartNode();
-                CellGrid* grid     = loc.getLayer()->getCellGrid();
+                Location const loc                  = route->getStartNode();
+                CellGrid* grid                      = loc.getLayer()->getCellGrid();
                 std::vector<ModelCoordinate> coords = route->getOccupiedArea();
                 for (auto& coord : coords) {
-                    m_footprintOffsets.push_back(
-                        ModelCoordinate(coord.x - loc.getLayerCoordinates().x,
-                                        coord.y - loc.getLayerCoordinates().y,
-                                        coord.z - loc.getLayerCoordinates().z));
+                    m_footprintOffsets.push_back(ModelCoordinate(
+                        coord.x - loc.getLayerCoordinates().x,
+                        coord.y - loc.getLayerCoordinates().y,
+                        coord.z - loc.getLayerCoordinates().z));
                 }
             }
             assert("footprint offsets must not be empty for multi-cell search" && !m_footprintOffsets.empty());
@@ -64,11 +64,8 @@ namespace FIFE
             return false;
         }
         // Lazy recompute: only rebuild absolute cache when position or rotation changes
-        if (!m_absoluteCache ||
-            m_lastCacheLoc.getLayerCoordinates() != currentLoc.getLayerCoordinates() ||
-            m_lastCacheLoc.getLayer() != currentLoc.getLayer() ||
-            m_lastCacheRotation != currentRot)
-        {
+        if (!m_absoluteCache || m_lastCacheLoc.getLayerCoordinates() != currentLoc.getLayerCoordinates() ||
+            m_lastCacheLoc.getLayer() != currentLoc.getLayer() || m_lastCacheRotation != currentRot) {
             m_absoluteCache.emplace();
             CellGrid* grid = currentLoc.getLayer()->getCellGrid();
             if (grid == nullptr) {
@@ -86,7 +83,7 @@ namespace FIFE
                     }
                 }
             }
-            m_lastCacheLoc     = currentLoc;
+            m_lastCacheLoc      = currentLoc;
             m_lastCacheRotation = currentRot;
         }
         return m_absoluteCache->contains(cell);

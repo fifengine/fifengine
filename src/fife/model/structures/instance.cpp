@@ -23,9 +23,9 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/ipather.h"
 #include "model/metamodel/timeprovider.h"
+#include "model/structures/cellcache.h"
 #include "model/structures/instancetree.h"
 #include "model/structures/layer.h"
-#include "model/structures/cellcache.h"
 #include "model/structures/map.h"
 #include "pathfinder/route.h"
 #include "util/base/exception.h"
@@ -216,17 +216,18 @@ namespace FIFE
                 if (cache != nullptr && grid != nullptr) {
                     std::set<Object*> const & overlapCheck = object->getMultiParts();
                     for (auto* part : overlapCheck) {
-                        if (part == m_object) continue;
+                        if (part == m_object)
+                            continue;
                         std::vector<ModelCoordinate> partcoords = part->getMultiPartCoordinates(m_rotation);
                         for (auto const & coord : partcoords) {
-                            ModelCoordinate absMc(static_cast<int32_t>(emc.x) + coord.x,
-                                                  static_cast<int32_t>(emc.y) + coord.y,
-                                                  static_cast<int32_t>(emc.z) + coord.z);
+                            ModelCoordinate absMc(
+                                static_cast<int32_t>(emc.x) + coord.x,
+                                static_cast<int32_t>(emc.y) + coord.y,
+                                static_cast<int32_t>(emc.z) + coord.z);
                             Cell* cell = cache->getCell(absMc);
-                            if (cell != nullptr &&
-                                (cell->getCellType() == CTYPE_STATIC_BLOCKER ||
-                                 cell->getCellType() == CTYPE_DYNAMIC_BLOCKER ||
-                                 cell->getCellType() == CTYPE_CELL_BLOCKER)) {
+                            if (cell != nullptr && (cell->getCellType() == CTYPE_STATIC_BLOCKER ||
+                                                    cell->getCellType() == CTYPE_DYNAMIC_BLOCKER ||
+                                                    cell->getCellType() == CTYPE_CELL_BLOCKER)) {
                                 // Cell blocked by existing instance — reject placement
                                 return;
                             }
@@ -341,13 +342,14 @@ namespace FIFE
         if (m_location != loc) {
             // Reject moves that would push multi-cell sub-instances off-grid (W6-T4)
             if (isMultiObject() && loc.getLayer() != nullptr) {
-                CellGrid* grid = loc.getLayer()->getCellGrid();
+                CellGrid* grid   = loc.getLayer()->getCellGrid();
                 CellCache* cache = loc.getLayer()->getCellCache();
                 if (grid != nullptr && cache != nullptr) {
                     std::vector<ModelCoordinate> fpOffsets;
                     auto const & parts = m_object->getMultiParts();
                     for (auto* part : parts) {
-                        if (part == m_object) continue;
+                        if (part == m_object)
+                            continue;
                         auto coords = part->getMultiPartCoordinates(m_rotation);
                         for (auto const & c : coords) {
                             ModelCoordinate abs(loc.getLayerCoordinates());
@@ -702,8 +704,7 @@ namespace FIFE
                     abs.x += off.x;
                     abs.y += off.y;
                     // Avoid adding the main cell duplicate
-                    if (abs.x == m_location.getLayerCoordinates().x &&
-                        abs.y == m_location.getLayerCoordinates().y) {
+                    if (abs.x == m_location.getLayerCoordinates().x && abs.y == m_location.getLayerCoordinates().y) {
                         continue;
                     }
                     cells.push_back(abs);

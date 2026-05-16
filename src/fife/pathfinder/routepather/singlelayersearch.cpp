@@ -83,14 +83,16 @@ namespace FIFE
 
         // Safety guard against infinite loops during A* expansion
         if (++m_expansionCount > MAX_ASTAR_EXPANSIONS) {
-            FL_ERR(_log,
-                   std::format("A* exceeded max expansions ({}) route: start={{{},{}}} end={{{},{}}} multiCell={}",
-                               MAX_ASTAR_EXPANSIONS,
-                               m_from.getLayerCoordinates().x,
-                               m_from.getLayerCoordinates().y,
-                               m_to.getLayerCoordinates().x,
-                               m_to.getLayerCoordinates().y,
-                               m_multicell));
+            FL_ERR(
+                _log,
+                std::format(
+                    "A* exceeded max expansions ({}) route: start={{{},{}}} end={{{},{}}} multiCell={}",
+                    MAX_ASTAR_EXPANSIONS,
+                    m_from.getLayerCoordinates().x,
+                    m_from.getLayerCoordinates().y,
+                    m_to.getLayerCoordinates().x,
+                    m_to.getLayerCoordinates().y,
+                    m_multicell));
             setSearchStatus(search_status_failed);
             m_route->setRouteStatus(ROUTE_FAILED);
             return;
@@ -161,83 +163,83 @@ namespace FIFE
                 }();
 
                 if (!spatialEarlyOut) {
-                    blocker = false;
+                    blocker                        = false;
                     double footprintCostMultiplier = 1.0;
                     Location currentLoc(nextCell->getLayer());
                     currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
                     Location adjacentLoc(adjacent->getLayer());
                     adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
-                    int32_t const rotation = getAngleBetween(currentLoc, adjacentLoc);
-                    Object* obj            = m_route->getObject();
-                    bool const hasCosts    = (obj != nullptr) && obj->hasFootprintCosts();
-                std::vector<ModelCoordinate> coords =
-                    grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
-                auto coord_it = coords.begin();
-                size_t ci     = 0;
-                for (; coord_it != coords.end(); ++coord_it, ++ci) {
-                    Cell* cell = m_cellCache->getCell(*coord_it);
-                    if (cell != nullptr) {
-                        if (cell->getCellType() > blockerThreshold) {
-                            if (!isIgnoredBlocker(cell, currentLoc, rotation)) {
-                                blocker = true;
-                                break;
-                            }
-                        }
-                        if (hasCosts && obj != nullptr) {
-                            double const cellCost = obj->getFootprintCellCost(rotation, ci);
-                            if (cellCost >= std::numeric_limits<double>::max()) {
-                                blocker = true;
-                                break;
-                            }
-                            footprintCostMultiplier = std::max(footprintCostMultiplier, cellCost);
-                        }
-                        if (limitedArea) {
-                            // check if cell is on one of the areas
-                            bool sameAreas                     = false;
-                            std::list<std::string> const areas = m_route->getLimitedAreas();
-                            auto area_it                       = areas.begin();
-                            for (; area_it != areas.end(); ++area_it) {
-                                if (m_cellCache->isCellInArea(*area_it, cell)) {
-                                    sameAreas = true;
+                    int32_t const rotation              = getAngleBetween(currentLoc, adjacentLoc);
+                    Object* obj                         = m_route->getObject();
+                    bool const hasCosts                 = (obj != nullptr) && obj->hasFootprintCosts();
+                    std::vector<ModelCoordinate> coords = grid->toMultiCoordinates(
+                        adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
+                    auto coord_it = coords.begin();
+                    size_t ci     = 0;
+                    for (; coord_it != coords.end(); ++coord_it, ++ci) {
+                        Cell* cell = m_cellCache->getCell(*coord_it);
+                        if (cell != nullptr) {
+                            if (cell->getCellType() > blockerThreshold) {
+                                if (!isIgnoredBlocker(cell, currentLoc, rotation)) {
+                                    blocker = true;
                                     break;
                                 }
                             }
-                            if (!sameAreas) {
-                                blocker = true;
-                                break;
+                            if (hasCosts && obj != nullptr) {
+                                double const cellCost = obj->getFootprintCellCost(rotation, ci);
+                                if (cellCost >= std::numeric_limits<double>::max()) {
+                                    blocker = true;
+                                    break;
+                                }
+                                footprintCostMultiplier = std::max(footprintCostMultiplier, cellCost);
                             }
+                            if (limitedArea) {
+                                // check if cell is on one of the areas
+                                bool sameAreas                     = false;
+                                std::list<std::string> const areas = m_route->getLimitedAreas();
+                                auto area_it                       = areas.begin();
+                                for (; area_it != areas.end(); ++area_it) {
+                                    if (m_cellCache->isCellInArea(*area_it, cell)) {
+                                        sameAreas = true;
+                                        break;
+                                    }
+                                }
+                                if (!sameAreas) {
+                                    blocker = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            blocker = true;
+                            break;
                         }
-                    } else {
-                        blocker = true;
-                        break;
                     }
-                }
-                if (blocker) {
-                    continue;
-                }
-                // Apply footprint cost multiplier to gCost for soft-blocked cells
-                if (footprintCostMultiplier > 1.0) {
-                    double gCost = m_gCosts[nextIndex];
-                    if (m_specialCost) {
-                        gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId()) *
-                                 footprintCostMultiplier;
-                    } else {
-                        gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord) * footprintCostMultiplier;
+                    if (blocker) {
+                        continue;
                     }
-                    double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
-                    if (m_sf[adjacentIndex] == -1) {
-                        m_sortedfrontier.pushElement(
-                            PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-                        m_gCosts[adjacentIndex] = gCost;
-                        m_sf[adjacentIndex]     = m_next;
-                    } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
-                        m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
-                        m_gCosts[adjacentIndex] = gCost;
-                        m_sf[adjacentIndex]     = m_next;
+                    // Apply footprint cost multiplier to gCost for soft-blocked cells
+                    if (footprintCostMultiplier > 1.0) {
+                        double gCost = m_gCosts[nextIndex];
+                        if (m_specialCost) {
+                            gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId()) *
+                                     footprintCostMultiplier;
+                        } else {
+                            gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord) * footprintCostMultiplier;
+                        }
+                        double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
+                        if (m_sf[adjacentIndex] == -1) {
+                            m_sortedfrontier.pushElement(
+                                PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
+                            m_gCosts[adjacentIndex] = gCost;
+                            m_sf[adjacentIndex]     = m_next;
+                        } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
+                            m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
+                            m_gCosts[adjacentIndex] = gCost;
+                            m_sf[adjacentIndex]     = m_next;
+                        }
+                        continue;
                     }
-                    continue;
-                }
                 } // end if (!spatialEarlyOut)
             } // end if (m_multicell)
             if (limitedArea) {

@@ -168,7 +168,7 @@ namespace FIFE
             m_endNode   = m_path.back();
         }
         m_replanned = false;
-        m_walked = 1;
+        m_walked    = 1;
     }
 
     Path const & Route::getPath()
@@ -348,8 +348,7 @@ namespace FIFE
                             // Check if this blocker is part of the multi-cell's own path cells
                             bool isSelf = false;
                             for (auto& pathCell : m_path) {
-                                if (pathCell.getLayerCoordinates() == fc &&
-                                    pathCell.getLayer() == layer) {
+                                if (pathCell.getLayerCoordinates() == fc && pathCell.getLayer() == layer) {
                                     isSelf = true;
                                     break;
                                 }
@@ -381,8 +380,8 @@ namespace FIFE
         if (m_path.empty()) {
             return 0.0;
         }
-        double cost             = 0.0;
-        Location const * prev   = nullptr;
+        double cost               = 0.0;
+        Location const * prev     = nullptr;
         CellGrid const * lastGrid = nullptr;
         for (auto const & loc : m_path) {
             Layer* layer = loc.getLayer();
@@ -397,7 +396,7 @@ namespace FIFE
             if (prev != nullptr && prev->getLayer() == layer) {
                 cost += grid->getAdjacentCost(loc.getLayerCoordinates(), prev->getLayerCoordinates());
             }
-            prev    = &loc;
+            prev     = &loc;
             lastGrid = grid;
         }
         return cost;
@@ -408,8 +407,8 @@ namespace FIFE
         if (m_path.empty()) {
             return 0.0;
         }
-        double cost       = 0.0;
-        bool found        = false;
+        double cost           = 0.0;
+        bool found            = false;
         Location const * prev = nullptr;
         for (auto const & loc : m_path) {
             if (!found && loc.getLayerCoordinates() == pos.getLayerCoordinates() && loc.getLayer() == pos.getLayer()) {
@@ -441,7 +440,7 @@ namespace FIFE
             return false;
         }
         // Find the cell in the new path closest to currentPos
-        auto bestIt    = newPath.begin();
+        auto bestIt     = newPath.begin();
         double bestDist = std::numeric_limits<double>::max();
         for (auto it = newPath.begin(); it != newPath.end(); ++it) {
             if (it->getLayer() != currentPos.getLayer()) {
@@ -462,17 +461,17 @@ namespace FIFE
             return false;
         }
         // Walk the path iterator to the new current position
-        m_path   = newPath;
+        m_path    = newPath;
         m_current = m_path.begin();
         m_walked  = 1;
         // Advance to the best position
         for (auto it = m_path.begin(); it != bestIt; ++it, ++m_walked) {
             ++m_current;
         }
-        m_startNode    = m_path.front();
-        m_endNode      = m_path.back();
-        m_status       = ROUTE_SOLVED;
-        m_replanned    = true;
+        m_startNode = m_path.front();
+        m_endNode   = m_path.back();
+        m_status    = ROUTE_SOLVED;
+        m_replanned = true;
         return true;
     }
 

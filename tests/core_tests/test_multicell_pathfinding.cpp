@@ -1,90 +1,105 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/catch_approx.hpp>
-
 #include <limits>
 
-#include "model/metamodel/object.h"
-#include "model/metamodel/modelcoords.h"
-#include "model/structures/layer.h"
-#include "model/structures/instance.h"
-#include "model/structures/cellcache.h"
-#include "model/structures/cell.h"
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/metamodel/ipather.h"
+#include "model/metamodel/modelcoords.h"
+#include "model/metamodel/object.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
 #include "pathfinder/route.h"
 #include "pathfinder/routepather/routepather.h"
 #include "util/time/timemanager.h"
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
-using namespace FIFE;
+using FIFE::Cell;
+using FIFE::CellCache;
+using FIFE::CellTypeInfo;
+using FIFE::CTYPE_CELL_BLOCKER;
+using FIFE::CTYPE_DYNAMIC_BLOCKER;
+using FIFE::CTYPE_STATIC_BLOCKER;
+using FIFE::Instance;
+using FIFE::Layer;
+using FIFE::Location;
+using FIFE::ModelCoordinate;
+using FIFE::Object;
+using FIFE::Route;
+using FIFE::ROUTE_SOLVED;
+using FIFE::RoutePather;
+using FIFE::SquareGrid;
+using FIFE::TimeManager;
 
-namespace {
+namespace
+{
 
     struct PathFixture
     {
-        TimeManager tm;
-        SquareGrid grid;
-        RoutePather pather;
-        Layer* layer{nullptr};
-        Object* blockerObj{nullptr};
-        Object* markerObj{nullptr};
-        Object* multiObj{nullptr};
-        Object* part1{nullptr};
+            TimeManager tm;
+            SquareGrid grid;
+            RoutePather pather;
+            Layer* layer{nullptr};
+            Object* blockerObj{nullptr};
+            Object* markerObj{nullptr};
+            Object* multiObj{nullptr};
+            Object* part1{nullptr};
 
-        PathFixture()
-        {
-            layer = new Layer("test_layer", nullptr, &grid);
-            assert("layer must exist" && layer != nullptr);
-            layer->setWalkable(true);
-            layer->createCellCache();
+            PathFixture()
+            {
+                layer = new Layer("test_layer", nullptr, &grid);
+                assert("layer must exist" && layer != nullptr);
+                layer->setWalkable(true);
+                layer->createCellCache();
 
-            blockerObj = new Object("obstacle", "test");
-            blockerObj->setBlocking(true);
-            blockerObj->setStatic(true);
+                blockerObj = new Object("obstacle", "test");
+                blockerObj->setBlocking(true);
+                blockerObj->setStatic(true);
 
-            // Non-blocking marker to force cell cache to cover needed area
-            markerObj = new Object("marker", "test");
-            markerObj->setBlocking(false);
+                // Non-blocking marker to force cell cache to cover needed area
+                markerObj = new Object("marker", "test");
+                markerObj->setBlocking(false);
 
-            multiObj = new Object("multi", "test");
-            multiObj->setBlocking(true);
-            multiObj->setStatic(true);
-            multiObj->setPather(&pather);
+                multiObj = new Object("multi", "test");
+                multiObj->setBlocking(true);
+                multiObj->setStatic(true);
+                multiObj->setPather(&pather);
 
-            part1 = new Object("multi_part", "test");
-            part1->setMultiPart(true);
-            part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
+                part1 = new Object("multi_part", "test");
+                part1->setMultiPart(true);
+                part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
 
-            multiObj->addMultiPartId("multi_part");
-            multiObj->addMultiPart(part1);
-        }
+                multiObj->addMultiPartId("multi_part");
+                multiObj->addMultiPart(part1);
+            }
 
-        ~PathFixture()
-        {
-            delete layer;
-            delete blockerObj;
-            delete markerObj;
-            delete multiObj;
-            delete part1;
-        }
+            ~PathFixture()
+            {
+                delete layer;
+                delete blockerObj;
+                delete markerObj;
+                delete multiObj;
+                delete part1;
+            }
 
-        // Creates non-blocking markers at path corridor extremes so the cell cache
-        // covers the full area needed for pathfinding. Markers persist for test duration.
-        void seedCellRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
-        {
-            Instance* m1 = layer->createInstance(markerObj, ModelCoordinate(x1, y1, 0));
-            Instance* m2 = layer->createInstance(markerObj, ModelCoordinate(x2, y2, 0));
-            // markers stay alive for the test, don't delete them
-            (void)m1;
-            (void)m2;
-        }
+            // Creates non-blocking markers at path corridor extremes so the cell cache
+            // covers the full area needed for pathfinding. Markers persist for test duration.
+            void seedCellRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+            {
+                Instance* m1 = layer->createInstance(markerObj, ModelCoordinate(x1, y1, 0));
+                Instance* m2 = layer->createInstance(markerObj, ModelCoordinate(x2, y2, 0));
+                // markers stay alive for the test, don't delete them
+                (void)m1;
+                (void)m2;
+            }
 
-        bool isBlocked(CellTypeInfo t) const
-        {
-            return t == CTYPE_STATIC_BLOCKER || t == CTYPE_DYNAMIC_BLOCKER || t == CTYPE_CELL_BLOCKER;
-        }
+            bool isBlocked(CellTypeInfo t) const
+            {
+                return t == CTYPE_STATIC_BLOCKER || t == CTYPE_DYNAMIC_BLOCKER || t == CTYPE_CELL_BLOCKER;
+            }
     };
 
     // Destroy all instances on a layer (helper for cleanup)

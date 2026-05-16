@@ -1,55 +1,76 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/catch_approx.hpp>
+#include <vector>
 
-#include "model/metamodel/object.h"
-#include "model/metamodel/modelcoords.h"
-#include "model/structures/layer.h"
-#include "model/structures/instance.h"
-#include "model/structures/cellcache.h"
-#include "model/structures/cell.h"
 #include "model/metamodel/grids/squaregrid.h"
+#include "model/metamodel/modelcoords.h"
+#include "model/metamodel/object.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
 #include "util/time/timemanager.h"
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
-using namespace FIFE;
+using FIFE::Cell;
+using FIFE::CellCache;
+using FIFE::CellTypeInfo;
+using FIFE::CTYPE_CELL_BLOCKER;
+using FIFE::CTYPE_DYNAMIC_BLOCKER;
+using FIFE::CTYPE_NO_BLOCKER;
+using FIFE::CTYPE_STATIC_BLOCKER;
+using FIFE::ICHANGE_FOOTPRINT;
+using FIFE::ICHANGE_LOC;
+using FIFE::ICHANGE_NO_CHANGES;
+using FIFE::ICHANGE_ROTATION;
+using FIFE::Instance;
+using FIFE::InstanceChangeInfo;
+using FIFE::InstanceChangeListener;
+using FIFE::Layer;
+using FIFE::Location;
+using FIFE::ModelCoordinate;
+using FIFE::Object;
+using FIFE::SquareGrid;
+using FIFE::TimeManager;
 
-namespace {
+namespace
+{
 
     struct MultiCellFixture
     {
-        TimeManager tm;
-        SquareGrid grid;
-        Layer* layer{nullptr};
-        Object* mainObj{nullptr};
-        Object* part1{nullptr};
+            TimeManager tm;
+            SquareGrid grid;
+            Layer* layer{nullptr};
+            Object* mainObj{nullptr};
+            Object* part1{nullptr};
 
-        MultiCellFixture()
-        {
-            layer = new Layer("test_layer", nullptr, &grid);
-            assert("layer must exist after creation" && layer != nullptr);
-            layer->setWalkable(true);
-            layer->createCellCache();
+            MultiCellFixture()
+            {
+                layer = new Layer("test_layer", nullptr, &grid);
+                assert("layer must exist after creation" && layer != nullptr);
+                layer->setWalkable(true);
+                layer->createCellCache();
 
-            mainObj = new Object("wall_main", "test");
-            mainObj->setBlocking(true);
-            mainObj->setStatic(true);
+                mainObj = new Object("wall_main", "test");
+                mainObj->setBlocking(true);
+                mainObj->setStatic(true);
 
-            part1 = new Object("wall_part", "test");
-            part1->setMultiPart(true);
-            part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
+                part1 = new Object("wall_part", "test");
+                part1->setMultiPart(true);
+                part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
 
-            mainObj->addMultiPartId("wall_part");
-            mainObj->addMultiPart(part1);
-        }
+                mainObj->addMultiPartId("wall_part");
+                mainObj->addMultiPart(part1);
+            }
 
-        ~MultiCellFixture()
-        {
-            delete layer;
-            delete mainObj;
-            delete part1;
-        }
+            ~MultiCellFixture()
+            {
+                delete layer;
+                delete mainObj;
+                delete part1;
+            }
     };
 
     bool isBlocked(CellTypeInfo t)
@@ -66,7 +87,7 @@ namespace {
 TEST_CASE("W1-T0A: multi-cell blocking on initial placement", "[multicell]")
 {
     MultiCellFixture f;
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     Cell* mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
@@ -83,7 +104,7 @@ TEST_CASE("W1-T0A: multi-cell blocking on initial placement", "[multicell]")
 TEST_CASE("W1-T0A: multi-cell blocking toggle propagates to sub-cells", "[multicell]")
 {
     MultiCellFixture f;
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
     inst->setOverrideBlocking(true);
 
@@ -110,7 +131,7 @@ TEST_CASE("W1-T0A: multi-cell rotation updates occupied cells", "[multicell]")
     MultiCellFixture f;
     f.part1->addMultiPartCoordinate(90, ModelCoordinate(0, 1, 0));
 
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     f.layer->update();
@@ -122,7 +143,7 @@ TEST_CASE("W1-T0A: multi-cell rotation updates occupied cells", "[multicell]")
     f.layer->update();
     f.layer->update();
 
-    Cell* updatedOldCell = cache->getCell(ModelCoordinate(6, 5, 0));
+    Cell* updatedOldCell      = cache->getCell(ModelCoordinate(6, 5, 0));
     bool const oldCellCleared = (updatedOldCell == nullptr) || (updatedOldCell->getCellType() == CTYPE_NO_BLOCKER);
     CHECK(oldCellCleared);
 
@@ -141,7 +162,7 @@ TEST_CASE("W1-T0A: multi-cell with multiple rotations (0, 90, 180, 270)", "[mult
     f.part1->addMultiPartCoordinate(180, ModelCoordinate(-1, 0, 0));
     f.part1->addMultiPartCoordinate(270, ModelCoordinate(0, -1, 0));
 
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
     inst->setOverrideBlocking(true);
 
@@ -177,7 +198,7 @@ TEST_CASE("W1-T0A: multi-cell with two sub-parts", "[multicell]")
     f.mainObj->addMultiPartId("wall_part2");
     f.mainObj->addMultiPart(part2);
 
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     CHECK(isBlocked(cache->getCell(ModelCoordinate(5, 5, 0))->getCellType()));
@@ -212,7 +233,7 @@ TEST_CASE("baseline: single cell blocking change propagates to cell type", "[mul
     Instance* inst = f.layer->createInstance(singleObj, ModelCoordinate(5, 5, 0));
     inst->setOverrideBlocking(true);
     CellCache* cache = f.layer->getCellCache();
-    Cell* cell = cache->getCell(ModelCoordinate(5, 5, 0));
+    Cell* cell       = cache->getCell(ModelCoordinate(5, 5, 0));
     REQUIRE(cell != nullptr);
     CHECK(cell->getCellType() == CTYPE_STATIC_BLOCKER);
 
@@ -312,11 +333,13 @@ TEST_CASE("W5-T0B: getOccupiedCells returns main + sub-instance cells", "[multic
     std::vector<ModelCoordinate> cells = inst->getOccupiedCells();
     CHECK(cells.size() == 2);
 
-    bool hasMain  = false;
-    bool hasSub   = false;
+    bool hasMain = false;
+    bool hasSub  = false;
     for (auto const & c : cells) {
-        if (c.x == 8 && c.y == 8 && c.z == 0) hasMain = true;
-        if (c.x == 9 && c.y == 8 && c.z == 0) hasSub  = true;
+        if (c.x == 8 && c.y == 8 && c.z == 0)
+            hasMain = true;
+        if (c.x == 9 && c.y == 8 && c.z == 0)
+            hasSub = true;
     }
     CHECK(hasMain);
     CHECK(hasSub);
@@ -347,8 +370,10 @@ TEST_CASE("W5-T0B: getOccupiedCells after rotation returns updated cells", "[mul
     bool hasNewSubX = false;
     bool hasNewSubY = false;
     for (auto const & c : cells) {
-        if (c.x == 8 && c.y == 9 && c.z == 0) hasNewSubY = true;
-        if (c.x == 9 && c.y == 8 && c.z == 0) hasNewSubX = true;
+        if (c.x == 8 && c.y == 9 && c.z == 0)
+            hasNewSubY = true;
+        if (c.x == 9 && c.y == 8 && c.z == 0)
+            hasNewSubX = true;
     }
     // After rotation, the old cell (9,8) should be vacated and new cell (8,9) occupied.
     // If both are occupied or neither, the rotation didn't correctly update.
@@ -378,21 +403,22 @@ TEST_CASE("W5-T0B: non-multi instance returns single cell from getOccupiedCells"
 // W5-T0A: Multi-cell footprint event tests
 // ============================================================
 
-namespace {
+namespace
+{
 
     struct FootprintListener : InstanceChangeListener
     {
-        InstanceChangeInfo lastChange{ICHANGE_NO_CHANGES};
+            InstanceChangeInfo lastChange{ICHANGE_NO_CHANGES};
 
-        void onInstanceChanged(Instance* /*instance*/, InstanceChangeInfo info) override
-        {
-            lastChange |= info;
-        }
+            void onInstanceChanged(Instance* /*instance*/, InstanceChangeInfo info) override
+            {
+                lastChange |= info;
+            }
 
-        void reset()
-        {
-            lastChange = ICHANGE_NO_CHANGES;
-        }
+            void reset()
+            {
+                lastChange = ICHANGE_NO_CHANGES;
+            }
     };
 
 } // namespace

@@ -69,8 +69,9 @@ namespace FIFE
 
                         // propagate blocking change to sub-instances before updating cells
                         if (blochange) {
-                            assert("multi-cell blocking change must propagate to sub-instances" &&
-                                   !instance->getMultiInstances().empty());
+                            assert(
+                                "multi-cell blocking change must propagate to sub-instances" &&
+                                !instance->getMultiInstances().empty());
                             instance->propagateBlockingToSubInstances();
                             // update cell blocking info for all occupied cells
                             ModelCoordinate const mc =
@@ -97,7 +98,7 @@ namespace FIFE
                             // doesn't reject the move, W5-T4/W6-T4)
                             if (rotchange) {
                                 ModelCoordinate newMc = instance->getLocationRef().getLayerCoordinates();
-                                CellGrid* cgPre = m_layer->getCellGrid();
+                                CellGrid* cgPre       = m_layer->getCellGrid();
                                 for (auto* si : instance->getMultiInstances()) {
                                     std::vector<ModelCoordinate> preCoords = cgPre->toMultiCoordinates(
                                         newMc, si->getObject()->getMultiPartCoordinates(instance->getRotation()));
