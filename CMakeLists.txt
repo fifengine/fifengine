@@ -710,11 +710,11 @@ set(
   src/fife/savers/native/map/iatlassaver.i
   src/fife/savers/native/map/imapsaver.i
   src/fife/savers/native/map/iobjectsaver.i
-   src/fife/savers/native/map/mapsaver.i
+  src/fife/savers/native/map/mapsaver.i
   src/fife/savers/native/map/objectsaver.i
-   src/fife/savers/native/map/animationsaver.i
-   src/fife/savers/native/map/atlassaver.i
-   src/fife/util/base/utilbase.i
+  src/fife/savers/native/map/animationsaver.i
+  src/fife/savers/native/map/atlassaver.i
+  src/fife/util/base/utilbase.i
   src/fife/util/log/logger.i
   src/fife/util/math/math.i
   src/fife/util/resource/resource.i
@@ -1162,6 +1162,7 @@ if(BUILD_PYTHON_BINDINGS)
     target_compile_options(fife_swig PRIVATE
       -Wno-unused-parameter
       -Wno-sometimes-uninitialized
+      -Wno-sign-conversion
     )
   endif()
 
