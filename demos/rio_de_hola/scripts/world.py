@@ -325,16 +325,16 @@ class World(EventListenerBase):
             self.lightSourceIntensity(25)
         elif keystr == "3":
             self.lightSourceIntensity(-25)
-        elif keystr == "0" or keystr == fife.Key.NUM_0:
+        elif keyval in (fife.Key._0, fife.Key.KP_0):
             if self.ctrldown:
                 self.cameras["main"].setZoom(1.0)
-        elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+        elif keyval in (fife.Key.LCTRL, fife.Key.RCTRL):
             self.ctrldown = True
 
     def keyReleased(self, evt):
         """Handle key released events and update modifier state."""
         keyval = evt.getKey().getValue()
-        if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+        if keyval in (fife.Key.LCTRL, fife.Key.RCTRL):
             self.ctrldown = False
 
     def mouseWheelMovedUp(self, evt):

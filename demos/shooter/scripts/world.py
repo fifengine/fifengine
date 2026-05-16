@@ -293,7 +293,7 @@ class World(EventListenerBase):
         elif keyval == fife.Key.P:
             self._paused = not self._paused
             self._pausedtime += self._timemanager.now64()
-        elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+        elif keyval in (fife.Key.LCTRL, fife.Key.RCTRL):
             self._keystate["CTRL"] = True
 
     def keyReleased(self, evt):
@@ -309,7 +309,7 @@ class World(EventListenerBase):
             self._keystate["RIGHT"] = False
         elif keyval == fife.Key.SPACE:
             self._keystate["SPACE"] = False
-        elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+        elif keyval in (fife.Key.LCTRL, fife.Key.RCTRL):
             self._keystate["CTRL"] = False
 
     def pump(self):
