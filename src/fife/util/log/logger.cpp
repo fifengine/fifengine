@@ -9,10 +9,14 @@
 #include <array>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <string>
 
 // 3rd party library includes
 #ifdef LOG_ENABLED
+    #include <spdlog/common.h>
+    #include <spdlog/sinks/dist_sink.h>
+    #include <spdlog/sinks/null_sink.h>
     #include <spdlog/sinks/rotating_file_sink.h>
     #include <spdlog/sinks/stdout_color_sinks.h>
     #include <spdlog/spdlog.h>
@@ -82,10 +86,6 @@ static constexpr auto moduleInfos = std::to_array<ModuleInfo>(
 namespace FIFE
 {
 
-    // m_instance is intentionally leaked to avoid static destruction order
-    // issues with spdlog's global registry. OS cleanup handles it.
-    static inline LogManager* m_instance = nullptr;
-
     Logger::Logger(logmodule_t module) :
         m_module(module)
 #ifdef LOG_ENABLED
@@ -94,7 +94,7 @@ namespace FIFE
 #endif
     {
 #ifdef LOG_ENABLED
-        m_logger = LogManager::instance()->getSpdlogLogger(module);
+        m_logger = LogManager::instance().getSpdlogLogger(module);
 #endif
     }
 
@@ -115,19 +115,26 @@ namespace FIFE
 #endif
     }
 
-    LogManager* LogManager::instance()
+    LogManager& LogManager::instance()
     {
-        if (m_instance == nullptr) {
-            m_instance = new LogManager();
-        }
-        return m_instance;
+        static LogManager mgr;
+        return mgr;
     }
 
     LogManager::~LogManager()
     {
-        // no-op: LogManager is intentionally leaked (see instance()) to avoid
-        // static destruction order issues with spdlog's global registry.
-        // The OS handles cleanup on process exit.
+        // no-op: LogManager is a function-local static (see instance()) whose
+        // destructor should not tear down spdlog state that other statics may
+        // still reference during exit.
+    }
+
+    void LogManager::configure(LogConfig const & cfg)
+    {
+        std::scoped_lock lock(m_config_mutex);
+        m_config = cfg;
+#ifdef LOG_ENABLED
+        rebuildSinks();
+#endif
     }
 
     void LogManager::setLevelFilter(LogLevel level)
@@ -171,42 +178,26 @@ namespace FIFE
 
     void LogManager::setLogToPrompt(bool logtoprompt)
     {
-#ifdef LOG_ENABLED
-        if (m_console_sink) {
-            m_console_sink->set_level(logtoprompt ? spdlog::level::trace : spdlog::level::off);
-        }
-#else
-        (void)logtoprompt;
-#endif
+        LogConfig cfg       = m_config;
+        cfg.console_enabled = logtoprompt;
+        configure(cfg);
     }
 
     bool LogManager::isLogToPrompt() const
     {
-#ifdef LOG_ENABLED
-        return m_console_sink && m_console_sink->level() != spdlog::level::off;
-#else
-        return false;
-#endif
+        return m_config.console_enabled;
     }
 
     void LogManager::setLogToFile(bool logtofile)
     {
-#ifdef LOG_ENABLED
-        if (m_file_sink) {
-            m_file_sink->set_level(logtofile ? spdlog::level::trace : spdlog::level::off);
-        }
-#else
-        (void)logtofile;
-#endif
+        LogConfig cfg    = m_config;
+        cfg.file_enabled = logtofile;
+        configure(cfg);
     }
 
     bool LogManager::isLogToFile() const
     {
-#ifdef LOG_ENABLED
-        return m_file_sink && m_file_sink->level() != spdlog::level::off;
-#else
-        return false;
-#endif
+        return m_config.file_enabled;
     }
 
     bool LogManager::isVisible(logmodule_t module)
@@ -265,39 +256,80 @@ namespace FIFE
     }
 
     LogManager::LogManager() :
+        m_config{},
         m_level(LEVEL_DEBUG),
         m_modules{}
 #ifdef LOG_ENABLED
         ,
-        m_loggers{}
+        m_loggers{},
+        m_root_logger(nullptr),
+        m_dist_sink(nullptr)
 #endif
     {
         validateModuleDescription(LM_CORE);
         clearVisibleModules();
 
 #ifdef LOG_ENABLED
-        // create shared sinks
-        m_console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        m_console_sink->set_level(spdlog::level::trace);
+        m_dist_sink = std::make_shared<spdlog::sinks::dist_sink_mt>();
 
-        m_file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("fife.log", 1048576 * 5, 3);
-        m_file_sink->set_level(spdlog::level::off);
-
-        // create one spdlog logger per module, sharing both sinks
-        for (size_t i = 0; i < static_cast<size_t>(LM_MODULE_MAX); i++) {
-            if (static_cast<int32_t>(i) <= static_cast<int32_t>(LM_CORE)) {
-                continue;
-            }
-            auto logger = std::make_shared<spdlog::logger>(
-                moduleInfos[i].spdlogName, spdlog::sinks_init_list{m_console_sink, m_file_sink});
-            logger->set_level(spdlog::level::trace);
-            logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
-            spdlog::register_logger(logger);
-            m_loggers[i] = logger.get();
-        }
+        rebuildSinks();
 
         spdlog::flush_on(spdlog::level::warn);
 #endif
     }
+
+#ifdef LOG_ENABLED
+    void LogManager::rebuildSinks()
+    {
+        std::vector<spdlog::sink_ptr> sinks;
+
+        if (m_config.console_enabled) {
+            sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+        }
+
+        if (m_config.file_enabled) {
+            sinks.push_back(
+                std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+                    m_config.file_path, m_config.file_max_size, m_config.file_max_files));
+        }
+
+        if (sinks.empty()) {
+            sinks.push_back(std::make_shared<spdlog::sinks::null_sink_mt>());
+        }
+
+        // Swap the dist_sink's children atomically.
+        // All loggers (root + per-module) route through this single sink,
+        // so changing it propagates to every logger instantly.
+        m_dist_sink->set_sinks(std::move(sinks));
+
+        // Create or update the root logger
+        if (!m_root_logger) {
+            m_root_logger = std::make_shared<spdlog::logger>("fife", m_dist_sink);
+            m_root_logger->set_level(m_config.default_level);
+            auto pattern = std::string("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
+            m_root_logger->set_pattern(pattern);
+        }
+
+        // Create or update per-module loggers
+        for (size_t i = 0; i < static_cast<size_t>(LM_MODULE_MAX); i++) {
+            if (static_cast<int32_t>(i) <= static_cast<int32_t>(LM_CORE)) {
+                continue;
+            }
+
+            auto module_name   = moduleInfos[i].spdlogName;
+            auto module_logger = spdlog::get(module_name);
+
+            if (!module_logger) {
+                module_logger = std::make_shared<spdlog::logger>(module_name, m_dist_sink);
+                module_logger->set_level(spdlog::level::trace);
+                auto pattern = std::string("[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
+                module_logger->set_pattern(pattern);
+                spdlog::register_logger(module_logger);
+            }
+
+            m_loggers[i] = module_logger.get();
+        }
+    }
+#endif
 
 } // namespace FIFE

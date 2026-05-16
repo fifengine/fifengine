@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -17,10 +18,12 @@
 #ifdef LOG_ENABLED
     #include <spdlog/common.h>
     #include <spdlog/logger.h>
+    #include <spdlog/sinks/dist_sink.h>
     #include <spdlog/sinks/sink.h>
 #endif
 
 // FIFE includes
+#include "config.hpp"
 #include "modules.h"
 #include "util/base/fife_stdint.h"
 
@@ -37,7 +40,7 @@
 #ifdef LOG_ENABLED
     #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
                 (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));                                          \
         } while (0)
 #else
@@ -55,7 +58,7 @@
 #ifdef LOG_ENABLED
     #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
                 (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));                                            \
         } while (0)
 #else
@@ -73,7 +76,7 @@
 #ifdef LOG_ENABLED
     #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                  \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                \
+            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                 \
                 (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));                                            \
         } while (0)
 #else
@@ -91,7 +94,7 @@
 #ifdef LOG_ENABLED
     #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                 \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                               \
+            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
                 (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));                                          \
         } while (0)
 #else
@@ -110,7 +113,7 @@
 #ifdef LOG_ENABLED
     #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
         do {                                                                                                   \
-            if (FIFE::LogManager::instance()->isVisible((logger).getModule()))                                 \
+            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                  \
                 (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));                                            \
         } while (0)
 #else
@@ -123,11 +126,18 @@ namespace FIFE
     /**
      *  Central logging controller.
      *
-     * LogManager is a singleton that owns all log sinks (console, file) and
-     * maintains the module-visibility bitmask.  Its primary responsibilities:
-     *   - Filter messages by severity level (LogLevel).
+     * LogManager is a singleton that owns all log sinks and
+     * maintains the module-visibility bitmask.
+     * It is configured via configure(LogConfig), which is safe to call even
+     * after static Logger instances have already started using the defaults.
+     * The file sink is created lazily only if logging is enabled (so we dont
+     * get an empty fife.log when file logging is disabled).
+     *
+     * Its primary responsibilities:
+     *   - Own the log sinks and per-module spdlog loggers.
      *   - Filter messages by module visibility (modules.h).
      *   - Route visible messages to spdlog sinks (color console, rotating file).
+     *   - Lazily create a file sink, if enabled
      *
      * Use the FL_DBG / FL_LOG / FL_WARN / FL_ERR / FL_PANIC macros instead
      * of calling LogManager or Logger methods directly.
@@ -151,14 +161,30 @@ namespace FIFE
 
             /**
              *  Returns the singleton instance.
-             * @return Pointer to the global LogManager.
+             * @return Reference to the global LogManager.
              *
-             * The instance is created on first call and intentionally leaked
-             * to avoid static-destruction-order issues with the spdlog registry.
+             * The instance is a function-local static (Meyer's singleton),
+             * initialized on first call and thread-safe in C++11+.
+             * Its destructor is intentionally a no-op to avoid static
+             * destruction-order issues with the spdlog registry.
              */
-            static LogManager* instance();
+            static LogManager& instance();
 
-            /// Destructor (no-op – singleton is intentionally leaked).
+            /**
+             *  Reconfigures the LogManager with the given config.
+             * @param cfg  The new logging configuration.
+             *
+             * Thread-safe: acquires an internal mutex before rebuilding sinks.
+             * All existing per-module loggers are updated atomically via
+             * spdlog::set_sinks().
+             *
+             * Safe to call after static Logger instances have already been
+             * constructed — those loggers continue to point to their
+             * per-module spdlog loggers, whose sinks are replaced in-place.
+             */
+            void configure(LogConfig const & cfg);
+
+            /// Destructor (no-op – see instance()).
             ~LogManager();
 
             LogManager(LogManager const &)            = delete;
@@ -216,6 +242,9 @@ namespace FIFE
             /**
              *  Enables or disables console output.
              * @param logtoprompt  true to enable the color console sink.
+             *
+             * This is a shorthand for configure() that toggles only the
+             * console_enabled flag.
              */
             void setLogToPrompt(bool logtoprompt);
 
@@ -229,8 +258,11 @@ namespace FIFE
              *  Enables or disables file output.
              * @param logtofile  true to enable the rotating file sink.
              *
-             * The file sink writes to @c fife.log with a 5 MB size limit
-             * and 3 rotated backups.
+             * This is a shorthand for configure() that toggles only the
+             * file_enabled flag.
+             *
+             * Unlike the legacy implementation, no fife.log file is created
+             * unless this flag is (or has been) true.
              */
             void setLogToFile(bool logtofile);
 
@@ -261,17 +293,27 @@ namespace FIFE
 #endif
 
         private:
+            // Only instance() may construct a LogManager.
             LogManager();
+
             void validateModuleDescription(logmodule_t module);
             static bool isValidModule(logmodule_t module);
+
+#ifdef LOG_ENABLED
+            /** Rebuild all sinks and propagate them to every registered logger. */
+            void rebuildSinks();
+#endif
+
+            std::mutex m_config_mutex;
+            LogConfig m_config;
 
             LogLevel m_level;
             bool m_modules[LM_MODULE_MAX];
 
 #ifdef LOG_ENABLED
             spdlog::logger* m_loggers[LM_MODULE_MAX];
-            std::shared_ptr<spdlog::sinks::sink> m_console_sink;
-            std::shared_ptr<spdlog::sinks::sink> m_file_sink;
+            std::shared_ptr<spdlog::logger> m_root_logger;
+            std::shared_ptr<spdlog::sinks::dist_sink_mt> m_dist_sink;
 #endif
     };
 

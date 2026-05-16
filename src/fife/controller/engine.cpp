@@ -83,7 +83,7 @@ namespace FIFE
         m_soundclipmanager(nullptr),
         m_vfs(nullptr),
         m_model(nullptr),
-        m_logmanager(LogManager::instance()),
+        m_logmanager(&LogManager::instance()),
         m_cursor(nullptr),
         m_destroyed(false),
 

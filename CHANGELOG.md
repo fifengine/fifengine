@@ -33,6 +33,10 @@ All notable changes to this project will be documented in this file.
   - fixed `~LogManager()` self-delete UB
   - fixed SWIG `getModuleName` heap corruption under `RTLD_GLOBAL` (static Python lookup)
   - removed dead `pprint` helper
+- refactored LogManager
+  - configure(LogConfig) allows in-place reconfiguration
+  - log file sink is now created only when LogConfig::file_enabled=true, eliminating the empty fife.log, if disabled.
+  - added config.hpp with LogConfig struct
 - dependencies: remove `FIFEGUI_DEPENDENCY_BUILD_FROM_SOURCE` option and clean up related code and build workflows
   - we always build non-vcpkg dependencies from source. = we no longer fetch pre-built binaries for windows.
 - standardized object ID naming (issue #517)
