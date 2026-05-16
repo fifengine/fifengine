@@ -63,6 +63,10 @@ namespace fcn
     void AnimationIcon::setAnimation(FIFE::AnimationPtr const & animation)
     {
         mAnimation = animation;
+        if (!mAnimation.get()) {
+            mAnimtime = 0;
+            return;
+        }
         if (mPlay) {
             mAnimtime = mTimemanager->now64();
         } else {

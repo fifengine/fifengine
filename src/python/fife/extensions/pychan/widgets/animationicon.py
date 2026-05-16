@@ -213,7 +213,10 @@ class AnimationIcon(Widget):
                     )
                     ptr = loader.load(anim)
                     self._anim = ptr
-            self.real_widget.setAnimation(self._anim)
+                else:
+                    self._anim = None
+            if self._anim is not None:
+                self.real_widget.setAnimation(self._anim)
 
     def _getAnimation(self):
         return self._anim
