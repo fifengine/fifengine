@@ -3,16 +3,9 @@
 
 """Savers plugin manager."""
 
-import os.path
 
-from fife.extensions.serializers.xmlmapsaver import XMLMapSaver
-
-mapFileMapping = {"xml": XMLMapSaver}
-fileExtensions = ("xml",)
-
-
-def saveMapFile(path, engine, map, importList=[], debug=True):
-    """Save a map file.
+def saveMapFile(path, engine, map_obj, importList=None, debug=True):
+    """Save a map file using the C++ MapSaver.
 
     Parameters
     ----------
@@ -20,7 +13,7 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
         Fully qualified path to the file to save.
     engine : object
         FIFE engine instance.
-    map : object
+    map_obj : object
         FIFE map object.
     importList : list, optional
         A list of all imports.
@@ -32,31 +25,14 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
     object
         The saved map object.
     """
-    filename, extension = os.path.splitext(path)
-    map.setFilename(path)
-    map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
+    from fife import fife
 
-    map_saver.saveResource()
+    model = engine.getModel()
+    img_mgr = engine.getImageManager()
+
+    saver = fife.createDefaultMapSaver(model, img_mgr)
+    saver.save(map_obj, path, importList or [])
+
     if debug:
-        print("--- Saved Map.")
-    return map
-
-
-def addMapSaver(fileExtension, saverClass):
-    """Register a new map saver for a file extension.
-
-    Parameters
-    ----------
-    fileExtension : str
-        The file extension the saver is registered for.
-    saverClass : type
-        A ``fife.ResourceLoader`` implementation that saves maps from files
-        with the given extension.
-    """
-    mapFileMapping[fileExtension] = saverClass
-    _updateMapFileExtensions()
-
-
-def _updateMapFileExtensions():
-    global fileExtensions
-    fileExtensions = set(mapFileMapping.keys())
+        print("--- Saved Map using C++ MapSaver.")
+    return map_obj

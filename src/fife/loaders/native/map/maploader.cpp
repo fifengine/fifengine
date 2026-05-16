@@ -8,6 +8,7 @@
 #include <cassert>
 #include <limits>
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -42,6 +43,7 @@
 #include "video/renderbackend.h"
 #include "view/camera.h"
 #include "view/renderers/instancerenderer.h"
+#include "view/renderers/lightrenderer.h"
 #include "view/visual.h"
 
 namespace FIFE
@@ -420,6 +422,9 @@ namespace FIFE
                                             m_percentDoneListener.incrementCount();
                                         }
                                     }
+
+                                    parseLights(layerElement, layer);
+                                    parseSounds(layerElement, layer);
                                 }
                             }
                         }
@@ -750,7 +755,212 @@ namespace FIFE
             }
         }
 
+        createLightNodes(map);
+
         return map;
+    }
+
+    void MapLoader::parseLights(XML::Element const * layerElement, Layer* layer)
+    {
+        assert("layerElement required" && layerElement);
+        assert("layer required" && layer);
+
+        XML::Element const * lightsElement = layerElement->FirstChildElement("lights");
+        if (!lightsElement) {
+            return;
+        }
+
+        for (XML::Element const * lightElement = lightsElement->FirstChildElement("l"); lightElement != nullptr;
+             lightElement                      = lightElement->NextSiblingElement("l")) {
+            LightData ld;
+            ld.layerName = layer->getName();
+
+            char const * groupStr = XML::Attribute(lightElement, "group");
+            if (!groupStr) {
+                continue;
+            }
+            ld.group = groupStr;
+
+            char const * type = XML::Attribute(lightElement, "type");
+            if (!type) {
+                continue;
+            }
+            ld.type = type;
+
+            char const * instanceName = XML::Attribute(lightElement, "instance");
+            if (instanceName) {
+                ld.instanceName = instanceName;
+            }
+
+            XML::QueryAttribute(lightElement, "x", &ld.x);
+            XML::QueryAttribute(lightElement, "y", &ld.y);
+
+            int src = -1;
+            int dst = -1;
+            XML::QueryAttribute(lightElement, "src", &src);
+            XML::QueryAttribute(lightElement, "dst", &dst);
+            ld.srcBlend = src;
+            ld.dstBlend = dst;
+
+            XML::QueryAttribute(lightElement, "s_ref", &ld.sRef);
+            XML::QueryAttribute(lightElement, "a_ref", &ld.aRef);
+
+            char const * camId = XML::Attribute(lightElement, "camera_id");
+            if (camId) {
+                ld.cameraId = camId;
+            }
+
+            if (ld.type == "simple") {
+                XML::QueryAttribute(lightElement, "radius", &ld.radius);
+                XML::QueryAttribute(lightElement, "subdivisions", &ld.subdivisions);
+                XML::QueryAttribute(lightElement, "intensity", &ld.intensity);
+                XML::QueryAttribute(lightElement, "xstretch", &ld.xstretch);
+                XML::QueryAttribute(lightElement, "ystretch", &ld.ystretch);
+
+                char const * colorStr = XML::Attribute(lightElement, "color");
+                if (colorStr) {
+                    IntVector const color = tokenize(colorStr, ',');
+                    if (color.size() >= 3) {
+                        ld.colorR = color[0];
+                        ld.colorG = color[1];
+                        ld.colorB = color[2];
+                    }
+                }
+            } else if (ld.type == "image") {
+                char const * imagePath = XML::Attribute(lightElement, "image");
+                if (!imagePath) {
+                    continue;
+                }
+                fs::path fullPath(m_mapDirectory);
+                fullPath /= imagePath;
+                ld.imagePath = fullPath.string();
+            } else if (ld.type == "animation") {
+                char const * animationPath = XML::Attribute(lightElement, "animation");
+                if (!animationPath) {
+                    continue;
+                }
+                fs::path fullPath(m_mapDirectory);
+                fullPath /= animationPath;
+                ld.animationPath = fullPath.string();
+            } else {
+                continue;
+            }
+
+            m_lightData.push_back(ld);
+        }
+    }
+
+    void MapLoader::parseSounds(XML::Element const * layerElement, Layer* layer)
+    {
+        assert("layerElement required" && layerElement);
+        assert("layer required" && layer);
+
+        XML::Element const * soundsElement = layerElement->FirstChildElement("sounds");
+        if (!soundsElement) {
+            return;
+        }
+
+        for (XML::Element const * soundElement = soundsElement->FirstChildElement("sound"); soundElement != nullptr;
+             soundElement                      = soundElement->NextSiblingElement("sound")) {
+            char const * file = XML::Attribute(soundElement, "file");
+            if (!file) {
+                continue;
+            }
+            FL_LOG(
+                _log,
+                "Sound file '" + std::string(file) + "' found on layer '" + layer->getName() +
+                    "' - sound emitters not yet implemented in loader");
+        }
+    }
+
+    void MapLoader::createLightNodes(Map* map)
+    {
+        assert("map required" && map);
+
+        if (m_lightData.empty()) {
+            return;
+        }
+
+        std::vector<Camera*> const & cameras = map->getCameras();
+        if (cameras.empty()) {
+            return;
+        }
+
+        std::map<std::string, Camera*> cameraMap;
+        for (Camera* cam : cameras) {
+            cameraMap[cam->getName()] = cam;
+        }
+
+        Camera* defaultCamera = cameras[0];
+
+        for (LightData const & ld : m_lightData) {
+            Layer* layer = map->getLayer(ld.layerName);
+            if (!layer) {
+                FL_WARN(_log, "Light references unknown layer '" + ld.layerName + "'");
+                continue;
+            }
+
+            Instance* instance = nullptr;
+            if (!ld.instanceName.empty()) {
+                instance = layer->getInstance(ld.instanceName);
+                if (!instance) {
+                    FL_WARN(
+                        _log,
+                        "Light references unknown instance '" + ld.instanceName + "' on layer '" + ld.layerName + "'");
+                }
+            }
+
+            RendererNode node(
+                instance ? RendererNode(instance, layer, Point(ld.x, ld.y)) : RendererNode(layer, Point(ld.x, ld.y)));
+
+            Camera* cam = defaultCamera;
+            if (!ld.cameraId.empty()) {
+                auto it = cameraMap.find(ld.cameraId);
+                if (it != cameraMap.end()) {
+                    cam = it->second;
+                }
+            }
+
+            LightRenderer* renderer = LightRenderer::getInstance(cam);
+            if (!renderer) {
+                continue;
+            }
+
+            if (ld.type == "simple") {
+                renderer->addSimpleLight(
+                    ld.group,
+                    node,
+                    static_cast<uint8_t>(ld.intensity),
+                    ld.radius,
+                    ld.subdivisions,
+                    ld.xstretch,
+                    ld.ystretch,
+                    static_cast<uint8_t>(ld.colorR),
+                    static_cast<uint8_t>(ld.colorG),
+                    static_cast<uint8_t>(ld.colorB),
+                    ld.srcBlend,
+                    ld.dstBlend);
+            } else if (ld.type == "image") {
+                ImagePtr image = m_imageManager->create(ld.imagePath);
+                renderer->addImage(ld.group, node, image, ld.srcBlend, ld.dstBlend);
+            } else if (ld.type == "animation") {
+                if (m_objectLoader) {
+                    AnimationLoaderPtr const animLoader = m_objectLoader->getAnimationLoader();
+                    if (animLoader) {
+                        std::vector<AnimationPtr> const anims = animLoader->loadMultiple(ld.animationPath);
+                        if (!anims.empty()) {
+                            renderer->addAnimation(ld.group, node, anims[0], ld.srcBlend, ld.dstBlend);
+                        }
+                    }
+                }
+            }
+
+            if (ld.sRef != -1) {
+                renderer->addStencilTest(ld.group, static_cast<uint8_t>(ld.sRef));
+            }
+        }
+
+        m_lightData.clear();
     }
 
     void MapLoader::setObjectLoader(FIFE::ObjectLoaderPtr const & objectLoader)

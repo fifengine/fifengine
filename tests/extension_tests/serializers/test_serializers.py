@@ -119,27 +119,6 @@ class TestSerializersExceptions:
         assert issubclass(NotFound, SerializerError)
 
 
-class TestXmlLoaderTools:
-    def test_norm_path(self):
-        from fife.extensions.serializers.xml_loader_tools import norm_path
-
-        assert callable(norm_path)
-
-    def test_root_subfile(self):
-        from fife.extensions.serializers.xml_loader_tools import root_subfile
-
-        assert callable(root_subfile)
-
-    def test_reverse_root_subfile(self):
-        from fife.extensions.serializers.xml_loader_tools import reverse_root_subfile
-
-        assert callable(reverse_root_subfile)
-
-    def test_frange(self):
-        from fife.extensions.serializers.xml_loader_tools import frange
-
-        assert callable(frange)
-
 
 class TestSimpleXMLSerializer:
     def test_class_exists(self):

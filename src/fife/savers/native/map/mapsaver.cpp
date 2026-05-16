@@ -7,12 +7,15 @@
 // Standard C++ library includes
 #include <list>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
 // FIFE includes
+#include "model/metamodel/action.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/object.h"
+#include "model/model.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
 #include "model/structures/instance.h"
@@ -20,10 +23,15 @@
 #include "model/structures/map.h"
 #include "model/structures/trigger.h"
 #include "model/structures/triggercontroller.h"
+#include "savers/native/map/animationsaver.h"
+#include "savers/native/map/atlassaver.h"
+#include "savers/native/map/objectsaver.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
 #include "util/xml/xmlhelper.h"
+#include "video/imagemanager.h"
 #include "view/camera.h"
+#include "view/renderers/lightrenderer.h"
 #include "view/visual.h"
 
 namespace FIFE
@@ -183,6 +191,8 @@ namespace FIFE
 
                 instancesElement->InsertEndChild(instanceElement);
             }
+
+            writeLayerLights(map, *layer, doc, layerElement);
         }
         // add cellcaches tag to document
         XML::Element* cellcachesElement = doc.NewElement("cellcaches");
@@ -416,6 +426,196 @@ namespace FIFE
             }
         }
 
+        // Save unique objects via object saver
+        if (m_objectSaver) {
+            ObjectSaver* objSaver = static_cast<ObjectSaver*>(m_objectSaver.get());
+            std::set<std::pair<std::string, std::string>> savedObjects;
+            for (auto* layer : layers) {
+                auto instances = layer->getInstances();
+                for (auto* instance : instances) {
+                    Object const * obj = instance->getObject();
+                    if (obj->isMultiPart()) {
+                        continue;
+                    }
+                    std::pair<std::string, std::string> key(obj->getName(), obj->getNamespace());
+                    if (savedObjects.insert(key).second) {
+                        objSaver->setObject(obj);
+                        objSaver->save(obj->getFilename());
+                    }
+                }
+            }
+        }
+
+        // Save unique animations via animation saver
+        if (m_animationSaver) {
+            AnimationSaver* animSaver = static_cast<AnimationSaver*>(m_animationSaver.get());
+            std::set<std::string> savedAnimations;
+            for (auto* layer : layers) {
+                for (auto* instance : layer->getInstances()) {
+                    Object const * obj = instance->getObject();
+                    if (obj->isMultiPart()) {
+                        continue;
+                    }
+                    std::list<std::string> const actionIds = obj->getActionIds();
+                    for (auto const & actionId : actionIds) {
+                        Action* action = obj->getAction(actionId, false);
+                        if (!action) {
+                            continue;
+                        }
+                        auto* actionVisual = action->getVisual<ActionVisual>();
+                        if (!actionVisual) {
+                            continue;
+                        }
+                        std::vector<int32_t> angles;
+                        actionVisual->getActionImageAngles(angles);
+                        for (int32_t angle : angles) {
+                            AnimationPtr const animation = actionVisual->getAnimationByAngle(angle);
+                            if (!animation) {
+                                continue;
+                            }
+                            if (savedAnimations.insert(animation->getName()).second) {
+                                animSaver->setAnimation(animation.get());
+                                animSaver->save(animation->getName() + ".xml");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         doc.SaveFile(filename.c_str());
+    }
+
+    void MapSaver::writeLayerLights(
+        Map const & map, Layer const & layer, XML::Document& doc, XML::Element* layerElement)
+    {
+        using CameraContainer   = std::vector<Camera*>;
+        CameraContainer cameras = map.getCameras();
+
+        bool hasLights = false;
+        for (auto& camera : cameras) {
+            LightRenderer* renderer = LightRenderer::getInstance(camera);
+            if (!renderer)
+                continue;
+
+            bool layerActive = false;
+            for (auto* activeLayer : renderer->getActiveLayers()) {
+                if (activeLayer->getName() == layer.getName()) {
+                    layerActive = true;
+                    break;
+                }
+            }
+            if (!layerActive)
+                continue;
+
+            if (!renderer->getGroups().empty()) {
+                hasLights = true;
+                break;
+            }
+        }
+
+        if (!hasLights)
+            return;
+
+        XML::Element* lightsElement = doc.NewElement("lights");
+        layerElement->InsertEndChild(lightsElement);
+
+        for (auto& camera : cameras) {
+            LightRenderer* renderer = LightRenderer::getInstance(camera);
+            if (!renderer)
+                continue;
+
+            bool layerActive = false;
+            for (auto* activeLayer : renderer->getActiveLayers()) {
+                if (activeLayer->getName() == layer.getName()) {
+                    layerActive = true;
+                    break;
+                }
+            }
+            if (!layerActive)
+                continue;
+
+            for (auto const & group : renderer->getGroups()) {
+                for (auto* info : renderer->getLightInfo(group)) {
+                    Instance* instance = info->getNode()->getInstance();
+                    if (!instance)
+                        continue;
+
+                    std::string type = info->getName();
+                    if (type != "simple" && type != "image" && type != "animation")
+                        continue;
+
+                    XML::Element* lightElement = doc.NewElement("l");
+                    lightElement->SetAttribute("group", group.c_str());
+                    lightElement->SetAttribute("type", type.c_str());
+                    lightElement->SetAttribute("instance", instance->getName().c_str());
+
+                    if (info->getSrcBlend() > -1) {
+                        lightElement->SetAttribute("src", info->getSrcBlend());
+                    }
+                    if (info->getDstBlend() > -1) {
+                        lightElement->SetAttribute("dst", info->getDstBlend());
+                    }
+                    if (info->getStencil() > -1) {
+                        lightElement->SetAttribute("s_ref", info->getStencil());
+                        lightElement->SetAttribute("a_ref", info->getStencil());
+                    }
+
+                    if (type == "simple") {
+                        auto* simpleInfo = dynamic_cast<LightRendererSimpleLightInfo*>(info);
+                        if (simpleInfo) {
+                            if (simpleInfo->getRadius() > 0.0) {
+                                lightElement->SetAttribute("radius", simpleInfo->getRadius());
+                            }
+                            std::vector<uint8_t> color = simpleInfo->getColor();
+                            if (!color.empty()) {
+                                std::ostringstream colorStr;
+                                colorStr << static_cast<int>(color[0]) << "," << static_cast<int>(color[1]) << ","
+                                         << static_cast<int>(color[2]);
+                                lightElement->SetAttribute("color", colorStr.str().c_str());
+                                lightElement->SetAttribute("intensity", static_cast<int>(color[3]));
+                            }
+                            if (simpleInfo->getSubdivisions() != 32) {
+                                lightElement->SetAttribute("subdivisions", simpleInfo->getSubdivisions());
+                            }
+                            if (simpleInfo->getXStretch() > 1.001 || simpleInfo->getXStretch() < 0.999) {
+                                lightElement->SetAttribute("xstretch", simpleInfo->getXStretch());
+                            }
+                            if (simpleInfo->getYStretch() > 1.001 || simpleInfo->getYStretch() < 0.999) {
+                                lightElement->SetAttribute("ystretch", simpleInfo->getYStretch());
+                            }
+                        }
+                    } else if (type == "image") {
+                        auto* imageInfo = dynamic_cast<LightRendererImageInfo*>(info);
+                        if (imageInfo && imageInfo->getImage()) {
+                            lightElement->SetAttribute("image", imageInfo->getImage()->getName().c_str());
+                        }
+                    } else if (type == "animation") {
+                        auto* animInfo = dynamic_cast<LightRendererAnimationInfo*>(info);
+                        if (animInfo && animInfo->getAnimation()) {
+                            lightElement->SetAttribute("animation", animInfo->getAnimation()->getName().c_str());
+                        }
+                    }
+
+                    lightsElement->InsertEndChild(lightElement);
+                }
+            }
+        }
+    }
+
+    MapSaver* createDefaultMapSaver(Model* model, ImageManager* imageManager)
+    {
+        MapSaver* saver = new MapSaver();
+
+        AnimationSaverPtr animSaver(new AnimationSaver());
+        AtlasSaverPtr atlasSaver(new AtlasSaver());
+        ObjectSaverPtr objSaver(new ObjectSaver(model, imageManager));
+        objSaver->setAnimationSaver(animSaver);
+
+        saver->setObjectSaver(objSaver);
+        saver->setAnimationSaver(animSaver);
+        saver->setAtlasSaver(atlasSaver);
+
+        return saver;
     }
 } // namespace FIFE

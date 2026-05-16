@@ -54,18 +54,6 @@ class TestPythonizeModule:
 
 
 class TestLoadersModule:
-    def test_all_exported(self):
-        from fife.extensions import loaders
-
-        expected = ["loadMapFile", "addMapLoader", "mapFileMapping", "fileExtensions"]
-        for name in expected:
-            assert hasattr(loaders, name)
-
-    def test_add_map_loader(self):
-        from fife.extensions.loaders import addMapLoader
-
-        assert callable(addMapLoader)
-
     def test_load_map_file(self):
         from fife.extensions.loaders import loadMapFile
 
@@ -73,18 +61,6 @@ class TestLoadersModule:
 
 
 class TestSaversModule:
-    def test_all_exported(self):
-        from fife.extensions import savers
-
-        expected = ["saveMapFile", "addMapSaver", "mapFileMapping", "fileExtensions"]
-        for name in expected:
-            assert hasattr(savers, name)
-
-    def test_add_map_saver(self):
-        from fife.extensions.savers import addMapSaver
-
-        assert callable(addMapSaver)
-
     def test_save_map_file(self):
         from fife.extensions.savers import saveMapFile
 

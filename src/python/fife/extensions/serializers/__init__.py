@@ -5,8 +5,6 @@
 
 import os
 
-import fife
-
 __all__ = (
     "ET",
     "SerializerError",
@@ -104,67 +102,6 @@ def norm_path(path):
 
     return "/".join(path.split(os.path.sep))
 
-
-def loadImportFile(loader, path, engine, debug=False):
-    """Use XMLObjectLoader to load an import file from a path.
-
-    Parameters
-    ----------
-    loader : object
-        Loader instance (XMLObjectLoader) to use.
-    path : str
-        Path to import file.
-    engine : object
-        Engine instance (unused by this helper but provided for API consistency).
-    debug : bool, optional
-        Flag to activate/deactivate print statements.
-    """
-    loader.loadResource(fife.ResourceLocation(path))
-    if debug:
-        print("imported object file " + path)
-
-
-def loadImportDir(loader, path, engine, debug=False):
-    """
-    Call :func:`loadImportFile` for every XML file in a directory.
-
-    Parameters
-    ----------
-    loader : object
-        Loader instance.
-    path : str
-        Path to import directory.
-    engine : object
-        Engine instance used to list files.
-    debug : bool, optional
-        Flag to activate/deactivate print statements.
-    """
-    for _file in [
-        f for f in engine.getVFS().listFiles(path) if f.split(".")[-1] == "xml"
-    ]:
-        loadImportFile(loader, "/".join([path, _file]), engine, debug)
-
-
-def loadImportDirRec(loader, path, engine, debug=False):
-    """Recursively call :func:`loadImportFile` for XML files in a directory tree.
-
-    Parameters
-    ----------
-    loader : object
-        Loader instance.
-    path : str
-        Path to import directory.
-    engine : object
-        Engine instance used to list directories and files.
-    debug : bool, optional
-        Flag to activate/deactivate print statements.
-    """
-    loadImportDir(loader, path, engine, debug)
-
-    for _dir in [
-        d for d in engine.getVFS().listDirectories(path) if not d.startswith(".")
-    ]:
-        loadImportDirRec(loader, "/".join([path, _dir]), engine, debug)
 
 
 def root_subfile(masterfile, subfile):

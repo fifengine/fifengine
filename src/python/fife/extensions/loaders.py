@@ -3,31 +3,16 @@
 
 """Loaders plugin manager."""
 
-import os.path
 
-from fife.extensions.serializers.xmlmap import XMLMapLoader
-
-mapFileMapping = {"xml": XMLMapLoader}
-fileExtensions = {"xml"}
-
-
-def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
-    """Load map file and get (an optional) callback if major stuff is done.
-
-    - map creation
-    - parsed imports
-    - parsed layers
-    - parsed cameras
-
-    the callback will send both a string and a float (which shows
-    the overall process), callback(string, float)
+def loadMapFile(path, engine, callback=None, debug=True, extensions=None):
+    """Load map file using the C++ MapLoader.
 
     Parameters
     ----------
     engine : object
         FIFE engine instance.
     callback : callable, optional
-        Callback for map loading progress; called as callback(string, float).
+        Ignored. C++ MapLoader does not support callback progress.
     debug : bool, optional
         Flag to activate/deactivate print statements.
 
@@ -36,29 +21,16 @@ def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
     object
         FIFE map object.
     """
-    filename, extension = os.path.splitext(path)
-    map_loader = mapFileMapping[extension[1:]](engine, callback, debug, extensions)
-    map = map_loader.loadResource(path)
+    from fife import fife
+
+    model = engine.getModel()
+    vfs = engine.getVFS()
+    img_mgr = engine.getImageManager()
+    render_backend = engine.getRenderBackend()
+
+    loader = fife.MapLoader(model, vfs, img_mgr, render_backend)
+    map_obj = loader.load(path)
+
     if debug:
-        print("--- Loading map took: ", map_loader.time_to_load, " seconds.")
-    return map
-
-
-def addMapLoader(fileExtension, loaderClass):
-    """Add a new loader for fileextension.
-
-    Parameters
-    ----------
-    fileExtension : str
-        The file extension the loader is registered for.
-    loaderClass : type
-        A ``fife.ResourceLoader`` implementation that loads maps from files
-        with the given file extension.
-    """
-    mapFileMapping[fileExtension] = loaderClass
-    _updateMapFileExtensions()
-
-
-def _updateMapFileExtensions():
-    global fileExtensions
-    fileExtensions = set(mapFileMapping.keys())
+        print("--- Loading map took using C++ MapLoader.")
+    return map_obj

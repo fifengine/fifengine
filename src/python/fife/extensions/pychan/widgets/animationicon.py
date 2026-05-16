@@ -5,7 +5,6 @@
 from fife import fife, fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.internal import get_manager
-from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 from .widget import Widget
 
@@ -206,8 +205,14 @@ class AnimationIcon(Widget):
                 self._anim = anim
             else:
                 if anim != "":
-                    # use xml loader
-                    self._anim = loadXMLAnimation(get_manager().hook.engine, anim)
+                    engine = get_manager().hook.engine
+                    loader = fife.AnimationLoader(
+                        engine.getVFS(),
+                        engine.getImageManager(),
+                        engine.getAnimationManager(),
+                    )
+                    ptr = loader.load(anim)
+                    self._anim = ptr
             self.real_widget.setAnimation(self._anim)
 
     def _getAnimation(self):

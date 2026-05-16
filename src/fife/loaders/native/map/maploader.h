@@ -16,6 +16,11 @@
 // FIFE includes
 
 #include "ianimationloader.h"
+
+namespace tinyxml2
+{
+    class XMLElement;
+}
 #include "imaploader.h"
 #include "percentdonelistener.h"
 
@@ -103,6 +108,40 @@ namespace FIFE
             std::string const & getLoaderName() const;
 
         private:
+            struct LightData
+            {
+                    std::string type;
+                    std::string group;
+                    std::string instanceName;
+                    std::string layerName;
+                    std::string cameraId;
+
+                    // simple light
+                    float radius     = 10.0f;
+                    int intensity    = 128;
+                    int subdivisions = 32;
+                    float xstretch   = 1.0f;
+                    float ystretch   = 1.0f;
+                    int colorR       = 255;
+                    int colorG       = 255;
+                    int colorB       = 255;
+
+                    // image light
+                    std::string imagePath;
+
+                    // animation light
+                    std::string animationPath;
+
+                    int x = 0;
+                    int y = 0;
+
+                    int srcBlend = -1;
+                    int dstBlend = -1;
+
+                    int sRef   = -1;
+                    float aRef = 0.0f;
+            };
+
             Model* m_model;
             VFS* m_vfs;
             ImageManager* m_imageManager;
@@ -114,6 +153,11 @@ namespace FIFE
             std::string m_loaderName;
             std::string m_mapDirectory;
             std::vector<std::string> m_importDirectories;
+            std::vector<LightData> m_lightData;
+
+            void parseLights(tinyxml2::XMLElement const * layerElement, Layer* layer);
+            void parseSounds(tinyxml2::XMLElement const * layerElement, Layer* layer);
+            void createLightNodes(Map* map);
     };
 
     /** convenience function for creating the default fife map loader

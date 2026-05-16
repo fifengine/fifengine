@@ -337,6 +337,9 @@ set(
   src/fife/pathfinder/routepather/singlelayersearch.cpp
   src/fife/savers/native/input/controllermappingsaver.cpp
   src/fife/savers/native/map/mapsaver.cpp
+  src/fife/savers/native/map/objectsaver.cpp
+  src/fife/savers/native/map/animationsaver.cpp
+  src/fife/savers/native/map/atlassaver.cpp
   src/fife/util/base/exception.cpp
   src/fife/util/base/fifeclass.cpp
   src/fife/util/base/stringutils.cpp
@@ -533,7 +536,10 @@ set(
   src/fife/savers/native/map/imapsaver.h
   src/fife/savers/native/map/iobjectsaver.h
   src/fife/savers/native/map/mapsaver.h
-  src/fife/util/base/exception.h
+  src/fife/savers/native/map/objectsaver.h
+   src/fife/savers/native/map/animationsaver.h
+   src/fife/savers/native/map/atlassaver.h
+   src/fife/util/base/exception.h
   src/fife/util/base/fifeclass.h
   src/fife/util/base/fife_stdint.h
   src/fife/util/base/sharedptr.h
@@ -704,8 +710,11 @@ set(
   src/fife/savers/native/map/iatlassaver.i
   src/fife/savers/native/map/imapsaver.i
   src/fife/savers/native/map/iobjectsaver.i
-  src/fife/savers/native/map/mapsaver.i
-  src/fife/util/base/utilbase.i
+   src/fife/savers/native/map/mapsaver.i
+  src/fife/savers/native/map/objectsaver.i
+   src/fife/savers/native/map/animationsaver.i
+   src/fife/savers/native/map/atlassaver.i
+   src/fife/util/base/utilbase.i
   src/fife/util/log/logger.i
   src/fife/util/math/math.i
   src/fife/util/resource/resource.i

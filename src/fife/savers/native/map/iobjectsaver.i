@@ -9,6 +9,7 @@
 
 namespace FIFE {
 	%feature("director") IObjectSaver;
+	%feature("director") ObjectSaver;
 }
 
 %include "savers/native/map/iobjectsaver.h"

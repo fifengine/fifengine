@@ -50,6 +50,13 @@ All notable changes to this project will be documented in this file.
   - Object::getId()/setId() → Object::getName()/setName()
   - Action::getId() → Action::getName() (no setter)
   - updated the codebase accordingly
+- implemented issue #491: ported map/object loaders and savers from Python to C++
+    - New C++ classes: ObjectSaver, AnimationSaver, AtlasSaver
+    - MapSaver now writes lights
+    - MapLoader loads lights and sounds
+    - createDefaultMapSaver() factory function and added it to SWIG bindings
+    - BC break: removed legacy Python serializers (xmlmap, xmlmapsaver, xmlobject,
+      xmlanimation, xml_loader_tools)
 
 ## Fixed
 

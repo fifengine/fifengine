@@ -8,6 +8,7 @@
 
 namespace FIFE {
 	%feature("director") IAnimationSaver;
+	%feature("director") AnimationSaver;
 }
 
 %include "savers/native/map/ianimationsaver.h"

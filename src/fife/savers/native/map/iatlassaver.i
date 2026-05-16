@@ -8,6 +8,7 @@
 
 namespace FIFE {
 	%feature("director") IAtlasSaver;
+	%feature("director") AtlasSaver;
 }
 
 %include "savers/native/map/iatlassaver.h"

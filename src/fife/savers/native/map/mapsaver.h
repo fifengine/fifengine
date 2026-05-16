@@ -15,10 +15,14 @@
 
 // FIFE includes
 #include "imapsaver.h"
+#include "util/xml/xmlhelper.h"
 
 namespace FIFE
 {
+    class ImageManager;
+    class Layer;
     class Map;
+    class Model;
 
     /**
      * Default map saver class implementing the IMapSaver interface
@@ -46,10 +50,18 @@ namespace FIFE
                 Map const & map, std::string const & filename, std::vector<std::string> const & importFiles) override;
 
         private:
+            void writeLayerLights(Map const & map, Layer const & layer, XML::Document& doc, XML::Element* layerElement);
+
             ObjectSaverPtr m_objectSaver;
             AnimationSaverPtr m_animationSaver;
             AtlasSaverPtr m_atlasSaver;
     };
+
+    /** convenience function for creating the default fife map saver
+     * deleting the object returned from this function is the
+     * responsibility of the caller
+     */
+    FIFE_API MapSaver* createDefaultMapSaver(Model* model, ImageManager* imageManager);
 } // namespace FIFE
 
 #endif
