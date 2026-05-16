@@ -23,5 +23,10 @@ __pycache__/
 
 .cache/
 
+# Profiling data
+*.profraw
+
+# Test output: contains images for visual inspection
+test_output/
 
 /demos/unknown-horizons
