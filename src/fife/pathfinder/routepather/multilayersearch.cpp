@@ -220,8 +220,9 @@ namespace FIFE
             ModelCoordinate const adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (blocker && m_multicell) {
-                    auto bc_it = std::ranges::find(m_ignoredBlockers, adjacent);
-                    if (bc_it == m_ignoredBlockers.end()) {
+                    Location currentLoc(nextCell->getLayer());
+                    currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
+                    if (!isIgnoredBlocker(adjacent, currentLoc, 0)) {
                         continue;
                     }
                 } else {
@@ -244,8 +245,7 @@ namespace FIFE
                     Cell* cell = m_currentCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            auto bc_it = std::ranges::find(m_ignoredBlockers, cell);
-                            if (bc_it == m_ignoredBlockers.end()) {
+                            if (!isIgnoredBlocker(cell, currentLoc, rotation)) {
                                 blocker = true;
                                 break;
                             }

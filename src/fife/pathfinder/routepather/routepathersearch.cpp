@@ -10,9 +10,11 @@
 // 3rd party library includes
 
 // FIFE includes
+#include <unordered_set>
 #include <vector>
 
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/object.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
 #include "model/structures/layer.h"
@@ -31,19 +33,64 @@ namespace FIFE
     {
         m_route->setRouteStatus(ROUTE_SEARCHING);
         if (m_multicell) {
-            Location const loc                  = route->getStartNode();
-            std::vector<ModelCoordinate> coords = route->getOccupiedArea();
-            auto co_it                          = coords.begin();
-            for (; co_it != coords.end(); ++co_it) {
-                Cell* cell = loc.getLayer()->getCellCache()->getCell(*co_it);
-                if (cell != nullptr) {
-                    m_ignoredBlockers.push_back(cell);
+            // Store relative footprint offsets instead of raw Cell* pointers
+            // This allows the search to recompute absolute cells dynamically
+            // if the multi-cell rotates during the search.
+            Object* obj = route->getObject();
+            if (obj != nullptr) {
+                m_footprintOffsets = obj->getCachedFootprint(route->getRotation());
+            }
+            if (m_footprintOffsets.empty()) {
+                // Fallback: compute from occupied area
+                Location const loc = route->getStartNode();
+                CellGrid* grid     = loc.getLayer()->getCellGrid();
+                std::vector<ModelCoordinate> coords = route->getOccupiedArea();
+                for (auto& coord : coords) {
+                    m_footprintOffsets.push_back(
+                        ModelCoordinate(coord.x - loc.getLayerCoordinates().x,
+                                        coord.y - loc.getLayerCoordinates().y,
+                                        coord.z - loc.getLayerCoordinates().z));
                 }
             }
+            assert("footprint offsets must not be empty for multi-cell search" && !m_footprintOffsets.empty());
         }
     }
 
     RoutePatherSearch::~RoutePatherSearch() = default;
+
+    bool RoutePatherSearch::isIgnoredBlocker(Cell* cell, Location const & currentLoc, int32_t currentRot)
+    {
+        if (!m_multicell || cell == nullptr) {
+            return false;
+        }
+        // Lazy recompute: only rebuild absolute cache when position or rotation changes
+        if (!m_absoluteCache ||
+            m_lastCacheLoc.getLayerCoordinates() != currentLoc.getLayerCoordinates() ||
+            m_lastCacheLoc.getLayer() != currentLoc.getLayer() ||
+            m_lastCacheRotation != currentRot)
+        {
+            m_absoluteCache.emplace();
+            CellGrid* grid = currentLoc.getLayer()->getCellGrid();
+            if (grid == nullptr) {
+                return false;
+            }
+            for (auto const & offset : m_footprintOffsets) {
+                std::vector<ModelCoordinate> single;
+                single.push_back(offset);
+                std::vector<ModelCoordinate> absVec =
+                    grid->toMultiCoordinates(currentLoc.getLayerCoordinates(), single);
+                if (!absVec.empty()) {
+                    Cell* absCell = currentLoc.getLayer()->getCellCache()->getCell(absVec.front());
+                    if (absCell != nullptr) {
+                        m_absoluteCache->insert(absCell);
+                    }
+                }
+            }
+            m_lastCacheLoc     = currentLoc;
+            m_lastCacheRotation = currentRot;
+        }
+        return m_absoluteCache->contains(cell);
+    }
 
     int32_t RoutePatherSearch::getSessionId() const
     {

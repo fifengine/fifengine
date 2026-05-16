@@ -9,12 +9,15 @@
 
 // Standard C++ library includes
 #include <cstdint>
+#include <optional>
+#include <unordered_set>
+#include <vector>
 
 // 3rd party library includes
 
 // FIFE includes
-#include <vector>
-
+#include "model/metamodel/modelcoords.h"
+#include "model/structures/location.h"
 #include "util/structures/priorityqueue.h"
 
 namespace FIFE
@@ -23,6 +26,7 @@ namespace FIFE
     class Cell;
     class CellCache;
     class Route;
+    class Object;
 
     /** RoutePatherSearch using A*
      *
@@ -87,6 +91,15 @@ namespace FIFE
              */
             void setSearchStatus(SearchStatus status);
 
+            /** Checks if a given cell is part of the multi-cell's own occupied footprint.
+             *  Uses lazy absolute cell computation from cached relative offsets.
+             *  @param cell The cell to check.
+             *  @param currentLoc The multi-cell's current location.
+             *  @param currentRot The multi-cell's current rotation.
+             *  @return true if the cell is occupied by the multi-cell itself.
+             */
+            bool isIgnoredBlocker(Cell* cell, Location const & currentLoc, int32_t currentRot);
+
             //! Pointer to route
             Route* m_route;
 
@@ -99,8 +112,17 @@ namespace FIFE
             //! Indicates if dynamic blockers should be ignored.
             bool m_ignoreDynamicBlockers;
 
-            //! Blockers from a multi cell object which should be ignored.
-            std::vector<Cell*> m_ignoredBlockers;
+            //! Relative offsets of the multi-cell footprint (from cached footprint).
+            std::vector<ModelCoordinate> m_footprintOffsets;
+
+            //! Lazy absolute cell cache for current position/rotation.
+            std::optional<std::unordered_set<Cell*>> m_absoluteCache;
+
+            //! Last location used to compute m_absoluteCache.
+            Location m_lastCacheLoc;
+
+            //! Last rotation used to compute m_absoluteCache.
+            int32_t m_lastCacheRotation{0};
 
         private:
             //! An integer containing the session id for this search.

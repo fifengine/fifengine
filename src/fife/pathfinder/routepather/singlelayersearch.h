@@ -81,6 +81,9 @@ namespace FIFE
 
             //! Priority queue to hold nodes on the sf in order.
             PriorityQueue<int32_t, double> m_sortedfrontier;
+
+            //! Expansion counter to detect infinite loops.
+            uint32_t m_expansionCount;
     };
 } // namespace FIFE
 #endif

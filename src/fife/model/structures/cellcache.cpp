@@ -67,7 +67,47 @@ namespace FIFE
                             oldrotation = newrotation;
                         }
 
+                        // propagate blocking change to sub-instances before updating cells
+                        if (blochange) {
+                            assert("multi-cell blocking change must propagate to sub-instances" &&
+                                   !instance->getMultiInstances().empty());
+                            instance->propagateBlockingToSubInstances();
+                            // update cell blocking info for all occupied cells
+                            ModelCoordinate const mc =
+                                m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                                    instance->getLocationRef().getExactLayerCoordinatesRef()));
+                            Cell* mcCell = m_layer->getCellCache()->getCell(mc);
+                            if (mcCell != nullptr) {
+                                mcCell->changeInstance(instance);
+                            }
+                            for (auto* sub : instance->getMultiInstances()) {
+                                ModelCoordinate const subMc =
+                                    m_layer->getCellGrid()->toLayerCoordinates(layer->getCellGrid()->toMapCoordinates(
+                                        sub->getLocationRef().getExactLayerCoordinatesRef()));
+                                Cell* subCell = m_layer->getCellCache()->getCell(subMc);
+                                if (subCell != nullptr) {
+                                    subCell->changeInstance(sub);
+                                }
+                            }
+                        }
+
                         if (rotchange || locchange || celchange) {
+                            // Before moving sub-instances, create any new cells needed
+                            // for the new rotation footprint (so setLocation off-grid check
+                            // doesn't reject the move, W5-T4/W6-T4)
+                            if (rotchange) {
+                                ModelCoordinate newMc = instance->getLocationRef().getLayerCoordinates();
+                                CellGrid* cgPre = m_layer->getCellGrid();
+                                for (auto* si : instance->getMultiInstances()) {
+                                    std::vector<ModelCoordinate> preCoords = cgPre->toMultiCoordinates(
+                                        newMc, si->getObject()->getMultiPartCoordinates(instance->getRotation()));
+                                    for (auto const & pc : preCoords) {
+                                        if (m_layer->getCellCache()->getCell(pc) == nullptr) {
+                                            m_layer->getCellCache()->createCell(pc);
+                                        }
+                                    }
+                                }
+                            }
                             // update visual positions
                             instance->updateMultiInstances();
                         }
@@ -95,7 +135,7 @@ namespace FIFE
                             std::vector<Instance*> const & multiinstances = instance->getMultiInstances();
                             auto it                                       = multiinstances.begin();
                             for (; it != multiinstances.end(); ++it) {
-                                // remove
+                                // remove from old cells
                                 std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
                                     oldmc, (*it)->getObject()->getMultiPartCoordinates(oldrotation));
                                 auto mcit = coordinates.begin();
@@ -105,15 +145,17 @@ namespace FIFE
                                         cell->removeInstance(*it);
                                     }
                                 }
-                                // add
+                                // add to new cells, creating them if they don't exist
                                 coordinates = cg->toMultiCoordinates(
                                     newmc, (*it)->getObject()->getMultiPartCoordinates(newrotation));
                                 mcit = coordinates.begin();
                                 for (; mcit != coordinates.end(); ++mcit) {
                                     Cell* cell = m_layer->getCellCache()->getCell(*mcit);
-                                    if (cell != nullptr) {
-                                        cell->addInstance(*it);
+                                    if (cell == nullptr) {
+                                        cell = m_layer->getCellCache()->createCell(*mcit);
                                     }
+                                    assert("cell must exist for multi-cell add" && cell != nullptr);
+                                    cell->addInstance(*it);
                                 }
                             }
 
@@ -121,6 +163,9 @@ namespace FIFE
                                 // leader instance
                                 Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
                                 Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+                                if (newcell == nullptr) {
+                                    newcell = m_layer->getCellCache()->createCell(newmc);
+                                }
                                 if (oldcell == newcell) {
                                     continue;
                                 }
@@ -131,6 +176,8 @@ namespace FIFE
                                     newcell->addInstance(instance);
                                 }
                             }
+                            // Notify change listeners that the multi-cell footprint changed
+                            instance->addChangeInfo(ICHANGE_FOOTPRINT);
                         }
                         continue;
                     }
@@ -727,9 +774,19 @@ namespace FIFE
     {
         Cell* cell = getCell(mc);
         if (cell == nullptr) {
+            // Expand cache bounds if needed so the new coordinate fits
+            if (mc.x < m_size.x || mc.y < m_size.y || mc.x > m_size.w || mc.y > m_size.h) {
+                Rect const expanded(
+                    std::min(m_size.x, mc.x),
+                    std::min(m_size.y, mc.y),
+                    std::max(m_size.w, mc.x),
+                    std::max(m_size.h, mc.y));
+                resize(expanded);
+            }
             cell = new Cell(convertCoordToInt(mc), mc, m_layer);
             m_cells[static_cast<size_t>(mc.x - m_size.x)][static_cast<size_t>(mc.y - m_size.y)] = cell;
         }
+        assert("createCell must return a valid cell" && cell != nullptr);
         return cell;
     }
 

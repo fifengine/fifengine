@@ -17,6 +17,7 @@
 
 // FIFE includes
 #include "action.h"
+#include "grids/cellgrid.h"
 #include "ipather.h"
 #include "util/base/exception.h"
 
@@ -561,6 +562,94 @@ namespace FIFE
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_restrictedRotation = restrict;
+    }
+
+    void Object::initializeFootprintCache(CellGrid* grid)
+    {
+        if (m_multiProperty == nullptr || grid == nullptr) {
+            return;
+        }
+        // Precompute footprint for each distinct rotation angle
+        for (auto const & angleEntry : m_multiProperty->m_multiAngleMap) {
+            int32_t const rot = angleEntry.second;
+            std::vector<ModelCoordinate> offsets =
+                grid->toMultiCoordinates(ModelCoordinate(0, 0, 0), getMultiObjectCoordinates(rot));
+            assert("cached footprint must not be empty for valid rotation" && !offsets.empty());
+            m_multiProperty->m_footprintCache[rot] = std::move(offsets);
+        }
+        // Also cache rotation 0 if not present (every multi-cell defines rot 0)
+        if (m_multiProperty->m_footprintCache.find(0) == m_multiProperty->m_footprintCache.end()) {
+            std::vector<ModelCoordinate> offsets =
+                grid->toMultiCoordinates(ModelCoordinate(0, 0, 0), getMultiObjectCoordinates(0));
+            m_multiProperty->m_footprintCache[0] = std::move(offsets);
+        }
+    }
+
+    std::vector<ModelCoordinate> const & Object::getCachedFootprint(int32_t rotation) const
+    {
+        static std::vector<ModelCoordinate> const empty;
+        if (m_multiProperty != nullptr) {
+            auto it = m_multiProperty->m_footprintCache.find(rotation);
+            if (it != m_multiProperty->m_footprintCache.end()) {
+                return it->second;
+            }
+            // Fallback to closest matching angle
+            int32_t closest = rotation;
+            if (!m_multiProperty->m_multiAngleMap.empty()) {
+                getIndexByAngle(rotation, m_multiProperty->m_multiAngleMap, closest);
+            }
+            it = m_multiProperty->m_footprintCache.find(closest);
+            if (it != m_multiProperty->m_footprintCache.end()) {
+                return it->second;
+            }
+        }
+        if (m_inherited != nullptr) {
+            return m_inherited->getCachedFootprint(rotation);
+        }
+        return empty;
+    }
+
+    void Object::setFootprintCellCost(int32_t rotation, size_t cellIndex, double cost)
+    {
+        if (m_multiProperty == nullptr) {
+            m_multiProperty = new MultiObjectProperty();
+        }
+        assert("footprint cell cost must be non-negative" && cost >= 0.0);
+        // Ensure the cost vector exists for this rotation
+        auto& costs = m_multiProperty->m_footprintCosts[rotation];
+        // Find the corresponding footprint to determine the vector size
+        auto fit = m_multiProperty->m_footprintCache.find(rotation);
+        if (fit != m_multiProperty->m_footprintCache.end() && cellIndex < fit->second.size()) {
+            if (costs.size() <= cellIndex) {
+                costs.resize(fit->second.size(), 1.0);
+            }
+            costs[cellIndex] = cost;
+        }
+    }
+
+    double Object::getFootprintCellCost(int32_t rotation, size_t cellIndex) const
+    {
+        if (m_multiProperty != nullptr) {
+            auto it = m_multiProperty->m_footprintCosts.find(rotation);
+            if (it != m_multiProperty->m_footprintCosts.end() && cellIndex < it->second.size()) {
+                return it->second[cellIndex];
+            }
+        }
+        if (m_inherited != nullptr) {
+            return m_inherited->getFootprintCellCost(rotation, cellIndex);
+        }
+        return 1.0;
+    }
+
+    bool Object::hasFootprintCosts() const
+    {
+        if (m_multiProperty != nullptr) {
+            return !m_multiProperty->m_footprintCosts.empty();
+        }
+        if (m_inherited != nullptr) {
+            return m_inherited->hasFootprintCosts();
+        }
+        return false;
     }
 
     bool Object::isRestrictedRotation() const

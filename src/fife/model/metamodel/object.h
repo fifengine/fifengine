@@ -12,6 +12,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // 3rd party library includes
@@ -24,6 +25,7 @@ namespace FIFE
 {
 
     class Action;
+    class CellGrid;
     class IPather;
     class IVisual;
 
@@ -269,11 +271,27 @@ namespace FIFE
             std::vector<ModelCoordinate> getMultiObjectCoordinates(int32_t rotation) const;
 
             /** Sets the rotation anchor for this multi object.
-             * Is used to rotate the images from multi part objects around this relative point,
-             * default is 0.0, 0.0 the center of the multi object.
              * @param anchor A const reference to a ExactModelCoordinate that holds the anchor coordinate.
              */
             void setRotationAnchor(ExactModelCoordinate const & anchor);
+
+            /** Sets the cost multiplier for a specific cell in the multi-cell footprint.
+             *  @param rotation The rotation angle.
+             *  @param cellIndex The index into the footprint array for this rotation.
+             *  @param cost The cost multiplier (1.0 = normal, INFINITY = hard-blocked).
+             */
+            void setFootprintCellCost(int32_t rotation, size_t cellIndex, double cost);
+
+            /** Returns the cost multiplier for a footprint cell.
+             *  @param rotation The rotation angle.
+             *  @param cellIndex The index into the footprint array.
+             *  @return The cost multiplier, or 1.0 if not set.
+             */
+            double getFootprintCellCost(int32_t rotation, size_t cellIndex) const;
+
+            /** Returns true if any footprint cell has a custom cost set.
+             */
+            bool hasFootprintCosts() const;
 
             /** Returns the rotation anchor for this multi object.
              * @return A const reference to a ExactModelCoordinate that holds the anchor coordinate.
@@ -281,10 +299,22 @@ namespace FIFE
             ExactModelCoordinate getRotationAnchor() const;
 
             /** Sets the rotation to restricted.
-             * If this is enabled the multi object uses only rotation values are which based on multi coordinates.
-             * @param restrict A boolean, if true the rotation will be restricted, false for free rotation.
+             *  If this is enabled the multi object uses only rotation values are which based on multi coordinates.
+             *  @param restrict A boolean, if true the rotation will be restricted, false for free rotation.
              */
             void setRestrictedRotation(bool restrict);
+
+            /** Precomputes and caches footprint offsets for all supported rotations.
+             *  Must be called after all multi-part coordinates are registered.
+             *  @param grid A pointer to the CellGrid used for coordinate transformation.
+             */
+            void initializeFootprintCache(CellGrid* grid);
+
+            /** Returns cached footprint offsets for the given rotation.
+             *  @param rotation The rotation angle in degrees.
+             *  @return A const reference to the vector of ModelCoordinate offsets.
+             */
+            std::vector<ModelCoordinate> const & getCachedFootprint(int32_t rotation) const;
 
             /** Gets if object uses restricted rotations.
              * @return A boolean, true if the object uses restricted rotations, otherwise false.
@@ -435,6 +465,12 @@ namespace FIFE
 
                     //! multi object angles
                     type_angle2id m_multiAngleMap;
+
+                    //! cached footprints per rotation (relative offsets from origin)
+                    std::unordered_map<int32_t, std::vector<ModelCoordinate>> m_footprintCache;
+
+                    //! per-cell cost multipliers per rotation (parallel to m_footprintCache entries)
+                    std::unordered_map<int32_t, std::vector<double>> m_footprintCosts;
 
                     //! part object coordinates
                     std::multimap<int32_t, ModelCoordinate> m_multiPartCoordinates;

@@ -27,6 +27,8 @@ set(
   test_utf.cpp
   test_vfs.cpp
   test_zip.cpp
+  test_multicell_blocking.cpp
+  test_multicell_pathfinding.cpp
 )
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")

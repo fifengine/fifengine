@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <limits>
 #include <list>
 #include <string>
@@ -18,14 +19,17 @@
 
 // FIFE includes
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/object.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
 #include "model/structures/layer.h"
 #include "pathfinder/route.h"
+#include "util/log/logger.h"
 #include "util/math/fife_math.h"
 
 namespace FIFE
 {
+
     namespace
     {
         [[nodiscard]] std::size_t toIndex(int32_t const value)
@@ -40,6 +44,13 @@ namespace FIFE
             return static_cast<std::size_t>(value);
         }
     } // namespace
+
+    static Logger& _log = []() -> Logger& {
+        static Logger log(LM_PATHFINDER);
+        return log;
+    }();
+
+    static constexpr uint32_t MAX_ASTAR_EXPANSIONS = 100000;
 
     SingleLayerSearch::SingleLayerSearch(Route* route, int32_t const sessionId) :
         RoutePatherSearch(route, sessionId),
@@ -56,6 +67,8 @@ namespace FIFE
         m_spt.resize(toSize(max_index), -1);
         m_sf.resize(toSize(max_index), -1);
         m_gCosts.resize(toSize(max_index), 0.0);
+        m_expansionCount = 0;
+        assert("expansion limit must be positive and reasonable" && MAX_ASTAR_EXPANSIONS > 0);
     }
 
     SingleLayerSearch::~SingleLayerSearch() = default;
@@ -63,6 +76,21 @@ namespace FIFE
     void SingleLayerSearch::updateSearch()
     {
         if (m_sortedfrontier.empty()) {
+            setSearchStatus(search_status_failed);
+            m_route->setRouteStatus(ROUTE_FAILED);
+            return;
+        }
+
+        // Safety guard against infinite loops during A* expansion
+        if (++m_expansionCount > MAX_ASTAR_EXPANSIONS) {
+            FL_ERR(_log,
+                   std::format("A* exceeded max expansions ({}) route: start={{{},{}}} end={{{},{}}} multiCell={}",
+                               MAX_ASTAR_EXPANSIONS,
+                               m_from.getLayerCoordinates().x,
+                               m_from.getLayerCoordinates().y,
+                               m_to.getLayerCoordinates().x,
+                               m_to.getLayerCoordinates().y,
+                               m_multicell));
             setSearchStatus(search_status_failed);
             m_route->setRouteStatus(ROUTE_FAILED);
             return;
@@ -120,25 +148,49 @@ namespace FIFE
             }
             // search if there are blockers which could block multicell object
             if (m_multicell) {
-                blocker = false;
-                Location currentLoc(nextCell->getLayer());
-                currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
-                Location adjacentLoc(adjacent->getLayer());
-                adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
+                // Spatial early-out: if adjacent cell and all its neighbors are unblocked,
+                // skip the expensive footprint expansion (W5-T2)
+                bool const spatialEarlyOut = !blocker && [&]() {
+                    auto const & adjNbrs = adjacent->getNeighbors();
+                    for (auto* nbr : adjNbrs) {
+                        if (nbr != nullptr && nbr->getCellType() > blockerThreshold) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }();
 
-                int32_t const rotation = getAngleBetween(currentLoc, adjacentLoc);
+                if (!spatialEarlyOut) {
+                    blocker = false;
+                    double footprintCostMultiplier = 1.0;
+                    Location currentLoc(nextCell->getLayer());
+                    currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
+                    Location adjacentLoc(adjacent->getLayer());
+                    adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
+
+                    int32_t const rotation = getAngleBetween(currentLoc, adjacentLoc);
+                    Object* obj            = m_route->getObject();
+                    bool const hasCosts    = (obj != nullptr) && obj->hasFootprintCosts();
                 std::vector<ModelCoordinate> coords =
                     grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
                 auto coord_it = coords.begin();
-                for (; coord_it != coords.end(); ++coord_it) {
+                size_t ci     = 0;
+                for (; coord_it != coords.end(); ++coord_it, ++ci) {
                     Cell* cell = m_cellCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            auto bc_it = std::ranges::find(m_ignoredBlockers, cell);
-                            if (bc_it == m_ignoredBlockers.end()) {
+                            if (!isIgnoredBlocker(cell, currentLoc, rotation)) {
                                 blocker = true;
                                 break;
                             }
+                        }
+                        if (hasCosts && obj != nullptr) {
+                            double const cellCost = obj->getFootprintCellCost(rotation, ci);
+                            if (cellCost >= std::numeric_limits<double>::max()) {
+                                blocker = true;
+                                break;
+                            }
+                            footprintCostMultiplier = std::max(footprintCostMultiplier, cellCost);
                         }
                         if (limitedArea) {
                             // check if cell is on one of the areas
@@ -164,7 +216,31 @@ namespace FIFE
                 if (blocker) {
                     continue;
                 }
-            } else if (limitedArea) {
+                // Apply footprint cost multiplier to gCost for soft-blocked cells
+                if (footprintCostMultiplier > 1.0) {
+                    double gCost = m_gCosts[nextIndex];
+                    if (m_specialCost) {
+                        gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId()) *
+                                 footprintCostMultiplier;
+                    } else {
+                        gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord) * footprintCostMultiplier;
+                    }
+                    double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
+                    if (m_sf[adjacentIndex] == -1) {
+                        m_sortedfrontier.pushElement(
+                            PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
+                        m_gCosts[adjacentIndex] = gCost;
+                        m_sf[adjacentIndex]     = m_next;
+                    } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
+                        m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
+                        m_gCosts[adjacentIndex] = gCost;
+                        m_sf[adjacentIndex]     = m_next;
+                    }
+                    continue;
+                }
+                } // end if (!spatialEarlyOut)
+            } // end if (m_multicell)
+            if (limitedArea) {
                 // check if cell is on one of the areas
                 bool sameAreas                     = false;
                 std::list<std::string> const areas = m_route->getLimitedAreas();

@@ -5,7 +5,10 @@
 #include "routepather.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <limits>
 #include <list>
 #include <string>
 #include <vector>
@@ -14,6 +17,7 @@
 
 // FIFE includes
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -25,6 +29,7 @@
 
 namespace FIFE
 {
+    constexpr double MAX_COST_INCREASE_RATIO = 1.5;
 
     int32_t RoutePather::makeSessionId()
     {
@@ -146,6 +151,13 @@ namespace FIFE
         Cell* startCell = startCache->getCell(start.getLayerCoordinates());
         Cell* endCell   = endCache->getCell(end.getLayerCoordinates());
 
+        // NOTE: Pathfinder requires start cells to belong to a zone for valid SingleLayerSearch.
+        // Blocked cells (STATIC_BLOCKER) are excluded from zone generation during CellCache::createCells().
+        // If a start cell has no zone (blocked by the searcher's own instance), the pathfinder
+        // falls through to MultiLayerSearch which requires between-zone transitions.
+        // Prefer starting from an unblocked cell adjacent to the searcher.
+        assert("start cell must exist in cache" && startCell != nullptr);
+
         bool multilayer = startCache != endCache;
         if (!multilayer) {
             Zone const * startZone = startCell->getZone();
@@ -221,6 +233,25 @@ namespace FIFE
             }
         }
 
+        // Validate destination footprint cells exist in the cell cache for multi-cell
+        if (route->isMultiCell()) {
+            if (route->getObject() != nullptr) {
+                CellGrid* destGrid = endCache->getLayer()->getCellGrid();
+                if (destGrid != nullptr) {
+                    std::vector<ModelCoordinate> destFootprint =
+                        destGrid->toMultiCoordinates(end.getLayerCoordinates(),
+                                                     route->getOccupiedCells(route->getRotation()));
+                    for (auto const & fc : destFootprint) {
+                        Location fcLoc(endCache->getLayer());
+                        fcLoc.setLayerCoordinates(fc);
+                        if (!endCache->isInCellCache(fcLoc)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
         int32_t sessionId = route->getSessionId();
         if (sessionId == -1) {
             sessionId = makeSessionId();
@@ -293,6 +324,17 @@ namespace FIFE
                         }
                         // if we have a blocker that is not part of the object
                         if (!found) {
+                            // Attempt dynamic replan before giving up
+                            Cell* blockerCell = currentNode.getLayer()->getCellCache()->getCell(*nco_it);
+                            if (blockerCell != nullptr && shouldAttemptReplan(route, blockerCell)) {
+                                if (replanRoute(route, current)) {
+                                    // Replan succeeded — path replaced, clear blocker flag
+                                    // so movement continues along the new path
+                                    nextBlocker = false;
+                                    route->setRotation(oldRotation);
+                                    break;
+                                }
+                            }
                             nextBlocker = true;
                         }
                     }
@@ -406,8 +448,26 @@ namespace FIFE
                     }
                 }
             }
-            if (cw && !multiCell &&
+            if (cw &&
                 currentNode.getLayer()->cellContainsBlockingInstance(route->getCurrentNode().getLayerCoordinates())) {
+                if (multiCell) {
+                    // For multi-cell, verify the blocker at the next node is not part of self
+                    bool selfOwned = false;
+                    std::vector<ModelCoordinate> nextFootprint =
+                        route->getCurrentNode().getLayer()->getCellGrid()->toMultiCoordinates(
+                            route->getCurrentNode().getLayerCoordinates(),
+                            route->getOccupiedCells(route->getRotation()));
+                    nextFootprint.push_back(route->getCurrentNode().getLayerCoordinates());
+                    for (auto& footprintCell : nextFootprint) {
+                        if (footprintCell == currentNode.getLayerCoordinates()) {
+                            selfOwned = true;
+                            break;
+                        }
+                    }
+                    if (selfOwned) {
+                        return cw; // the blocker is part of the multi-cell itself, continue
+                    }
+                }
                 // set facing to end blocker
                 Location const facing = route->getCurrentNode();
                 route->setRotation(getAngleBetween(current, facing));
@@ -435,4 +495,70 @@ namespace FIFE
     {
         return "RoutePather";
     }
+
+    bool RoutePather::shouldAttemptReplan(Route* route, Cell* blockerCell)
+    {
+        assert("blocker cell must be valid" && blockerCell != nullptr);
+        assert("route must be valid" && route != nullptr);
+
+        // If the blocker is the destination cell, replanning is futile
+        if (route->isMultiCell()) {
+            // For multi-cell, check the destination footprint
+            Layer* endLayer = route->getEndNode().getLayer();
+            CellGrid* grid  = (endLayer != nullptr) ? endLayer->getCellGrid() : nullptr;
+            if (grid != nullptr) {
+                std::vector<ModelCoordinate> destFootprint =
+                    grid->toMultiCoordinates(route->getEndNode().getLayerCoordinates(),
+                                             route->getOccupiedCells(route->getRotation()));
+                ModelCoordinate const blockerMc = blockerCell->getLayerCoordinates();
+                for (auto const & fc : destFootprint) {
+                    if (fc == blockerMc) {
+                        return false;
+                    }
+                }
+            }
+        } else {
+            if (blockerCell->getLayerCoordinates() == route->getEndNode().getLayerCoordinates() &&
+                blockerCell->getLayer() == route->getEndNode().getLayer()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool RoutePather::replanRoute(Route* route, Location const & currentPos)
+    {
+        assert("route must be valid and active" && route != nullptr);
+        assert("route must have an active solved path" &&
+               (route->getRouteStatus() == ROUTE_SOLVED || route->getRouteStatus() == ROUTE_CREATED));
+        assert("cost ratio threshold must be >= 1.0" && MAX_COST_INCREASE_RATIO >= 1.0f);
+
+        // Solve new route from current position to original destination
+        Route* newRoute = createRoute(currentPos, route->getEndNode(), true, route->getCostId());
+
+        if (newRoute == nullptr || newRoute->getRouteStatus() != ROUTE_SOLVED) {
+            delete newRoute;
+            return false;
+        }
+
+        // Cost threshold: only accept if the new path is not drastically worse
+        double const originalRemainingCost = route->getRemainingCostFrom(currentPos);
+        double const newCost              = newRoute->getTotalCost();
+
+        assert("new route cost must be finite" && std::isfinite(newCost));
+        assert("original remaining cost must be non-negative" && originalRemainingCost >= 0.0);
+
+        if (newCost > originalRemainingCost * MAX_COST_INCREASE_RATIO) {
+            // New path is too expensive; consider waiting instead
+            delete newRoute;
+            return false;
+        }
+
+        // Accept the new path while preserving movement progress
+        bool const success = route->replacePathKeepingProgress(newRoute->getPath(), currentPos);
+        delete newRoute;
+
+        return success;
+    }
+
 } // namespace FIFE

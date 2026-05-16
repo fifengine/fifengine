@@ -58,7 +58,8 @@ namespace FIFE
         ICHANGE_TRANSPARENCY    = 0x0100,
         ICHANGE_VISIBLE         = 0x0200,
         ICHANGE_STACKPOS        = 0x0400,
-        ICHANGE_VISUAL          = 0x0800
+        ICHANGE_VISUAL          = 0x0800,
+        ICHANGE_FOOTPRINT       = 0x1000
     };
     using InstanceChangeInfo = uint32_t;
     class FIFE_API InstanceChangeListener
@@ -381,6 +382,14 @@ namespace FIFE
              */
             InstanceChangeInfo getChangeInfo();
 
+            /** ORs additional change flags into the current change info
+             *  and fires change listeners.
+             *  Used internally when subsystems (e.g. cell cache) detect changes
+             *  that should be propagated to change listeners.
+             *  @param flag The change flag(s) to add.
+             */
+            void addChangeInfo(InstanceChangeInfo flag);
+
             /** callback so other instances we depend on can notify us if they go away
              */
             void onInstanceDeleted(Instance* instance) override;
@@ -392,6 +401,12 @@ namespace FIFE
             /** Sets the cell stack position.
              */
             void setCellStackPosition(uint8_t stack);
+
+            /** Propagates blocking state from this instance to all sub-instances.
+             *  Used internally by the engine to keep multi-cell blocking in sync.
+             *  Bypasses the m_overrideBlocking guard.
+             */
+            void propagateBlockingToSubInstances();
 
             /** Gets the cell stack position.
              */
@@ -429,7 +444,7 @@ namespace FIFE
 
             /** Returns true if it is multi cell otherwise false
              */
-            bool isMultiCell();
+            bool isMultiCell() const;
 
             /** Returns true if it is multi object otherwise false
              */
@@ -451,6 +466,12 @@ namespace FIFE
              * object.
              */
             Instance* getMainMultiInstance();
+
+            /** Returns a vector of all ModelCoordinates this multi-cell instance occupies.
+             *  Includes the main cell and all sub-instance cells.
+             *  Returns empty vector if not a multi-cell object.
+             */
+            std::vector<ModelCoordinate> getOccupiedCells() const;
 
             /** Adds new static color overlay with given angle (degrees).
              */

@@ -45,7 +45,9 @@ namespace FIFE {
 		ICHANGE_CELL = 0x0080,
 		ICHANGE_TRANSPARENCY = 0x0100,
 		ICHANGE_VISIBLE = 0x0200,
-		ICHANGE_STACKPOS = 0x0400
+		ICHANGE_STACKPOS = 0x0400,
+		ICHANGE_VISUAL = 0x0800,
+		ICHANGE_FOOTPRINT = 0x1000
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -131,6 +133,7 @@ namespace FIFE {
 		bool isMultiObject();
 		const std::vector<Instance*>& getMultiInstances();
 		Instance* getMainMultiInstance();
+		std::vector<ModelCoordinate> getOccupiedCells() const;
 
 		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
 		OverlayColors* getStaticColorOverlay(int32_t angle);
