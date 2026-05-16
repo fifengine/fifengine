@@ -31,9 +31,9 @@
 // ignore overload operator
 %ignore FIFE::Key::operator=;
 %include "eventchannel/key/key.h"
-%include "eventchannel/key/key_gen.h"
 // The generated enum has DELETE (SDLK_DELETE), which clashes with C++ delete.
 %rename(DELETE) FIFE::Keys::KEY_DELETE;
+%include "eventchannel/key/key_gen.h"
 // ignore overload operator
 %ignore FIFE::Text::operator=;
 %include "eventchannel/text/text.h"
