@@ -13,9 +13,8 @@
 #include <utility>
 #include <vector>
 
-// 3rd party library includes
-
 // FIFE includes
+#include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/object.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -168,10 +167,8 @@ namespace FIFE
             m_startNode = m_path.front();
             m_endNode   = m_path.back();
         }
-        if (!isMultiCell()) {
-            m_replanned = false;
-        }
-        m_walked = 1;
+        m_replanned = false;
+        m_walked    = 1;
     }
 
     Path const & Route::getPath()
@@ -326,10 +323,42 @@ namespace FIFE
     {
         Path p;
         if (!m_path.empty()) {
+            // Check each path cell for blocking instances
             for (auto& it : m_path) {
                 Layer* layer = it.getLayer();
-                if (layer->cellContainsBlockingInstance(it.getLayerCoordinates())) {
+                if (layer != nullptr && layer->cellContainsBlockingInstance(it.getLayerCoordinates())) {
                     p.push_back(it);
+                }
+            }
+            // For multi-cell, also check if any footprint cells at each path position are blocked
+            if (m_object != nullptr && m_object->isMultiObject()) {
+                for (auto& it : m_path) {
+                    Layer* layer = it.getLayer();
+                    if (layer == nullptr) {
+                        continue;
+                    }
+                    CellGrid* grid = layer->getCellGrid();
+                    if (grid == nullptr) {
+                        continue;
+                    }
+                    std::vector<ModelCoordinate> footprint =
+                        grid->toMultiCoordinates(it.getLayerCoordinates(), getOccupiedCells(m_rotation));
+                    for (auto& fc : footprint) {
+                        if (layer->cellContainsBlockingInstance(fc)) {
+                            // Check if this blocker is part of the multi-cell's own path cells
+                            bool isSelf = false;
+                            for (auto& pathCell : m_path) {
+                                if (pathCell.getLayerCoordinates() == fc && pathCell.getLayer() == layer) {
+                                    isSelf = true;
+                                    break;
+                                }
+                            }
+                            if (!isSelf) {
+                                p.push_back(it);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -345,4 +374,105 @@ namespace FIFE
     {
         return m_object;
     }
+
+    double Route::getTotalCost() const
+    {
+        if (m_path.empty()) {
+            return 0.0;
+        }
+        double cost               = 0.0;
+        Location const * prev     = nullptr;
+        CellGrid const * lastGrid = nullptr;
+        for (auto const & loc : m_path) {
+            Layer* layer = loc.getLayer();
+            if (layer == nullptr) {
+                continue;
+            }
+            CellCache* cache = layer->getCellCache();
+            CellGrid* grid   = layer->getCellGrid();
+            if (cache == nullptr || grid == nullptr) {
+                continue;
+            }
+            if (prev != nullptr && prev->getLayer() == layer) {
+                cost += grid->getAdjacentCost(loc.getLayerCoordinates(), prev->getLayerCoordinates());
+            }
+            prev     = &loc;
+            lastGrid = grid;
+        }
+        return cost;
+    }
+
+    double Route::getRemainingCostFrom(Location const & pos) const
+    {
+        if (m_path.empty()) {
+            return 0.0;
+        }
+        double cost           = 0.0;
+        bool found            = false;
+        Location const * prev = nullptr;
+        for (auto const & loc : m_path) {
+            if (!found && loc.getLayerCoordinates() == pos.getLayerCoordinates() && loc.getLayer() == pos.getLayer()) {
+                found = true;
+            }
+            if (!found) {
+                prev = &loc;
+                continue;
+            }
+            Layer* layer = loc.getLayer();
+            if (layer == nullptr) {
+                continue;
+            }
+            CellGrid* grid = layer->getCellGrid();
+            if (grid == nullptr) {
+                continue;
+            }
+            if (prev != nullptr && prev->getLayer() == layer) {
+                cost += grid->getAdjacentCost(loc.getLayerCoordinates(), prev->getLayerCoordinates());
+            }
+            prev = &loc;
+        }
+        return cost;
+    }
+
+    bool Route::replacePathKeepingProgress(Path const & newPath, Location const & currentPos)
+    {
+        if (newPath.empty()) {
+            return false;
+        }
+        // Find the cell in the new path closest to currentPos
+        auto bestIt     = newPath.begin();
+        double bestDist = std::numeric_limits<double>::max();
+        for (auto it = newPath.begin(); it != newPath.end(); ++it) {
+            if (it->getLayer() != currentPos.getLayer()) {
+                continue;
+            }
+            ModelCoordinate const mc = it->getLayerCoordinates();
+            ModelCoordinate const pc = currentPos.getLayerCoordinates();
+            double const dx          = static_cast<double>(mc.x - pc.x);
+            double const dy          = static_cast<double>(mc.y - pc.y);
+            double const dist        = dx * dx + dy * dy;
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestIt   = it;
+            }
+        }
+        // Accept only if within 3 cells of current position
+        if (bestDist > 9.0) {
+            return false;
+        }
+        // Walk the path iterator to the new current position
+        m_path    = newPath;
+        m_current = m_path.begin();
+        m_walked  = 1;
+        // Advance to the best position
+        for (auto it = m_path.begin(); it != bestIt; ++it, ++m_walked) {
+            ++m_current;
+        }
+        m_startNode = m_path.front();
+        m_endNode   = m_path.back();
+        m_status    = ROUTE_SOLVED;
+        m_replanned = true;
+        return true;
+    }
+
 } // namespace FIFE

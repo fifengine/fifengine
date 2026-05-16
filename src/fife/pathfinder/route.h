@@ -244,6 +244,26 @@ namespace FIFE
              */
             Object* getObject();
 
+            /** Estimates the total travel cost of the entire path.
+             *  Uses adjacent costs from the cell grid of the first path node.
+             *  @return The estimated total cost, or 0 if the path is empty.
+             */
+            double getTotalCost() const;
+
+            /** Estimates the remaining travel cost from a given position to the end.
+             *  @param pos The position along the path to compute from.
+             *  @return The estimated remaining cost, or 0 if pos is past the end.
+             */
+            double getRemainingCostFrom(Location const & pos) const;
+
+            /** Replaces the path while preserving the walk position.
+             *  The new path must include the current position or a cell near it.
+             *  @param newPath The replacement path.
+             *  @param currentPos The current position to preserve.
+             *  @return true if the replacement succeeded.
+             */
+            bool replacePathKeepingProgress(Path const & newPath, Location const & currentPos);
+
         private:
             //! path iterator
             using PathIterator = Path::iterator;

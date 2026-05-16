@@ -23,6 +23,7 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/ipather.h"
 #include "model/metamodel/timeprovider.h"
+#include "model/structures/cellcache.h"
 #include "model/structures/instancetree.h"
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
@@ -207,11 +208,49 @@ namespace FIFE
             uint32_t count                   = 0;
             Layer* layer                     = m_location.getLayer();
             ExactModelCoordinate const & emc = m_location.getExactLayerCoordinatesRef();
+
+            // W6-T5: Validate no overlap with existing blocking instances on sub-cells
+            if (layer != nullptr) {
+                CellCache* cache = layer->getCellCache();
+                CellGrid* grid   = layer->getCellGrid();
+                if (cache != nullptr && grid != nullptr) {
+                    std::set<Object*> const & overlapCheck = object->getMultiParts();
+                    for (auto* part : overlapCheck) {
+                        if (part == m_object)
+                            continue;
+                        std::vector<ModelCoordinate> partcoords = part->getMultiPartCoordinates(m_rotation);
+                        for (auto const & coord : partcoords) {
+                            ModelCoordinate absMc(
+                                static_cast<int32_t>(emc.x) + coord.x,
+                                static_cast<int32_t>(emc.y) + coord.y,
+                                static_cast<int32_t>(emc.z) + coord.z);
+                            Cell* cell = cache->getCell(absMc);
+                            if (cell != nullptr && (cell->getCellType() == CTYPE_STATIC_BLOCKER ||
+                                                    cell->getCellType() == CTYPE_DYNAMIC_BLOCKER ||
+                                                    cell->getCellType() == CTYPE_CELL_BLOCKER)) {
+                                // Cell blocked by existing instance — reject placement
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
             std::set<Object*> const & multis = object->getMultiParts();
             auto it                          = multis.begin();
             for (; it != multis.end(); ++it, ++count) {
                 if (*it == m_object) {
                     continue;
+                }
+                // temporarily sync part properties from main object so sub-instances
+                // inherit the correct blocking state from the part's Object template
+                bool const origPartBlocking = (*it)->isBlocking();
+                bool const origPartStatic   = (*it)->isStatic();
+                if (origPartBlocking != m_blocking) {
+                    (*it)->setBlocking(m_blocking);
+                }
+                if (origPartStatic != m_object->isStatic()) {
+                    (*it)->setStatic(m_object->isStatic());
                 }
                 std::vector<ModelCoordinate> partcoords = (*it)->getMultiPartCoordinates(m_rotation);
                 auto coordit                            = partcoords.begin();
@@ -225,6 +264,13 @@ namespace FIFE
                     m_multiInstances.push_back(instance);
                     instance->addDeleteListener(this);
                     instance->setMainMultiInstance(this);
+                }
+                // restore original part properties
+                if (origPartBlocking != m_blocking) {
+                    (*it)->setBlocking(origPartBlocking);
+                }
+                if (origPartStatic != m_object->isStatic()) {
+                    (*it)->setStatic(origPartStatic);
                 }
             }
         }
@@ -294,6 +340,32 @@ namespace FIFE
     {
         // ToDo: Handle the case when the layers are different
         if (m_location != loc) {
+            // Reject moves that would push multi-cell sub-instances off-grid (W6-T4)
+            if (isMultiObject() && loc.getLayer() != nullptr) {
+                CellGrid* grid   = loc.getLayer()->getCellGrid();
+                CellCache* cache = loc.getLayer()->getCellCache();
+                if (grid != nullptr && cache != nullptr) {
+                    std::vector<ModelCoordinate> fpOffsets;
+                    auto const & parts = m_object->getMultiParts();
+                    for (auto* part : parts) {
+                        if (part == m_object)
+                            continue;
+                        auto coords = part->getMultiPartCoordinates(m_rotation);
+                        for (auto const & c : coords) {
+                            ModelCoordinate abs(loc.getLayerCoordinates());
+                            abs.x += c.x;
+                            abs.y += c.y;
+                            abs.z += c.z;
+                            Location tmp(loc.getLayer());
+                            tmp.setLayerCoordinates(abs);
+                            if (!cache->isInCellCache(tmp)) {
+                                return; // reject — sub-instance would be off-grid
+                            }
+                        }
+                    }
+                }
+            }
+
             prepareForUpdate();
 
             if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
@@ -348,6 +420,7 @@ namespace FIFE
         if (m_overrideBlocking) {
             prepareForUpdate();
             m_blocking = blocking;
+            propagateBlockingToSubInstances();
         }
     }
 
@@ -614,6 +687,31 @@ namespace FIFE
     Instance* Instance::getMainMultiInstance()
     {
         return m_mainMultiInstance;
+    }
+
+    std::vector<ModelCoordinate> Instance::getOccupiedCells() const
+    {
+        std::vector<ModelCoordinate> cells;
+        // Always include the main instance cell
+        cells.push_back(m_location.getLayerCoordinates());
+        // For multi-cell, compute footprint from cached offsets using main rotation
+        if (isMultiCell() && m_location.getLayer() != nullptr) {
+            CellGrid* grid = m_location.getLayer()->getCellGrid();
+            if (grid != nullptr) {
+                std::vector<ModelCoordinate> offsets = m_object->getCachedFootprint(m_rotation);
+                for (auto const & off : offsets) {
+                    ModelCoordinate abs = m_location.getLayerCoordinates();
+                    abs.x += off.x;
+                    abs.y += off.y;
+                    // Avoid adding the main cell duplicate
+                    if (abs.x == m_location.getLayerCoordinates().x && abs.y == m_location.getLayerCoordinates().y) {
+                        continue;
+                    }
+                    cells.push_back(abs);
+                }
+            }
+        }
+        return cells;
     }
 
     void Instance::actOnce(std::string const & actionName, Location const & direction)
@@ -1042,6 +1140,21 @@ namespace FIFE
         return ICHANGE_NO_CHANGES;
     }
 
+    void Instance::addChangeInfo(InstanceChangeInfo flag)
+    {
+        if (m_activity != nullptr) {
+            m_changeInfo |= flag;
+            // Re-fire change listeners with updated info
+            auto i = m_activity->m_changeListeners.begin();
+            while (i != m_activity->m_changeListeners.end()) {
+                if (nullptr != *i) {
+                    (*i)->onInstanceChanged(this, m_changeInfo);
+                }
+                ++i;
+            }
+        }
+    }
+
     void Instance::callOnTransparencyChange()
     {
         prepareForUpdate();
@@ -1151,7 +1264,19 @@ namespace FIFE
         return m_object->isSpecialSpeed();
     }
 
-    bool Instance::isMultiCell()
+    void Instance::propagateBlockingToSubInstances()
+    {
+        // multi-cell main instance must have blocking state
+
+        if (!m_multiInstances.empty()) {
+            for (auto* sub : m_multiInstances) {
+                assert("sub-instance must not be null during blocking propagation" && sub != nullptr);
+                sub->m_blocking = m_blocking;
+            }
+        }
+    }
+
+    bool Instance::isMultiCell() const
     {
         return m_object->isMultiObject();
     }

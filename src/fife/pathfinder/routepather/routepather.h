@@ -23,6 +23,7 @@
 namespace FIFE
 {
 
+    class Cell;
     class CellCache;
     class RoutePatherSearch;
     class Route;
@@ -103,6 +104,21 @@ namespace FIFE
              * @return A string that contains the name of the pathfinder.
              */
             std::string getName() const;
+
+            /** Attempts to replan a route when a blocker is detected mid-follow.
+             *  Compares alternative path cost to original; only accepts if within threshold.
+             *  @param route The existing route to replan.
+             *  @param currentPos The current position of the instance.
+             *  @return true if a better path was found and swapped in.
+             */
+            bool replanRoute(Route* route, Location const & currentPos);
+
+            /** Early-out check: skip replan if the blocker is at the destination itself.
+             *  @param route The route being followed.
+             *  @param blockerCell The cell that is blocked.
+             *  @return false if replanning would be futile.
+             */
+            bool shouldAttemptReplan(Route* route, Cell* blockerCell);
 
         private:
             //! A path is a list with locations. Each location holds the coordinate for one cell.

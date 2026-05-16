@@ -395,3 +395,18 @@ Example::
 		void setGamepadStringMapping(const std::string& mapping);
 	};
 };
+
+%pythoncode %{
+# Backward compatibility: expose module-level key constants on Key class
+import sys as _sys
+_mod = _sys.modules[__name__]
+for _name in dir(_mod):
+    _val = getattr(_mod, _name, None)
+    if not isinstance(_val, int):
+        continue
+    if _name.startswith('__') or _name == 'FIFE_SDL_KEYMAP_VERSION':
+        continue
+    if _name[0].isalpha() and _name[0].islower():
+        continue
+    setattr(Key, _name, _val)
+%}
