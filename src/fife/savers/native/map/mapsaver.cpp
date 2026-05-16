@@ -426,63 +426,6 @@ namespace FIFE
             }
         }
 
-        // Save unique objects via object saver
-        if (m_objectSaver) {
-            ObjectSaver* objSaver = static_cast<ObjectSaver*>(m_objectSaver.get());
-            std::set<std::pair<std::string, std::string>> savedObjects;
-            for (auto* layer : layers) {
-                auto instances = layer->getInstances();
-                for (auto* instance : instances) {
-                    Object const * obj = instance->getObject();
-                    if (obj->isMultiPart()) {
-                        continue;
-                    }
-                    std::pair<std::string, std::string> key(obj->getName(), obj->getNamespace());
-                    if (savedObjects.insert(key).second) {
-                        objSaver->setObject(obj);
-                        objSaver->save(obj->getFilename());
-                    }
-                }
-            }
-        }
-
-        // Save unique animations via animation saver
-        if (m_animationSaver) {
-            AnimationSaver* animSaver = static_cast<AnimationSaver*>(m_animationSaver.get());
-            std::set<std::string> savedAnimations;
-            for (auto* layer : layers) {
-                for (auto* instance : layer->getInstances()) {
-                    Object const * obj = instance->getObject();
-                    if (obj->isMultiPart()) {
-                        continue;
-                    }
-                    std::list<std::string> const actionIds = obj->getActionIds();
-                    for (auto const & actionId : actionIds) {
-                        Action* action = obj->getAction(actionId, false);
-                        if (!action) {
-                            continue;
-                        }
-                        auto* actionVisual = action->getVisual<ActionVisual>();
-                        if (!actionVisual) {
-                            continue;
-                        }
-                        std::vector<int32_t> angles;
-                        actionVisual->getActionImageAngles(angles);
-                        for (int32_t angle : angles) {
-                            AnimationPtr const animation = actionVisual->getAnimationByAngle(angle);
-                            if (!animation) {
-                                continue;
-                            }
-                            if (savedAnimations.insert(animation->getName()).second) {
-                                animSaver->setAnimation(animation.get());
-                                animSaver->save(animation->getName() + ".xml");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         doc.SaveFile(filename.c_str());
     }
 
