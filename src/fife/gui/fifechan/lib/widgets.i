@@ -486,7 +486,8 @@ namespace fcn {
 		virtual bool isMovable() const;
 		virtual void setOpaque(bool opaque);
 		virtual bool isOpaque();
-		virtual void resizeToContent();
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void expandContent(bool recursiv=true);
 	};
 
 	%feature("notabstract") AdjustingContainer;
