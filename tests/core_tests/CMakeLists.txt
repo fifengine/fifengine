@@ -52,7 +52,6 @@ else()
   target_link_libraries(all_tests PRIVATE $<TARGET_OBJECTS:fife_lib>)
 endif()
 
-target_link_options(all_tests PRIVATE -Wl,--no-as-needed)
 target_link_libraries(
   all_tests
     PRIVATE
