@@ -113,11 +113,47 @@
       }
     },
     {
+      "name": "compiler-gcc16-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-16",
+        "CMAKE_CXX_COMPILER": "g++-16"
+      }
+    },
+    {
+      "name": "compiler-gcc16-static-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-16",
+        "CMAKE_CXX_COMPILER": "g++-16",
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
       "name": "gcc14-x64-linux-static",
       "hidden": true,
       "inherits": [
         "gcc-x64-linux-base",
         "compiler-gcc14-static-linux"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-static",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc16-static-linux"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc16-linux"
       ]
     },
     {

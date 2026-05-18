@@ -181,6 +181,43 @@
       }
     },
     {
+      "name": "gcc16-x64-linux-static-rel",
+      "displayName": "GCC16 Static Release",
+      "inherits": "gcc16-x64-linux-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc16-x64-linux-static-dbg",
+      "displayName": "GCC16 Static Debug",
+      "inherits": "gcc16-x64-linux-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "gcc16-x64-linux-rel",
+      "displayName": "GCC16 Release",
+      "inherits": "gcc16-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc16-x64-linux-dbg",
+      "displayName": "GCC16 Debug",
+      "inherits": "gcc16-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "gcc16-x64-linux-dbg-asan",
+      "displayName": "GCC16 Debug ASAN",
+      "inherits": ["gcc16-x64-linux-dbg", "address-sanitizer"]
+    },
+    {
       "name": "gcc12-x64-linux-rel",
       "displayName": "GCC12 Release",
       "inherits": "gcc12-x64-linux",
@@ -329,6 +366,61 @@
     {
       "name": "clang16-x64-linux-rel",
       "configurePreset": "clang16-x64-linux-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-static-rel",
+      "configurePreset": "gcc16-x64-linux-static-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-static-dbg",
+      "configurePreset": "gcc16-x64-linux-static-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-rel",
+      "configurePreset": "gcc16-x64-linux-rel",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-dbg",
+      "configurePreset": "gcc16-x64-linux-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig.wrappers"
+      ]
+    },
+    {
+      "name": "gcc16-x64-linux-dbg-asan",
+      "configurePreset": "gcc16-x64-linux-dbg-asan",
       "targets": [
         "fife",
         "fife_swig",
