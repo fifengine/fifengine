@@ -119,6 +119,9 @@ namespace fcn
     void AnimationIcon::stop()
     {
         mPlay = false;
+        if (!mAnimation.get()) {
+            return;
+        }
         // set first frame as new image
         if (mAnimation->getFrameCount() > 0) {
             mFrameIndex   = 0;
@@ -130,6 +133,9 @@ namespace fcn
     void AnimationIcon::logic()
     {
         if (isPlaying()) {
+            if (!mAnimation.get()) {
+                return;
+            }
             int32_t index          = mFrameIndex;
             uint64_t const elapsed = mTimemanager->now64() - mAnimtime;
             if (isRepeating()) {

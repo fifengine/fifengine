@@ -25,13 +25,13 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     AnimationLoader::AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager) :
         m_vfs(vfs), m_imageManager(imageManager), m_animationManager(animationManager)
@@ -76,14 +76,16 @@ namespace FIFE
             }
         }
 
+        if (XML::HasName(root, "animation")) {
+            return true;
+        }
+
         return false;
     }
 
     AnimationPtr AnimationLoader::load(std::string const & filename)
     {
-        fs::path const animPath(filename);
-
-        std::string const animationFilename = GetFilenameFromPath(animPath);
+        std::string const animationFilename = filename;
 
         XML::Document doc;
 
@@ -120,8 +122,14 @@ namespace FIFE
         // so we can just parse out the contents
         XML::Element* root = doc.RootElement();
 
+        XML::Element* animElem = nullptr;
         if (XML::HasName(root, "assets")) {
-            animation = loadAnimation(filename, root->FirstChildElement("animation"));
+            animElem = root->FirstChildElement("animation");
+        } else if (XML::HasName(root, "animation")) {
+            animElem = root;
+        }
+        if (animElem) {
+            animation = loadAnimation(filename, animElem);
         }
 
         return animation;
@@ -189,7 +197,7 @@ namespace FIFE
         }
 
         fs::path animPath(filename);
-        std::string const animationFile = animPath.string();
+        std::string const animationFile = GetFilenameFromPath(animPath);
 
         bool alreadyLoaded = false;
         // first try to use the id, if no id exists it use the filename as fallback
