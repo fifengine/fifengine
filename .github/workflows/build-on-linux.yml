@@ -275,28 +275,28 @@ jobs:
         config:
           - {
               job_name: "Linux | GCC 16 | Release",
-              image_version: "trixie-with-vulkansdk-1.0.18",
+              image_version: "trixie-with-vulkansdk-latest",
               preset: "gcc16-x64-linux-rel",
               triplet: x64-linux,
               artifact-name: "libfife-gcc16-x64-linux"
             }
           - {
               job_name: "Linux | Clang22 | Release",
-              image_version: "trixie-with-vulkansdk-1.0.18",
+              image_version: "trixie-with-vulkansdk-latest",
               preset: "clang22-x64-linux-rel",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-linux"
             }
           - {
               job_name: "Linux | Clang22 | Debug",
-              image_version: "trixie-with-vulkansdk-1.0.18",
+              image_version: "trixie-with-vulkansdk-latest",
               preset: "clang22-x64-linux-dbg",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-dbg"
             }
           - {
               job_name: "Linux | Clang22 | Coverage",
-              image_version: "trixie-with-vulkansdk-1.0.18",
+              image_version: "trixie-with-vulkansdk-latest",
               preset: "clang22-x64-linux-dbg-cov",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-cov"
