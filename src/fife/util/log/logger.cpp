@@ -121,16 +121,11 @@ namespace FIFE
         return mgr;
     }
 
-    LogManager::~LogManager()
-    {
-        // no-op: LogManager is a function-local static (see instance()) whose
-        // destructor should not tear down spdlog state that other statics may
-        // still reference during exit.
-    }
+    LogManager::~LogManager() = default;
 
     void LogManager::configure(LogConfig const & cfg)
     {
-        std::scoped_lock lock(m_config_mutex);
+        std::scoped_lock const lock(m_config_mutex);
         m_config = cfg;
 #ifdef LOG_ENABLED
         rebuildSinks();

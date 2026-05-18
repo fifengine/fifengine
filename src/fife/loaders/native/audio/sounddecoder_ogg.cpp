@@ -19,19 +19,19 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_AUDIO);
-        return log;
-    }();
-
-    /* OggVorbis Callback functions
-     */
-    namespace OGG_cb
+    namespace
     {
-        static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_AUDIO);
+            return log;
+        }();
+
+        /* OggVorbis Callback functions
+         */
+        size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
             auto* rdp            = static_cast<RawData*>(datasource);
             size_t const restlen = rdp->getDataLength() - rdp->getCurrentIndex();
@@ -42,7 +42,7 @@ namespace FIFE
             return len;
         }
 
-        static int seek(void* datasource, ogg_int64_t offset, int whence)
+        int seek(void* datasource, ogg_int64_t offset, int whence)
         {
             auto* rdp                 = static_cast<RawData*>(datasource);
             int64_t const data_length = static_cast<int64_t>(rdp->getDataLength());
@@ -75,28 +75,24 @@ namespace FIFE
             }
         }
 
-        static int close(void* datasource)
+        int close(void* datasource)
         {
             static_cast<void>(datasource);
             return 0;
         }
 
         // Required by ov_callbacks::tell_func ABI from libvorbis.
-        static long tell(void* datasource) // NOLINT(runtime/int)
+        long tell(void* datasource) // NOLINT(runtime/int)
         {
             auto* rdp = static_cast<RawData*>(datasource);
             return static_cast<long>((*rdp).getCurrentIndex()); // NOLINT(runtime/int)
         }
-    } // namespace OGG_cb
+    } // namespace
 
     SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp), m_ovf{}
     {
 
-        ov_callbacks const ocb = {
-            .read_func  = OGG_cb::read,
-            .seek_func  = OGG_cb::seek,
-            .close_func = OGG_cb::close,
-            .tell_func  = OGG_cb::tell};
+        ov_callbacks const ocb = {.read_func = read, .seek_func = seek, .close_func = close, .tell_func = tell};
 
         if (0 > ov_open_callbacks(m_file.get(), &m_ovf, nullptr, 0, ocb)) {
             throw InvalidFormat("Error opening OggVorbis file");

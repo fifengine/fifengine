@@ -24,10 +24,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIDEO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIDEO);
+            return log;
+        }();
+    } // namespace
 
     SDLImage::SDLImage(IResourceLoader* loader) : Image(loader)
     {

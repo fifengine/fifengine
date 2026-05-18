@@ -32,10 +32,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIDEO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIDEO);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {
@@ -1028,7 +1031,7 @@ namespace FIFE
         uint32_t* currentElements = nullptr;
 
         // index buffer pointer
-        uint32_t* indexBuffer = nullptr;
+        uint32_t const * indexBuffer = nullptr;
 
         // stride
         uint32_t const strideP   = sizeof(renderDataP);

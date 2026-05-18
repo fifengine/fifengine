@@ -36,14 +36,13 @@ namespace FIFE
             // Store relative footprint offsets instead of raw Cell* pointers
             // This allows the search to recompute absolute cells dynamically
             // if the multi-cell rotates during the search.
-            Object* obj = route->getObject();
+            Object const * obj = route->getObject();
             if (obj != nullptr) {
                 m_footprintOffsets = obj->getCachedFootprint(route->getRotation());
             }
             if (m_footprintOffsets.empty()) {
                 // Fallback: compute from occupied area
                 Location const loc                  = route->getStartNode();
-                CellGrid* grid                      = loc.getLayer()->getCellGrid();
                 std::vector<ModelCoordinate> coords = route->getOccupiedArea();
                 for (auto& coord : coords) {
                     m_footprintOffsets.push_back(ModelCoordinate(

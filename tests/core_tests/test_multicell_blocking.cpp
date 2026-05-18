@@ -330,16 +330,18 @@ TEST_CASE("W5-T0B: getOccupiedCells returns main + sub-instance cells", "[multic
     Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(8, 8, 0));
     f.layer->update();
 
-    std::vector<ModelCoordinate> cells = inst->getOccupiedCells();
+    std::vector<ModelCoordinate> const cells = inst->getOccupiedCells();
     CHECK(cells.size() == 2);
 
     bool hasMain = false;
     bool hasSub  = false;
     for (auto const & c : cells) {
-        if (c.x == 8 && c.y == 8 && c.z == 0)
+        if (c.x == 8 && c.y == 8 && c.z == 0) {
             hasMain = true;
-        if (c.x == 9 && c.y == 8 && c.z == 0)
+        }
+        if (c.x == 9 && c.y == 8 && c.z == 0) {
             hasSub = true;
+        }
     }
     CHECK(hasMain);
     CHECK(hasSub);
@@ -363,17 +365,19 @@ TEST_CASE("W5-T0B: getOccupiedCells after rotation returns updated cells", "[mul
     inst->setRotation(90);
     f.layer->update();
 
-    std::vector<ModelCoordinate> cells = inst->getOccupiedCells();
+    std::vector<ModelCoordinate> const cells = inst->getOccupiedCells();
     CHECK(cells.size() == 2);
 
     // Try both offset directions to determine actual rotation behavior
     bool hasNewSubX = false;
     bool hasNewSubY = false;
     for (auto const & c : cells) {
-        if (c.x == 8 && c.y == 9 && c.z == 0)
+        if (c.x == 8 && c.y == 9 && c.z == 0) {
             hasNewSubY = true;
-        if (c.x == 9 && c.y == 8 && c.z == 0)
+        }
+        if (c.x == 9 && c.y == 8 && c.z == 0) {
             hasNewSubX = true;
+        }
     }
     // After rotation, the old cell (9,8) should be vacated and new cell (8,9) occupied.
     // If both are occupied or neither, the rotation didn't correctly update.

@@ -33,10 +33,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     ObjectLoader::ObjectLoader(
         Model* model,
@@ -439,7 +442,7 @@ namespace FIFE
                             Action* action = obj->createAction(actionId, (isDefault != 0));
 
                             // Fetch ActionAudio data
-                            XML::Element* soundElement = actionElement->FirstChildElement("sound");
+                            XML::Element const * soundElement = actionElement->FirstChildElement("sound");
                             if (soundElement != nullptr) {
                                 char const * clip = XML::Attribute(soundElement, "source");
                                 if (clip != nullptr) {

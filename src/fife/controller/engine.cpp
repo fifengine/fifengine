@@ -67,10 +67,13 @@ int32_t main(int32_t argc, char** argv)
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_CONTROLLER);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_CONTROLLER);
+            return log;
+        }();
+    } // namespace
 
     Engine::Engine() :
         m_renderbackend(nullptr),

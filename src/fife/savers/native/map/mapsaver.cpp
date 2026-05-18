@@ -36,10 +36,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_SAVERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_SAVERS);
+            return log;
+        }();
+    } // namespace
 
     MapSaver::MapSaver() = default;
 
@@ -84,7 +87,7 @@ namespace FIFE
         LayerList layers = map.getLayers();
         for (auto& layer : layers) {
             XML::Element* layerElement = doc.NewElement("layer");
-            CellGrid* grid             = layer->getCellGrid();
+            CellGrid const * grid      = layer->getCellGrid();
             layerElement->SetAttribute("id", layer->getName().c_str());
             layerElement->SetAttribute("x_offset", grid->getXShift());
             layerElement->SetAttribute("y_offset", grid->getYShift());
@@ -144,7 +147,7 @@ namespace FIFE
             using InstancesContainer     = std::vector<Instance*>;
             InstancesContainer instances = layer->getInstances();
             for (auto& instance : instances) {
-                Object* obj = instance->getObject();
+                Object const * obj = instance->getObject();
                 // don't save part instances
                 if (obj->isMultiPart()) {
                     continue;
@@ -250,10 +253,10 @@ namespace FIFE
                         areasEmpty = cellAreaIds.empty();
                     }
 
-                    CellTypeInfo const cti     = cell->getCellType();
-                    bool const cellBlocker     = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
-                    TransitionInfo* transition = cell->getTransition();
-                    bool isNarrow              = false;
+                    CellTypeInfo const cti            = cell->getCellType();
+                    bool const cellBlocker            = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
+                    TransitionInfo const * transition = cell->getTransition();
+                    bool isNarrow                     = false;
                     if (saveNarrows) {
                         auto narrow_it = narrowCells.find(cell);
                         if (narrow_it != narrowCells.end()) {

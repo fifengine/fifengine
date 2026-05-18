@@ -17,10 +17,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEW);
+            return log;
+        }();
+    } // namespace
 
     // use some big value, so that non-positioned renderers show on top
     int32_t const DEFAULT_RENDERER_POSITION = 1000;

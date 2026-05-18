@@ -42,10 +42,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_GUI);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_GUI);
+            return log;
+        }();
+    } // namespace
 
     FifechanManager::FifechanManager() :
         m_fcn_gui(new fcn::Gui()),

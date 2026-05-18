@@ -24,13 +24,16 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_CURSOR);
-        return log;
-    }();
+    namespace
+    {
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_CURSOR);
+            return log;
+        }();
+    } // namespace
 
     Cursor::Cursor(RenderBackend* renderbackend) :
         m_cursor_id(NC_ARROW),

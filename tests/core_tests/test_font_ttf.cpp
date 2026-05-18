@@ -21,7 +21,7 @@ static char const * const FONT_FILE = "tests/data/FreeMono.ttf";
 
 TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf]")
 {
-    FontTestFixture env;
+    FontTestFixture const env;
     require_font_renderable(FONT_FILE, 16);
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 16);
@@ -48,11 +48,11 @@ TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf
     for (int32_t y = 0; y < surface->h; ++y) {
         uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surface->w; ++x) {
-            uint32_t p = row[x];
-            uint8_t r  = 0;
-            uint8_t g  = 0;
-            uint8_t b  = 0;
-            uint8_t a  = 0;
+            uint32_t const p = row[x];
+            uint8_t r        = 0;
+            uint8_t g        = 0;
+            uint8_t b        = 0;
+            uint8_t a        = 0;
             SDL_GetRGBA(p, format_details, nullptr, &r, &g, &b, &a);
 
             if (a == 0) {
@@ -72,7 +72,7 @@ TEST_CASE("TrueTypeFont::renderString sanitizes transparent pixels", "[font][ttf
 
 TEST_CASE("TrueTypeFont::renderString handles empty string", "[font][ttf]")
 {
-    FontTestFixture env;
+    FontTestFixture const env;
     require_font_renderable(FONT_FILE, 16);
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 16);
@@ -88,7 +88,7 @@ TEST_CASE("TrueTypeFont::renderString handles empty string", "[font][ttf]")
 
 TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", "[font][ttf]")
 {
-    FontTestFixture env;
+    FontTestFixture const env;
     require_font_renderable(FONT_FILE, 24);
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 24);
@@ -112,11 +112,11 @@ TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", 
     for (int32_t y = 0; y < surface->h; ++y) {
         uint32_t const * row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
         for (int32_t x = 0; x < surface->w; ++x) {
-            uint32_t p = row[x];
-            uint8_t r  = 0;
-            uint8_t g  = 0;
-            uint8_t b  = 0;
-            uint8_t a  = 0;
+            uint32_t const p = row[x];
+            uint8_t r        = 0;
+            uint8_t g        = 0;
+            uint8_t b        = 0;
+            uint8_t a        = 0;
             SDL_GetRGBA(p, format_details, nullptr, &r, &g, &b, &a);
 
             if (a == 0 && r == 0 && g == 255 && b == 255) {
@@ -132,7 +132,7 @@ TEST_CASE("TrueTypeFont::renderString no cyan artifacts in transparent pixels", 
 
 TEST_CASE("TrueTypeFont::renderString with different colors", "[font][ttf]")
 {
-    FontTestFixture env;
+    FontTestFixture const env;
     require_font_renderable(FONT_FILE, 20);
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 20);
@@ -198,7 +198,7 @@ TEST_CASE("TrueTypeFont::renderString with different colors", "[font][ttf]")
 
 TEST_CASE("TrueTypeFont::renderString pixel-perfect verification", "[font][ttf]")
 {
-    FontTestFixture env;
+    FontTestFixture const env;
     require_font_renderable(FONT_FILE, 16);
 
     auto font = std::make_unique<TrueTypeFont>(FONT_FILE, 16);

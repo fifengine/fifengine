@@ -126,11 +126,11 @@ TEST_CASE("W3-T0A: multi-cell ignored as blocker by non-blocking walker", "[mult
     f.seedCellRect(4, 4, 12, 6);
 
     // Place multi-cell at (5,5) with sub at (6,5)
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Place obstacle at (8,5)
-    Instance* wall = f.layer->createInstance(f.blockerObj, ModelCoordinate(8, 5, 0));
+    f.layer->createInstance(f.blockerObj, ModelCoordinate(8, 5, 0));
     f.layer->update();
 
     // Non-blocking walker starts from clean cell (4,5)
@@ -159,10 +159,10 @@ TEST_CASE("W3-T0A: multi-cell destination cell validity from clean start", "[mul
     PathFixture f;
     f.seedCellRect(4, 4, 8, 6);
 
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
-    Instance* wall = f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 5, 0));
+    f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 5, 0));
     f.layer->update();
 
     // Walker from (4,5), dest (6,5) near blocked sub-cell (7,5)
@@ -192,7 +192,7 @@ TEST_CASE("W3-T0A: single-cell object paths around multi-cell obstacle", "[multi
     f.seedCellRect(3, 3, 8, 7);
 
     // Multi-cell obstacle at (5,5)+(6,5)
-    Instance* obstacle = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Single-cell walker
@@ -200,7 +200,7 @@ TEST_CASE("W3-T0A: single-cell object paths around multi-cell obstacle", "[multi
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
 
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(3, 5, 0));
+    f.layer->createInstance(walkerObj, ModelCoordinate(3, 5, 0));
     f.layer->update();
 
     Location start(f.layer);
@@ -223,7 +223,7 @@ TEST_CASE("W3-T0A: multi-cell path blocked ahead", "[multicell][path]")
     PathFixture f;
     f.seedCellRect(4, 3, 8, 7);
 
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Block at (7,5),(7,4),(7,6) — completely block x=7 column
@@ -259,7 +259,7 @@ TEST_CASE("W3-T0B: multi-cell route from same start and end is rejected", "[mult
 {
     PathFixture f;
     f.seedCellRect(5, 5, 5, 5);
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     Location loc(f.layer);
@@ -325,7 +325,7 @@ TEST_CASE("W4-T0A: soft-blocked footprint cells are passable at higher cost", "[
     // Mark the sub-cell offset as soft-blocked (cost 5.0)
     f.multiObj->setFootprintCellCost(0, 1, 5.0);
 
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Walker from clean cell (4,5)
@@ -358,7 +358,7 @@ TEST_CASE("W4-T0A: hard-blocked footprint cell (infinite cost) blocks movement",
 
     f.multiObj->setFootprintCellCost(0, 1, std::numeric_limits<double>::max());
 
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Walker from clean cell (4,5)

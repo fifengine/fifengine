@@ -37,10 +37,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_INSTANCE);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_INSTANCE);
+            return log;
+        }();
+    } // namespace
 
     class ActionInfo
     {
@@ -211,14 +214,15 @@ namespace FIFE
 
             // W6-T5: Validate no overlap with existing blocking instances on sub-cells
             if (layer != nullptr) {
-                CellCache* cache = layer->getCellCache();
-                CellGrid* grid   = layer->getCellGrid();
+                CellCache* cache      = layer->getCellCache();
+                CellGrid const * grid = layer->getCellGrid();
                 if (cache != nullptr && grid != nullptr) {
                     std::set<Object*> const & overlapCheck = object->getMultiParts();
                     for (auto* part : overlapCheck) {
-                        if (part == m_object)
+                        if (part == m_object) {
                             continue;
-                        std::vector<ModelCoordinate> partcoords = part->getMultiPartCoordinates(m_rotation);
+                        }
+                        std::vector<ModelCoordinate> const partcoords = part->getMultiPartCoordinates(m_rotation);
                         for (auto const & coord : partcoords) {
                             ModelCoordinate absMc(
                                 static_cast<int32_t>(emc.x) + coord.x,
@@ -342,14 +346,15 @@ namespace FIFE
         if (m_location != loc) {
             // Reject moves that would push multi-cell sub-instances off-grid (W6-T4)
             if (isMultiObject() && loc.getLayer() != nullptr) {
-                CellGrid* grid   = loc.getLayer()->getCellGrid();
-                CellCache* cache = loc.getLayer()->getCellCache();
+                CellGrid const * grid = loc.getLayer()->getCellGrid();
+                CellCache* cache      = loc.getLayer()->getCellCache();
                 if (grid != nullptr && cache != nullptr) {
                     std::vector<ModelCoordinate> fpOffsets;
                     auto const & parts = m_object->getMultiParts();
                     for (auto* part : parts) {
-                        if (part == m_object)
+                        if (part == m_object) {
                             continue;
+                        }
                         auto coords = part->getMultiPartCoordinates(m_rotation);
                         for (auto const & c : coords) {
                             ModelCoordinate abs(loc.getLayerCoordinates());
@@ -638,7 +643,7 @@ namespace FIFE
     void Instance::cancelMovement(uint32_t length)
     {
         if (m_activity != nullptr) {
-            ActionInfo* info = m_activity->m_actionInfo;
+            ActionInfo const * info = m_activity->m_actionInfo;
             if (info != nullptr) {
                 Route* route = info->m_route;
                 if (route != nullptr) {
@@ -651,7 +656,7 @@ namespace FIFE
     Route* Instance::getRoute()
     {
         if (m_activity != nullptr) {
-            ActionInfo* info = m_activity->m_actionInfo;
+            ActionInfo const * info = m_activity->m_actionInfo;
             if (info != nullptr) {
                 return info->m_route;
             }
@@ -696,7 +701,7 @@ namespace FIFE
         cells.push_back(m_location.getLayerCoordinates());
         // For multi-cell, compute footprint from cached offsets using main rotation
         if (isMultiCell() && m_location.getLayer() != nullptr) {
-            CellGrid* grid = m_location.getLayer()->getCellGrid();
+            CellGrid const * grid = m_location.getLayer()->getCellGrid();
             if (grid != nullptr) {
                 std::vector<ModelCoordinate> offsets = m_object->getCachedFootprint(m_rotation);
                 for (auto const & off : offsets) {

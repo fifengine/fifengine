@@ -23,13 +23,13 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEWVIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEWVIEW);
+            return log;
+        }();
+    } // namespace
 
     BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position), m_color{.r = 0, .g = 255, .b = 0, .a = 255}

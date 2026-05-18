@@ -26,13 +26,16 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     size_t Atlas::getImageCount() const
     {

@@ -30,10 +30,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIDEO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIDEO);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {
@@ -632,11 +635,12 @@ namespace FIFE
     {
         float const rad = static_cast<float>(radius);
         for (int32_t dy = 1; static_cast<float>(dy) <= rad; ++dy) {
-            float const dx = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dy) - (dy * dy)));
-            int32_t x      = p.x - static_cast<int32_t>(dx);
+            float const dyf = static_cast<float>(dy);
+            float const dx  = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dyf) - (dyf * dyf)));
+            int32_t x       = p.x - static_cast<int32_t>(dx);
             for (; static_cast<float>(x) <= static_cast<float>(p.x) + dx; x++) {
-                putPixel(x, p.y + static_cast<int32_t>(rad - dy), r, g, b, a);
-                putPixel(x, p.y - static_cast<int32_t>(rad - dy), r, g, b, a);
+                putPixel(x, p.y + static_cast<int32_t>(rad - dyf), r, g, b, a);
+                putPixel(x, p.y - static_cast<int32_t>(rad - dyf), r, g, b, a);
             }
         }
     }

@@ -22,11 +22,13 @@
 
 namespace FIFE
 {
-
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_STRUCTURES);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_STRUCTURES);
+            return log;
+        }();
+    } // namespace
 
     TriggerController::TriggerController(Map* map) : m_map(map)
     {

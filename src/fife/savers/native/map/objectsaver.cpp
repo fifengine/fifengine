@@ -28,10 +28,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_SAVERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_SAVERS);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {
@@ -72,7 +75,7 @@ namespace FIFE
                     rotations.insert(rotation);
                 }
 
-                for (int32_t rotation : rotations) {
+                for (int32_t const rotation : rotations) {
                     XML::Element* rotationElement = doc->NewElement("rotation");
                     rotationElement->SetAttribute("rot", rotation);
 
@@ -110,7 +113,7 @@ namespace FIFE
 
             XML::Document* doc = parent->GetDocument();
 
-            for (int32_t angle : angles) {
+            for (int32_t const angle : angles) {
                 int32_t const imageIndex = objVisual->getStaticImageIndexByAngle(angle);
                 ImagePtr const image     = imageManager->getPtr(static_cast<ResourceHandle>(imageIndex));
                 if (!image) {
@@ -136,7 +139,7 @@ namespace FIFE
 
         void writeActionSound(XML::Element* parent, Action const * action)
         {
-            ActionAudio* audio = action->getAudio();
+            ActionAudio const * audio = action->getAudio();
             if (audio == nullptr) {
                 return;
             }
@@ -225,7 +228,7 @@ namespace FIFE
             std::vector<int32_t> angles;
             actionVisual->getActionImageAngles(angles);
 
-            for (int32_t angle : angles) {
+            for (int32_t const angle : angles) {
                 AnimationPtr const animation = actionVisual->getAnimationByAngle(angle);
                 if (!animation) {
                     continue;
@@ -258,7 +261,7 @@ namespace FIFE
                 XML::Element* actionElement = doc->NewElement("action");
                 actionElement->SetAttribute("id", action->getName().c_str());
 
-                Action* defaultAction = object->getDefaultAction();
+                Action const * defaultAction = object->getDefaultAction();
                 if (defaultAction == action) {
                     actionElement->SetAttribute("default", 1);
                 }
@@ -282,7 +285,7 @@ namespace FIFE
             objectElement->SetAttribute("id", object->getName().c_str());
             objectElement->SetAttribute("namespace", object->getNamespace().c_str());
 
-            Object* inherited = object->getInherited();
+            Object const * inherited = object->getInherited();
             if (inherited != nullptr) {
                 objectElement->SetAttribute("parent", inherited->getName().c_str());
             }
@@ -333,7 +336,7 @@ namespace FIFE
     } // anonymous namespace
 
     ObjectSaver::ObjectSaver(Model* model, ImageManager* imageManager) :
-        m_animationSaver(), m_object(nullptr), m_model(model), m_imageManager(imageManager)
+        m_object(nullptr), m_model(model), m_imageManager(imageManager)
     {
         assert("model must not be null" && m_model);
         assert("imageManager must not be null" && m_imageManager);

@@ -27,101 +27,14 @@
 #include "modules.h"
 #include "util/base/fife_stdint.h"
 
-/**
- * @def   FL_DBG
- *  Logs a debug-level message.
- * @param logger Logger instance (e.g. the static @c _log declared per .cpp file).
- * @param msg    Message to log (string literal, std::string, or std::format result).
- *
- * This macro first checks whether the logger's module is visible via
- * LogManager::isVisible(). If so, it forwards to Logger::log() with level
- * LogManager::LEVEL_DEBUG.
- */
-#ifdef LOG_ENABLED
-    #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                                                 \
-            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
-                (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));                                          \
-        } while (0)
-#else
-    #define FL_DBG(logger, msg)
-#endif
-
-/**
- * @def   FL_LOG
- *  Logs a standard log-level message.
- * @param logger Logger instance.
- * @param msg    Message to log.
- *
- * @see FL_DBG
- */
-#ifdef LOG_ENABLED
-    #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                                                 \
-            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
-                (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));                                            \
-        } while (0)
-#else
-    #define FL_LOG(logger, msg)
-#endif
-
-/**
- * @def   FL_WARN
- *  Logs a warning-level message.
- * @param logger Logger instance.
- * @param msg    Message to log.
- *
- * @see FL_DBG
- */
-#ifdef LOG_ENABLED
-    #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                                                  \
-            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                 \
-                (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));                                            \
-        } while (0)
-#else
-    #define FL_WARN(logger, msg)
-#endif
-
-/**
- * @def   FL_ERR
- *  Logs an error-level message.
- * @param logger Logger instance.
- * @param msg    Message to log.
- *
- * @see FL_DBG
- */
-#ifdef LOG_ENABLED
-    #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                                                 \
-            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                \
-                (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));                                          \
-        } while (0)
-#else
-    #define FL_ERR(logger, msg)
-#endif
-
-/**
- * @def   FL_PANIC
- *  Logs a panic-level message and aborts the program.
- * @param logger Logger instance.
- * @param msg    Message to log.
- *
- * After logging, the process is terminated via std::abort().
- * @see FL_DBG
- */
-#ifdef LOG_ENABLED
-    #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-avoid-do-while) */ \
-        do {                                                                                                   \
-            if (FIFE::LogManager::instance().isVisible((logger).getModule()))                                  \
-                (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));                                            \
-        } while (0)
-#else
-    #define FL_PANIC(logger, msg)
-#endif
-
 namespace FIFE
 {
+
+#ifdef LOG_ENABLED
+    inline constexpr bool kLogEnabled = true;
+#else
+    inline constexpr bool kLogEnabled = false;
+#endif
 
     /**
      *  Central logging controller.
@@ -378,6 +291,62 @@ namespace FIFE
             spdlog::logger* m_logger;
 #endif
     };
+
+    /**
+     * @def   FL_DBG
+     *  Logs a debug-level message.
+     * @param logger Logger instance.
+     * @param msg    Message to log (string literal, std::string, or std::format result).
+     *
+     * These are inline template functions (not macros) that first check whether
+     * the logger's module is visible via LogManager::isVisible() before logging.
+     * When @c LOG_ENABLED is not defined the function body is eliminated by
+     * @c if constexpr and the compiler may elide the call entirely.
+     */
+    template <typename Msg>
+    inline void FL_DBG([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
+    {
+        if constexpr (kLogEnabled) {
+            if (LogManager::instance().isVisible(logger.getModule()))
+                logger.log(LogManager::LEVEL_DEBUG, std::forward<Msg>(msg));
+        }
+    }
+
+    template <typename Msg>
+    inline void FL_LOG([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
+    {
+        if constexpr (kLogEnabled) {
+            if (LogManager::instance().isVisible(logger.getModule()))
+                logger.log(LogManager::LEVEL_LOG, std::forward<Msg>(msg));
+        }
+    }
+
+    template <typename Msg>
+    inline void FL_WARN([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
+    {
+        if constexpr (kLogEnabled) {
+            if (LogManager::instance().isVisible(logger.getModule()))
+                logger.log(LogManager::LEVEL_WARN, std::forward<Msg>(msg));
+        }
+    }
+
+    template <typename Msg>
+    inline void FL_ERR([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
+    {
+        if constexpr (kLogEnabled) {
+            if (LogManager::instance().isVisible(logger.getModule()))
+                logger.log(LogManager::LEVEL_ERROR, std::forward<Msg>(msg));
+        }
+    }
+
+    template <typename Msg>
+    inline void FL_PANIC([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
+    {
+        if constexpr (kLogEnabled) {
+            if (LogManager::instance().isVisible(logger.getModule()))
+                logger.log(LogManager::LEVEL_PANIC, std::forward<Msg>(msg));
+        }
+    }
 
 } // namespace FIFE
 

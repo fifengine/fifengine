@@ -22,10 +22,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_RESMGR);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_RESMGR);
+            return log;
+        }();
+    } // namespace
 
     AnimationManager::~AnimationManager() = default;
 

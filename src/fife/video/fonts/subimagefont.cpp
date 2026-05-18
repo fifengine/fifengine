@@ -26,14 +26,13 @@
 
 namespace FIFE
 {
-
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_GUI);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_GUI);
+            return log;
+        }();
+    } // namespace
 
     SubImageFont::SubImageFont(std::string const & filename, std::string const & glyphs) :
         m_colorkey{.r = 0, .g = 0, .b = 0, .a = 0}

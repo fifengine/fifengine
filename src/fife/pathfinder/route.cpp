@@ -22,11 +22,13 @@
 
 namespace FIFE
 {
-
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_STRUCTURES);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_STRUCTURES);
+            return log;
+        }();
+    } // namespace
 
     Route::Route(Location const & start, Location const & end) :
         m_status(ROUTE_CREATED),
@@ -380,9 +382,8 @@ namespace FIFE
         if (m_path.empty()) {
             return 0.0;
         }
-        double cost               = 0.0;
-        Location const * prev     = nullptr;
-        CellGrid const * lastGrid = nullptr;
+        double cost           = 0.0;
+        Location const * prev = nullptr;
         for (auto const & loc : m_path) {
             Layer* layer = loc.getLayer();
             if (layer == nullptr) {
@@ -396,8 +397,7 @@ namespace FIFE
             if (prev != nullptr && prev->getLayer() == layer) {
                 cost += grid->getAdjacentCost(loc.getLayerCoordinates(), prev->getLayerCoordinates());
             }
-            prev     = &loc;
-            lastGrid = grid;
+            prev = &loc;
         }
         return cost;
     }

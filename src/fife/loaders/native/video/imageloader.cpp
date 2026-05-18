@@ -80,7 +80,7 @@ namespace FIFE
 
         // Fallback: load from VFS memory buffer
         auto* vfs          = VFS::instance();
-        auto* data         = vfs->open(filename.c_str());
+        auto* data         = vfs->open(filename);
         auto const datalen = data->getDataLength();
 
         std::vector<uint8_t> buffer(datalen);

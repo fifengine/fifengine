@@ -32,10 +32,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEWVIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEWVIEW);
+            return log;
+        }();
+    } // namespace
 
     CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),

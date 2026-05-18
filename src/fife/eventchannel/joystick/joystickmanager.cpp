@@ -28,10 +28,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_EVTCHANNEL);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_EVTCHANNEL);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {
@@ -386,7 +389,7 @@ namespace FIFE
 
     std::string JoystickManager::getGuidString(int32_t deviceIndex)
     {
-        std::array<char, 33> tmp;
+        std::array<char, 33> tmp{};
         auto const sdlDeviceIndex = toSdlJoystickId(deviceIndex);
         SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
         if (joy != nullptr) {

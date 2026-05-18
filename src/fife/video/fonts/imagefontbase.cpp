@@ -67,8 +67,8 @@ namespace FIFE
         SDL_FillSurfaceRect(surface, nullptr, 0x00000000);
 
         SDL_Rect dst;
-        dst.x = dst.y  = 0;
-        s_glyph* glyph = nullptr;
+        dst.x = dst.y         = 0;
+        s_glyph const * glyph = nullptr;
 
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {

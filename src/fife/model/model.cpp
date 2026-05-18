@@ -30,10 +30,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_MODEL);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_MODEL);
+            return log;
+        }();
+    } // namespace
 
     class ModelMapObserver : public MapChangeListener
     {

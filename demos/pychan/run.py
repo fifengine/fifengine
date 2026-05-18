@@ -239,7 +239,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 
         # save source to file
         tmp = open("gui/tmp.xml", "w")
-        tmp.write(self.gui.findChild(name="xmlSource").text.encode("utf-8"))
+        tmp.write(self.gui.findChild(name="xmlSource").text)
         tmp.close()
         # change the xml path, load it and reset the path
         xml_orig = self.currentExample.xmlFile

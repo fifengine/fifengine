@@ -68,7 +68,7 @@ namespace FIFE
         m_sf.resize(toSize(max_index), -1);
         m_gCosts.resize(toSize(max_index), 0.0);
         m_expansionCount = 0;
-        assert("expansion limit must be positive and reasonable" && MAX_ASTAR_EXPANSIONS > 0);
+        static_assert(MAX_ASTAR_EXPANSIONS > 0, "expansion limit must be positive and reasonable");
     }
 
     SingleLayerSearch::~SingleLayerSearch() = default;
@@ -154,12 +154,9 @@ namespace FIFE
                 // skip the expensive footprint expansion (W5-T2)
                 bool const spatialEarlyOut = !blocker && [&]() {
                     auto const & adjNbrs = adjacent->getNeighbors();
-                    for (auto* nbr : adjNbrs) {
-                        if (nbr != nullptr && nbr->getCellType() > blockerThreshold) {
-                            return false;
-                        }
-                    }
-                    return true;
+                    return std::ranges::all_of(adjNbrs, [&](auto* nbr) {
+                        return nbr == nullptr || nbr->getCellType() <= blockerThreshold;
+                    });
                 }();
 
                 if (!spatialEarlyOut) {

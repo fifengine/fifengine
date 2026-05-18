@@ -20,13 +20,13 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_CONTROLLER);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_CONTROLLER);
+            return log;
+        }();
+    } // namespace
 
     constexpr float MAXIMUM_VOLUME = 10.0F;
 

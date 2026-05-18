@@ -55,39 +55,42 @@ namespace FIFE
         delete m_joystickManager;
     }
 
-    template <typename T>
-    static void addListener(std::deque<T>& vec, T& listener)
+    namespace
     {
-        if (!listener->isActive()) {
-            listener->setActive(true);
-            vec.push_back(listener);
-        }
-    }
-
-    template <typename T>
-    static void addListenerFront(std::deque<T>& vec, T& listener)
-    {
-        if (!listener->isActive()) {
-            listener->setActive(true);
-            vec.push_front(listener);
-        }
-    }
-
-    template <typename T>
-    static void removeListener(std::deque<T>& vec, T& listener)
-    {
-        if (listener->isActive()) {
-            listener->setActive(false);
-
-            auto it = std::find_if(vec.begin(), vec.end(), [&](T const & item) {
-                return item == listener;
-            });
-
-            if (it != vec.end()) {
-                vec.erase(it);
+        template <typename T>
+        void addListener(std::deque<T>& vec, T& listener)
+        {
+            if (!listener->isActive()) {
+                listener->setActive(true);
+                vec.push_back(listener);
             }
         }
-    }
+
+        template <typename T>
+        void addListenerFront(std::deque<T>& vec, T& listener)
+        {
+            if (!listener->isActive()) {
+                listener->setActive(true);
+                vec.push_front(listener);
+            }
+        }
+
+        template <typename T>
+        void removeListener(std::deque<T>& vec, T& listener)
+        {
+            if (listener->isActive()) {
+                listener->setActive(false);
+
+                auto it = std::find_if(vec.begin(), vec.end(), [&](T const & item) {
+                    return item == listener;
+                });
+
+                if (it != vec.end()) {
+                    vec.erase(it);
+                }
+            }
+        }
+    } // namespace
 
     void EventManager::addCommandListener(ICommandListener* listener)
     {

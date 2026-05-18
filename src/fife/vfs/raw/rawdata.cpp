@@ -20,10 +20,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VFS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VFS);
+            return log;
+        }();
+    } // namespace
 
     RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0)
     {

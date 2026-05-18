@@ -71,7 +71,7 @@ namespace FIFE
         uint32_t flags = 0;
 
         for (i = 0; i < kRingBufferSize - kMatchLengthUpperLimit; i++) {
-            buffer[i] = ' ';
+            buffer[static_cast<size_t>(i)] = ' ';
         }
 
         r     = kRingBufferSize - kMatchLengthUpperLimit;
@@ -87,7 +87,7 @@ namespace FIFE
                 c                 = in[ibuf++];
                 out[m_outindex++] = static_cast<uint8_t>(c);
 
-                buffer[r++] = static_cast<char>(c);
+                buffer[static_cast<size_t>(r++)] = static_cast<char>(c);
                 r &= (kRingBufferSize - 1);
             } else {
                 i = in[ibuf++];
@@ -101,7 +101,7 @@ namespace FIFE
 
                     out[m_outindex++] = static_cast<uint8_t>(c);
 
-                    buffer[r++] = static_cast<char>(c);
+                    buffer[static_cast<size_t>(r++)] = static_cast<char>(c);
                     r &= (kRingBufferSize - 1);
                 }
             }

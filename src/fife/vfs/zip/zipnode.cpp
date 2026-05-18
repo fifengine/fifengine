@@ -235,12 +235,12 @@ std::ostream& operator<<(std::ostream& os, FIFE::ZipNode const & node)
     os << node.getName() << '\n';
 
     // print all file children
-    FIFE::ZipNodeContainer fileChildren = node.getChildren(FIFE::ZipContentType::File);
+    FIFE::ZipNodeContainer const fileChildren = node.getChildren(FIFE::ZipContentType::File);
     for (auto* child : fileChildren) {
         os << *child << '\n';
     }
 
-    FIFE::ZipNodeContainer directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
+    FIFE::ZipNodeContainer const directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
     for (auto* child : directoryChildren) {
         os << *child << '\n';
     }

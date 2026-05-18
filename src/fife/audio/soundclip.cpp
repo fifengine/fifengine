@@ -27,10 +27,13 @@ namespace FIFE
 {
     // Use `FIFE_API` from platform.h on declarations; don't define local FIFE_API_IMPL here.
 
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_AUDIO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_AUDIO);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {

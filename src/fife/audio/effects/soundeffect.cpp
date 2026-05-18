@@ -21,10 +21,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_AUDIO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_AUDIO);
+            return log;
+        }();
+    } // namespace
 
     SoundEffect::SoundEffect() :
         m_effect(0), m_slot(0), m_effectType(SE_EFFECT_NULL), m_enabled(false), m_filter(nullptr)

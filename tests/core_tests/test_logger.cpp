@@ -21,7 +21,6 @@ TEST_CASE("LogManager singleton", "[core][logger]")
 {
     auto& a = LogManager::instance();
     auto& b = LogManager::instance();
-    CHECK(&a != nullptr);
     CHECK(&a == &b);
 }
 

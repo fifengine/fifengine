@@ -41,10 +41,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_CAMERA);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_CAMERA);
+            return log;
+        }();
+    } // namespace
 
     // to avoid std::bad_alloc errors, we determine the maximum size of batches
     uint32_t const MAX_BATCH_SIZE = 100000;
@@ -773,10 +776,13 @@ found_non_transparent_pixel:;
         m_transform = NoneTransform;
     }
 
-    static bool pipelineSort(RendererBase const * lhs, RendererBase const * rhs)
+    namespace
     {
-        return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
-    }
+        bool pipelineSort(RendererBase const * lhs, RendererBase const * rhs)
+        {
+            return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
+        }
+    } // namespace
 
     void Camera::addRenderer(RendererBase* renderer)
     {

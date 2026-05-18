@@ -15,10 +15,12 @@
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 
-static uint32_t const ATLAS_SIZE = 512;
-
 namespace FIFE
 {
+    namespace
+    {
+        uint32_t const ATLAS_SIZE = 512;
+    } // namespace
     GuiImageLoader::GuiImageLoader() : m_atlasbook(new AtlasBook(ATLAS_SIZE, ATLAS_SIZE))
     {
     }
@@ -41,7 +43,7 @@ namespace FIFE
             return new GuiImage(tmpimg);
         }
         // look for a place for an image of given size
-        AtlasBlock* block = m_atlasbook->getBlock(tmpimg->getWidth(), tmpimg->getHeight());
+        AtlasBlock const * block = m_atlasbook->getBlock(tmpimg->getWidth(), tmpimg->getHeight());
 
         // if it can't fit, we need to add new 'page'
         if (block->page >= m_atlases.size()) {

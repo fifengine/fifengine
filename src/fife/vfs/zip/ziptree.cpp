@@ -31,7 +31,7 @@ namespace FIFE
             cleaned.pop_back();
         }
 
-        fs::path filePath(cleaned);
+        fs::path const filePath(cleaned);
         ZipNode* node       = m_rootNode;
         ZipNode* returnNode = nullptr;
 

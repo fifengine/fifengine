@@ -41,16 +41,15 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEWVIEW);
-        return log;
-    }();
-
     namespace
     {
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEWVIEW);
+            return log;
+        }();
         int32_t toInt32Dimension(uint32_t value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));

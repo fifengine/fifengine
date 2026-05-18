@@ -32,10 +32,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_STRUCTURES);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_STRUCTURES);
+            return log;
+        }();
+    } // namespace
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_name(std::move(identifier)),
@@ -492,7 +495,7 @@ namespace FIFE
     {
         bool blockingInstance = false;
         if (m_cellCache != nullptr) {
-            Cell* cell = m_cellCache->getCell(cellCoordinate);
+            Cell const * cell = m_cellCache->getCell(cellCoordinate);
             if (cell != nullptr) {
                 return cell->getCellType() != CTYPE_NO_BLOCKER;
             }

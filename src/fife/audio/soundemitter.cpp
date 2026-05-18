@@ -27,10 +27,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_AUDIO);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_AUDIO);
+            return log;
+        }();
+    } // namespace
 
     namespace
     {

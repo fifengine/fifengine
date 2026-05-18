@@ -25,10 +25,13 @@
 namespace FIFE
 {
 
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) :
         VFSSource(vfs), m_zipfile(vfs->open(zip_file)), m_centralDirOffset(0), m_centralDirCount(0)

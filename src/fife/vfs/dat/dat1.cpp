@@ -20,10 +20,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_FO_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_FO_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     DAT1::DAT1(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {

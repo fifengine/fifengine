@@ -51,10 +51,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_NATIVE_LOADERS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_NATIVE_LOADERS);
+            return log;
+        }();
+    } // namespace
 
     MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend) :
         m_model(model),
@@ -910,7 +913,7 @@ namespace FIFE
                 }
             }
 
-            RendererNode node(
+            RendererNode const node(
                 instance ? RendererNode(instance, layer, Point(ld.x, ld.y)) : RendererNode(layer, Point(ld.x, ld.y)));
 
             Camera* cam = defaultCamera;
@@ -941,7 +944,7 @@ namespace FIFE
                     ld.srcBlend,
                     ld.dstBlend);
             } else if (ld.type == "image") {
-                ImagePtr image = m_imageManager->create(ld.imagePath);
+                ImagePtr const image = m_imageManager->create(ld.imagePath);
                 renderer->addImage(ld.group, node, image, ld.srcBlend, ld.dstBlend);
             } else if (ld.type == "animation") {
                 if (m_objectLoader) {

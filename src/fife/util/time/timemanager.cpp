@@ -21,11 +21,14 @@
 
 namespace FIFE
 {
-    static uint64_t const UNDEFINED_TIME_DELTA = 999999;
-    static Logger& _log                        = []() -> Logger& {
-        static Logger log(LM_UTIL);
-        return log;
-    }();
+    namespace
+    {
+        uint64_t const UNDEFINED_TIME_DELTA = 999999;
+        Logger& _log                        = []() -> Logger& {
+            static Logger log(LM_UTIL);
+            return log;
+        }();
+    } // namespace
 
     TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0)
     {

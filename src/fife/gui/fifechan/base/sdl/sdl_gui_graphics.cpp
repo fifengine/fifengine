@@ -24,10 +24,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_GUI);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_GUI);
+            return log;
+        }();
+    } // namespace
 
     SdlGuiGraphics::SdlGuiGraphics() : m_renderbackend(RenderBackend::instance())
     {

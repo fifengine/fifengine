@@ -22,10 +22,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEW);
+            return log;
+        }();
+    } // namespace
 
     OverlayColors::OverlayColors(ImagePtr const & image) : m_image(image)
     {
@@ -385,7 +388,7 @@ namespace FIFE
         for (; it != m_map.end(); ++it) {
             addAnimationOverlay(it->first, 0, getAnimationByAngle(static_cast<int32_t>(it->first)));
             if (colorOverlay) {
-                OverlayColors* oldC = getColorOverlay(static_cast<int32_t>(it->first));
+                OverlayColors const * oldC = getColorOverlay(static_cast<int32_t>(it->first));
                 if (oldC != nullptr) {
                     OverlayColors const c = OverlayColors(*oldC);
                     addColorOverlay(it->first, 0, c);

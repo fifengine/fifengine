@@ -36,13 +36,16 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_CAMERA);
-        return log;
-    }();
+    namespace
+    {
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_CAMERA);
+            return log;
+        }();
+    } // namespace
 
     class CacheLayerChangeListener : public LayerChangeListener
     {

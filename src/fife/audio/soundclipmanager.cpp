@@ -19,10 +19,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_RESMGR);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_RESMGR);
+            return log;
+        }();
+    } // namespace
 
     SoundClipManager::~SoundClipManager() = default;
 

@@ -223,36 +223,36 @@ namespace FIFE
 
     void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a)
     {
-        Uint8* p = nullptr;
-
         assert(m_surface);
 
-        SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(m_surface->format);
-        int32_t const bpp                      = SDL_BYTESPERPIXEL(m_surface->format);
+        SDL_PixelFormatDetails const * const details = SDL_GetPixelFormatDetails(m_surface->format);
+        int32_t const bpp                            = SDL_BYTESPERPIXEL(m_surface->format);
 
-        if (!isSharedImage()) {
-            if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
-                (void)r;
-                (void)g;
-                (void)b;
-                (void)a;
-                return;
+        Uint8* const p = [&]() -> Uint8* {
+            if (!isSharedImage()) {
+                if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+                    return nullptr;
+                }
+                return static_cast<Uint8*>(m_surface->pixels) +
+                       (static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch)) +
+                       (static_cast<size_t>(x) * static_cast<size_t>(bpp));
+            } else {
+                if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
+                    ((y + m_subimagerect.y) >= m_surface->h)) {
+                    return nullptr;
+                }
+                return static_cast<Uint8*>(m_surface->pixels) +
+                       (static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch)) +
+                       (static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp));
             }
-            p = static_cast<Uint8*>(m_surface->pixels) +
-                (static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch)) +
-                (static_cast<size_t>(x) * static_cast<size_t>(bpp));
-        } else {
-            if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
-                ((y + m_subimagerect.y) >= m_surface->h)) {
-                (void)r;
-                (void)g;
-                (void)b;
-                (void)a;
-                return;
-            }
-            p = static_cast<Uint8*>(m_surface->pixels) +
-                (static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch)) +
-                (static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp));
+        }();
+
+        if (!p) {
+            (void)r;
+            (void)g;
+            (void)b;
+            (void)a;
+            return;
         }
 
         uint32_t pixel = 0;
@@ -328,8 +328,8 @@ namespace FIFE
         // disable blending
         SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_NONE);
         if (this->isSharedImage()) {
-            Rect const & rect = this->getSubImageRect();
-            SDL_Rect dstrect  = {
+            Rect const & rect      = this->getSubImageRect();
+            SDL_Rect const dstrect = {
                 .x = static_cast<int>(rect.x) + static_cast<int>(xoffset),
                 .y = static_cast<int>(rect.y) + static_cast<int>(yoffset),
                 .w = static_cast<Uint16>(srcimg->getWidth()),
@@ -346,7 +346,7 @@ namespace FIFE
                 SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);
             }
         } else {
-            SDL_Rect dstrect = {
+            SDL_Rect const dstrect = {
                 .x = static_cast<Sint16>(xoffset),
                 .y = static_cast<Sint16>(yoffset),
                 .w = static_cast<Uint16>(srcimg->getWidth()),

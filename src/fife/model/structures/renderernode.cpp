@@ -19,10 +19,13 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEWVIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEWVIEW);
+            return log;
+        }();
+    } // namespace
 
     class NodeInstanceDeleteListener : public InstanceDeleteListener
     {

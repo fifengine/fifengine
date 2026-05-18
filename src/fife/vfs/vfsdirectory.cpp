@@ -24,10 +24,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VFS);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VFS);
+            return log;
+        }();
+    } // namespace
 
     VFSDirectory::VFSDirectory(VFS* vfs, std::string root) : VFSSource(vfs), m_root(std::move(root))
     {

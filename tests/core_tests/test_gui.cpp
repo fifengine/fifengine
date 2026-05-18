@@ -60,8 +60,8 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
     ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
-    int h = static_cast<int>(img->getHeight());
-    int w = static_cast<int>(img->getWidth());
+    int const h = static_cast<int>(img->getHeight());
+    int const w = static_cast<int>(img->getWidth());
     for (int i = 0; i < 100; i += 2) {
         renderbackend.startFrame();
         img->render(Rect(i, i, w, h));
@@ -73,7 +73,7 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
 
 TEST_CASE("GuiImageLoader renders beach_e1.png via SDL", "[gui][sdl]")
 {
-    environment env;
+    environment const env;
     RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
@@ -84,7 +84,7 @@ TEST_CASE("GuiImageLoader renders beach_e1.png via SDL", "[gui][sdl]")
 
 TEST_CASE("GuiImageLoader renders beach_e1.png via OpenGL", "[gui][opengl]")
 {
-    environment env;
+    environment const env;
     RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
     renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");

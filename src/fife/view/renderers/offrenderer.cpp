@@ -52,10 +52,13 @@ namespace FIFE
     /** Logger to use for this source file.
      *  @relates Logger
      */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_VIEWVIEW);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIEWVIEW);
+            return log;
+        }();
+    } // namespace
 
     OffRendererLineInfo::OffRendererLineInfo(
         Point const & n1, Point const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
