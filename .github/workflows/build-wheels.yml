@@ -299,6 +299,204 @@ jobs:
           path: wheelhouse/*.whl
 
 
+# ---------------------------------------------------------------------------------------
+
+  build-wheels-linux:
+
+# ---------------------------------------------------------------------------------------
+
+    name: "${{ matrix.config.job_name }}"
+
+    runs-on: ubuntu-latest
+    container: ghcr.io/jakoch/cpp-devbox:${{ matrix.config.image_version }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              job_name: "Linux | Clang22 | Wheel + Tests",
+              image_version: "trixie-with-vulkansdk-latest",
+              preset: "clang22-x64-linux-rel",
+              triplet: x64-linux,
+              artifact-name: "wheels-linux-clang22"
+            }
+
+    env:
+      VCPKG_DISABLE_METRICS: 1
+      VCPKG_FORCE_SYSTEM_BINARIES: 1
+      VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching,registries
+      VCPKG_ROOT: /opt/vcpkg
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+      SOURCE_DIR: ${{ github.workspace }}
+      DEPS_DIR: ${{ github.workspace }}/out/fife-dependencies
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6 # https://github.com/actions/checkout
+
+      - name: ℹ Show Tool Versions
+        run: |
+          cmake --version
+          ninja --version
+          python3 --version
+
+      - name: 🔽 Install required system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf autoconf-archive automake libtool \
+            build-essential git make \
+            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils python3-dev
+
+      - name: ✏ Define Build Paths
+        run: |
+          echo "BUILD_DIR=out/build/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
+          echo "INSTALL_DIR=out/install/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
+
+      - name: 🎯 Setup VCPKG Cache
+        id: cache-vcpkg-linux-wheels
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_ROOT }}/packages
+            ~/.cache/vcpkg/archives
+          key: cache-vcpkg-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            cache-vcpkg-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-vcpkg-linux-wheels-${{ matrix.config.preset }}
+
+      - name: 🎯 Setup Dependencies Cache
+        id: cache-deps-linux-wheels
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          restore-keys: |
+            cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-deps-linux-wheels-${{ matrix.config.preset }}
+
+      - name: 🔽 1.1 Update VCPKG (latest TAG)
+        run: |
+          cd ${{ env.VCPKG_ROOT }}
+          git fetch origin --tags --force
+          git checkout master
+          git reset --hard origin/master
+          git clean -fdx
+          LATEST_VCPKG_TAG="$(git tag --sort=-v:refname | head -n 1)"
+          git checkout "$LATEST_VCPKG_TAG"
+
+      - name: 🛠️ 1.2 Setup VCPKG
+        run: |
+          "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+          "${VCPKG_ROOT}/vcpkg" integrate install
+
+      - name: 📦 1.3 Install VCPKG dependencies
+        run: |
+          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
+
+      - name: 🧩 2.1 Configure non-vcpkg dependencies
+        run: |
+          cmake \
+            -S dependencies \
+            -B ${{ env.DEPS_DIR }}/build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+
+      - name: 🏗️ 2.2 Build non-vcpkg dependencies
+        run: |
+          cmake --build ${{ env.DEPS_DIR }}/build --parallel
+
+      - name: 🛠️ 3.1 Install wheel tooling
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install build check-wheel-contents uv
+
+      - name: 🛠️ 3.2 Build Linux wheel
+        env:
+          CMAKE_ARGS: >
+            -DENABLE_FIFEGUI=ON
+            -DBUILD_PYTHON_BINDINGS=ON
+            -DBUILD_LIBRARY=ON
+            -DVCPKG_MANIFEST_MODE=OFF
+            -DCMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+        run: |
+          python3 -m build --wheel --outdir wheelhouse
+
+      - name: 🛠️ 3.3 Verify wheels
+        run: |
+          ls wheelhouse/*.whl
+          python3 -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
+
+      - name: 🐍 Prepare wheel test environment
+        run: |
+          set -euo pipefail
+          uv venv --python /usr/bin/python3 .venv-wheeltest
+          uv pip install --python .venv-wheeltest wheelhouse/*.whl pytest pytest-timeout
+
+      - name: 🚬 Smoke Test (installed wheel)
+        env:
+          LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+        run: |
+          set -euo pipefail
+          .venv-wheeltest/bin/python -c "import fife; from fife import fifechan; print('wheel import OK:', hasattr(fifechan, 'Window'))"
+
+      - name: 🧪 Python Tests ➔ extension_tests (wheel)
+        env:
+          SDL_VIDEODRIVER: x11
+          SDL_AUDIODRIVER: dummy
+          LIBGL_ALWAYS_SOFTWARE: 1
+          GALLIUM_DRIVER: llvmpipe
+          MESA_GL_VERSION_OVERRIDE: 3.3
+          LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+        run: |
+          set -euo pipefail
+          xvfb-run --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
+            .venv-wheeltest/bin/python -m pytest tests/extension_tests/ -v \
+            --timeout=120 --maxfail=10
+
+      - name: 🧪 Python Tests ➔ swig_tests (wheel)
+        env:
+          SDL_VIDEODRIVER: x11
+          SDL_AUDIODRIVER: dummy
+          LIBGL_ALWAYS_SOFTWARE: 1
+          GALLIUM_DRIVER: llvmpipe
+          MESA_GL_VERSION_OVERRIDE: 3.3
+          LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+        run: |
+          set -euo pipefail
+          xvfb-run --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
+            .venv-wheeltest/bin/python -m pytest tests/swig_tests/ -v \
+            --timeout=120 --maxfail=10
+
+      - name: 🔼 Upload Linux wheel artifacts
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        with:
+          name: ${{ matrix.config.artifact-name }}
+          path: wheelhouse/*.whl
+
+
 # # ---------------------------------------------------------------------------------------
 
 #   upload_wheels_to_pypi:
