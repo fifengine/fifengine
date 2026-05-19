@@ -465,6 +465,8 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: 🧪 CTest ➔ Run Tests
+        env:
+          LD_LIBRARY_PATH: /usr/lib64
         run: |
           xvfb-run \
             --auto-servernum \
