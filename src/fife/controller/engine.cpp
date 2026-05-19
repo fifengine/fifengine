@@ -55,6 +55,7 @@
 #include "view/renderers/instancerenderer.h"
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
+#include "view/renderers/pathrenderer.h"
 #include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/targetrenderer.h"
 
@@ -346,6 +347,7 @@ namespace FIFE
         m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
         m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
         m_renderers.push_back(new CellRenderer(m_renderbackend, 100));
+        m_renderers.push_back(new PathRenderer(m_renderbackend, 105));
 
         FL_LOG(_log, "Creating model");
         m_model = new Model(m_renderbackend, m_renderers);

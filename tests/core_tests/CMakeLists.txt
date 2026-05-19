@@ -29,6 +29,7 @@ set(
   test_zip.cpp
   test_multicell_blocking.cpp
   test_multicell_pathfinding.cpp
+  test_pathrenderer.cpp
 )
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")

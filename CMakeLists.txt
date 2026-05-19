@@ -395,6 +395,7 @@ set(
   src/fife/view/visual.cpp
   src/fife/view/renderers/blockinginforenderer.cpp
   src/fife/view/renderers/cellrenderer.cpp
+  src/fife/view/renderers/pathrenderer.cpp
   src/fife/view/renderers/cellselectionrenderer.cpp
   src/fife/view/renderers/coordinaterenderer.cpp
   src/fife/view/renderers/floatingtextrenderer.cpp
@@ -607,6 +608,7 @@ set(
   src/fife/view/visual.h
   src/fife/view/renderers/blockinginforenderer.h
   src/fife/view/renderers/cellrenderer.h
+  src/fife/view/renderers/pathrenderer.h
   src/fife/view/renderers/cellselectionrenderer.h
   src/fife/view/renderers/coordinaterenderer.h
   src/fife/view/renderers/floatingtextrenderer.h
@@ -729,6 +731,7 @@ set(
   src/fife/view/rendererbase.i
   src/fife/view/renderers/blockinginforenderer.i
   src/fife/view/renderers/cellrenderer.i
+  src/fife/view/renderers/pathrenderer.i
   src/fife/view/renderers/cellselectionrenderer.i
   src/fife/view/renderers/coordinaterenderer.i
   src/fife/view/renderers/floatingtextrenderer.i

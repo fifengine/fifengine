@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - tba
 
+## Added
+
+- implemented issue #733: new PathRenderer with multiple path visualization styles
+  - added `PathRenderer` class with solid, dashed, arrowed, gradient, and heatmap styles
+  - added `PathStyleConfig` struct for per-instance style settings (color, width, dash pattern, arrow size)
+  - added `PathLineStyle` enum (`PLS_SOLID`, `PLS_DASHED`, `PLS_ARROWED`, `PLS_GRADIENT`, `PLS_HEATMAP`)
+  - `isPointInView()` culling with 20-px padding for efficient off-screen skipping
+  - per-instance route cache with dirty tracking via route session ID
+  - registered at pipeline position 105 (above CellRenderer)
+  - added SWIG bindings and Python unit tests
+
 ## Changed
 
 - implemented issue #817: LightRenderer add methods now return typed light info pointers
