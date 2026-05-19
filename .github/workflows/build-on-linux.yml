@@ -349,6 +349,12 @@ jobs:
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
             libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
 
+      - name: 🐍 Install Python3 dev headers (for Python bindings)
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
+
       # Derive build/install directories directly from the preset name.
       - name: ✏ Define Build Paths
         run: |
