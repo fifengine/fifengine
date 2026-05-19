@@ -431,7 +431,7 @@ jobs:
             --preset "${{ matrix.config.preset }}" \
             -B ${{ env.BUILD_DIR }} \
             -DENABLE_FIFEGUI=ON \
-            -DBUILD_PYTHON_BINDINGS=OFF \
+            -DBUILD_PYTHON_BINDINGS=${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && 'ON' || 'OFF' }} \
             -DBUILD_LIBRARY=ON \
             -DVCPKG_MANIFEST_MODE=OFF \
             -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/x64-linux" \
@@ -472,6 +472,40 @@ jobs:
           ctest \
             --test-dir "${BUILD_DIR}" \
             --output-on-failure
+
+      - name: 🐍 Prepare Python Environment
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        run: |
+          set -euo pipefail
+          PY_VER="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+          PYTHON_SITE="${INSTALL_DIR}/lib/python${PY_VER}/site-packages"
+          echo "PY_VER=$PY_VER" >> "$GITHUB_ENV"
+          echo "PYTHON_SITE=$PYTHON_SITE" >> "$GITHUB_ENV"
+
+      - name: 🐍 Python Tests ➔ extension_tests
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        env:
+          PYTHONPATH: ${{ env.PYTHON_SITE }}
+          LD_LIBRARY_PATH: ${{ env.INSTALL_DIR }}/lib:${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+        run: |
+          python3 -c "from fife import fifechan; print('fifechan OK:', fifechan.Window())"
+          xvfb-run --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
+          uv run --no-project -p /usr/bin/python3 \
+            --with pytest --with pytest-timeout \
+          python3 -m pytest tests/extension_tests/ -v --timeout=120 -x
+
+      - name: 🐍 Python Tests ➔ swig_tests
+        if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
+        env:
+          PYTHONPATH: ${{ env.PYTHON_SITE }}
+          LD_LIBRARY_PATH: ${{ env.INSTALL_DIR }}/lib:${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+        run: |
+          xvfb-run --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
+          uv run --no-project -p /usr/bin/python3 \
+            --with pytest --with pytest-timeout \
+          python3 -m pytest tests/swig_tests/ -v --timeout=120 -x
 
       - name: ❔ CHECK folders, to see if everything is present (after building)
         run: |
