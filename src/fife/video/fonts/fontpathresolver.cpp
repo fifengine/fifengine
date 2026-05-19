@@ -31,6 +31,44 @@ namespace FIFE
         }();
 
         constexpr std::array<std::string_view, 3> fontExtensions = {".ttf", ".ttc", ".otf"};
+
+        bool ensureVfsSourceRegistered(std::string const & path)
+        {
+            VFS* const vfs = VFS::instance();
+            assert("VFS instance must exist" && vfs);
+
+            if (vfs->hasSource(path)) {
+                return true;
+            }
+
+            FL_DBG(_log, std::format("FontPathResolver: lazily registering VFS source: {}", path));
+            vfs->addNewSource(path);
+            if (vfs->hasSource(path)) {
+                return true;
+            }
+
+            fs::path const normalizedPath(path);
+            std::string const normalized = normalizedPath.lexically_normal().string();
+            if (normalized != path) {
+                FL_DBG(_log, std::format("FontPathResolver: retrying VFS source registration with normalized path: {}", normalized));
+                vfs->addNewSource(normalized);
+                if (vfs->hasSource(path) || vfs->hasSource(normalized)) {
+                    return true;
+                }
+            }
+
+            std::string const absolute = GetAbsolutePath(normalizedPath).lexically_normal().string();
+            if (absolute != path && absolute != normalized) {
+                FL_DBG(_log, std::format("FontPathResolver: retrying VFS source registration with absolute path: {}", absolute));
+                vfs->addNewSource(absolute);
+                if (vfs->hasSource(path) || vfs->hasSource(normalized) || vfs->hasSource(absolute)) {
+                    return true;
+                }
+            }
+
+            FL_WARN(_log, std::format("FontPathResolver: failed to register VFS source for {}", path));
+            return false;
+        }
     } // namespace
 
     void FontPathResolver::setSearchPaths(std::vector<std::string> const & paths)
@@ -82,11 +120,9 @@ namespace FIFE
         for (auto const & path : m_searchPaths) {
             // Lazy VFS source registration
             if (!m_registeredPaths.contains(path)) {
-                if (!VFS::instance()->hasSource(path)) {
-                    FL_DBG(_log, std::format("FontPathResolver: lazily registering VFS source: {}", path));
-                    VFS::instance()->addNewSource(path);
+                if (ensureVfsSourceRegistered(path)) {
+                    m_registeredPaths[path] = true;
                 }
-                m_registeredPaths[path] = true;
             }
 
             // Check if file exists in this source
