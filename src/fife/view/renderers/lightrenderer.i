@@ -33,6 +33,7 @@ namespace FIFE {
 		virtual ~LightRendererImageInfo();
 
 		ImagePtr getImage();
+		void setImage(ImagePtr image);
 	};
 
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
@@ -41,6 +42,7 @@ namespace FIFE {
 		virtual ~LightRendererAnimationInfo();
 
 		AnimationPtr getAnimation();
+		void setAnimation(AnimationPtr animation);
 	};
 
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
@@ -52,6 +54,12 @@ namespace FIFE {
 		int32_t getSubdivisions();
 		float getXStretch();
 		float getYStretch();
+		void setIntensity(uint8_t intensity);
+		void setRadius(float radius);
+		void setSubdivisions(int32_t subdivisions);
+		void setXStretch(float xstretch);
+		void setYStretch(float ystretch);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 	};
 
 	class LightRendererResizeInfo : public LightRendererElementInfo {
@@ -60,6 +68,11 @@ namespace FIFE {
 		virtual ~LightRendererResizeInfo();
 
 		ImagePtr getImage();
+		void setImage(ImagePtr image);
+		int32_t getWidth();
+		void setWidth(int32_t width);
+		int32_t getHeight();
+		void setHeight(int32_t height);
 	};
 
 	class LightRenderer: public RendererBase {
@@ -68,10 +81,10 @@ namespace FIFE {
 		~LightRenderer();
 		std::string getName();
 		static LightRenderer* getInstance(IRendererContainer* cnt);
-		void addImage(const std::string &group, RendererNode n, ImagePtr image, int32_t src=-1, int32_t dst=-1);
-		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
-		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
-		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
+		LightRendererImageInfo* addImage(const std::string &group, RendererNode n, ImagePtr image, int32_t src=-1, int32_t dst=-1);
+		LightRendererAnimationInfo* addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
+		LightRendererSimpleLightInfo* addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
+		LightRendererResizeInfo* resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();

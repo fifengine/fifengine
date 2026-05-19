@@ -269,23 +269,25 @@ namespace FIFE
     LightRenderer::~LightRenderer() = default;
 
     // Add a static lightmap
-    void LightRenderer::addImage(
+    LightRendererImageInfo* LightRenderer::addImage(
         std::string const & group, RendererNode const & n, ImagePtr const & image, int32_t src, int32_t dst)
     {
-        LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
+        auto* info = new LightRendererImageInfo(n, image, src, dst);
         m_groups[group].push_back(info);
+        return info;
     }
 
     // Add a animation lightmap
-    void LightRenderer::addAnimation(
+    LightRendererAnimationInfo* LightRenderer::addAnimation(
         std::string const & group, RendererNode const & n, AnimationPtr const & animation, int32_t src, int32_t dst)
     {
-        LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
+        auto* info = new LightRendererAnimationInfo(n, animation, src, dst);
         m_groups[group].push_back(info);
+        return info;
     }
 
     // Add a simple light
-    void LightRenderer::addSimpleLight(
+    LightRendererSimpleLightInfo* LightRenderer::addSimpleLight(
         std::string const & group,
         RendererNode const & n,
         uint8_t intensity,
@@ -299,13 +301,14 @@ namespace FIFE
         int32_t src,
         int32_t dst)
     {
-        LightRendererElementInfo* info =
+        auto* info =
             new LightRendererSimpleLightInfo(n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
         m_groups[group].push_back(info);
+        return info;
     }
 
     // Resize an Image
-    void LightRenderer::resizeImage(
+    LightRendererResizeInfo* LightRenderer::resizeImage(
         std::string const & group,
         RendererNode const & n,
         ImagePtr const & image,
@@ -314,8 +317,9 @@ namespace FIFE
         int32_t src,
         int32_t dst)
     {
-        LightRendererElementInfo* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
+        auto* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
         m_groups[group].push_back(info);
+        return info;
     }
 
     // Enable stencil test for the group

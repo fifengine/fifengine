@@ -96,6 +96,10 @@ namespace FIFE
             {
                 return m_image;
             }
+            void setImage(ImagePtr const & image)
+            {
+                m_image = image;
+            }
 
         private:
             ImagePtr m_image;
@@ -116,6 +120,10 @@ namespace FIFE
             AnimationPtr getAnimation()
             {
                 return m_animation;
+            }
+            void setAnimation(AnimationPtr const & animation)
+            {
+                m_animation = animation;
             }
 
         private:
@@ -164,6 +172,32 @@ namespace FIFE
             {
                 return m_ystretch;
             }
+            void setIntensity(uint8_t intensity)
+            {
+                m_intensity = intensity;
+            }
+            void setRadius(float radius)
+            {
+                m_radius = radius;
+            }
+            void setSubdivisions(int32_t subdivisions)
+            {
+                m_subdivisions = subdivisions;
+            }
+            void setXStretch(float xstretch)
+            {
+                m_xstretch = xstretch;
+            }
+            void setYStretch(float ystretch)
+            {
+                m_ystretch = ystretch;
+            }
+            void setColor(uint8_t r, uint8_t g, uint8_t b)
+            {
+                m_red   = r;
+                m_green = g;
+                m_blue  = b;
+            }
 
         private:
             uint8_t m_intensity;
@@ -198,6 +232,26 @@ namespace FIFE
             {
                 return m_image;
             }
+            void setImage(ImagePtr const & image)
+            {
+                m_image = image;
+            }
+            int32_t getWidth() const
+            {
+                return m_width;
+            }
+            void setWidth(int32_t width)
+            {
+                m_width = width;
+            }
+            int32_t getHeight() const
+            {
+                return m_height;
+            }
+            void setHeight(int32_t height)
+            {
+                m_height = height;
+            }
 
         private:
             ImagePtr m_image;
@@ -231,19 +285,19 @@ namespace FIFE
              */
             static LightRenderer* getInstance(IRendererContainer* cnt);
 
-            void addImage(
+            LightRendererImageInfo* addImage(
                 std::string const & group,
                 RendererNode const & n,
                 ImagePtr const & image,
                 int32_t src = -1,
                 int32_t dst = -1);
-            void addAnimation(
+            LightRendererAnimationInfo* addAnimation(
                 std::string const & group,
                 RendererNode const & n,
                 AnimationPtr const & animation,
                 int32_t src = -1,
                 int32_t dst = -1);
-            void addSimpleLight(
+            LightRendererSimpleLightInfo* addSimpleLight(
                 std::string const & group,
                 RendererNode const & n,
                 uint8_t intensity,
@@ -256,7 +310,7 @@ namespace FIFE
                 uint8_t b,
                 int32_t src = -1,
                 int32_t dst = -1);
-            void resizeImage(
+            LightRendererResizeInfo* resizeImage(
                 std::string const & group,
                 RendererNode const & n,
                 ImagePtr const & image,

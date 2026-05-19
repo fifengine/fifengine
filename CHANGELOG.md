@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## Changed
 
+- implemented issue #817: LightRenderer add methods now return typed light info pointers
+  - `addImage()` returns `LightRendererImageInfo*`
+  - `addAnimation()` returns `LightRendererAnimationInfo*`
+  - `addSimpleLight()` returns `LightRendererSimpleLightInfo*`
+  - `resizeImage()` returns `LightRendererResizeInfo*`
+  - added setters to all light info classes for dynamic runtime manipulation
 - migration from SDL2 to SDL3
 - implemented issue #981: refactored key system with auto-generator for SDL3 keycodes
   - added `tools/keygen/` with `parse_sdl3.py` + `generate_enum.py` (C++ enum from SDL_keycode.h)
