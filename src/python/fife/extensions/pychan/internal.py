@@ -276,6 +276,15 @@ class Manager:
         """
         style = self._remapStyleKeys(style)
 
+        resolved = {}
+        for k, v in style.items():
+            if isinstance(k, tuple):
+                for item in k:
+                    resolved[item] = v
+            else:
+                resolved[k] = v
+        style = resolved
+
         for k, v in list(self.styles.get("default", {}).items()):
             style[k] = style.get(k, v)
         self.styles[name] = style
@@ -299,7 +308,15 @@ class Manager:
             setattr(widget, k, v)
 
         cls = widget.__class__
-        for applicable, specstyle in list(style.items()):
+        for applicable, specstyle in sorted(
+            style.items(),
+            key=lambda x: (
+                isinstance(x[0], type),
+                x[0].__name__ if isinstance(x[0], type) else str(x[0]),
+            ),
+        ):
+            if applicable == "default":
+                continue
             if not isinstance(applicable, tuple):
                 applicable = (applicable,)
             if cls in applicable:
