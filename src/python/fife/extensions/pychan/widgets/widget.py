@@ -629,6 +629,14 @@ class Widget:
             Pass False here to force the layout to start from this widget.
         """
         self.real_widget.adaptLayout(recurse)
+        if recurse:
+            # Second pass: the top-most layouted container (e.g. a Window)
+            # now has a non-zero size, so resizeToContent can properly
+            # account for chrome (title bar, border, padding).
+            # On the first pass, diffH=0 because the container size is 0
+            # and getChildrenArea also returns 0.
+            self.real_widget.adaptLayout(recurse)
+
 
     def beforeShow(self):
         """
