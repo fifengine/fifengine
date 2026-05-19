@@ -17,6 +17,7 @@
 // FIFE includes
 #include "util/base/exception.h"
 #include "util/log/logger.h"
+#include "vfs/filesystem.h"
 #include "vfssource.h"
 #include "vfssourceprovider.h"
 
@@ -266,16 +267,45 @@ namespace FIFE
 
     bool VFS::hasSource(std::string const & path) const
     {
-        auto end = m_providers.end();
-        for (auto i = m_providers.begin(); i != end; ++i) {
-            VFSSourceProvider const * provider = *i;
-            if (provider->hasSource(path)) {
-                VFSSource const * source = provider->getSource(path);
+        auto checkPath = [this](std::string const & candidate) -> bool {
+            auto const end = m_providers.end();
 
-                auto srcIt = std::ranges::find(m_sources, source);
-                return srcIt != m_sources.end();
+            for (auto it = m_providers.begin(); it != end; ++it) {
+                auto const * provider = *it;
+
+                if (!provider->hasSource(candidate)) {
+                    continue;
+                }
+
+                auto const * source = provider->getSource(candidate);
+
+                // O(n) lookup in the worst case, but only few sources expected
+                if (std::ranges::find(m_sources, source) != m_sources.end()) {
+                    return true;
+                }
             }
+            return false;
+        };
+
+        std::string const original = path;
+
+        fs::path const raw(path);
+
+        std::string const normalized = raw.lexically_normal().string();
+        std::string const absolute   = GetAbsolutePath(raw).lexically_normal().string();
+
+        if (checkPath(original)) {
+            return true;
         }
+
+        if (normalized != original && checkPath(normalized)) {
+            return true;
+        }
+
+        if (absolute != original && absolute != normalized && checkPath(absolute)) {
+            return true;
+        }
+
         return false;
     }
 } // namespace FIFE

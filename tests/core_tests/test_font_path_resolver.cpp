@@ -14,6 +14,7 @@
 
 // FIFE includes
 #include "vfs/raw/rawdata.h"
+#include "vfs/filesystem.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "video/fonts/fontpathresolver.h"
@@ -212,8 +213,20 @@ TEST_CASE("FontPathResolver lazy registers VFS sources", "[font][resolver]")
     CHECK(vfs->hasSource(FONT_DIR));
     delete data;
 
-    // Re-add the source if we removed it
-    if (!alreadySource) {
+    // Restore original VFS source state and verify cleanup.
+    if (alreadySource) {
         vfs->addNewSource(FONT_DIR);
+        CHECK(vfs->hasSource(FONT_DIR));
+    } else {
+        if (vfs->hasSource(FONT_DIR)) {
+            vfs->removeSource(FONT_DIR);
+        }
+
+        if (vfs->hasSource(FONT_DIR)) {
+            std::string const absoluteFontDir = FIFE::GetAbsolutePath(FONT_DIR).lexically_normal().string();
+            vfs->removeSource(absoluteFontDir);
+        }
+
+        CHECK(!vfs->hasSource(FONT_DIR));
     }
 }
