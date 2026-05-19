@@ -423,10 +423,9 @@ jobs:
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
-      - name: 🛠️ 3.1 Install wheel tooling
+      - name: 🛠️ 3.1 Show uv version
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install build check-wheel-contents uv
+          uv --version
 
       - name: 🛠️ 3.2 Build Linux wheel
         env:
@@ -440,22 +439,24 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
         run: |
-          python3 -m build --wheel --outdir wheelhouse
+          uv build --wheel --out-dir wheelhouse
 
       - name: 🛠️ 3.3 Verify wheels
         run: |
           ls wheelhouse/*.whl
-          python3 -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
+          uvx --from check-wheel-contents check-wheel-contents --config pyproject.toml wheelhouse/*.whl
 
       - name: 🐍 Prepare wheel test environment
         run: |
           set -euo pipefail
           uv venv --python /usr/bin/python3 .venv-wheeltest
-          uv pip install --python .venv-wheeltest wheelhouse/*.whl pytest pytest-timeout
+          uv pip install --python .venv-wheeltest $(ls wheelhouse/*.whl | head -n 1) pytest pytest-timeout
 
       - name: 🚬 Smoke Test (installed wheel)
         env:
-          LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
+          LD_LIBRARY_PATH: >
+            ${{ env.DEPS_DIR }}/install/lib:
+            ${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
         run: |
           set -euo pipefail
           .venv-wheeltest/bin/python -c "import fife; from fife import fifechan; print('wheel import OK:', hasattr(fifechan, 'Window'))"
