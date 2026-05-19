@@ -5,6 +5,7 @@
 #include "fifechanmanager.h"
 
 // Standard C++ library includes
+#include <cassert>
 #include <format>
 #include <string>
 #include <vector>
@@ -262,7 +263,21 @@ namespace FIFE
         IFont* font      = nullptr;
         GuiFont* guifont = nullptr;
         if (GetExtension(fontpath) == ".ttf" || GetExtension(fontpath) == ".ttc") {
-            font = new TrueTypeFont(fontpath, fontsize);
+            // Try direct filesystem open first (fast path for bundled fonts)
+            try {
+                font = new TrueTypeFont(fontpath, fontsize);
+            } catch (CannotOpenFile const &) {
+                // Direct open failed — try VFS font path resolver
+                RawData* fontData = m_fontPathResolver.resolve(fontpath);
+                if (fontData != nullptr) {
+                    font = TrueTypeFont::createFromRawData(fontData, fontsize, fontpath);
+                    assert("resolver must return valid font" && font);
+                    delete fontData;
+                } else {
+                    // Re-throw original error — font not found anywhere
+                    throw;
+                }
+            }
         } else {
             font = new SubImageFont(fontpath, fontglyphs);
         }

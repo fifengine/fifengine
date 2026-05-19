@@ -127,12 +127,12 @@ namespace FIFE
 
     void VFS::removeSource(std::string const & path)
     {
-        for (VFSSourceProvider* provider : m_providers) {
+        for (VFSSourceProvider const * provider : m_providers) {
             if (!provider->hasSource(path)) {
                 continue;
             }
 
-            VFSSource* source = provider->getSource(path);
+            VFSSource const * source = provider->getSource(path);
 
             auto it = std::ranges::find(m_sources, source);
 
@@ -144,6 +144,11 @@ namespace FIFE
     }
 
     VFSSource* VFS::getSourceForFile(std::string const & file) const
+    {
+        return findSourceForFile(file);
+    }
+
+    VFSSource* VFS::findSourceForFile(std::string const & file) const
     {
         auto it = std::ranges::find_if(m_sources, [&file](VFSSource const * s) {
             return s->fileExists(file);

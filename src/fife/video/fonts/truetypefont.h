@@ -19,6 +19,9 @@
 
 namespace FIFE
 {
+    class RawData;
+
+    class FIFE_API TrueTypeFont;
 
     /**
      * SDL True Type Font implementation of Font. It uses the SDL_ttf library
@@ -43,6 +46,15 @@ namespace FIFE
             TrueTypeFont(std::string const & filename, int32_t size);
 
             /**
+             * Create a TrueTypeFont from raw font data loaded through VFS.
+             *
+             * @param data raw font file data (e.g. from VFS::open)
+             * @param size the size the font should be in.
+             * @param displayName a human-readable name for error messages
+             */
+            static TrueTypeFont* createFromRawData(RawData* data, int32_t size, std::string const & displayName = "");
+
+            /**
              * Destructor.
              */
             ~TrueTypeFont() override;
@@ -65,6 +77,11 @@ namespace FIFE
             TTF_Font* mFont;
 
             int32_t mFontStyle;
+
+        private:
+            TrueTypeFont(TTF_Font* font, std::string const & name, std::vector<uint8_t>&& fontData);
+
+            std::vector<uint8_t> m_fontData;
     };
 } // namespace FIFE
 

@@ -83,6 +83,8 @@ namespace FIFE {
 		uint16_t getDefaultFontSize() const;
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
 		const std::string& getDefaultFontGlyphs() const;
+		void setFontPaths(const std::vector<std::string>& fontpaths);
+		const std::vector<std::string>& getFontPaths() const;
 		void setWindowTitle(const std::string& title);
 		const std::string& getWindowTitle() const;
 		void setWindowIcon(const std::string& icon);

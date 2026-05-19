@@ -353,6 +353,22 @@ namespace FIFE
             }
 
             /**
+             * Sets font search paths (list of directories to search for font files)
+             */
+            void setFontPaths(std::vector<std::string> const & fontpaths)
+            {
+                m_fontpaths = fontpaths;
+            }
+
+            /**
+             * Gets font search paths
+             */
+            std::vector<std::string> const & getFontPaths() const
+            {
+                return m_fontpaths;
+            }
+
+            /**
              * Sets path for default font
              */
             void setDefaultFontPath(std::string const & defaultfontpath);
@@ -589,6 +605,7 @@ namespace FIFE
             std::string m_windowtitle;
             std::string m_windowicon;
 
+            std::vector<std::string> m_fontpaths;
             std::string m_defaultfontpath;
             uint16_t m_defaultfontsize;
             std::string m_defaultfontglyphs;

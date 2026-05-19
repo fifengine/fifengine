@@ -379,6 +379,7 @@ set(
   src/fife/video/imagemanager.cpp
   src/fife/video/renderbackend.cpp
   src/fife/video/fonts/fontbase.cpp
+  src/fife/video/fonts/fontpathresolver.cpp
   src/fife/video/fonts/imagefontbase.cpp
   src/fife/video/fonts/subimagefont.cpp
   src/fife/video/fonts/textrenderpool.cpp
@@ -590,6 +591,7 @@ set(
   src/fife/video/imagemanager.h
   src/fife/video/renderbackend.h
   src/fife/video/fonts/fontbase.h
+  src/fife/video/fonts/fontpathresolver.h
   src/fife/video/fonts/ifont.h
   src/fife/video/fonts/imagefontbase.h
   src/fife/video/fonts/subimagefont.h

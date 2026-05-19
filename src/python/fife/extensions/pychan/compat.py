@@ -64,6 +64,8 @@ def _munge_engine_hook(engine):
 
     engine.setGuiManager(guimanager)
 
+    guimanager.setFontSearchPaths(engine.getSettings().getFontPaths())
+
     guimanager.setDefaultFont(
         engine.getSettings().getDefaultFontPath(),
         engine.getSettings().getDefaultFontSize(),

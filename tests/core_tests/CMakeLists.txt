@@ -16,6 +16,7 @@ set(
   FIFE_CORE_TEST_SOURCES
   test_dat1.cpp
   test_dat2.cpp
+  test_font_path_resolver.cpp
   test_font_ttf.cpp
   test_gui.cpp
   test_imagepool.cpp

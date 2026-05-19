@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>
@@ -16,6 +17,7 @@
 // FIFE includes
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
+#include "vfs/raw/rawdata.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
@@ -39,6 +41,35 @@ namespace FIFE
         // TTF_HINTING_MONO
         // TTF_HINTING_NONE
         // TTF_SetFontHinting(mFont, TTF_HINTING_LIGHT);
+    }
+
+    TrueTypeFont* TrueTypeFont::createFromRawData(RawData* data, int32_t size, std::string const & displayName)
+    {
+        assert("font data must not be null" && data);
+        std::vector<uint8_t> bytes = data->getDataInBytes();
+        if (bytes.empty()) {
+            throw FIFE::CannotOpenFile(displayName + " (empty font data)");
+        }
+
+        SDL_IOStream* stream = SDL_IOFromConstMem(bytes.data(), bytes.size());
+        if (stream == nullptr) {
+            throw FIFE::SDLException(std::string("SDL_IOFromConstMem failed: ") + SDL_GetError());
+        }
+
+        TTF_Font* font = TTF_OpenFontIO(stream, true, static_cast<float>(size));
+        if (font == nullptr) {
+            throw FIFE::CannotOpenFile(displayName + " (" + SDL_GetError() + ")");
+        }
+
+        return new TrueTypeFont(font, displayName, std::move(bytes));
+    }
+
+    TrueTypeFont::TrueTypeFont(TTF_Font* font, std::string const & name, std::vector<uint8_t>&& fontData) :
+        mFont(font), mFontStyle(TTF_STYLE_NORMAL), m_fontData(std::move(fontData))
+    {
+        mFilename = name;
+
+        mColor.r = mColor.g = mColor.b = mColor.a = 255;
     }
 
     TrueTypeFont::~TrueTypeFont()

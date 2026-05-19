@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- implemented issue #572: configurable font search paths with hybrid VFS/filesystem FontPathResolver
+  - added `FontPathResolver` class with lazy VFS registration, search cache, `.ttf`/`.ttc`/`.otf` extension filtering
+  - added `EngineSettings::setFontPaths/getFontPaths` with `std::vector<std::string>` font search directories
+  - added `TrueTypeFont::createFromRawData()` static factory for memory-based font loading via `SDL_IOFromConstMem` + `TTF_OpenFontIO`
+  - added `FifechanManager::setFontSearchPaths()` with font fallback (filesystem → VFS → raw data)
+  - wired font paths through Python settings (`basicapplication.py`, `fife_settings.py`) and SWIG bindings
+  - added C++ unit tests for FontPathResolver and TrueTypeFont VFS loading
 - implemented issue #733: new PathRenderer with multiple path visualization styles
   - added `PathRenderer` class with solid, dashed, arrowed, gradient, and heatmap styles
   - added `PathStyleConfig` struct for per-instance style settings (color, width, dash pattern, arrow size)

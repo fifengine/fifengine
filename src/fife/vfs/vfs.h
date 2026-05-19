@@ -154,6 +154,13 @@ namespace FIFE
              */
             bool hasSource(std::string const & path) const;
 
+            /** Find the first VFS source that contains the given file
+             *
+             * @param file the filename to search for
+             * @return pointer to the source, or nullptr if not found
+             */
+            VFSSource* findSourceForFile(std::string const & file) const;
+
         private:
             using type_providers = std::vector<VFSSourceProvider*>;
             type_providers m_providers;
