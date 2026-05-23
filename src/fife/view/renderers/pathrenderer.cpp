@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <vector>
 
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"

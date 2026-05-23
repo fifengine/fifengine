@@ -272,12 +272,28 @@ namespace FIFE
 
     Image* RenderBackendSDL::createImage(SDL_Surface* surface)
     {
-        return new SDLImage(surface);
+        if (surface->format == m_rgba_format.format) {
+            return new SDLImage(surface);
+        }
+
+        SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+        auto* image       = new SDLImage(conv);
+
+        SDL_DestroySurface(surface);
+        return image;
     }
 
     Image* RenderBackendSDL::createImage(std::string const & name, SDL_Surface* surface)
     {
-        return new SDLImage(name, surface);
+        if (surface->format == m_rgba_format.format) {
+            return new SDLImage(name, surface);
+        }
+
+        SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+        auto* image       = new SDLImage(name, conv);
+
+        SDL_DestroySurface(surface);
+        return image;
     }
 
     Image* RenderBackendSDL::createImage(uint8_t const * data, uint32_t width, uint32_t height)

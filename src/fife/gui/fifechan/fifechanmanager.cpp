@@ -8,6 +8,7 @@
 #include <cassert>
 #include <format>
 #include <string>
+#include <utility>
 #include <vector>
 
 // OpenGL - include GLEW first before any other OpenGL headers
@@ -36,9 +37,8 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/filesystem.h"
-#include "video/fonts/fontbase.h"
-#include "video/fonts/subimagefont.h"
-#include "video/fonts/truetypefont.h"
+#include "video/fonts/fontinstanceifontadapter.h"
+#include "video/fonts/fontmanager.h"
 #include "video/renderbackend.h"
 
 namespace FIFE
@@ -243,46 +243,22 @@ namespace FIFE
         resizeTopContainer(0, 0, static_cast<uint32_t>(screenWidth), static_cast<uint32_t>(screenHeight));
     }
 
-    GuiFont* FifechanManager::createFont(std::string const & path, uint32_t size, std::string const & glyphs)
+    GuiFont* FifechanManager::createFont(std::string const & path, uint32_t size, std::string const & /*glyphs*/)
     {
-        std::string fontpath   = path;
-        std::string fontglyphs = glyphs;
-        int32_t fontsize       = static_cast<int32_t>(size);
+        std::string fontpath = path;
+        int32_t fontsize     = static_cast<int32_t>(size);
 
-        // Set default settings if necessary
         if (fontpath.empty()) {
             fontpath = m_fontpath;
         }
         if (fontsize == 0) {
             fontsize = m_fontsize;
         }
-        if (fontglyphs.empty()) {
-            fontglyphs = m_fontglyphs;
-        }
 
-        IFont* font      = nullptr;
-        GuiFont* guifont = nullptr;
-        if (GetExtension(fontpath) == ".ttf" || GetExtension(fontpath) == ".ttc") {
-            // Try direct filesystem open first (fast path for bundled fonts)
-            try {
-                font = new TrueTypeFont(fontpath, fontsize);
-            } catch (CannotOpenFile const &) {
-                // Direct open failed — try VFS font path resolver
-                RawData* fontData = m_fontPathResolver.resolve(fontpath);
-                if (fontData != nullptr) {
-                    font = TrueTypeFont::createFromRawData(fontData, fontsize, fontpath);
-                    assert("resolver must return valid font" && font);
-                    delete fontData;
-                } else {
-                    // Re-throw original error — font not found anywhere
-                    throw;
-                }
-            }
-        } else {
-            font = new SubImageFont(fontpath, fontglyphs);
-        }
-        guifont = new GuiFont(font);
-
+        FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
+        auto instance           = m_fontManager->getFontInstance(handle);
+        auto* adapter           = new FontInstanceIFontAdapter(std::move(instance));
+        auto* guifont           = new GuiFont(adapter);
         m_fonts.push_back(guifont);
         return guifont;
     }
@@ -309,11 +285,10 @@ namespace FIFE
         }
     }
 
-    GuiFont* FifechanManager::setDefaultFont(std::string const & path, uint32_t size, std::string const & glyphs)
+    GuiFont* FifechanManager::setDefaultFont(std::string const & path, uint32_t size, std::string const & /*glyphs*/)
     {
-        m_fontpath   = path;
-        m_fontsize   = static_cast<int32_t>(size);
-        m_fontglyphs = glyphs;
+        m_fontpath = path;
+        m_fontsize = static_cast<int32_t>(size);
 
         m_defaultfont = createFont();
         fcn::Widget::setGlobalFont(m_defaultfont);

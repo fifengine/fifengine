@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-// Corresponding header include
 #include "gui_font.h"
 
-// Standard C++ library includes
-#include <string>
-
-// 3rd party library includes
 #include <fifechan.hpp>
 
-// FIFE includes
+#include <cassert>
+#include <memory>
+#include <string>
+
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
@@ -27,40 +25,37 @@ namespace FIFE
         delete m_font;
     }
 
-    int32_t GuiFont::getStringIndexAt(std::string const & text, int32_t x) const
+    int GuiFont::getWidth(std::string_view text) const
     {
-        return m_font->getStringIndexAt(text, x);
+        return m_font->getWidth(std::string(text));
     }
 
-    void GuiFont::drawString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y)
+    int GuiFont::getHeight() const
+    {
+        return m_font->getHeight();
+    }
+
+    int GuiFont::getStringIndexAt(std::string_view text, int x) const
+    {
+        return m_font->getStringIndexAt(std::string(text), x);
+    }
+
+    auto GuiFont::renderToSurface(std::string_view text) const
+        -> std::unique_ptr<SDL_Surface, fcn::Font::SDL_SurfaceDeleter>
     {
         if (text.empty()) {
-            return;
+            return nullptr;
         }
-
-        int32_t const yoffset = getRowSpacing() / 2;
-
-        fcn::ClipRectangle const & clip = graphics->getCurrentClipArea();
-        FIFE::Rect rect;
-        rect.x = x + clip.xOffset;
-        rect.y = y + clip.yOffset + yoffset;
-        rect.w = getWidth(text);
-        rect.h = getHeight();
-
-        if (!rect.intersects(Rect(clip.x, clip.y, clip.width, clip.height))) {
-            return;
+        Image* image = m_font->getAsImage(std::string(text));
+        if (image == nullptr) {
+            return nullptr;
         }
-
-        Image* image = nullptr;
-        if (isDynamicColoring()) {
-            SDL_Color const color = getColor();
-            setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
-            image = getAsImage(text);
-            setColor(color.r, color.g, color.b, color.a);
-        } else {
-            image = getAsImage(text);
+        SDL_Surface* src = image->getSurface();
+        if (src == nullptr) {
+            return nullptr;
         }
-        image->render(rect);
+        SDL_Surface* copy = SDL_DuplicateSurface(src);
+        return std::unique_ptr<SDL_Surface, fcn::Font::SDL_SurfaceDeleter>(copy);
     }
 
     void GuiFont::drawMultiLineString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y)
@@ -144,24 +139,22 @@ namespace FIFE
         return m_font->isItalicStyle();
     }
 
-    void GuiFont::setUnderlineStyle(bool style)
+    void GuiFont::setUnderlineStyle([[maybe_unused]] bool style)
     {
-        m_font->setUnderlineStyle(style);
     }
 
     bool GuiFont::isUnderlineStyle() const
     {
-        return m_font->isUnderlineStyle();
+        return false;
     }
 
-    void GuiFont::setStrikethroughStyle(bool style)
+    void GuiFont::setStrikethroughStyle([[maybe_unused]] bool style)
     {
-        m_font->setStrikethroughStyle(style);
     }
 
     bool GuiFont::isStrikethroughStyle() const
     {
-        return m_font->isStrikethroughStyle();
+        return false;
     }
 
     void GuiFont::setDynamicColoring(bool coloring)
@@ -197,16 +190,6 @@ namespace FIFE
     SDL_Color GuiFont::getColor() const
     {
         return m_font->getColor();
-    }
-
-    int32_t GuiFont::getWidth(std::string const & text) const
-    {
-        return m_font->getWidth(text);
-    }
-
-    int32_t GuiFont::getHeight() const
-    {
-        return m_font->getHeight();
     }
 
     void GuiFont::invalidate()

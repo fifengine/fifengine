@@ -25,7 +25,6 @@ TODO
  - Finalize Widget.execute
 
  - Documentation ( Allways not enough :-( )
- - Handle Image Fonts
  - Move Font config files to XML, too ...
 
  - Implement real Menus
@@ -215,11 +214,10 @@ has to be invoked I{after} the subclass specific construction has taken place.
 from traceback import print_exc
 from xml.sax import handler
 
-__all__ = ["loadXML", "loadFonts", "init", "manager"]
+__all__ = ["loadXML", "init", "manager"]
 
 # This *import should really be removed!
 from .exceptions import GuiXMLError, InitializationError, PyChanException
-from .fonts import loadFonts
 from .widgets import WIDGETS, Widget
 from .widgets.tabbedarea import Tab
 
@@ -343,9 +341,9 @@ class _GuiLoader(__GuiLoaderBase):
         self.indent += " " * 4
 
     def _createInstance(self, cls, name, attrs):
-        obj = cls(parent=self.root)
+        obj = cls(parent=self.root)                 # (1) Create widget with current root as parent
         for k, v in list(attrs.items()):
-            self._setAttr(obj, k, v)
+            self._setAttr(obj, k, v)                # (2) Set all XML attributes
 
         if self.root:
             if isinstance(obj, Tab):
@@ -354,8 +352,8 @@ class _GuiLoader(__GuiLoaderBase):
                 else:
                     raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
             else:
-                self.root.addChild(obj)
-        self.root = obj
+                self.root.addChild(obj)            # (3) Add widget to current root container
+        self.root = obj                            # (4) This widget becomes new root
 
     def endElement(self, name):
         self.indent = self.indent[:-4]

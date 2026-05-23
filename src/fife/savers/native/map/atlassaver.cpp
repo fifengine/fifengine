@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <string>
 
 // FIFE includes
 #include "util/xml/xmlhelper.h"

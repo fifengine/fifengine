@@ -3,7 +3,11 @@
 
 """Demo for pychan gui animations."""
 
+import random
+
 from fife.extensions import pychan
+from fife.extensions.fife_timer import Timer
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 from run import PyChanExample
 
 ACTION_MOVE = 1
@@ -14,11 +18,11 @@ ACTIONS = [ACTION_MOVE, ACTION_RESIZE, ACTION_COLOR]
 DEFAULT_DELAY = 10
 
 
-class PocAnimations(PyChanExample):
+class GuiAnimations(PyChanExample):
     """Small app to demonstrate GUI animations using TimeEvents."""
 
     def __init__(self):
-        super().__init__("gui/poc_guianimation.xml")
+        super().__init__("gui/guianimation.xml")
 
         self._move_timer = None
         self._resize_timer = None
@@ -56,7 +60,7 @@ class PocAnimations(PyChanExample):
         self.delay_display.text = str(DEFAULT_DELAY)
 
         self.progressbar = self.widget.findChild(name="progressbar")
-        # 		self.progressbar2 = self.widget.findChild(name="progressbar2")
+        self.progressbar2 = self._find_optional_child("progressbar2")
 
         self.little_matrix = []
         for x in range(1, 4):
@@ -145,8 +149,8 @@ class PocAnimations(PyChanExample):
         if self._progress_timer:
             self._progress_timer.stop()
             self.progressbar.value = 0
-
-    # 			self.progressbar2.value = 0
+            if self.progressbar2 is not None:
+                self.progressbar2.value = 0
 
     def _move(self):
         """Move the move-example widget."""
@@ -189,6 +193,17 @@ class PocAnimations(PyChanExample):
         if self.progressbar.value < self.progressbar.size[0]:
             value = int(self.progressbar.value) + random.randint(0, DEFAULT_DELAY)
             self.progressbar.value = value
-        # 			self.progressbar2.value = value
+            if self.progressbar2 is not None:
+                self.progressbar2.value = min(value, self.progressbar2.max_value)
         else:
             self._reset_anim()
+
+    def _find_optional_child(self, name):
+        """Return a child widget when present, otherwise None."""
+        try:
+            return self.widget.findChild(name=name)
+        except Exception:
+            return None
+
+
+PocAnimations = GuiAnimations

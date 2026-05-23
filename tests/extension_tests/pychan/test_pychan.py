@@ -209,12 +209,6 @@ class TestPychanWidgetsCommonModule:
 
         assert callable(get_manager)
 
-    def test_gui2str_function(self):
-        from fife.extensions.pychan.widgets.common import gui2str
-
-        assert callable(gui2str)
-
-
 class TestPychanLayoutModule:
     def test_constants(self):
         from fife.extensions.pychan.widgets.layout import (

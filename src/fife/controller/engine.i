@@ -6,6 +6,7 @@
 #include "controller/engine.h"
 %}
 
+%template(FontPaths) std::vector<std::string>;
 
 namespace FIFE {
 

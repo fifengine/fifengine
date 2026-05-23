@@ -11,6 +11,8 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <utility>
+#include <vector>
 
 // 3rd party library includes
 #ifdef LOG_ENABLED

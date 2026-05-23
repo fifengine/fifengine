@@ -7,6 +7,25 @@ import os
 from fife import fife
 
 
+def test_atlas_animation(engine):
+    vfs = engine.getVFS()
+    img_mgr = engine.getImageManager()
+    anim_mgr = engine.getAnimationManager()
+
+    loader = fife.AnimationLoader(vfs, img_mgr, anim_mgr)
+    anim = loader.load("demos/pychan/gui/animations/cog/animation.xml")
+
+    assert anim
+    assert anim.getFrameCount() == 12
+
+    for i in range(anim.getFrameCount()):
+        frame = anim.getFrame(i)
+        assert frame, f"Frame {i} is null"
+        assert frame.isSharedImage(), f"Frame {i} is not a shared image"
+        assert frame.getWidth() == 52, f"Frame {i} width mismatch"
+        assert frame.getHeight() == 52, f"Frame {i} height mismatch"
+
+
 def test_camera(engine):
     model = engine.getModel()
     map_obj = model.createMap("map001")

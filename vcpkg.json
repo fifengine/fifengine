@@ -12,7 +12,9 @@
     {
       "name": "spdlog",
       "default-features": false,
-      "features": ["tz-offset"]
+      "features": [
+        "tz-offset"
+      ]
     },
     "glew",
     "libogg",

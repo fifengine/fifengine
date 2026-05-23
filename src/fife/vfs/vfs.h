@@ -113,6 +113,17 @@ namespace FIFE
              */
             RawData* open(std::string const & path);
 
+            /** Read a file, returning nullptr instead of throwing on failure.
+             *
+             * Searches all VFS sources for the given file and returns its
+             * contents as RawData. Unlike open(), this returns nullptr if
+             * the file is not found in any source.
+             *
+             * @param path the file to read
+             * @return the opened file (delete when done), or nullptr if not found
+             */
+            RawData* readFile(std::string const & path);
+
             /** Get a filelist of the given directory
              *
              * @param path the directory

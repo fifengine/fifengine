@@ -4,35 +4,34 @@
 #ifndef FIFE_GUI_FONT_H
 #define FIFE_GUI_FONT_H
 
-// Platform specific includes
-#include "platform.h"
+#include <SDL3/SDL.h>
 
-// Standard C++ library includes
-#include <string>
-
-// 3rd party library includes
 #include <fifechan/font.hpp>
 
-// FIFE includes
+#include <memory>
+#include <string>
+#include <string_view>
+
+#include "platform.h"
 #include "video/fonts/ifont.h"
 
 namespace FIFE
 {
 
-    class FIFE_API GuiFont : public fcn::Font, public IFont
+    class FIFE_API GuiFont : public fcn::Font
     {
         public:
-            /** Constructor
-             *  Takes the ownership of given font
-             */
             explicit GuiFont(IFont* font);
-            virtual ~GuiFont();
+            ~GuiFont() override;
 
-            int32_t getStringIndexAt(std::string const & text, int32_t x) const;
-            void drawString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y);
+            int getWidth(std::string_view text) const override;
+            int getHeight() const override;
+            int getStringIndexAt(std::string_view text, int x) const override;
+            auto renderToSurface(std::string_view text) const
+                -> std::unique_ptr<SDL_Surface, fcn::Font::SDL_SurfaceDeleter> override;
+
             void drawMultiLineString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y);
             std::string splitTextToWidth(std::string const & text, int32_t render_width);
-
             void setRowSpacing(int32_t spacing);
             int32_t getRowSpacing() const;
             void setGlyphSpacing(int32_t spacing);
@@ -53,8 +52,6 @@ namespace FIFE
             Image* getAsImageMultiline(std::string const & text);
             void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
             SDL_Color getColor() const;
-            int32_t getWidth(std::string const & text) const;
-            int32_t getHeight() const;
             void invalidate();
 
         private:

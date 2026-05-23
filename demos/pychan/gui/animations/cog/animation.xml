@@ -11,4 +11,5 @@
   <frame source="cog_0009.png" xpos="104" ypos="52" x_offset="0" y_offset="0" delay="40"/>
   <frame source="cog_0010.png" xpos="156" ypos="52" x_offset="0" y_offset="0" delay="40"/>
   <frame source="cog_0011.png" xpos="208" ypos="52" x_offset="0" y_offset="0" delay="40"/>
+  <frame source="cog_0012.png" xpos="260" ypos="52" x_offset="0" y_offset="0" delay="40"/>
 </animation>

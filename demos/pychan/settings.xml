@@ -12,6 +12,7 @@
     <Setting name="WindowTitle" type="str"> Pychan demo [FIFE Client] </Setting>
     <Setting name="WindowIcon" type="str"> gui/icons/pychan_logo.png </Setting>
     <Setting name="Font" type="str"> fonts/freefont/FreeMono.ttf </Setting>
+    <Setting name="FontPaths" type="list"> /usr/share/fonts/truetype/ </Setting>
     <Setting name="FontGlyphs" strip="0" type="str"> abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"</Setting>
     <Setting name="DefaultFontSize" type="int"> 16 </Setting>
     <Setting name="LogModules" type="list"> controller ; GUI </Setting>

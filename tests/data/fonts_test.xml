@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<fonts version="1">
+  <family id="UI">
+    <face weight="400">fonts/FreeSans.ttf</face>
+    <face weight="700">fonts/FreeSansBold.ttf</face>
+    <fallback>CJK</fallback>
+    <fallback>Emoji</fallback>
+  </family>
+  <family id="Mono">
+    <face weight="400">fonts/FreeMono.ttf</face>
+  </family>
+  <family id="RPGDefault">
+    <face type="bitmap" glyphs=" !&quot;#$%&amp;'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~">fonts/rpgfont.png</face>
+  </family>
+</fonts>

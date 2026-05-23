@@ -170,7 +170,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         from iconprogressbar import IconProgressBarExample
         from imageprogressbar import ImageProgressBarExample
         from modalfocus import ModalFocusExample
-        from poc_gui_animation import PocAnimations
+        from guianimation import GuiAnimations
         from showhide import ShowHideExample
         from sliders import SliderExample
         from stretching import StretchingExample
@@ -190,7 +190,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
             "Sliders": SliderExample(),
             "ScrollArea": PyChanExample("gui/scrollarea.xml"),
             "Colortester": ColorExample(),
-            "GuiAnimations": PocAnimations(),
+            "GuiAnimations": GuiAnimations(),
             "Tabbed Area": TabbedAreaExample(),
             "Image Stretching": StretchingExample(),
             "Resizable Window": PyChanExample("gui/resizable.xml"),

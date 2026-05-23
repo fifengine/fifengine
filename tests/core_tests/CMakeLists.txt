@@ -16,8 +16,6 @@ set(
   FIFE_CORE_TEST_SOURCES
   test_dat1.cpp
   test_dat2.cpp
-  test_font_path_resolver.cpp
-  test_font_ttf.cpp
   test_gui.cpp
   test_imagepool.cpp
   test_images.cpp
@@ -31,6 +29,11 @@ set(
   test_multicell_blocking.cpp
   test_multicell_pathfinding.cpp
   test_pathrenderer.cpp
+  test_font_types.cpp
+  test_font_face.cpp
+  test_font_instance.cpp
+  test_font_definition_loader.cpp
+  test_font_manager.cpp
 )
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")

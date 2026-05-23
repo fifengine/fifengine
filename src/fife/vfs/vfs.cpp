@@ -265,6 +265,16 @@ namespace FIFE
         return results;
     }
 
+    RawData* VFS::readFile(std::string const & path)
+    {
+        VFSSource const * source = getSourceForFile(path);
+        if (source == nullptr) {
+            FL_DBG(_log, std::format("readFile: {} not found, returning nullptr", path));
+            return nullptr;
+        }
+        return source->open(path);
+    }
+
     bool VFS::hasSource(std::string const & path) const
     {
         auto checkPath = [this](std::string const & candidate) -> bool {

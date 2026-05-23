@@ -25,7 +25,7 @@ from fife import fife, fifechan
 
 __all__ = ()
 
-fife.Exception.__str__ = fife.Exception.what
+fife.Exception.__str__ = lambda self: self.what()
 
 
 def _Color2Str(c):

@@ -5,7 +5,6 @@
 
 from fife.extensions import fife_timer as timer
 
-from . import fonts
 from .compat import fife, fifechan, in_fife
 from .exceptions import InitializationError
 
@@ -65,10 +64,6 @@ class Manager:
             if not hook.guimanager:
                 raise InitializationError("No GUI manager installed.")
         timer.init(hook.engine.getTimeManager())
-
-        self.fonts = {}
-        # glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-        self.fonts["default"] = hook.default_font
 
         self.styles = {}
         self.addStyle("default", DEFAULT_STYLE)
@@ -160,108 +155,6 @@ class Manager:
             The console instance managed by the GUI hook.
         """
         return self.hook.console
-
-    def getDefaultFont(self):
-        """Get the default font.
-
-        Returns
-        -------
-        GuiFont
-            The default GUI font object.
-        """
-        return self.fonts["default"]
-
-    def setDefaultFont(self, name):
-        """Set the default font."""
-        self.fonts["default"] = self.getFont(name)
-
-    def getFont(self, name):
-        """
-        B{pending deprecation}.
-
-        Returns a GuiFont identified by its name.
-
-        Parameters
-        ----------
-        name : str
-            A string identifier from the font definitions in pychans config files.
-
-        Returns
-        -------
-        GuiFont
-            The requested GUI font.
-
-        Raises
-        ------
-        InitializationError
-            If the requested font cannot be found or cannot be converted to a
-            `fife.GuiFont`.
-        """
-        if in_fife:
-            font = self.fonts.get(name)
-            if isinstance(font, fife.GuiFont):
-                return font
-            if hasattr(font, "font") and isinstance(getattr(font, "font"), fife.GuiFont):
-                return font.font
-            raise InitializationError(
-                f"Couldn't find the font '{name}'. Please load the xml file."
-            )
-        else:
-            return self.hook.get_font(name)
-
-    def createFont(self, path="", size=0, glyphs=""):
-        """Create and return a GuiFont from the GUI Manager.
-
-        Returns
-        -------
-        GuiFont
-            A new or existing GUI font object created from the provided
-            resource parameters.
-        """
-        return self.hook.create_font(path, size, glyphs)
-
-    def releaseFont(self, font):
-        """
-        Releases a font from memory.  Expects a fifechan.GuiFont.
-
-        Raises
-        ------
-        InitializationError
-            If `font` is not a `fifechan.GuiFont` instance.
-
-        Notes
-        -----
-        This needs to be tested. Also should add a way to release a font by name (fonts.Font).
-        """
-        if not isinstance(font, fifechan.GuiFont):
-            raise InitializationError(
-                f"PyChan Manager expected a fifechan.GuiFont instance, not {repr(font)}."
-            )
-        self.hook.release_font(font)
-
-    def addFont(self, font):
-        """
-        B{deprecated}.
-
-        Add a font to the font registry. It's not necessary to call this directly.
-        But it expects a L{fonts.Font} instance and throws an L{InitializationError}
-        otherwise.
-
-        Parameters
-        ----------
-        font : fonts.Font
-            A fonts.Font instance.
-
-        Raises
-        ------
-        InitializationError
-            If `font` is not a `fonts.Font` instance.
-        """
-        if not isinstance(font, fonts.Font):
-            raise InitializationError(
-                f"PyChan Manager expected a fonts.Font instance, not {repr(font)}."
-            )
-        self.fonts[font.name] = font
 
     def addStyle(self, name, style):
         """

@@ -208,6 +208,21 @@ class TestFifeSettingsAdvanced:
 
         assert hasattr(Setting, "setValidDisplays")
 
+    def test_font_paths_in_valid_settings(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert "FontPaths" in Setting._validSetting["FIFE"]
+
+    def test_font_paths_in_default_settings(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert "FontPaths" in Setting._defaultSetting["FIFE"]
+
+    def test_font_paths_default_is_empty_list(self):
+        from fife.extensions.fife_settings import Setting
+
+        assert Setting._defaultSetting["FIFE"]["FontPaths"] == []
+
 
 class TestFifeSettingsEntry:
     def test_entry_class(self):

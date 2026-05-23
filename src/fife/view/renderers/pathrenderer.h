@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <map>
+#include <string>
 #include <vector>
 
 #include "model/structures/instance.h"
@@ -42,7 +43,7 @@ namespace FIFE
     class FIFE_API PathRenderer : public RendererBase
     {
         public:
-            PathRenderer(RenderBackend* renderbackend, int32_t position = 105);
+            explicit PathRenderer(RenderBackend* renderbackend, int32_t position = 105);
 
             PathRenderer(PathRenderer const & old);
 

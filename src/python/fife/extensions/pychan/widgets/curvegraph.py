@@ -15,21 +15,21 @@ class CurveGraph(Widget):
     ----------
       - coordinates: int list: x and y coordinates
       - thickness: int: Line thickness, default 1
-      - controll_points: bool: Adds internal controll points, default True
+      - control_points: bool: Adds internal control points, default True
       - opaque: bool: default False
     """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         IntListAttr("coordinates"),
         IntAttr("thickness"),
-        BoolAttr("controll_points"),
+        BoolAttr("control_points"),
         BoolAttr("opaque"),
     ]
     DEFAULT_HEXPAND = False
     DEFAULT_VEXPAND = False
 
     DEFAULT_THICKNESS = 1
-    DEFAULT_CONTROLL_POINTS = True
+    DEFAULT_CONTROL_POINTS = True
     DEFAULT_OPAQUE = False
 
     def __init__(
@@ -62,13 +62,13 @@ class CurveGraph(Widget):
         opaque=None,
         coordinates=None,
         thickness=None,
-        controll_points=None,
+        control_points=None,
     ):
 
         self.real_widget = fifechan.CurveGraph()
         self.opaque = self.DEFAULT_OPAQUE
         self.thickness = self.DEFAULT_THICKNESS
-        self.controll_points = self.DEFAULT_CONTROLL_POINTS
+        self.control_points = self.DEFAULT_CONTROL_POINTS
 
         super().__init__(
             parent=parent,
@@ -104,8 +104,8 @@ class CurveGraph(Widget):
             self.coordinates = coordinates
         if thickness is not None:
             self.thickness = thickness
-        if controll_points is not None:
-            self.controll_points = controll_points
+        if control_points is not None:
+            self.control_points = control_points
 
     def clone(self, prefix):
         """Create a clone of this CurveGraph with a name prefix.
@@ -144,7 +144,7 @@ class CurveGraph(Widget):
             self.opaque,
             self.coordinates,
             self.thickness,
-            self.controll_points,
+            self.control_points,
         )
         return curveGraphClone
 
@@ -183,10 +183,10 @@ class CurveGraph(Widget):
 
     thickness = property(_getThickness, _setThickness)
 
-    def _setControllPoints(self, controll):
-        self.real_widget.setAutomaticControllPoints(controll)
+    def _setControlPoints(self, control):
+        self.real_widget.setAutomaticControlPoints(control)
 
-    def _getControllPoints(self):
-        return self.real_widget.isAutomaticControllPoints()
+    def _getControlPoints(self):
+        return self.real_widget.isAutomaticControlPoints()
 
-    controll_points = property(_getControllPoints, _setControllPoints)
+    control_points = property(_getControlPoints, _setControlPoints)

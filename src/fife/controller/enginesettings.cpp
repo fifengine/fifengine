@@ -54,7 +54,7 @@ namespace FIFE
         m_screenheight(600),
         m_windowtitle("FIFE"),
 
-        m_defaultfontpath("fonts/FreeSans.ttf"),
+        m_defaultfontid("SystemDefault"),
         m_defaultfontsize(8),
         m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
         m_iscolorkeyenabled(false),
@@ -239,9 +239,9 @@ namespace FIFE
         m_screenheight = screenheight;
     }
 
-    void EngineSettings::setDefaultFontPath(std::string const & defaultfontpath)
+    void EngineSettings::setDefaultFontId(std::string const & id)
     {
-        m_defaultfontpath = defaultfontpath;
+        m_defaultfontid = id;
     }
 
     void EngineSettings::setDefaultFontSize(uint16_t defaultfontsize)

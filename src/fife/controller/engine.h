@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 #ifdef USE_COCOA
@@ -42,6 +43,7 @@ namespace FIFE
     class ImageManager;
     class AnimationManager;
     class SoundClipManager;
+    class FontManager;
     class OffRenderer;
     class TargetRenderer;
 
@@ -136,10 +138,7 @@ namespace FIFE
             /** Sets the GUI Manager to use.  Engine takes
              * ownership of the manager so DONT DELETE IT!
              */
-            void setGuiManager(IGUIManager* guimanager)
-            {
-                m_guimanager = guimanager;
-            }
+            void setGuiManager(IGUIManager* guimanager);
 
             /** Provides access point to the GUI Manager
              */
@@ -197,6 +196,13 @@ namespace FIFE
                 return m_vfs;
             }
 
+            /** Provides access point to the FontManager
+             */
+            FontManager* getFontManager() const
+            {
+                return m_fontManager.get();
+            }
+
             /** Returns cursor used in the engine
              */
             Cursor* getCursor() const
@@ -246,6 +252,7 @@ namespace FIFE
             bool m_destroyed;
 
             EngineSettings m_settings;
+            std::unique_ptr<FontManager> m_fontManager;
             DeviceCaps m_devcaps;
 
             ScreenMode m_screenMode;

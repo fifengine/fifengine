@@ -13,7 +13,7 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "fontbase.h"
+#include "ifont.h"
 #include "util/time/timemanager.h"
 #include "video/image.h"
 
@@ -36,21 +36,21 @@ namespace FIFE
         }
     }
 
-    Image* TextRenderPool::getRenderedText(FontBase const * fontbase, std::string const & text)
+    Image* TextRenderPool::getRenderedText(IFont const * font, std::string const & text)
     {
-        SDL_Color const c = fontbase->getColor();
+        SDL_Color const c = font->getColor();
 
         auto it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
-            if (it->antialias != fontbase->isAntiAlias()) {
+            if (it->antialias != font->isAntiAlias()) {
                 continue;
             }
 
-            if (it->glyph_spacing != fontbase->getGlyphSpacing()) {
+            if (it->glyph_spacing != font->getGlyphSpacing()) {
                 continue;
             }
 
-            if (it->row_spacing != fontbase->getRowSpacing()) {
+            if (it->row_spacing != font->getRowSpacing()) {
                 continue;
             }
 
@@ -72,15 +72,15 @@ namespace FIFE
         return nullptr;
     }
 
-    void TextRenderPool::addRenderedText(FontBase const * fontbase, std::string const & text, Image* image)
+    void TextRenderPool::addRenderedText(IFont const * font, std::string const & text, Image* image)
     {
         // Construct a entry and add it.
         s_pool_entry centry;
-        centry.antialias     = fontbase->isAntiAlias();
-        centry.glyph_spacing = fontbase->getGlyphSpacing();
-        centry.row_spacing   = fontbase->getRowSpacing();
+        centry.antialias     = font->isAntiAlias();
+        centry.glyph_spacing = font->getGlyphSpacing();
+        centry.row_spacing   = font->getRowSpacing();
         centry.text          = text;
-        centry.color         = fontbase->getColor();
+        centry.color         = font->getColor();
         centry.image         = image;
         centry.timestamp     = TimeManager::instance()->now64();
         m_pool.push_front(centry);

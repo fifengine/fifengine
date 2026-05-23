@@ -51,8 +51,10 @@ namespace FIFE
             return;
         }
 
+        // Use RGBA32 (ABGR8888 on LE, RGBA8888 on BE) to match the byte order expected by
+        // GL_RGBA/GL_UNSIGNED_BYTE texture uploads, since raw pixel data is in R,G,B,A byte order.
         SDL_Surface* surface =
-            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA8888);
+            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA32);
         if (surface == nullptr) {
             return;
         }
@@ -96,7 +98,7 @@ namespace FIFE
         }
 
         SDL_Surface* surface =
-            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA8888);
+            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA32);
         if (surface == nullptr) {
             return;
         }
@@ -323,7 +325,7 @@ namespace FIFE
             assert(srcWidth <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
             assert(srcHeight <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
             m_surface =
-                SDL_CreateSurface(static_cast<int>(srcWidth), static_cast<int>(srcHeight), SDL_PIXELFORMAT_RGBA8888);
+                SDL_CreateSurface(static_cast<int>(srcWidth), static_cast<int>(srcHeight), SDL_PIXELFORMAT_RGBA32);
         }
         // disable blending
         SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_NONE);

@@ -10,6 +10,8 @@
 #include <vector>
 
 // GLEW must be included first before any OpenGL headers
+#include <SDL3/SDL.h>
+
 #include <fifechan/backends/opengl/graphics.hpp>
 #include <fifechan/font.hpp>
 
@@ -219,6 +221,23 @@ namespace FIFE
             mColor.g,
             mColor.b,
             mColor.a);
+    }
+
+    void OpenGLGuiGraphics::drawSurface(SDL_Surface* surface, int dstX, int dstY)
+    {
+        if (surface == nullptr) {
+            return;
+        }
+        fcn::ClipRectangle const & top = mClipStack.top();
+        SDL_Surface* dup               = SDL_DuplicateSurface(surface);
+        Image* image                   = m_renderbackend->createImage(dup);
+        if (image == nullptr) {
+            SDL_DestroySurface(dup);
+            return;
+        }
+        Rect renderRect(dstX + top.xOffset, dstY + top.yOffset, image->getWidth(), image->getHeight());
+        image->render(renderRect);
+        delete image;
     }
 
     void OpenGLGuiGraphics::_beginDraw()

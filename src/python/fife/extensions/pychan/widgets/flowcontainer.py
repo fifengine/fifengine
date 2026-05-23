@@ -152,7 +152,7 @@ class FlowContainer(Container):
         self.real_widget.setAlignment(alignment)
 
     def _getAlignment(self):
-        self.real_widget.getAlignment()
+        return self.real_widget.getAlignment()
 
     alignment = property(_getAlignment, _setAlignment)
 

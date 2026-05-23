@@ -8,7 +8,9 @@
 #include <algorithm>
 #include <format>
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -19,17 +21,22 @@
 #include "audio/soundclipmanager.h"
 #include "audio/soundmanager.h"
 #include "eventchannel/eventmanager.h"
+#include "gui/fifechan/fifechanmanager.h"
 #include "gui/guimanager.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "vfs/directoryprovider.h"
+#include "vfs/filesystemassetprovider.h"
+#include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
+#include "vfs/vfsassetprovider.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/zip/zipprovider.h"
 #include "video/animationmanager.h"
 #include "video/cursor.h"
 #include "video/devicecaps.h"
+#include "video/fonts/fontmanager.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #ifdef HAVE_OPENGL
@@ -125,6 +132,14 @@ namespace FIFE
         return m_devcaps;
     }
 
+    void Engine::setGuiManager(IGUIManager* guimanager)
+    {
+        m_guimanager = guimanager;
+        if (auto* fifechan = dynamic_cast<FifechanManager*>(guimanager)) {
+            fifechan->setFontManager(m_fontManager.get());
+        }
+    }
+
     void Engine::changeScreenMode(ScreenMode const & mode)
     {
         m_cursor->invalidate();
@@ -166,6 +181,29 @@ namespace FIFE
 
         // m_vfs->addProvider(ProviderDAT2());
         // m_vfs->addProvider(ProviderDAT1());
+
+        FL_LOG(_log, "Creating FontManager");
+        {
+            auto resolver = std::make_unique<AssetResolver>();
+            resolver->addProvider(std::make_unique<VfsAssetProvider>(m_vfs));
+            resolver->addProvider(std::make_unique<FilesystemAssetProvider>(m_settings.getFontPaths()));
+            m_fontManager = std::make_unique<FontManager>(std::move(resolver));
+        }
+
+        try {
+            if (m_vfs->exists("config/fonts.xml")) {
+                FL_LOG(_log, "Loading font manifest from config/fonts.xml");
+                std::unique_ptr<RawData> fontManifest(m_vfs->open("config/fonts.xml"));
+                if (fontManifest) {
+                    auto bytes = fontManifest->getDataInBytes();
+                    std::string xmlContent(reinterpret_cast<char*>(bytes.data()), bytes.size());
+                    m_fontManager->loadManifestFromString(xmlContent);
+                }
+            }
+        } catch (std::exception const & e) {
+            FL_WARN(_log, std::format("Failed to load font manifest: {}", e.what()));
+        }
+
         FL_LOG(_log, "Engine pre-init done");
 
         // SDL3 initializes the timer subsystem automatically, no need for SDL_Init(SDL_INIT_TIMER)

@@ -369,6 +369,8 @@ set(
   src/fife/vfs/zip/zipprovider.cpp
   src/fife/vfs/zip/zipsource.cpp
   src/fife/vfs/zip/ziptree.cpp
+  src/fife/vfs/vfsassetprovider.cpp
+  src/fife/vfs/filesystemassetprovider.cpp
   src/fife/video/animation.cpp
   src/fife/video/animationmanager.cpp
   src/fife/video/atlasbook.cpp
@@ -378,12 +380,18 @@ set(
   src/fife/video/image.cpp
   src/fife/video/imagemanager.cpp
   src/fife/video/renderbackend.cpp
-  src/fife/video/fonts/fontbase.cpp
-  src/fife/video/fonts/fontpathresolver.cpp
-  src/fife/video/fonts/imagefontbase.cpp
-  src/fife/video/fonts/subimagefont.cpp
   src/fife/video/fonts/textrenderpool.cpp
-  src/fife/video/fonts/truetypefont.cpp
+  src/fife/video/fonts/assetresolver.cpp
+  src/fife/video/fonts/fontface.cpp
+  src/fife/video/fonts/fontfacecache.cpp
+  src/fife/video/fonts/fontfamily.cpp
+  src/fife/video/fonts/fontinstance.cpp
+  src/fife/video/fonts/fontinstanceifontadapter.cpp
+  src/fife/video/fonts/fontmanager.cpp
+  src/fife/video/fonts/fontdefinitionloader.cpp
+  src/fife/video/fonts/imagefontface.cpp
+  src/fife/video/fonts/textlayout.cpp
+  src/fife/video/fonts/truetypefontface.cpp
   src/fife/video/opengl/glimage.cpp
   src/fife/video/opengl/renderbackendopengl.cpp
   src/fife/video/sdl/renderbackendsdl.cpp
@@ -581,6 +589,8 @@ set(
   src/fife/vfs/zip/zipprovider.h
   src/fife/vfs/zip/zipsource.h
   src/fife/vfs/zip/ziptree.h
+  src/fife/vfs/vfsassetprovider.h
+  src/fife/vfs/filesystemassetprovider.h
   src/fife/video/animation.h
   src/fife/video/animationmanager.h
   src/fife/video/atlasbook.h
@@ -590,13 +600,19 @@ set(
   src/fife/video/image.h
   src/fife/video/imagemanager.h
   src/fife/video/renderbackend.h
-  src/fife/video/fonts/fontbase.h
-  src/fife/video/fonts/fontpathresolver.h
-  src/fife/video/fonts/ifont.h
-  src/fife/video/fonts/imagefontbase.h
-  src/fife/video/fonts/subimagefont.h
   src/fife/video/fonts/textrenderpool.h
-  src/fife/video/fonts/truetypefont.h
+  src/fife/video/fonts/assetresolver.h
+  src/fife/video/fonts/fontdefinitionloader.h
+  src/fife/video/fonts/fontface.h
+  src/fife/video/fonts/fontfacecache.h
+  src/fife/video/fonts/fontfamily.h
+  src/fife/video/fonts/fontinstance.h
+  src/fife/video/fonts/fontinstanceifontadapter.h
+  src/fife/video/fonts/fontmanager.h
+  src/fife/video/fonts/fonttypes.h
+  src/fife/video/fonts/imagefontface.h
+  src/fife/video/fonts/textlayout.h
+  src/fife/video/fonts/truetypefontface.h
   src/fife/video/opengl/fife_opengl.h
   src/fife/video/opengl/glimage.h
   src/fife/video/opengl/renderbackendopengl.h

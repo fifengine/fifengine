@@ -64,14 +64,6 @@ def _munge_engine_hook(engine):
 
     engine.setGuiManager(guimanager)
 
-    guimanager.setFontSearchPaths(engine.getSettings().getFontPaths())
-
-    guimanager.setDefaultFont(
-        engine.getSettings().getDefaultFontPath(),
-        engine.getSettings().getDefaultFontSize(),
-        engine.getSettings().getDefaultFontGlyphs(),
-    )
-
     guimanager.init(
         engine.getRenderBackend().getName(),
         engine.getRenderBackend().getScreenWidth(),
@@ -87,9 +79,6 @@ def _munge_engine_hook(engine):
         if gui:
             return fife.GuiImage(img)
         return img
-        # use below line instead of above ones to let fifechan
-        # use its image loader that supports creating/using atlases
-        # return fifechan.GuiImage().load(filename)
 
     class hook:
         pass
@@ -98,14 +87,11 @@ def _munge_engine_hook(engine):
 
     hook.add_widget = guimanager.add
     hook.remove_widget = guimanager.remove
-    hook.default_font = guimanager.getDefaultFont()
     hook.load_image = _fife_load_image
     hook.translate_mouse_event = guimanager.translateMouseEvent
     hook.translate_key_event = guimanager.translateKeyEvent
     hook.guimanager = guimanager
     hook.console = guimanager.getConsole()
-    hook.create_font = guimanager.createFont
-    hook.release_font = guimanager.releaseFont
 
     hook.screen_width = engine.getRenderBackend().getScreenWidth()
     hook.screen_height = engine.getRenderBackend().getScreenHeight()

@@ -22,7 +22,6 @@
 #include "gui/guimanager.h"
 #include "util/base/fife_stdint.h"
 #include "util/base/singleton.h"
-#include "video/fonts/fontpathresolver.h"
 
 namespace fcn
 {
@@ -48,6 +47,7 @@ namespace FIFE
     class MouseEvent;
     class IFont;
     class GuiFont;
+    class FontManager;
 
     /* GUI Fifechan Manager.
      *
@@ -171,11 +171,11 @@ namespace FIFE
              */
             GuiFont* createFont(std::string const & path = "", uint32_t size = 0, std::string const & glyphs = "");
 
-            /** Sets the font search paths used when a font file cannot be opened directly.
+            /** Sets the FontManager to use for font resolution.
              */
-            void setFontSearchPaths(std::vector<std::string> const & paths)
+            void setFontManager(FontManager* fm)
             {
-                m_fontPathResolver.setSearchPaths(paths);
+                m_fontManager = fm;
             }
 
             /** Releases given font.
@@ -242,11 +242,10 @@ namespace FIFE
 
             // default font settings
             std::string m_fontpath;
-            std::string m_fontglyphs;
             int32_t m_fontsize;
 
-            // font search resolver
-            FontPathResolver m_fontPathResolver;
+            // font manager for new font system
+            FontManager* m_fontManager = nullptr;
 
             // true, if fifechan logic has already been executed for this round
             bool m_logic_executed;

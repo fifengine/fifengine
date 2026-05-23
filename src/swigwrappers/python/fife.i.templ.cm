@@ -139,11 +139,17 @@ print(s)\n\
 
 #define _FIFE_EXC_HANDLER(_fife_exc_type) \
 	catch (FIFE::_fife_exc_type& _e) { \
-		SWIG_Python_Raise( \
-			SWIG_NewPointerObj( \
-				new FIFE::_fife_exc_type(_e), \
-				SWIGTYPE_p_FIFE__##_fife_exc_type, SWIG_POINTER_OWN), \
-			#_fife_exc_type, SWIGTYPE_p_FIFE__##_fife_exc_type); \
+		PyObject *exc_type = SWIG_Python_ExceptionType(SWIGTYPE_p_FIFE__##_fife_exc_type); \
+		if (exc_type) { \
+			PyObject *exc_msg = SWIG_From_std_string(_e.what()); \
+			PyObject *exc = PyObject_CallOneArg(exc_type, exc_msg); \
+			if (exc) { \
+				SWIG_Python_SetErrorObj(exc_type, exc); \
+			} \
+			Py_XDECREF(exc_msg); \
+		} else { \
+			PyErr_SetString(PyExc_RuntimeError, _e.what()); \
+		} \
 		SWIG_fail; \
 	}
 

@@ -123,9 +123,10 @@ namespace FIFE
                     SDL_GetError()));
         }
 
-        // Determine target pixel format
+        // Determine target pixel format: use RGBA32 (byte order [R,G,B,A] in memory on all platforms)
+        // for the OpenGL backend to match GL_RGBA/GL_UNSIGNED_BYTE uploads.
         auto const target_fmt =
-            (RenderBackend::instance()->getName() == "SDL") ? SDL_PIXELFORMAT_RGBA8888 : SDL_PIXELFORMAT_ABGR8888;
+            (RenderBackend::instance()->getName() == "SDL") ? SDL_PIXELFORMAT_RGBA8888 : SDL_PIXELFORMAT_RGBA32;
 
         // Convert if needed
         if (surface->format != target_fmt) {

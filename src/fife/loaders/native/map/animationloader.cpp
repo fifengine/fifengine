@@ -246,26 +246,50 @@ namespace FIFE
         XML::QueryAttribute(animationElem, "x_offset", &animXoffset);
         XML::QueryAttribute(animationElem, "y_offset", &animYoffset);
 
-        for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement != nullptr;
-             frameElement               = frameElement->NextSiblingElement("frame")) {
-            char const * sourceId = XML::Attribute(frameElement, "source");
-            if (sourceId != nullptr) {
-                fs::path framePath(filename);
+        // Check for atlas-based animation (shared sub-images from a sprite sheet)
+        char const * atlasSource = XML::Attribute(animationElem, "atlas");
+        if (atlasSource != nullptr) {
+            fs::path atlasPath(filename);
+            if (HasParentPath(atlasPath)) {
+                atlasPath = GetParentPath(atlasPath) / atlasSource;
+            } else {
+                atlasPath = fs::path(atlasSource);
+            }
 
-                if (HasParentPath(framePath)) {
-                    framePath = GetParentPath(framePath) / sourceId;
-                    if (!fs::exists(framePath)) {
-                        framePath = fs::path(sourceId);
-                    }
-                } else {
-                    framePath = fs::path(sourceId);
+            ImagePtr atlasImgPtr;
+            if (!m_imageManager->exists(atlasPath.string())) {
+                atlasImgPtr = m_imageManager->create(atlasPath.string());
+            } else {
+                atlasImgPtr = m_imageManager->getPtr(atlasPath.string());
+            }
+
+            int animFrameWidth  = 0;
+            int animFrameHeight = 0;
+            XML::QueryAttribute(animationElem, "width", &animFrameWidth);
+            XML::QueryAttribute(animationElem, "height", &animFrameHeight);
+
+            for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement != nullptr;
+                 frameElement               = frameElement->NextSiblingElement("frame")) {
+                char const * sourceId = XML::Attribute(frameElement, "source");
+                if (sourceId == nullptr) {
+                    continue;
                 }
 
+                int xpos = 0;
+                int ypos = 0;
+                int fw   = animFrameWidth;
+                int fh   = animFrameHeight;
+                XML::QueryAttribute(frameElement, "xpos", &xpos);
+                XML::QueryAttribute(frameElement, "ypos", &ypos);
+                XML::QueryAttribute(frameElement, "width", &fw);
+                XML::QueryAttribute(frameElement, "height", &fh);
+
                 ImagePtr imagePtr;
-                if (!m_imageManager->exists(framePath.string())) {
-                    imagePtr = m_imageManager->create(framePath.string());
+                if (!m_imageManager->exists(sourceId)) {
+                    imagePtr = m_imageManager->create(sourceId);
+                    imagePtr->useSharedImage(atlasImgPtr, Rect(xpos, ypos, fw, fh));
                 } else {
-                    imagePtr = m_imageManager->getPtr(framePath.string());
+                    imagePtr = m_imageManager->getPtr(sourceId);
                 }
 
                 if (imagePtr) {
@@ -291,6 +315,56 @@ namespace FIFE
                         animation->addFrame(imagePtr, static_cast<uint32_t>(frameDelay));
                     } else {
                         animation->addFrame(imagePtr, static_cast<uint32_t>(animDelay));
+                    }
+                }
+            }
+        } else {
+            for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement != nullptr;
+                 frameElement               = frameElement->NextSiblingElement("frame")) {
+                char const * sourceId = XML::Attribute(frameElement, "source");
+                if (sourceId != nullptr) {
+                    fs::path framePath(filename);
+
+                    if (HasParentPath(framePath)) {
+                        framePath = GetParentPath(framePath) / sourceId;
+                        if (!fs::exists(framePath)) {
+                            framePath = fs::path(sourceId);
+                        }
+                    } else {
+                        framePath = fs::path(sourceId);
+                    }
+
+                    ImagePtr imagePtr;
+                    if (!m_imageManager->exists(framePath.string())) {
+                        imagePtr = m_imageManager->create(framePath.string());
+                    } else {
+                        imagePtr = m_imageManager->getPtr(framePath.string());
+                    }
+
+                    if (imagePtr) {
+                        int frameXoffset = 0;
+                        success          = XML::QueryAttribute(frameElement, "x_offset", &frameXoffset);
+                        if (success == XML::SUCCESS) {
+                            imagePtr->setXShift(frameXoffset);
+                        } else {
+                            imagePtr->setXShift(animXoffset);
+                        }
+
+                        int frameYoffset = 0;
+                        success          = XML::QueryAttribute(frameElement, "y_offset", &frameYoffset);
+                        if (success == XML::SUCCESS) {
+                            imagePtr->setYShift(frameYoffset);
+                        } else {
+                            imagePtr->setYShift(animYoffset);
+                        }
+
+                        int frameDelay = 0;
+                        success        = XML::QueryAttribute(frameElement, "delay", &frameDelay);
+                        if (success == XML::SUCCESS) {
+                            animation->addFrame(imagePtr, static_cast<uint32_t>(frameDelay));
+                        } else {
+                            animation->addFrame(imagePtr, static_cast<uint32_t>(animDelay));
+                        }
                     }
                 }
             }

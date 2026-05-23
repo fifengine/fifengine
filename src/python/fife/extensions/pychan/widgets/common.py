@@ -47,54 +47,24 @@ def text2gui(text):
 
     Returns
     -------
-    bytes or str
-        Encoded bytes (when encoding applies) or modified string with tabs and [br] replaced.
+    str
+        Modified string with tabs and [br] replaced.
 
     """
-    try:
-        result = (
-            text.encode("utf8", *get_manager().unicodePolicy)
-            .replace("\t", " " * 4)
-            .replace("[br]", "\n")
-        )
-        return result
-    except TypeError:
-        return text.replace("\t", " " * 4).replace("[br]", "\n")
+    return str(text).replace("\t", "    ").replace("[br]", "\n")
 
 
 def gui2text(text):
     """
     Convert text from GUI widgets.
 
-    Translates the encoded string into a unicode object.
-
     Returns
     -------
-    str or object
-        Decoded unicode string or the original text on failure.
+    str
+        The text as a string.
 
     """
-    try:
-        result = str(text, "utf8", *get_manager().unicodePolicy)
-        return result
-    except TypeError:
-        return text
+    if isinstance(text, bytes):
+        return text.decode("utf-8")
+    return str(text)
 
-
-def gui2str(text):
-    """
-    Convert unicode string to 8-bit representation.
-
-    This is useful for passing strings to SWIG functions.
-
-    Returns
-    -------
-    str or bytes
-        String representation or encoded bytes on error.
-
-    """
-    try:
-        result = text.__str__()
-        return result
-    except Exception:
-        return text.encode("utf-8")

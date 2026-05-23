@@ -4,9 +4,6 @@
 %module fife
 %{
 #include "video/fonts/ifont.h"
-#include "video/fonts/fontbase.h"
-#include "video/fonts/truetypefont.h"
-#include "video/fonts/subimagefont.h"
 
 %}
 typedef uint8_t Uint8;
@@ -27,29 +24,4 @@ namespace FIFE {
 		virtual int32_t getHeight() const = 0;
 	};
 
-	class FontBase: public IFont {
-	public:
-		virtual ~FontBase(){ }
-	};
-
-	%feature("notabstract") TrueTypeFont;
-	%rename(TTFont) TrueTypeFont;
-	class TrueTypeFont: public FontBase {
-	public:
-		TrueTypeFont(const std::string& filename, int32_t size);
-		virtual ~TrueTypeFont();
-		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		virtual int32_t getWidth(const std::string& text) const;
-		virtual int32_t getHeight() const;
-	};
-
-	%feature("notabstract") SubImageFont;
-	class SubImageFont: public FontBase {
-	public:
-		SubImageFont(const std::string& filename, const std::string& glyphs);
-		virtual ~SubImageFont();
-		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		virtual int32_t getWidth(const std::string& text) const;
-		virtual int32_t getHeight() const;
-	};
 }

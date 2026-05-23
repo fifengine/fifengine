@@ -37,7 +37,6 @@ namespace FIFE {
 		GuiFont* createFont(const std::string& path, uint32_t size, const std::string& glyphs);
 		void releaseFont(GuiFont* font);
 		GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
-		void setFontSearchPaths(const std::vector<std::string>& paths);
 		GuiFont* getDefaultFont();
 		
 		KeyEvent translateKeyEvent(const fcn::KeyEvent& evt);

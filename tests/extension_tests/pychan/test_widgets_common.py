@@ -8,8 +8,4 @@ class TestPychanWidgetsCommon:
 
         assert get_manager() is None
 
-    def test_gui2str(self):
-        from fife.extensions.pychan.widgets.common import gui2str
 
-        result = gui2str("hello")
-        assert result == "hello"

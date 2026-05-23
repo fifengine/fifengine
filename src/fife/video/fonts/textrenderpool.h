@@ -20,7 +20,7 @@
 struct SDL_Surface;
 namespace FIFE
 {
-    class FontBase;
+    class IFont;
     class Image;
 
     /** Generic pool for rendered text
@@ -49,11 +49,11 @@ namespace FIFE
 
             /** Get a string image
              */
-            Image* getRenderedText(FontBase const * fontbase, std::string const & text);
+            Image* getRenderedText(IFont const * font, std::string const & text);
 
             /** Add a string image
              */
-            void addRenderedText(FontBase const * fontbase, std::string const & text, Image* image);
+            void addRenderedText(IFont const * font, std::string const & text, Image* image);
 
             /** Remove entries not used since a minute
              *  Is a timer callback.

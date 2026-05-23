@@ -369,24 +369,40 @@ namespace FIFE
             }
 
             /**
-             * Sets path for default font
+             * Sets font id for default font
              */
-            void setDefaultFontPath(std::string const & defaultfontpath);
+            void setDefaultFontId(std::string const & id);
 
             /**
-             * Gets current path for default font
+             * Gets current font id for default font
              */
-            std::string const & getDefaultFontPath() const
+            std::string const & getDefaultFontId() const
             {
-                return m_defaultfontpath;
+                return m_defaultfontid;
             }
 
             /**
-             * Gets current path for default font
+             * Gets current font id for default font
              */
-            std::string const & getDefaultFontPath()
+            std::string const & getDefaultFontId()
             {
-                return m_defaultfontpath;
+                return m_defaultfontid;
+            }
+
+            /**
+             * Sets path for default font (deprecated - use setDefaultFontId)
+             */
+            void setDefaultFontPath(std::string const & defaultfontpath)
+            {
+                m_defaultfontid = defaultfontpath;
+            }
+
+            /**
+             * Gets current path for default font (deprecated - use getDefaultFontId)
+             */
+            std::string const & getDefaultFontPath() const
+            {
+                return m_defaultfontid;
             }
 
             /**
@@ -606,7 +622,7 @@ namespace FIFE
             std::string m_windowicon;
 
             std::vector<std::string> m_fontpaths;
-            std::string m_defaultfontpath;
+            std::string m_defaultfontid;
             uint16_t m_defaultfontsize;
             std::string m_defaultfontglyphs;
             bool m_iscolorkeyenabled;
