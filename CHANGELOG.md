@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- implemented issue #510: new font architecture with FontManager, FontFace, FontInstance, FontFamily, and TrueTypeFontFace/ImageFontFace classes
+  - `FontManager` owns face caching, instance caching (with `FontFaceCache`), manifest loading via `FontDefinitionLoader`, and VFS/filesystem asset resolution
+  - `FontFace` base with `TrueTypeFontFace` (TTF from file or memory) and `ImageFontFace` (glyph sheet) implementations
+  - `FontInstance` holds font state (size, bold, italic, antialias, hinting) and delegates rendering to its face
+  - `FontInstanceIFontAdapter` bridges `FontInstance` to the existing `IFont` interface used by `TextRenderPool` and GUI
+  - `AssetResolver` / `AssetProvider` abstraction for font data lookup (VFS, filesystem)
+  - `FontFamily` model with weighted/italic face selection and fallback chain
+  - `GlyphRun` / `TextLayout` primitives for multi-run text layout
+  - `Engine` boot wires `FontManager` into `FifechanManager`; `EngineSettings` provides `getDefaultFontId`/`setDefaultFontId`
+  - added C++ unit tests for font face, instance, definition loader, and manager
+  - added `GuiFont::renderToSurface()` for new fifechan `Font` API
+  - added `OpenGLGuiGraphics::drawSurface()` to support fifechan's surface-based font rendering
 - implemented issue #572: configurable font search paths with hybrid VFS/filesystem FontPathResolver
   - added `FontPathResolver` class with lazy VFS registration, search cache, `.ttf`/`.ttc`/`.otf` extension filtering
   - added `EngineSettings::setFontPaths/getFontPaths` with `std::vector<std::string>` font search directories
@@ -24,6 +36,10 @@ All notable changes to this project will be documented in this file.
 
 ## Changed
 
+- implemented issue #510: font system: `TextRenderPool` public API changed from `FontBase*` to `IFont*`
+  - `FifechanManager::createFont()` now exclusively uses `FontManager` + `FontInstanceIFontAdapter`
+  - `GuiFont` updated to new fifechan API: inherits `fcn::Font` only (removed `IFont` base), implements `renderToSurface()`, drops `drawString()` override
+  - `doxygen.conf`: enabled `BUILTIN_STL_SUPPORT` for proper `std::hash` specialization docs
 - implemented issue #817: LightRenderer add methods now return typed light info pointers
   - `addImage()` returns `LightRendererImageInfo*`
   - `addAnimation()` returns `LightRendererAnimationInfo*`
@@ -85,6 +101,14 @@ All notable changes to this project will be documented in this file.
 - updated devcontainer to cpp-devbox:trixie-with-vulkansdk-1.0.18
 - CI (Linux)
   - added building with GCC16
+
+## Removed
+
+- implemented issue #510: font system:
+  - removed legacy `FontBase`, `TrueTypeFont`, `SubImageFont`, `ImageFontBase`, `FontPathResolver` classes and their Python bindings
+  - removed `fonts.py` Python font loader and `fontfileparser.py`
+  - removed `setFontSearchPaths` from `FifechanManager` (path resolution now internal to `FontManager`)
+  - removed `test_font_ttf.cpp`, `test_font_path_resolver.cpp`, `test_font_types.cpp`, `test_font_face.cpp` (replaced by new font tests)
 
 ## Fixed
 
