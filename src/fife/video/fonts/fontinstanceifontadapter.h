@@ -8,12 +8,13 @@
 
 #include "fontinstance.h"
 #include "ifont.h"
+#include "platform.h"
 #include "textrenderpool.h"
 
 namespace FIFE
 {
 
-    class FontInstanceIFontAdapter final : public IFont
+    class FIFE_API FontInstanceIFontAdapter final : public IFont
     {
         public:
             explicit FontInstanceIFontAdapter(std::shared_ptr<FontInstance> instance);

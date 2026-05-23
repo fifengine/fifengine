@@ -10,11 +10,12 @@
 #include <string>
 
 #include "fontface.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class ImageFontFace final : public FontFace
+    class FIFE_API ImageFontFace final : public FontFace
     {
         public:
             ImageFontFace(AssetHandle handle, std::string const & filepath, std::string const & glyphs);

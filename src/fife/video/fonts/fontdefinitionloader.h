@@ -7,11 +7,12 @@
 #include <vector>
 
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class FontDefinitionLoader
+    class FIFE_API FontDefinitionLoader
     {
         public:
             static std::vector<FontDefinition> loadFromXml(std::string const & xmlContent);

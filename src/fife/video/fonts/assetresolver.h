@@ -6,11 +6,12 @@
 #include <vector>
 
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class AssetProvider
+    class FIFE_API AssetProvider
     {
         public:
             virtual ~AssetProvider()                                = default;
@@ -22,7 +23,7 @@ namespace FIFE
             }
     };
 
-    class AssetResolver
+    class FIFE_API AssetResolver
     {
         public:
             void addProvider(std::unique_ptr<AssetProvider> provider);

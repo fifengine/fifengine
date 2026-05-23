@@ -11,11 +11,12 @@
 #include <vector>
 
 #include "fontface.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class TrueTypeFontFace final : public FontFace
+    class FIFE_API TrueTypeFontFace final : public FontFace
     {
         public:
             TrueTypeFontFace(AssetHandle handle, std::string const & filepath, int ptsize);

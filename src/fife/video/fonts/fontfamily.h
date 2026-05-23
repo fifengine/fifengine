@@ -8,12 +8,13 @@
 #include <vector>
 
 #include "fontface.h"
+#include "platform.h"
 #include "fonttypes.h"
 
 namespace FIFE
 {
 
-    class FontFamily
+    class FIFE_API FontFamily
     {
         public:
             explicit FontFamily(std::string id);

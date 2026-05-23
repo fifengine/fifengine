@@ -8,11 +8,12 @@
 
 #include "fontface.h"
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class FontInstance
+    class FIFE_API FontInstance
     {
         public:
             FontInstance(
@@ -75,7 +76,7 @@ namespace FIFE
             int m_rowSpacing;
     };
 
-    class TrueTypeFontInstance final : public FontInstance
+    class FIFE_API TrueTypeFontInstance final : public FontInstance
     {
         public:
             using FontInstance::FontInstance;
@@ -83,7 +84,7 @@ namespace FIFE
             int getWidth(std::string const & text) const override;
     };
 
-    class ImageFontInstance final : public FontInstance
+    class FIFE_API ImageFontInstance final : public FontInstance
     {
         public:
             using FontInstance::FontInstance;

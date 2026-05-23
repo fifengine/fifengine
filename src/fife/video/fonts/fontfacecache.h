@@ -8,11 +8,12 @@
 
 #include "fontface.h"
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class FontFaceCache
+    class FIFE_API FontFaceCache
     {
         public:
             FontFaceCache()  = default;

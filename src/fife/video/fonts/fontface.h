@@ -6,11 +6,12 @@
 #include <memory>
 
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {
 
-    class FontFace
+    class FIFE_API FontFace
     {
         public:
             explicit FontFace(AssetHandle handle);
