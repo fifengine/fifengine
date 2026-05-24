@@ -213,20 +213,6 @@ class World(EventListenerBase):
 
         self.cameras["main"].attach(self.hero.agent)
 
-        # Floating text renderers currntly only support one font.
-        # ... so we set that up.
-        # You'll se that for our demo we use a image font, so we have to specify the font glyphs
-        # for that one.
-        renderer = fife.FloatingTextRenderer.getInstance(self.cameras["main"])
-        textfont = get_manager().createFont(
-            "fonts/rpgfont.png", 0, str(TDS.get("FIFE", "FontGlyphs"))
-        )
-        renderer.setFont(textfont)
-        renderer.activateAllLayers(self.map)
-        renderer.setBackground(100, 255, 100, 165) # green background with some transparency
-        renderer.setBorder(50, 255, 50) # bright green border
-        renderer.setEnabled(True)
-
         # Activate the grid renderer on all layers
         renderer = self.cameras["main"].getRenderer("GridRenderer")
         renderer.activateAllLayers(self.map)
@@ -240,7 +226,6 @@ class World(EventListenerBase):
         # Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )
         # renderers will be handed all layers. That's handled here.
         renderer = fife.CoordinateRenderer.getInstance(self.cameras["main"])
-        renderer.setFont(textfont)
         renderer.clearActiveLayers()
         renderer.addActiveLayer(
             self.map.getLayer(str(TDS.get("rio", "CoordinateLayerName")))

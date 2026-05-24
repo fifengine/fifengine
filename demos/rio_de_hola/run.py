@@ -151,6 +151,7 @@ class IslandDemo(PychanApplicationBase):
         """Initialize application, VFS, world and listener."""
         super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
+        get_manager().hook.guimanager.setDefaultFont("FreeSans", 16)
         self.world = world.World(self.engine)
         self.listener = ApplicationListener(self.engine, self.world)
         self.world.load(str(TDS.get("rio", "MapFile")))
