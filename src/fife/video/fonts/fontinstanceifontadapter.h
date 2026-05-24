@@ -3,23 +3,32 @@
 
 #pragma once
 
+#include <fifechan/font.hpp>
+
 #include <memory>
 #include <string>
+#include <string_view>
 
 #include "fontinstance.h"
 #include "ifont.h"
 #include "platform.h"
 #include "textrenderpool.h"
 
+namespace fcn
+{
+    class Graphics;
+}
+
 namespace FIFE
 {
 
-    class FIFE_API FontInstanceIFontAdapter final : public IFont
+    class FIFE_API FontInstanceIFontAdapter final : public IFont, public fcn::Font
     {
         public:
             explicit FontInstanceIFontAdapter(std::shared_ptr<FontInstance> instance);
             ~FontInstanceIFontAdapter() override;
 
+            // IFont
             void setRowSpacing(int32_t spacing) override;
             int32_t getRowSpacing() const override;
             void setGlyphSpacing(int32_t spacing) override;
@@ -44,8 +53,16 @@ namespace FIFE
             void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             SDL_Color getColor() const override;
             int32_t getWidth(std::string const & text) const override;
-            int32_t getHeight() const override;
+            int getHeight() const override;
             void invalidate() override;
+
+            // fcn::Font
+            int getWidth(std::string_view text) const override;
+            int getStringIndexAt(std::string_view text, int x) const override;
+            auto renderToSurface(std::string_view text) const
+                -> std::unique_ptr<SDL_Surface, fcn::Font::SDL_SurfaceDeleter> override;
+
+            void drawMultiLineString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y);
 
         private:
             SDL_Surface* renderString(std::string const & text);

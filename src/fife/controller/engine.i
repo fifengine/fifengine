@@ -156,5 +156,7 @@ namespace FIFE {
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);
+
+		void loadFontManifestFromString(const std::string& xml);
 	};
 }

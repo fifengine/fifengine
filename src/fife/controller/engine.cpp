@@ -140,6 +140,13 @@ namespace FIFE
         }
     }
 
+    void Engine::loadFontManifestFromString(std::string const & xml)
+    {
+        if (m_fontManager) {
+            m_fontManager->loadManifestFromString(xml);
+        }
+    }
+
     void Engine::changeScreenMode(ScreenMode const & mode)
     {
         m_cursor->invalidate();
@@ -179,8 +186,13 @@ namespace FIFE
         FL_LOG(_log, "Adding zip provider to VFS");
         m_vfs->addProvider(new ZipProvider());
 
-        // m_vfs->addProvider(ProviderDAT2());
-        // m_vfs->addProvider(ProviderDAT1());
+        //FL_LOG(_log, "Adding Fallout DAT2 provider to VFS");
+        //m_vfs->addProvider(ProviderDAT2());
+
+        //FL_LOG(_log, "Adding Fallout DAT1 provider to VFS");
+        //m_vfs->addProvider(ProviderDAT1());
+
+        TTF_Init();
 
         FL_LOG(_log, "Creating FontManager");
         {
@@ -205,10 +217,6 @@ namespace FIFE
         }
 
         FL_LOG(_log, "Engine pre-init done");
-
-        // SDL3 initializes the timer subsystem automatically, no need for SDL_Init(SDL_INIT_TIMER)
-
-        TTF_Init();
 
         FL_LOG(_log, "Creating event manager");
         m_eventmanager = new EventManager();
@@ -443,7 +451,6 @@ namespace FIFE
 
         FL_LOG(_log, "================== Engine destructed ==================");
         m_destroyed = true;
-        // delete m_logmanager;
     }
     void Engine::initializePumping()
     {

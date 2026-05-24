@@ -29,7 +29,7 @@ namespace FIFE
             {
                 return m_font;
             }
-            int getPointSize() const
+            int getPointSize() const override
             {
                 return m_ptsize;
             }

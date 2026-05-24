@@ -19,15 +19,15 @@ namespace FIFE
             FontFaceCache()  = default;
             ~FontFaceCache() = default;
 
-            bool has(AssetHandle handle) const;
-            std::shared_ptr<FontFace> get(AssetHandle handle) const;
-            void put(AssetHandle handle, std::shared_ptr<FontFace> face);
-            void remove(AssetHandle handle);
+            bool has(FontFaceKey key) const;
+            std::shared_ptr<FontFace> get(FontFaceKey key) const;
+            void put(FontFaceKey key, std::shared_ptr<FontFace> face);
+            void remove(FontFaceKey key);
             void clear();
             size_t size() const;
 
         private:
-            std::unordered_map<uint64_t, std::shared_ptr<FontFace>> m_cache;
+            std::unordered_map<FontFaceKey, std::shared_ptr<FontFace>> m_cache;
     };
 
 } // namespace FIFE

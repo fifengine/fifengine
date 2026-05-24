@@ -157,7 +157,7 @@ namespace FIFE
 
             /** gets height of this font
              */
-            virtual int32_t getHeight() const = 0;
+            virtual int getHeight() const = 0;
 
             virtual void invalidate() = 0;
     };

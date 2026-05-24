@@ -203,6 +203,11 @@ namespace FIFE
                 return m_fontManager.get();
             }
 
+            /** Loads a font manifest XML string into the FontManager.
+             *  Useful for Python applications that need to register fonts dynamically.
+             */
+            void loadFontManifestFromString(std::string const & xml);
+
             /** Returns cursor used in the engine
              */
             Cursor* getCursor() const

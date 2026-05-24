@@ -38,6 +38,11 @@ namespace FIFE
             static Logger log(LM_VIDEO);
             return log;
         }();
+
+        Logger& _guiLog = []() -> Logger& {
+            static Logger log(LM_GUI);
+            return log;
+        }();
     } // namespace
 
     namespace
@@ -527,13 +532,34 @@ namespace FIFE
     Image* RenderBackendOpenGL::createImage(SDL_Surface* surface)
     {
         // Given an abritary surface, we must convert it to the format GLImage will understand.
-        // It's easiest to let SDL do this for us.
+        // Let SDL do this for us.
+
+        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+            FL_WARN(_log, std::format(
+                "RB::createImage: surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
+                surface->w,
+                surface->h,
+                surface->pitch,
+                static_cast<unsigned>(surface->format),
+                static_cast<unsigned>(m_rgba_format.format),
+                surface->format == m_rgba_format.format));
+        }
 
         if (surface->format == m_rgba_format.format) {
             return new GLImage(surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+
+        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+            FL_WARN(_log, std::format(
+                "  RB::createImage conv={}x{} pitch={} fmt={:#x}",
+                conv->w,
+                conv->h,
+                conv->pitch,
+                static_cast<unsigned>(conv->format)));
+        }
+
         auto* image       = new GLImage(conv);
 
         SDL_DestroySurface(surface);
@@ -545,11 +571,33 @@ namespace FIFE
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // It's easiest to let SDL do this for us.
 
+        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+            FL_WARN(_log, std::format(
+                "RB::createImage(name): name='{}' surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
+                name,
+                surface->w,
+                surface->h,
+                surface->pitch,
+                static_cast<unsigned>(surface->format),
+                static_cast<unsigned>(m_rgba_format.format),
+                surface->format == m_rgba_format.format));
+        }
+
         if (surface->format == m_rgba_format.format) {
             return new GLImage(name, surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
+
+        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+            FL_WARN(_log, std::format(
+                "  RB::createImage(name) conv={}x{} pitch={} fmt={:#x}",
+                conv->w,
+                conv->h,
+                conv->pitch,
+                static_cast<unsigned>(conv->format)));
+        }
+
         auto* image       = new GLImage(name, conv);
 
         SDL_DestroySurface(surface);
@@ -628,26 +676,24 @@ namespace FIFE
     {
         enableTextures(texUnit);
 
-        if (m_state.texture[texUnit] != texId) {
-            if (m_state.active_tex != texUnit) {
-                m_state.active_tex = texUnit;
-                glActiveTexture(GL_TEXTURE0 + texUnit);
-            }
-            if (m_state.active_client_tex != texUnit) {
-                m_state.active_client_tex = texUnit;
-                glClientActiveTexture(GL_TEXTURE0 + texUnit);
-            }
-            m_state.texture[texUnit] = texId;
-            glBindTexture(GL_TEXTURE_2D, texId);
+        if (m_state.active_tex != texUnit) {
+            m_state.active_tex = texUnit;
+            glActiveTexture(GL_TEXTURE0 + texUnit);
         }
+        if (m_state.active_client_tex != texUnit) {
+            m_state.active_client_tex = texUnit;
+            glClientActiveTexture(GL_TEXTURE0 + texUnit);
+        }
+
+        // Some GUI paths bind textures directly, so the cached id can drift from real GL state.
+        m_state.texture[texUnit] = texId;
+        glBindTexture(GL_TEXTURE_2D, texId);
     }
 
     void RenderBackendOpenGL::bindTexture(GLuint texId)
     {
-        if (m_state.texture[m_state.active_tex] != texId) {
-            m_state.texture[m_state.active_tex] = texId;
-            glBindTexture(GL_TEXTURE_2D, texId);
-        }
+        m_state.texture[m_state.active_tex] = texId;
+        glBindTexture(GL_TEXTURE_2D, texId);
     }
 
     void RenderBackendOpenGL::enableLighting()
@@ -1035,6 +1081,58 @@ namespace FIFE
         // index buffer pointer
         uint32_t const * indexBuffer = nullptr;
 
+        auto logQueuedTextureQuad = [&](uint32_t textureId, int32_t currentIndexValue, uint32_t elementCount) {
+            if (mode != GL_TRIANGLES || indexBuffer != m_tIndices.data() || elementCount != 6 || textureId == 0) {
+                return;
+            }
+
+            if (currentIndexValue < 0 || static_cast<size_t>(currentIndexValue) >= m_tIndices.size()) {
+                return;
+            }
+
+            uint32_t const firstVertex = indexBuffer[currentIndexValue];
+            if ((firstVertex + 3) >= m_renderTextureDatas.size()) {
+                return;
+            }
+
+            auto const & v0 = m_renderTextureDatas[firstVertex + 0];
+            auto const & v1 = m_renderTextureDatas[firstVertex + 1];
+            auto const & v2 = m_renderTextureDatas[firstVertex + 2];
+            auto const & v3 = m_renderTextureDatas[firstVertex + 3];
+
+            float const minX = std::min(std::min(v0.vertex[0], v1.vertex[0]), std::min(v2.vertex[0], v3.vertex[0]));
+            float const maxX = std::max(std::max(v0.vertex[0], v1.vertex[0]), std::max(v2.vertex[0], v3.vertex[0]));
+            float const minY = std::min(std::min(v0.vertex[1], v1.vertex[1]), std::min(v2.vertex[1], v3.vertex[1]));
+            float const maxY = std::max(std::max(v0.vertex[1], v1.vertex[1]), std::max(v2.vertex[1], v3.vertex[1]));
+
+            if ((maxX - minX) != 33.0F || (maxY - minY) != 16.0F) {
+                return;
+            }
+
+            GLint scissorBox[4] = {0, 0, 0, 0};
+            glGetIntegerv(GL_SCISSOR_BOX, scissorBox);
+            GLboolean const scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
+            FL_LOG(_guiLog, std::format(
+                "renderWithoutZ flush: tex={} quad=({:.1f},{:.1f})-({:.1f},{:.1f}) size=({:.1f}x{:.1f}) elemCount={} colorEnabled={} scissorEnabled={} scissor=({},{} {}x{}) blend=({}, {})",
+                textureId,
+                minX,
+                minY,
+                maxX,
+                maxY,
+                maxX - minX,
+                maxY - minY,
+                elementCount,
+                m_state.color_enabled,
+                scissorEnabled == GL_TRUE,
+                scissorBox[0],
+                scissorBox[1],
+                scissorBox[2],
+                scissorBox[3],
+                src,
+                dst));
+        };
+
         // stride
         uint32_t const strideP   = sizeof(renderDataP);
         uint32_t const strideT   = sizeof(renderDataT);
@@ -1133,6 +1231,7 @@ namespace FIFE
             // if changes then we render all previously elements
             if (render) {
                 if (*currentElements > 0) {
+                    logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
                     // render
                     glDrawElements(mode, toGLsizei(*currentElements), GL_UNSIGNED_INT, indexBuffer + *currentIndex);
                     *currentIndex += *currentElements;
@@ -1342,6 +1441,7 @@ namespace FIFE
             }
         }
         // render
+        logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
         glDrawElements(mode, toGLsizei(*currentElements), GL_UNSIGNED_INT, indexBuffer + *currentIndex);
 
         // reset all states
@@ -2211,6 +2311,38 @@ namespace FIFE
         uint32_t id, Rect const & rect, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
         RenderObject ro(GL_TRIANGLES, 6, id);
+
+        if ((rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16)) {
+            FL_LOG(_guiLog, std::format(
+                "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
+                id,
+                rect.x,
+                rect.y,
+                rect.w,
+                rect.h,
+                alpha,
+                rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) : std::string("null"),
+                st[0],
+                st[1],
+                st[2],
+                st[3],
+                (alpha == 255 && rgba == nullptr) ? "texture-only" : (rgba != nullptr ? "overlay-color" : "texture-alpha")));
+        } else if (rect.w >= 40 && rect.w <= 400 && rect.h >= 10 && rect.h <= 40) {
+            FL_WARN(_log, std::format(
+                "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
+                id,
+                rect.x,
+                rect.y,
+                rect.w,
+                rect.h,
+                alpha,
+                rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) : std::string("null"),
+                st[0],
+                st[1],
+                st[2],
+                st[3],
+                (alpha == 255 && rgba == nullptr) ? "texture-only" : (rgba != nullptr ? "overlay-color" : "texture-alpha")));
+        }
 
         // texture quad without alpha
         if (alpha == 255 && (rgba == nullptr)) {

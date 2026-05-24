@@ -12,12 +12,26 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "gui/fifechan/base/gui_font.h"
+#include "util/log/logger.h"
 #include "util/base/exception.h"
+#include "video/fonts/fontinstanceifontadapter.h"
 #include "video/image.h"
 
 namespace fcn
 {
+    namespace
+    {
+        FIFE::Logger& _log = []() -> FIFE::Logger& {
+            static FIFE::Logger log(LM_GUI);
+            return log;
+        }();
+
+        bool shouldLogCaption(std::string const & caption)
+        {
+            return caption == "Text 1" || caption == "Text 2" || caption == "Text 3" || caption == "Credits";
+        }
+    }
+
     ClickLabel::ClickLabel() :
         mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
@@ -53,7 +67,7 @@ namespace fcn
     void ClickLabel::setCaption(std::string const & caption)
     {
         mCaption = caption;
-        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::FontInstanceIFontAdapter*>(getFont());
         wrapText();
     }
 
@@ -212,13 +226,39 @@ namespace fcn
                 fcn::throwException("Unknown alignment.");
             }
 
+            if (shouldLogCaption(mCaption)) {
+                Rectangle const childrenArea = getChildrenArea();
+                FIFE::FL_LOG(_log, std::format(
+                    "ClickLabel::draw caption='{}' widget=({},{} {}x{}) children=({},{} {}x{}) textPos=({}, {}) image={}x{} padding=({}, {}, {}, {}) border={} opaque={} visible={}",
+                    mCaption,
+                    getX(),
+                    getY(),
+                    getWidth(),
+                    getHeight(),
+                    childrenArea.x,
+                    childrenArea.y,
+                    childrenArea.width,
+                    childrenArea.height,
+                    textX,
+                    textY,
+                    image->getWidth(),
+                    image->getHeight(),
+                    getPaddingTop(),
+                    getPaddingRight(),
+                    getPaddingBottom(),
+                    getPaddingLeft(),
+                    getBorderSize(),
+                    isOpaque(),
+                    isVisible()));
+            }
+
             mGuiFont->drawMultiLineString(graphics, text, textX, textY);
         }
     }
 
     void ClickLabel::fontChanged()
     {
-        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::FontInstanceIFontAdapter*>(getFont());
         wrapText();
     }
 

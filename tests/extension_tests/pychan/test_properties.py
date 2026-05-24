@@ -24,13 +24,4 @@ class TestProperties:
         assert ImageProperty is not None
 
 
-class TestFonts:
-    def test_font_class_exists(self):
-        from fife.extensions.pychan.fonts import Font
 
-        assert Font is not None
-
-    def test_load_fonts_exists(self):
-        from fife.extensions.pychan.fonts import loadFonts
-
-        assert loadFonts is not None

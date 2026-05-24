@@ -21,6 +21,10 @@ namespace FIFE
                 return m_assetHandle;
             }
             virtual bool supports(uint32_t codepoint) const;
+            virtual int getPointSize() const
+            {
+                return 0;
+            }
 
         protected:
             AssetHandle m_assetHandle;

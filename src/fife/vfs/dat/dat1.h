@@ -23,7 +23,8 @@
 namespace FIFE
 {
 
-    /** VFSource for the Fallout1 DAT file format.
+    /**
+     * VFSource for the Fallout1 DAT file format.
      *
      * DAT1 files are the data archive format used by Fallout 1 (master.dat,
      * critter.dat). File structure (all integers big-endian):

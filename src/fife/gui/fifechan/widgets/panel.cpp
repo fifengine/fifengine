@@ -12,7 +12,6 @@
 
 // FIFE includes
 #include "dockarea.h"
-#include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "util/base/exception.h"
 

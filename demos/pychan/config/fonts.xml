@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<fonts version="1">
+  <family id="FreeMono">
+    <face type="truetype" weight="400" size="12" antialias="true" color="255,255,255">fonts/freefont/FreeMono.ttf</face>
+  </family>
+  <family id="FreeSans">
+    <face type="truetype" weight="400" size="12" antialias="true" color="255,255,255">fonts/freefont/FreeSans.ttf</face>
+  </family>
+  <family id="samanata_large_pixelated">
+    <face type="truetype" weight="400" size="30" antialias="0" color="255,255,0">fonts/samanata.ttf</face>
+  </family>
+  <family id="samanata_large">
+    <face type="truetype" weight="400" size="20" antialias="1" color="255,255,100">fonts/samanata.ttf</face>
+  </family>
+  <family id="samanata_large_recoloring">
+    <face type="truetype" weight="400" size="20" antialias="1" color="255,255,100" recoloring="1">fonts/samanata.ttf</face>
+  </family>
+  <family id="samanata_small_pixelated">
+    <face type="truetype" weight="400" size="8" antialias="0" color="255,255,100" row_spacing="50" glyph_spacing="50">fonts/samanata.ttf</face>
+  </family>
+  <family id="samanata_small">
+    <face type="truetype" weight="400" size="10" antialias="1" color="255,255,100">fonts/samanata.ttf</face>
+  </family>
+</fonts>

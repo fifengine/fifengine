@@ -30,7 +30,6 @@
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/mouse/mouseevent.h"
-#include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
 #include "gui/fifechan/console/console.h"
@@ -243,7 +242,7 @@ namespace FIFE
         resizeTopContainer(0, 0, static_cast<uint32_t>(screenWidth), static_cast<uint32_t>(screenHeight));
     }
 
-    GuiFont* FifechanManager::createFont(std::string const & path, uint32_t size, std::string const & /*glyphs*/)
+    fcn::Font* FifechanManager::createFont(std::string const & path, uint32_t size)
     {
         std::string fontpath = path;
         int32_t fontsize     = static_cast<int32_t>(size);
@@ -251,19 +250,36 @@ namespace FIFE
         if (fontpath.empty()) {
             fontpath = m_fontpath;
         }
-        if (fontsize == 0) {
-            fontsize = m_fontsize;
-        }
+
+        FL_WARN(
+            _log,
+            std::format(
+                "createFont: path='{}' fontpath='{}' size={} fontsize={} m_fontManager={}",
+                path,
+                fontpath,
+                size,
+                fontsize,
+                static_cast<void*>(m_fontManager)));
 
         FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
         auto instance           = m_fontManager->getFontInstance(handle);
         auto* adapter           = new FontInstanceIFontAdapter(std::move(instance));
-        auto* guifont           = new GuiFont(adapter);
-        m_fonts.push_back(guifont);
-        return guifont;
+        if (auto definition = m_fontManager->getFontDefinition(handle)) {
+            adapter->setAntiAlias(definition->antialias);
+            adapter->setGlyphSpacing(definition->glyphSpacing);
+            adapter->setRowSpacing(definition->rowSpacing);
+            adapter->setDynamicColoring(definition->recoloring);
+            adapter->setColor(
+                definition->color.r,
+                definition->color.g,
+                definition->color.b,
+                definition->color.a);
+        }
+        m_fonts.push_back(adapter);
+        return adapter;
     }
 
-    void FifechanManager::releaseFont(GuiFont* font)
+    void FifechanManager::releaseFont(fcn::Font* font)
     {
         auto i = m_fonts.begin();
         while (i != m_fonts.end()) {
@@ -280,12 +296,15 @@ namespace FIFE
     {
         auto it = m_fonts.begin();
         while (it != m_fonts.end()) {
-            (*it)->invalidate();
+            auto* ifont = dynamic_cast<IFont*>(*it);
+            if (ifont != nullptr) {
+                ifont->invalidate();
+            }
             ++it;
         }
     }
 
-    GuiFont* FifechanManager::setDefaultFont(std::string const & path, uint32_t size, std::string const & /*glyphs*/)
+    fcn::Font* FifechanManager::setDefaultFont(std::string const & path, uint32_t size)
     {
         m_fontpath = path;
         m_fontsize = static_cast<int32_t>(size);
@@ -293,6 +312,7 @@ namespace FIFE
         m_defaultfont = createFont();
         fcn::Widget::setGlobalFont(m_defaultfont);
         if (m_console != nullptr) {
+            m_console->setIOFont(m_defaultfont);
             m_console->reLayout();
         }
 

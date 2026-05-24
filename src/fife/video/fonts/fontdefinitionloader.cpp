@@ -20,10 +20,11 @@
 
 namespace
 {
-    FIFE::Logger& _log = []() -> FIFE::Logger& {
+    FIFE::Logger& getFontDefLog()
+    {
         static FIFE::Logger log(LM_VIDEO);
         return log;
-    }();
+    }
 } // namespace
 
 namespace FIFE
@@ -47,7 +48,7 @@ namespace FIFE
 
         char const * version = XML::Attribute(root, "version");
         if (version == nullptr) {
-            FL_WARN(_log, "<fonts> element is missing 'version' attribute");
+            FL_WARN(getFontDefLog(), "<fonts> element is missing 'version' attribute");
         }
 
         std::vector<FontDefinition> result;
@@ -102,15 +103,18 @@ namespace FIFE
 
                 char const * colorAttr = XML::Attribute(faceElem, "color");
                 if (colorAttr != nullptr) {
-                    std::string colorStr(colorAttr);
-                    int r = 255, g = 255, b = 255, a = 255;
+                    std::string const colorStr(colorAttr);
+                    int r = 255;
+                    int g = 255;
+                    int b = 255;
+                    int a = 255;
                     std::stringstream ss(colorStr);
-                    char comma;
+                    char comma = 0;
                     ss >> r >> comma >> g >> comma >> b;
                     if (ss >> comma >> a) { /* four values */
                     }
                     def.color = {
-                        static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b), static_cast<Uint8>(a)};
+                        .r = static_cast<Uint8>(r), .g = static_cast<Uint8>(g), .b = static_cast<Uint8>(b), .a = static_cast<Uint8>(a)};
                 }
 
                 char const * recoloringAttr = XML::Attribute(faceElem, "recoloring");

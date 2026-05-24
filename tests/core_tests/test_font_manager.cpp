@@ -27,6 +27,7 @@ using FIFE::FontDefinition;
 using FIFE::FontDefinitionLoader;
 using FIFE::FontFace;
 using FIFE::FontFaceCache;
+using FIFE::FontFaceKey;
 using FIFE::FontFamily;
 using FIFE::FontHandle;
 using FIFE::FontInstance;
@@ -44,12 +45,12 @@ TEST_CASE("FontFaceCache put and get")
 {
     FontFaceCache cache;
 
-    AssetHandle h{42};
+    FontFaceKey const k{AssetHandle{42}, 0};
     auto face = std::make_shared<FontFace>(AssetHandle{42});
 
-    cache.put(h, face);
-    REQUIRE(cache.has(h));
-    REQUIRE(cache.get(h) == face);
+    cache.put(k, face);
+    REQUIRE(cache.has(k));
+    REQUIRE(cache.get(k) == face);
     REQUIRE(cache.size() == 1);
 }
 
@@ -57,64 +58,64 @@ TEST_CASE("FontFaceCache put overwrites existing entry")
 {
     FontFaceCache cache;
 
-    AssetHandle h{1};
+    FontFaceKey const k{AssetHandle{1}, 0};
     auto face1 = std::make_shared<FontFace>(AssetHandle{1});
     auto face2 = std::make_shared<FontFace>(AssetHandle{1});
 
-    cache.put(h, face1);
-    cache.put(h, face2);
+    cache.put(k, face1);
+    cache.put(k, face2);
     REQUIRE(cache.size() == 1);
-    REQUIRE(cache.get(h) == face2);
+    REQUIRE(cache.get(k) == face2);
 }
 
-TEST_CASE("FontFaceCache has returns false for missing handle")
+TEST_CASE("FontFaceCache has returns false for missing key")
 {
     FontFaceCache cache;
-    REQUIRE_FALSE(cache.has(AssetHandle{999}));
+    REQUIRE_FALSE(cache.has(FontFaceKey{AssetHandle{999}, 0}));
 }
 
-TEST_CASE("FontFaceCache get missing handle throws")
+TEST_CASE("FontFaceCache get missing key throws")
 {
     FontFaceCache cache;
-    REQUIRE_THROWS_AS(cache.get(AssetHandle{999}), std::out_of_range);
+    REQUIRE_THROWS_AS(cache.get(FontFaceKey{AssetHandle{999}, 0}), std::out_of_range);
 }
 
 TEST_CASE("FontFaceCache put null face throws")
 {
     FontFaceCache cache;
-    REQUIRE_THROWS_AS(cache.put(AssetHandle{1}, nullptr), std::invalid_argument);
+    REQUIRE_THROWS_AS(cache.put(FontFaceKey{AssetHandle{1}, 0}, nullptr), std::invalid_argument);
 }
 
 TEST_CASE("FontFaceCache remove")
 {
     FontFaceCache cache;
 
-    AssetHandle h{1};
-    cache.put(h, std::make_shared<FontFace>(AssetHandle{1}));
-    REQUIRE(cache.has(h));
+    FontFaceKey const k{AssetHandle{1}, 0};
+    cache.put(k, std::make_shared<FontFace>(AssetHandle{1}));
+    REQUIRE(cache.has(k));
 
-    cache.remove(h);
-    REQUIRE_FALSE(cache.has(h));
+    cache.remove(k);
+    REQUIRE_FALSE(cache.has(k));
     REQUIRE(cache.size() == 0);
 }
 
-TEST_CASE("FontFaceCache remove missing handle does nothing")
+TEST_CASE("FontFaceCache remove missing key does nothing")
 {
     FontFaceCache cache;
-    REQUIRE_NOTHROW(cache.remove(AssetHandle{999}));
+    REQUIRE_NOTHROW(cache.remove(FontFaceKey{AssetHandle{999}, 0}));
 }
 
 TEST_CASE("FontFaceCache clear")
 {
     FontFaceCache cache;
 
-    cache.put(AssetHandle{1}, std::make_shared<FontFace>(AssetHandle{1}));
-    cache.put(AssetHandle{2}, std::make_shared<FontFace>(AssetHandle{2}));
+    cache.put(FontFaceKey{AssetHandle{1}, 0}, std::make_shared<FontFace>(AssetHandle{1}));
+    cache.put(FontFaceKey{AssetHandle{2}, 0}, std::make_shared<FontFace>(AssetHandle{2}));
     REQUIRE(cache.size() == 2);
 
     cache.clear();
     REQUIRE(cache.size() == 0);
-    REQUIRE_FALSE(cache.has(AssetHandle{1}));
+    REQUIRE_FALSE(cache.has(FontFaceKey{AssetHandle{1}, 0}));
 }
 
 TEST_CASE("FontFaceCache empty cache size is zero")
@@ -359,6 +360,8 @@ TEST_CASE("FontManager non-copyable")
 
 TEST_CASE("FontManager instance cache clear invalidates handles")
 {
+    FontTestFixture fixture;
+
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));

@@ -161,6 +161,8 @@ class ApplicationBase:
         engineSetting.setMouseSensitivity(self._finalSetting["MouseSensitivity"])
         engineSetting.setMouseAccelerationEnabled(self._finalSetting["MouseAcceleration"])
 
+        engineSetting.setFontPaths(self._finalSetting["FontPaths"])
+
     def initLogging(self):
         """Initialize the LogManager.
 

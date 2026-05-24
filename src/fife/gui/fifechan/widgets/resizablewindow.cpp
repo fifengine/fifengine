@@ -12,7 +12,6 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "gui/fifechan/widgets/resizablewindow.h"
 #include "util/base/exception.h"

@@ -46,7 +46,6 @@ namespace FIFE
     class KeyEvent;
     class MouseEvent;
     class IFont;
-    class GuiFont;
     class FontManager;
 
     /* GUI Fifechan Manager.
@@ -158,18 +157,18 @@ namespace FIFE
 
             /** Set the global font properties.
              */
-            GuiFont* setDefaultFont(std::string const & path, uint32_t size, std::string const & glyphs);
+            fcn::Font* setDefaultFont(std::string const & path, uint32_t size);
 
             /** Gets the default font
              */
-            GuiFont* getDefaultFont()
+            fcn::Font* getDefaultFont()
             {
                 return m_defaultfont;
             };
 
             /** Gets font with given properties. Note that font will be owned by Fifechan GUI Manager
              */
-            GuiFont* createFont(std::string const & path = "", uint32_t size = 0, std::string const & glyphs = "");
+            fcn::Font* createFont(std::string const & path = "", uint32_t size = 0);
 
             /** Sets the FontManager to use for font resolution.
              */
@@ -180,7 +179,7 @@ namespace FIFE
 
             /** Releases given font.
              */
-            void releaseFont(GuiFont* font);
+            void releaseFont(fcn::Font* font);
 
             void invalidateFonts();
 
@@ -227,9 +226,9 @@ namespace FIFE
             // Acess to the Cursor class.
             Cursor* m_cursor;
             // The default font
-            GuiFont* m_defaultfont;
+            fcn::Font* m_defaultfont;
             // The fonts used
-            std::vector<GuiFont*> m_fonts;
+            std::vector<fcn::Font*> m_fonts;
             // Added widgets
             std::set<fcn::Widget*> m_widgets;
 

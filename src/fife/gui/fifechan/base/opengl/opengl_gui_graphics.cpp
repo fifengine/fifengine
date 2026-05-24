@@ -34,6 +34,11 @@ namespace FIFE
             static Logger log(LM_GUI);
             return log;
         }();
+
+        bool shouldLogShowHideBand(int32_t x, int32_t y, [[maybe_unused]] int32_t width, int32_t height)
+        {
+            return x == 216 && height == 16 && (y == 354 || y == 370);
+        }
     } // namespace
 
     OpenGLGuiGraphics::OpenGLGuiGraphics() :
@@ -62,7 +67,29 @@ namespace FIFE
 
         ImagePtr const fifeimg          = g_img->getFIFEImage();
         fcn::ClipRectangle const & clip = mClipStack.top();
-        fifeimg->render(Rect(dstX + clip.xOffset, dstY + clip.yOffset, width, height));
+        int32_t const renderX           = dstX + clip.xOffset;
+        int32_t const renderY           = dstY + clip.yOffset;
+
+        if (shouldLogShowHideBand(renderX, renderY, width, height)) {
+            FL_LOG(_log, std::format(
+                "OpenGLGuiGraphics::drawImage global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) color=({}, {}, {}, {})",
+                renderX,
+                renderY,
+                width,
+                height,
+                clip.x,
+                clip.y,
+                clip.width,
+                clip.height,
+                clip.xOffset,
+                clip.yOffset,
+                mColor.r,
+                mColor.g,
+                mColor.b,
+                mColor.a));
+        }
+
+        fifeimg->render(Rect(renderX, renderY, width, height));
     }
 
     void OpenGLGuiGraphics::drawText(std::string const & text, int32_t x, int32_t y, fcn::Graphics::Alignment alignment)
@@ -171,8 +198,30 @@ namespace FIFE
     void OpenGLGuiGraphics::fillRectangle(fcn::Rectangle const & rectangle)
     {
         fcn::ClipRectangle const & top = mClipStack.top();
+        int32_t const renderX          = rectangle.x + top.xOffset;
+        int32_t const renderY          = rectangle.y + top.yOffset;
+
+        if (shouldLogShowHideBand(renderX, renderY, rectangle.width, rectangle.height)) {
+            FL_LOG(_log, std::format(
+                "OpenGLGuiGraphics::fillRectangle global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) color=({}, {}, {}, {})",
+                renderX,
+                renderY,
+                rectangle.width,
+                rectangle.height,
+                top.x,
+                top.y,
+                top.width,
+                top.height,
+                top.xOffset,
+                top.yOffset,
+                mColor.r,
+                mColor.g,
+                mColor.b,
+                mColor.a));
+        }
+
         m_renderbackend->fillRectangle(
-            Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
+            Point(renderX, renderY),
             static_cast<uint16_t>(rectangle.width),
             static_cast<uint16_t>(rectangle.height),
             mColor.r,
@@ -228,6 +277,18 @@ namespace FIFE
         if (surface == nullptr) {
             return;
         }
+        FL_WARN(_log, std::format(
+            "drawSurface: dst=({},{}) fmt={:#x} w={} h={} pitch={}",
+            dstX, dstY,
+            static_cast<unsigned>(surface->format),
+            surface->w, surface->h, surface->pitch));
+        if (surface->w > 0 && surface->h > 0) {
+            auto* px = static_cast<uint32_t*>(surface->pixels);
+            FL_WARN(_log, std::format(
+                "  first pixel={:#010x} center pixel={:#010x}",
+                px[0],
+                px[(surface->h/2) * (surface->pitch/4) + (surface->w/2)]));
+        }
         fcn::ClipRectangle const & top = mClipStack.top();
         SDL_Surface* dup               = SDL_DuplicateSurface(surface);
         Image* image                   = m_renderbackend->createImage(dup);
@@ -237,6 +298,7 @@ namespace FIFE
         }
         Rect renderRect(dstX + top.xOffset, dstY + top.yOffset, image->getWidth(), image->getHeight());
         image->render(renderRect);
+        m_renderbackend->renderVertexArrays();
         delete image;
     }
 

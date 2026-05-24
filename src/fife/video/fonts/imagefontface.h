@@ -22,6 +22,10 @@ namespace FIFE
             ~ImageFontFace() override;
 
             bool supports(uint32_t codepoint) const override;
+            int getPointSize() const override
+            {
+                return m_height;
+            }
             SDL_Surface* getGlyphSurface(uint32_t codepoint) const;
             int getGlyphWidth(uint32_t codepoint) const;
             int getHeight() const

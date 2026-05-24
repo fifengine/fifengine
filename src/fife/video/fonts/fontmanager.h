@@ -38,6 +38,7 @@ namespace FIFE
 
             FontHandle getFontHandle(FontInstanceKey const & key);
             std::shared_ptr<FontInstance> getFontInstance(FontHandle handle);
+            std::optional<FontDefinition> getFontDefinition(FontHandle handle) const;
 
             FontHandle getFontHandle(
                 std::string const & familyId,
@@ -58,11 +59,13 @@ namespace FIFE
         private:
             FontHandle nextHandle();
             void processDefinitions(std::vector<FontDefinition> const & definitions);
+            FontHandle getFontHandle(FontInstanceKey const & key, std::shared_ptr<FontFace> const & face);
 
             std::unique_ptr<AssetResolver> m_resolver;
             std::unique_ptr<FontDefinitionLoader> m_definitionLoader;
 
             FontFaceCache m_faceCache;
+            std::unordered_map<AssetHandle, FontDefinition> m_faceDefinitions;
             std::unordered_map<FontInstanceKey, FontHandle> m_instanceKeyToHandle;
             std::unordered_map<FontHandle, std::shared_ptr<FontInstance>> m_instanceCache;
             std::unordered_map<std::string, std::unique_ptr<FontFamily>> m_families;

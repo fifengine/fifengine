@@ -27,7 +27,8 @@ namespace FIFE
 {
     class RawData;
 
-    /** VFSource for the Fallout2 DAT file format.
+    /**
+     * VFSource for the Fallout2 DAT file format.
      *
      * DAT2 files are the data archive format used by Fallout 2 (master.dat,
      * critter.dat, patch000.dat). Unlike DAT1, the directory tree is at

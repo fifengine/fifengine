@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "fontface.h"
-#include "platform.h"
 #include "fonttypes.h"
+#include "platform.h"
 
 namespace FIFE
 {

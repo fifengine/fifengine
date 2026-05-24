@@ -12,6 +12,12 @@
 
 namespace fcn {
 	class Widget;
+	class Font {
+	public:
+		virtual ~Font();
+		virtual int getWidth(std::string_view text) const = 0;
+		virtual int getHeight() const = 0;
+	};
 }
 namespace FIFE {
 	class Console;
@@ -34,10 +40,10 @@ namespace FIFE {
 		void add(fcn::Widget* widget);
 		void remove(fcn::Widget* widget);
 		
-		GuiFont* createFont(const std::string& path, uint32_t size, const std::string& glyphs);
-		void releaseFont(GuiFont* font);
-		GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
-		GuiFont* getDefaultFont();
+		fcn::Font* createFont(const std::string& path, uint32_t size);
+		void releaseFont(fcn::Font* font);
+		fcn::Font* setDefaultFont(const std::string& path, uint32_t size);
+		fcn::Font* getDefaultFont();
 		
 		KeyEvent translateKeyEvent(const fcn::KeyEvent& evt);
 		MouseEvent translateMouseEvent(const fcn::MouseEvent& evt);

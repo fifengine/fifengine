@@ -52,7 +52,7 @@ class Widget:
       - selection_color: Color
       - border_color: Color
       - outline_color: Color
-      - font: String: This should identify a font that was loaded via L{loadFonts} before.
+      - font: String: This should identify a font family registered in the FontManager (via config/fonts.xml or L{loadFonts}).
       - helptext: Unicode: Text which can be used for e.g. tooltips.
       - comment: Unicode: Additional text stored by the widget.  Not used by PyChan directly. Can be used by the client for additional info about the widget.
       - border_size: Integer: The size of the border in pixels.

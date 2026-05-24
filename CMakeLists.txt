@@ -420,7 +420,6 @@ set(
 set(
   FIFE_FIFEGUI_SOURCES
   src/fife/gui/fifechan/fifechanmanager.cpp
-  src/fife/gui/fifechan/base/gui_font.cpp
   src/fife/gui/fifechan/base/gui_image.cpp
   src/fife/gui/fifechan/base/gui_imageloader.cpp
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
@@ -643,7 +642,6 @@ set(
 set(
   FIFE_FIFEGUI_HEADERS
   src/fife/gui/fifechan/fifechanmanager.h
-  src/fife/gui/fifechan/base/gui_font.h
   src/fife/gui/fifechan/base/gui_image.h
   src/fife/gui/fifechan/base/gui_imageloader.h
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.h
@@ -764,7 +762,6 @@ set(
 
 set(
   FIFE_FIFEGUI_SWIG
-  src/fife/gui/fifechan/base/gui_font.i
   src/fife/gui/fifechan/base/gui_image.i
   src/fife/gui/fifechan/console/console.i
   src/fife/gui/fifechan/fifechanmanager.i

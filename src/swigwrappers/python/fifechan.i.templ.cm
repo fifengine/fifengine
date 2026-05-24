@@ -21,6 +21,7 @@
 %}
 
 %include "std_string.i"
+%include "std_string_view.i"
 %include "std_vector.i"
 
 /* IMPORTS_FCHAN */

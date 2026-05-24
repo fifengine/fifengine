@@ -17,7 +17,7 @@
 
 namespace FIFE
 {
-    class GuiFont;
+    class FontInstanceIFontAdapter;
 }
 
 namespace fcn
@@ -153,7 +153,7 @@ namespace fcn
             /**
              * Holds the gui font.
              */
-            FIFE::GuiFont* mGuiFont;
+            FIFE::FontInstanceIFontAdapter* mGuiFont;
 
             /**
              * Holds the caption of the label.

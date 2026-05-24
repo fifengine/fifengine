@@ -135,9 +135,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         super().__init__()
 
         # Init Pychan
-        pychan.loadFonts("fonts/freefont.xml")
-        pychan.manager.setDefaultFont("FreeSans")
-        pychan.setupModalExecution(self.mainLoop, self.breakFromMainLoop)
+        pychan.manager.hook.guimanager.setDefaultFont("FreeSans", 12)
 
         # Build the main GUI
         self.gui = pychan.loadXML("gui/demoapp.xml")
@@ -280,8 +278,9 @@ class TestXMLApplication(pychanbasicapplication.PychanApplicationBase):
     """Test application that loads a single XML file for interactive tests."""
 
     def __init__(self, xmlfile):
+        self.xmlFile = xmlfile
         super().__init__()
-        pychan.init(self.engine, debug=True)
+        pychan.manager.hook.guimanager.setDefaultFont("FreeSans", 12)
         self.start()
 
     @trace

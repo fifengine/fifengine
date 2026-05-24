@@ -252,6 +252,35 @@ class Manager:
             style_copy[new_k] = v
         return style_copy
 
+    def getFont(self, font):
+        """Get a font by name from the FifechanManager.
+
+        Parameters
+        ----------
+        font : str
+            The font family name or identifier.
+
+        Returns
+        -------
+        IFont
+            The font instance from the FifechanManager.
+        """
+        if font == "default":
+            return self.hook.guimanager.getDefaultFont()
+        return self.hook.guimanager.createFont(font, 0)
+
+    def setDefaultFont(self, font, size=12):
+        """Set the default font by family name.
+
+        Parameters
+        ----------
+        font : str
+            The font family name (e.g. "FreeSans") registered in the FontManager.
+        size : int, optional
+            The font size (default 12).
+        """
+        self.hook.guimanager.setDefaultFont(font, size)
+
     def loadImage(self, filename, gui=True):
         """
         Load an image from a file.

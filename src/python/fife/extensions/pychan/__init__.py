@@ -25,7 +25,7 @@ TODO
  - Finalize Widget.execute
 
  - Documentation ( Allways not enough :-( )
- - Move Font config files to XML, too ...
+ - Font config files are now XML (config/fonts.xml)
 
  - Implement real Menus
  - Implement StackWidget
@@ -157,14 +157,18 @@ classes and thus - for example apply a common font::
 A new style is added to pychan with L{internal.Manager.addStyle}.
 You can set a new default style by adding a style with the name 'default'.
 
-The font is set via a string identifier pulled from a font definition
-in a PyChan configuration file. You have to load these by calling
-L{loadFonts} in your startup code::
-   import pychan
-   pychan.init( fifeEngine )
-   pychan.loadFonts( "content/fonts/console.xml" )
+The font is set via a string identifier that corresponds to a font family
+registered in the FontManager manifest. Font families are loaded automatically
+from ``config/fonts.xml`` at engine startup, or can be loaded dynamically via
+L{loadFonts} (backward compatibility). For new code, place a font manifest at
+``config/fonts.xml`` following the format::
 
-The font definition files are in XML format.
+   <?xml version="1.0"?>
+   <fonts version="1">
+     <family id="FreeSans">
+       <face weight="400">fonts/FreeSans.ttf</face>
+     </family>
+   </fonts>
 Unicode and internationalisation
 ================================
 
@@ -214,7 +218,7 @@ has to be invoked I{after} the subclass specific construction has taken place.
 from traceback import print_exc
 from xml.sax import handler
 
-__all__ = ["loadXML", "init", "manager"]
+__all__ = ["loadXML", "init", "manager", "loadFonts"]
 
 # This *import should really be removed!
 from .exceptions import GuiXMLError, InitializationError, PyChanException
@@ -247,6 +251,94 @@ def init(engine, debug=False, compat_layout=False):
     global manager
 
     manager = Manager(_munge_engine_hook(engine), debug, compat_layout)
+
+
+# Font manifest loading (backward compat)
+
+
+def loadFonts(font_file):
+    """
+    Load font definitions from an XML file (backward compatibility).
+
+    .. deprecated::
+       Fonts are now loaded automatically from ``config/fonts.xml`` at engine
+       startup via the C++ FontManager manifest system. This function converts
+       the old PyChan XML format (``<font name="..." source="..." />``) to the
+       new format and registers them with the FontManager.
+
+    Parameters
+    ----------
+    font_file : str
+        Path to a PyChan font XML file.
+
+    Raises
+    ------
+    ImportError
+        If PyChan has not been initialized yet.
+    """
+    import xml.etree.ElementTree as ET
+
+    from .compat import fife, in_fife
+
+    if not in_fife or not manager:
+        raise ImportError("PyChan must be initialized before loading fonts.")
+
+    tree = ET.parse(font_file)
+    root = tree.getroot()
+
+    families = {}
+    for font_elem in root.findall("font"):
+        name = font_elem.get("name", "")
+        if not name:
+            continue
+        source = font_elem.get("source", "")
+        if not source:
+            continue
+
+        weight = font_elem.get("weight", "400")
+        size = font_elem.get("size", "12")
+        antialias = font_elem.get("antialias", "1")
+        color = font_elem.get("color", "255,255,255")
+        row_spacing = font_elem.get("row_spacing", "0")
+        glyph_spacing = font_elem.get("glyph_spacing", "0")
+        ftype = font_elem.get("type", "truetype")
+
+        if name not in families:
+            families[name] = []
+        families[name].append(
+            {
+                "source": source,
+                "weight": weight,
+                "size": size,
+                "antialias": antialias,
+                "color": color,
+                "row_spacing": row_spacing,
+                "glyph_spacing": glyph_spacing,
+                "type": ftype,
+            }
+        )
+
+    lines = ['<?xml version="1.0"?>', '<fonts version="1">']
+    for fid, faces in families.items():
+        lines.append(f'  <family id="{fid}">')
+        for face in faces:
+            attrs = ""
+            ftype_attr = f' type="{face["type"]}"' if face["type"] != "truetype" else ""
+            attrs += f' weight="{face["weight"]}"'
+            attrs += f' size="{face["size"]}"'
+            antialias_val = "true" if face["antialias"] in ("1", "true") else "false"
+            attrs += f' antialias="{antialias_val}"'
+            attrs += f' color="{face["color"]}"'
+            if int(face["row_spacing"]):
+                attrs += f' row_spacing="{face["row_spacing"]}"'
+            if int(face["glyph_spacing"]):
+                attrs += f' glyph_spacing="{face["glyph_spacing"]}"'
+            lines.append(f'    <face{ftype_attr}{attrs}>{face["source"]}</face>')
+        lines.append("  </family>")
+    lines.append("</fonts>")
+
+    xml_content = "\n".join(lines)
+    manager.hook.engine.loadFontManifestFromString(xml_content)
 
 
 # XML Loader

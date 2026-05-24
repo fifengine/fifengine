@@ -1218,11 +1218,7 @@ class Window(Container):
 
     movable = property(_getMovable, _setMovable)
 
-    # Hackish way of hiding that title bar height in the perceived height.
-    # Fixes VBox calculation
-    # def _setHeight(self,h):
-    # 	h = max(self.min_size[1],h)
-    # 	h = min(self.max_size[1],h)
-    # 	self.real_widget.setHeight(h + self.titlebar_height)
-    # def _getHeight(self): return self.real_widget.getHeight() - self.titlebar_height
-    # height = property(_getHeight,_setHeight)
+    def adaptLayout(self, recurse=True):
+        super().adaptLayout(recurse)
+
+

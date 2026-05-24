@@ -14,7 +14,6 @@
 
 // FIFE includes
 #include "commandline.h"
-#include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
@@ -71,10 +70,6 @@ namespace FIFE
         m_toolsbutton->addActionListener(this);
         m_toolsbutton->setFocusable(false);
         m_input->addFocusListener(this);
-
-        GuiFont* font = FifechanManager::instance()->createFont();
-        font->setColor(255, 255, 255);
-        setIOFont(font);
     }
 
     void Console::reLayout()
@@ -300,7 +295,7 @@ namespace FIFE
         m_consoleexec = nullptr;
     }
 
-    void Console::setIOFont(GuiFont* font)
+    void Console::setIOFont(fcn::Font* font)
     {
         m_input->setFont(font);
         m_output->setFont(font);

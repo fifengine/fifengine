@@ -56,7 +56,7 @@ STYLES = {
         "Window": {
             "titlebar_height": 30,
         },
-        "ListBox": {"font": "samanata_large"},
+        "ListBox": {},
     },
 }
 
@@ -71,7 +71,7 @@ class StylingExample(PyChanExample):
         for name, style in list(STYLES.items()):
             pychan.manager.addStyle(name, style)
 
-        pychan.loadFonts("fonts/samanata.xml")
+
 
     def start(self):
         """Start the example by loading XML and applying styles."""

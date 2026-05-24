@@ -11,31 +11,33 @@
 namespace FIFE
 {
 
-    bool FontFaceCache::has(AssetHandle handle) const
+    bool FontFaceCache::has(FontFaceKey key) const
     {
-        return m_cache.contains(handle.id);
+        return m_cache.contains(key);
     }
 
-    std::shared_ptr<FontFace> FontFaceCache::get(AssetHandle handle) const
+    std::shared_ptr<FontFace> FontFaceCache::get(FontFaceKey key) const
     {
-        auto it = m_cache.find(handle.id);
+        auto it = m_cache.find(key);
         if (it == m_cache.end()) {
-            throw std::out_of_range("FontFace not found in cache for handle: " + std::to_string(handle.id));
+            throw std::out_of_range(
+                "FontFace not found in cache for asset " + std::to_string(key.asset.id) + " ptsize " +
+                std::to_string(key.ptsize));
         }
         return it->second;
     }
 
-    void FontFaceCache::put(AssetHandle handle, std::shared_ptr<FontFace> face)
+    void FontFaceCache::put(FontFaceKey key, std::shared_ptr<FontFace> face)
     {
         if (!face) {
             throw std::invalid_argument("FontFace must not be null");
         }
-        m_cache[handle.id] = std::move(face);
+        m_cache[key] = std::move(face);
     }
 
-    void FontFaceCache::remove(AssetHandle handle)
+    void FontFaceCache::remove(FontFaceKey key)
     {
-        m_cache.erase(handle.id);
+        m_cache.erase(key);
     }
 
     void FontFaceCache::clear()

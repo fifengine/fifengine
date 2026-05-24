@@ -12,6 +12,7 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "util/log/logger.h"
 #include "util/structures/rect.h"
 #include "video/imagemanager.h"
 #include "video/opengl/renderbackendopengl.h"
@@ -20,6 +21,116 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        Logger& _log = []() -> Logger& {
+            static Logger log(LM_VIDEO);
+            return log;
+        }();
+
+        Logger& _guiLog = []() -> Logger& {
+            static Logger log(LM_GUI);
+            return log;
+        }();
+
+        bool shouldLogGuiLikeSurface(SDL_Surface const * surface)
+        {
+            if (surface == nullptr) {
+                return false;
+            }
+            return surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80;
+        }
+
+        bool shouldLogTargetRect(Rect const & rect)
+        {
+            return (rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16);
+        }
+
+        std::string summarizeSurfaceSamples(SDL_Surface const * surface)
+        {
+            if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
+                return "samples=unavailable";
+            }
+
+            SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surface->format);
+            auto const sampleAt                = [&](int32_t x, int32_t y) {
+                int32_t const clampedX = std::clamp(x, 0, surface->w - 1);
+                int32_t const clampedY = std::clamp(y, 0, surface->h - 1);
+                auto const * pixels    = static_cast<uint32_t const *>(surface->pixels);
+                int32_t const pitchPx  = surface->pitch / 4;
+                uint32_t const pixel   = pixels[(clampedY * pitchPx) + clampedX];
+                uint8_t r = 0, g = 0, b = 0, a = 0;
+                SDL_GetRGBA(pixel, fmt, SDL_GetSurfacePalette(const_cast<SDL_Surface*>(surface)), &r, &g, &b, &a);
+                return std::format("({},{})={:#010x}/rgba({},{},{},{})", clampedX, clampedY, pixel, r, g, b, a);
+            };
+
+            return std::format(
+                "{} {} {}",
+                sampleAt(0, 0),
+                sampleAt(surface->w / 4, surface->h / 2),
+                sampleAt(surface->w / 2, surface->h / 2));
+        }
+
+        std::string summarizeSurfaceAlphaCoverage(SDL_Surface const * surface)
+        {
+            if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
+                return "alpha=unavailable";
+            }
+
+            SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surface->format);
+            auto const * pixels                = static_cast<uint32_t const *>(surface->pixels);
+            int32_t const pitchPx              = surface->pitch / 4;
+
+            int32_t nonZeroAlpha = 0;
+            int32_t fullAlpha    = 0;
+            int32_t minX         = surface->w;
+            int32_t minY         = surface->h;
+            int32_t maxX         = -1;
+            int32_t maxY         = -1;
+
+            for (int32_t y = 0; y < surface->h; ++y) {
+                for (int32_t x = 0; x < surface->w; ++x) {
+                    uint8_t r = 0, g = 0, b = 0, a = 0;
+                    SDL_GetRGBA(
+                        pixels[(y * pitchPx) + x],
+                        fmt,
+                        SDL_GetSurfacePalette(const_cast<SDL_Surface*>(surface)),
+                        &r,
+                        &g,
+                        &b,
+                        &a);
+
+                    if (a == 0) {
+                        continue;
+                    }
+
+                    ++nonZeroAlpha;
+                    if (a == 255) {
+                        ++fullAlpha;
+                    }
+                    minX = std::min(minX, x);
+                    minY = std::min(minY, y);
+                    maxX = std::max(maxX, x);
+                    maxY = std::max(maxY, y);
+                }
+            }
+
+            if (nonZeroAlpha == 0) {
+                return "alpha=all-zero";
+            }
+
+            return std::format(
+                "alpha=nonZero:{}/{} full:{} bounds=({},{})->({},{})",
+                nonZeroAlpha,
+                surface->w * surface->h,
+                fullAlpha,
+                minX,
+                minY,
+                maxX,
+                maxY);
+        }
+    } // namespace
+
     GLImage::GLImage(IResourceLoader* loader) :
         Image(loader),
         m_tex_coords{0, 0, 0, 0},
@@ -162,6 +273,42 @@ namespace FIFE
             validateShared();
         }
 
+        if (shouldLogTargetRect(rect)) {
+            FL_LOG(_guiLog, std::format(
+                "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) surf={}x{} fmt={:#x}",
+                m_texId,
+                rect.x,
+                rect.y,
+                rect.w,
+                rect.h,
+                alpha,
+                rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                m_tex_coords[0],
+                m_tex_coords[1],
+                m_tex_coords[2],
+                m_tex_coords[3],
+                m_surface != nullptr ? m_surface->w : 0,
+                m_surface != nullptr ? m_surface->h : 0,
+                m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
+        } else if (shouldLogGuiLikeSurface(m_surface)) {
+            FL_WARN(_log, std::format(
+                "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) surf={}x{} fmt={:#x}",
+                m_texId,
+                rect.x,
+                rect.y,
+                rect.w,
+                rect.h,
+                alpha,
+                rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                m_tex_coords[0],
+                m_tex_coords[1],
+                m_tex_coords[2],
+                m_tex_coords[3],
+                m_surface != nullptr ? m_surface->w : 0,
+                m_surface != nullptr ? m_surface->h : 0,
+                m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
+        }
+
         rb->addImageToArray(m_texId, rect, &m_tex_coords[0], alpha, rgb);
     }
 
@@ -296,6 +443,39 @@ namespace FIFE
 
         auto* data          = static_cast<uint8_t*>(m_surface->pixels);
         int32_t const pitch = m_surface->pitch;
+
+        if ((m_surface != nullptr) && ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16))) {
+            FL_LOG(_guiLog, std::format(
+                "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {} {}",
+                m_surface->w,
+                m_surface->h,
+                m_surface->pitch,
+                static_cast<unsigned>(m_surface->format),
+                static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
+                m_chunk_size_w,
+                m_chunk_size_h,
+                m_tex_coords[0],
+                m_tex_coords[1],
+                m_tex_coords[2],
+                m_tex_coords[3],
+                summarizeSurfaceSamples(m_surface),
+                summarizeSurfaceAlphaCoverage(m_surface)));
+        } else if (shouldLogGuiLikeSurface(m_surface)) {
+            FL_WARN(_log, std::format(
+                "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {}",
+                m_surface->w,
+                m_surface->h,
+                m_surface->pitch,
+                static_cast<unsigned>(m_surface->format),
+                static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
+                m_chunk_size_w,
+                m_chunk_size_h,
+                m_tex_coords[0],
+                m_tex_coords[1],
+                m_tex_coords[2],
+                m_tex_coords[3],
+                summarizeSurfaceSamples(m_surface)));
+        }
 
         assert(!m_texId);
 

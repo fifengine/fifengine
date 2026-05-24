@@ -24,7 +24,7 @@ namespace FIFE
         if (!face) {
             throw std::invalid_argument("Face must not be null");
         }
-        m_faces.push_back({std::move(face), weight, italic});
+        m_faces.push_back({.face = std::move(face), .weight = weight, .italic = italic});
     }
 
     void FontFamily::addFallback(std::string familyId)

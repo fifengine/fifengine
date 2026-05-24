@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include <algorithm>
+
 #include "imagefontface.h"
 #include "truetypefontface.h"
 
@@ -45,7 +47,7 @@ namespace FIFE
         std::unordered_map<std::string, std::vector<FontDefinition const *>> groups;
         for (auto const & def : definitions) {
             auto pos        = def.id.find('/');
-            std::string fid = (pos != std::string::npos) ? def.id.substr(0, pos) : def.id;
+            std::string const fid = (pos != std::string::npos) ? def.id.substr(0, pos) : def.id;
             groups[fid].push_back(&def);
         }
 
@@ -53,8 +55,8 @@ namespace FIFE
             auto family = std::make_unique<FontFamily>(fid);
 
             for (auto const * def : faceDefs) {
-                AssetRequest request(AssetRequest::Type::Font, def->id, def->source);
-                AssetHandle handle = m_resolver->resolve(request);
+                AssetRequest const request(AssetRequest::Type::Font, def->id, def->source);
+                AssetHandle const handle = m_resolver->resolve(request);
 
                 std::shared_ptr<FontFace> face;
                 if (def->type == FontType::TRUETYPE) {
@@ -65,9 +67,10 @@ namespace FIFE
                     continue;
                 }
 
-                m_faceCache.put(handle, face);
+                m_faceCache.put(FontFaceKey{.asset = handle, .ptsize = face->getPointSize()}, face);
+                m_faceDefinitions[handle] = *def;
 
-                FontWeight weight = def->bold ? FontWeight::Bold : FontWeight::Regular;
+                FontWeight const weight = def->bold ? FontWeight::Bold : FontWeight::Regular;
                 family->addFace(face, weight, def->italic);
             }
 
@@ -92,12 +95,17 @@ namespace FIFE
     FontHandle FontManager::getFontHandle(FontInstanceKey const & key)
     {
         assert("Resolver must be valid" && m_resolver != nullptr);
+        auto face = m_faceCache.get(FontFaceKey{.asset = key.asset, .ptsize = key.size});
+        return getFontHandle(key, face);
+    }
+
+    FontHandle FontManager::getFontHandle(FontInstanceKey const & key, std::shared_ptr<FontFace> const & face)
+    {
+        assert("Resolver must be valid" && m_resolver != nullptr);
         auto it = m_instanceKeyToHandle.find(key);
         if (it != m_instanceKeyToHandle.end()) {
             return it->second;
         }
-
-        auto face = m_faceCache.get(AssetHandle{key.asset.id});
 
         std::shared_ptr<FontInstance> instance;
         if (auto ttfFace = std::dynamic_pointer_cast<TrueTypeFontFace>(face)) {
@@ -110,7 +118,7 @@ namespace FIFE
             throw std::runtime_error("Unknown font face type");
         }
 
-        FontHandle handle          = nextHandle();
+        FontHandle const handle    = nextHandle();
         m_instanceKeyToHandle[key] = handle;
         m_instanceCache[handle]    = instance;
         m_allocatedHandles.insert(handle);
@@ -125,6 +133,26 @@ namespace FIFE
             throw std::out_of_range("FontInstance handle not found: " + std::to_string(handle));
         }
         return it->second;
+    }
+
+    std::optional<FontDefinition> FontManager::getFontDefinition(FontHandle handle) const
+    {
+        auto instanceIt = m_instanceCache.find(handle);
+        if (instanceIt == m_instanceCache.end() || instanceIt->second == nullptr) {
+            return std::nullopt;
+        }
+
+        auto face = instanceIt->second->getFace();
+        if (face == nullptr) {
+            return std::nullopt;
+        }
+
+        auto definitionIt = m_faceDefinitions.find(face->getAssetHandle());
+        if (definitionIt == m_faceDefinitions.end()) {
+            return std::nullopt;
+        }
+
+        return definitionIt->second;
     }
 
     FontHandle FontManager::getFontHandle(
@@ -146,14 +174,36 @@ namespace FIFE
 
         auto const & family   = getFamily(familyId);
         FontFace const * face = family.selectFace(weight, italic, 0x0041);
-        if (!face) {
+        if (face == nullptr) {
             throw std::runtime_error("No suitable face found in family: " + familyId);
         }
 
-        FontInstanceKey key{
-            AssetHandle{face->getAssetHandle().id}, size, weight == FontWeight::Bold, italic, antialias, hinting};
+        int effectiveSize = (size > 0) ? size : face->getPointSize();
+        effectiveSize     = std::max(effectiveSize, 1);
 
-        return getFontHandle(key);
+        AssetHandle const handle = face->getAssetHandle();
+        FontFaceKey const cacheKey{.asset = handle, .ptsize = effectiveSize};
+
+        std::shared_ptr<FontFace> renderFace;
+        if (effectiveSize == face->getPointSize()) {
+            renderFace = m_faceCache.get(FontFaceKey{.asset = handle, .ptsize = face->getPointSize()});
+        } else if (m_faceCache.has(cacheKey)) {
+            renderFace = m_faceCache.get(cacheKey);
+        } else {
+            auto defIt = m_faceDefinitions.find(handle);
+            if (defIt == m_faceDefinitions.end()) {
+                throw std::runtime_error("Font definition not found for handle in family: " + familyId);
+            }
+            if (defIt->second.type != FontType::TRUETYPE) {
+                throw std::runtime_error("Cannot render non-TrueType font at different size: " + familyId);
+            }
+            renderFace = std::make_shared<TrueTypeFontFace>(handle, defIt->second.source, effectiveSize);
+            m_faceCache.put(cacheKey, renderFace);
+        }
+
+        FontInstanceKey const key{.asset = handle, .size = effectiveSize, .bold = weight == FontWeight::Bold, .italic = italic, .antialias = antialias, .hinting = hinting};
+
+        return getFontHandle(key, renderFace);
     }
 
     void FontManager::setFallbackFont(std::string const & id)
@@ -184,7 +234,7 @@ namespace FIFE
         while (m_allocatedHandles.contains(m_nextHandle)) {
             ++m_nextHandle;
         }
-        FontHandle handle = m_nextHandle++;
+        FontHandle const handle = m_nextHandle++;
         m_allocatedHandles.insert(handle);
         return handle;
     }

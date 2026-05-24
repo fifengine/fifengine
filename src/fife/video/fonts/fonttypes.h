@@ -86,6 +86,7 @@ namespace FIFE
     struct FontFaceKey
     {
             AssetHandle asset;
+            int ptsize = 0;
             bool operator==(FontFaceKey const &) const = default;
     };
 
@@ -116,7 +117,9 @@ struct std::hash<FIFE::FontFaceKey>
 {
         size_t operator()(FIFE::FontFaceKey const & k) const noexcept
         {
-            return std::hash<uint64_t>{}(k.asset.id);
+            size_t h = std::hash<uint64_t>{}(k.asset.id);
+            h ^= std::hash<int>{}(k.ptsize) + 0x9e3779b9 + (h << 6) + (h >> 2);
+            return h;
         }
 };
 

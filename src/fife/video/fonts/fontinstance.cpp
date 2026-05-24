@@ -44,21 +44,22 @@ namespace FIFE
     FontInstanceKey FontInstance::getKey() const
     {
         assert("FontFace must still be alive" && m_face != nullptr);
-        return FontInstanceKey{m_face->getAssetHandle(), m_size, m_bold, m_italic, m_antialias, m_hinting};
+        return FontInstanceKey{.asset = m_face->getAssetHandle(), .size = m_size, .bold = m_bold, .italic = m_italic, .antialias = m_antialias, .hinting = m_hinting};
     }
 
     int TrueTypeFontInstance::getHeight() const
     {
         auto ttfFace = std::dynamic_pointer_cast<TrueTypeFontFace>(m_face);
         assert("Face must be TrueTypeFontFace" && ttfFace != nullptr);
-        return static_cast<int>(TTF_GetFontHeight(ttfFace->getFont())) + m_rowSpacing;
+        return TTF_GetFontHeight(ttfFace->getFont()) + m_rowSpacing;
     }
 
     int TrueTypeFontInstance::getWidth(std::string const & text) const
     {
         auto ttfFace = std::dynamic_pointer_cast<TrueTypeFontFace>(m_face);
         assert("Face must be TrueTypeFontFace" && ttfFace != nullptr);
-        int w = 0, h = 0;
+        int w = 0;
+        int h = 0;
         TTF_GetStringSize(ttfFace->getFont(), text.c_str(), text.length(), &w, &h);
         return w;
     }
@@ -75,8 +76,9 @@ namespace FIFE
         auto imgFace = std::dynamic_pointer_cast<ImageFontFace>(m_face);
         assert("Face must be ImageFontFace" && imgFace != nullptr);
         int width = 0;
-        for (unsigned char c : text) {
-            width += imgFace->getGlyphWidth(static_cast<uint32_t>(c)) + m_glyphSpacing;
+        for (auto const & c : text) {
+            auto uc = static_cast<unsigned char>(c);
+            width += imgFace->getGlyphWidth(static_cast<uint32_t>(uc)) + m_glyphSpacing;
         }
         return width > 0 ? width - m_glyphSpacing : 0;
     }

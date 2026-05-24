@@ -20,7 +20,6 @@ namespace FIFE
 {
 
     class CommandLine;
-    class GuiFont;
 
     /**
      * Console executer is listener interface for console activity
@@ -123,7 +122,7 @@ namespace FIFE
 
             /** Sets the font used for the input and output areas
              */
-            void setIOFont(GuiFont* font);
+            void setIOFont(fcn::Font* font);
 
             /** Hide if we loose focus
              */
