@@ -9,6 +9,7 @@ import os
 
 from fife import fife  # noqa: E402
 from fife.extensions.pychan.fife_pychansettings import FifePychanSettings  # noqa: E402
+from fife.extensions.pychan.internal import get_manager  # noqa: E402
 from fife.extensions.pychan.pychanbasicapplication import (  # noqa: E402
     PychanApplicationBase,
 )
@@ -59,6 +60,7 @@ class Shooter(PychanApplicationBase):
         """Initialize the Shooter application and create its world."""
         super().__init__(TDS)
         self.engine.getVFS().addNewSource(os.getcwd())
+        get_manager().hook.guimanager.setDefaultFont("FreeSans", 16)
 
         self._world = world.World(self, self.engine, self._setting)
         self._listener = ApplicationListener(self.engine, self._world)

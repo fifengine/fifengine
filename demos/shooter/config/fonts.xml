@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<fonts version="1">
+  <family id="FreeSans">
+    <face type="truetype" weight="400" size="16" antialias="true" color="255,255,255">fonts/FreeSans.ttf</face>
+  </family>
+</fonts>
