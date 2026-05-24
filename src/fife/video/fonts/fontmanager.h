@@ -21,7 +21,7 @@
 namespace FIFE
 {
 
-    class FontManager
+    class FIFE_API FontManager
     {
         public:
             explicit FontManager(std::unique_ptr<AssetResolver> resolver);
