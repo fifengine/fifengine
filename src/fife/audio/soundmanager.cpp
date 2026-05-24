@@ -461,96 +461,153 @@ namespace FIFE
 
     SoundEffect* SoundManager::createSoundEffect(SoundEffectType type)
     {
+        if (!m_effectManager) {
+            return nullptr;
+        }
         return m_effectManager->createSoundEffect(type);
     }
 
     SoundEffect* SoundManager::createSoundEffectPreset(SoundEffectPreset type)
     {
+        if (!m_effectManager) {
+            return nullptr;
+        }
         return m_effectManager->createSoundEffectPreset(type);
     }
 
     void SoundManager::deleteSoundEffect(SoundEffect* effect)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->deleteSoundEffect(effect);
     }
 
     void SoundManager::enableSoundEffect(SoundEffect* effect)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->enableSoundEffect(effect);
     }
 
     void SoundManager::disableSoundEffect(SoundEffect* effect)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->disableSoundEffect(effect);
     }
 
     void SoundManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->addEmitterToSoundEffect(effect, emitter);
     }
 
     void SoundManager::removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->removeEmitterFromSoundEffect(effect, emitter);
     }
 
     void SoundManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->addSoundFilterToSoundEffect(effect, filter);
     }
 
     void SoundManager::removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->removeSoundFilterFromSoundEffect(effect, filter);
     }
 
     void SoundManager::activateEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->activateEffect(effect, emitter);
     }
 
     void SoundManager::deactivateEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->deactivateEffect(effect, emitter);
     }
 
     SoundFilter* SoundManager::createSoundFilter(SoundFilterType type)
     {
+        if (!m_effectManager) {
+            return nullptr;
+        }
         return m_effectManager->createSoundFilter(type);
     }
 
     void SoundManager::deleteSoundFilter(SoundFilter* filter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->deleteSoundFilter(filter);
     }
 
     void SoundManager::enableDirectSoundFilter(SoundFilter* filter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->enableDirectSoundFilter(filter);
     }
 
     void SoundManager::disableDirectSoundFilter(SoundFilter* filter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->disableDirectSoundFilter(filter);
     }
 
     void SoundManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->addEmitterToDirectSoundFilter(filter, emitter);
     }
 
     void SoundManager::removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->removeEmitterFromDirectSoundFilter(filter, emitter);
     }
 
     void SoundManager::activateFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->activateFilter(filter, emitter);
     }
 
     void SoundManager::deactivateFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
+        if (!m_effectManager) {
+            return;
+        }
         m_effectManager->deactivateFilter(filter, emitter);
     }
 
