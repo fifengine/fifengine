@@ -29,4 +29,8 @@ __pycache__/
 # Test output: contains images for visual inspection
 test_output/
 
+# Demo Saves
+demos/**/saves/*.xml
+
+# UH (git clone of unknown-horizons)
 /demos/unknown-horizons
