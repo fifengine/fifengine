@@ -146,6 +146,8 @@ class RPGApplication(PychanApplicationBase):
         self._settings = TDS
         self.engine.getVFS().addNewSource(os.getcwd())
 
+        get_manager().hook.guimanager.setDefaultFont("FreeSans", 16)
+
         self._gamecontroller = GameController(self, self.engine, self._settings)
 
     def createListener(self):
