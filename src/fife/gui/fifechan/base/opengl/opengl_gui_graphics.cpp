@@ -303,7 +303,7 @@ namespace FIFE
                 std::format(
                     "  first pixel={:#010x} center pixel={:#010x}",
                     px[0],
-                    px[static_cast<size_t>((surface->h / 2) * (surface->pitch / 4) + (surface->w / 2))]));
+                    px[static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2))]));
         }
         fcn::ClipRectangle const & top = mClipStack.top();
         SDL_Surface* dup               = SDL_DuplicateSurface(surface);

@@ -16,7 +16,7 @@
 
 namespace
 {
-    static int dummy_inst_storage[5];
+    int dummy_inst_storage[5];
 }
 
 // ── Mock RenderBackend ──────────────────────────────────────────────────
@@ -65,24 +65,24 @@ namespace
             void setScreenMode(FIFE::ScreenMode const & mode) override
             {
             }
-            std::unique_ptr<FIFE::Image> createImage(FIFE::IResourceLoader* loader) override
+            std::unique_ptr<FIFE::Image> createImage(FIFE::IResourceLoader*) override
             {
                 return nullptr;
             }
             std::unique_ptr<FIFE::Image> createImage(
-                std::string const & filename, FIFE::IResourceLoader* loader) override
+                std::string const &, FIFE::IResourceLoader*) override
             {
                 return nullptr;
             }
-            std::unique_ptr<FIFE::Image> createImage(uint8_t const * data, uint32_t width, uint32_t height) override
+            std::unique_ptr<FIFE::Image> createImage(uint8_t const *, uint32_t, uint32_t) override
             {
                 return nullptr;
             }
-            std::unique_ptr<FIFE::Image> createImage(SDL_Surface* surface) override
+            std::unique_ptr<FIFE::Image> createImage(SDL_Surface*) override
             {
                 return nullptr;
             }
-            std::unique_ptr<FIFE::Image> createImage(std::string const & filename, SDL_Surface* surface) override
+            std::unique_ptr<FIFE::Image> createImage(std::string const &, SDL_Surface*) override
             {
                 return nullptr;
             }
@@ -95,7 +95,7 @@ namespace
             void captureScreen(std::string const & filename, uint32_t x, uint32_t y) override
             {
             }
-            bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            bool putPixel(int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
                 return true;
             }
@@ -123,7 +123,7 @@ namespace
             {
             }
             std::unique_ptr<FIFE::Image> createImage(
-                std::string const & filename, uint8_t const * data, uint32_t width, uint32_t height) override
+                std::string const &, uint8_t const *, uint32_t, uint32_t) override
             {
                 return nullptr;
             }

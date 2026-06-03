@@ -108,9 +108,9 @@ namespace FIFE
 
             for (int row = 0; row < converted->h; ++row) {
                 for (int col = 0; col < glyphWidth; ++col) {
-                    dstPixels[static_cast<size_t>(row) * static_cast<size_t>(dstPitchPx) + static_cast<size_t>(col)] =
+                    dstPixels[(static_cast<size_t>(row) * static_cast<size_t>(dstPitchPx)) + static_cast<size_t>(col)] =
                         pixels
-                            [static_cast<size_t>(row) * static_cast<size_t>(pitch_px) +
+                            [(static_cast<size_t>(row) * static_cast<size_t>(pitch_px)) +
                              static_cast<size_t>(glyphStart) + static_cast<size_t>(col)];
                 }
             }

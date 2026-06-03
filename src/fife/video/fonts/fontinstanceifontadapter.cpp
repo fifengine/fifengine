@@ -223,7 +223,7 @@ namespace FIFE
                 std::format(
                     "  first={:#010x} center={:#010x} nonZero/{}k={}",
                     px[0],
-                    px[static_cast<size_t>((renderedText->h / 2) * (renderedText->pitch / 4) + (renderedText->w / 2))],
+                    px[static_cast<size_t>(((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))],
                     totalPx > 10000 ? 10 : totalPx / 1000,
                     nonZero));
         }
@@ -483,7 +483,7 @@ namespace FIFE
                     static_cast<uint32_t const *>(surface->pixels),
                     static_cast<size_t>((surface->pitch / 4) * surface->h));
                 firstPixel  = pixels[0];
-                centerPixel = pixels[static_cast<size_t>((surface->h / 2) * (surface->pitch / 4) + (surface->w / 2))];
+                centerPixel = pixels[static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2))];
             }
             FL_LOG(
                 _log(),

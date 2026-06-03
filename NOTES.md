@@ -34,7 +34,11 @@
 - [ ] reduce number of clang-tidy warnings
 - [ ] work order: low prio to high prio
 
-- Baseline, 10.05.2026, L9149
+- 10.05.2026, L9149 (baseline)
   - https://github.com/fifengine/fifengine/actions/runs/25628339279/job/75227331476#step:21:9149
 - 12.05.2026: L8023
   - https://github.com/fifengine/fifengine/actions/runs/25735020103/job/75569611392#step:22:8024
+- 24.05.2026: L8008
+  - https://github.com/fifengine/fifengine/actions/runs/26370673220/job/77622203639#step:23:8009
+- 03.06.2026: L2737
+  - https://github.com/fifengine/fifengine/actions/runs/26895164211/job/79331958884#step:23:2738

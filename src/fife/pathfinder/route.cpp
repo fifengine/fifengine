@@ -344,7 +344,7 @@ namespace FIFE
                     }
                     std::vector<ModelCoordinate> const footprint =
                         grid->toMultiCoordinates(it.getLayerCoordinates(), getOccupiedCells(m_rotation));
-                    for (auto& fc : footprint) {
+                    for (auto const& fc : footprint) {
                         if (layer->cellContainsBlockingInstance(fc)) {
                             // Check if this blocker is part of the multi-cell's own path cells
                             bool isSelf = false;

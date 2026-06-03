@@ -28,103 +28,129 @@ namespace FIFE
     class FIFE_API SoundEffectManager
     {
         public:
-            /** Constructor
+            /**
+             * Constructor
              */
             SoundEffectManager();
 
-            /** Destructor
+            SoundEffectManager(SoundEffectManager const &)            = delete;
+            SoundEffectManager& operator=(SoundEffectManager const &) = delete;
+
+            /**
+             * Destructor
              */
             ~SoundEffectManager();
 
-            /** Initializes the effect system
+            /**
+             * Initializes the effect system
              */
             void init(ALCdevice* device);
 
-            /** Returns true if sound effect module is active
+            /**
+             * Returns true if sound effect module is active
              */
             bool isActive() const;
 
-            /** Creates SoundEffect of the specific type.
+            /**
+             * Creates SoundEffect of the specific type.
              * @param type See SoundEffectType
              */
             SoundEffect* createSoundEffect(SoundEffectType type);
 
-            /** Creates EaxReverb SoundEffect and loads the specific preset type.
+            /**
+             * Creates EaxReverb SoundEffect and loads the specific preset type.
              * @param type See SoundEffectPreset
              */
             SoundEffect* createSoundEffectPreset(SoundEffectPreset type);
 
-            /** Deletes given SoundEffect.
+            /**
+             * Deletes given SoundEffect.
              * Deactivates for SoundEmitters are automatically done.
              */
             void deleteSoundEffect(SoundEffect* effect);
 
-            /** Enables given SoundEffect.
+            /**
+             * Enables given SoundEffect.
              */
             void enableSoundEffect(SoundEffect* effect);
 
-            /** Disables given SoundEffect.
+            /**
+             * Disables given SoundEffect.
              */
             void disableSoundEffect(SoundEffect* effect);
 
-            /** Adds given SoundEmitter to the specific SoundEffect.
+            /**
+             * Adds given SoundEmitter to the specific SoundEffect.
              * Note: A SoundEmitter can only have a limited number of effects, usually 4.
              */
             void addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
 
-            /** Removes given SoundEmitter from the specific SoundEffect.
+            /**
+             * Removes given SoundEmitter from the specific SoundEffect.
              */
             void removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
 
-            /** Adds given SoundFilter to the SoundEffect.
+            /**
+             * Adds given SoundFilter to the SoundEffect.
              * Note: A SoundEffect can only have one SoundFilter.
              */
             void addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter);
 
-            /** Removes given SoundFilter from the SoundEffect.
+            /**
+             * Removes given SoundFilter from the SoundEffect.
              */
             void removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter);
 
-            /** Internal function to do the OpenAL calls to activate the SoundEffect for the SoundEmitter.
+            /**
+             * Internal function to do the OpenAL calls to activate the SoundEffect for the SoundEmitter.
              */
             void activateEffect(SoundEffect* effect, SoundEmitter* emitter);
 
-            /** Internal function to do the OpenAL calls to deactivate the SoundEffect for the SoundEmitter.
+            /**
+             * Internal function to do the OpenAL calls to deactivate the SoundEffect for the SoundEmitter.
              */
             void deactivateEffect(SoundEffect* effect, SoundEmitter* emitter);
 
-            /** Creates SoundFilter of the specific type.
+            /**
+             * Creates SoundFilter of the specific type.
              * @param type See SoundFilterType
              */
             SoundFilter* createSoundFilter(SoundFilterType type);
 
-            /** Deletes given SoundFilter.
+            /**
+             * Deletes given SoundFilter.
              * Deactivates for SoundEmitters and Effects are automatically done.
              */
             void deleteSoundFilter(SoundFilter* filter);
 
-            /** Enables given direct SoundFilter. Only SoundFilters for SoundEmitters are meant.
+            /**
+             * Enables given direct SoundFilter. Only SoundFilters for SoundEmitters are meant.
              */
             void enableDirectSoundFilter(SoundFilter* filter);
 
-            /** Disables given SoundFilter. Only SoundFilters for SoundEmitters are meant.
+            /**
+             * Disables given SoundFilter. Only SoundFilters for SoundEmitters are meant.
              */
             void disableDirectSoundFilter(SoundFilter* filter);
 
-            /** Adds given SoundEmitter to the specific direct SoundFilter
+            /**
+             * Adds given SoundEmitter to the specific direct SoundFilter
              * Note: A SoundEmitter can only have one direct filter.
              */
             void addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
 
-            /** Removes given SoundEmitter from the specific direct SoundFilter.
+            /**
+             * Removes given SoundEmitter from the specific direct SoundFilter.
              */
             void removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
 
-            /** Internal function to do the OpenAL calls to activate the SoundFilter for the SoundEmitter.
+            /**
+             * Internal function to do the OpenAL calls to activate the SoundFilter for the SoundEmitter.
              */
             void activateFilter(SoundFilter const * filter, SoundEmitter const * emitter);
 
-            /** Internal function to do the OpenAL calls to deactivate the SoundFilter for the SoundEmitter.
+            /**
+             * Internal function to do the OpenAL calls to deactivate the SoundFilter for the SoundEmitter.
              */
             void deactivateFilter(SoundFilter const * filter, SoundEmitter const * emitter);
 

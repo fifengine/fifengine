@@ -439,7 +439,7 @@ namespace FIFE
         CameraContainer const & cameras = map.getCameras();
 
         bool hasLights = false;
-        for (auto& camera : cameras) {
+        for (auto const& camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
             if (renderer == nullptr) {
                 continue;
@@ -469,7 +469,7 @@ namespace FIFE
         XML::Element* lightsElement = doc.NewElement("lights");
         layerElement->InsertEndChild(lightsElement);
 
-        for (auto& camera : cameras) {
+        for (auto const& camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
             if (renderer == nullptr) {
                 continue;

@@ -578,7 +578,7 @@ namespace FIFE
             m_multiProperty->m_footprintCache[rot] = std::move(offsets);
         }
         // Also cache rotation 0 if not present (every multi-cell defines rot 0)
-        if (m_multiProperty->m_footprintCache.find(0) == m_multiProperty->m_footprintCache.end()) {
+        if (!m_multiProperty->m_footprintCache.contains(0)) {
             std::vector<ModelCoordinate> offsets =
                 grid->toMultiCoordinates(ModelCoordinate(0, 0, 0), getMultiObjectCoordinates(0));
             m_multiProperty->m_footprintCache[0] = std::move(offsets);

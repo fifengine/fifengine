@@ -244,16 +244,16 @@ namespace FIFE
                     return nullptr;
                 }
                 return &pixels_span
-                    [static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch) +
-                     static_cast<size_t>(x) * static_cast<size_t>(bpp)];
+                    [(static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch)) +
+                     (static_cast<size_t>(x) * static_cast<size_t>(bpp))];
             }
             if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
                 ((y + m_subimagerect.y) >= m_surface->h)) {
                 return nullptr;
             }
             return &pixels_span
-                [static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch) +
-                 static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp)];
+                [(static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch)) +
+                 (static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp))];
         }();
 
         if (p == nullptr) {
@@ -391,8 +391,8 @@ namespace FIFE
             static_cast<Uint8*>(surface->pixels),
             static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
         Uint8* p = &pixels_span
-                       [static_cast<size_t>(y) * static_cast<size_t>(surface->pitch) +
-                        static_cast<size_t>(x) * static_cast<size_t>(bpp)];
+                       [(static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
+                        (static_cast<size_t>(x) * static_cast<size_t>(bpp))];
 
         Uint32 const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
         switch (bpp) {
