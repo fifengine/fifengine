@@ -79,7 +79,7 @@ namespace FIFE
         }
     }
 
-    void RendererBase::removeActiveLayer(Layer const * layer)
+    void RendererBase::removeActiveLayer(Layer* layer)
     {
         m_active_layers.remove(layer);
     }
