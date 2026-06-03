@@ -79,8 +79,8 @@ TEST_CASE("Logger log does not crash", "[core][logger]")
     Logger log(LM_CONTROLLER);
 
     // Silence console output for this test — we only care that it doesn't crash
-    auto& lm         = LogManager::instance();
-    bool const prev  = lm.isLogToPrompt();
+    auto& lm        = LogManager::instance();
+    bool const prev = lm.isLogToPrompt();
     lm.setLogToPrompt(false);
 
     // basic log call — should not throw or crash

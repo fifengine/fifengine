@@ -38,7 +38,7 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_NATIVE_SAVERS);
             return log;
@@ -435,11 +435,11 @@ namespace FIFE
     void MapSaver::writeLayerLights(
         Map const & map, Layer const & layer, XML::Document& doc, XML::Element* layerElement)
     {
-        using CameraContainer         = std::vector<Camera*>;
+        using CameraContainer           = std::vector<Camera*>;
         CameraContainer const & cameras = map.getCameras();
 
         bool hasLights = false;
-        for (auto const& camera : cameras) {
+        for (auto const & camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
             if (renderer == nullptr) {
                 continue;
@@ -469,7 +469,7 @@ namespace FIFE
         XML::Element* lightsElement = doc.NewElement("lights");
         layerElement->InsertEndChild(lightsElement);
 
-        for (auto const& camera : cameras) {
+        for (auto const & camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
             if (renderer == nullptr) {
                 continue;

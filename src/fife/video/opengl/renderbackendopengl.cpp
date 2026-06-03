@@ -283,7 +283,7 @@ namespace FIFE
 
         int displayCount        = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID displayId =
+        SDL_DisplayID const displayId =
             (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
@@ -398,7 +398,7 @@ namespace FIFE
                 "RenderBackendOpenGLVideomode {}x{} at {} bpp with {} Hz",
                 width,
                 height,
-                int32_t(bitsPerPixel),
+                static_cast<int32_t>(bitsPerPixel),
                 displayMode.refresh_rate));
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
@@ -1107,14 +1107,10 @@ namespace FIFE
             auto const & v2 = m_renderTextureDatas.at(firstVertex + 2);
             auto const & v3 = m_renderTextureDatas.at(firstVertex + 3);
 
-            float const minX =
-                std::min(std::min(v0.vertex.at(0), v1.vertex.at(0)), std::min(v2.vertex.at(0), v3.vertex.at(0)));
-            float const maxX =
-                std::max(std::max(v0.vertex.at(0), v1.vertex.at(0)), std::max(v2.vertex.at(0), v3.vertex.at(0)));
-            float const minY =
-                std::min(std::min(v0.vertex.at(1), v1.vertex.at(1)), std::min(v2.vertex.at(1), v3.vertex.at(1)));
-            float const maxY =
-                std::max(std::max(v0.vertex.at(1), v1.vertex.at(1)), std::max(v2.vertex.at(1), v3.vertex.at(1)));
+            float const minX = std::min({v0.vertex.at(0), v1.vertex.at(0), v2.vertex.at(0), v3.vertex.at(0)});
+            float const maxX = std::max({v0.vertex.at(0), v1.vertex.at(0), v2.vertex.at(0), v3.vertex.at(0)});
+            float const minY = std::min({v0.vertex.at(1), v1.vertex.at(1), v2.vertex.at(1), v3.vertex.at(1)});
+            float const maxY = std::max({v0.vertex.at(1), v1.vertex.at(1), v2.vertex.at(1), v3.vertex.at(1)});
 
             if ((maxX - minX) != 33.0F || (maxY - minY) != 16.0F) {
                 return;
@@ -3147,7 +3143,7 @@ namespace FIFE
         std::vector<GuiVertex> const & vertices,
         std::vector<int> const & indices,
         DoublePoint const & translation,
-        ImagePtr texture)  // NOLINT(performance-unnecessary-value-param)
+        ImagePtr texture) // NOLINT(performance-unnecessary-value-param)
     {
 
         glPushMatrix();

@@ -69,6 +69,8 @@ namespace FIFE
             /** Constructor
              */
             Engine();
+            Engine(Engine const &)            = delete;
+            Engine& operator=(Engine const &) = delete;
 
             /** Destructor
              */

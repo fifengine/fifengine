@@ -11,7 +11,7 @@
 #include "model/structures/cellcache.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
-#include "util/time/timemanager.h"
+#include "util/time/timemanager.h">
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
@@ -66,6 +66,7 @@ namespace
                 mainObj->addMultiPart(part1.get());
             }
 
+            ~MultiCellFixture()                                   = default;
             MultiCellFixture(MultiCellFixture const &)            = delete;
             MultiCellFixture& operator=(MultiCellFixture const &) = delete;
             MultiCellFixture(MultiCellFixture&&)                  = delete;

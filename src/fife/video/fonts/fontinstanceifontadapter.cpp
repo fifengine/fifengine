@@ -223,7 +223,8 @@ namespace FIFE
                 std::format(
                     "  first={:#010x} center={:#010x} nonZero/{}k={}",
                     px[0],
-                    px[static_cast<size_t>(((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))],
+                    px[static_cast<size_t>(
+                        ((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))],
                     totalPx > 10000 ? 10 : totalPx / 1000,
                     nonZero));
         }

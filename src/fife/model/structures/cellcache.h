@@ -103,6 +103,8 @@ namespace FIFE
              * @param layer A pointer to the associated layer.
              */
             explicit CellCache(Layer* layer);
+            CellCache(CellCache const &)            = delete;
+            CellCache& operator=(CellCache const &) = delete;
 
             /** Destructor
              */

@@ -157,8 +157,8 @@ namespace fcn
                 }
                 mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
             } else {
-                FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
-                w                  = static_cast<int32_t>(
+                FIFE::Image const * image = mGuiFont->getAsImageMultiline(mCaption);
+                w                         = static_cast<int32_t>(
                     image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight());
             }
             std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
@@ -199,8 +199,8 @@ namespace fcn
 
         if (mGuiFont != nullptr) {
             graphics->setColor(getForegroundColor());
-            std::string const & text = isTextWrapping() ? mWrappedText : mCaption;
-            FIFE::Image* image       = mGuiFont->getAsImageMultiline(text);
+            std::string const & text  = isTextWrapping() ? mWrappedText : mCaption;
+            FIFE::Image const * image = mGuiFont->getAsImageMultiline(text);
 
             int32_t textX = 0;
             int32_t const textY =

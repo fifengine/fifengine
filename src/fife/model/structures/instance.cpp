@@ -225,11 +225,11 @@ namespace FIFE
                         }
                         std::vector<ModelCoordinate> const partcoords = part->getMultiPartCoordinates(m_rotation);
                         for (auto const & coord : partcoords) {
-                            ModelCoordinate absMc(
+                            ModelCoordinate const absMc(
                                 static_cast<int32_t>(emc.x) + coord.x,
                                 static_cast<int32_t>(emc.y) + coord.y,
                                 static_cast<int32_t>(emc.z) + coord.z);
-                            Cell* cell = cache->getCell(absMc);
+                            Cell const * cell = cache->getCell(absMc);
                             if (cell != nullptr && (cell->getCellType() == CTYPE_STATIC_BLOCKER ||
                                                     cell->getCellType() == CTYPE_DYNAMIC_BLOCKER ||
                                                     cell->getCellType() == CTYPE_CELL_BLOCKER)) {
@@ -347,8 +347,8 @@ namespace FIFE
         if (m_location != loc) {
             // Reject moves that would push multi-cell sub-instances off-grid (W6-T4)
             if (isMultiObject() && loc.getLayer() != nullptr) {
-                CellGrid const * grid = loc.getLayer()->getCellGrid();
-                CellCache* cache      = loc.getLayer()->getCellCache();
+                CellGrid const * grid   = loc.getLayer()->getCellGrid();
+                CellCache const * cache = loc.getLayer()->getCellCache();
                 if (grid != nullptr && cache != nullptr) {
                     auto const & parts = m_object->getMultiParts();
                     for (auto* part : parts) {
@@ -703,7 +703,7 @@ namespace FIFE
         if (isMultiCell() && m_location.getLayer() != nullptr) {
             CellGrid const * grid = m_location.getLayer()->getCellGrid();
             if (grid != nullptr) {
-                std::vector<ModelCoordinate> offsets = m_object->getCachedFootprint(m_rotation);
+                std::vector<ModelCoordinate> const offsets = m_object->getCachedFootprint(m_rotation);
                 for (auto const & off : offsets) {
                     ModelCoordinate abs = m_location.getLayerCoordinates();
                     abs.x += off.x;

@@ -40,6 +40,9 @@ namespace FIFE
             {
             }
 
+            RoutePather(RoutePather const &)            = delete;
+            RoutePather& operator=(RoutePather const &) = delete;
+
             ~RoutePather();
 
             /** Creates a route between the start and end location that needs be solved.

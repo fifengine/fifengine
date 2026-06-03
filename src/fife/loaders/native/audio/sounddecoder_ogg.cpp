@@ -25,7 +25,7 @@ namespace FIFE
         /** Logger to use for this source file.
          *  @relates Logger
          */
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_AUDIO);
             return log;

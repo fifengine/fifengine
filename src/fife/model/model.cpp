@@ -242,12 +242,11 @@ namespace FIFE
         // WARNING: This code has obviously not been tested (thoroughly).
 
         // Check if any instances exist. If yes - bail out.
-        std::vector<Instance*>::const_iterator kt;
         for (auto const & m_map : m_maps) {
             auto layers = m_map->getLayers();
-            for (auto jt = layers.begin(); jt != layers.end(); ++jt) {
-                for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
-                    Object const * o = (*kt)->getObject();
+            for (auto const & layer : layers) {
+                for (auto const & kt : layer->getInstances()) {
+                    Object const * o = kt->getObject();
                     if (o == object) {
                         return false;
                     }
@@ -275,7 +274,7 @@ namespace FIFE
         // If we have layers with instances - bail out.
         for (auto const & m_map : m_maps) {
             auto layers = m_map->getLayers();
-            auto jt     = std::find_if(layers.begin(), layers.end(), [](Layer const * layer) {
+            auto jt     = std::ranges::find_if(layers, [](Layer const * layer) {
                 return layer->hasInstances();
             });
             if (jt != layers.end()) {

@@ -39,7 +39,7 @@ namespace FIFE
         template <typename T>
         T getALProc(char const * name) noexcept
         {
-            void* ptr = alGetProcAddress(name);
+            void const * ptr = alGetProcAddress(name);
             static_assert(sizeof(T) == sizeof(void*));
             return std::bit_cast<T>(ptr);
         }

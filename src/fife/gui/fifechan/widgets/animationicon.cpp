@@ -129,7 +129,7 @@ namespace fcn
             if (mAnimation.get() == nullptr) {
                 return;
             }
-            int32_t index;
+            int32_t index          = 0;
             uint64_t const elapsed = mTimemanager->now64() - mAnimtime;
             if (isRepeating()) {
                 index = mAnimation->getFrameIndex64(

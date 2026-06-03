@@ -67,7 +67,8 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         uint32_t pix                     = 0;
         auto pixel_span                  = std::span<uint8_t const>(
             static_cast<uint8_t const *>(s->pixels), static_cast<size_t>(s->h) * static_cast<size_t>(s->pitch));
-        size_t const offset = (static_cast<size_t>(172) * static_cast<size_t>(s->pitch)) + (static_cast<size_t>(134) * 4U);
+        size_t const offset =
+            (static_cast<size_t>(172) * static_cast<size_t>(s->pitch)) + (static_cast<size_t>(134) * 4U);
         std::memcpy(&pix, &pixel_span[offset], sizeof(pix));
         SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
     }

@@ -71,7 +71,7 @@ namespace FIFE
             }
         }
         for (auto& inst : m_instances) {
-            std::unique_ptr<Instance> deleter(inst);
+            std::unique_ptr<Instance> const deleter(inst);
         }
         m_instances.clear();
     }
@@ -228,7 +228,7 @@ namespace FIFE
         for (; it != m_instances.end(); ++it) {
             if (*it == instance) {
                 m_instanceTree->removeInstance(*it);
-                std::unique_ptr<Instance> deleter(*it);
+                std::unique_ptr<Instance> const deleter(*it);
                 m_instances.erase(it);
                 break;
             }

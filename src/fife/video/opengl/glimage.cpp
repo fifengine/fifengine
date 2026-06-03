@@ -452,7 +452,7 @@ namespace FIFE
             m_tex_coords[3] = 1.0F;
         }
 
-        std::span<uint8_t> data_span{
+        std::span<uint8_t> const data_span{
             static_cast<uint8_t*>(m_surface->pixels),
             static_cast<size_t>(height) * static_cast<size_t>(m_surface->pitch)};
         int32_t const pitch = m_surface->pitch;

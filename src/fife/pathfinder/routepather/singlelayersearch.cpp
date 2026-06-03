@@ -63,8 +63,8 @@ namespace FIFE
         m_cellCache(m_from.getLayer()->getCellCache()),
         m_startCoordInt(m_cellCache->convertCoordToInt(m_from.getLayerCoordinates())),
         m_destCoordInt(m_cellCache->convertCoordToInt(m_to.getLayerCoordinates())),
-        m_expansionCount(0),
-        m_next(0)
+        m_next(0),
+        m_expansionCount(0)
     {
 
         m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));

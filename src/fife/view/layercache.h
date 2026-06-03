@@ -37,6 +37,8 @@ namespace FIFE
         public:
             using CacheTree = QuadTree<std::set<int32_t>>;
             explicit LayerCache(Camera* camera);
+            LayerCache(LayerCache const &)            = delete;
+            LayerCache& operator=(LayerCache const &) = delete;
             ~LayerCache();
 
             void setLayer(Layer* layer);

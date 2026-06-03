@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@
 
 namespace
 {
-    int dummy_inst_storage[5];
+    std::array<int, 5> dummy_inst_storage{};
 }
 
 // ── Mock RenderBackend ──────────────────────────────────────────────────
@@ -33,44 +34,42 @@ namespace
                 static std::string const n = "MockRenderBackend";
                 return n;
             }
-            void init(std::string const & backendId) override
+            void init(std::string const &) override
             {
             }
             void clearBackBuffer() override
             {
             }
-            void setLightingModel(uint32_t mode) override
+            void setLightingModel(uint32_t) override
             {
             }
             uint32_t getLightingModel() const override
             {
                 return 0;
             }
-            void setLighting(float r, float g, float b) override
+            void setLighting(float, float, float) override
             {
             }
             void resetLighting() override
             {
             }
-            void resetStencilBuffer(uint8_t value) override
+            void resetStencilBuffer(uint8_t) override
             {
             }
-            void changeBlending(int32_t src, int32_t dst) override
+            void changeBlending(int32_t, int32_t) override
             {
             }
-            void createMainScreen(
-                FIFE::ScreenMode const & mode, std::string const & title, std::string const & icon) override
+            void createMainScreen(FIFE::ScreenMode const &, std::string const &, std::string const &) override
             {
             }
-            void setScreenMode(FIFE::ScreenMode const & mode) override
+            void setScreenMode(FIFE::ScreenMode const &) override
             {
             }
             std::unique_ptr<FIFE::Image> createImage(FIFE::IResourceLoader*) override
             {
                 return nullptr;
             }
-            std::unique_ptr<FIFE::Image> createImage(
-                std::string const &, FIFE::IResourceLoader*) override
+            std::unique_ptr<FIFE::Image> createImage(std::string const &, FIFE::IResourceLoader*) override
             {
                 return nullptr;
             }
@@ -89,144 +88,98 @@ namespace
             void renderVertexArrays() override
             {
             }
-            void captureScreen(std::string const & filename) override
+            void captureScreen(std::string const &) override
             {
             }
-            void captureScreen(std::string const & filename, uint32_t x, uint32_t y) override
+            void captureScreen(std::string const &, uint32_t, uint32_t) override
             {
             }
             bool putPixel(int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
                 return true;
             }
-            void drawLine(
-                FIFE::Point const & p1, FIFE::Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            void drawLine(FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawThickLine(
-                FIFE::Point const & p1, FIFE::Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w)
-                override
+                FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
-            void drawPolyLine(
-                std::vector<FIFE::Point> const & pts, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w) override
+            void drawPolyLine(std::vector<FIFE::Point> const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawBezier(
-                std::vector<FIFE::Point> const & pts,
-                int32_t steps,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b,
-                uint8_t a,
-                uint8_t w) override
+                std::vector<FIFE::Point> const &, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
-            std::unique_ptr<FIFE::Image> createImage(
-                std::string const &, uint8_t const *, uint32_t, uint32_t) override
+            std::unique_ptr<FIFE::Image> createImage(std::string const &, uint8_t const *, uint32_t, uint32_t) override
             {
                 return nullptr;
             }
             void drawTriangle(
-                FIFE::Point const & p1,
-                FIFE::Point const & p2,
-                FIFE::Point const & p3,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b,
-                uint8_t a) override
+                FIFE::Point const &, FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
+                override
             {
             }
-            void drawRectangle(
-                FIFE::Point const & pt, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            void drawRectangle(FIFE::Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
-            void fillRectangle(
-                FIFE::Point const & pt, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            void fillRectangle(FIFE::Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawQuad(
-                FIFE::Point const & p1,
-                FIFE::Point const & p2,
-                FIFE::Point const & p3,
-                FIFE::Point const & p4,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b,
-                uint8_t a) override
+                FIFE::Point const &,
+                FIFE::Point const &,
+                FIFE::Point const &,
+                FIFE::Point const &,
+                uint8_t,
+                uint8_t,
+                uint8_t,
+                uint8_t) override
             {
             }
-            void drawVertex(FIFE::Point const & pt, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w) override
+            void drawVertex(FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
-            void drawCircle(
-                FIFE::Point const & center, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            void drawCircle(FIFE::Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
-            void drawFillCircle(
-                FIFE::Point const & center, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
+            void drawFillCircle(FIFE::Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawCircleSegment(
-                FIFE::Point const & center,
-                uint32_t radius,
-                int32_t startAngle,
-                int32_t endAngle,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b,
-                uint8_t a) override
+                FIFE::Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawFillCircleSegment(
-                FIFE::Point const & center,
-                uint32_t radius,
-                int32_t startAngle,
-                int32_t endAngle,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b,
-                uint8_t a) override
+                FIFE::Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
             {
             }
             void drawLightPrimitive(
-                FIFE::Point const & pt,
-                uint8_t brightness,
-                float scale,
-                int32_t angle,
-                float xStretch,
-                float yStretch,
-                uint8_t r,
-                uint8_t g,
-                uint8_t b) override
+                FIFE::Point const &, uint8_t, float, int32_t, float, float, uint8_t, uint8_t, uint8_t) override
             {
             }
-            void addImageToArray(
-                uint32_t id,
-                FIFE::Rect const & rect,
-                float const * texCoords,
-                uint8_t opacity,
-                uint8_t const * color) override
+            void addImageToArray(uint32_t, FIFE::Rect const &, float const *, uint8_t, uint8_t const *) override
             {
             }
             void changeRenderInfos(
-                FIFE::RenderDataType type,
-                uint16_t src,
-                int32_t x,
-                int32_t y,
-                bool fog,
-                bool lighting,
-                uint8_t alpha,
-                FIFE::GLConstants srcBlend,
-                FIFE::GLConstants dstBlend,
-                FIFE::OverlayType overlay) override
+                FIFE::RenderDataType,
+                uint16_t,
+                int32_t,
+                int32_t,
+                bool,
+                bool,
+                uint8_t,
+                FIFE::GLConstants,
+                FIFE::GLConstants,
+                FIFE::OverlayType) override
             {
             }
             void renderGuiGeometry(
-                std::vector<FIFE::GuiVertex> const & verts,
-                std::vector<int> const & indices,
-                FIFE::DoublePoint const & offset,
-                FIFE::ImagePtr image) override
+                std::vector<FIFE::GuiVertex> const &,
+                std::vector<int> const &,
+                FIFE::DoublePoint const &,
+                FIFE::ImagePtr) override
             {
             }
             void enableScissorTest() override
@@ -235,7 +188,7 @@ namespace
             void disableScissorTest() override
             {
             }
-            void attachRenderTarget(FIFE::ImagePtr& target, bool enabled) override
+            void attachRenderTarget(FIFE::ImagePtr&, bool) override
             {
             }
             void detachRenderTarget() override
@@ -243,7 +196,7 @@ namespace
             }
 
         protected:
-            void setClipArea(FIFE::Rect const & rect, bool enabled) override
+            void setClipArea(FIFE::Rect const &, bool) override
             {
             }
 

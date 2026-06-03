@@ -58,6 +58,8 @@ namespace FIFE
              * @param parent the parent of this node, defaults to NULL
              */
             explicit ZipNode(std::string name, ZipNode* parent = nullptr);
+            ZipNode(ZipNode const &)            = delete;
+            ZipNode& operator=(ZipNode const &) = delete;
 
             /**
              * Constructor for creating a node with an explicit entry type.

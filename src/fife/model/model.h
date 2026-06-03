@@ -43,6 +43,8 @@ namespace FIFE
              *
              */
             Model(RenderBackend* renderbackend, std::vector<std::unique_ptr<RendererBase>> const & renderers);
+            Model(Model const &)            = delete;
+            Model& operator=(Model const &) = delete;
 
             /** Destructor
              *

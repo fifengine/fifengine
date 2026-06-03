@@ -34,6 +34,6 @@ namespace FIFE
     {
         assert(start + len <= m_datalen);
         auto const src = std::span(m_data, m_datalen).subspan(start, len);
-        std::copy(src.begin(), src.end(), target);
+        std::ranges::copy(src, target);
     }
 } // namespace FIFE

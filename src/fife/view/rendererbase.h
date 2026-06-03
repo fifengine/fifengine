@@ -143,7 +143,7 @@ namespace FIFE
 
             /** Removes active layer from renderer.
              */
-            void removeActiveLayer(Layer* layer);
+            void removeActiveLayer(Layer const * layer);
 
             /** Clears all active layers from renderer
              */

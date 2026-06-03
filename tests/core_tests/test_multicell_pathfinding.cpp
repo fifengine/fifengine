@@ -76,10 +76,9 @@ namespace
                 multiObj->addMultiPart(part1.get());
             }
 
+            ~PathFixture()                              = default;
             PathFixture(PathFixture const &)            = delete;
             PathFixture& operator=(PathFixture const &) = delete;
-            PathFixture(PathFixture&&)                  = default;
-            PathFixture& operator=(PathFixture&&)       = default;
 
             // Creates non-blocking markers at path corridor extremes so the cell cache
             // covers the full area needed for pathfinding. Markers persist for test duration.

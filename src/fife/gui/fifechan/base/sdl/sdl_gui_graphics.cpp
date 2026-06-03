@@ -76,12 +76,9 @@ namespace FIFE
         SDL_SetTextureColorMod(texture, mColor.r, mColor.g, mColor.b);
         SDL_SetTextureAlphaMod(texture, mColor.a);
 
-        SDL_FRect src{.x = 0.0F, .y = 0.0F, .w = static_cast<float>(surface->w), .h = static_cast<float>(surface->h)};
-        SDL_FRect dst{
-            .x = static_cast<float>(x),
-            .y = static_cast<float>(y),
-            .w = src.w,
-            .h = src.h};
+        SDL_FRect const src{
+            .x = 0.0F, .y = 0.0F, .w = static_cast<float>(surface->w), .h = static_cast<float>(surface->h)};
+        SDL_FRect const dst{.x = static_cast<float>(x), .y = static_cast<float>(y), .w = src.w, .h = src.h};
 
         SDL_RenderTexture(renderer, texture, &src, &dst);
         SDL_DestroyTexture(texture);

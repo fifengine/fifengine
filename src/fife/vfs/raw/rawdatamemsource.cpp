@@ -28,7 +28,7 @@ namespace FIFE
     void RawDataMemSource::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
     {
         auto const src = std::span(m_data).subspan(start, length);
-        std::copy(src.begin(), src.end(), buffer);
+        std::ranges::copy(src, buffer);
     }
 
     uint8_t* RawDataMemSource::getRawData()

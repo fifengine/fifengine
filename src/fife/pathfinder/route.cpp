@@ -24,7 +24,7 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_STRUCTURES);
             return log;
@@ -344,7 +344,7 @@ namespace FIFE
                     }
                     std::vector<ModelCoordinate> const footprint =
                         grid->toMultiCoordinates(it.getLayerCoordinates(), getOccupiedCells(m_rotation));
-                    for (auto const& fc : footprint) {
+                    for (auto const & fc : footprint) {
                         if (layer->cellContainsBlockingInstance(fc)) {
                             // Check if this blocker is part of the multi-cell's own path cells
                             bool isSelf = false;
