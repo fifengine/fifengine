@@ -5,9 +5,13 @@
 #include "glimage.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <iostream>
+#include <span>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 
@@ -23,15 +27,17 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIDEO);
             return log;
-        }();
+        }
 
-        Logger& _guiLog = []() -> Logger& {
+        Logger& _guiLog()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
 
         bool shouldLogGuiLikeSurface(SDL_Surface const * surface)
         {
@@ -46,7 +52,7 @@ namespace FIFE
             return (rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16);
         }
 
-        std::string summarizeSurfaceSamples(SDL_Surface const * surface)
+        std::string summarizeSurfaceSamples(SDL_Surface* surface)
         {
             if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
                 return "samples=unavailable";
@@ -59,8 +65,11 @@ namespace FIFE
                 auto const * pixels    = static_cast<uint32_t const *>(surface->pixels);
                 int32_t const pitchPx  = surface->pitch / 4;
                 uint32_t const pixel   = pixels[(clampedY * pitchPx) + clampedX];
-                uint8_t r = 0, g = 0, b = 0, a = 0;
-                SDL_GetRGBA(pixel, fmt, SDL_GetSurfacePalette(const_cast<SDL_Surface*>(surface)), &r, &g, &b, &a);
+                uint8_t r              = 0;
+                uint8_t g              = 0;
+                uint8_t b              = 0;
+                uint8_t a              = 0;
+                SDL_GetRGBA(pixel, fmt, SDL_GetSurfacePalette(surface), &r, &g, &b, &a);
                 return std::format("({},{})={:#010x}/rgba({},{},{},{})", clampedX, clampedY, pixel, r, g, b, a);
             };
 
@@ -71,7 +80,7 @@ namespace FIFE
                 sampleAt(surface->w / 2, surface->h / 2));
         }
 
-        std::string summarizeSurfaceAlphaCoverage(SDL_Surface const * surface)
+        std::string summarizeSurfaceAlphaCoverage(SDL_Surface* surface)
         {
             if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
                 return "alpha=unavailable";
@@ -90,15 +99,11 @@ namespace FIFE
 
             for (int32_t y = 0; y < surface->h; ++y) {
                 for (int32_t x = 0; x < surface->w; ++x) {
-                    uint8_t r = 0, g = 0, b = 0, a = 0;
-                    SDL_GetRGBA(
-                        pixels[(y * pitchPx) + x],
-                        fmt,
-                        SDL_GetSurfacePalette(const_cast<SDL_Surface*>(surface)),
-                        &r,
-                        &g,
-                        &b,
-                        &a);
+                    uint8_t r = 0;
+                    uint8_t g = 0;
+                    uint8_t b = 0;
+                    uint8_t a = 0;
+                    SDL_GetRGBA(pixels[(y * pitchPx) + x], fmt, SDL_GetSurfacePalette(surface), &r, &g, &b, &a);
 
                     if (a == 0) {
                         continue;
@@ -274,39 +279,45 @@ namespace FIFE
         }
 
         if (shouldLogTargetRect(rect)) {
-            FL_LOG(_guiLog, std::format(
-                "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) surf={}x{} fmt={:#x}",
-                m_texId,
-                rect.x,
-                rect.y,
-                rect.w,
-                rect.h,
-                alpha,
-                rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
-                m_tex_coords[0],
-                m_tex_coords[1],
-                m_tex_coords[2],
-                m_tex_coords[3],
-                m_surface != nullptr ? m_surface->w : 0,
-                m_surface != nullptr ? m_surface->h : 0,
-                m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
+            FL_LOG(
+                _guiLog(),
+                std::format(
+                    "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) "
+                    "surf={}x{} fmt={:#x}",
+                    m_texId,
+                    rect.x,
+                    rect.y,
+                    rect.w,
+                    rect.h,
+                    alpha,
+                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                    m_tex_coords[0],
+                    m_tex_coords[1],
+                    m_tex_coords[2],
+                    m_tex_coords[3],
+                    m_surface != nullptr ? m_surface->w : 0,
+                    m_surface != nullptr ? m_surface->h : 0,
+                    m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
         } else if (shouldLogGuiLikeSurface(m_surface)) {
-            FL_WARN(_log, std::format(
-                "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) surf={}x{} fmt={:#x}",
-                m_texId,
-                rect.x,
-                rect.y,
-                rect.w,
-                rect.h,
-                alpha,
-                rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
-                m_tex_coords[0],
-                m_tex_coords[1],
-                m_tex_coords[2],
-                m_tex_coords[3],
-                m_surface != nullptr ? m_surface->w : 0,
-                m_surface != nullptr ? m_surface->h : 0,
-                m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
+            FL_WARN(
+                _log(),
+                std::format(
+                    "GLImage::render tex={} rect=({},{} {}x{}) alpha={} rgb={} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) "
+                    "surf={}x{} fmt={:#x}",
+                    m_texId,
+                    rect.x,
+                    rect.y,
+                    rect.w,
+                    rect.h,
+                    alpha,
+                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                    m_tex_coords[0],
+                    m_tex_coords[1],
+                    m_tex_coords[2],
+                    m_tex_coords[3],
+                    m_surface != nullptr ? m_surface->w : 0,
+                    m_surface != nullptr ? m_surface->h : 0,
+                    m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
         }
 
         rb->addImageToArray(m_texId, rect, &m_tex_coords[0], alpha, rgb);
@@ -441,40 +452,49 @@ namespace FIFE
             m_tex_coords[3] = 1.0F;
         }
 
-        auto* data          = static_cast<uint8_t*>(m_surface->pixels);
+        std::span<uint8_t> data_span{
+            static_cast<uint8_t*>(m_surface->pixels),
+            static_cast<size_t>(height) * static_cast<size_t>(m_surface->pitch)};
         int32_t const pitch = m_surface->pitch;
 
-        if ((m_surface != nullptr) && ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16))) {
-            FL_LOG(_guiLog, std::format(
-                "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {} {}",
-                m_surface->w,
-                m_surface->h,
-                m_surface->pitch,
-                static_cast<unsigned>(m_surface->format),
-                static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
-                m_chunk_size_w,
-                m_chunk_size_h,
-                m_tex_coords[0],
-                m_tex_coords[1],
-                m_tex_coords[2],
-                m_tex_coords[3],
-                summarizeSurfaceSamples(m_surface),
-                summarizeSurfaceAlphaCoverage(m_surface)));
+        if ((m_surface != nullptr) &&
+            ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16))) {
+            FL_LOG(
+                _guiLog(),
+                std::format(
+                    "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} "
+                    "texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {} {}",
+                    m_surface->w,
+                    m_surface->h,
+                    m_surface->pitch,
+                    static_cast<unsigned>(m_surface->format),
+                    static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
+                    m_chunk_size_w,
+                    m_chunk_size_h,
+                    m_tex_coords[0],
+                    m_tex_coords[1],
+                    m_tex_coords[2],
+                    m_tex_coords[3],
+                    summarizeSurfaceSamples(m_surface),
+                    summarizeSurfaceAlphaCoverage(m_surface)));
         } else if (shouldLogGuiLikeSurface(m_surface)) {
-            FL_WARN(_log, std::format(
-                "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {}",
-                m_surface->w,
-                m_surface->h,
-                m_surface->pitch,
-                static_cast<unsigned>(m_surface->format),
-                static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
-                m_chunk_size_w,
-                m_chunk_size_h,
-                m_tex_coords[0],
-                m_tex_coords[1],
-                m_tex_coords[2],
-                m_tex_coords[3],
-                summarizeSurfaceSamples(m_surface)));
+            FL_WARN(
+                _log(),
+                std::format(
+                    "GLImage::generateGLTexture surface={}x{} pitch={} fmt={:#x} targetFmt={:#x} texChunk={}x{} "
+                    "texCoords=({:.3f},{:.3f},{:.3f},{:.3f}) {}",
+                    m_surface->w,
+                    m_surface->h,
+                    m_surface->pitch,
+                    static_cast<unsigned>(m_surface->format),
+                    static_cast<unsigned>(RenderBackend::instance()->getPixelFormat()),
+                    m_chunk_size_w,
+                    m_chunk_size_h,
+                    m_tex_coords[0],
+                    m_tex_coords[1],
+                    m_tex_coords[2],
+                    m_tex_coords[3],
+                    summarizeSurfaceSamples(m_surface)));
         }
 
         assert(!m_texId);
@@ -534,21 +554,18 @@ namespace FIFE
 
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
-            auto* oglbuffer = new uint16_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
-            memset(
-                oglbuffer,
-                0x00,
-                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h) * sizeof(uint16_t));
+            std::vector<uint16_t> oglbuffer(
+                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h), 0x00);
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t r = data[pos + 0];
-                    uint8_t g = data[pos + 1];
-                    uint8_t b = data[pos + 2];
-                    uint8_t a = data[pos + 3];
+                    uint8_t r = data_span[pos + 0];
+                    uint8_t g = data_span[pos + 1];
+                    uint8_t b = data_span[pos + 2];
+                    uint8_t a = data_span[pos + 3];
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -582,15 +599,15 @@ namespace FIFE
                 0,
                 GL_RGBA,
                 GL_UNSIGNED_SHORT_4_4_4_4,
-                oglbuffer);
-            delete[] oglbuffer;
+                oglbuffer.data());
             return;
         }
 
         if (GLEW_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
             if (RenderBackend::instance()->isColorKeyEnabled()) {
-                auto* oglbuffer = new uint8_t[static_cast<size_t>(width) * static_cast<size_t>(height) * 4U];
-                memcpy(oglbuffer, data, static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
+                std::vector<uint8_t> oglbuffer(static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
+                std::memcpy(
+                    oglbuffer.data(), data_span.data(), static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
@@ -625,12 +642,11 @@ namespace FIFE
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
-                    oglbuffer);
-
-                delete[] oglbuffer;
+                    oglbuffer.data());
             } else if (monochrome) {
-                auto* oglbuffer = new uint8_t[static_cast<size_t>(width) * static_cast<size_t>(height) * 4U];
-                memcpy(oglbuffer, data, static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
+                std::vector<uint8_t> oglbuffer(static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
+                std::memcpy(
+                    oglbuffer.data(), data_span.data(), static_cast<size_t>(width) * static_cast<size_t>(height) * 4U);
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
@@ -655,9 +671,7 @@ namespace FIFE
                     0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
-                    oglbuffer);
-
-                delete[] oglbuffer;
+                    oglbuffer.data());
             } else {
                 // SDL3 surfaces may have padded row pitch; OpenGL expects contiguous rows when
                 // uploading with GL_RGBA/GL_UNSIGNED_BYTE in this path, so repack when needed.
@@ -673,14 +687,14 @@ namespace FIFE
                         0,
                         GL_RGBA,
                         GL_UNSIGNED_BYTE,
-                        data);
+                        data_span.data());
                 } else {
                     // SDL surfaces can have padded row pitch; repack to a tightly packed buffer.
-                    auto* packed = new uint8_t[static_cast<size_t>(tightPitch) * static_cast<size_t>(height)];
+                    std::vector<uint8_t> packed(static_cast<size_t>(tightPitch) * static_cast<size_t>(height));
                     for (uint32_t y = 0; y < height; ++y) {
-                        uint8_t const * srcRow = data + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
-                        uint8_t* dstRow        = packed + (static_cast<size_t>(y) * static_cast<size_t>(tightPitch));
-                        memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
+                        uint8_t const * srcRow = &data_span[static_cast<size_t>(y) * static_cast<size_t>(pitch)];
+                        uint8_t* dstRow        = &packed[static_cast<size_t>(y) * static_cast<size_t>(tightPitch)];
+                        std::memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
                     }
 
                     glTexImage2D(
@@ -692,27 +706,23 @@ namespace FIFE
                         0,
                         GL_RGBA,
                         GL_UNSIGNED_BYTE,
-                        packed);
-                    delete[] packed;
+                        packed.data());
                 }
             }
             // Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
         } else {
-            auto* oglbuffer = new uint32_t[static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h)];
-            memset(
-                oglbuffer,
-                0x00,
-                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h) * sizeof(uint32_t));
+            std::vector<uint32_t> oglbuffer(
+                static_cast<size_t>(m_chunk_size_w) * static_cast<size_t>(m_chunk_size_h), 0x00);
 
             for (uint32_t y = 0; y < height; ++y) {
                 for (uint32_t x = 0; x < width; ++x) {
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t a = data[pos + 3];
-                    uint8_t b = data[pos + 2];
-                    uint8_t g = data[pos + 1];
-                    uint8_t r = data[pos + 0];
+                    uint8_t a = data_span[pos + 3];
+                    uint8_t b = data_span[pos + 2];
+                    uint8_t g = data_span[pos + 1];
+                    uint8_t r = data_span[pos + 0];
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -743,8 +753,7 @@ namespace FIFE
                 0,
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
-                static_cast<GLvoid*>(oglbuffer));
-            delete[] oglbuffer;
+                oglbuffer.data());
         }
     }
 

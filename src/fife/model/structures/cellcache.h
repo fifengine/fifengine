@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <stack>
 #include <string>
@@ -150,7 +151,7 @@ namespace FIFE
             /** Returns all cells of this CellCache.
              * @return A const reference to a two dimensional vector which contain all cells.
              */
-            std::vector<std::vector<Cell*>> const & getCells();
+            std::vector<std::vector<Cell*>> getCells();
 
             /** Removes cell from CellCache.
              * Removes cell from cost table, special cost and speed,
@@ -459,7 +460,7 @@ namespace FIFE
             /** Returns zones of this CellCache.
              * @return A vector which contains the zones.
              */
-            std::vector<Zone*> const & getZones();
+            std::vector<Zone*> getZones();
 
             /** Gets zone by identifier.
              * @param id A unsigned integer which is used as zone identifier,
@@ -618,10 +619,10 @@ namespace FIFE
             double m_defaultSpeedMulti;
 
             //! change listener
-            LayerChangeListener* m_cellListener;
+            std::unique_ptr<LayerChangeListener> m_cellListener;
 
             // cells on this cache
-            std::vector<std::vector<Cell*>> m_cells;
+            std::vector<std::vector<std::unique_ptr<Cell>>> m_cells;
 
             //! Rect holds the min and max size
             //! x = min.x, w = max.x, y = min.y, h = max.y
@@ -652,7 +653,7 @@ namespace FIFE
             std::vector<Cell*> m_transitions;
 
             //! zones
-            std::vector<Zone*> m_zones;
+            std::vector<std::unique_ptr<Zone>> m_zones;
 
             //! special cells which are monitored (zone split and merge)
             std::set<Cell*> m_narrowCells;
@@ -661,7 +662,7 @@ namespace FIFE
             StringCellMultimap m_cellAreas;
 
             //! listener for zones
-            CellChangeListener* m_cellZoneListener;
+            std::unique_ptr<CellChangeListener> m_cellZoneListener;
 
             //! holds cost table
             std::map<std::string, double> m_costsTable;

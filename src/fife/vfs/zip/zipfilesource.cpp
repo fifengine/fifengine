@@ -5,8 +5,10 @@
 #include "zipfilesource.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <span>
 
 // 3rd party library includes
 
@@ -31,6 +33,7 @@ namespace FIFE
     void ZipFileSource::readInto(uint8_t* target, uint32_t start, uint32_t len)
     {
         assert(start + len <= m_datalen);
-        memcpy(target, m_data + start, len);
+        auto const src = std::span(m_data, m_datalen).subspan(start, len);
+        std::copy(src.begin(), src.end(), target);
     }
 } // namespace FIFE

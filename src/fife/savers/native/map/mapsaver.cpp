@@ -38,10 +38,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_SAVERS);
             return log;
-        }();
+        }
     } // namespace
 
     MapSaver::MapSaver() = default;
@@ -83,8 +84,7 @@ namespace FIFE
             mapElement->InsertEndChild(importElement);
         }
 
-        using LayerList  = std::list<Layer*>;
-        LayerList layers = map.getLayers();
+        auto layers = map.getLayers();
         for (auto& layer : layers) {
             XML::Element* layerElement = doc.NewElement("layer");
             CellGrid const * grid      = layer->getCellGrid();
@@ -419,7 +419,7 @@ namespace FIFE
                             lightingColorString << ",";
                         }
 
-                        lightingColorString << lightingColor[i];
+                        lightingColorString << lightingColor.at(i);
                     }
 
                     cameraElement->SetAttribute("light_color", lightingColorString.str().c_str());
@@ -435,14 +435,15 @@ namespace FIFE
     void MapSaver::writeLayerLights(
         Map const & map, Layer const & layer, XML::Document& doc, XML::Element* layerElement)
     {
-        using CameraContainer   = std::vector<Camera*>;
-        CameraContainer cameras = map.getCameras();
+        using CameraContainer         = std::vector<Camera*>;
+        CameraContainer const & cameras = map.getCameras();
 
         bool hasLights = false;
         for (auto& camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
-            if (!renderer)
+            if (renderer == nullptr) {
                 continue;
+            }
 
             bool layerActive = false;
             for (auto* activeLayer : renderer->getActiveLayers()) {
@@ -451,8 +452,9 @@ namespace FIFE
                     break;
                 }
             }
-            if (!layerActive)
+            if (!layerActive) {
                 continue;
+            }
 
             if (!renderer->getGroups().empty()) {
                 hasLights = true;
@@ -460,16 +462,18 @@ namespace FIFE
             }
         }
 
-        if (!hasLights)
+        if (!hasLights) {
             return;
+        }
 
         XML::Element* lightsElement = doc.NewElement("lights");
         layerElement->InsertEndChild(lightsElement);
 
         for (auto& camera : cameras) {
             LightRenderer* renderer = LightRenderer::getInstance(camera);
-            if (!renderer)
+            if (renderer == nullptr) {
                 continue;
+            }
 
             bool layerActive = false;
             for (auto* activeLayer : renderer->getActiveLayers()) {
@@ -478,18 +482,21 @@ namespace FIFE
                     break;
                 }
             }
-            if (!layerActive)
+            if (!layerActive) {
                 continue;
+            }
 
             for (auto const & group : renderer->getGroups()) {
                 for (auto* info : renderer->getLightInfo(group)) {
                     Instance* instance = info->getNode()->getInstance();
-                    if (!instance)
+                    if (instance == nullptr) {
                         continue;
+                    }
 
-                    std::string type = info->getName();
-                    if (type != "simple" && type != "image" && type != "animation")
+                    std::string const type = info->getName();
+                    if (type != "simple" && type != "image" && type != "animation") {
                         continue;
+                    }
 
                     XML::Element* lightElement = doc.NewElement("l");
                     lightElement->SetAttribute("group", group.c_str());
@@ -509,17 +516,17 @@ namespace FIFE
 
                     if (type == "simple") {
                         auto* simpleInfo = dynamic_cast<LightRendererSimpleLightInfo*>(info);
-                        if (simpleInfo) {
+                        if (simpleInfo != nullptr) {
                             if (simpleInfo->getRadius() > 0.0) {
                                 lightElement->SetAttribute("radius", simpleInfo->getRadius());
                             }
                             std::vector<uint8_t> color = simpleInfo->getColor();
                             if (!color.empty()) {
                                 std::ostringstream colorStr;
-                                colorStr << static_cast<int>(color[0]) << "," << static_cast<int>(color[1]) << ","
-                                         << static_cast<int>(color[2]);
+                                colorStr << static_cast<int>(color.at(0)) << "," << static_cast<int>(color.at(1)) << ","
+                                         << static_cast<int>(color.at(2));
                                 lightElement->SetAttribute("color", colorStr.str().c_str());
-                                lightElement->SetAttribute("intensity", static_cast<int>(color[3]));
+                                lightElement->SetAttribute("intensity", static_cast<int>(color.at(3)));
                             }
                             if (simpleInfo->getSubdivisions() != 32) {
                                 lightElement->SetAttribute("subdivisions", simpleInfo->getSubdivisions());
@@ -533,12 +540,12 @@ namespace FIFE
                         }
                     } else if (type == "image") {
                         auto* imageInfo = dynamic_cast<LightRendererImageInfo*>(info);
-                        if (imageInfo && imageInfo->getImage()) {
+                        if (imageInfo != nullptr && imageInfo->getImage()) {
                             lightElement->SetAttribute("image", imageInfo->getImage()->getName().c_str());
                         }
                     } else if (type == "animation") {
                         auto* animInfo = dynamic_cast<LightRendererAnimationInfo*>(info);
-                        if (animInfo && animInfo->getAnimation()) {
+                        if (animInfo != nullptr && animInfo->getAnimation()) {
                             lightElement->SetAttribute("animation", animInfo->getAnimation()->getName().c_str());
                         }
                     }
@@ -553,9 +560,9 @@ namespace FIFE
     {
         MapSaver* saver = new MapSaver();
 
-        AnimationSaverPtr animSaver(new AnimationSaver());
-        AtlasSaverPtr atlasSaver(new AtlasSaver());
-        ObjectSaverPtr objSaver(new ObjectSaver(model, imageManager));
+        AnimationSaverPtr const animSaver(new AnimationSaver());
+        AtlasSaverPtr const atlasSaver(new AtlasSaver());
+        ObjectSaverPtr const objSaver(new ObjectSaver(model, imageManager));
         objSaver->setAnimationSaver(animSaver);
 
         saver->setObjectSaver(objSaver);

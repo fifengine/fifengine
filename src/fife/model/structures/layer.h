@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -384,11 +385,11 @@ namespace FIFE
             //! pointer to map
             Map* m_map;
             //! The instance tree
-            InstanceTree* m_instanceTree;
+            std::unique_ptr<InstanceTree> m_instanceTree;
             //! layer's cellgrid
             CellGrid* m_grid;
             //! pointer to cellcache
-            CellCache* m_cellCache;
+            std::unique_ptr<CellCache> m_cellCache;
             //! pathing strategy for the layer
             PathingStrategy m_pathingStrategy;
             //! sorting strategy for rendering

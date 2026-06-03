@@ -5,9 +5,12 @@
 #include "lightrenderer.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -36,10 +39,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     LightRendererElementInfo::LightRendererElementInfo(RendererNode const & n, int32_t src, int32_t dst) :
@@ -263,7 +267,8 @@ namespace FIFE
 
     RendererBase* LightRenderer::clone()
     {
-        return new LightRenderer(*this);
+        auto copy = std::make_unique<LightRenderer>(*this);
+        return copy.release();
     }
 
     LightRenderer::~LightRenderer() = default;
@@ -272,18 +277,20 @@ namespace FIFE
     LightRendererImageInfo* LightRenderer::addImage(
         std::string const & group, RendererNode const & n, ImagePtr const & image, int32_t src, int32_t dst)
     {
-        auto* info = new LightRendererImageInfo(n, image, src, dst);
-        m_groups[group].push_back(info);
-        return info;
+        auto info                   = std::make_unique<LightRendererImageInfo>(n, image, src, dst);
+        LightRendererImageInfo* ret = info.get();
+        m_groups[group].push_back(std::move(info));
+        return ret;
     }
 
     // Add a animation lightmap
     LightRendererAnimationInfo* LightRenderer::addAnimation(
         std::string const & group, RendererNode const & n, AnimationPtr const & animation, int32_t src, int32_t dst)
     {
-        auto* info = new LightRendererAnimationInfo(n, animation, src, dst);
-        m_groups[group].push_back(info);
-        return info;
+        auto info                       = std::make_unique<LightRendererAnimationInfo>(n, animation, src, dst);
+        LightRendererAnimationInfo* ret = info.get();
+        m_groups[group].push_back(std::move(info));
+        return ret;
     }
 
     // Add a simple light
@@ -301,10 +308,11 @@ namespace FIFE
         int32_t src,
         int32_t dst)
     {
-        auto* info =
-            new LightRendererSimpleLightInfo(n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
-        m_groups[group].push_back(info);
-        return info;
+        auto info = std::make_unique<LightRendererSimpleLightInfo>(
+            n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
+        LightRendererSimpleLightInfo* ret = info.get();
+        m_groups[group].push_back(std::move(info));
+        return ret;
     }
 
     // Resize an Image
@@ -317,9 +325,10 @@ namespace FIFE
         int32_t src,
         int32_t dst)
     {
-        auto* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
-        m_groups[group].push_back(info);
-        return info;
+        auto info                    = std::make_unique<LightRendererResizeInfo>(n, image, width, height, src, dst);
+        LightRendererResizeInfo* ret = info.get();
+        m_groups[group].push_back(std::move(info));
+        return ret;
     }
 
     // Enable stencil test for the group
@@ -357,20 +366,15 @@ namespace FIFE
     std::vector<LightRendererElementInfo*> LightRenderer::getLightInfo(std::string const & group)
     {
         std::vector<LightRendererElementInfo*> info;
-        auto info_it = m_groups[group].begin();
-        for (; info_it != m_groups[group].end(); ++info_it) {
-            info.push_back(*info_it);
-        }
+        std::ranges::transform(m_groups[group], std::back_inserter(info), [](auto const & entry) {
+            return entry.get();
+        });
         return info;
     }
 
     // Remove the group
     void LightRenderer::removeAll(std::string const & group)
     {
-        auto info_it = m_groups[group].begin();
-        for (; info_it != m_groups[group].end(); ++info_it) {
-            delete *info_it;
-        }
         m_groups[group].clear();
         m_groups.erase(group);
     }
@@ -378,13 +382,6 @@ namespace FIFE
     // Remove all groups
     void LightRenderer::removeAll()
     {
-        auto it = m_groups.begin();
-        for (; it != m_groups.end(); ++it) {
-            auto info_it = it->second.begin();
-            for (; info_it != it->second.end(); ++info_it) {
-                delete *info_it;
-            }
-        }
         m_groups.clear();
     }
 

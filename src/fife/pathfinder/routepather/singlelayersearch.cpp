@@ -45,12 +45,16 @@ namespace FIFE
         }
     } // namespace
 
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_PATHFINDER);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log()
+        {
+            static Logger log(LM_PATHFINDER);
+            return log;
+        }
 
-    static constexpr uint32_t MAX_ASTAR_EXPANSIONS = 100000;
+        constexpr uint32_t MAX_ASTAR_EXPANSIONS = 100000;
+    } // namespace
 
     SingleLayerSearch::SingleLayerSearch(Route* route, int32_t const sessionId) :
         RoutePatherSearch(route, sessionId),
@@ -59,6 +63,7 @@ namespace FIFE
         m_cellCache(m_from.getLayer()->getCellCache()),
         m_startCoordInt(m_cellCache->convertCoordToInt(m_from.getLayerCoordinates())),
         m_destCoordInt(m_cellCache->convertCoordToInt(m_to.getLayerCoordinates())),
+        m_expansionCount(0),
         m_next(0)
     {
 
@@ -67,7 +72,6 @@ namespace FIFE
         m_spt.resize(toSize(max_index), -1);
         m_sf.resize(toSize(max_index), -1);
         m_gCosts.resize(toSize(max_index), 0.0);
-        m_expansionCount = 0;
         static_assert(MAX_ASTAR_EXPANSIONS > 0, "expansion limit must be positive and reasonable");
     }
 
@@ -84,7 +88,7 @@ namespace FIFE
         // Safety guard against infinite loops during A* expansion
         if (++m_expansionCount > MAX_ASTAR_EXPANSIONS) {
             FL_ERR(
-                _log,
+                _log(),
                 std::format(
                     "A* exceeded max expansions ({}) route: start={{{},{}}} end={{{},{}}} multiCell={}",
                     MAX_ASTAR_EXPANSIONS,
@@ -102,7 +106,7 @@ namespace FIFE
         m_sortedfrontier.popElement();
         m_next                      = topvalue.first;
         std::size_t const nextIndex = toIndex(m_next);
-        m_spt[nextIndex]            = m_sf[nextIndex];
+        m_spt.at(nextIndex)         = m_sf.at(nextIndex);
         // found destination
         if (m_destCoordInt == m_next) {
             setSearchStatus(search_status_complete);
@@ -132,7 +136,7 @@ namespace FIFE
             }
             int32_t const adjacentInt       = adjacent->getCellId();
             std::size_t const adjacentIndex = toIndex(adjacentInt);
-            if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
+            if (m_sf.at(adjacentIndex) != -1 && m_spt.at(adjacentIndex) != -1) {
                 continue;
             }
             if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
@@ -168,7 +172,7 @@ namespace FIFE
                     adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
                     int32_t const rotation              = getAngleBetween(currentLoc, adjacentLoc);
-                    Object* obj                         = m_route->getObject();
+                    Object const * obj                  = m_route->getObject();
                     bool const hasCosts                 = (obj != nullptr) && obj->hasFootprintCosts();
                     std::vector<ModelCoordinate> coords = grid->toMultiCoordinates(
                         adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
@@ -217,7 +221,7 @@ namespace FIFE
                     }
                     // Apply footprint cost multiplier to gCost for soft-blocked cells
                     if (footprintCostMultiplier > 1.0) {
-                        double gCost = m_gCosts[nextIndex];
+                        double gCost = m_gCosts.at(nextIndex);
                         if (m_specialCost) {
                             gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId()) *
                                      footprintCostMultiplier;
@@ -225,15 +229,15 @@ namespace FIFE
                             gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord) * footprintCostMultiplier;
                         }
                         double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
-                        if (m_sf[adjacentIndex] == -1) {
+                        if (m_sf.at(adjacentIndex) == -1) {
                             m_sortedfrontier.pushElement(
                                 PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-                            m_gCosts[adjacentIndex] = gCost;
-                            m_sf[adjacentIndex]     = m_next;
-                        } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
+                            m_gCosts.at(adjacentIndex) = gCost;
+                            m_sf.at(adjacentIndex)     = m_next;
+                        } else if (gCost < m_gCosts.at(adjacentIndex) && m_spt.at(adjacentIndex) == -1) {
                             m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
-                            m_gCosts[adjacentIndex] = gCost;
-                            m_sf[adjacentIndex]     = m_next;
+                            m_gCosts.at(adjacentIndex) = gCost;
+                            m_sf.at(adjacentIndex)     = m_next;
                         }
                         continue;
                     }
@@ -255,21 +259,21 @@ namespace FIFE
                 }
             }
 
-            double gCost = m_gCosts[nextIndex];
+            double gCost = m_gCosts.at(nextIndex);
             if (m_specialCost) {
                 gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId());
             } else {
                 gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord);
             }
             double const hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
-            if (m_sf[adjacentIndex] == -1) {
+            if (m_sf.at(adjacentIndex) == -1) {
                 m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-                m_gCosts[adjacentIndex] = gCost;
-                m_sf[adjacentIndex]     = m_next;
-            } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
+                m_gCosts.at(adjacentIndex) = gCost;
+                m_sf.at(adjacentIndex)     = m_next;
+            } else if (gCost < m_gCosts.at(adjacentIndex) && m_spt.at(adjacentIndex) == -1) {
                 m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
-                m_gCosts[adjacentIndex] = gCost;
-                m_sf[adjacentIndex]     = m_next;
+                m_gCosts.at(adjacentIndex) = gCost;
+                m_sf.at(adjacentIndex)     = m_next;
             }
         }
     }
@@ -285,13 +289,13 @@ namespace FIFE
         path.push_back(newnode);
         while (current != end) {
             std::size_t const currentIndex = toIndex(current);
-            if (m_spt[currentIndex] < 0) {
+            if (m_spt.at(currentIndex) < 0) {
                 // This is when the size of m_spt can not handle the distance of the location
                 setSearchStatus(search_status_failed);
                 m_route->setRouteStatus(ROUTE_FAILED);
                 break;
             }
-            current                            = m_spt[currentIndex];
+            current                            = m_spt.at(currentIndex);
             ModelCoordinate const currentCoord = m_cellCache->convertIntToCoord(current);
             newnode.setLayerCoordinates(currentCoord);
             path.push_front(newnode);

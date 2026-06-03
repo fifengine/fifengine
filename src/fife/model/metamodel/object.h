@@ -185,7 +185,7 @@ namespace FIFE
             bool isSpecialSpeed() const;
 
             /** Sets the speed modifier.
-             * @param cost A double which value is used as speed multiplier.
+             * @param speed A double which value is used as speed multiplier.
              */
             void setSpeed(double speed);
 

@@ -32,6 +32,8 @@ namespace FIFE
             SdlGuiGraphics& operator=(SdlGuiGraphics const &) = delete;
 
             void updateTarget();
+            void drawSurface(SDL_Surface* surface, int dstX, int dstY) override;
+
             virtual void drawImage(
                 fcn::Image const * image,
                 int32_t srcX,

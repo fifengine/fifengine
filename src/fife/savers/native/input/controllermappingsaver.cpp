@@ -23,7 +23,9 @@ namespace FIFE
 #else
         fp = fopen(filename.c_str(), "w");
 #endif
-        fputs(data.c_str(), fp);
-        fclose(fp);
+        if (fp != nullptr) {
+            fputs(data.c_str(), fp);
+            fclose(fp);
+        }
     }
 } // namespace FIFE

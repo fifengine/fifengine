@@ -15,7 +15,7 @@
 #include "video/fonts/fontmanager.h"
 #include "video/fonts/fonttypes.h"
 #include "video/fonts/imagefontface.h"
-#include "video/fonts/truetypefontface.h"
+#include "video/fonts/truetypefontface.h">
 #include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;
@@ -23,19 +23,14 @@ using FIFE::AssetProvider;
 using FIFE::AssetRequest;
 using FIFE::AssetResolver;
 using FIFE::FONT_HANDLE_INVALID;
-using FIFE::FontDefinition;
-using FIFE::FontDefinitionLoader;
 using FIFE::FontFace;
 using FIFE::FontFaceCache;
 using FIFE::FontFaceKey;
-using FIFE::FontFamily;
 using FIFE::FontHandle;
 using FIFE::FontInstance;
 using FIFE::FontInstanceKey;
 using FIFE::FontManager;
 using FIFE::FontWeight;
-using FIFE::ImageFontFace;
-using FIFE::TrueTypeFontFace;
 
 // ---------------------------------------------------------------------------
 // FontFaceCache tests
@@ -45,7 +40,7 @@ TEST_CASE("FontFaceCache put and get")
 {
     FontFaceCache cache;
 
-    FontFaceKey const k{AssetHandle{42}, 0};
+    FontFaceKey const k{.asset = AssetHandle{42}, .ptsize = 0};
     auto face = std::make_shared<FontFace>(AssetHandle{42});
 
     cache.put(k, face);
@@ -58,7 +53,7 @@ TEST_CASE("FontFaceCache put overwrites existing entry")
 {
     FontFaceCache cache;
 
-    FontFaceKey const k{AssetHandle{1}, 0};
+    FontFaceKey const k{.asset = AssetHandle{1}, .ptsize = 0};
     auto face1 = std::make_shared<FontFace>(AssetHandle{1});
     auto face2 = std::make_shared<FontFace>(AssetHandle{1});
 
@@ -71,26 +66,26 @@ TEST_CASE("FontFaceCache put overwrites existing entry")
 TEST_CASE("FontFaceCache has returns false for missing key")
 {
     FontFaceCache cache;
-    REQUIRE_FALSE(cache.has(FontFaceKey{AssetHandle{999}, 0}));
+    REQUIRE_FALSE(cache.has(FontFaceKey{.asset = AssetHandle{999}, .ptsize = 0}));
 }
 
 TEST_CASE("FontFaceCache get missing key throws")
 {
     FontFaceCache cache;
-    REQUIRE_THROWS_AS(cache.get(FontFaceKey{AssetHandle{999}, 0}), std::out_of_range);
+    REQUIRE_THROWS_AS(cache.get(FontFaceKey{.asset = AssetHandle{999}, .ptsize = 0}), std::out_of_range);
 }
 
 TEST_CASE("FontFaceCache put null face throws")
 {
     FontFaceCache cache;
-    REQUIRE_THROWS_AS(cache.put(FontFaceKey{AssetHandle{1}, 0}, nullptr), std::invalid_argument);
+    REQUIRE_THROWS_AS(cache.put(FontFaceKey{.asset = AssetHandle{1}, .ptsize = 0}, nullptr), std::invalid_argument);
 }
 
 TEST_CASE("FontFaceCache remove")
 {
     FontFaceCache cache;
 
-    FontFaceKey const k{AssetHandle{1}, 0};
+    FontFaceKey const k{.asset = AssetHandle{1}, .ptsize = 0};
     cache.put(k, std::make_shared<FontFace>(AssetHandle{1}));
     REQUIRE(cache.has(k));
 
@@ -102,20 +97,20 @@ TEST_CASE("FontFaceCache remove")
 TEST_CASE("FontFaceCache remove missing key does nothing")
 {
     FontFaceCache cache;
-    REQUIRE_NOTHROW(cache.remove(FontFaceKey{AssetHandle{999}, 0}));
+    REQUIRE_NOTHROW(cache.remove(FontFaceKey{.asset = AssetHandle{999}, .ptsize = 0}));
 }
 
 TEST_CASE("FontFaceCache clear")
 {
     FontFaceCache cache;
 
-    cache.put(FontFaceKey{AssetHandle{1}, 0}, std::make_shared<FontFace>(AssetHandle{1}));
-    cache.put(FontFaceKey{AssetHandle{2}, 0}, std::make_shared<FontFace>(AssetHandle{2}));
+    cache.put(FontFaceKey{.asset = AssetHandle{1}, .ptsize = 0}, std::make_shared<FontFace>(AssetHandle{1}));
+    cache.put(FontFaceKey{.asset = AssetHandle{2}, .ptsize = 0}, std::make_shared<FontFace>(AssetHandle{2}));
     REQUIRE(cache.size() == 2);
 
     cache.clear();
     REQUIRE(cache.size() == 0);
-    REQUIRE_FALSE(cache.has(FontFaceKey{AssetHandle{1}, 0}));
+    REQUIRE_FALSE(cache.has(FontFaceKey{.asset = AssetHandle{1}, .ptsize = 0}));
 }
 
 TEST_CASE("FontFaceCache empty cache size is zero")
@@ -134,11 +129,11 @@ namespace
     class TestAssetProvider : public AssetProvider
     {
         public:
-            bool canResolve(AssetRequest const &) const override
+            bool canResolve(AssetRequest const & request) const override
             {
                 return true;
             }
-            AssetHandle resolve(AssetRequest const &) const override
+            AssetHandle resolve(AssetRequest const & request) const override
             {
                 static uint64_t nextId = 100;
                 return AssetHandle{nextId++};
@@ -176,12 +171,12 @@ TEST_CASE("FontManager getFamily throws for unknown")
 
 TEST_CASE("FontManager loadManifestFromString creates families")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -205,13 +200,13 @@ TEST_CASE("FontManager loadManifest with missing file throws")
 
 TEST_CASE("FontManager getFontHandle caches same key")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -230,13 +225,13 @@ TEST_CASE("FontManager getFontHandle caches same key")
 
 TEST_CASE("FontManager getFontHandle different size gives different handle")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -255,13 +250,13 @@ TEST_CASE("FontManager getFontHandle different size gives different handle")
 
 TEST_CASE("FontManager getFontInstance returns valid instance")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -298,13 +293,13 @@ TEST_CASE("FontManager getFontHandle unknown family throws")
 
 TEST_CASE("FontManager clearInstanceCache resets state")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -328,12 +323,12 @@ TEST_CASE("FontManager clearInstanceCache resets state")
 
 TEST_CASE("FontManager face cache size reflects loaded fonts")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());
     FontManager mgr(std::move(resolver));
 
-    std::string xml =
+    std::string const xml =
         R"(<?xml version="1.0"?>
 <fonts version="1">
   <family id="UI">
@@ -360,7 +355,7 @@ TEST_CASE("FontManager non-copyable")
 
 TEST_CASE("FontManager instance cache clear invalidates handles")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     auto resolver = std::make_unique<AssetResolver>();
     resolver->addProvider(std::make_unique<TestAssetProvider>());

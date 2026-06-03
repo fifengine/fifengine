@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <span>
 #include <stdexcept>
 #include <string>
 
@@ -40,7 +41,8 @@ namespace FIFE
         if (ptsize <= 0) {
             throw std::invalid_argument("Font size must be positive");
         }
-        m_fontData.assign(data, data + size);
+        auto const fontSpan = std::span(data, size);
+        m_fontData.assign(fontSpan.begin(), fontSpan.end());
         SDL_IOStream* iostream = SDL_IOFromConstMem(m_fontData.data(), m_fontData.size());
         if (iostream == nullptr) {
             throw std::runtime_error("Failed to create SDL_IOStream from font data");

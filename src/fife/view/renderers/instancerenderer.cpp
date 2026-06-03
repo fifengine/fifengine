@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstring>
 #include <format>
 #include <limits>
 #include <list>
@@ -46,10 +47,11 @@ namespace FIFE
         /** Logger to use for this source file.
          *  @relates Logger
          */
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
         int32_t toInt32Dimension(uint32_t value)
         {
             assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
@@ -186,10 +188,10 @@ namespace FIFE
 
     void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        //		FL_DBG(_log, "Iterating layer...");
+        //		FL_DBG(_log(), "Iterating layer...");
         CellGrid const * cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
+            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw instances");
             return;
         }
 
@@ -226,7 +228,7 @@ namespace FIFE
 
         auto instance_it = instances.begin();
         for (; instance_it != instances.end(); ++instance_it) {
-            //			FL_DBG(_log, "Iterating instances...");
+            //			FL_DBG(_log(), "Iterating instances...");
             Instance* instance  = (*instance_it)->instance;
             RenderItem& vc      = **instance_it;
             float const vertexZ = vc.vertexZ;
@@ -280,11 +282,11 @@ namespace FIFE
                 auto coloring_it    = m_instance_colorings.find(instance);
                 bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
-                    coloringColor[0] = coloring_it->second.r;
-                    coloringColor[1] = coloring_it->second.g;
-                    coloringColor[2] = coloring_it->second.b;
-                    coloringColor[3] = coloring_it->second.a;
-                    recoloring       = true;
+                    coloringColor.at(0) = coloring_it->second.r;
+                    coloringColor.at(1) = coloring_it->second.g;
+                    coloringColor.at(2) = coloring_it->second.b;
+                    coloringColor.at(3) = coloring_it->second.a;
+                    recoloring          = true;
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
@@ -354,11 +356,11 @@ namespace FIFE
                 auto coloring_it    = m_instance_colorings.find(instance);
                 bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
-                    coloringColor[0] = coloring_it->second.r;
-                    coloringColor[1] = coloring_it->second.g;
-                    coloringColor[2] = coloring_it->second.b;
-                    coloringColor[3] = coloring_it->second.a;
-                    recoloring       = true;
+                    coloringColor.at(0) = coloring_it->second.r;
+                    coloringColor.at(1) = coloring_it->second.g;
+                    coloringColor.at(2) = coloring_it->second.b;
+                    coloringColor.at(3) = coloring_it->second.a;
+                    recoloring          = true;
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
@@ -413,7 +415,7 @@ namespace FIFE
 
         auto instance_it = instances.begin();
         for (; instance_it != instances.end(); ++instance_it) {
-            //			FL_DBG(_log, "Iterating instances...");
+            //			FL_DBG(_log(), "Iterating instances...");
             Instance* instance = (*instance_it)->instance;
             RenderItem& vc     = **instance_it;
 
@@ -452,7 +454,7 @@ namespace FIFE
                 }
             }
 
-            //			FL_DBG(_log, std::format("Instance layer coordinates = {}",
+            //			FL_DBG(_log(), std::format("Instance layer coordinates = {}",
             // instance->getLocationRef().getLayerCoordinates()));
 
             std::array<uint8_t, 4> coloringColor{};
@@ -463,11 +465,11 @@ namespace FIFE
                 auto coloring_it    = m_instance_colorings.find(instance);
                 bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring && !m_need_bind_coloring) {
-                    coloringColor[0] = coloring_it->second.r;
-                    coloringColor[1] = coloring_it->second.g;
-                    coloringColor[2] = coloring_it->second.b;
-                    coloringColor[3] = coloring_it->second.a;
-                    recoloring       = true;
+                    coloringColor.at(0) = coloring_it->second.r;
+                    coloringColor.at(1) = coloring_it->second.g;
+                    coloringColor.at(2) = coloring_it->second.b;
+                    coloringColor.at(3) = coloring_it->second.a;
+                    recoloring          = true;
                 }
                 // outline
                 auto outline_it    = m_instance_outlines.find(instance);
@@ -551,6 +553,10 @@ namespace FIFE
     void InstanceRenderer::renderOverlay(
         RenderDataType type, RenderItem* item, uint8_t const * coloringColor, bool recoloring)
     {
+        std::array<uint8_t, 4> cc{};
+        if (coloringColor != nullptr) {
+            std::memcpy(cc.data(), coloringColor, sizeof(cc));
+        }
         RenderItem const & vc = *item;
         bool const withZ      = type != RENDER_DATA_WITHOUT_Z;
         float const vertexZ   = vc.vertexZ;
@@ -564,11 +570,11 @@ namespace FIFE
         if ((animationOverlay != nullptr) && (animationColorOverlay == nullptr)) {
             if (withZ) {
                 for (auto& it : *animationOverlay) {
-                    it->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    it->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                 }
             } else {
                 for (auto& it : *animationOverlay) {
-                    it->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    it->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                 }
             }
             // animation overlay with color overlay
@@ -579,9 +585,9 @@ namespace FIFE
                 OverlayColors* oc = (*ovit);
                 if (oc == nullptr) {
                     if (withZ) {
-                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                     } else {
-                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                     }
                 } else {
                     if (oc->getColors().size() > 1) {
@@ -592,7 +598,7 @@ namespace FIFE
                         if (recoloring) {
                             // create temp OverlayColors
                             auto* temp        = new OverlayColors(oc->getColorOverlayImage());
-                            auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                            auto alphaFactor1 = static_cast<float>(cc.at(3) / 255.0);
                             std::map<Color, Color> const & defaultColors = oc->getColors();
                             for (auto const & defaultColor : defaultColors) {
                                 if (defaultColor.second.getAlpha() == 0) {
@@ -601,33 +607,32 @@ namespace FIFE
                                 float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                                 Color const c(
                                     toUint8Channel(
-                                        (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                        (cc.at(0) * (1.0F - alphaFactor1)) +
                                         ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
                                     toUint8Channel(
-                                        (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                        (cc.at(1) * (1.0F - alphaFactor1)) +
                                         ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
                                     toUint8Channel(
-                                        (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                        (cc.at(2) * (1.0F - alphaFactor1)) +
                                         ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
                                     255);
                                 temp->changeColor(defaultColor.first, c);
                             }
                             // create new factor
-                            factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
-                            factor[3] = std::min(coloringColor[3], factor[3]);
+                            factor.at(3) = toUint8Channel(255 - static_cast<int32_t>(factor.at(3)));
+                            factor.at(3) = std::min(cc.at(3), factor.at(3));
                             // get overlay image with temp colors
                             multiColorOverlay = getMultiColorOverlay(vc, temp);
                             delete temp;
                         } else {
                             multiColorOverlay = getMultiColorOverlay(vc, oc);
-                            factor[3]         = 0;
+                            factor.at(3)      = 0;
                         }
                         if (withZ) {
-                            (*it)->renderZ(
-                                vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                            (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                             (*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor.data());
                         } else {
-                            (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                            (*it)->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                             (*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor.data());
                         }
                         continue;
@@ -639,22 +644,22 @@ namespace FIFE
                         color_it->second.getG(),
                         color_it->second.getB(),
                         toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
-                    bool const noOverlay = rgba[3] == 255;
+                    bool const noOverlay = rgba.at(3) == 255;
                     if (recoloring) {
                         if (!noOverlay) {
-                            float const alphaFactor1 = alphaFraction(coloringColor[3]);
-                            float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
-                            rgba[0]                  = toUint8Channel(
-                                (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
-                            rgba[1] = toUint8Channel(
-                                (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
-                            rgba[2] = toUint8Channel(
-                                (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
-                            rgba[3] = std::min(coloringColor[3], rgba[3]);
+                            float const alphaFactor1 = alphaFraction(cc.at(3));
+                            float const alphaFactor2 = 1.0F - alphaFraction(rgba.at(3));
+                            rgba.at(0)               = toUint8Channel(
+                                (cc.at(0) * (1.0F - alphaFactor1)) + ((rgba.at(0) * alphaFactor2) * alphaFactor1));
+                            rgba.at(1) = toUint8Channel(
+                                (cc.at(1) * (1.0F - alphaFactor1)) + ((rgba.at(1) * alphaFactor2) * alphaFactor1));
+                            rgba.at(2) = toUint8Channel(
+                                (cc.at(2) * (1.0F - alphaFactor1)) + ((rgba.at(2) * alphaFactor2) * alphaFactor1));
+                            rgba.at(3) = std::min(cc.at(3), rgba.at(3));
                         }
                     }
                     if (withZ) {
-                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                         if (!noOverlay) {
                             (*it)->renderZ(
                                 vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba.data());
@@ -662,7 +667,7 @@ namespace FIFE
                                 type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                         }
                     } else {
-                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                         if (!noOverlay) {
                             (*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba.data());
                             m_renderbackend->changeRenderInfos(
@@ -682,7 +687,7 @@ namespace FIFE
                 if (recoloring) {
                     // create temp OverlayColors
                     auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
-                    float const alphaFactor1 = alphaFraction(coloringColor[3]);
+                    float const alphaFactor1 = alphaFraction(cc.at(3));
                     std::map<Color, Color> const & defaultColors = colorOverlay->getColors();
                     for (auto const & defaultColor : defaultColors) {
                         if (defaultColor.second.getAlpha() == 0) {
@@ -691,33 +696,33 @@ namespace FIFE
                         float const alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                         Color const c(
                             toUint8Channel(
-                                (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                (cc.at(0) * (1.0F - alphaFactor1)) +
                                 ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
                             toUint8Channel(
-                                (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                (cc.at(1) * (1.0F - alphaFactor1)) +
                                 ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
                             toUint8Channel(
-                                (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                (cc.at(2) * (1.0F - alphaFactor1)) +
                                 ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
                             255);
                         temp->changeColor(defaultColor.first, c);
                     }
                     // create new factor
-                    factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
-                    factor[3] = std::min(coloringColor[3], factor[3]);
+                    factor.at(3) = toUint8Channel(255 - static_cast<int32_t>(factor.at(3)));
+                    factor.at(3) = std::min(cc.at(3), factor.at(3));
                     // get overlay image with temp colors
                     multiColorOverlay = getMultiColorOverlay(vc, temp);
                     delete temp;
                 }
                 if (!multiColorOverlay) {
                     multiColorOverlay = getMultiColorOverlay(vc);
-                    factor[3]         = 0;
+                    factor.at(3)      = 0;
                 }
                 if (withZ) {
-                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                     vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor.data());
                 } else {
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                     vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor.data());
                 }
             } else {
@@ -728,22 +733,22 @@ namespace FIFE
                     color_it->second.getG(),
                     color_it->second.getB(),
                     toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
-                bool const noOverlay = rgba[3] == 255;
+                bool const noOverlay = rgba.at(3) == 255;
                 if (recoloring) {
                     if (!noOverlay) {
-                        float const alphaFactor1 = alphaFraction(coloringColor[3]);
-                        float const alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
-                        rgba[0]                  = toUint8Channel(
-                            (coloringColor[0] * (1.0F - alphaFactor1)) + ((rgba[0] * alphaFactor2) * alphaFactor1));
-                        rgba[1] = toUint8Channel(
-                            (coloringColor[1] * (1.0F - alphaFactor1)) + ((rgba[1] * alphaFactor2) * alphaFactor1));
-                        rgba[2] = toUint8Channel(
-                            (coloringColor[2] * (1.0F - alphaFactor1)) + ((rgba[2] * alphaFactor2) * alphaFactor1));
-                        rgba[3] = std::min(coloringColor[3], rgba[3]);
+                        float const alphaFactor1 = alphaFraction(cc.at(3));
+                        float const alphaFactor2 = 1.0F - alphaFraction(rgba.at(3));
+                        rgba.at(0)               = toUint8Channel(
+                            (cc.at(0) * (1.0F - alphaFactor1)) + ((rgba.at(0) * alphaFactor2) * alphaFactor1));
+                        rgba.at(1) = toUint8Channel(
+                            (cc.at(1) * (1.0F - alphaFactor1)) + ((rgba.at(1) * alphaFactor2) * alphaFactor1));
+                        rgba.at(2) = toUint8Channel(
+                            (cc.at(2) * (1.0F - alphaFactor1)) + ((rgba.at(2) * alphaFactor2) * alphaFactor1));
+                        rgba.at(3) = std::min(cc.at(3), rgba.at(3));
                     }
                 }
                 if (withZ) {
-                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                     if (!noOverlay) {
                         vc.image->renderZ(
                             vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba.data());
@@ -751,7 +756,7 @@ namespace FIFE
                             type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                     }
                 } else {
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? cc.data() : nullptr);
                     if (!noOverlay) {
                         vc.image->render(
                             vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba.data());
@@ -763,13 +768,16 @@ namespace FIFE
         }
     }
 
-    static inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
+    namespace
     {
-        if (threshold > 1) {
-            return (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha));
+        bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
+        {
+            if (threshold > 1) {
+                return ((alpha - threshold) >= 0 && (alpha != prev_alpha));
+            }
+            return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
         }
-        return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
-    }
+    } // namespace
 
     Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
     {
@@ -867,18 +875,18 @@ namespace FIFE
         }
 
         // In case of OpenGL backend, SDLImage needs to be converted
-        Image* img = m_renderbackend->createImage(sts.str(), outline_surface);
+        auto img = m_renderbackend->createImage(sts.str(), outline_surface);
         img->setState(IResource::RES_LOADED);
 
         if (found) {
             // image exists but is not "loaded"
             removeFromCheck(info.outline);
-            ImagePtr const temp(img);
+            ImagePtr const temp(img.release());
             info.outline.get()->copySubimage(0, 0, temp);
             info.outline.get()->setState(IResource::RES_LOADED);
         } else {
             // create and add image
-            info.outline = ImageManager::instance()->add(img);
+            info.outline = ImageManager::instance()->add(std::move(img));
         }
         // mark outline as not dirty since we created/recreated it here
         info.dirty = false;
@@ -988,18 +996,18 @@ namespace FIFE
         }
 
         // In case of OpenGL backend, SDLImage needs to be converted
-        Image* img = m_renderbackend->createImage(sts.str(), outline_surface);
+        auto img = m_renderbackend->createImage(sts.str(), outline_surface);
         img->setState(IResource::RES_LOADED);
 
         if (found) {
             // image exists but is not "loaded"
             removeFromCheck(info.outline);
-            ImagePtr const temp(img);
+            ImagePtr const temp(img.release());
             info.outline.get()->copySubimage(0, 0, temp);
             info.outline.get()->setState(IResource::RES_LOADED);
         } else {
             // create and add image
-            info.outline = ImageManager::instance()->add(img);
+            info.outline = ImageManager::instance()->add(std::move(img));
         }
         // mark outline as not dirty since we created/recreated it here
         info.dirty = false;
@@ -1074,18 +1082,18 @@ namespace FIFE
         }
 
         // In case of OpenGL backend, SDLImage needs to be converted
-        Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+        auto img = m_renderbackend->createImage(sts.str(), overlay_surface);
 
         if (found) {
             // image exists but is not "loaded"
             removeFromCheck(info.overlay);
-            ImagePtr const temp(img);
+            ImagePtr const temp(img.release());
             info.overlay.get()->copySubimage(0, 0, temp);
             info.overlay.get()->setState(IResource::RES_LOADED);
         } else {
             // add image
             img->setState(IResource::RES_LOADED);
-            info.overlay = ImageManager::instance()->add(img);
+            info.overlay = ImageManager::instance()->add(std::move(img));
         }
         // mark overlay as not dirty since we created/recreated it here
         info.dirty = false;
@@ -1159,18 +1167,19 @@ namespace FIFE
             }
 
             // In case of OpenGL backend, SDLImage needs to be converted
-            Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+            auto img = m_renderbackend->createImage(sts.str(), overlay_surface);
 
             if (exist) {
                 // image exists but is not "loaded"
                 removeFromCheck(colorOverlay);
-                ImagePtr const temp(img);
-                colorOverlay.get()->setSurface(img->detachSurface());
+                Image* rawImg = img.release();
+                ImagePtr const temp(rawImg);
+                colorOverlay.get()->setSurface(rawImg->detachSurface());
                 colorOverlay.get()->setState(IResource::RES_LOADED);
             } else {
                 // add image
                 img->setState(IResource::RES_LOADED);
-                colorOverlay = ImageManager::instance()->add(img);
+                colorOverlay = ImageManager::instance()->add(std::move(img));
             }
         }
         addToCheck(colorOverlay);

@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <format>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -51,18 +52,21 @@ namespace FIFE
         SDL_LockSurface(surface);
         auto const * fmt = SDL_GetPixelFormatDetails(surface->format);
 
+        auto allPixels =
+            std::span(static_cast<uint32_t*>(surface->pixels), static_cast<size_t>((surface->pitch / 4) * surface->h));
+        size_t const pitchPx = static_cast<size_t>(surface->pitch / 4);
+
         for (int y = 0; y < surface->h; ++y) {
-            auto* row = reinterpret_cast<Uint32*>(
-                static_cast<uint8_t*>(surface->pixels) + (static_cast<ptrdiff_t>(y) * surface->pitch));
+            size_t const rowStart = static_cast<size_t>(y) * pitchPx;
 
             for (int x = 0; x < surface->w; ++x) {
                 Uint8 r = 0;
                 Uint8 g = 0;
                 Uint8 b = 0;
                 Uint8 a = 0;
-                SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
+                SDL_GetRGBA(allPixels[rowStart + static_cast<size_t>(x)], fmt, nullptr, &r, &g, &b, &a);
                 if (a == 0) {
-                    row[x] = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
+                    allPixels[rowStart + static_cast<size_t>(x)] = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
                 }
             }
         }
@@ -90,7 +94,7 @@ namespace FIFE
         if (iostream == nullptr) {
             return nullptr;
         }
-        SDL_IOStreamPtr ioGuard{iostream};
+        SDL_IOStreamPtr const ioGuard{iostream};
 
         auto* surface = IMG_Load_IO(iostream, false);
         if (surface == nullptr) {
@@ -111,7 +115,7 @@ namespace FIFE
             return;
         }
 
-        std::string filename = img->getName();
+        std::string const filename = img->getName();
         std::string fileError;
 
         auto surface = loadSurface(filename, fileError);

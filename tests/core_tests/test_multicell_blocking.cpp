@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+#include <memory>
 #include <vector>
 
 #include "model/metamodel/grids/squaregrid.h"
@@ -10,7 +11,7 @@
 #include "model/structures/cellcache.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
-#include "util/time/timemanager.h">
+#include "util/time/timemanager.h"
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
@@ -42,35 +43,33 @@ namespace
     {
             TimeManager tm;
             SquareGrid grid;
-            Layer* layer{nullptr};
-            Object* mainObj{nullptr};
-            Object* part1{nullptr};
+            std::unique_ptr<Layer> layer;
+            std::unique_ptr<Object> mainObj;
+            std::unique_ptr<Object> part1;
 
             MultiCellFixture()
             {
-                layer = new Layer("test_layer", nullptr, &grid);
+                layer = std::make_unique<Layer>("test_layer", nullptr, &grid);
                 assert("layer must exist after creation" && layer != nullptr);
                 layer->setWalkable(true);
                 layer->createCellCache();
 
-                mainObj = new Object("wall_main", "test");
+                mainObj = std::make_unique<Object>("wall_main", "test");
                 mainObj->setBlocking(true);
                 mainObj->setStatic(true);
 
-                part1 = new Object("wall_part", "test");
+                part1 = std::make_unique<Object>("wall_part", "test");
                 part1->setMultiPart(true);
                 part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
 
                 mainObj->addMultiPartId("wall_part");
-                mainObj->addMultiPart(part1);
+                mainObj->addMultiPart(part1.get());
             }
 
-            ~MultiCellFixture()
-            {
-                delete layer;
-                delete mainObj;
-                delete part1;
-            }
+            MultiCellFixture(MultiCellFixture const &)            = delete;
+            MultiCellFixture& operator=(MultiCellFixture const &) = delete;
+            MultiCellFixture(MultiCellFixture&&)                  = delete;
+            MultiCellFixture& operator=(MultiCellFixture&&)       = delete;
     };
 
     bool isBlocked(CellTypeInfo t)
@@ -87,7 +86,7 @@ namespace
 TEST_CASE("W1-T0A: multi-cell blocking on initial placement", "[multicell]")
 {
     MultiCellFixture f;
-    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     Cell* mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
@@ -104,7 +103,7 @@ TEST_CASE("W1-T0A: multi-cell blocking on initial placement", "[multicell]")
 TEST_CASE("W1-T0A: multi-cell blocking toggle propagates to sub-cells", "[multicell]")
 {
     MultiCellFixture f;
-    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
     inst->setOverrideBlocking(true);
 
@@ -131,7 +130,7 @@ TEST_CASE("W1-T0A: multi-cell rotation updates occupied cells", "[multicell]")
     MultiCellFixture f;
     f.part1->addMultiPartCoordinate(90, ModelCoordinate(0, 1, 0));
 
-    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     f.layer->update();
@@ -162,7 +161,7 @@ TEST_CASE("W1-T0A: multi-cell with multiple rotations (0, 90, 180, 270)", "[mult
     f.part1->addMultiPartCoordinate(180, ModelCoordinate(-1, 0, 0));
     f.part1->addMultiPartCoordinate(270, ModelCoordinate(0, -1, 0));
 
-    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
     inst->setOverrideBlocking(true);
 
@@ -192,13 +191,13 @@ TEST_CASE("W1-T0A: multi-cell with multiple rotations (0, 90, 180, 270)", "[mult
 TEST_CASE("W1-T0A: multi-cell with two sub-parts", "[multicell]")
 {
     MultiCellFixture f;
-    Object* part2 = new Object("wall_part2", "test");
+    auto part2 = std::make_unique<Object>("wall_part2", "test");
     part2->setMultiPart(true);
     part2->addMultiPartCoordinate(0, ModelCoordinate(0, 1, 0));
     f.mainObj->addMultiPartId("wall_part2");
-    f.mainObj->addMultiPart(part2);
+    f.mainObj->addMultiPart(part2.get());
 
-    Instance* inst   = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
     CHECK(isBlocked(cache->getCell(ModelCoordinate(5, 5, 0))->getCellType()));
@@ -206,14 +205,13 @@ TEST_CASE("W1-T0A: multi-cell with two sub-parts", "[multicell]")
     CHECK(isBlocked(cache->getCell(ModelCoordinate(5, 6, 0))->getCellType()));
 
     f.layer->deleteInstance(inst);
-    delete part2;
 }
 
 TEST_CASE("W1-T0A: multi-cell with idle change events only (no rotation/location/block)", "[multicell]")
 {
     // Ensure no crash when layer update fires but nothing changed
     MultiCellFixture f;
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
     f.layer->update();
     f.layer->deleteInstance(inst);
@@ -226,11 +224,11 @@ TEST_CASE("W1-T0A: multi-cell with idle change events only (no rotation/location
 TEST_CASE("baseline: single cell blocking change propagates to cell type", "[multicell][baseline]")
 {
     MultiCellFixture f;
-    Object* singleObj = new Object("single", "test");
+    auto singleObj = std::make_unique<Object>("single", "test");
     singleObj->setBlocking(true);
     singleObj->setStatic(true);
 
-    Instance* inst = f.layer->createInstance(singleObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = f.layer->createInstance(singleObj.get(), ModelCoordinate(5, 5, 0));
     inst->setOverrideBlocking(true);
     CellCache* cache = f.layer->getCellCache();
     Cell* cell       = cache->getCell(ModelCoordinate(5, 5, 0));
@@ -246,7 +244,6 @@ TEST_CASE("baseline: single cell blocking change propagates to cell type", "[mul
     CHECK(cell->getCellType() == CTYPE_STATIC_BLOCKER);
 
     f.layer->deleteInstance(inst);
-    delete singleObj;
 }
 
 // ============================================================
@@ -256,15 +253,15 @@ TEST_CASE("baseline: single cell blocking change propagates to cell type", "[mul
 TEST_CASE("W6-T0A: multi-cell move rejected when sub-instance would be off-grid", "[multicell][edge]")
 {
     MultiCellFixture f;
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
 
-    // Move to (0,5) — sub-instance would be at (1,5) which exists in cache
-    // (the fixture created cells in the (5,5) area, so (1,5) is OUTSIDE the cache)
-    Location newLoc(f.layer);
-    newLoc.setLayerCoordinates(ModelCoordinate(0, 5, 0));
+    // Move to (0,10) — sub-instance would be at (1,10) outside the cell cache
+    // (cache covers x=0..6, y=0..5 after createInstance at (5,5))
+    Location newLoc(f.layer.get());
+    newLoc.setLayerCoordinates(ModelCoordinate(0, 10, 0));
     Location const oldLoc = inst->getLocation();
     inst->setLocation(newLoc);
-    // Move should be rejected (sub-instance would be off cache)
+    // Move should be rejected (sub-instance cell is outside cache)
     ModelCoordinate const after = inst->getLocation().getLayerCoordinates();
     CHECK(after.x == oldLoc.getLayerCoordinates().x); // unchanged
 
@@ -274,17 +271,16 @@ TEST_CASE("W6-T0A: multi-cell move rejected when sub-instance would be off-grid"
 TEST_CASE("W6-T0A: single-cell move to off-grid is handled gracefully", "[multicell][edge]")
 {
     MultiCellFixture f;
-    Object* singleObj = new Object("s", "test");
+    auto singleObj = std::make_unique<Object>("s", "test");
     singleObj->setBlocking(false);
-    Instance* inst = f.layer->createInstance(singleObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = f.layer->createInstance(singleObj.get(), ModelCoordinate(5, 5, 0));
 
-    Location offGrid(f.layer);
+    Location offGrid(f.layer.get());
     offGrid.setLayerCoordinates(ModelCoordinate(-100, -100, 0));
     inst->setLocation(offGrid);
     // Instance may or may not move; key is no crash
 
     f.layer->deleteInstance(inst);
-    delete singleObj;
 }
 
 TEST_CASE("W6-T0B: multi-cell placement rejected when sub-cell overlaps blocker", "[multicell][edge]")
@@ -292,11 +288,11 @@ TEST_CASE("W6-T0B: multi-cell placement rejected when sub-cell overlaps blocker"
     MultiCellFixture f;
 
     // Place a blocking instance where the multi-cell's sub would go
-    Instance* existing = f.layer->createInstance(f.mainObj, ModelCoordinate(6, 6, 0));
+    Instance* existing = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(6, 6, 0));
 
     // Try to place another multi-cell at (5,6) — the sub-instance would be at (6,6)
     // which already has a blocking instance. Should reject sub-instance creation.
-    Instance* overlap = f.layer->createInstance(f.mainObj, ModelCoordinate(5, 6, 0));
+    Instance* overlap = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 6, 0));
     // The main instance may be created but sub-instances should not exist
     // due to the overlap check in Instance constructor
 
@@ -311,7 +307,7 @@ TEST_CASE("W6-T0B: multi-cell placement succeeds when sub-cell is clear", "[mult
     MultiCellFixture f;
 
     // Place multi-cell in clear area — should create normally
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(10, 10, 0));
+    Instance* inst = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(10, 10, 0));
     CHECK(inst->isMultiObject());
 
     f.layer->deleteInstance(inst);
@@ -327,7 +323,7 @@ TEST_CASE("W5-T0B: getOccupiedCells returns main + sub-instance cells", "[multic
     // Populate angle map and footprint cache
     f.mainObj->getMultiObjectCoordinates(0);
     f.mainObj->initializeFootprintCache(&f.grid);
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(8, 8, 0));
+    Instance* inst = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(8, 8, 0));
     f.layer->update();
 
     std::vector<ModelCoordinate> const cells = inst->getOccupiedCells();
@@ -358,7 +354,7 @@ TEST_CASE("W5-T0B: getOccupiedCells after rotation returns updated cells", "[mul
     f.mainObj->getMultiObjectCoordinates(90);
     f.mainObj->initializeFootprintCache(&f.grid);
 
-    Instance* inst = f.layer->createInstance(f.mainObj, ModelCoordinate(8, 8, 0));
+    Instance* inst = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(8, 8, 0));
     f.layer->update();
 
     // Rotate 90°: sub moves from (9,8) to (8,9)
@@ -390,17 +386,16 @@ TEST_CASE("W5-T0B: getOccupiedCells after rotation returns updated cells", "[mul
 TEST_CASE("W5-T0B: non-multi instance returns single cell from getOccupiedCells", "[multicell]")
 {
     MultiCellFixture f;
-    Object* singleObj = new Object("s", "test");
+    auto singleObj = std::make_unique<Object>("s", "test");
     singleObj->setBlocking(false);
-    Instance* inst = f.layer->createInstance(singleObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = f.layer->createInstance(singleObj.get(), ModelCoordinate(5, 5, 0));
 
     std::vector<ModelCoordinate> cells = inst->getOccupiedCells();
     CHECK(cells.size() == 1);
-    CHECK(cells[0].x == 5);
-    CHECK(cells[0].y == 5);
+    CHECK(cells.at(0).x == 5);
+    CHECK(cells.at(0).y == 5);
 
     f.layer->deleteInstance(inst);
-    delete singleObj;
 }
 
 // ============================================================
@@ -432,7 +427,7 @@ TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT fires on multi-cell rotation", "[multicell]
     MultiCellFixture fix;
     fix.part1->addMultiPartCoordinate(90, ModelCoordinate(0, 1, 0));
 
-    Instance* inst = fix.layer->createInstance(fix.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = fix.layer->createInstance(fix.mainObj.get(), ModelCoordinate(5, 5, 0));
     FootprintListener listener;
     inst->addChangeListener(&listener);
     fix.layer->update();
@@ -451,17 +446,17 @@ TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT fires on multi-cell location change", "[mul
     MultiCellFixture fix;
 
     // Keep a marker alive to expand cell cache to cover the target area
-    Object* marker = new Object("m", "test");
+    auto marker = std::make_unique<Object>("m", "test");
     marker->setBlocking(false);
-    fix.layer->createInstance(marker, ModelCoordinate(12, 12, 0));
+    fix.layer->createInstance(marker.get(), ModelCoordinate(12, 12, 0));
 
-    Instance* inst = fix.layer->createInstance(fix.mainObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = fix.layer->createInstance(fix.mainObj.get(), ModelCoordinate(5, 5, 0));
     FootprintListener listener;
     inst->addChangeListener(&listener);
     fix.layer->update();
 
     // Move to new cell — should fire ICHANGE_LOC | ICHANGE_CELL | ICHANGE_FOOTPRINT
-    Location newLoc(fix.layer);
+    Location newLoc(fix.layer.get());
     newLoc.setLayerCoordinates(ModelCoordinate(10, 10, 0));
     inst->setLocation(newLoc);
     fix.layer->update();
@@ -469,7 +464,6 @@ TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT fires on multi-cell location change", "[mul
     CHECK(listener.lastChange & ICHANGE_FOOTPRINT);
 
     fix.layer->deleteInstance(inst);
-    delete marker;
 }
 
 TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT not fired for single-cell instance", "[multicell]")
@@ -477,19 +471,19 @@ TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT not fired for single-cell instance", "[mult
     MultiCellFixture fix;
 
     // Keep a marker alive to expand cache
-    Object* marker = new Object("m", "test");
+    auto marker = std::make_unique<Object>("m", "test");
     marker->setBlocking(false);
-    fix.layer->createInstance(marker, ModelCoordinate(12, 12, 0));
+    fix.layer->createInstance(marker.get(), ModelCoordinate(12, 12, 0));
 
-    Object* singleObj = new Object("single", "test");
+    auto singleObj = std::make_unique<Object>("single", "test");
     singleObj->setBlocking(false);
-    Instance* inst = fix.layer->createInstance(singleObj, ModelCoordinate(5, 5, 0));
+    Instance* inst = fix.layer->createInstance(singleObj.get(), ModelCoordinate(5, 5, 0));
     FootprintListener listener;
     inst->addChangeListener(&listener);
     fix.layer->update();
 
     // Move — should fire ICHANGE_LOC but NOT ICHANGE_FOOTPRINT
-    Location newLoc(fix.layer);
+    Location newLoc(fix.layer.get());
     newLoc.setLayerCoordinates(ModelCoordinate(10, 10, 0));
     inst->setLocation(newLoc);
     fix.layer->update();
@@ -497,6 +491,4 @@ TEST_CASE("W5-T0A: ICHANGE_FOOTPRINT not fired for single-cell instance", "[mult
     CHECK(!(listener.lastChange & ICHANGE_FOOTPRINT));
 
     fix.layer->deleteInstance(inst);
-    delete singleObj;
-    delete marker;
 }

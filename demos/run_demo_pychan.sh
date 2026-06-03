@@ -8,6 +8,9 @@ BUILD_DIR="$REPO_ROOT/out/build/clang22-x64-linux-dbg-cov"
 # Use the source python package directory so demos import the working copy
 ENGINE_PYTHON_DIR="$REPO_ROOT/src/python"
 
+export PYTHONPATH="$ENGINE_PYTHON_DIR:$PYTHONPATH"
+export LD_LIBRARY_PATH="$BUILD_DIR:$REPO_ROOT/vcpkg_installed/x64-linux/lib:/usr/lib64:$REPO_ROOT/out/fife-dependencies/x64-linux/install/lib:$LD_LIBRARY_PATH"
+
 cd "$REPO_ROOT"
 
 echo "=== Step 1: Configure with CMake (clang22-x64-linux-dbg-cov) ==="
@@ -29,8 +32,6 @@ if [ ! -f settings.xml ]; then
 fi
 
 echo "=== Step 5: Run pychan demo ==="
-export PYTHONPATH="$ENGINE_PYTHON_DIR:$PYTHONPATH"
-export LD_LIBRARY_PATH="$BUILD_DIR:$REPO_ROOT/vcpkg_installed/x64-linux/lib:$REPO_ROOT/out/fife-dependencies/x64-linux/install/lib:$LD_LIBRARY_PATH"
 
 # Verify we're using the rebuilt library
 echo "=== Verifying library loading ==="

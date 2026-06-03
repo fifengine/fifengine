@@ -22,8 +22,8 @@ static_assert(::FIFE::Keys::ESCAPE == 27, "ESCAPE must be 27");
 static_assert(::FIFE::Keys::SPACE == 32, "SPACE must be 32");
 static_assert(::FIFE::Keys::A == 0x61, "A must be 0x61");
 static_assert(::FIFE::Keys::Z == 0x7A, "Z must be 0x7A");
-static_assert(::FIFE::Keys::F1 == 0x4000003Au, "F1 must be 0x4000003A");
-static_assert(::FIFE::Keys::F24 == 0x40000073u, "F24 must be 0x40000073");
+static_assert(::FIFE::Keys::F1 == 0x4000003AU, "F1 must be 0x4000003A");
+static_assert(::FIFE::Keys::F24 == 0x40000073U, "F24 must be 0x40000073");
 
 // ── Test cases ────────────────────────────────────────────────────────────
 

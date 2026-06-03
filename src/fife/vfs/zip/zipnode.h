@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -44,7 +45,7 @@ namespace FIFE
 
     // convenience typedef
     class ZipNode;
-    using ZipNodeContainer = std::vector<ZipNode*>;
+    using ZipNodeContainer = std::vector<std::unique_ptr<ZipNode>>;
 
     class FIFE_API ZipNode
     {
@@ -67,8 +68,6 @@ namespace FIFE
              * @param entryType the explicit type (File, Directory, or Symlink)
              */
             ZipNode(std::string name, ZipNode* parent, ZipEntryType entryType);
-
-            ~ZipNode();
 
             /**
              * accessor for the name of this node

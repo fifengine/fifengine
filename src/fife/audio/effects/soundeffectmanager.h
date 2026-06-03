@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <queue>
 #include <vector>
 // 3rd party library includes
@@ -143,12 +144,12 @@ namespace FIFE
             //! Maximal effect slots per Source
             ALint m_maxSlots;
             //! Holds all SoundEffects
-            std::vector<SoundEffect*> m_effects;
+            std::vector<std::unique_ptr<SoundEffect>> m_effects;
             //! Holds SoundEffects together with the added SoundEmitters
             using SoundEffectEmitterMap = std::map<SoundEffect*, std::vector<SoundEmitter*>>;
             SoundEffectEmitterMap m_effectEmitters;
             //! Holds all SoundFilters
-            std::vector<SoundFilter*> m_filters;
+            std::vector<std::unique_ptr<SoundFilter>> m_filters;
             //! Holds SoundFilters together with the added SoundEmitters
             using SoundFilterEmitterMap = std::map<SoundFilter*, std::vector<SoundEmitter*>>;
             SoundFilterEmitterMap m_filterdEmitters;

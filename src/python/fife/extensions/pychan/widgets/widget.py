@@ -1262,6 +1262,12 @@ class Widget:
     def _setOutlineSize(self, size):
         self.real_widget.setOutlineSize(size)
 
+    def _getBorderStyle(self):
+        return self.real_widget.getBorderStyle()
+
+    def _setBorderStyle(self, style):
+        self.real_widget.setBorderStyle(style)
+
     def _getBorderSize(self):
         return self.real_widget.getBorderSize()
 
@@ -1344,6 +1350,8 @@ class Widget:
     selection_color = ColorProperty("SelectionColor")
     outline_color = ColorProperty("OutlineColor")
     border_color = ColorProperty("BorderColor")
+    highlight_offset = ColorProperty("HighlightOffset")
+    shadow_offset = ColorProperty("ShadowOffset")
 
     def _getStyle(self):
         return self._style
@@ -1434,6 +1442,7 @@ class Widget:
     font = property(_getFont, _setFont)
     outline_size = property(_getOutlineSize, _setOutlineSize)
     border_size = property(_getBorderSize, _setBorderSize)
+    border_style = property(_getBorderStyle, _setBorderStyle)
     is_focusable = property(_isFocusable, _setFocusable)
     margins = property(_getMargins, _setMargins)
     padding = property(_getPadding, _setPadding)

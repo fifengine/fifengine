@@ -35,8 +35,8 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
     renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
 
     {
-        SDL_Rect rect     = {.x = 0, .y = 0, .w = 1, .h = 1};
-        SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
+        SDL_Rect const rect = {.x = 0, .y = 0, .w = 1, .h = 1};
+        SDL_Surface* surf   = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
         uint8_t r                          = 0;
@@ -65,23 +65,23 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         REQUIRE(s->h > 172);
         SDL_PixelFormatDetails const * f = SDL_GetPixelFormatDetails(s->format);
         uint32_t pix                     = 0;
-        std::memcpy(
-            &pix,
-            static_cast<uint8_t const *>(s->pixels) + (172 * static_cast<ptrdiff_t>(s->pitch)) + (134 * 4),
-            sizeof(pix));
+        auto pixel_span                  = std::span<uint8_t const>(
+            static_cast<uint8_t const *>(s->pixels), static_cast<size_t>(s->h) * static_cast<size_t>(s->pitch));
+        size_t const offset = static_cast<size_t>(172) * static_cast<size_t>(s->pitch) + static_cast<size_t>(134) * 4U;
+        std::memcpy(&pix, &pixel_span[offset], sizeof(pix));
         SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
     }
 
-    int h = static_cast<int>(img->getHeight());
-    int w = static_cast<int>(img->getWidth());
+    int const h = static_cast<int>(img->getHeight());
+    int const w = static_cast<int>(img->getWidth());
 
     // Render first frame at (0,0) and verify a known pixel from the image
     renderbackend.startFrame();
     img->render(FIFE::Rect(0, 0, w, h));
 
     {
-        SDL_Rect rect     = {.x = 134, .y = 172, .w = 1, .h = 1};
-        SDL_Surface* surf = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
+        SDL_Rect const rect = {.x = 134, .y = 172, .w = 1, .h = 1};
+        SDL_Surface* surf   = SDL_RenderReadPixels(renderbackend.getRenderer(), &rect);
         REQUIRE(surf != nullptr);
         SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surf->format);
         uint8_t r                          = 0;
@@ -128,8 +128,8 @@ TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);
 
-    int h = static_cast<int>(img->getHeight());
-    int w = static_cast<int>(img->getWidth());
+    int const h = static_cast<int>(img->getHeight());
+    int const w = static_cast<int>(img->getWidth());
     for (int i = 0; i < 100; i++) {
         renderbackend.startFrame();
         img->render(FIFE::Rect(i, i, w, h));
@@ -147,15 +147,15 @@ TEST_CASE("RenderBackendSDL renders subimages from rpg_tiles_01.png", "[core][im
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
 
-    int W = static_cast<int>(img->getWidth());
-    int w = W / 12;
-    int H = static_cast<int>(img->getHeight());
-    int h = H / 12;
+    int const W = static_cast<int>(img->getWidth());
+    int const w = W / 12;
+    int const H = static_cast<int>(img->getHeight());
+    int const h = H / 12;
     std::vector<FIFE::ImagePtr> subimages;
 
     for (int x = 0; x < (W - w); x += w) {
         for (int y = 0; y < (H - h); y += h) {
-            FIFE::ImagePtr sub = FIFE::ImageManager::instance()->create();
+            FIFE::ImagePtr const sub = FIFE::ImageManager::instance()->create();
             sub->useSharedImage(img, FIFE::Rect(x, y, w, h));
             subimages.push_back(sub);
         }
@@ -163,7 +163,7 @@ TEST_CASE("RenderBackendSDL renders subimages from rpg_tiles_01.png", "[core][im
 
     for (unsigned int i = 0; i < 200; i++) {
         renderbackend.startFrame();
-        subimages[i / 40].get()->render(FIFE::Rect(200, 200, w, h));
+        subimages.at(i / 40).get()->render(FIFE::Rect(200, 200, w, h));
         renderbackend.endFrame();
     }
 }
@@ -182,15 +182,15 @@ TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core]
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
 
-    int W = static_cast<int>(img->getWidth());
-    int w = W / 12;
-    int H = static_cast<int>(img->getHeight());
-    int h = H / 12;
+    int const W = static_cast<int>(img->getWidth());
+    int const w = W / 12;
+    int const H = static_cast<int>(img->getHeight());
+    int const h = H / 12;
     std::vector<FIFE::ImagePtr> subimages;
 
     for (int x = 0; x < (W - w); x += w) {
         for (int y = 0; y < (H - h); y += h) {
-            FIFE::ImagePtr sub = FIFE::ImageManager::instance()->create();
+            FIFE::ImagePtr const sub = FIFE::ImageManager::instance()->create();
             sub->useSharedImage(img, FIFE::Rect(x, y, w, h));
             subimages.push_back(sub);
         }
@@ -198,7 +198,7 @@ TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core]
 
     for (unsigned int i = 0; i < 200; i++) {
         renderbackend.startFrame();
-        subimages[i / 40].get()->render(FIFE::Rect(200, 200, w, h));
+        subimages.at(i / 40).get()->render(FIFE::Rect(200, 200, w, h));
         renderbackend.endFrame();
     }
 }
@@ -216,11 +216,11 @@ TEST_CASE("RenderBackendSDL alpha optimizer renders fife_logo.png and alpha_fidg
     REQUIRE(img);
     REQUIRE(alpha_img);
 
-    int h0 = static_cast<int>(img->getHeight());
-    int w0 = static_cast<int>(img->getWidth());
+    int const h0 = static_cast<int>(img->getHeight());
+    int const w0 = static_cast<int>(img->getWidth());
 
-    int h1 = static_cast<int>(alpha_img->getHeight());
-    int w1 = static_cast<int>(alpha_img->getWidth());
+    int const h1 = static_cast<int>(alpha_img->getHeight());
+    int const w1 = static_cast<int>(alpha_img->getWidth());
     for (int i = 0; i != 200; ++i) {
         renderbackend.startFrame();
         img.get()->render(FIFE::Rect(i, i, w0, h0));

@@ -12,7 +12,6 @@
 #include "video/fonts/fontdefinitionloader.h"
 #include "video/fonts/fonttypes.h"
 
-using FIFE::FontDefinition;
 using FIFE::FontDefinitionLoader;
 using FIFE::FontType;
 
@@ -47,7 +46,7 @@ TEST_CASE("Verify parsed FontDefinition fields", "[font][definition]")
     auto const defs = FontDefinitionLoader::loadFromXml(xml);
     REQUIRE(defs.size() == 1);
 
-    auto const & d = defs[0];
+    auto const & d = defs.at(0);
     CHECK(d.id == "UI/400");
     CHECK(d.type == FontType::TRUETYPE);
     CHECK(d.source == "fonts/FreeSans.ttf");
@@ -68,7 +67,7 @@ TEST_CASE("Parse bitmap face, verify type is SUBIMAGE and glyphs are populated",
     auto const defs = FontDefinitionLoader::loadFromXml(xml);
     REQUIRE(defs.size() == 1);
 
-    auto const & d = defs[0];
+    auto const & d = defs.at(0);
     CHECK(d.type == FontType::SUBIMAGE);
     CHECK(d.glyphs == "ABCDEFG");
     CHECK(d.source == "fonts/rpgfont.png");
@@ -87,9 +86,9 @@ TEST_CASE("Parse minimal XML (one family, one face)", "[font][definition]")
 
     auto const defs = FontDefinitionLoader::loadFromXml(xml);
     REQUIRE(defs.size() == 1);
-    CHECK(defs[0].id == "Test/400");
-    CHECK(defs[0].source == "fonts/test.ttf");
-    CHECK(defs[0].type == FontType::TRUETYPE);
+    CHECK(defs.at(0).id == "Test/400");
+    CHECK(defs.at(0).source == "fonts/test.ttf");
+    CHECK(defs.at(0).type == FontType::TRUETYPE);
 }
 
 TEST_CASE("Parse with fallback references", "[font][definition]")
@@ -111,8 +110,8 @@ TEST_CASE("Parse with fallback references", "[font][definition]")
     // not yet mapped to FontDefinition fields in this track)
     auto const defs = FontDefinitionLoader::loadFromXml(xml);
     REQUIRE(defs.size() == 2);
-    CHECK(defs[0].id == "UI/400");
-    CHECK(defs[1].id == "Mono/400");
+    CHECK(defs.at(0).id == "UI/400");
+    CHECK(defs.at(1).id == "Mono/400");
 }
 
 TEST_CASE("Empty string throws exception", "[font][definition]")
@@ -168,5 +167,5 @@ TEST_CASE("Missing version attribute is handled (logs warning, doesn't throw)", 
     // Should not throw despite missing version attribute
     auto const defs = FontDefinitionLoader::loadFromXml(xml);
     REQUIRE(defs.size() == 1);
-    CHECK(defs[0].id == "Test/400");
+    CHECK(defs.at(0).id == "Test/400");
 }

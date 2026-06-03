@@ -16,7 +16,7 @@ using FIFE::FontHandle;
 
 TEST_CASE("AssetHandle default id is 0")
 {
-    FIFE::AssetHandle h;
+    FIFE::AssetHandle const h;
     REQUIRE(h.id == 0);
 }
 
@@ -49,20 +49,20 @@ TEST_CASE("FontInstanceKey with different size is not equal")
 
 TEST_CASE("FontFaceKey wrapping same AssetHandle is equal")
 {
-    FIFE::FontFaceKey fk1{{42}};
-    FIFE::FontFaceKey fk2{{42}};
+    FIFE::FontFaceKey fk1{.asset = {42}};
+    FIFE::FontFaceKey fk2{.asset = {42}};
     CHECK(fk1 == fk2);
 }
 
 TEST_CASE("AssetRequest default type is Font")
 {
-    FIFE::AssetRequest req;
+    FIFE::AssetRequest const req;
     CHECK(req.type == FIFE::AssetRequest::Type::Font);
 }
 
 TEST_CASE("FontDefinition has default size 12")
 {
-    FIFE::FontDefinition fd;
+    FIFE::FontDefinition const fd;
     CHECK(fd.size == 12);
 }
 
@@ -73,16 +73,16 @@ TEST_CASE("FontHandle INVALID is 0")
 
 TEST_CASE("Hash of same keys produces same value")
 {
-    std::hash<FIFE::AssetHandle> hasher;
-    FIFE::AssetHandle a{42};
-    FIFE::AssetHandle b{42};
+    std::hash<FIFE::AssetHandle> const hasher;
+    FIFE::AssetHandle const a{42};
+    FIFE::AssetHandle const b{42};
     CHECK(hasher(a) == hasher(b));
 }
 
 TEST_CASE("Hash of different keys produces different value")
 {
-    std::hash<FIFE::FontInstanceKey> hasher;
-    FIFE::FontInstanceKey k1;
+    std::hash<FIFE::FontInstanceKey> const hasher;
+    FIFE::FontInstanceKey const k1;
     FIFE::FontInstanceKey k2;
     k2.size = 16;
     CHECK(hasher(k1) != hasher(k2));

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <set>
 #include <string>
 
@@ -98,7 +99,7 @@ namespace FIFE
             ZipEntryType classifyEntry(std::string const & name, uint32_t externalAttrs) const;
 
             ZipTree m_zipTree;
-            RawData* m_zipfile;
+            std::unique_ptr<RawData> m_zipfile;
             uint32_t m_centralDirOffset;
             uint16_t m_centralDirCount;
     };

@@ -10,7 +10,9 @@
 #include <cmath>
 #include <limits>
 #include <list>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -30,6 +32,8 @@
 namespace FIFE
 {
     constexpr double MAX_COST_INCREASE_RATIO = 1.5;
+
+    RoutePather::~RoutePather() = default;
 
     int32_t RoutePather::makeSessionId()
     {
@@ -54,7 +58,7 @@ namespace FIFE
             }
             RoutePatherSearch* prioritySession = m_sessions.getPriorityElement().first;
             if (!sessionIdValid(prioritySession->getSessionId())) {
-                delete prioritySession;
+                m_searchStore.erase(prioritySession->getSessionId());
                 m_sessions.popElement();
                 continue;
             }
@@ -62,16 +66,16 @@ namespace FIFE
             if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_complete) {
                 int32_t const sessionId = prioritySession->getSessionId();
                 prioritySession->calcPath();
-                Route* route = prioritySession->getRoute();
+                Route const * route = prioritySession->getRoute();
                 if (route->getRouteStatus() == ROUTE_SOLVED) {
                     invalidateSessionId(sessionId);
-                    delete prioritySession;
+                    m_searchStore.erase(sessionId);
                     m_sessions.popElement();
                 }
             } else if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_failed) {
                 int32_t const sessionId = prioritySession->getSessionId();
                 invalidateSessionId(sessionId);
-                delete prioritySession;
+                m_searchStore.erase(sessionId);
                 m_sessions.popElement();
             }
             --ticksleft;
@@ -111,17 +115,16 @@ namespace FIFE
     Route* RoutePather::createRoute(
         Location const & start, Location const & end, bool immediate, std::string const & costId)
     {
-        auto* route = new Route(start, end);
+        auto route = std::make_unique<Route>(start, end);
         if (!costId.empty()) {
             route->setCostId(costId);
         }
         if (immediate) {
-            if (!solveRoute(route, MEDIUM_PRIORITY, true)) {
+            if (!solveRoute(route.get(), MEDIUM_PRIORITY, true)) {
                 route->setRouteStatus(ROUTE_FAILED);
             }
-            return route;
         }
-        return route;
+        return route.release();
     }
 
     bool RoutePather::solveRoute(Route* route, int32_t priority, bool immediate)
@@ -180,7 +183,7 @@ namespace FIFE
                     if (!found && startCell->isZoneProtected()) {
                         std::vector<Cell*> const & startNeighbors = startCell->getNeighbors();
                         for (auto* neighbor : startNeighbors) {
-                            Zone* tmpZone = neighbor->getZone();
+                            Zone const * tmpZone = neighbor->getZone();
                             if (tmpZone != nullptr) {
                                 if (tmpZone == startZone) {
                                     endZone = tmpZone;
@@ -238,7 +241,7 @@ namespace FIFE
             if (route->getObject() != nullptr) {
                 CellGrid* destGrid = endCache->getLayer()->getCellGrid();
                 if (destGrid != nullptr) {
-                    std::vector<ModelCoordinate> destFootprint = destGrid->toMultiCoordinates(
+                    std::vector<ModelCoordinate> const destFootprint = destGrid->toMultiCoordinates(
                         end.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
                     for (auto const & fc : destFootprint) {
                         Location fcLoc(endCache->getLayer());
@@ -257,11 +260,11 @@ namespace FIFE
             route->setSessionId(sessionId);
         }
 
-        RoutePatherSearch* newSearch = nullptr;
+        std::unique_ptr<RoutePatherSearch> newSearch;
         if (multilayer) {
-            newSearch = new MultiLayerSearch(route, sessionId);
+            newSearch = std::make_unique<MultiLayerSearch>(route, sessionId);
         } else {
-            newSearch = new SingleLayerSearch(route, sessionId);
+            newSearch = std::make_unique<SingleLayerSearch>(route, sessionId);
         }
         if (immediate) {
             while (newSearch->getSearchStatus() != RoutePatherSearch::search_status_complete) {
@@ -276,10 +279,10 @@ namespace FIFE
                 newSearch->calcPath();
                 route->setRouteStatus(ROUTE_SOLVED);
             }
-            delete newSearch;
             return true;
         }
-        m_sessions.pushElement(SessionQueue::value_type(newSearch, priority));
+        m_searchStore[sessionId] = std::move(newSearch);
+        m_sessions.pushElement(SessionQueue::value_type(m_searchStore[sessionId].get(), priority));
         addSessionId(sessionId);
         return true;
     }
@@ -358,9 +361,9 @@ namespace FIFE
         }
         // calculate distance
         CellCache* nodeCache           = currentNode.getLayer()->getCellCache();
-        CellGrid* nodeGrid             = currentNode.getLayer()->getCellGrid();
+        CellGrid const * nodeGrid      = currentNode.getLayer()->getCellGrid();
         ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
-        Cell* tmpCell                  = nodeCache->getCell(currentNode.getLayerCoordinates());
+        Cell const * tmpCell           = nodeCache->getCell(currentNode.getLayerCoordinates());
         if (tmpCell != nullptr) {
             targetPos.z = tmpCell->getLayerCoordinates().z + nodeGrid->getZShift();
         }
@@ -382,7 +385,7 @@ namespace FIFE
         if (!Mathd::Equal(distance, 0.0) && !pop) {
             Location const prevNode      = route->getPreviousNode();
             CellCache* prevCache         = prevNode.getLayer()->getCellCache();
-            CellGrid* prevGrid           = prevNode.getLayer()->getCellGrid();
+            CellGrid const * prevGrid    = prevNode.getLayer()->getCellGrid();
             ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
             tmpCell                      = prevCache->getCell(prevNode.getLayerCoordinates());
             if (tmpCell != nullptr) {
@@ -423,7 +426,7 @@ namespace FIFE
             if (cache != nullptr) {
                 Cell* cell = cache->getCell(nextLocation.getLayerCoordinates());
                 if (cell != nullptr) {
-                    TransitionInfo* ti = cell->getTransition();
+                    TransitionInfo const * ti = cell->getTransition();
                     if (ti != nullptr) {
                         // "beam" if it is a part of path
                         if (cw &&
@@ -457,12 +460,9 @@ namespace FIFE
                             route->getCurrentNode().getLayerCoordinates(),
                             route->getOccupiedCells(route->getRotation()));
                     nextFootprint.push_back(route->getCurrentNode().getLayerCoordinates());
-                    for (auto& footprintCell : nextFootprint) {
-                        if (footprintCell == currentNode.getLayerCoordinates()) {
-                            selfOwned = true;
-                            break;
-                        }
-                    }
+                    selfOwned = std::ranges::any_of(nextFootprint, [&](auto const & footprintCell) {
+                        return footprintCell == currentNode.getLayerCoordinates();
+                    });
                     if (selfOwned) {
                         return cw; // the blocker is part of the multi-cell itself, continue
                     }
@@ -503,16 +503,16 @@ namespace FIFE
         // If the blocker is the destination cell, replanning is futile
         if (route->isMultiCell()) {
             // For multi-cell, check the destination footprint
-            Layer* endLayer = route->getEndNode().getLayer();
-            CellGrid* grid  = (endLayer != nullptr) ? endLayer->getCellGrid() : nullptr;
+            Layer const * endLayer = route->getEndNode().getLayer();
+            CellGrid* grid         = (endLayer != nullptr) ? endLayer->getCellGrid() : nullptr;
             if (grid != nullptr) {
-                std::vector<ModelCoordinate> destFootprint = grid->toMultiCoordinates(
+                std::vector<ModelCoordinate> const destFootprint = grid->toMultiCoordinates(
                     route->getEndNode().getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
                 ModelCoordinate const blockerMc = blockerCell->getLayerCoordinates();
-                for (auto const & fc : destFootprint) {
-                    if (fc == blockerMc) {
-                        return false;
-                    }
+                if (std::ranges::any_of(destFootprint, [&](auto const & fc) {
+                        return fc == blockerMc;
+                    })) {
+                    return false;
                 }
             }
         } else {
@@ -530,13 +530,12 @@ namespace FIFE
         assert(
             "route must have an active solved path" &&
             (route->getRouteStatus() == ROUTE_SOLVED || route->getRouteStatus() == ROUTE_CREATED));
-        static_assert(MAX_COST_INCREASE_RATIO >= 1.0f, "cost ratio threshold must be >= 1.0");
+        static_assert(MAX_COST_INCREASE_RATIO >= 1.0F, "cost ratio threshold must be >= 1.0");
 
         // Solve new route from current position to original destination
-        Route* newRoute = createRoute(currentPos, route->getEndNode(), true, route->getCostId());
+        auto newRoute = std::unique_ptr<Route>(createRoute(currentPos, route->getEndNode(), true, route->getCostId()));
 
         if (newRoute == nullptr || newRoute->getRouteStatus() != ROUTE_SOLVED) {
-            delete newRoute;
             return false;
         }
 
@@ -549,13 +548,11 @@ namespace FIFE
 
         if (newCost > originalRemainingCost * MAX_COST_INCREASE_RATIO) {
             // New path is too expensive; consider waiting instead
-            delete newRoute;
             return false;
         }
 
         // Accept the new path while preserving movement progress
         bool const success = route->replacePathKeepingProgress(newRoute->getPath(), currentPos);
-        delete newRoute;
 
         return success;
     }

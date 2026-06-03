@@ -22,10 +22,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VFS);
             return log;
-        }();
+        }
     } // namespace
 
     RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0)
@@ -99,7 +100,7 @@ namespace FIFE
         uint32_t const checkedLen = static_cast<uint32_t>(len);
 
         if (m_index_current + checkedLen > getDataLength()) {
-            FL_LOG(_log, std::format("RawData{} : {} : {}", m_index_current, checkedLen, getDataLength()));
+            FL_LOG(_log(), std::format("RawData{} : {} : {}", m_index_current, checkedLen, getDataLength()));
             throw IndexOverflow(__FUNCTION__);
         }
 
@@ -188,7 +189,8 @@ namespace FIFE
             uint8_t firstByte = 0;
             std::memcpy(&firstByte, &value, sizeof(firstByte));
             endian = static_cast<int32_t>(firstByte);
-            FL_LOG(_log, std::format("RawDatawe are on a {} machine", (endian == 1 ? "little endian" : "big endian")));
+            FL_LOG(
+                _log(), std::format("RawDatawe are on a {} machine", (endian == 1 ? "little endian" : "big endian")));
         }
 
         return endian == 1;

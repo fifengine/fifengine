@@ -160,8 +160,8 @@ namespace fcn
 
     void DockArea::repositionWidget(Widget* widget)
     {
-        Widget* placeBefore = nullptr;
-        Widget* placeAfter  = nullptr;
+        Widget const * placeBefore = nullptr;
+        Widget const * placeAfter  = nullptr;
 
         Rectangle dim = widget->getDimension();
         widget->getAbsolutePosition(dim.x, dim.y);
@@ -181,7 +181,7 @@ namespace fcn
                         } else {
                             placeAfter = *currChild;
                         }
-                    } else if (dim.x >= childDim.x) {
+                    } else {
                         if (dim.x <= childDim.x + (childDim.width / 2)) {
                             placeBefore = *currChild;
                         } else {
@@ -196,7 +196,7 @@ namespace fcn
                         } else {
                             placeAfter = *currChild;
                         }
-                    } else if (dim.y >= childDim.y) {
+                    } else {
                         if (dim.y <= childDim.y + (childDim.height / 2)) {
                             placeBefore = *currChild;
                         } else {
@@ -224,7 +224,7 @@ namespace fcn
     {
         Widget* parent = getParent();
         if (parent != nullptr) {
-            DockArea* top              = nullptr;
+            DockArea const * top       = nullptr;
             DockArea* right            = nullptr;
             DockArea* bottom           = nullptr;
             DockArea* left             = nullptr;

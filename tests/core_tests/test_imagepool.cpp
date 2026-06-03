@@ -49,10 +49,10 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
     ImagePtr atlas = imageManager->load(SUBIMAGE_FILE);
     CHECK((2) == (imageManager->getTotalResourcesLoaded()));
 
-    uint32_t W = atlas->getWidth();
-    int w      = static_cast<int>(W / 12);
-    uint32_t H = atlas->getHeight();
-    int h      = static_cast<int>(H / 12);
+    uint32_t const W = atlas->getWidth();
+    int const w      = static_cast<int>(W / 12);
+    uint32_t const H = atlas->getHeight();
+    int const h      = static_cast<int>(H / 12);
     CHECK_NE(w, 0);
     CHECK_NE(h, 0);
 
@@ -69,8 +69,8 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
             } else if (j == 2) {
                 r = subImage.get();
             }
-            int height = static_cast<int>(r->getHeight());
-            int width  = static_cast<int>(r->getWidth());
+            int const height = static_cast<int>(r->getHeight());
+            int const width  = static_cast<int>(r->getWidth());
             for (int i = 20; i > 0; i -= 2) {
                 renderbackend.startFrame();
                 r->render(Rect(i, i, width, height));

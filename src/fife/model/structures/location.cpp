@@ -18,10 +18,12 @@ namespace FIFE
 {
     namespace
     {
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         std::string& INVALID_LAYER_SET = []() -> std::string& {
             static std::string s = "Cannot set layer coordinates, given layer is not initialized properly";
             return s;
         }();
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         std::string& INVALID_LAYER_GET = []() -> std::string& {
             static std::string s = "Cannot get layer coordinates, layer is not initialized properly";
             return s;

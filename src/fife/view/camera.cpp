@@ -43,10 +43,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_CAMERA);
             return log;
-        }();
+        }
     } // namespace
 
     // to avoid std::bad_alloc errors, we determine the maximum size of batches
@@ -133,7 +134,7 @@ namespace FIFE
         // Trigger removal of LayerCaches and MapObserver
         if (m_map != nullptr) {
             m_map->removeChangeListener(m_map_observer);
-            std::list<Layer*> const & layers = m_map->getLayers();
+            auto layers = m_map->getLayers();
             for (auto* layer : layers) {
                 removeLayer(layer);
             }
@@ -157,7 +158,7 @@ namespace FIFE
 
         // Trigger addition of LayerCaches and MapObserver
         m_map->addChangeListener(m_map_observer);
-        std::list<Layer*> const & layers = m_map->getLayers();
+        auto layers = m_map->getLayers();
         for (auto* layer : layers) {
             addLayer(layer);
         }
@@ -444,15 +445,18 @@ namespace FIFE
         // set the z transformation to unity
         int32_t const N = 4;
         for (int32_t i = 0; i != N; ++i) {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
             m_vscreen_2_screen[(2 * N) + i] = 0;
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
             m_vscreen_2_screen[(i * N) + 2] = 0;
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
         m_vscreen_2_screen[(2 * N) + 2] = 1;
         m_screen_2_vscreen              = m_vscreen_2_screen.inverse();
 
         m_mapViewPortUpdated = false;
-        // FL_WARN(_log, std::format("matrix: {} 1: {}", m_matrix, m_matrix.inverse().mult4by4(m_matrix)));
-        // 		FL_WARN(_log, std::format("vs2s matrix: {} s2vs matrix: {}", m_vscreen_2_screen,
+        // FL_WARN(_log(), std::format("matrix: {} 1: {}", m_matrix, m_matrix.inverse().mult4by4(m_matrix)));
+        // 		FL_WARN(_log(), std::format("vs2s matrix: {} s2vs matrix: {}", m_vscreen_2_screen,
         // m_screen_2_vscreen));
     }
 
@@ -513,16 +517,16 @@ namespace FIFE
         double y2 = 0;
 
         for (uint32_t i = 0; i < vertices.size(); i++) {
-            vertices[i] = cg->toMapCoordinates(vertices[i]);
-            vertices[i] = mtx * vertices[i];
+            vertices.at(i) = cg->toMapCoordinates(vertices.at(i));
+            vertices.at(i) = mtx * vertices.at(i);
             if (i == 0) {
-                x1 = x2 = vertices[0].x;
-                y1 = y2 = vertices[0].y;
+                x1 = x2 = vertices.at(0).x;
+                y1 = y2 = vertices.at(0).y;
             } else {
-                x1 = std::min(vertices[i].x, x1);
-                x2 = std::max(vertices[i].x, x2);
-                y1 = std::min(vertices[i].y, y1);
-                y2 = std::max(vertices[i].y, y2);
+                x1 = std::min(vertices.at(i).x, x1);
+                x2 = std::max(vertices.at(i).x, x2);
+                y1 = std::min(vertices.at(i).y, y1);
+                y2 = std::max(vertices.at(i).y, y2);
             }
         }
         return DoublePoint(x2 - x1, y2 - y1);
@@ -546,15 +550,15 @@ namespace FIFE
         double y2 = 0;
 
         for (uint32_t i = 0; i < vertices.size(); i++) {
-            vertices[i] = mtx * vertices[i];
+            vertices.at(i) = mtx * vertices.at(i);
             if (i == 0) {
-                x1 = x2 = vertices[0].x;
-                y1 = y2 = vertices[0].y;
+                x1 = x2 = vertices.at(0).x;
+                y1 = y2 = vertices.at(0).y;
             } else {
-                x1 = std::min(vertices[i].x, x1);
-                x2 = std::max(vertices[i].x, x2);
-                y1 = std::min(vertices[i].y, y1);
-                y2 = std::max(vertices[i].y, y2);
+                x1 = std::min(vertices.at(i).x, x1);
+                x2 = std::max(vertices.at(i).x, x2);
+                y1 = std::min(vertices.at(i).y, y1);
+                y2 = std::max(vertices.at(i).y, y2);
             }
         }
         return DoublePoint(x2 - x1, y2 - y1);
@@ -566,12 +570,12 @@ namespace FIFE
         m_referenceScaleX     = static_cast<double>(m_screenCellWidth) / dim.x;
         m_referenceScaleY     = static_cast<double>(m_screenCellHeight) / dim.y;
 
-        FL_DBG(_log, "Updating reference scale");
-        FL_DBG(_log, std::format("   tilt={} rot={}", m_tilt, m_rotation));
-        FL_DBG(_log, std::format("   m_screenCellWidth={}", m_screenCellWidth));
-        FL_DBG(_log, std::format("   m_screenCellHeight={}", m_screenCellHeight));
-        FL_DBG(_log, std::format("   m_referenceScaleX={}", m_referenceScaleX));
-        FL_DBG(_log, std::format("   m_referenceScaleY={}", m_referenceScaleY));
+        FL_DBG(_log(), "Updating reference scale");
+        FL_DBG(_log(), std::format("   tilt={} rot={}", m_tilt, m_rotation));
+        FL_DBG(_log(), std::format("   m_screenCellWidth={}", m_screenCellWidth));
+        FL_DBG(_log(), std::format("   m_screenCellHeight={}", m_screenCellHeight));
+        FL_DBG(_log(), std::format("   m_referenceScaleX={}", m_referenceScaleX));
+        FL_DBG(_log(), std::format("   m_referenceScaleY={}", m_referenceScaleY));
     }
 
     RenderList& Camera::getRenderListRef(Layer* layer)
@@ -801,10 +805,12 @@ found_non_transparent_pixel:;
 
     void Camera::onRendererEnabledChanged(RendererBase* renderer)
     {
-        assert(m_renderers.contains(renderer->getName()));
+        auto const & rendererName            = renderer->getName();
+        [[maybe_unused]] bool const contains = m_renderers.contains(rendererName);
+        assert(contains);
 
         if (renderer->isEnabled()) {
-            FL_LOG(_log, std::format("Enabling renderer {}", renderer->getName()));
+            FL_LOG(_log(), std::format("Enabling renderer {}", renderer->getName()));
             m_pipeline.push_back(renderer);
             m_pipeline.sort(pipelineSort);
         } else {
@@ -1062,18 +1068,18 @@ found_non_transparent_pixel:;
     void Camera::updateRenderLists()
     {
         if (m_map == nullptr) {
-            FL_ERR(_log, "No map for camera found");
+            FL_ERR(_log(), "No map for camera found");
             return;
         }
 
-        std::list<Layer*> const & layers = m_map->getLayers();
-        auto layer_it                    = layers.begin();
+        auto layers   = m_map->getLayers();
+        auto layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             LayerCache* cache = m_cache[*layer_it];
             if (cache == nullptr) {
                 addLayer(*layer_it);
                 cache = m_cache[*layer_it];
-                FL_ERR(_log, std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getName()));
+                FL_ERR(_log(), std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getName()));
             }
             RenderList& instancesToRender = m_layerToInstances[*layer_it];
             if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
@@ -1096,12 +1102,12 @@ found_non_transparent_pixel:;
         if (lm != 0) {
             m_renderbackend->resetStencilBuffer(0);
             if (m_lighting) {
-                m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2]);
+                m_renderbackend->setLighting(m_light_colors.at(0), m_light_colors.at(1), m_light_colors.at(2));
             }
         }
 
-        std::list<Layer*> const & layers = m_map->getLayers();
-        auto layer_it                    = layers.begin();
+        auto layers   = m_map->getLayers();
+        auto layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             // layer with static flag will rendered as one texture
             if ((*layer_it)->isStatic()) {

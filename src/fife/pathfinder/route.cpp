@@ -24,10 +24,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     Route::Route(Location const & start, Location const & end) :
@@ -48,9 +49,7 @@ namespace FIFE
 
     void Route::setRouteStatus(RouteStatusInfo status)
     {
-        if (m_status != status) {
-            m_status = status;
-        }
+        m_status = status;
     }
 
     RouteStatusInfo Route::getRouteStatus() const
@@ -343,7 +342,7 @@ namespace FIFE
                     if (grid == nullptr) {
                         continue;
                     }
-                    std::vector<ModelCoordinate> footprint =
+                    std::vector<ModelCoordinate> const footprint =
                         grid->toMultiCoordinates(it.getLayerCoordinates(), getOccupiedCells(m_rotation));
                     for (auto& fc : footprint) {
                         if (layer->cellContainsBlockingInstance(fc)) {
@@ -389,8 +388,8 @@ namespace FIFE
             if (layer == nullptr) {
                 continue;
             }
-            CellCache* cache = layer->getCellCache();
-            CellGrid* grid   = layer->getCellGrid();
+            CellCache const * cache = layer->getCellCache();
+            CellGrid* grid          = layer->getCellGrid();
             if (cache == nullptr || grid == nullptr) {
                 continue;
             }
@@ -418,7 +417,7 @@ namespace FIFE
                 prev = &loc;
                 continue;
             }
-            Layer* layer = loc.getLayer();
+            Layer const * layer = loc.getLayer();
             if (layer == nullptr) {
                 continue;
             }
@@ -450,7 +449,7 @@ namespace FIFE
             ModelCoordinate const pc = currentPos.getLayerCoordinates();
             double const dx          = static_cast<double>(mc.x - pc.x);
             double const dy          = static_cast<double>(mc.y - pc.y);
-            double const dist        = dx * dx + dy * dy;
+            double const dist        = (dx * dx) + (dy * dy);
             if (dist < bestDist) {
                 bestDist = dist;
                 bestIt   = it;

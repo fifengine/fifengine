@@ -24,7 +24,7 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
             static Logger log(LM_VIEW);
             return log;
         }();

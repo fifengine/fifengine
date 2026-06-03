@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <cstdint>
+#include <memory>
 // 3rd party library includes
 #include <fifechan/image.hpp>
 #include <fifechan/platform.hpp>
@@ -122,7 +123,7 @@ namespace fcn
              * Currently used image. It's the current frame from the animation
              * encapsulated in a GuiImage.
              */
-            Image const * mCurrentImage;
+            std::unique_ptr<Image const> mCurrentImage;
 
             /**
              * The time as the animation was started.

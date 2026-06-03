@@ -24,10 +24,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     TriggerController::TriggerController(Map* map) : m_map(map)
@@ -54,7 +55,7 @@ namespace FIFE
         if (!returnValue.second) {
             delete trigger;
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "TriggerController::createTrigger() - Trigger {} already exists.... ignoring.", triggerName));
         }
@@ -101,7 +102,8 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnLocation(std::string const & triggerName, Location const & loc)
     {
         assert(loc.getLayer());
-        assert(loc.getLayer()->getCellCache());
+        auto* cellCache = loc.getLayer()->getCellCache();
+        assert(cellCache);
 
         Trigger* trigger = createTrigger(triggerName);
         trigger->assign(loc.getLayer(), loc.getLayerCoordinates());

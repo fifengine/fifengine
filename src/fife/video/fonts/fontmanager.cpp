@@ -3,6 +3,7 @@
 
 #include "fontmanager.h"
 
+#include <algorithm>
 #include <cassert>
 #include <memory>
 #include <stdexcept>
@@ -10,8 +11,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-
-#include <algorithm>
 
 #include "imagefontface.h"
 #include "truetypefontface.h"
@@ -46,7 +45,7 @@ namespace FIFE
         assert("At least one definition required" && !definitions.empty());
         std::unordered_map<std::string, std::vector<FontDefinition const *>> groups;
         for (auto const & def : definitions) {
-            auto pos        = def.id.find('/');
+            auto pos              = def.id.find('/');
             std::string const fid = (pos != std::string::npos) ? def.id.substr(0, pos) : def.id;
             groups[fid].push_back(&def);
         }
@@ -201,7 +200,13 @@ namespace FIFE
             m_faceCache.put(cacheKey, renderFace);
         }
 
-        FontInstanceKey const key{.asset = handle, .size = effectiveSize, .bold = weight == FontWeight::Bold, .italic = italic, .antialias = antialias, .hinting = hinting};
+        FontInstanceKey const key{
+            .asset     = handle,
+            .size      = effectiveSize,
+            .bold      = weight == FontWeight::Bold,
+            .italic    = italic,
+            .antialias = antialias,
+            .hinting   = hinting};
 
         return getFontHandle(key, renderFace);
     }

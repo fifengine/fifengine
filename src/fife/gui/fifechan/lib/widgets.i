@@ -111,6 +111,12 @@ namespace fcn {
 		uint32_t getOutlineSize() const;
 		void setBorderSize(uint32_t size);
 		uint32_t getBorderSize() const;
+		enum BorderStyle : uint8_t {
+			BORDER_STYLE_BEVEL = 0,
+			BORDER_STYLE_FLAT  = 1
+		};
+		void setBorderStyle(unsigned int style);
+		uint32_t getBorderStyle() const;
 		void setMargin(int32_t margin);
 		void setMarginTop(int32_t margin);
 		int32_t getMarginTop() const;
@@ -139,6 +145,10 @@ namespace fcn {
 		virtual bool isSetVisible() const;
 		virtual void setBaseColor(const Color& color);
 		virtual const Color& getBaseColor() const;
+		virtual void setHighlightOffset(const Color& color);
+		virtual const Color& getHighlightOffset() const;
+		virtual void setShadowOffset(const Color& color);
+		virtual const Color& getShadowOffset() const;
 		virtual void setForegroundColor(const Color& color);
 		virtual const Color& getForegroundColor() const;
 		virtual void setBackgroundColor(const Color& color);

@@ -30,10 +30,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_EVTCHANNEL);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -123,7 +124,7 @@ namespace FIFE
         Joystick* joy = nullptr;
         auto it       = m_joystickIndices.find(instanceId);
         if (it != m_joystickIndices.end()) {
-            joy = m_joysticks[it->second];
+            joy = m_joysticks.at(it->second);
         }
         return joy;
     }
@@ -274,7 +275,7 @@ namespace FIFE
             if (!deviceIndex) {
                 dispatch = false;
             } else {
-                Joystick* joy = addJoystick(*deviceIndex);
+                Joystick const * joy = addJoystick(*deviceIndex);
                 if (joy != nullptr) {
                     joyevt.setInstanceId(joy->getInstanceId());
                 } else {
@@ -393,11 +394,11 @@ namespace FIFE
         auto const sdlDeviceIndex = toSdlJoystickId(deviceIndex);
         SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
         if (joy != nullptr) {
-            SDL_GUID guid = SDL_GetJoystickGUID(joy);
+            SDL_GUID const guid = SDL_GetJoystickGUID(joy);
             SDL_GUIDToString(guid, tmp.data(), tmp.size());
             SDL_CloseJoystick(joy);
         } else {
-            tmp[0] = '\0';
+            tmp.at(0) = '\0';
         }
         std::string guidString(tmp.data());
         return guidString;

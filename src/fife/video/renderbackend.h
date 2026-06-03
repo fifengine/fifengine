@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -184,8 +185,8 @@ namespace FIFE
              */
             virtual void setScreenMode(ScreenMode const & mode) = 0;
 
-            virtual Image* createImage(IResourceLoader* loader = nullptr)                           = 0;
-            virtual Image* createImage(std::string const & name, IResourceLoader* loader = nullptr) = 0;
+            virtual std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr)                           = 0;
+            virtual std::unique_ptr<Image> createImage(std::string const & name, IResourceLoader* loader = nullptr) = 0;
 
             /** Creates an Image suitable for this renderbackend.
              * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
@@ -193,8 +194,8 @@ namespace FIFE
              * @param height Height of the image.
              * @return The new Image.
              */
-            virtual Image* createImage(uint8_t const * data, uint32_t width, uint32_t height) = 0;
-            virtual Image* createImage(
+            virtual std::unique_ptr<Image> createImage(uint8_t const * data, uint32_t width, uint32_t height) = 0;
+            virtual std::unique_ptr<Image> createImage(
                 std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) = 0;
 
             /** Helper function to create images from SDL_Surfaces.
@@ -202,8 +203,8 @@ namespace FIFE
              * @param surface The surface to convert.
              * @return The new Image.
              */
-            virtual Image* createImage(SDL_Surface* surface)                           = 0;
-            virtual Image* createImage(std::string const & name, SDL_Surface* surface) = 0;
+            virtual std::unique_ptr<Image> createImage(SDL_Surface* surface)                           = 0;
+            virtual std::unique_ptr<Image> createImage(std::string const & name, SDL_Surface* surface) = 0;
 
             /** Render the Vertex Arrays, only for primitives (points, lines,...)
              */

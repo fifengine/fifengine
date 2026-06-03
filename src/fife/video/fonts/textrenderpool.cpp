@@ -6,7 +6,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <memory>
 #include <string>
+#include <utility>
 
 // Platform specific includes
 
@@ -28,13 +30,7 @@ namespace FIFE
         });
     }
 
-    TextRenderPool::~TextRenderPool()
-    {
-        auto it = m_pool.begin();
-        for (; it != m_pool.end(); ++it) {
-            delete it->image;
-        }
-    }
+    TextRenderPool::~TextRenderPool() = default;
 
     Image* TextRenderPool::getRenderedText(IFont const * font, std::string const & text)
     {
@@ -64,10 +60,10 @@ namespace FIFE
 
             // Stay sorted after access time
             it->timestamp = TimeManager::instance()->now64();
-            m_pool.push_front(*it);
+            m_pool.push_front(std::move(*it));
             m_pool.erase(it);
 
-            return m_pool.front().image;
+            return m_pool.front().image.get();
         }
         return nullptr;
     }
@@ -81,9 +77,9 @@ namespace FIFE
         centry.row_spacing   = font->getRowSpacing();
         centry.text          = text;
         centry.color         = font->getColor();
-        centry.image         = image;
+        centry.image         = std::unique_ptr<Image>(image);
         centry.timestamp     = TimeManager::instance()->now64();
-        m_pool.push_front(centry);
+        m_pool.push_front(std::move(centry));
 
         // Some minimal amount of entries -> start collection timer
         // Don't have a timer active if only _some_ text is pooled.
@@ -96,7 +92,6 @@ namespace FIFE
             m_poolSize++;
             return;
         }
-        delete m_pool.back().image;
         m_pool.pop_back();
     }
 
@@ -107,7 +102,6 @@ namespace FIFE
         uint64_t const now = TimeManager::instance()->now64();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000ULL * 60) {
-                delete it->image;
                 it = m_pool.erase(it);
                 --m_poolSize;
             } else {

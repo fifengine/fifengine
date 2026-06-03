@@ -7,7 +7,7 @@
 #include "fixture.h"
 #include "video/fonts/fontface.h"
 #include "video/fonts/fonttypes.h"
-#include "video/fonts/textlayout.h"
+#include "video/fonts/textlayout.h">
 #include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;

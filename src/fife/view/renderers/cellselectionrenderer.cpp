@@ -23,10 +23,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -100,7 +101,7 @@ namespace FIFE
 
             CellGrid* cg = layer->getCellGrid();
             if (cg == nullptr) {
-                FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
+                FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw selection");
                 continue;
             }
 

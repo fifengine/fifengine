@@ -9,6 +9,7 @@
 #include <cassert>
 #include <limits>
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -34,18 +35,18 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_name(std::move(identifier)),
         m_map(map),
-        m_instanceTree(new InstanceTree()),
+        m_instanceTree(std::make_unique<InstanceTree>()),
         m_grid(grid),
-        m_cellCache(nullptr),
         m_pathingStrategy(CELL_EDGES_ONLY),
         m_sortingStrategy(SORTING_CAMERA),
         m_transparency(0),
@@ -69,8 +70,10 @@ namespace FIFE
                 temp->removeInteractLayer(this);
             }
         }
-        purge(m_instances);
-        delete m_instanceTree;
+        for (auto& inst : m_instances) {
+            std::unique_ptr<Instance> deleter(inst);
+        }
+        m_instances.clear();
     }
 
     std::string const & Layer::getName() const
@@ -100,7 +103,7 @@ namespace FIFE
 
     InstanceTree* Layer::getInstanceTree() const
     {
-        return m_instanceTree;
+        return m_instanceTree.get();
     }
 
     bool Layer::hasInstances() const
@@ -119,26 +122,27 @@ namespace FIFE
         Location location(this);
         location.setExactLayerCoordinates(p);
 
-        auto* instance = new Instance(object, location, id);
-        if (instance->isActive()) {
-            setInstanceActivityStatus(instance, instance->isActive());
+        auto instance = std::make_unique<Instance>(object, location, id);
+        Instance* raw = instance.get();
+        if (raw->isActive()) {
+            setInstanceActivityStatus(raw, raw->isActive());
         }
-        m_instances.push_back(instance);
-        m_instanceTree->addInstance(instance);
+        m_instanceTree->addInstance(raw);
 
         auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
-            (*i)->onInstanceCreate(this, instance);
+            (*i)->onInstanceCreate(this, raw);
             ++i;
         }
+        m_instances.push_back(instance.release());
         m_changed = true;
-        return instance;
+        return raw;
     }
 
     bool Layer::addInstance(Instance* instance, ExactModelCoordinate const & p)
     {
         if (instance == nullptr) {
-            FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
+            FL_ERR(_log(), "Tried to add an instance to layer, but given instance is invalid");
             return false;
         }
 
@@ -146,7 +150,6 @@ namespace FIFE
         location.setLayer(this);
         location.setExactLayerCoordinates(p);
 
-        m_instances.push_back(instance);
         m_instanceTree->addInstance(instance);
         if (instance->isActive()) {
             setInstanceActivityStatus(instance, instance->isActive());
@@ -157,6 +160,7 @@ namespace FIFE
             (*i)->onInstanceCreate(this, instance);
             ++i;
         }
+        m_instances.push_back(instance);
         m_changed = true;
         return true;
     }
@@ -224,7 +228,7 @@ namespace FIFE
         for (; it != m_instances.end(); ++it) {
             if (*it == instance) {
                 m_instanceTree->removeInstance(*it);
-                delete *it;
+                std::unique_ptr<Instance> deleter(*it);
                 m_instances.erase(it);
                 break;
             }
@@ -435,8 +439,8 @@ namespace FIFE
         int32_t const numlayers = static_cast<int32_t>(mapLayerCount);
         int32_t thislayer       = 1; // we don't need 0 indexed
 
-        std::list<Layer*> const & layers = m_map->getLayers();
-        auto iter                        = layers.begin();
+        auto layers = m_map->getLayers();
+        auto iter   = layers.begin();
         for (; iter != layers.end(); ++iter, ++thislayer) {
             if (*iter == this) {
                 break;
@@ -525,11 +529,9 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (auto* j : adjacentInstances) {
-                if (j->isBlocking() && j->getLocationRef().getLayerCoordinates() == cellCoordinate) {
-                    blockingInstances.push_back(j);
-                }
-            }
+            std::ranges::copy_if(adjacentInstances, std::back_inserter(blockingInstances), [&](auto j) {
+                return j->isBlocking() && j->getLocationRef().getLayerCoordinates() == cellCoordinate;
+            });
         }
         return blockingInstances;
     }
@@ -609,19 +611,19 @@ namespace FIFE
 
     void Layer::createCellCache()
     {
-        if ((m_cellCache == nullptr) && m_walkable) {
-            m_cellCache = new CellCache(this);
+        if (!m_cellCache && m_walkable) {
+            m_cellCache = std::make_unique<CellCache>(this);
         }
     }
 
     CellCache* Layer::getCellCache()
     {
-        return m_cellCache;
+        return m_cellCache.get();
     }
 
     void Layer::destroyCellCache()
     {
-        if (m_walkable) {
+        if (m_walkable && m_cellCache) {
             removeChangeListener(m_cellCache->getCellCacheChangeListener());
             if (!m_interacts.empty()) {
                 auto it = m_interacts.begin();
@@ -631,9 +633,8 @@ namespace FIFE
                 }
                 m_interacts.clear();
             }
-            delete m_cellCache;
-            m_cellCache = nullptr;
-            m_walkable  = false;
+            m_cellCache.reset();
+            m_walkable = false;
         }
     }
 

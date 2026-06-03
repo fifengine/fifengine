@@ -138,9 +138,9 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
         if not self.aboutWindow:
             self.aboutWindow = pychan.loadXML("gui/help.xml")
             self.aboutWindow.mapEvents({"closeButton": self.aboutWindow.hide})
-            self.aboutWindow.distributeData(
-                {"helpText": open("misc/infotext.txt").read()}
-            )
+            textbox = self.aboutWindow.findChild(name="helpText")
+            textbox.text = open("misc/infotext.txt").read()
+            self.aboutWindow.adaptLayout()
         self.aboutWindow.show()
 
 

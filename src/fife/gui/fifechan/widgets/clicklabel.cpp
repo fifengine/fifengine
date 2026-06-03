@@ -12,8 +12,8 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/log/logger.h"
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "video/fonts/fontinstanceifontadapter.h"
 #include "video/image.h"
 
@@ -21,22 +21,23 @@ namespace fcn
 {
     namespace
     {
-        FIFE::Logger& _log = []() -> FIFE::Logger& {
+        FIFE::Logger& _log()
+        {
             static FIFE::Logger log(LM_GUI);
             return log;
-        }();
+        }
 
         bool shouldLogCaption(std::string const & caption)
         {
             return caption == "Text 1" || caption == "Text 2" || caption == "Text 3" || caption == "Credits";
         }
-    }
+    } // namespace
 
     ClickLabel::ClickLabel() :
         mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
-        setAlignment(Graphics::Alignment::Left);
-        setOpaque(true);
+        ClickLabel::setAlignment(Graphics::Alignment::Left);
+        ClickLabel::setOpaque(true);
         setBorderSize(0);
         mHasMouse = false, mKeyPressed = false, mMousePressed = false;
 
@@ -49,13 +50,13 @@ namespace fcn
     ClickLabel::ClickLabel(std::string const & caption) :
         mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {
-        setCaption(caption);
-        setAlignment(Graphics::Alignment::Left);
-        setOpaque(true);
+        ClickLabel::setCaption(caption);
+        ClickLabel::setAlignment(Graphics::Alignment::Left);
+        ClickLabel::setOpaque(true);
         setBorderSize(0);
         mHasMouse = false, mKeyPressed = false, mMousePressed = false;
 
-        adjustSize();
+        ClickLabel::adjustSize();
         addMouseListener(this);
         addKeyListener(this);
         addFocusListener(this);
@@ -228,28 +229,31 @@ namespace fcn
 
             if (shouldLogCaption(mCaption)) {
                 Rectangle const childrenArea = getChildrenArea();
-                FIFE::FL_LOG(_log, std::format(
-                    "ClickLabel::draw caption='{}' widget=({},{} {}x{}) children=({},{} {}x{}) textPos=({}, {}) image={}x{} padding=({}, {}, {}, {}) border={} opaque={} visible={}",
-                    mCaption,
-                    getX(),
-                    getY(),
-                    getWidth(),
-                    getHeight(),
-                    childrenArea.x,
-                    childrenArea.y,
-                    childrenArea.width,
-                    childrenArea.height,
-                    textX,
-                    textY,
-                    image->getWidth(),
-                    image->getHeight(),
-                    getPaddingTop(),
-                    getPaddingRight(),
-                    getPaddingBottom(),
-                    getPaddingLeft(),
-                    getBorderSize(),
-                    isOpaque(),
-                    isVisible()));
+                FIFE::FL_LOG(
+                    _log(),
+                    std::format(
+                        "ClickLabel::draw caption='{}' widget=({},{} {}x{}) children=({},{} {}x{}) textPos=({}, {}) "
+                        "image={}x{} padding=({}, {}, {}, {}) border={} opaque={} visible={}",
+                        mCaption,
+                        getX(),
+                        getY(),
+                        getWidth(),
+                        getHeight(),
+                        childrenArea.x,
+                        childrenArea.y,
+                        childrenArea.width,
+                        childrenArea.height,
+                        textX,
+                        textY,
+                        image->getWidth(),
+                        image->getHeight(),
+                        getPaddingTop(),
+                        getPaddingRight(),
+                        getPaddingBottom(),
+                        getPaddingLeft(),
+                        getBorderSize(),
+                        isOpaque(),
+                        isVisible()));
             }
 
             mGuiFont->drawMultiLineString(graphics, text, textX, textY);

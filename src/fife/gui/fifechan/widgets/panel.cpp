@@ -127,24 +127,9 @@ namespace fcn
         return dockArea;
     }
 
-    void Panel::resizeToContent(bool recursiv)
-    {
-        ResizableWindow::resizeToContent(recursiv);
-    }
-
     void Panel::expandContent(bool recursiv)
     {
         ResizableWindow::resizeToContent(recursiv);
-    }
-
-    void Panel::mouseEntered(MouseEvent& mouseEvent)
-    {
-        ResizableWindow::mouseEntered(mouseEvent);
-    }
-
-    void Panel::mouseExited(MouseEvent& mouseEvent)
-    {
-        ResizableWindow::mouseExited(mouseEvent);
     }
 
     void Panel::mousePressed(MouseEvent& mouseEvent)
@@ -174,11 +159,6 @@ namespace fcn
             }
         }
         ResizableWindow::mouseReleased(mouseEvent);
-    }
-
-    void Panel::mouseMoved(MouseEvent& mouseEvent)
-    {
-        ResizableWindow::mouseMoved(mouseEvent);
     }
 
     void Panel::mouseDragged(MouseEvent& mouseEvent)

@@ -30,14 +30,14 @@ static char const * const RAW_FILE        = "tests/data/test.map";
 
 TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", "[core][zip]")
 {
-    std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-    vfs->addSource(new VFSDirectory(vfs.get()));
+    std::shared_ptr<VFS> const vfs = std::make_shared<VFS>();
+    vfs->addSource(std::make_unique<VFSDirectory>(vfs.get()));
 
     CHECK(vfs->exists(COMPRESSED_FILE));
-    vfs->addSource(new ZipSource(vfs.get(), COMPRESSED_FILE));
+    vfs->addSource(std::make_unique<ZipSource>(vfs.get(), COMPRESSED_FILE));
 
     CHECK_THROWS_AS(vfs->open("does-not-exist"), NotFound);
-    std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
+    std::set<std::string> const dirlist = vfs->listDirectories("ziptest_content");
 
     CHECK_EQ(dirlist.size(), 4);
     CHECK(dirlist.contains("maps"));
@@ -64,7 +64,6 @@ TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", 
     auto fcomp = std::unique_ptr<RawData>(vfs->open("ziptest_content/maps/test.map"));
 
     CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
-    std::cout << "9" << '\n';
     auto smaller_len = std::min(fraw->getDataLength(), fcomp->getDataLength());
 
     std::vector<uint8_t> d_raw(fraw->getDataLength());
@@ -72,11 +71,9 @@ TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", 
     fraw->readInto(d_raw.data(), fraw->getDataLength());
     fcomp->readInto(d_comp.data(), fcomp->getDataLength());
 
-    std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
-        uint8_t rawc  = d_raw[i];
-        uint8_t compc = d_comp[i];
+        uint8_t const rawc  = d_raw.at(i);
+        uint8_t const compc = d_comp.at(i);
         CHECK_EQ(rawc, compc);
     }
-    std::cout << "scanning finished" << '\n';
 }

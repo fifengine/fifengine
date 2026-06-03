@@ -74,7 +74,7 @@ namespace FIFE
             /** Constructor
              * Create a VFSSource for a Fallout2 DAT file.
              * @param vfs A pointer to the VFS.
-             * @param path A Fallout2 DAT file - e.g. master.DAT
+             * @param file A Fallout2 DAT file - e.g. master.DAT
              */
             DAT2(VFS* vfs, std::string const & file);
 

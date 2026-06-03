@@ -22,10 +22,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_AUDIO);
             return log;
-        }();
+        }
     } // namespace
 
     class SoundChangeListener : public InstanceChangeListener
@@ -58,9 +59,9 @@ namespace FIFE
         m_instance(instance),
         m_audio(nullptr),
         m_emitter(SoundManager::instance()->createEmitter()),
-        m_listener(new SoundChangeListener(this))
+        m_listener(std::make_unique<SoundChangeListener>(this))
     {
-        m_instance->addChangeListener(m_listener);
+        m_instance->addChangeListener(m_listener.get());
 
         // inital data
         setPosition();
@@ -68,8 +69,7 @@ namespace FIFE
 
     SoundSource::~SoundSource()
     {
-        m_instance->removeChangeListener(m_listener);
-        delete m_listener;
+        m_instance->removeChangeListener(m_listener.get());
         SoundManager::instance()->releaseEmitter(m_emitter->getId());
     }
 

@@ -42,14 +42,14 @@ namespace FIFE
             }
             if (m_footprintOffsets.empty()) {
                 // Fallback: compute from occupied area
-                Location const loc                  = route->getStartNode();
-                std::vector<ModelCoordinate> coords = route->getOccupiedArea();
-                for (auto& coord : coords) {
-                    m_footprintOffsets.push_back(ModelCoordinate(
+                Location const loc                        = route->getStartNode();
+                std::vector<ModelCoordinate> const coords = route->getOccupiedArea();
+                std::ranges::transform(coords, std::back_inserter(m_footprintOffsets), [&](auto const & coord) {
+                    return ModelCoordinate(
                         coord.x - loc.getLayerCoordinates().x,
                         coord.y - loc.getLayerCoordinates().y,
-                        coord.z - loc.getLayerCoordinates().z));
-                }
+                        coord.z - loc.getLayerCoordinates().z);
+                });
             }
             assert("footprint offsets must not be empty for multi-cell search" && !m_footprintOffsets.empty());
         }

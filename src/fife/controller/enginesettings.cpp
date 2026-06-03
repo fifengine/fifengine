@@ -22,10 +22,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_CONTROLLER);
             return log;
-        }();
+        }
     } // namespace
 
     constexpr float MAXIMUM_VOLUME = 10.0F;
@@ -92,7 +93,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
+            _log(),
             std::format(
                 "EngineSettings::setBitsPerPixel() -  Tried to set screen bpp to an unsupporded value of {}.  "
                 "Setting bpp to use the default value of 0 (the current screen bpp)",
@@ -115,7 +116,7 @@ namespace FIFE
     {
         if (volume > getMaxVolume() || volume < 0) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "EngineSettings::setInitialVolume() -  Tried to set initial volume to an unsupporded value of "
                     "{}.  Setting volume to the default value of 5 (minumum is 0, maximum is 10)",
@@ -142,7 +143,7 @@ namespace FIFE
             return;
         }
         FL_WARN(
-            _log,
+            _log(),
             std::format(
                 "EngineSettings::setRenderBackend() - {} is not a valid render backend .  Setting the render "
                 "backend to the default value of \"SDL\".",
@@ -304,7 +305,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
+            _log(),
             std::format(
                 "EngineSettings::setLightingModel() - {} is not a valid lighting model..  Setting the lighting "
                 "model to the default value of 0 (off)",

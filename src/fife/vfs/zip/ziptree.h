@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -28,10 +29,6 @@ namespace FIFE
 
             ZipTree(ZipTree const &)            = delete;
             ZipTree& operator=(ZipTree const &) = delete;
-
-            /** destructor
-             */
-            ~ZipTree();
             /**
              * Adds a node to the proper place in the tree
              * based on the node path name.
@@ -59,7 +56,7 @@ namespace FIFE
             ZipNode* getRootNode() const;
 
         private:
-            ZipNode* m_rootNode;
+            std::unique_ptr<ZipNode> m_rootNode;
     };
 } // namespace FIFE
 

@@ -15,13 +15,8 @@ namespace fs = std::filesystem;
 namespace FIFE
 {
 
-    ZipTree::ZipTree() : m_rootNode(new ZipNode("/"))
+    ZipTree::ZipTree() : m_rootNode(std::make_unique<ZipNode>("/"))
     {
-    }
-
-    ZipTree::~ZipTree()
-    {
-        delete m_rootNode;
     }
 
     ZipNode* ZipTree::addNode(std::string const & nodePath, ZipEntryType entryType)
@@ -32,7 +27,7 @@ namespace FIFE
         }
 
         fs::path const filePath(cleaned);
-        ZipNode* node       = m_rootNode;
+        ZipNode* node       = m_rootNode.get();
         ZipNode* returnNode = nullptr;
 
         for (auto it = filePath.begin(); it != filePath.end(); ++it) {
@@ -85,7 +80,7 @@ namespace FIFE
 
     ZipNode* ZipTree::getRootNode() const
     {
-        return m_rootNode;
+        return m_rootNode.get();
     }
 } // namespace FIFE
 

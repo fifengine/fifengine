@@ -35,10 +35,10 @@ TEST_CASE("DAT1::open decompresses stored entry correctly", "[dat1][vfs]")
 {
 
     std::shared_ptr<FIFE::VFS> const vfs = std::make_shared<FIFE::VFS>();
-    vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
+    vfs->addSource(std::make_unique<FIFE::VFSDirectory>(vfs.get()));
     CHECK(vfs->exists(COMPRESSED_FILE));
 
-    vfs->addSource(new FIFE::DAT1(vfs.get(), COMPRESSED_FILE));
+    vfs->addSource(std::make_unique<FIFE::DAT1>(vfs.get(), COMPRESSED_FILE));
 
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("dat1vfstest.map"));
@@ -57,8 +57,8 @@ TEST_CASE("DAT1::open decompresses stored entry correctly", "[dat1][vfs]")
     fcomp->readInto(d_comp.data(), fcomp->getDataLength());
     // std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
-        uint8_t const rawc  = d_raw[i];
-        uint8_t const compc = d_comp[i];
+        uint8_t const rawc  = d_raw.at(i);
+        uint8_t const compc = d_comp.at(i);
         CHECK((compc) == (rawc));
         // std::cout
         //	<< "raw: " << std::setbase(16) << rawc

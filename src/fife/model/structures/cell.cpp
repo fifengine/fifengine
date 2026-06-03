@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <set>
 #include <utility>
 #include <vector>
@@ -25,10 +26,11 @@ namespace FIFE
 
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     Cell::Cell(int32_t coordint, ModelCoordinate const & coordinate, Layer* layer) :
@@ -36,7 +38,6 @@ namespace FIFE
         m_coordinate(coordinate),
         m_layer(layer),
         m_zone(nullptr),
-        m_transition(nullptr),
         m_inserted(false),
         m_protect(false),
         m_type(CTYPE_NO_BLOCKER)
@@ -58,12 +59,16 @@ namespace FIFE
         if (m_zone != nullptr) {
             m_zone->removeCell(this);
         }
-        // delete m_transition;
-        if (m_transition != nullptr) {
+        if (m_transition) {
             deleteTransition();
         }
         // remove cell from cache (costs, narrow, area)
-        m_layer->getCellCache()->removeCell(this);
+        if (m_layer != nullptr) {
+            CellCache* cache = m_layer->getCellCache();
+            if (cache != nullptr) {
+                cache->removeCell(this);
+            }
+        }
     }
 
     void Cell::addInstances(std::list<Instance*> const & instances)
@@ -116,7 +121,7 @@ namespace FIFE
     void Cell::removeInstance(Instance* instance)
     {
         if (m_instances.erase(instance) == 0) {
-            FL_ERR(_log, "Tried to remove an instance from cell, but given instance could not be found.");
+            FL_ERR(_log(), "Tried to remove an instance from cell, but given instance could not be found.");
             return;
         }
         CellCache* cache = m_layer->getCellCache();
@@ -218,10 +223,12 @@ namespace FIFE
         updateCellBlockingInfo();
 
         if (!m_deleteListeners.empty()) {
-            m_deleteListeners.erase(std::ranges::remove(m_deleteListeners, nullptr).begin(), m_deleteListeners.end());
+            auto [first, last] = std::ranges::remove(m_deleteListeners, nullptr);
+            m_deleteListeners.erase(first, last);
         }
         if (!m_changeListeners.empty()) {
-            m_changeListeners.erase(std::ranges::remove(m_changeListeners, nullptr).begin(), m_changeListeners.end());
+            auto [first, last] = std::ranges::remove(m_changeListeners, nullptr);
+            m_changeListeners.erase(first, last);
         }
     }
 
@@ -344,7 +351,7 @@ namespace FIFE
     void Cell::resetNeighbors()
     {
         m_neighbors.clear();
-        if (m_transition != nullptr) {
+        if (m_transition) {
             CellCache* cache = m_transition->m_layer->getCellCache();
             if (cache != nullptr) {
                 Cell* cell = cache->getCell(m_transition->m_mc);
@@ -362,7 +369,7 @@ namespace FIFE
 
     void Cell::createTransition(Layer* layer, ModelCoordinate const & mc, bool immediate)
     {
-        auto* trans = new TransitionInfo(layer);
+        auto trans = std::make_unique<TransitionInfo>(layer);
         // if layers are the same then it's a portal
         if (layer != m_layer) {
             trans->m_difflayer = true;
@@ -372,22 +379,18 @@ namespace FIFE
 
         deleteTransition();
 
-        m_transition = trans;
-
         Cell* c = layer->getCellCache()->getCell(mc);
         if (c != nullptr) {
             m_neighbors.push_back(c);
             c->addDeleteListener(this);
             m_layer->getCellCache()->addTransition(this);
-        } else {
-            delete m_transition;
-            m_transition = nullptr;
+            m_transition = std::move(trans);
         }
     }
 
     void Cell::deleteTransition()
     {
-        if (m_transition != nullptr) {
+        if (m_transition) {
             Cell* oldc = m_transition->m_layer->getCellCache()->getCell(m_transition->m_mc);
             auto it    = m_neighbors.begin();
             for (; it != m_neighbors.end(); ++it) {
@@ -398,14 +401,13 @@ namespace FIFE
             }
             oldc->removeDeleteListener(this);
             m_layer->getCellCache()->removeTransition(this);
-            delete m_transition;
-            m_transition = nullptr;
+            m_transition.reset();
         }
     }
 
     TransitionInfo* Cell::getTransition()
     {
-        return m_transition;
+        return m_transition.get();
     }
 
     void Cell::addDeleteListener(CellDeleteListener* listener)

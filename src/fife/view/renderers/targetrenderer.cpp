@@ -25,10 +25,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     RenderTarget::RenderTarget(RenderBackend* rb, std::string const & name, uint32_t width, uint32_t height) :

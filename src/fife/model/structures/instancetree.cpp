@@ -19,10 +19,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     InstanceTree::InstanceTree() = default;
@@ -36,7 +37,7 @@ namespace FIFE
         InstanceList& list           = node->data();
         list.push_back(instance);
         if (m_reverse.contains(instance)) {
-            FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
+            FL_WARN(_log(), "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
             return;
         }
         m_reverse[instance] = node;
@@ -46,7 +47,7 @@ namespace FIFE
     {
         InstanceTreeNode* node = m_reverse[instance];
         if (node == nullptr) {
-            FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");
+            FL_WARN(_log(), "InstanceTree::removeInstance() - Instance not part of tree.");
             return;
         }
         m_reverse.erase(instance);
@@ -60,7 +61,7 @@ namespace FIFE
             return;
         }
         FL_WARN(
-            _log, "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
+            _log(), "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
     }
 
     class InstanceListCollector
@@ -77,11 +78,11 @@ namespace FIFE
 
     bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, [[maybe_unused]] int32_t d) const
     {
-        InstanceTree::InstanceList& list = node->data();
-        for (InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
-            ModelCoordinate const coords = (*it)->getLocationRef().getLayerCoordinates();
+        InstanceTree::InstanceList const & list = node->data();
+        for (auto const & instance : list) {
+            ModelCoordinate const coords = instance->getLocationRef().getLayerCoordinates();
             if (searchRect.contains(Point(coords.x, coords.y))) {
-                instanceList->push_back(*it);
+                instanceList->push_back(instance);
             }
         }
         return true;

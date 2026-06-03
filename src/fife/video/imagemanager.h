@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -133,7 +134,11 @@ namespace FIFE
              * @see Image
              *
              */
-            virtual ImagePtr add(Image* res);
+            virtual ImagePtr add(std::unique_ptr<Image> res);
+            ImagePtr add(Image* res)
+            {
+                return add(std::unique_ptr<Image>(res));
+            }
 
             /** Checks to see if an Image exists
              *

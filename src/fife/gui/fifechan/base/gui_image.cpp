@@ -17,10 +17,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
     } // namespace
 
     GuiImage::GuiImage() = default;
@@ -54,14 +55,14 @@ namespace FIFE
 
     fcn::Color GuiImage::getPixel([[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y)
     {
-        FL_PANIC(_log, "GuiImage::getPixel, not implemented");
+        FL_PANIC(_log(), "GuiImage::getPixel, not implemented");
         return {};
     }
 
     void GuiImage::putPixel(
         [[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y, [[maybe_unused]] fcn::Color const & color)
     {
-        FL_PANIC(_log, "GuiImage::putPixel, not implemented");
+        FL_PANIC(_log(), "GuiImage::putPixel, not implemented");
     }
 
     void GuiImage::convertToDisplayFormat()

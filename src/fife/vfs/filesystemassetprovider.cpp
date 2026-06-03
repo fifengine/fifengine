@@ -3,6 +3,7 @@
 
 #include "filesystemassetprovider.h"
 
+#include <algorithm>
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -21,10 +22,10 @@ namespace FIFE
     bool FilesystemAssetProvider::canResolve(AssetRequest const & req) const
     {
         assert("Asset request source must not be empty" && !req.source.empty());
-        for (auto const & path : m_searchPaths) {
-            if (fs::exists(fs::path(path) / req.source)) {
-                return true;
-            }
+        if (std::ranges::any_of(m_searchPaths, [&](auto const & path) {
+                return fs::exists(fs::path(path) / req.source);
+            })) {
+            return true;
         }
         auto const direct = fs::path(req.source);
         return direct.is_absolute() && fs::exists(direct);

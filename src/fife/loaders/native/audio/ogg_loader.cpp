@@ -22,10 +22,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     void OggLoader::load(IResource* res)

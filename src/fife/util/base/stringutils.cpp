@@ -32,7 +32,7 @@ namespace FIFE
         std::string::size_type start = curr;
 
         while (curr < str.size()) {
-            if (str[curr] == group) {
+            if (str.at(curr) == group) {
                 curr = str.find_first_of(group, curr + 1);
                 if (curr == std::string::npos) {
                     return {};
@@ -41,8 +41,8 @@ namespace FIFE
                 std::string const token = str.substr(start + 1, curr - start - 1);
                 tokens.push_back(makeInt32(token));
                 start = curr + 1;
-            } else if (str[curr] == delim) {
-                if (str[curr - 1] != delim && str[curr - 1] != group) {
+            } else if (str.at(curr) == delim) {
+                if (str.at(curr - 1) != delim && str.at(curr - 1) != group) {
                     std::string const token = str.substr(start, curr - start);
                     tokens.push_back(makeInt32(token));
                 }
@@ -56,7 +56,7 @@ namespace FIFE
             return tokens;
         }
 
-        if (str[curr - 1] != delim && str[curr - 1] != group) {
+        if (str.at(curr - 1) != delim && str.at(curr - 1) != group) {
             std::string const token = str.substr(start, curr - start);
             tokens.push_back(makeInt32(token));
         }

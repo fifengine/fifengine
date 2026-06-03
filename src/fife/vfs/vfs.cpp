@@ -7,9 +7,11 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <format>
+#include <memory>
 #include <regex>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -28,10 +30,11 @@ namespace FIFE
         /** Logger to use for this source file.
          *  @relates Logger
          */
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VFS);
             return log;
-        }();
+        }
     } // namespace
 
     VFS::VFS() = default;
@@ -43,38 +46,33 @@ namespace FIFE
 
     void VFS::cleanup()
     {
-        type_sources sources = m_sources;
-        auto end             = sources.end();
-        for (auto i = sources.begin(); i != end; ++i) {
-            delete *i;
-        }
-
-        auto end2 = m_providers.end();
-        for (auto j = m_providers.begin(); j != end2; ++j) {
-            delete *j;
-        }
-
+        // Swap with empty vector to avoid re-entrancy: clearing m_sources directly
+        // would trigger VFSSource::~VFSSource() which calls removeSource() back
+        // on the same vector during clear(). Swapping first ensures removeSource()
+        // sees an empty m_sources and does nothing.
+        type_sources sources;
+        m_sources.swap(sources);
         m_providers.clear();
     }
 
-    void VFS::addProvider(VFSSourceProvider* provider)
+    void VFS::addProvider(std::unique_ptr<VFSSourceProvider> provider)
     {
         provider->setVFS(this);
-        m_providers.push_back(provider);
-        FL_LOG(_log, std::format("new provider: {}", provider->getName()));
+        FL_LOG(_log(), std::format("new provider: {}", provider->getName()));
+        m_providers.push_back(std::move(provider));
     }
 
     VFSSource* VFS::createSource(std::string const & path)
     {
 
         if (hasSource(path)) {
-            FL_WARN(_log, std::format("{} is already used as VFS source", path));
+            FL_WARN(_log(), std::format("{} is already used as VFS source", path));
             return nullptr;
         }
 
         auto end = m_providers.end();
         for (auto i = m_providers.begin(); i != end; ++i) {
-            VFSSourceProvider* provider = *i;
+            VFSSourceProvider* provider = i->get();
             if (!provider->isReadable(path)) {
                 continue;
             }
@@ -84,13 +82,13 @@ namespace FIFE
                 return source;
             } catch (Exception const & ex) {
                 FL_WARN(
-                    _log,
+                    _log(),
                     std::format(
                         "{} thought it could load {} but didn't succeed ({})", provider->getName(), path, ex.what()));
                 continue;
             } catch (...) {
                 FL_WARN(
-                    _log,
+                    _log(),
                     std::format(
                         "{} thought it could load {} but didn't succeed (unknown exception)",
                         provider->getName(),
@@ -99,28 +97,30 @@ namespace FIFE
             }
         }
 
-        FL_WARN(_log, std::format("no provider for {} found", path));
+        FL_WARN(_log(), std::format("no provider for {} found", path));
         return nullptr;
     }
 
     void VFS::addNewSource(std::string const & path)
     {
-        VFSSource* source = createSource(path);
-        if (source != nullptr) {
-            addSource(source);
+        std::unique_ptr<VFSSource> source(createSource(path));
+        if (source) {
+            addSource(std::move(source));
         } else {
-            FL_WARN(_log, std::format("Failed to add new VFS source: {}", path));
+            FL_WARN(_log(), std::format("Failed to add new VFS source: {}", path));
         }
     }
 
-    void VFS::addSource(VFSSource* source)
+    void VFS::addSource(std::unique_ptr<VFSSource> source)
     {
-        m_sources.push_back(source);
+        m_sources.push_back(std::move(source));
     }
 
     void VFS::removeSource(VFSSource* source)
     {
-        auto i = std::ranges::find(m_sources, source);
+        auto i = std::ranges::find_if(m_sources, [source](auto const & ptr) {
+            return ptr.get() == source;
+        });
         if (i != m_sources.end()) {
             m_sources.erase(i);
         }
@@ -128,17 +128,19 @@ namespace FIFE
 
     void VFS::removeSource(std::string const & path)
     {
-        for (VFSSourceProvider const * provider : m_providers) {
+        for (auto const & provider : m_providers) {
             if (!provider->hasSource(path)) {
                 continue;
             }
 
             VFSSource const * source = provider->getSource(path);
 
-            auto it = std::ranges::find(m_sources, source);
+            auto it = std::ranges::find_if(m_sources, [source](auto const & ptr) {
+                return ptr.get() == source;
+            });
 
             if (it != m_sources.end()) {
-                removeSource(*it);
+                removeSource(it->get());
                 return;
             }
         }
@@ -151,15 +153,15 @@ namespace FIFE
 
     VFSSource* VFS::findSourceForFile(std::string const & file) const
     {
-        auto it = std::ranges::find_if(m_sources, [&file](VFSSource const * s) {
+        auto it = std::ranges::find_if(m_sources, [&file](auto const & s) {
             return s->fileExists(file);
         });
 
         if (it != m_sources.end()) {
-            return *it;
+            return it->get();
         }
 
-        FL_WARN(_log, std::format("no source for {} found", file));
+        FL_WARN(_log(), std::format("no source for {} found", file));
         return nullptr;
     }
 
@@ -204,7 +206,7 @@ namespace FIFE
 
     RawData* VFS::open(std::string const & path)
     {
-        FL_DBG(_log, std::format("Opening: {}", path));
+        FL_DBG(_log(), std::format("Opening: {}", path));
 
         VFSSource const * source = getSourceForFile(path);
         if (source == nullptr) {
@@ -269,7 +271,7 @@ namespace FIFE
     {
         VFSSource const * source = getSourceForFile(path);
         if (source == nullptr) {
-            FL_DBG(_log, std::format("readFile: {} not found, returning nullptr", path));
+            FL_DBG(_log(), std::format("readFile: {} not found, returning nullptr", path));
             return nullptr;
         }
         return source->open(path);
@@ -281,7 +283,7 @@ namespace FIFE
             auto const end = m_providers.end();
 
             for (auto it = m_providers.begin(); it != end; ++it) {
-                auto const * provider = *it;
+                auto const * provider = it->get();
 
                 if (!provider->hasSource(candidate)) {
                     continue;
@@ -290,14 +292,16 @@ namespace FIFE
                 auto const * source = provider->getSource(candidate);
 
                 // O(n) lookup in the worst case, but only few sources expected
-                if (std::ranges::find(m_sources, source) != m_sources.end()) {
+                if (std::ranges::find_if(m_sources, [source](auto const & ptr) {
+                        return ptr.get() == source;
+                    }) != m_sources.end()) {
                     return true;
                 }
             }
             return false;
         };
 
-        std::string const original = path;
+        std::string const & original = path;
 
         fs::path const raw(path);
 

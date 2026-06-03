@@ -19,8 +19,8 @@ using FIFE::LogManager;
 
 TEST_CASE("LogManager singleton", "[core][logger]")
 {
-    auto& a = LogManager::instance();
-    auto& b = LogManager::instance();
+    auto const & a = LogManager::instance();
+    auto const & b = LogManager::instance();
     CHECK(&a == &b);
 }
 
@@ -77,6 +77,12 @@ TEST_CASE("Logger construction and getModule", "[core][logger]")
 TEST_CASE("Logger log does not crash", "[core][logger]")
 {
     Logger log(LM_CONTROLLER);
+
+    // Silence console output for this test — we only care that it doesn't crash
+    auto& lm         = LogManager::instance();
+    bool const prev  = lm.isLogToPrompt();
+    lm.setLogToPrompt(false);
+
     // basic log call — should not throw or crash
     log.log(LogManager::LEVEL_LOG, "test message");
 
@@ -90,6 +96,8 @@ TEST_CASE("Logger log does not crash", "[core][logger]")
     FL_LOG(log, "log");
     FL_WARN(log, "warn");
     FL_ERR(log, "err");
+
+    lm.setLogToPrompt(prev);
 }
 
 TEST_CASE("LogManager getModuleName", "[core][logger]")

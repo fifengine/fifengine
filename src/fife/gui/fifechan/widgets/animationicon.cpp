@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <memory>
 
 // 3rd party library includes
 
@@ -19,7 +20,6 @@ namespace fcn
 {
     AnimationIcon::AnimationIcon() :
         mTimemanager(FIFE::TimeManager::instance()),
-
         mCurrentImage(nullptr),
         mAnimtime(0),
         mFrameIndex(-1),
@@ -46,8 +46,8 @@ namespace fcn
         // set first frame as new image
         if (mAnimation->getFrameCount() > 0) {
             mFrameIndex   = 0;
-            mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));
-            setImage(mCurrentImage);
+            mCurrentImage = std::make_unique<FIFE::GuiImage>(mAnimation->getFrame(mFrameIndex));
+            setImage(mCurrentImage.get());
         }
         setScaling(false);
         setTiling(false);
@@ -55,15 +55,12 @@ namespace fcn
         adjustSize();
     }
 
-    AnimationIcon::~AnimationIcon()
-    {
-        delete mCurrentImage;
-    }
+    AnimationIcon::~AnimationIcon() = default;
 
     void AnimationIcon::setAnimation(FIFE::AnimationPtr const & animation)
     {
         mAnimation = animation;
-        if (!mAnimation.get()) {
+        if (mAnimation.get() == nullptr) {
             mAnimtime = 0;
             return;
         }
@@ -74,13 +71,9 @@ namespace fcn
         }
         // set first frame as new image
         if (mAnimation->getFrameCount() > 0) {
-            mFrameIndex = 0;
-            if (mCurrentImage != nullptr) {
-                delete mCurrentImage;
-                mCurrentImage = nullptr;
-            }
-            mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));
-            setImage(mCurrentImage);
+            mFrameIndex   = 0;
+            mCurrentImage = std::make_unique<FIFE::GuiImage>(mAnimation->getFrame(mFrameIndex));
+            setImage(mCurrentImage.get());
         }
         adjustSize();
     }
@@ -119,24 +112,24 @@ namespace fcn
     void AnimationIcon::stop()
     {
         mPlay = false;
-        if (!mAnimation.get()) {
+        if (mAnimation.get() == nullptr) {
             return;
         }
         // set first frame as new image
         if (mAnimation->getFrameCount() > 0) {
             mFrameIndex   = 0;
-            mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));
-            setImage(mCurrentImage);
+            mCurrentImage = std::make_unique<FIFE::GuiImage>(mAnimation->getFrame(mFrameIndex));
+            setImage(mCurrentImage.get());
         }
     }
 
     void AnimationIcon::logic()
     {
         if (isPlaying()) {
-            if (!mAnimation.get()) {
+            if (mAnimation.get() == nullptr) {
                 return;
             }
-            int32_t index          = mFrameIndex;
+            int32_t index;
             uint64_t const elapsed = mTimemanager->now64() - mAnimtime;
             if (isRepeating()) {
                 index = mAnimation->getFrameIndex64(
@@ -146,14 +139,11 @@ namespace fcn
             }
             if (index != mFrameIndex) {
                 mFrameIndex = index;
-                if (mCurrentImage != nullptr) {
-                    delete mCurrentImage;
-                    mCurrentImage = nullptr;
-                }
+                mCurrentImage.reset();
                 if (mFrameIndex >= 0) {
-                    mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));
+                    mCurrentImage = std::make_unique<FIFE::GuiImage>(mAnimation->getFrame(mFrameIndex));
                 }
-                setImage(mCurrentImage);
+                setImage(mCurrentImage.get());
             }
         }
     }

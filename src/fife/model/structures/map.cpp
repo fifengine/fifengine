@@ -10,6 +10,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -43,20 +44,16 @@ namespace FIFE
         m_renderBackend(renderBackend),
         m_renderers(renderers),
         m_changed(false),
-        m_triggerController(new TriggerController(this))
+        m_triggerController(std::make_unique<TriggerController>(this))
     {
     }
 
     Map::~Map()
     {
-        delete m_triggerController;
-        // remove all cameras
-        auto iter = m_cameras.begin();
-        for (; iter != m_cameras.end(); ++iter) {
-            delete *iter;
+        for (auto* cam : m_cameras) {
+            delete cam;
         }
         m_cameras.clear();
-
         deleteLayers();
     }
 
@@ -65,10 +62,19 @@ namespace FIFE
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
             if ((*it)->getName() == id) {
-                return *it;
+                return it->get();
             }
         }
         return nullptr;
+    }
+
+    std::list<Layer*> Map::getLayers() const
+    {
+        std::list<Layer*> result;
+        std::ranges::transform(m_layers, std::back_inserter(result), [](auto const & l) {
+            return l.get();
+        });
+        return result;
     }
 
     uint32_t Map::getLayerCount() const
@@ -86,29 +92,29 @@ namespace FIFE
             }
         }
 
-        auto* layer = new Layer(identifier, this, grid);
-        m_layers.push_back(layer);
+        auto layer = std::make_unique<Layer>(identifier, this, grid);
+        Layer* raw = layer.get();
+        m_layers.push_back(std::move(layer));
         m_changed = true;
         auto i    = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
-            (*i)->onLayerCreate(this, layer);
+            (*i)->onLayerCreate(this, raw);
             ++i;
         }
 
-        return layer;
+        return raw;
     }
 
     void Map::deleteLayer(Layer* layer)
     {
         auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
-            if ((*it) == layer) {
+            if (it->get() == layer) {
                 auto i = m_changeListeners.begin();
                 while (i != m_changeListeners.end()) {
                     (*i)->onLayerDelete(this, layer);
                     ++i;
                 }
-                delete layer;
                 m_layers.erase(it);
                 return;
             }
@@ -118,23 +124,14 @@ namespace FIFE
 
     void Map::deleteLayers()
     {
-        std::list<Layer*> temp_layers = m_layers;
-        auto temp_it                  = temp_layers.begin();
-        for (; temp_it != temp_layers.end(); ++temp_it) {
+        for (auto const & l : m_layers) {
             auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
-                (*i)->onLayerDelete(this, *temp_it);
+                (*i)->onLayerDelete(this, l.get());
                 ++i;
             }
-            auto it = m_layers.begin();
-            for (; it != m_layers.end(); ++it) {
-                if (*it == *temp_it) {
-                    delete *it;
-                    m_layers.erase(it);
-                    break;
-                }
-            }
         }
+        m_layers.clear();
     }
 
     void Map::getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max)
@@ -143,7 +140,7 @@ namespace FIFE
             return;
         }
         auto it      = m_layers.begin();
-        Layer* layer = *it;
+        Layer* layer = it->get();
         for (; it != m_layers.end(); ++it) {
             ModelCoordinate newMin;
             ModelCoordinate newMax;
@@ -186,7 +183,7 @@ namespace FIFE
         // update Layers
         for (; it != m_layers.end(); ++it) {
             if ((*it)->update()) {
-                m_changedLayers.push_back(*it);
+                m_changedLayers.push_back(it->get());
             }
             CellCache* cache = (*it)->getCellCache();
             if (cache != nullptr) {
@@ -244,15 +241,15 @@ namespace FIFE
         }
 
         // create new camera and add to list of cameras
-        auto* camera = new Camera(id, this, viewport, m_renderBackend);
-        m_cameras.push_back(camera);
+        auto camera = std::make_unique<Camera>(id, this, viewport, m_renderBackend);
+        Camera* raw = camera.get();
 
         auto iter = m_renderers.begin();
         for (; iter != m_renderers.end(); ++iter) {
-            camera->addRenderer((*iter)->clone());
+            raw->addRenderer((*iter)->clone());
         }
-
-        return camera;
+        m_cameras.push_back(camera.release());
+        return raw;
     }
 
     void Map::removeCamera(std::string const & id)
@@ -260,14 +257,8 @@ namespace FIFE
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             if ((*iter)->getName() == id) {
-                // camera has been found delete it
                 delete *iter;
-
-                // now remove it from the vector
-                // note this invalidates iterators, but we do not need
-                // to worry about it in this case since we are done
                 m_cameras.erase(iter);
-
                 break;
             }
         }
@@ -333,7 +324,7 @@ namespace FIFE
             if ((*layit)->isInteract()) {
                 Layer* temp = getLayer((*layit)->getWalkableId());
                 if (temp != nullptr) {
-                    temp->addInteractLayer(*layit);
+                    temp->addInteractLayer(layit->get());
                 }
             }
         }

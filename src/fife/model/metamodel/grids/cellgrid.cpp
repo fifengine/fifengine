@@ -18,10 +18,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_CELLGRID);
             return log;
-        }();
+        }
     } // namespace
 
     CellGrid::CellGrid() :
@@ -91,7 +92,7 @@ namespace FIFE
         double const o3   = orientation(pt3, pt1, pt);
         bool const result = (o1 == o2) && (o2 == o3);
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "ptInTriangle, pt=({}, {}, {}) pt1=({}, {}, {}) pt2=({}, {}, {}) pt3=({}, {}, {}) in={}",
                 pt.x,

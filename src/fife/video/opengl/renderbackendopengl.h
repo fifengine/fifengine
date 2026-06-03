@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -49,12 +50,13 @@ namespace FIFE
             virtual void createMainScreen(ScreenMode const & mode, std::string const & title, std::string const & icon);
             virtual void setScreenMode(ScreenMode const & mode);
 
-            virtual Image* createImage(IResourceLoader* loader = nullptr);
-            virtual Image* createImage(std::string const & name, IResourceLoader* loader = nullptr);
-            virtual Image* createImage(uint8_t const * data, uint32_t width, uint32_t height);
-            virtual Image* createImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height);
-            virtual Image* createImage(SDL_Surface* surface);
-            virtual Image* createImage(std::string const & name, SDL_Surface* surface);
+            virtual std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr);
+            virtual std::unique_ptr<Image> createImage(std::string const & name, IResourceLoader* loader = nullptr);
+            virtual std::unique_ptr<Image> createImage(uint8_t const * data, uint32_t width, uint32_t height);
+            virtual std::unique_ptr<Image> createImage(
+                std::string const & name, uint8_t const * data, uint32_t width, uint32_t height);
+            virtual std::unique_ptr<Image> createImage(SDL_Surface* surface);
+            virtual std::unique_ptr<Image> createImage(std::string const & name, SDL_Surface* surface);
 
             virtual void renderVertexArrays();
             virtual void addImageToArray(

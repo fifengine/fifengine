@@ -26,15 +26,15 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
     } // namespace
 
     SdlGuiGraphics::SdlGuiGraphics() : m_renderbackend(RenderBackend::instance())
     {
-        // New fifechan SDL backend expects an SDL_Renderer and dimensions
         auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
         setTarget(
             rb_sdl->getRenderer(),
@@ -49,6 +49,42 @@ namespace FIFE
             rb_sdl->getRenderer(),
             static_cast<int>(m_renderbackend->getWidth()),
             static_cast<int>(m_renderbackend->getHeight()));
+    }
+
+    void SdlGuiGraphics::drawSurface(SDL_Surface* surface, int dstX, int dstY)
+    {
+        if (surface == nullptr) {
+            return;
+        }
+
+        auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
+        if (rb_sdl == nullptr) {
+            return;
+        }
+        SDL_Renderer* renderer = rb_sdl->getRenderer();
+
+        fcn::ClipRectangle const & clip = getCurrentClipArea();
+        int const x                     = dstX + clip.xOffset;
+        int const y                     = dstY + clip.yOffset;
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (texture == nullptr) {
+            return;
+        }
+
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureColorMod(texture, mColor.r, mColor.g, mColor.b);
+        SDL_SetTextureAlphaMod(texture, mColor.a);
+
+        SDL_FRect src{.x = 0.0F, .y = 0.0F, .w = static_cast<float>(surface->w), .h = static_cast<float>(surface->h)};
+        SDL_FRect dst{
+            .x = static_cast<float>(x),
+            .y = static_cast<float>(y),
+            .w = src.w,
+            .h = src.h};
+
+        SDL_RenderTexture(renderer, texture, &src, &dst);
+        SDL_DestroyTexture(texture);
     }
 
     void SdlGuiGraphics::drawImage(
@@ -90,7 +126,7 @@ namespace FIFE
             break;
         default:
             FL_WARN(
-                _log, std::format("SdlGuiGraphics::drawText() - Unknown alignment: {}", static_cast<int>(alignment)));
+                _log(), std::format("SdlGuiGraphics::drawText() - Unknown alignment: {}", static_cast<int>(alignment)));
             mFont->drawString(this, text, x, y);
         }
     }

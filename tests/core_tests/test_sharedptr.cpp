@@ -139,7 +139,7 @@ TEST_CASE("SharedPtr::operator-> and operator* access underlying data", "[core][
     shptr.reset();
     CHECK(!shptr);
 
-    Data d = *copy;
+    Data const d = *copy;
 
     CHECK_EQ(copy.useCount(), 1);
     CHECK(copy.unique());
@@ -159,10 +159,10 @@ TEST_CASE("SharedPtr::operator-> and operator* access underlying data", "[core][
  */
 TEST_CASE("SharedPtr::unique reports single vs shared ownership", "[core][sharedptr]")
 {
-    SharedPtr<Data> shptr(new Data());
+    SharedPtr<Data> const shptr(new Data());
     CHECK(shptr.unique());
 
-    SharedPtr<Data> copy(shptr); // NOLINT(performance-unnecessary-copy-initialization)
+    SharedPtr<Data> const copy(shptr); // NOLINT(performance-unnecessary-copy-initialization)
 
     CHECK(!shptr.unique());
     CHECK(!copy.unique());
@@ -174,7 +174,7 @@ TEST_CASE("SharedPtr::unique reports single vs shared ownership", "[core][shared
  */
 TEST_CASE("SharedPtr::default constructor creates empty (falsy) pointer", "[core][sharedptr]")
 {
-    SharedPtr<Data> shptr;
+    SharedPtr<Data> const shptr;
 
     CHECK(!shptr);
 }
@@ -185,7 +185,7 @@ TEST_CASE("SharedPtr::default constructor creates empty (falsy) pointer", "[core
  */
 TEST_CASE("SharedPtr<Base> to Derived calls virtual function correctly", "[core][sharedptr]")
 {
-    SharedPtr<Data> shptr(new SubData(2, 4, 6));
+    SharedPtr<Data> const shptr(new SubData(2, 4, 6));
 
     CHECK_EQ(shptr->total(), 12);
 }
@@ -217,7 +217,7 @@ TEST_CASE("SharedPtr::operator== and operator!= compare pointers correctly", "[c
 TEST_CASE("SharedPtr::reset with new data isolates copies", "[core][sharedptr]")
 {
     SharedPtr<Data> shptr(new Data(2, 4));
-    SharedPtr<Data> copy(shptr);
+    SharedPtr<Data> const copy(shptr);
 
     CHECK_EQ(copy.useCount(), 2);
     shptr.reset(new Data(6, 8)); // NOLINT(cppcoreguidelines-owning-memory)

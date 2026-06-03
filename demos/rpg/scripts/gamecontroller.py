@@ -354,7 +354,10 @@ class GameController:
             self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")]
         )
         self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
-        font = get_manager().getFont("default")
+        font = self._engine.getFontManager().getFont(
+            "FreeSans",
+            self._settings.get("FIFE", "DefaultFontSize", 16)
+        )
         self._floatingtextrenderer.setFont(font)
         self._floatingtextrenderer.setBackground(255, 100, 100, 165)
         self._floatingtextrenderer.setBorder(255, 50, 50)

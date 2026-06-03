@@ -47,7 +47,7 @@ namespace FIFE
         }
 
         blocks.emplace_back(Rect(), 0);
-        AtlasBlock* newBlock = &blocks[blocks.size() - 1];
+        AtlasBlock* newBlock = &blocks.at(blocks.size() - 1);
 
         for (uint32_t v = 0; (v + 1) * blockHeight <= this->height; ++v) {
             newBlock->top    = v * blockHeight;
@@ -152,7 +152,7 @@ namespace FIFE
     void AtlasPage::shrink(bool pot)
     {
         AtlasBlock boundaryBox(Rect(), 0);
-        for (auto& block : blocks) {
+        for (auto const & block : blocks) {
             boundaryBox.merge(block);
         }
 
@@ -190,7 +190,7 @@ namespace FIFE
     AtlasBlock const * AtlasPage::intersects(AtlasBlock const * block) const
     {
         for (size_t b = 0; b < blocks.size() - 1; ++b) {
-            if (!blocks[b].intersects(*block).isTrivial()) {
+            if (!blocks.at(b).intersects(*block).isTrivial()) {
                 return block;
             }
         }
@@ -220,7 +220,7 @@ namespace FIFE
 
         assert(pages.size() <= static_cast<size_t>(std::numeric_limits<uint32_t>::max()));
         pages.emplace_back(pageWidth, pageHeight, pixelSize, static_cast<uint32_t>(pages.size()));
-        return &pages[pages.size() - 1];
+        return &pages.at(pages.size() - 1);
     }
 
     void AtlasBook::shrink(bool pot)

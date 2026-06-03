@@ -27,6 +27,7 @@ namespace FIFE {
 	class ImageManager;
 	class AnimationManager;
 	class SoundClipManager;
+	class FontManager;
 	class OffRenderer;
 	class TargetRenderer;
 
@@ -141,7 +142,6 @@ namespace FIFE {
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
-		void setGuiManager(IGUIManager* guimanager);
 		IGUIManager* getGuiManager();
 		ImageManager* getImageManager();
 		AnimationManager* getAnimationManager();
@@ -153,10 +153,17 @@ namespace FIFE {
 		Cursor* getCursor();
 		OffRenderer* getOffRenderer();
 		TargetRenderer* getTargetRenderer();
+		FontManager* getFontManager();
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);
 
 		void loadFontManifestFromString(const std::string& xml);
 	};
+}
+
+%extend FIFE::Engine {
+  void setGuiManager(FIFE::IGUIManager* guimanager) {
+    $self->setGuiManager(std::unique_ptr<FIFE::IGUIManager>(guimanager));
+  }
 }

@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -25,15 +26,15 @@ namespace
      */
     FIFE::ZipNode* FindNameInContainer(FIFE::ZipNodeContainer const & container, std::string const & name)
     {
-        auto it = std::ranges::find_if(container, [&](auto const * node) {
+        auto it = std::ranges::find_if(container, [&](auto const & node) {
             return node->getName() == name;
         });
-        return (it != container.end()) ? *it : nullptr;
+        return (it != container.end()) ? it->get() : nullptr;
     }
 
     FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, std::string const & name)
     {
-        return std::ranges::find_if(container, [&](auto const * node) {
+        return std::ranges::find_if(container, [&](auto const & node) {
             return node->getName() == name;
         });
     }
@@ -66,19 +67,6 @@ namespace FIFE
             m_contentType = ZipContentType::Directory;
             break;
         }
-    }
-
-    ZipNode::~ZipNode()
-    {
-        for (auto* child : m_fileChildren) {
-            delete child;
-        }
-        m_fileChildren.clear();
-
-        for (auto* child : m_directoryChildren) {
-            delete child;
-        }
-        m_directoryChildren.clear();
     }
 
     std::string const & ZipNode::getName() const
@@ -115,16 +103,32 @@ namespace FIFE
             // putting all directories before files
             // reserve space in destination vector to avoid
             // tons of vector resizing overhead
-            ZipNodeContainer allNodes;
+            std::vector<ZipNode*> allNodes;
             allNodes.reserve(m_directoryChildren.size() + m_fileChildren.size());
-            allNodes.insert(allNodes.end(), m_directoryChildren.begin(), m_directoryChildren.end());
-            allNodes.insert(allNodes.end(), m_fileChildren.begin(), m_fileChildren.end());
+            std::ranges::transform(m_directoryChildren, std::back_inserter(allNodes), [](auto const & child) {
+                return child.get();
+            });
+            std::ranges::transform(m_fileChildren, std::back_inserter(allNodes), [](auto const & child) {
+                return child.get();
+            });
             return allNodes;
         }
-        case ZipContentType::File:
-            return m_fileChildren;
-        case ZipContentType::Directory:
-            return m_directoryChildren;
+        case ZipContentType::File: {
+            std::vector<ZipNode*> result;
+            result.reserve(m_fileChildren.size());
+            std::ranges::transform(m_fileChildren, std::back_inserter(result), [](auto const & child) {
+                return child.get();
+            });
+            return result;
+        }
+        case ZipContentType::Directory: {
+            std::vector<ZipNode*> result;
+            result.reserve(m_directoryChildren.size());
+            std::ranges::transform(m_directoryChildren, std::back_inserter(result), [](auto const & child) {
+                return child.get();
+            });
+            return result;
+        }
         }
     }
 
@@ -148,28 +152,26 @@ namespace FIFE
 
     ZipNode* ZipNode::addChild(std::string const & name)
     {
-        auto* child = new ZipNode(name, this);
-        if (child != nullptr) {
-            if (child->getContentType() == ZipContentType::File) {
-                m_fileChildren.push_back(child);
-            } else {
-                m_directoryChildren.push_back(child);
-            }
+        auto child = std::make_unique<ZipNode>(name, this);
+        auto* ptr  = child.get();
+        if (ptr->getContentType() == ZipContentType::File) {
+            m_fileChildren.push_back(std::move(child));
+        } else {
+            m_directoryChildren.push_back(std::move(child));
         }
-        return child;
+        return ptr;
     }
 
     ZipNode* ZipNode::addChild(std::string const & name, ZipEntryType entryType)
     {
-        auto* child = new ZipNode(name, this, entryType);
-        if (child != nullptr) {
-            if (child->getContentType() == ZipContentType::File) {
-                m_fileChildren.push_back(child);
-            } else {
-                m_directoryChildren.push_back(child);
-            }
+        auto child = std::make_unique<ZipNode>(name, this, entryType);
+        auto* ptr  = child.get();
+        if (ptr->getContentType() == ZipContentType::File) {
+            m_fileChildren.push_back(std::move(child));
+        } else {
+            m_directoryChildren.push_back(std::move(child));
         }
-        return child;
+        return ptr;
     }
 
     void ZipNode::removeChild(ZipNode* child)
@@ -178,16 +180,18 @@ namespace FIFE
             return;
         }
 
-        auto it = std::ranges::find(m_fileChildren, child);
+        auto it = std::ranges::find_if(m_fileChildren, [child](auto const & ptr) {
+            return ptr.get() == child;
+        });
         if (it != m_fileChildren.end()) {
-            delete *it;
             m_fileChildren.erase(it);
             return;
         }
 
-        it = std::ranges::find(m_directoryChildren, child);
+        it = std::ranges::find_if(m_directoryChildren, [child](auto const & ptr) {
+            return ptr.get() == child;
+        });
         if (it != m_directoryChildren.end()) {
-            delete *it;
             m_directoryChildren.erase(it);
         }
     }
@@ -196,14 +200,12 @@ namespace FIFE
     {
         auto it = FindNameInContainer(m_fileChildren, name);
         if (it != m_fileChildren.end()) {
-            delete *it;
             m_fileChildren.erase(it);
             return;
         }
 
         it = FindNameInContainer(m_directoryChildren, name);
         if (it != m_directoryChildren.end()) {
-            delete *it;
             m_directoryChildren.erase(it);
         }
     }
@@ -235,13 +237,13 @@ std::ostream& operator<<(std::ostream& os, FIFE::ZipNode const & node)
     os << node.getName() << '\n';
 
     // print all file children
-    FIFE::ZipNodeContainer const fileChildren = node.getChildren(FIFE::ZipContentType::File);
-    for (auto* child : fileChildren) {
+    auto const fileChildren = node.getChildren(FIFE::ZipContentType::File);
+    for (auto const * child : fileChildren) {
         os << *child << '\n';
     }
 
-    FIFE::ZipNodeContainer const directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
-    for (auto* child : directoryChildren) {
+    auto const directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
+    for (auto const * child : directoryChildren) {
         os << *child << '\n';
     }
 

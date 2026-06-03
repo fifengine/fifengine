@@ -6,6 +6,10 @@
 #include "model/model.h"
 %}
 
+%ignore FIFE::Model::Model;
+%ignore FIFE::Model::adoptPather;
+%ignore FIFE::Model::adoptCellGrid;
+
 namespace FIFE {
   class Map;
   class Object;
@@ -20,13 +24,12 @@ namespace FIFE {
 
 	class Model: public FifeClass {
 	public:
-		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers);
 		~Model();
 
 		Map* createMap(const std::string& identifier);
 		void deleteMap(Map*);
 
-		const std::list<Map*>& getMaps() const;
+		std::list<Map*> getMaps() const;
 		Map* getMap(const std::string& id) const;
 
 		std::list<std::string> getNamespaces() const;
@@ -42,10 +45,32 @@ namespace FIFE {
 
 		void adoptPather(IPather* pather);
 		IPather* getPather(const std::string& pathername);
+		void adoptCellGrid(CellGrid* grid);
 		CellGrid* getCellGrid(const std::string& gridtype);
 
 		void setTimeMultiplier(float multip);
 		double getTimeMultiplier() const;
 
 	};
+}
+
+%template(RendererBaseVector) std::vector<FIFE::RendererBase*>;
+
+%extend FIFE::Model {
+  Model(FIFE::RenderBackend* rb, const std::vector<FIFE::RendererBase*>& renderers) {
+    std::vector<std::unique_ptr<FIFE::RendererBase>> unique_ptrs;
+    unique_ptrs.reserve(renderers.size());
+    for (auto* r : renderers) {
+      unique_ptrs.emplace_back(r);
+    }
+    return new FIFE::Model(rb, std::move(unique_ptrs));
+  }
+
+  void adoptPather(FIFE::IPather* pather) {
+    $self->adoptPather(std::unique_ptr<FIFE::IPather>(pather));
+  }
+
+  void adoptCellGrid(FIFE::CellGrid* grid) {
+    $self->adoptCellGrid(std::unique_ptr<FIFE::CellGrid>(grid));
+  }
 }

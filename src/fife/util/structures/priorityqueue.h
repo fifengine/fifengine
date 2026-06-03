@@ -129,7 +129,7 @@ namespace FIFE
             void orderUp(ElementListIt i);
             /** Orders a PQ element up the list.
              *
-             * @param entry A const reference to a value_type which represents the element to be added to the
+             * @param val A const reference to a value_type which represents the element to be added to the
              * pq.
              */
             void orderUp(value_type const & val);

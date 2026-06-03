@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 // 3rd party library includes
 
 // FIFE includes
@@ -59,7 +60,7 @@ namespace FIFE
             //! Related SoundEmitter
             SoundEmitter* m_emitter;
             //! InstanceChangeListener for position and direction
-            SoundChangeListener* m_listener;
+            std::unique_ptr<SoundChangeListener> m_listener;
     };
 } // namespace FIFE
 

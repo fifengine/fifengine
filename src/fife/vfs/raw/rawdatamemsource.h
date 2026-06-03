@@ -8,6 +8,8 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <vector>
+
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
@@ -41,11 +43,10 @@ namespace FIFE
 
             uint32_t getSize() const override;
             void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
-            uint8_t* getRawData() const;
+            uint8_t* getRawData();
 
         private:
-            uint8_t* m_data;
-            uint32_t m_datalen;
+            std::vector<uint8_t> m_data;
     };
 
 } // namespace FIFE

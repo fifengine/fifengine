@@ -39,8 +39,8 @@ TEST_CASE("VFSDirectory::isDirectory on created and removed directories", "[core
     std::error_code ec;
     std::filesystem::remove_all(test_dir, ec);
 
-    std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-    vfs->addSource(new VFSDirectory(vfs.get()));
+    std::shared_ptr<VFS> const vfs = std::make_shared<VFS>();
+    vfs->addSource(std::make_unique<VFSDirectory>(vfs.get()));
 
     CHECK(vfs->isDirectory(""));
     CHECK(vfs->isDirectory("/"));

@@ -81,7 +81,7 @@ namespace FIFE
 
             /** Set the callback that will be called
              *
-             *  @param callback A @c std::function returning void
+             *  @param cb A @c std::function returning void
              */
             void setCallback(type_callback const & cb);
 

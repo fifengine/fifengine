@@ -178,8 +178,17 @@ class Manager:
                 resolved[k] = v
         style = resolved
 
-        for k, v in list(self.styles.get("default", {}).items()):
-            style[k] = style.get(k, v)
+        default_entries = self.styles.get("default", {})
+        default_section = style.get("default", {})
+        for k, v in list(default_entries.items()):
+            if k == "default":
+                continue
+            if k in style:
+                continue
+            inherited = dict(v)
+            for prop in default_section:
+                inherited.pop(prop, None)
+            style[k] = inherited
         self.styles[name] = style
 
     def stylize(self, widget, style, **kwargs):
@@ -312,17 +321,22 @@ class Manager:
 DEFAULT_STYLE = {
     "default": {
         "border_size": 0,
+        "border_style": 1,
         "margins": (0, 0),
-        "base_color": fifechan.Color(28, 28, 28),
-        "foreground_color": fifechan.Color(255, 255, 255),
-        "background_color": fifechan.Color(50, 50, 50),
-        "selection_color": fifechan.Color(80, 80, 80),
+        "base_color": fifechan.Color(35, 35, 45),
+        "foreground_color": fifechan.Color(210, 210, 220),
+        "background_color": fifechan.Color(45, 45, 58),
+        "selection_color": fifechan.Color(70, 90, 140),
+        "border_color": fifechan.Color(60, 60, 80),
+        "highlight_offset": fifechan.Color(25, 25, 35),
+        "shadow_offset": fifechan.Color(15, 15, 20),
         "font": "default",
     },
     "Button": {
         "border_size": 2,
         "margins": (5, 2),
         "min_size": (15, 10),
+        "base_color": fifechan.Color(50, 55, 72),
     },
     "CheckBox": {
         "border_size": 0,
@@ -331,7 +345,7 @@ DEFAULT_STYLE = {
         "border_size": 0,
         "background_color": fifechan.Color(0, 0, 0),
     },
-    "Label": {"border_size": 0, "background_color": fifechan.Color(50, 50, 50, 0)},
+    "Label": {"border_size": 0, "background_color": fifechan.Color(45, 45, 58, 0)},
     "ListBox": {
         "border_size": 0,
     },
@@ -342,6 +356,7 @@ DEFAULT_STYLE = {
         "padding": 2,
         "titlebar_height": 25,
         "background_image": None,
+        "base_color": fifechan.Color(38, 38, 50),
     },
     "TextBox": {},
     ("Container", "HBox", "VBox"): {

@@ -47,8 +47,8 @@ namespace FIFE
             bool isDynamicColoring() const override;
 
             int32_t getStringIndexAt(std::string const & text, int32_t x) const override;
-            Image* getAsImage(std::string const & text) override;
-            Image* getAsImageMultiline(std::string const & text) override;
+            Image* getAsImage(std::string const & text) const override;
+            Image* getAsImageMultiline(std::string const & text) const override;
             std::string splitTextToWidth(std::string const & text, int32_t render_width) override;
             void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             SDL_Color getColor() const override;
@@ -65,12 +65,12 @@ namespace FIFE
             void drawMultiLineString(fcn::Graphics* graphics, std::string const & text, int32_t x, int32_t y);
 
         private:
-            SDL_Surface* renderString(std::string const & text);
-            SDL_Surface* renderTrueType(std::string const & text);
-            SDL_Surface* renderImage(std::string const & text);
+            SDL_Surface* renderString(std::string const & text) const;
+            SDL_Surface* renderTrueType(std::string const & text) const;
+            SDL_Surface* renderImage(std::string const & text) const;
 
             std::shared_ptr<FontInstance> m_instance;
-            TextRenderPool m_pool;
+            mutable TextRenderPool m_pool;
             SDL_Color m_color{255, 255, 255, 255};
             int32_t m_rowSpacing   = 0;
             int32_t m_glyphSpacing = 0;

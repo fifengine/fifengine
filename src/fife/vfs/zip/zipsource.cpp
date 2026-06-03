@@ -27,10 +27,11 @@ namespace FIFE
 
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     ZipSource::ZipSource(VFS* vfs, std::string const & zip_file) :
@@ -39,10 +40,7 @@ namespace FIFE
         readIndex();
     }
 
-    ZipSource::~ZipSource()
-    {
-        delete m_zipfile;
-    }
+    ZipSource::~ZipSource() = default;
 
     bool ZipSource::fileExists(std::string const & file) const
     {
@@ -59,13 +57,13 @@ namespace FIFE
 
         if (node != nullptr) {
             ZipEntryData const & entryData = node->getZipEntryData();
-            uint32_t dataOffset            = getLocalFileDataOffset(entryData.offset);
+            uint32_t const dataOffset      = getLocalFileDataOffset(entryData.offset);
 
             m_zipfile->setIndex(dataOffset);
-            auto* data = new uint8_t[entryData.size_real];
+            auto data = std::make_unique<uint8_t[]>(entryData.size_real);
             if (entryData.comp == 8) {
                 FL_DBG(
-                    _log,
+                    _log(),
                     std::format("trying to uncompress file {} (compressed with method {})", path, entryData.comp));
                 std::vector<uint8_t> compdata(entryData.size_comp);
                 m_zipfile->readInto(compdata.data(), entryData.size_comp);
@@ -76,37 +74,34 @@ namespace FIFE
                 zstream.zalloc    = Z_NULL;
                 zstream.zfree     = Z_NULL;
                 zstream.opaque    = Z_NULL;
-                zstream.next_out  = data;
+                zstream.next_out  = data.get();
                 zstream.avail_out = entryData.size_real;
 
                 if (inflateInit2(&zstream, -15) != Z_OK) {
-                    FL_ERR(_log, "inflateInit2 failed");
-                    delete[] data;
+                    FL_ERR(_log(), "inflateInit2 failed");
                     return nullptr;
                 }
 
                 int32_t const err = inflate(&zstream, Z_FINISH);
                 if (err != Z_STREAM_END) {
                     if (zstream.msg != nullptr) {
-                        FL_ERR(_log, std::format("inflate failed: {}", zstream.msg));
+                        FL_ERR(_log(), std::format("inflate failed: {}", zstream.msg));
                     } else {
-                        FL_ERR(_log, std::format("inflate failed without msg, err: {}", err));
+                        FL_ERR(_log(), std::format("inflate failed without msg, err: {}", err));
                     }
                     inflateEnd(&zstream);
-                    delete[] data;
                     return nullptr;
                 }
 
                 inflateEnd(&zstream);
             } else if (entryData.comp == 0) {
-                m_zipfile->readInto(data, entryData.size_real);
+                m_zipfile->readInto(data.get(), entryData.size_real);
             } else {
-                FL_ERR(_log, "unsupported compression");
-                delete[] data;
+                FL_ERR(_log(), "unsupported compression");
                 return nullptr;
             }
 
-            return new RawData(new ZipFileSource(data, entryData.size_real));
+            return new RawData(new ZipFileSource(data.release(), entryData.size_real));
         }
 
         return nullptr;
@@ -128,11 +123,11 @@ namespace FIFE
         assert("Zip file is too small" && fileSize >= 22);
 
         m_zipfile->setIndex(fileSize - 2);
-        uint16_t commentLength = m_zipfile->read16Little();
+        uint16_t const commentLength = m_zipfile->read16Little();
 
-        uint32_t eocdOffset = fileSize - 22 - commentLength;
+        uint32_t const eocdOffset = fileSize - 22 - commentLength;
         m_zipfile->setIndex(eocdOffset);
-        uint32_t signature = m_zipfile->read32Little();
+        uint32_t const signature = m_zipfile->read32Little();
         assert("End of Central Directory signature not found" && signature == 0x06054b50);
 
         m_zipfile->read16Little();                      // disk number
@@ -145,31 +140,31 @@ namespace FIFE
 
     void ZipSource::readCentralDirectoryEntry()
     {
-        uint32_t signature = m_zipfile->read32Little();
+        uint32_t const signature = m_zipfile->read32Little();
         assert("Invalid central directory entry signature" && signature == 0x02014b50);
 
         m_zipfile->read16Little(); // version made by
         m_zipfile->read16Little(); // version needed
         m_zipfile->read16Little(); // flags
-        uint16_t compression = m_zipfile->read16Little();
+        uint16_t const compression = m_zipfile->read16Little();
         m_zipfile->read16Little(); // mod time
         m_zipfile->read16Little(); // mod date
-        uint32_t crc32            = m_zipfile->read32Little();
-        uint32_t compressedSize   = m_zipfile->read32Little();
-        uint32_t uncompressedSize = m_zipfile->read32Little();
-        uint16_t filenameLen      = m_zipfile->read16Little();
-        uint16_t extraLen         = m_zipfile->read16Little();
-        uint16_t commentLen       = m_zipfile->read16Little();
+        uint32_t const crc32            = m_zipfile->read32Little();
+        uint32_t const compressedSize   = m_zipfile->read32Little();
+        uint32_t const uncompressedSize = m_zipfile->read32Little();
+        uint16_t const filenameLen      = m_zipfile->read16Little();
+        uint16_t const extraLen         = m_zipfile->read16Little();
+        uint16_t const commentLen       = m_zipfile->read16Little();
         m_zipfile->read16Little(); // disk number start
         m_zipfile->read16Little(); // internal attrs
-        uint32_t externalAttrs     = m_zipfile->read32Little();
-        uint32_t localHeaderOffset = m_zipfile->read32Little();
+        uint32_t const externalAttrs     = m_zipfile->read32Little();
+        uint32_t const localHeaderOffset = m_zipfile->read32Little();
 
-        std::string filename = m_zipfile->readString(filenameLen);
+        std::string const filename = m_zipfile->readString(filenameLen);
 
         m_zipfile->moveIndex(extraLen + commentLen);
 
-        ZipEntryType type = classifyEntry(filename, externalAttrs);
+        ZipEntryType const type = classifyEntry(filename, externalAttrs);
 
         ZipNode* node = m_zipTree.addNode(filename, type);
         assert("Failed to add node to zip tree" && node != nullptr);
@@ -188,8 +183,8 @@ namespace FIFE
     uint32_t ZipSource::getLocalFileDataOffset(uint32_t localHeaderOffset) const
     {
         m_zipfile->setIndex(localHeaderOffset + 26);
-        uint16_t fnamelen = m_zipfile->read16Little();
-        uint16_t extralen = m_zipfile->read16Little();
+        uint16_t const fnamelen = m_zipfile->read16Little();
+        uint16_t const extralen = m_zipfile->read16Little();
         return localHeaderOffset + 30 + fnamelen + extralen;
     }
 
@@ -214,8 +209,8 @@ namespace FIFE
         ZipNode const * node = m_zipTree.getNode(path);
 
         if (node != nullptr) {
-            ZipNodeContainer files = node->getChildren(ZipContentType::File);
-            for (auto* child : files) {
+            auto const files = node->getChildren(ZipContentType::File);
+            for (auto const * child : files) {
                 result.insert(child->getName());
             }
         }
@@ -230,8 +225,8 @@ namespace FIFE
         ZipNode const * node = m_zipTree.getNode(path);
 
         if (node != nullptr) {
-            ZipNodeContainer dirs = node->getChildren(ZipContentType::Directory);
-            for (auto* child : dirs) {
+            auto const dirs = node->getChildren(ZipContentType::Directory);
+            for (auto const * child : dirs) {
                 result.insert(child->getName());
             }
         }

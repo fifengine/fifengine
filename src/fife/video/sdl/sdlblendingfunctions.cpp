@@ -5,6 +5,8 @@
 #include "sdlblendingfunctions.h"
 
 // Standard C++ library includes
+#include <cstddef>
+#include <span>
 
 // 3rd party library includes
 
@@ -24,75 +26,66 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGBA8(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        auto const * srcColor =
-            reinterpret_cast<ColorRGBA8 const *>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto* dstColor = reinterpret_cast<ColorRGBA8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), static_cast<size_t>(n)};
+        auto dstSpan = std::span<ColorRGBA8>{static_cast<ColorRGBA8*>(static_cast<void*>(dst)), static_cast<size_t>(n)};
 
-        for (int32_t i = n; 0 < i; --i) {
-            uint32_t const aMulA = alpha * srcColor->a;
+        for (size_t i = 0; i < static_cast<size_t>(n); ++i) {
+            uint32_t const aMulA = alpha * srcSpan[i].a;
 
             if (aMulA != 0U) {
                 uint32_t const OneMin_aMulA = 65535 - aMulA;
-                dstColor->r = static_cast<uint8_t>(((aMulA * srcColor->r) + (OneMin_aMulA * dstColor->r)) >> 16);
-                dstColor->g = static_cast<uint8_t>(((aMulA * srcColor->g) + (OneMin_aMulA * dstColor->g)) >> 16);
-                dstColor->b = static_cast<uint8_t>(((aMulA * srcColor->b) + (OneMin_aMulA * dstColor->b)) >> 16);
-                dstColor->a = 255;
+                dstSpan[i].r = static_cast<uint8_t>(((aMulA * srcSpan[i].r) + (OneMin_aMulA * dstSpan[i].r)) >> 16);
+                dstSpan[i].g = static_cast<uint8_t>(((aMulA * srcSpan[i].g) + (OneMin_aMulA * dstSpan[i].g)) >> 16);
+                dstSpan[i].b = static_cast<uint8_t>(((aMulA * srcSpan[i].b) + (OneMin_aMulA * dstSpan[i].b)) >> 16);
             }
-            ++dstColor;
-            ++srcColor;
         }
     }
 
     void SDL_BlendRow_RGBA8_to_RGB8(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        auto const * srcColor =
-            reinterpret_cast<ColorRGBA8 const *>(src);      // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto* dstColor = reinterpret_cast<ColorRGB8*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), static_cast<size_t>(n)};
+        auto dstSpan = std::span<ColorRGB8>{static_cast<ColorRGB8*>(static_cast<void*>(dst)), static_cast<size_t>(n)};
 
-        for (int32_t i = n; 0 < i; --i) {
-            uint32_t const aMulA = alpha * srcColor->a;
+        for (size_t i = 0; i < static_cast<size_t>(n); ++i) {
+            uint32_t const aMulA = alpha * srcSpan[i].a;
             if (aMulA != 0U) {
                 uint32_t const OneMin_aMulA = 65535 - aMulA;
-                dstColor->r = static_cast<uint8_t>(((aMulA * srcColor->r) + (OneMin_aMulA * dstColor->r)) >> 16);
-                dstColor->g = static_cast<uint8_t>(((aMulA * srcColor->g) + (OneMin_aMulA * dstColor->g)) >> 16);
-                dstColor->b = static_cast<uint8_t>(((aMulA * srcColor->b) + (OneMin_aMulA * dstColor->b)) >> 16);
+                dstSpan[i].r = static_cast<uint8_t>(((aMulA * srcSpan[i].r) + (OneMin_aMulA * dstSpan[i].r)) >> 16);
+                dstSpan[i].g = static_cast<uint8_t>(((aMulA * srcSpan[i].g) + (OneMin_aMulA * dstSpan[i].g)) >> 16);
+                dstSpan[i].b = static_cast<uint8_t>(((aMulA * srcSpan[i].b) + (OneMin_aMulA * dstSpan[i].b)) >> 16);
             }
-
-            ++dstColor;
-            ++srcColor;
         }
     }
 
     void SDL_BlendRow_RGBA8_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        auto const * srcColor =
-            reinterpret_cast<ColorRGBA8 const *>(src);     // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), static_cast<size_t>(n)};
+        auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), static_cast<size_t>(n)};
 
-        for (int32_t i = n; 0 < i; --i) {
-            uint32_t const aMulA = (alpha * srcColor->a) >> 8;
+        for (size_t i = 0; i < static_cast<size_t>(n); ++i) {
+            uint32_t const aMulA = (alpha * srcSpan[i].a) >> 8;
             if (aMulA != 0U) {
                 uint32_t const OneMin_aMulA = 255 - aMulA;
-                uint32_t const c            = *dstColor;
-                *dstColor = (((srcColor->b * aMulA) + (((c & 0xF800) >> 8) * OneMin_aMulA)) & 0xF800) |
-                            ((((srcColor->g * aMulA) + (((c & 0x07E0) >> 3) * OneMin_aMulA)) >> 5) & 0x07E0) |
-                            ((((srcColor->r * aMulA) + (((c & 0x001F) << 3) * OneMin_aMulA)) >> 11) & 0x001F);
+                uint32_t const c            = dstSpan[i];
+                dstSpan[i] = (((srcSpan[i].b * aMulA) + (((c & 0xF800) >> 8) * OneMin_aMulA)) & 0xF800) |
+                             ((((srcSpan[i].g * aMulA) + (((c & 0x07E0) >> 3) * OneMin_aMulA)) >> 5) & 0x07E0) |
+                             ((((srcSpan[i].r * aMulA) + (((c & 0x001F) << 3) * OneMin_aMulA)) >> 11) & 0x001F);
             }
-
-            ++dstColor;
-            ++srcColor;
         }
     }
 
     void SDL_BlendRow_RGBA4_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        auto const * srcColor =
-            reinterpret_cast<uint16_t const *>(src);       // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto* dstColor = reinterpret_cast<uint16_t*>(dst); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        auto srcSpan = std::span<uint16_t const>{
+            static_cast<uint16_t const *>(static_cast<void const *>(src)), static_cast<size_t>(n)};
+        auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), static_cast<size_t>(n)};
 
-        for (int32_t i = n; 0 < i; --i) {
-            uint32_t const c1 = *dstColor;
-            uint32_t const c2 = *srcColor;
+        for (size_t i = 0; i < static_cast<size_t>(n); ++i) {
+            uint32_t const c1 = dstSpan[i];
+            uint32_t const c2 = srcSpan[i];
 
             uint32_t aMulA = c2 & 0xF;
             aMulA          = (alpha * aMulA) / 15; ///< upgrade to range 0-255
@@ -103,11 +96,8 @@ namespace FIFE
                 result |= (((((c2 & 0x0F00) >> 1) | 0x0040) * aMulA) + ((c1 & 0x07E0) * OneMin_aMulA)) & 0x07E000;
                 result |= (((((c2 & 0x00F0) >> 3) | 0x0001) * aMulA) + ((c1 & 0x001F) * OneMin_aMulA)) & 0x001F00;
                 /// multiplying by alpha resulted in shift.
-                *dstColor = static_cast<uint16_t>(result >> 8);
+                dstSpan[i] = static_cast<uint16_t>(result >> 8);
             }
-
-            ++dstColor;
-            ++srcColor;
         }
     }
 

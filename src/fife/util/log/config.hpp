@@ -25,7 +25,7 @@ namespace FIFE
             bool console_enabled      = true;
             bool file_enabled         = false;
             std::string file_path     = "fife.log";
-            std::size_t file_max_size = 5 * 1024 * 1024; // 5 MB
+            std::size_t file_max_size = static_cast<std::size_t>(5) * 1024 * 1024; // 5 MB
             int file_max_files        = 3;
 
 #ifdef LOG_ENABLED

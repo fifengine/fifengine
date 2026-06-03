@@ -9,6 +9,7 @@
 #include <cassert>
 #include <limits>
 #include <list>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -32,10 +33,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_MODEL);
             return log;
-        }();
+        }
     } // namespace
 
     class ModelMapObserver : public MapChangeListener
@@ -66,30 +68,24 @@ namespace FIFE
             }
     };
 
-    Model::Model(RenderBackend* renderbackend, std::vector<RendererBase*> const & renderers) :
-        m_mapObserver(new ModelMapObserver(this)),
+    Model::Model(RenderBackend* renderbackend, std::vector<std::unique_ptr<RendererBase>> const & renderers) :
+        m_mapObserver(std::make_unique<ModelMapObserver>(this)),
         m_lastNamespace(nullptr),
         m_timeprovider(nullptr),
-        m_renderbackend(renderbackend),
-        m_renderers(renderers)
+        m_renderbackend(renderbackend)
     {
+        m_renderers.reserve(renderers.size());
+        std::ranges::transform(renderers, std::back_inserter(m_renderers), [](auto const & r) {
+            return r.get();
+        });
     }
 
     Model::~Model()
     {
         // first remove the map observer, we delete all grids anyway
         for (auto& m_map : m_maps) {
-            m_map->removeChangeListener(m_mapObserver);
-            delete m_map;
+            m_map->removeChangeListener(m_mapObserver.get());
         }
-        delete m_mapObserver;
-
-        for (auto& m_namespace : m_namespaces) {
-            purge_map(m_namespace.second);
-        }
-        purge(m_pathers);
-        purge(m_createdGrids);
-        purge(m_adoptedGrids);
     }
 
     Map* Model::createMap(std::string const & identifier)
@@ -101,15 +97,16 @@ namespace FIFE
             }
         }
 
-        Map* map = new Map(identifier, m_renderbackend, m_renderers, &m_timeprovider);
-        map->addChangeListener(m_mapObserver);
-        m_maps.push_back(map);
-        return map;
+        auto map = std::make_unique<Map>(identifier, m_renderbackend, m_renderers, &m_timeprovider);
+        map->addChangeListener(m_mapObserver.get());
+        Map* ptr = map.get();
+        m_maps.push_back(std::move(map));
+        return ptr;
     }
 
-    void Model::adoptPather(IPather* pather)
+    void Model::adoptPather(std::unique_ptr<IPather> pather)
     {
-        m_pathers.push_back(pather);
+        m_pathers.push_back(std::move(pather));
     }
 
     IPather* Model::getPather(std::string const & pathername)
@@ -117,16 +114,16 @@ namespace FIFE
         auto it = m_pathers.begin();
         for (; it != m_pathers.end(); ++it) {
             if ((*it)->getName() == pathername) {
-                return *it;
+                return it->get();
             }
         }
-        FL_WARN(_log, "No pather of requested type \"" + pathername + "\" found.");
+        FL_WARN(_log(), "No pather of requested type \"" + pathername + "\" found.");
         return nullptr;
     }
 
-    void Model::adoptCellGrid(CellGrid* grid)
+    void Model::adoptCellGrid(std::unique_ptr<CellGrid> grid)
     {
-        m_adoptedGrids.push_back(grid);
+        m_adoptedGrids.push_back(std::move(grid));
     }
 
     CellGrid* Model::getCellGrid(std::string const & gridtype)
@@ -134,12 +131,13 @@ namespace FIFE
         auto it = m_adoptedGrids.begin();
         for (; it != m_adoptedGrids.end(); ++it) {
             if ((*it)->getType() == gridtype) {
-                CellGrid* newcg = (*it)->clone();
-                m_createdGrids.push_back(newcg);
-                return newcg;
+                auto newcg    = std::unique_ptr<CellGrid>((*it)->clone());
+                CellGrid* ptr = newcg.get();
+                m_createdGrids.push_back(std::move(newcg));
+                return ptr;
             }
         }
-        FL_WARN(_log, "No cellgrid of requested type \"" + gridtype + "\" found.");
+        FL_WARN(_log(), "No cellgrid of requested type \"" + gridtype + "\" found.");
         return nullptr;
     }
 
@@ -149,9 +147,10 @@ namespace FIFE
             return;
         }
 
-        auto it = std::ranges::find(m_createdGrids, grid);
+        auto it = std::ranges::find_if(m_createdGrids, [grid](auto const & ptr) {
+            return ptr.get() == grid;
+        });
         if (it != m_createdGrids.end()) {
-            delete *it;
             m_createdGrids.erase(it);
             return;
         }
@@ -162,7 +161,7 @@ namespace FIFE
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             if ((*it)->getName() == identifier) {
-                return *it;
+                return it->get();
             }
         }
 
@@ -173,8 +172,7 @@ namespace FIFE
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
-            if (*it == map) {
-                delete *it;
+            if (it->get() == map) {
                 m_maps.erase(it);
                 return;
             }
@@ -191,11 +189,9 @@ namespace FIFE
     {
         // first remove the map observer, we delete all grids anyway
         for (auto& m_map : m_maps) {
-            m_map->removeChangeListener(m_mapObserver);
-            delete m_map;
+            m_map->removeChangeListener(m_mapObserver.get());
         }
         m_maps.clear();
-        purge(m_createdGrids);
         m_createdGrids.clear();
     }
 
@@ -235,9 +231,10 @@ namespace FIFE
         }
 
         // Finally insert & create
-        auto* object               = new Object(identifier, name_space, parent);
-        nspace->second[identifier] = object;
-        return object;
+        auto object                = std::make_unique<Object>(identifier, name_space, parent);
+        Object* ptr                = object.get();
+        nspace->second[identifier] = std::move(object);
+        return ptr;
     }
 
     bool Model::deleteObject(Object* object)
@@ -245,10 +242,10 @@ namespace FIFE
         // WARNING: This code has obviously not been tested (thoroughly).
 
         // Check if any instances exist. If yes - bail out.
-        std::list<Layer*>::const_iterator jt;
         std::vector<Instance*>::const_iterator kt;
-        for (auto& m_map : m_maps) {
-            for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
+        for (auto const & m_map : m_maps) {
+            auto layers = m_map->getLayers();
+            for (auto jt = layers.begin(); jt != layers.end(); ++jt) {
                 for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
                     Object const * o = (*kt)->getObject();
                     if (o == object) {
@@ -267,7 +264,6 @@ namespace FIFE
         // If yes - delete+erase object.
         auto it = nspace->second.find(object->getName());
         if (it != nspace->second.end()) {
-            delete it->second;
             nspace->second.erase(it);
         }
 
@@ -277,25 +273,18 @@ namespace FIFE
     bool Model::deleteObjects()
     {
         // If we have layers with instances - bail out.
-        std::list<Layer*>::const_iterator jt;
-        for (auto& m_map : m_maps) {
-            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](Layer const * layer) {
+        for (auto const & m_map : m_maps) {
+            auto layers = m_map->getLayers();
+            auto jt     = std::find_if(layers.begin(), layers.end(), [](Layer const * layer) {
                 return layer->hasInstances();
             });
-            if (jt != m_map->getLayers().end()) {
+            if (jt != layers.end()) {
                 return false;
             }
         }
 
         // Otherwise delete every object in every namespace
-        auto nspace = m_namespaces.begin();
-        while (nspace != m_namespaces.end()) {
-            auto it = nspace->second.begin();
-            for (; it != nspace->second.end(); ++it) {
-                delete it->second;
-            }
-            nspace = m_namespaces.erase(nspace);
-        }
+        m_namespaces.clear();
         m_lastNamespace = nullptr;
         return true;
     }
@@ -306,7 +295,7 @@ namespace FIFE
         if (nspace != nullptr) {
             auto it = nspace->second.find(id);
             if (it != nspace->second.end()) {
-                return it->second;
+                return it->second.get();
             }
         }
         return nullptr;
@@ -319,7 +308,7 @@ namespace FIFE
         if (nspace != nullptr) {
             auto it = nspace->second.begin();
             for (; it != nspace->second.end(); ++it) {
-                object_list.push_back(it->second);
+                object_list.push_back(it->second.get());
             }
         }
 

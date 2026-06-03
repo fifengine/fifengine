@@ -118,68 +118,68 @@ namespace FIFE
              */
             SoundManager* getSoundManager() const
             {
-                return m_soundmanager;
+                return m_soundmanager.get();
             }
 
             /** Provides access point to the EventManager
              */
             EventManager* getEventManager() const
             {
-                return m_eventmanager;
+                return m_eventmanager.get();
             }
 
             /** Provides access point to the TimeManager
              */
             TimeManager* getTimeManager() const
             {
-                return m_timemanager;
+                return m_timemanager.get();
             }
 
             /** Sets the GUI Manager to use.  Engine takes
              * ownership of the manager so DONT DELETE IT!
              */
-            void setGuiManager(IGUIManager* guimanager);
+            void setGuiManager(std::unique_ptr<IGUIManager> guimanager);
 
             /** Provides access point to the GUI Manager
              */
             IGUIManager* getGuiManager() const
             {
-                return m_guimanager;
+                return m_guimanager.get();
             }
 
             /** Provides access point to the ImageManager
              */
             ImageManager* getImageManager() const
             {
-                return m_imagemanager;
+                return m_imagemanager.get();
             }
 
             /** Provides access point to the ImageManager
              */
             AnimationManager* getAnimationManager() const
             {
-                return m_animationmanager;
+                return m_animationmanager.get();
             }
 
             /** Provides access point to the SoundClipManager
              */
             SoundClipManager* getSoundClipManager() const
             {
-                return m_soundclipmanager;
+                return m_soundclipmanager.get();
             }
 
             /** Provides access point to the RenderBackend
              */
             RenderBackend* getRenderBackend() const
             {
-                return m_renderbackend;
+                return m_renderbackend.get();
             }
 
             /** Provides access point to the Model
              */
             Model* getModel() const
             {
-                return m_model;
+                return m_model.get();
             }
 
             /** Provides access point to the LogManager
@@ -193,7 +193,7 @@ namespace FIFE
              */
             VFS* getVFS() const
             {
-                return m_vfs;
+                return m_vfs.get();
             }
 
             /** Provides access point to the FontManager
@@ -212,21 +212,21 @@ namespace FIFE
              */
             Cursor* getCursor() const
             {
-                return m_cursor;
+                return m_cursor.get();
             }
 
             /** Provides access point to the OffRenderer
              */
             OffRenderer* getOffRenderer() const
             {
-                return m_offrenderer;
+                return m_offrenderer.get();
             }
 
             /** Provides access point to the TargetRenderer
              */
             TargetRenderer* getTargetRenderer() const
             {
-                return m_targetrenderer;
+                return m_targetrenderer.get();
             }
 
             /** Adds new change listener
@@ -237,23 +237,23 @@ namespace FIFE
             /** Removes associated change listener
              * @param listener to remove
              */
-            void removeChangeListener(IEngineChangeListener* listener);
+            void removeChangeListener(IEngineChangeListener const * listener);
 
         private:
-            RenderBackend* m_renderbackend;
-            IGUIManager* m_guimanager;
-            EventManager* m_eventmanager;
-            SoundManager* m_soundmanager;
-            TimeManager* m_timemanager;
-            ImageManager* m_imagemanager;
-            AnimationManager* m_animationmanager;
-            SoundClipManager* m_soundclipmanager;
+            std::unique_ptr<RenderBackend> m_renderbackend;
+            std::unique_ptr<IGUIManager> m_guimanager;
+            std::unique_ptr<EventManager> m_eventmanager;
+            std::unique_ptr<SoundManager> m_soundmanager;
+            std::unique_ptr<TimeManager> m_timemanager;
+            std::unique_ptr<ImageManager> m_imagemanager;
+            std::unique_ptr<AnimationManager> m_animationmanager;
+            std::unique_ptr<SoundClipManager> m_soundclipmanager;
 
-            VFS* m_vfs;
-            Model* m_model;
+            std::unique_ptr<VFS> m_vfs;
+            std::unique_ptr<Model> m_model;
             LogManager* m_logmanager;
 
-            Cursor* m_cursor;
+            std::unique_ptr<Cursor> m_cursor;
             bool m_destroyed;
 
             EngineSettings m_settings;
@@ -262,9 +262,9 @@ namespace FIFE
 
             ScreenMode m_screenMode;
 
-            OffRenderer* m_offrenderer;
-            TargetRenderer* m_targetrenderer;
-            std::vector<RendererBase*> m_renderers;
+            std::unique_ptr<OffRenderer> m_offrenderer;
+            std::unique_ptr<TargetRenderer> m_targetrenderer;
+            std::vector<std::unique_ptr<RendererBase>> m_renderers;
 
             std::vector<IEngineChangeListener*> m_changelisteners;
 

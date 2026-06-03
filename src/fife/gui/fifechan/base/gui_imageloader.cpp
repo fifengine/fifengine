@@ -54,12 +54,12 @@ namespace FIFE
             RenderBackend* rb = RenderBackend::instance();
             bool const prev   = rb->isImageCompressingEnabled();
             rb->setImageCompressingEnabled(false);
-            m_atlases[block->page]->forceLoadInternal();
+            m_atlases.at(block->page)->forceLoadInternal();
             rb->setImageCompressingEnabled(prev);
         }
 
         // update atlas page with given image
-        m_atlases[block->page]->copySubimage(block->left, block->top, tmpimg);
+        m_atlases.at(block->page)->copySubimage(block->left, block->top, tmpimg);
 
         // we dont really need this image anymore
         tmpimg->free();
@@ -72,7 +72,7 @@ namespace FIFE
             static_cast<int32_t>(block->top),
             static_cast<int32_t>(block->getWidth()),
             static_cast<int32_t>(block->getHeight()));
-        img->useSharedImage(m_atlases[block->page], region);
+        img->useSharedImage(m_atlases.at(block->page), region);
 
         return new GuiImage(img);
     }

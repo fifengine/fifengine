@@ -92,18 +92,17 @@ namespace FIFE
         m_module(module)
 #ifdef LOG_ENABLED
         ,
-        m_logger(nullptr)
+        m_logger(LogManager::instance().getSpdlogLogger(module))
 #endif
     {
 #ifdef LOG_ENABLED
-        m_logger = LogManager::instance().getSpdlogLogger(module);
 #endif
     }
 
     void Logger::log(LogManager::LogLevel level, std::string const & msg)
     {
 #ifdef LOG_ENABLED
-        if (m_logger) {
+        if (m_logger != nullptr) {
             auto spd_level = static_cast<spdlog::level::level_enum>(level);
             m_logger->log(spd_level, msg);
             if (level == LogManager::LEVEL_PANIC) {
@@ -152,8 +151,8 @@ namespace FIFE
         }
         auto ind       = static_cast<size_t>(module);
         m_modules[ind] = true;
-        if (moduleInfos[ind].parent != LM_CORE) {
-            addVisibleModule(moduleInfos[ind].parent);
+        if (moduleInfos.at(ind).parent != LM_CORE) {
+            addVisibleModule(moduleInfos.at(ind).parent);
         }
     }
 
@@ -206,8 +205,8 @@ namespace FIFE
         if (!m_modules[ind]) {
             return false;
         }
-        if (moduleInfos[ind].parent != LM_CORE) {
-            return isVisible(moduleInfos[ind].parent);
+        if (moduleInfos.at(ind).parent != LM_CORE) {
+            return isVisible(moduleInfos.at(ind).parent);
         }
         return true;
     }
@@ -217,7 +216,7 @@ namespace FIFE
         if (!isValidModule(module)) {
             return "Unknown";
         }
-        return moduleInfos[static_cast<size_t>(module)].displayName;
+        return moduleInfos.at(static_cast<size_t>(module)).displayName;
     }
 
     bool LogManager::isValidModule(logmodule_t module)
@@ -241,7 +240,7 @@ namespace FIFE
     {
         if (module == LM_CORE) {
             for (size_t m = 0; m < static_cast<size_t>(LM_MODULE_MAX); m++) {
-                if (moduleInfos[m].module != static_cast<logmodule_t>(m)) {
+                if (moduleInfos.at(m).module != static_cast<logmodule_t>(m)) {
                     std::string msg = "Log module definition ids do not match in index ";
                     msg += std::to_string(m);
                     std::cout << msg << '\n';
@@ -313,8 +312,8 @@ namespace FIFE
                 continue;
             }
 
-            auto module_name   = moduleInfos[i].spdlogName;
-            auto module_logger = spdlog::get(module_name);
+            auto const * module_name = moduleInfos.at(i).spdlogName;
+            auto module_logger       = spdlog::get(module_name);
 
             if (!module_logger) {
                 module_logger = std::make_shared<spdlog::logger>(module_name, m_dist_sink);

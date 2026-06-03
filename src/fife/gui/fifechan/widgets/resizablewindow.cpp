@@ -244,7 +244,7 @@ namespace fcn
 
     void ResizableWindow::set(CursorDirections direction, uint32_t cursor_id)
     {
-        CursorState& state = m_cursors[direction];
+        CursorState& state = m_cursors.at(direction);
         state.cursorType   = FIFE::CURSOR_NATIVE;
         state.cursorId     = cursor_id;
         state.cursorImage.reset();
@@ -253,7 +253,7 @@ namespace fcn
 
     void ResizableWindow::set(CursorDirections direction, FIFE::ImagePtr const & image)
     {
-        CursorState& state = m_cursors[direction];
+        CursorState& state = m_cursors.at(direction);
         state.cursorType   = FIFE::CURSOR_IMAGE;
         state.cursorId     = FIFE::NC_ARROW;
         state.cursorImage  = image;
@@ -262,7 +262,7 @@ namespace fcn
 
     void ResizableWindow::set(CursorDirections direction, FIFE::AnimationPtr const & anim)
     {
-        CursorState& state = m_cursors[direction];
+        CursorState& state = m_cursors.at(direction);
         state.cursorType   = FIFE::CURSOR_ANIMATION;
         state.cursorId     = FIFE::NC_ARROW;
         state.cursorImage.reset();
@@ -271,22 +271,22 @@ namespace fcn
 
     FIFE::MouseCursorType ResizableWindow::getType(CursorDirections direction) const
     {
-        return m_cursors[direction].cursorType;
+        return m_cursors.at(direction).cursorType;
     }
 
     uint32_t ResizableWindow::getId(CursorDirections direction) const
     {
-        return m_cursors[direction].cursorId;
+        return m_cursors.at(direction).cursorId;
     }
 
     FIFE::ImagePtr ResizableWindow::getImage(CursorDirections direction)
     {
-        return m_cursors[direction].cursorImage;
+        return m_cursors.at(direction).cursorImage;
     }
 
     FIFE::AnimationPtr ResizableWindow::getAnimation(CursorDirections direction)
     {
-        return m_cursors[direction].cursorAnimation;
+        return m_cursors.at(direction).cursorAnimation;
     }
 
     void ResizableWindow::resizeToContent(bool recursiv)
@@ -363,7 +363,7 @@ namespace fcn
             if (index > 0) {
                 // to get the real index value
                 index -= 1;
-                CursorState const state          = m_cursors[index];
+                CursorState const state          = m_cursors.at(index);
                 FIFE::MouseCursorType const type = state.cursorType;
                 switch (type) {
                 case FIFE::CURSOR_NATIVE:

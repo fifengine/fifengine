@@ -6,7 +6,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cstring>
 #include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -23,144 +25,138 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_AUDIO);
-        return log;
-    }();
+    namespace
+    {
+        /** Logger to use for this source file.
+         *  @relates Logger
+         */
+        Logger& _log()
+        {
+            static Logger log(LM_AUDIO);
+            return log;
+        }
 
-    // Effect Slots
-    static LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
-    static LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = nullptr;
-    static LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = nullptr;
-    static LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = nullptr;
-    static LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = nullptr;
-    static LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = nullptr;
-    static LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = nullptr;
-    static LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = nullptr;
-    static LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = nullptr;
-    static LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = nullptr;
-    static LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = nullptr;
+        template <typename T>
+        T getALProc(char const * name) noexcept
+        {
+            void* ptr = alGetProcAddress(name);
+            static_assert(sizeof(T) == sizeof(void*));
+            return std::bit_cast<T>(ptr);
+        }
 
-    // Effects
-    static LPALGENEFFECTS alGenEffects       = nullptr;
-    static LPALDELETEEFFECTS alDeleteEffects = nullptr;
-    static LPALISEFFECT alIsEffect           = nullptr;
-    static LPALEFFECTI alEffecti             = nullptr;
-    static LPALEFFECTIV alEffectiv           = nullptr;
-    static LPALEFFECTF alEffectf             = nullptr;
-    static LPALEFFECTFV alEffectfv           = nullptr;
-    static LPALGETEFFECTI alGetEffecti       = nullptr;
-    static LPALGETEFFECTIV alGetEffectiv     = nullptr;
-    static LPALGETEFFECTF alGetEffectf       = nullptr;
-    static LPALGETEFFECTFV alGetEffectfv     = nullptr;
+        // Effect Slots
+        LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
+        LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = nullptr;
+        LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = nullptr;
+        LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = nullptr;
+        LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = nullptr;
+        LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = nullptr;
+        LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = nullptr;
+        LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = nullptr;
+        LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = nullptr;
+        LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = nullptr;
+        LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = nullptr;
 
-    // Filters
-    static LPALGENFILTERS alGenFilters       = nullptr;
-    static LPALDELETEFILTERS alDeleteFilters = nullptr;
-    static LPALISFILTER alIsFilter           = nullptr;
-    static LPALFILTERI alFilteri             = nullptr;
-    static LPALFILTERIV alFilteriv           = nullptr;
-    static LPALFILTERF alFilterf             = nullptr;
-    static LPALFILTERFV alFilterfv           = nullptr;
-    static LPALGETFILTERI alGetFilteri       = nullptr;
-    static LPALGETFILTERIV alGetFilteriv     = nullptr;
-    static LPALGETFILTERF alGetFilterf       = nullptr;
-    static LPALGETFILTERFV alGetFilterfv     = nullptr;
+        // Effects
+        LPALGENEFFECTS alGenEffects       = nullptr;
+        LPALDELETEEFFECTS alDeleteEffects = nullptr;
+        LPALISEFFECT alIsEffect           = nullptr;
+        LPALEFFECTI alEffecti             = nullptr;
+        LPALEFFECTIV alEffectiv           = nullptr;
+        LPALEFFECTF alEffectf             = nullptr;
+        LPALEFFECTFV alEffectfv           = nullptr;
+        LPALGETEFFECTI alGetEffecti       = nullptr;
+        LPALGETEFFECTIV alGetEffectiv     = nullptr;
+        LPALGETEFFECTF alGetEffectf       = nullptr;
+        LPALGETEFFECTFV alGetEffectfv     = nullptr;
+
+        // Filters
+        LPALGENFILTERS alGenFilters       = nullptr;
+        LPALDELETEFILTERS alDeleteFilters = nullptr;
+        LPALISFILTER alIsFilter           = nullptr;
+        LPALFILTERI alFilteri             = nullptr;
+        LPALFILTERIV alFilteriv           = nullptr;
+        LPALFILTERF alFilterf             = nullptr;
+        LPALFILTERFV alFilterfv           = nullptr;
+        LPALGETFILTERI alGetFilteri       = nullptr;
+        LPALGETFILTERIV alGetFilteriv     = nullptr;
+        LPALGETFILTERF alGetFilterf       = nullptr;
+        LPALGETFILTERFV alGetFilterfv     = nullptr;
+    } // namespace
 
     SoundEffectManager::SoundEffectManager() :
         m_device(nullptr), m_active(false), m_effectSlots{}, m_createdSlots(0), m_maxSlots(0)
     {
     }
 
-    SoundEffectManager::~SoundEffectManager()
-    {
-        // SoundEmitters are destroyed beforehand
-        for (auto& m_filter : m_filters) {
-            delete m_filter;
-        }
-        for (auto& m_effect : m_effects) {
-            delete m_effect;
-        }
-    }
+    SoundEffectManager::~SoundEffectManager() = default;
 
     void SoundEffectManager::init(ALCdevice* device)
     {
         m_device = device;
 
         if (alcIsExtensionPresent(m_device, "ALC_EXT_EFX") == AL_FALSE) {
-            FL_WARN(_log, "ALC_EXT_EFX not supported!\n");
+            FL_WARN(_log(), "ALC_EXT_EFX not supported!\n");
             return;
         }
 
         // Slot functions
-        alGenAuxiliaryEffectSlots =
-            reinterpret_cast<LPALGENAUXILIARYEFFECTSLOTS>(alGetProcAddress("alGenAuxiliaryEffectSlots"));
-        alDeleteAuxiliaryEffectSlots =
-            reinterpret_cast<LPALDELETEAUXILIARYEFFECTSLOTS>(alGetProcAddress("alDeleteAuxiliaryEffectSlots"));
-        alIsAuxiliaryEffectSlot =
-            reinterpret_cast<LPALISAUXILIARYEFFECTSLOT>(alGetProcAddress("alIsAuxiliaryEffectSlot"));
-        alAuxiliaryEffectSloti = reinterpret_cast<LPALAUXILIARYEFFECTSLOTI>(alGetProcAddress("alAuxiliaryEffectSloti"));
-        alAuxiliaryEffectSlotiv =
-            reinterpret_cast<LPALAUXILIARYEFFECTSLOTIV>(alGetProcAddress("alAuxiliaryEffectSlotiv"));
-        alAuxiliaryEffectSlotf = reinterpret_cast<LPALAUXILIARYEFFECTSLOTF>(alGetProcAddress("alAuxiliaryEffectSlotf"));
-        alAuxiliaryEffectSlotfv =
-            reinterpret_cast<LPALAUXILIARYEFFECTSLOTFV>(alGetProcAddress("alAuxiliaryEffectSlotfv"));
-        alGetAuxiliaryEffectSloti =
-            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTI>(alGetProcAddress("alGetAuxiliaryEffectSloti"));
-        alGetAuxiliaryEffectSlotiv =
-            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTIV>(alGetProcAddress("alGetAuxiliaryEffectSlotiv"));
-        alGetAuxiliaryEffectSlotf =
-            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTF>(alGetProcAddress("alGetAuxiliaryEffectSlotf"));
-        alGetAuxiliaryEffectSlotfv =
-            reinterpret_cast<LPALGETAUXILIARYEFFECTSLOTFV>(alGetProcAddress("alGetAuxiliaryEffectSlotfv"));
+        alGenAuxiliaryEffectSlots    = getALProc<LPALGENAUXILIARYEFFECTSLOTS>("alGenAuxiliaryEffectSlots");
+        alDeleteAuxiliaryEffectSlots = getALProc<LPALDELETEAUXILIARYEFFECTSLOTS>("alDeleteAuxiliaryEffectSlots");
+        alIsAuxiliaryEffectSlot      = getALProc<LPALISAUXILIARYEFFECTSLOT>("alIsAuxiliaryEffectSlot");
+        alAuxiliaryEffectSloti       = getALProc<LPALAUXILIARYEFFECTSLOTI>("alAuxiliaryEffectSloti");
+        alAuxiliaryEffectSlotiv      = getALProc<LPALAUXILIARYEFFECTSLOTIV>("alAuxiliaryEffectSlotiv");
+        alAuxiliaryEffectSlotf       = getALProc<LPALAUXILIARYEFFECTSLOTF>("alAuxiliaryEffectSlotf");
+        alAuxiliaryEffectSlotfv      = getALProc<LPALAUXILIARYEFFECTSLOTFV>("alAuxiliaryEffectSlotfv");
+        alGetAuxiliaryEffectSloti    = getALProc<LPALGETAUXILIARYEFFECTSLOTI>("alGetAuxiliaryEffectSloti");
+        alGetAuxiliaryEffectSlotiv   = getALProc<LPALGETAUXILIARYEFFECTSLOTIV>("alGetAuxiliaryEffectSlotiv");
+        alGetAuxiliaryEffectSlotf    = getALProc<LPALGETAUXILIARYEFFECTSLOTF>("alGetAuxiliaryEffectSlotf");
+        alGetAuxiliaryEffectSlotfv   = getALProc<LPALGETAUXILIARYEFFECTSLOTFV>("alGetAuxiliaryEffectSlotfv");
         if (alGenAuxiliaryEffectSlots == nullptr || alDeleteAuxiliaryEffectSlots == nullptr ||
             alIsAuxiliaryEffectSlot == nullptr || alAuxiliaryEffectSloti == nullptr ||
             alAuxiliaryEffectSlotiv == nullptr || alAuxiliaryEffectSlotf == nullptr ||
             alAuxiliaryEffectSlotfv == nullptr || alGetAuxiliaryEffectSloti == nullptr ||
             alGetAuxiliaryEffectSlotiv == nullptr || alGetAuxiliaryEffectSlotf == nullptr ||
             alGetAuxiliaryEffectSlotfv == nullptr) {
-            FL_WARN(_log, "Failed initializing slot function pointers\n");
+            FL_WARN(_log(), "Failed initializing slot function pointers\n");
             return;
         }
 
         // Effect functions
-        alGenEffects    = reinterpret_cast<LPALGENEFFECTS>(alGetProcAddress("alGenEffects"));
-        alDeleteEffects = reinterpret_cast<LPALDELETEEFFECTS>(alGetProcAddress("alDeleteEffects"));
-        alIsEffect      = reinterpret_cast<LPALISEFFECT>(alGetProcAddress("alIsEffect"));
-        alEffecti       = reinterpret_cast<LPALEFFECTI>(alGetProcAddress("alEffecti"));
-        alEffectiv      = reinterpret_cast<LPALEFFECTIV>(alGetProcAddress("alEffectiv"));
-        alEffectf       = reinterpret_cast<LPALEFFECTF>(alGetProcAddress("alEffectf"));
-        alEffectfv      = reinterpret_cast<LPALEFFECTFV>(alGetProcAddress("alEffectfv"));
-        alGetEffecti    = reinterpret_cast<LPALGETEFFECTI>(alGetProcAddress("alGetEffecti"));
-        alGetEffectiv   = reinterpret_cast<LPALGETEFFECTIV>(alGetProcAddress("alGetEffectiv"));
-        alGetEffectf    = reinterpret_cast<LPALGETEFFECTF>(alGetProcAddress("alGetEffectf"));
-        alGetEffectfv   = reinterpret_cast<LPALGETEFFECTFV>(alGetProcAddress("alGetEffectfv"));
+        alGenEffects    = getALProc<LPALGENEFFECTS>("alGenEffects");
+        alDeleteEffects = getALProc<LPALDELETEEFFECTS>("alDeleteEffects");
+        alIsEffect      = getALProc<LPALISEFFECT>("alIsEffect");
+        alEffecti       = getALProc<LPALEFFECTI>("alEffecti");
+        alEffectiv      = getALProc<LPALEFFECTIV>("alEffectiv");
+        alEffectf       = getALProc<LPALEFFECTF>("alEffectf");
+        alEffectfv      = getALProc<LPALEFFECTFV>("alEffectfv");
+        alGetEffecti    = getALProc<LPALGETEFFECTI>("alGetEffecti");
+        alGetEffectiv   = getALProc<LPALGETEFFECTIV>("alGetEffectiv");
+        alGetEffectf    = getALProc<LPALGETEFFECTF>("alGetEffectf");
+        alGetEffectfv   = getALProc<LPALGETEFFECTFV>("alGetEffectfv");
         if (alGenEffects == nullptr || alDeleteEffects == nullptr || alIsEffect == nullptr || alEffecti == nullptr ||
             alEffectiv == nullptr || alEffectf == nullptr || alEffectfv == nullptr || alGetEffecti == nullptr ||
             alGetEffectiv == nullptr || alGetEffectf == nullptr || alGetEffectfv == nullptr) {
-            FL_WARN(_log, "Failed initializing effect function pointers\n");
+            FL_WARN(_log(), "Failed initializing effect function pointers\n");
             return;
         }
 
         // Filter functions
-        alGenFilters    = reinterpret_cast<LPALGENFILTERS>(alGetProcAddress("alGenFilters"));
-        alDeleteFilters = reinterpret_cast<LPALDELETEFILTERS>(alGetProcAddress("alDeleteFilters"));
-        alIsFilter      = reinterpret_cast<LPALISFILTER>(alGetProcAddress("alIsFilter"));
-        alFilteri       = reinterpret_cast<LPALFILTERI>(alGetProcAddress("alFilteri"));
-        alFilteriv      = reinterpret_cast<LPALFILTERIV>(alGetProcAddress("alFilteriv"));
-        alFilterf       = reinterpret_cast<LPALFILTERF>(alGetProcAddress("alFilterf"));
-        alFilterfv      = reinterpret_cast<LPALFILTERFV>(alGetProcAddress("alFilterfv"));
-        alGetFilteri    = reinterpret_cast<LPALGETFILTERI>(alGetProcAddress("alGetFilteri"));
-        alGetFilteriv   = reinterpret_cast<LPALGETFILTERIV>(alGetProcAddress("alGetFilteriv"));
-        alGetFilterf    = reinterpret_cast<LPALGETFILTERF>(alGetProcAddress("alGetFilterf"));
-        alGetFilterfv   = reinterpret_cast<LPALGETFILTERFV>(alGetProcAddress("alGetFilterfv"));
+        alGenFilters    = getALProc<LPALGENFILTERS>("alGenFilters");
+        alDeleteFilters = getALProc<LPALDELETEFILTERS>("alDeleteFilters");
+        alIsFilter      = getALProc<LPALISFILTER>("alIsFilter");
+        alFilteri       = getALProc<LPALFILTERI>("alFilteri");
+        alFilteriv      = getALProc<LPALFILTERIV>("alFilteriv");
+        alFilterf       = getALProc<LPALFILTERF>("alFilterf");
+        alFilterfv      = getALProc<LPALFILTERFV>("alFilterfv");
+        alGetFilteri    = getALProc<LPALGETFILTERI>("alGetFilteri");
+        alGetFilteriv   = getALProc<LPALGETFILTERIV>("alGetFilteriv");
+        alGetFilterf    = getALProc<LPALGETFILTERF>("alGetFilterf");
+        alGetFilterfv   = getALProc<LPALGETFILTERFV>("alGetFilterfv");
         if (alGenFilters == nullptr || alDeleteFilters == nullptr || alIsFilter == nullptr || alFilteri == nullptr ||
             alFilteriv == nullptr || alFilterf == nullptr || alFilterfv == nullptr || alGetFilteri == nullptr ||
             alGetFilteriv == nullptr || alGetFilterf == nullptr || alGetFilterfv == nullptr) {
-            FL_WARN(_log, "Failed initializing filter function pointers\n");
+            FL_WARN(_log(), "Failed initializing filter function pointers\n");
             return;
         }
 
@@ -189,38 +185,39 @@ namespace FIFE
 
     SoundEffect* SoundEffectManager::createSoundEffect(SoundEffectType type)
     {
-        SoundEffect* effect = nullptr;
+        std::unique_ptr<SoundEffect> effect;
         if (type == SE_EFFECT_REVERB) {
-            effect = new Reverb();
+            effect = std::make_unique<Reverb>();
         } else if (type == SE_EFFECT_CHORUS) {
-            effect = new Chorus();
+            effect = std::make_unique<Chorus>();
         } else if (type == SE_EFFECT_DISTORTION) {
-            effect = new Distortion();
+            effect = std::make_unique<Distortion>();
         } else if (type == SE_EFFECT_ECHO) {
-            effect = new Echo();
+            effect = std::make_unique<Echo>();
         } else if (type == SE_EFFECT_FLANGER) {
-            effect = new Flanger();
+            effect = std::make_unique<Flanger>();
         } else if (type == SE_EFFECT_FREQUENCY_SHIFTER) {
-            effect = new FrequencyShifter();
+            effect = std::make_unique<FrequencyShifter>();
         } else if (type == SE_EFFECT_VOCAL_MORPHER) {
-            effect = new VocalMorpher();
+            effect = std::make_unique<VocalMorpher>();
         } else if (type == SE_EFFECT_PITCH_SHIFTER) {
-            effect = new PitchShifter();
+            effect = std::make_unique<PitchShifter>();
         } else if (type == SE_EFFECT_RING_MODULATOR) {
-            effect = new RingModulator();
+            effect = std::make_unique<RingModulator>();
         } else if (type == SE_EFFECT_AUTOWAH) {
-            effect = new Autowah();
+            effect = std::make_unique<Autowah>();
         } else if (type == SE_EFFECT_COMPRESSOR) {
-            effect = new Compressor();
+            effect = std::make_unique<Compressor>();
         } else if (type == SE_EFFECT_EQUALIZER) {
-            effect = new Equalizer();
+            effect = std::make_unique<Equalizer>();
         } else if (type == SE_EFFECT_EAXREVERB) {
-            effect = new EaxReverb();
+            effect = std::make_unique<EaxReverb>();
         }
         if (effect != nullptr) {
-            m_effects.push_back(effect);
+            m_effects.push_back(std::move(effect));
+            return m_effects.back().get();
         }
-        return effect;
+        return nullptr;
     }
 
     SoundEffect* SoundEffectManager::createSoundEffectPreset(SoundEffectPreset type)
@@ -229,12 +226,11 @@ namespace FIFE
         if (it == m_presets.end()) {
             return nullptr;
         }
-        SoundEffect* effect = new EaxReverb();
-        m_effects.push_back(effect);
-
-        auto* reverb = dynamic_cast<EaxReverb*>(effect);
+        auto effect  = std::make_unique<EaxReverb>();
+        auto* reverb = effect.get();
         reverb->loadPreset(it->second);
-        return effect;
+        m_effects.push_back(std::move(effect));
+        return m_effects.back().get();
     }
 
     void SoundEffectManager::deleteSoundEffect(SoundEffect* effect)
@@ -245,7 +241,9 @@ namespace FIFE
             removeSoundFilterFromSoundEffect(effect, effect->getFilter());
         }
 
-        auto it = std::ranges::find(m_effects, effect);
+        auto it = std::ranges::find_if(m_effects, [effect](auto& ptr) {
+            return ptr.get() == effect;
+        });
         if (it != m_effects.end()) {
             auto effectIt = m_effectEmitters.find(effect);
             if (effectIt != m_effectEmitters.end()) {
@@ -255,7 +253,6 @@ namespace FIFE
                 m_effectEmitters.erase(effectIt);
             }
 
-            delete *it;
             m_effects.erase(it);
         }
     }
@@ -264,7 +261,7 @@ namespace FIFE
     {
         if (m_freeSlots.empty() || effect->isEnabled()) {
             if (m_freeSlots.empty()) {
-                FL_WARN(_log, "No free auxiliary slot available");
+                FL_WARN(_log(), "No free auxiliary slot available");
             }
             return;
         }
@@ -308,12 +305,12 @@ namespace FIFE
     void SoundEffectManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
         if (std::cmp_equal(emitter->getEffectCount(), m_maxSlots)) {
-            FL_WARN(_log, "Maximal effect number for SoundEmitter reached");
+            FL_WARN(_log(), "Maximal effect number for SoundEmitter reached");
             return;
         }
         m_effectEmitters[effect].push_back(emitter);
         emitter->addEffect(effect);
-        if ((emitter - static_cast<int>(isActive())) != nullptr) {
+        if (isActive()) {
             activateEffect(effect, emitter);
         }
     }
@@ -322,7 +319,7 @@ namespace FIFE
     {
         auto effectIt = m_effectEmitters.find(effect);
         if (effectIt == m_effectEmitters.end()) {
-            FL_WARN(_log, "SoundEmitter can not removed from unknown effect");
+            FL_WARN(_log(), "SoundEmitter can not removed from unknown effect");
             return;
         }
         bool found      = false;
@@ -341,7 +338,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, "SoundEmitter could not be found for the given effect.");
+            FL_WARN(_log(), "SoundEmitter could not be found for the given effect.");
             return;
         }
     }
@@ -349,7 +346,7 @@ namespace FIFE
     void SoundEffectManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
         if (effect->getFilter() != nullptr) {
-            FL_WARN(_log, "SoundEffect already has a filter");
+            FL_WARN(_log(), "SoundEffect already has a filter");
             return;
         }
         effect->setFilter(filter);
@@ -364,7 +361,7 @@ namespace FIFE
     {
         auto filterIt = m_filterdEffects.find(filter);
         if (filterIt == m_filterdEffects.end()) {
-            FL_WARN(_log, "SoundEffect can not removed from unknown filter");
+            FL_WARN(_log(), "SoundEffect can not removed from unknown filter");
             return;
         }
         bool found     = false;
@@ -384,7 +381,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, "SoundEffect could not be found for the given filter.");
+            FL_WARN(_log(), "SoundEffect could not be found for the given filter.");
             return;
         }
     }
@@ -420,16 +417,18 @@ namespace FIFE
 
     SoundFilter* SoundEffectManager::createSoundFilter(SoundFilterType type)
     {
-        auto* filter = new SoundFilter(type);
-        m_filters.push_back(filter);
-        return filter;
+        auto filter = std::make_unique<SoundFilter>(type);
+        m_filters.push_back(std::move(filter));
+        return m_filters.back().get();
     }
 
     void SoundEffectManager::deleteSoundFilter(SoundFilter* filter)
     {
         disableDirectSoundFilter(filter);
 
-        auto it = std::ranges::find(m_filters, filter);
+        auto it = std::ranges::find_if(m_filters, [filter](auto& ptr) {
+            return ptr.get() == filter;
+        });
         if (it != m_filters.end()) {
             auto filterIt = m_filterdEmitters.find(filter);
             if (filterIt != m_filterdEmitters.end()) {
@@ -451,7 +450,6 @@ namespace FIFE
                 m_filterdEffects.erase(filterItt);
             }
 
-            delete *it;
             m_filters.erase(it);
         }
     }
@@ -493,7 +491,7 @@ namespace FIFE
     void SoundEffectManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
         if (emitter->getDirectFilter() != nullptr) {
-            FL_WARN(_log, "SoundEmitter already has a direct filter");
+            FL_WARN(_log(), "SoundEmitter already has a direct filter");
             return;
         }
         emitter->setDirectFilter(filter);
@@ -507,7 +505,7 @@ namespace FIFE
     {
         auto filterIt = m_filterdEmitters.find(filter);
         if (filterIt == m_filterdEmitters.end()) {
-            FL_WARN(_log, "SoundEmitter can not removed from unknown filter");
+            FL_WARN(_log(), "SoundEmitter can not removed from unknown filter");
             return;
         }
         bool found      = false;
@@ -526,7 +524,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, "SoundEmitter could not be found for the given filter.");
+            FL_WARN(_log(), "SoundEmitter could not be found for the given filter.");
             return;
         }
     }

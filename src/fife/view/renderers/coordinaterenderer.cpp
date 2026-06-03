@@ -41,10 +41,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -93,9 +94,8 @@ namespace FIFE
 
     int32_t const MIN_COORD = -9999999;
     int32_t const MAX_COORD = 9999999;
-    void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList&)
     {
-        static_cast<void>(instances);
         if (m_font == nullptr) {
             // no font selected.. nothing to render
             return;

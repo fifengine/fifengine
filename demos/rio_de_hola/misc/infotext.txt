@@ -24,4 +24,4 @@ Keybindings:
 Have fun,
 The FIFE team
 
-http://www.fifengine.net
+http://fifengine.net

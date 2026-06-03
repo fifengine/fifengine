@@ -44,7 +44,13 @@ namespace FIFE
     FontInstanceKey FontInstance::getKey() const
     {
         assert("FontFace must still be alive" && m_face != nullptr);
-        return FontInstanceKey{.asset = m_face->getAssetHandle(), .size = m_size, .bold = m_bold, .italic = m_italic, .antialias = m_antialias, .hinting = m_hinting};
+        return FontInstanceKey{
+            .asset     = m_face->getAssetHandle(),
+            .size      = m_size,
+            .bold      = m_bold,
+            .italic    = m_italic,
+            .antialias = m_antialias,
+            .hinting   = m_hinting};
     }
 
     int TrueTypeFontInstance::getHeight() const

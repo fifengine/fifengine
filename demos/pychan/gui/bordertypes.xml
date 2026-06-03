@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<Window title="Border Types - Regression/Inspection Test" min_size="640,480">
+  <Label text="Visual comparison of different border settings. Each cell has a labeled container with the given style."/>
+  <ScrollArea min_size="620,400">
+    <VBox padding="4">
+      <Label text="Border Sizes (default border_color)" />
+      <HBox>
+        <Container style="border_0" min_size="80,50">
+          <Label text="size=0" />
+        </Container>
+        <Container style="border_1" min_size="80,50">
+          <Label text="size=1" />
+        </Container>
+        <Container style="border_2" min_size="80,50">
+          <Label text="size=2" />
+        </Container>
+        <Container style="border_3" min_size="80,50">
+          <Label text="size=3" />
+        </Container>
+        <Container style="border_4" min_size="80,50">
+          <Label text="size=4" />
+        </Container>
+      </HBox>
+
+      <Label text="Border Colors (size=2)" />
+      <HBox>
+        <Container style="border_white" min_size="90,50">
+          <Label text="white" />
+        </Container>
+        <Container style="border_dark" min_size="90,50">
+          <Label text="dark" />
+        </Container>
+        <Container style="border_red" min_size="90,50">
+          <Label text="red" />
+        </Container>
+        <Container style="border_green" min_size="90,50">
+          <Label text="green" />
+        </Container>
+        <Container style="border_blue" min_size="90,50">
+          <Label text="blue" />
+        </Container>
+        <Container style="border_yellow" min_size="90,50">
+          <Label text="yellow" />
+        </Container>
+      </HBox>
+
+      <Label text="Widget Type Borders (style=default, size=2)" />
+      <HBox>
+        <Button text="Button" style="button_test" min_size="100,30" />
+        <TextBox text="TextBox" style="textbox_test" min_size="100,30" />
+      </HBox>
+
+      <Label text="TabbedArea Border (uses base_color +/- offset):" />
+      <TabbedArea style="tabbed_test" min_size="580,200">
+        <Tab content_name="tab_page1">
+          <Label text="Tab A"/>
+        </Tab>
+        <Label name="tab_page1" text="Tab A content area. Borders drawn by Tab/TabbedArea draw()." />
+        <Tab content_name="tab_page2">
+          <Label text="Tab B"/>
+        </Tab>
+        <Label name="tab_page2" text="Tab B content area." />
+        <Tab content_name="tab_page3">
+          <Label text="Tab C"/>
+        </Tab>
+        <Label name="tab_page3" text="Tab C content area." />
+      </TabbedArea>
+    </VBox>
+  </ScrollArea>
+  <HBox>
+    <Spacer/>
+    <Button name="closeButton" text="Close"/>
+  </HBox>
+</Window>

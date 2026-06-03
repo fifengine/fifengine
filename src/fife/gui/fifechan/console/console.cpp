@@ -24,10 +24,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_CONSOLE);
             return log;
-        }();
+        }
     } // namespace
 
     Console::Console() :
@@ -224,7 +225,7 @@ namespace FIFE
 
     void Console::execute(std::string const & cmd)
     {
-        FL_DBG(_log, std::format("in execute with command {}", cmd));
+        FL_DBG(_log(), std::format("in execute with command {}", cmd));
         if (cmd.empty()) {
             return;
         }
@@ -238,10 +239,10 @@ namespace FIFE
                 std::string const resp = m_consoleexec->onConsoleCommand(cmd);
                 println(resp);
             } else {
-                FL_WARN(_log, std::format("ConsoleExecuter not bind, but command received: {}", cmd));
+                FL_WARN(_log(), std::format("ConsoleExecuter not bind, but command received: {}", cmd));
             }
         } catch (FIFE::Exception const & e) {
-            FL_WARN(_log, std::format("Console caught exception: {}", e.what()));
+            FL_WARN(_log(), std::format("Console caught exception: {}", e.what()));
             println(e.what());
         }
     }
@@ -281,7 +282,7 @@ namespace FIFE
         if (m_consoleexec != nullptr) {
             m_consoleexec->onToolsClick();
         } else {
-            FL_WARN(_log, "ConsoleExecuter not bind, but tools button clicked");
+            FL_WARN(_log(), "ConsoleExecuter not bind, but tools button clicked");
         }
     }
 

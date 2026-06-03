@@ -81,7 +81,7 @@ namespace FIFE {
 		virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
 		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
 		virtual ImagePtr loadBlank(uint32_t width, uint32_t height);
-		virtual ImagePtr add(Image* res);
+		ImagePtr add(Image* res);
 
 		virtual bool exists(const std::string& name);
 		virtual bool exists(ResourceHandle handle);

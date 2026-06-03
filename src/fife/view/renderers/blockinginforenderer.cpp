@@ -25,10 +25,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -59,7 +60,7 @@ namespace FIFE
     {
         CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
 
@@ -94,9 +95,9 @@ namespace FIFE
                             pt1 = pt2;
                         }
                         m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-                        ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                        ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(0)));
                         Point const pt3(spt1.x, spt1.y);
-                        ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                        ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(halfind)));
                         Point const pt4(spt2.x, spt2.y);
                         m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
                     }
@@ -125,9 +126,9 @@ namespace FIFE
                     pt1 = pt2;
                 }
                 m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-                ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(0)));
                 Point const pt3(spt1.x, spt1.y);
-                ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+                ScreenPoint const spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(halfind)));
                 Point const pt4(spt2.x, spt2.y);
                 m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
             }

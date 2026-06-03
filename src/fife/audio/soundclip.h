@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
@@ -33,7 +34,7 @@ namespace FIFE
 
     struct FIFE_API SoundBufferEntry
     {
-            ALuint buffers[BUFFER_NUM];
+            std::array<ALuint, BUFFER_NUM> buffers{};
             uint32_t usedbufs;
             uint64_t deccursor;
     };
@@ -126,10 +127,8 @@ namespace FIFE
             // is stream?
             bool m_isStream;
             // attached decoder
-            SoundDecoder* m_decoder;
-            // when loadFromDecoder-method is used, decoder shouldn't be deleted
-            bool m_deleteDecoder;
-            std::vector<SoundBufferEntry*, std::allocator<SoundBufferEntry*>> m_buffervec;
+            std::unique_ptr<SoundDecoder> m_decoder;
+            std::vector<std::unique_ptr<SoundBufferEntry>> m_buffervec;
 
             std::string createUniqueClipName();
     };

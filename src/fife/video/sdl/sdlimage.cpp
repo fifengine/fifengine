@@ -5,7 +5,9 @@
 #include "sdlimage.h"
 
 // Standard C++ library includes
+#include <array>
 #include <cassert>
+#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -26,10 +28,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIDEO);
             return log;
-        }();
+        }
     } // namespace
 
     SDLImage::SDLImage(IResourceLoader* loader) : Image(loader)
@@ -71,7 +74,7 @@ namespace FIFE
 
     SDLImage::~SDLImage()
     {
-        invalidate();
+        SDLImage::invalidate();
     }
 
     void SDLImage::invalidate()
@@ -135,8 +138,10 @@ namespace FIFE
 
         // set additonal color and alpha mods
         if (rgb != nullptr) {
-            SDL_SetTextureColorMod(m_texture, rgb[0], rgb[1], rgb[2]);
-            SDL_SetTextureAlphaMod(m_texture, rgb[3]);
+            std::array<uint8_t, 4> cc{};
+            std::memcpy(cc.data(), rgb, sizeof(cc));
+            SDL_SetTextureColorMod(m_texture, cc.at(0), cc.at(1), cc.at(2));
+            SDL_SetTextureAlphaMod(m_texture, cc.at(3));
         } else {
             SDL_SetTextureColorMod(m_texture, 255, 255, 255);
             SDL_SetTextureAlphaMod(m_texture, 255);

@@ -114,7 +114,10 @@ namespace FIFE
                     if (ss >> comma >> a) { /* four values */
                     }
                     def.color = {
-                        .r = static_cast<Uint8>(r), .g = static_cast<Uint8>(g), .b = static_cast<Uint8>(b), .a = static_cast<Uint8>(a)};
+                        .r = static_cast<Uint8>(r),
+                        .g = static_cast<Uint8>(g),
+                        .b = static_cast<Uint8>(b),
+                        .a = static_cast<Uint8>(a)};
                 }
 
                 char const * recoloringAttr = XML::Attribute(faceElem, "recoloring");

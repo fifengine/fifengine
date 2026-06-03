@@ -9,6 +9,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -53,10 +54,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend) :
@@ -68,10 +70,13 @@ namespace FIFE
         m_loaderName("fife")
 
     {
-        AnimationLoaderPtr const animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
-        AtlasLoaderPtr const atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
-        m_objectLoader.reset(
-            new ObjectLoader(m_model, m_vfs, m_imageManager, m_animationManager, animationLoader, atlasLoader));
+        auto animTemp = std::make_unique<AnimationLoader>(m_vfs, m_imageManager, m_animationManager);
+        AnimationLoaderPtr const animationLoader(animTemp.release());
+        auto atlasTemp = std::make_unique<AtlasLoader>(m_model, m_vfs, m_imageManager, m_animationManager);
+        AtlasLoaderPtr const atlasLoader(atlasTemp.release());
+        auto objTemp = std::make_unique<ObjectLoader>(
+            m_model, m_vfs, m_imageManager, m_animationManager, animationLoader, atlasLoader);
+        m_objectLoader = SharedPtr<IObjectLoader>(objTemp.release());
     }
 
     MapLoader::~MapLoader() = default;
@@ -98,7 +103,7 @@ namespace FIFE
         std::string const mapFilename = mapPath.string();
 
         try {
-            RawData* data = m_vfs->open(mapFilename);
+            auto data = std::unique_ptr<RawData>(m_vfs->open(mapFilename));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -107,19 +112,14 @@ namespace FIFE
                     if (!XML::Parse(mapFile, xml)) {
                         std::ostringstream oss;
                         oss << " Failed to load" << mapFilename << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
-                        FL_ERR(_log, oss.str());
+                        FL_ERR(_log(), oss.str());
 
-                        delete data;
                         return map;
                     }
                 }
-
-                // done with data delete resource
-                delete data;
-                data = nullptr;
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -150,7 +150,7 @@ namespace FIFE
                 try {
                     map = m_model->createMap(mapName);
                 } catch (NameClash& e) {
-                    FL_ERR(_log, e.what());
+                    FL_ERR(_log(), e.what());
 
                     // just rethrow to client
                     throw;
@@ -260,12 +260,7 @@ namespace FIFE
                                 }
                             }
 
-                            CellGrid* grid = nullptr;
-                            if (gridType != nullptr) {
-                                grid = m_model->getCellGrid(gridType);
-                            } else {
-                                grid = m_model->getCellGrid("square");
-                            }
+                            CellGrid* grid = m_model->getCellGrid(gridType);
 
                             if (grid != nullptr) {
                                 grid->setXShift(xOffset);
@@ -378,7 +373,7 @@ namespace FIFE
                                                             std::vector<int> angles;
                                                             objVisual->getStaticImageAngles(angles);
                                                             if (!angles.empty()) {
-                                                                r = angles[0];
+                                                                r = angles.at(0);
                                                             }
                                                         }
 
@@ -416,7 +411,7 @@ namespace FIFE
                                                         std::ostringstream oss;
                                                         oss << " Failed to create instance of object " << objectId
                                                             << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
-                                                        FL_ERR(_log, oss.str());
+                                                        FL_ERR(_log(), oss.str());
                                                     }
                                                 }
                                             }
@@ -703,10 +698,10 @@ namespace FIFE
                                 // make sure the right number of viewport parameters were parsed
                                 if (viewportParameters.size() == 4) {
                                     Rect const rect(
-                                        viewportParameters[0],
-                                        viewportParameters[1],
-                                        viewportParameters[2],
-                                        viewportParameters[3]);
+                                        viewportParameters.at(0),
+                                        viewportParameters.at(1),
+                                        viewportParameters.at(2),
+                                        viewportParameters.at(3));
 
                                     try {
                                         cam = map->addCamera(cameraId, rect);
@@ -769,7 +764,7 @@ namespace FIFE
         assert("layer required" && layer);
 
         XML::Element const * lightsElement = layerElement->FirstChildElement("lights");
-        if (!lightsElement) {
+        if (lightsElement == nullptr) {
             return;
         }
 
@@ -779,19 +774,19 @@ namespace FIFE
             ld.layerName = layer->getName();
 
             char const * groupStr = XML::Attribute(lightElement, "group");
-            if (!groupStr) {
+            if (groupStr == nullptr) {
                 continue;
             }
             ld.group = groupStr;
 
             char const * type = XML::Attribute(lightElement, "type");
-            if (!type) {
+            if (type == nullptr) {
                 continue;
             }
             ld.type = type;
 
             char const * instanceName = XML::Attribute(lightElement, "instance");
-            if (instanceName) {
+            if (instanceName != nullptr) {
                 ld.instanceName = instanceName;
             }
 
@@ -809,7 +804,7 @@ namespace FIFE
             XML::QueryAttribute(lightElement, "a_ref", &ld.aRef);
 
             char const * camId = XML::Attribute(lightElement, "camera_id");
-            if (camId) {
+            if (camId != nullptr) {
                 ld.cameraId = camId;
             }
 
@@ -821,17 +816,17 @@ namespace FIFE
                 XML::QueryAttribute(lightElement, "ystretch", &ld.ystretch);
 
                 char const * colorStr = XML::Attribute(lightElement, "color");
-                if (colorStr) {
+                if (colorStr != nullptr) {
                     IntVector const color = tokenize(colorStr, ',');
                     if (color.size() >= 3) {
-                        ld.colorR = color[0];
-                        ld.colorG = color[1];
-                        ld.colorB = color[2];
+                        ld.colorR = color.at(0);
+                        ld.colorG = color.at(1);
+                        ld.colorB = color.at(2);
                     }
                 }
             } else if (ld.type == "image") {
                 char const * imagePath = XML::Attribute(lightElement, "image");
-                if (!imagePath) {
+                if (imagePath == nullptr) {
                     continue;
                 }
                 fs::path fullPath(m_mapDirectory);
@@ -839,7 +834,7 @@ namespace FIFE
                 ld.imagePath = fullPath.string();
             } else if (ld.type == "animation") {
                 char const * animationPath = XML::Attribute(lightElement, "animation");
-                if (!animationPath) {
+                if (animationPath == nullptr) {
                     continue;
                 }
                 fs::path fullPath(m_mapDirectory);
@@ -859,18 +854,18 @@ namespace FIFE
         assert("layer required" && layer);
 
         XML::Element const * soundsElement = layerElement->FirstChildElement("sounds");
-        if (!soundsElement) {
+        if (soundsElement == nullptr) {
             return;
         }
 
         for (XML::Element const * soundElement = soundsElement->FirstChildElement("sound"); soundElement != nullptr;
              soundElement                      = soundElement->NextSiblingElement("sound")) {
             char const * file = XML::Attribute(soundElement, "file");
-            if (!file) {
+            if (file == nullptr) {
                 continue;
             }
             FL_LOG(
-                _log,
+                _log(),
                 "Sound file '" + std::string(file) + "' found on layer '" + layer->getName() +
                     "' - sound emitters not yet implemented in loader");
         }
@@ -894,27 +889,28 @@ namespace FIFE
             cameraMap[cam->getName()] = cam;
         }
 
-        Camera* defaultCamera = cameras[0];
+        Camera* defaultCamera = cameras.at(0);
 
         for (LightData const & ld : m_lightData) {
             Layer* layer = map->getLayer(ld.layerName);
-            if (!layer) {
-                FL_WARN(_log, "Light references unknown layer '" + ld.layerName + "'");
+            if (layer == nullptr) {
+                FL_WARN(_log(), "Light references unknown layer '" + ld.layerName + "'");
                 continue;
             }
 
             Instance* instance = nullptr;
             if (!ld.instanceName.empty()) {
                 instance = layer->getInstance(ld.instanceName);
-                if (!instance) {
+                if (instance == nullptr) {
                     FL_WARN(
-                        _log,
+                        _log(),
                         "Light references unknown instance '" + ld.instanceName + "' on layer '" + ld.layerName + "'");
                 }
             }
 
             RendererNode const node(
-                instance ? RendererNode(instance, layer, Point(ld.x, ld.y)) : RendererNode(layer, Point(ld.x, ld.y)));
+                instance != nullptr ? RendererNode(instance, layer, Point(ld.x, ld.y)) :
+                                      RendererNode(layer, Point(ld.x, ld.y)));
 
             Camera* cam = defaultCamera;
             if (!ld.cameraId.empty()) {
@@ -925,7 +921,7 @@ namespace FIFE
             }
 
             LightRenderer* renderer = LightRenderer::getInstance(cam);
-            if (!renderer) {
+            if (renderer == nullptr) {
                 continue;
             }
 
@@ -952,7 +948,7 @@ namespace FIFE
                     if (animLoader) {
                         std::vector<AnimationPtr> const anims = animLoader->loadMultiple(ld.animationPath);
                         if (!anims.empty()) {
-                            renderer->addAnimation(ld.group, node, anims[0], ld.srcBlend, ld.dstBlend);
+                            renderer->addAnimation(ld.group, node, anims.at(0), ld.srcBlend, ld.dstBlend);
                         }
                     }
                 }
@@ -1017,14 +1013,13 @@ namespace FIFE
         std::string const mapFilename = mapPath.string();
 
         try {
-            RawData* data = m_vfs->open(mapFilename);
+            auto data = std::unique_ptr<RawData>(m_vfs->open(mapFilename));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(mapFile, xml)) {
-                        delete data;
                         return false;
                     }
 
@@ -1037,19 +1032,14 @@ namespace FIFE
                         // correctly then we know we have a compatible extension so we will
                         // attempt to load it, if it does specify a loader then the loader
                         // name will be checked
-                        if ((loaderName == nullptr) ||
-                            ((loaderName != nullptr) && std::string(loaderName) == getLoaderName())) {
+                        if ((loaderName == nullptr) || (std::string(loaderName) == getLoaderName())) {
                             return true;
                         }
                     }
                 }
-
-                // done with file delete the resource
-                delete data;
-                data = nullptr;
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             return false;
         }
@@ -1119,6 +1109,6 @@ namespace FIFE
 
     MapLoader* createDefaultMapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend)
     {
-        return (new MapLoader(model, vfs, imageManager, renderBackend));
+        return std::make_unique<MapLoader>(model, vfs, imageManager, renderBackend).release();
     }
 } // namespace FIFE

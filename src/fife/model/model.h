@@ -8,8 +8,10 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -40,7 +42,7 @@ namespace FIFE
             /** Constructor
              *
              */
-            Model(RenderBackend* renderbackend, std::vector<RendererBase*> const & renderers);
+            Model(RenderBackend* renderbackend, std::vector<std::unique_ptr<RendererBase>> const & renderers);
 
             /** Destructor
              *
@@ -58,9 +60,13 @@ namespace FIFE
 
             /** Get all the maps in the model.
              */
-            std::list<Map*> const & getMaps() const
+            std::list<Map*> getMaps() const
             {
-                return m_maps;
+                std::list<Map*> result;
+                std::ranges::transform(m_maps, std::back_inserter(result), [](auto const & m) {
+                    return m.get();
+                });
+                return result;
             }
 
             /** Get a map.
@@ -115,7 +121,7 @@ namespace FIFE
 
             /** Adds pather to model. Moves ownership to model
              */
-            void adoptPather(IPather* pather);
+            void adoptPather(std::unique_ptr<IPather> pather);
 
             /** Returns pather corresponding given name. If none found, returns NULL
              */
@@ -123,7 +129,7 @@ namespace FIFE
 
             /** Adds cellgrid to model. Moves ownership to model
              */
-            void adoptCellGrid(CellGrid* grid);
+            void adoptCellGrid(std::unique_ptr<CellGrid> grid);
 
             /** Returns new copy of cellgrid corresponding given name. If none found, returns NULL
              */
@@ -155,11 +161,11 @@ namespace FIFE
 
         private:
             // Map observer, currently only used to delete CellGrids from deleted layers
-            ModelMapObserver* m_mapObserver;
+            std::unique_ptr<ModelMapObserver> m_mapObserver;
 
-            std::list<Map*> m_maps;
+            std::list<std::unique_ptr<Map>> m_maps;
 
-            using objectmap_t = std::map<std::string, Object*>;
+            using objectmap_t = std::map<std::string, std::unique_ptr<Object>>;
             using namespace_t = std::pair<std::string, objectmap_t>;
             std::list<namespace_t> m_namespaces;
 
@@ -172,9 +178,9 @@ namespace FIFE
             // Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
             namespace_t const * selectNamespace(std::string const & name_space) const;
 
-            std::vector<IPather*> m_pathers;
-            std::vector<CellGrid*> m_createdGrids;
-            std::vector<CellGrid*> m_adoptedGrids;
+            std::vector<std::unique_ptr<IPather>> m_pathers;
+            std::vector<std::unique_ptr<CellGrid>> m_createdGrids;
+            std::vector<std::unique_ptr<CellGrid>> m_adoptedGrids;
 
             TimeProvider m_timeprovider;
 

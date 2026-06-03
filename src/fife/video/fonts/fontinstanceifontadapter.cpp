@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cassert>
 #include <list>
+#include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -27,10 +29,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
 
         bool shouldLogGuiText(std::string const & text)
         {
@@ -152,7 +155,7 @@ namespace FIFE
         m_pool.invalidateCachedText();
     }
 
-    SDL_Surface* FontInstanceIFontAdapter::renderTrueType(std::string const & text)
+    SDL_Surface* FontInstanceIFontAdapter::renderTrueType(std::string const & text) const
     {
         auto ttfFace = std::dynamic_pointer_cast<TrueTypeFontFace>(m_instance->getFace());
         if (!ttfFace) {
@@ -165,13 +168,21 @@ namespace FIFE
             return surface;
         }
 
-        TTF_Font* font            = ttfFace->getFont();
+        TTF_Font* font  = ttfFace->getFont();
         int font_ptsize = ttfFace->getPointSize();
-        FL_WARN(_log, std::format(
-            "renderTrueType: text='{}' ptsize={} fontHeight={} fontAscent={} color=({},{},{},{}) antiAlias={}",
-            text, font_ptsize, static_cast<int>(TTF_GetFontHeight(font)),
-            static_cast<int>(TTF_GetFontAscent(font)),
-            m_color.r, m_color.g, m_color.b, m_color.a, m_antiAlias));
+        FL_WARN(
+            _log(),
+            std::format(
+                "renderTrueType: text='{}' ptsize={} fontHeight={} fontAscent={} color=({},{},{},{}) antiAlias={}",
+                text,
+                font_ptsize,
+                TTF_GetFontHeight(font),
+                TTF_GetFontAscent(font),
+                m_color.r,
+                m_color.g,
+                m_color.b,
+                m_color.a,
+                m_antiAlias));
 
         SDL_Surface* renderedText = nullptr;
         if (m_antiAlias) {
@@ -186,48 +197,65 @@ namespace FIFE
             throw SDLException(std::string("TTF_RenderText_ failed: ") + SDL_GetError());
         }
 
-        FL_WARN(_log, std::format(
-            "renderTrueType result: text='{}' fmt={:#x} w={} h={} pitch={}",
-            text,
-            static_cast<unsigned>(renderedText->format),
-            renderedText->w,
-            renderedText->h,
-            renderedText->pitch));
+        FL_WARN(
+            _log(),
+            std::format(
+                "renderTrueType result: text='{}' fmt={:#x} w={} h={} pitch={}",
+                text,
+                static_cast<unsigned>(renderedText->format),
+                renderedText->w,
+                renderedText->h,
+                renderedText->pitch));
 
         if (renderedText->w > 0 && renderedText->h > 0) {
             uint32_t nonZero = 0;
-            auto* px = static_cast<uint32_t*>(renderedText->pixels);
-            int totalPx = (renderedText->pitch / 4) * renderedText->h;
-            for (int i = 0; i < totalPx && i < 10000; ++i) {
-                if (px[i] != 0) ++nonZero;
+            auto const px    = std::span(
+                static_cast<uint32_t const *>(renderedText->pixels),
+                static_cast<size_t>((renderedText->pitch / 4) * renderedText->h));
+            auto const totalPx = px.size();
+            for (size_t i = 0; i < totalPx && i < 10000; ++i) {
+                if (px[i] != 0) {
+                    ++nonZero;
+                }
             }
-            FL_WARN(_log, std::format(
-                "  first={:#010x} center={:#010x} nonZero/{}k={}",
-                px[0],
-                px[(renderedText->h/2) * (renderedText->pitch/4) + (renderedText->w/2)],
-                totalPx > 10000 ? 10 : totalPx / 1000, nonZero));
+            FL_WARN(
+                _log(),
+                std::format(
+                    "  first={:#010x} center={:#010x} nonZero/{}k={}",
+                    px[0],
+                    px[static_cast<size_t>((renderedText->h / 2) * (renderedText->pitch / 4) + (renderedText->w / 2))],
+                    totalPx > 10000 ? 10 : totalPx / 1000,
+                    nonZero));
         }
 
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {
-                int fixedCount = 0;
+                int fixedCount                     = 0;
                 SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(renderedText->format);
                 int32_t const pitch_px             = renderedText->pitch / 4;
-                auto* pixels                       = static_cast<uint32_t*>(renderedText->pixels);
+                auto pixels                        = std::span(
+                    static_cast<uint32_t*>(renderedText->pixels),
+                    static_cast<size_t>(pitch_px) * static_cast<size_t>(renderedText->h));
                 for (int32_t y = 0; y < renderedText->h; ++y) {
-                    uint32_t* row = pixels + (static_cast<size_t>(y) * static_cast<size_t>(pitch_px));
+                    auto row = pixels.subspan(
+                        static_cast<size_t>(y) * static_cast<size_t>(pitch_px), static_cast<size_t>(renderedText->w));
                     for (int32_t x = 0; x < renderedText->w; ++x) {
-                        uint8_t r = 0, g = 0, b = 0, a = 0;
-                        SDL_GetRGBA(row[x], fmt, nullptr, &r, &g, &b, &a);
+                        uint8_t r = 0;
+                        uint8_t g = 0;
+                        uint8_t b = 0;
+                        uint8_t a = 0;
+                        SDL_GetRGBA(row[static_cast<size_t>(x)], fmt, nullptr, &r, &g, &b, &a);
                         if (a == 0 && (r != 0 || g != 0 || b != 0)) {
-                            row[x] = 0;
+                            row[static_cast<size_t>(x)] = 0;
                             ++fixedCount;
                         }
                     }
                 }
                 SDL_UnlockSurface(renderedText);
                 if (fixedCount > 0) {
-                    FL_WARN(_log, std::format("  alpha-fix: zeroed {} pixels with non-zero RGB but zero alpha", fixedCount));
+                    FL_WARN(
+                        _log(),
+                        std::format("  alpha-fix: zeroed {} pixels with non-zero RGB but zero alpha", fixedCount));
                 }
             }
         }
@@ -235,7 +263,7 @@ namespace FIFE
         return renderedText;
     }
 
-    SDL_Surface* FontInstanceIFontAdapter::renderImage(std::string const & text)
+    SDL_Surface* FontInstanceIFontAdapter::renderImage(std::string const & text) const
     {
         auto imgFace = std::dynamic_pointer_cast<ImageFontFace>(m_instance->getFace());
         if (!imgFace) {
@@ -248,12 +276,12 @@ namespace FIFE
         int32_t x                      = 0;
         std::string::const_iterator it = text.begin();
         while (it != text.end()) {
-            uint32_t codepoint = utf8::next(it, text.end());
-            SDL_Surface* glyph = imgFace->getGlyphSurface(codepoint);
+            uint32_t const codepoint = utf8::next(it, text.end());
+            SDL_Surface* glyph       = imgFace->getGlyphSurface(codepoint);
             if (glyph == nullptr) {
                 continue;
             }
-            SDL_Rect dst{x, 0, glyph->w, glyph->h};
+            SDL_Rect const dst{.x = x, .y = 0, .w = glyph->w, .h = glyph->h};
             SDL_BlitSurface(glyph, nullptr, surface, &dst);
             x += glyph->w + m_glyphSpacing;
         }
@@ -261,7 +289,7 @@ namespace FIFE
         return surface;
     }
 
-    SDL_Surface* FontInstanceIFontAdapter::renderString(std::string const & text)
+    SDL_Surface* FontInstanceIFontAdapter::renderString(std::string const & text) const
     {
         auto face = m_instance->getFace();
         if (std::dynamic_pointer_cast<TrueTypeFontFace>(face)) {
@@ -273,18 +301,19 @@ namespace FIFE
         return nullptr;
     }
 
-    Image* FontInstanceIFontAdapter::getAsImage(std::string const & text)
+    Image* FontInstanceIFontAdapter::getAsImage(std::string const & text) const
     {
         Image* image = m_pool.getRenderedText(this, text);
         if (image == nullptr) {
             SDL_Surface* textSurface = renderString(text);
-            image                    = RenderBackend::instance()->createImage(textSurface);
-            m_pool.addRenderedText(this, text, image);
+            auto newImage            = RenderBackend::instance()->createImage(textSurface);
+            image                    = newImage.get();
+            m_pool.addRenderedText(this, text, newImage.release());
         }
         return image;
     }
 
-    Image* FontInstanceIFontAdapter::getAsImageMultiline(std::string const & text)
+    Image* FontInstanceIFontAdapter::getAsImageMultiline(std::string const & text) const
     {
         Image* image = m_pool.getRenderedText(this, text);
         if (image != nullptr) {
@@ -341,8 +370,9 @@ namespace FIFE
             SDL_DestroySurface(line_surf);
         }
 
-        image = RenderBackend::instance()->createImage(final_surface);
-        m_pool.addRenderedText(this, text, image);
+        auto newImage = RenderBackend::instance()->createImage(final_surface);
+        image         = newImage.get();
+        m_pool.addRenderedText(this, text, newImage.release());
         return image;
     }
 
@@ -356,7 +386,7 @@ namespace FIFE
         utf8::next(cur, text.end());
 
         while (cur != text.end()) {
-            std::string buff(text.begin(), cur);
+            std::string const buff(text.begin(), cur);
             if (getWidth(buff) > x) {
                 return static_cast<int32_t>(buff.size());
             }
@@ -385,30 +415,35 @@ namespace FIFE
         if (text.empty()) {
             return nullptr;
         }
-        auto* self   = const_cast<FontInstanceIFontAdapter*>(this);
-        Image* image = self->getAsImage(std::string(text));
+        Image* image = getAsImage(std::string(text));
         if (image == nullptr) {
-            FL_WARN(_log, std::format("renderToSurface: getAsImage returned nullptr for '{}'", text));
+            FL_WARN(_log(), std::format("renderToSurface: getAsImage returned nullptr for '{}'", text));
             return nullptr;
         }
         if (image->getSurface() == nullptr) {
-            FL_WARN(_log, std::format("renderToSurface: image surface is nullptr for '{}'", text));
+            FL_WARN(_log(), std::format("renderToSurface: image surface is nullptr for '{}'", text));
             return nullptr;
         }
-        FL_WARN(_log, std::format(
-            "renderToSurface: text='{}' img=({}x{}) surf_fmt={:#x} surf_w={} surf_h={}",
-            text, image->getWidth(), image->getHeight(),
-            static_cast<unsigned>(image->getSurface()->format),
-            image->getSurface()->w, image->getSurface()->h));
-        SDL_Surface* src = image->getSurface();
+        FL_WARN(
+            _log(),
+            std::format(
+                "renderToSurface: text='{}' img=({}x{}) surf_fmt={:#x} surf_w={} surf_h={}",
+                text,
+                image->getWidth(),
+                image->getHeight(),
+                static_cast<unsigned>(image->getSurface()->format),
+                image->getSurface()->w,
+                image->getSurface()->h));
+        SDL_Surface* src  = image->getSurface();
         SDL_Surface* copy = SDL_DuplicateSurface(src);
         if (copy == nullptr) {
-            FL_WARN(_log, std::format("renderToSurface: SDL_DuplicateSurface returned nullptr for '{}'", text));
+            FL_WARN(_log(), std::format("renderToSurface: SDL_DuplicateSurface returned nullptr for '{}'", text));
             return nullptr;
         }
-        FL_WARN(_log, std::format(
-            "renderToSurface: copy w={} h={} fmt={:#x}",
-            copy->w, copy->h, static_cast<unsigned>(copy->format)));
+        FL_WARN(
+            _log(),
+            std::format(
+                "renderToSurface: copy w={} h={} fmt={:#x}", copy->w, copy->h, static_cast<unsigned>(copy->format)));
         return std::unique_ptr<SDL_Surface, fcn::Font::SDL_SurfaceDeleter>(copy);
     }
 
@@ -441,36 +476,40 @@ namespace FIFE
 
         if (shouldLogGuiText(text)) {
             SDL_Surface* surface = image->getSurface();
-            uint32_t firstPixel = 0;
+            uint32_t firstPixel  = 0;
             uint32_t centerPixel = 0;
             if (surface != nullptr && surface->pixels != nullptr && surface->w > 0 && surface->h > 0) {
-                auto* pixels = static_cast<uint32_t*>(surface->pixels);
-                int32_t const pitchPx = surface->pitch / 4;
-                firstPixel = pixels[0];
-                centerPixel = pixels[(surface->h / 2) * pitchPx + (surface->w / 2)];
+                auto const pixels = std::span(
+                    static_cast<uint32_t const *>(surface->pixels),
+                    static_cast<size_t>((surface->pitch / 4) * surface->h));
+                firstPixel  = pixels[0];
+                centerPixel = pixels[static_cast<size_t>((surface->h / 2) * (surface->pitch / 4) + (surface->w / 2))];
             }
-            FL_LOG(_log, std::format(
-                "drawMultiLineString: text='{}' input=({}, {}) yoffset={} clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) rect=({},{} {}x{}) image={}x{} surface={} fmt={:#x} first={:#010x} center={:#010x}",
-                text,
-                x,
-                y,
-                yoffset,
-                clip.x,
-                clip.y,
-                clip.width,
-                clip.height,
-                clip.xOffset,
-                clip.yOffset,
-                rect.x,
-                rect.y,
-                rect.w,
-                rect.h,
-                image->getWidth(),
-                image->getHeight(),
-                surface != nullptr ? std::format("{}x{}", surface->w, surface->h) : std::string("null"),
-                surface != nullptr ? static_cast<unsigned>(surface->format) : 0U,
-                firstPixel,
-                centerPixel));
+            FL_LOG(
+                _log(),
+                std::format(
+                    "drawMultiLineString: text='{}' input=({}, {}) yoffset={} clip=(x={}, y={}, w={}, h={}, offX={}, "
+                    "offY={}) rect=({},{} {}x{}) image={}x{} surface={} fmt={:#x} first={:#010x} center={:#010x}",
+                    text,
+                    x,
+                    y,
+                    yoffset,
+                    clip.x,
+                    clip.y,
+                    clip.width,
+                    clip.height,
+                    clip.xOffset,
+                    clip.yOffset,
+                    rect.x,
+                    rect.y,
+                    rect.w,
+                    rect.h,
+                    image->getWidth(),
+                    image->getHeight(),
+                    surface != nullptr ? std::format("{}x{}", surface->w, surface->h) : std::string("null"),
+                    surface != nullptr ? static_cast<unsigned>(surface->format) : 0U,
+                    firstPixel,
+                    centerPixel));
         }
 
         if (!rect.intersects(Rect(clip.x, clip.y, clip.width, clip.height))) {

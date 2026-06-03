@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -111,7 +112,7 @@ namespace FIFE
              */
             fcn::Container* getTopContainer() const
             {
-                return m_fcn_topcontainer;
+                return m_fcn_topcontainer.get();
             }
 
             /** Gets the console.
@@ -120,7 +121,7 @@ namespace FIFE
              */
             Console* getConsole() const
             {
-                return m_console;
+                return m_console.get();
             };
 
             /** Enables the console, or not.
@@ -210,25 +211,25 @@ namespace FIFE
 
         private:
             // The Fifechan GUI.
-            fcn::Gui* m_fcn_gui;
+            std::unique_ptr<fcn::Gui> m_fcn_gui;
             // Fifechan Graphics
-            fcn::Graphics* m_gui_graphics;
+            std::unique_ptr<fcn::Graphics> m_gui_graphics;
             // Focus handler for input management
             fcn::FocusHandler* m_focushandler;
             // The top container of the GUI.
-            fcn::Container* m_fcn_topcontainer;
+            std::unique_ptr<fcn::Container> m_fcn_topcontainer;
             // The imageloader.
-            GuiImageLoader* m_imgloader;
+            std::unique_ptr<GuiImageLoader> m_imgloader;
             // The input controller.
-            fcn::sdl3::Input* m_input;
+            std::unique_ptr<fcn::sdl3::Input> m_input;
             // The console.
-            Console* m_console;
+            std::unique_ptr<Console> m_console;
             // Acess to the Cursor class.
             Cursor* m_cursor;
             // The default font
             fcn::Font* m_defaultfont;
             // The fonts used
-            std::vector<fcn::Font*> m_fonts;
+            std::vector<std::unique_ptr<fcn::Font>> m_fonts;
             // Added widgets
             std::set<fcn::Widget*> m_widgets;
 

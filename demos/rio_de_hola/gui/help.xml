@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<Window title="Help">
-  <TextBox name="helpText"/>
+<Window title="Help" min_size="520,300">
+  <ScrollArea name="helpScroll" min_size="500,240" hexpand="True" vexpand="True" horizontal_scrollbar="False">
+    <TextBox name="helpText" vexpand="False"/>
+  </ScrollArea>
   <Button name="closeButton" text="Close"/>
 </Window>

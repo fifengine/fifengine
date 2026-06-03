@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -40,7 +41,7 @@ namespace FIFE
             virtual bool hasSource(std::string const & path) const;
 
         private:
-            std::map<std::string, VFSSource*> m_sources;
+            std::map<std::string, std::unique_ptr<VFSSource>> m_sources;
     };
 } // namespace FIFE
 

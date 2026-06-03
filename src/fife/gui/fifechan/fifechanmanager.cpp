@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <format>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -44,19 +45,20 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
     } // namespace
 
     FifechanManager::FifechanManager() :
-        m_fcn_gui(new fcn::Gui()),
+        m_fcn_gui(std::make_unique<fcn::Gui>()),
         m_gui_graphics(nullptr),
         m_focushandler(nullptr),
-        m_fcn_topcontainer(new fcn::Container()),
-        m_imgloader(new GuiImageLoader()),
-        m_input(new fcn::sdl3::Input()),
+        m_fcn_topcontainer(std::make_unique<fcn::Container>()),
+        m_imgloader(std::make_unique<GuiImageLoader>()),
+        m_input(std::make_unique<fcn::sdl3::Input>()),
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
@@ -69,35 +71,22 @@ namespace FIFE
         m_enabled_console(true)
     {
 
-        m_fcn_gui->setInput(m_input);
-        fcn::Image::setImageLoader(m_imgloader);
+        m_fcn_gui->setInput(m_input.get());
+        fcn::Image::setImageLoader(m_imgloader.get());
 
-        m_fcn_gui->setTop(m_fcn_topcontainer);
+        m_fcn_gui->setTop(m_fcn_topcontainer.get());
         m_focushandler = m_fcn_topcontainer->_getFocusHandler();
 
         m_fcn_topcontainer->setOpaque(false);
         m_fcn_topcontainer->setFocusable(false);
     }
 
-    FifechanManager::~FifechanManager()
-    {
-        delete m_console;
-        delete m_fcn_topcontainer;
-        delete m_imgloader;
-        delete m_input;
-        delete m_fcn_gui;
-        delete m_gui_graphics;
-        auto i = m_fonts.begin();
-        while (i != m_fonts.end()) {
-            delete *i;
-            ++i;
-        }
-    }
+    FifechanManager::~FifechanManager() = default;
 
     bool FifechanManager::onSdlEvent(SDL_Event& evt)
     {
         if (m_input == nullptr) {
-            FL_WARN(_log, "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
+            FL_WARN(_log(), "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
             return false;
         }
 
@@ -169,9 +158,9 @@ namespace FIFE
     void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
         if (m_backend == "SDL") {
-            dynamic_cast<SdlGuiGraphics*>(m_gui_graphics)->updateTarget();
+            dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else {
-            dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
+            dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         }
         m_fcn_topcontainer->setDimension(
             fcn::Rectangle(
@@ -184,7 +173,7 @@ namespace FIFE
 
     fcn::Gui* FifechanManager::getFifechanGUI() const
     {
-        return m_fcn_gui;
+        return m_fcn_gui.get();
     }
 
     void FifechanManager::add(fcn::Widget* widget)
@@ -217,16 +206,16 @@ namespace FIFE
     {
 #ifdef HAVE_OPENGL
         if (backend == "SDL") {
-            m_gui_graphics = new SdlGuiGraphics();
+            m_gui_graphics = std::make_unique<SdlGuiGraphics>();
         } else if (backend == "OpenGL") {
-            m_gui_graphics = new OpenGLGuiGraphics();
+            m_gui_graphics = std::make_unique<OpenGLGuiGraphics>();
         } else {
             // should never get here
             assert(0);
         }
 #else
         if (backend == "SDL") {
-            m_gui_graphics = new SdlGuiGraphics();
+            m_gui_graphics = std::make_unique<SdlGuiGraphics>();
         } else {
             // should never get here
             assert(0);
@@ -234,9 +223,9 @@ namespace FIFE
 #endif
         m_backend = backend;
 
-        m_fcn_gui->setGraphics(m_gui_graphics);
+        m_fcn_gui->setGraphics(m_gui_graphics.get());
         if (m_enabled_console) {
-            m_console = new Console();
+            m_console = std::make_unique<Console>();
         }
 
         resizeTopContainer(0, 0, static_cast<uint32_t>(screenWidth), static_cast<uint32_t>(screenHeight));
@@ -252,7 +241,7 @@ namespace FIFE
         }
 
         FL_WARN(
-            _log,
+            _log(),
             std::format(
                 "createFont: path='{}' fontpath='{}' size={} fontsize={} m_fontManager={}",
                 path,
@@ -263,29 +252,25 @@ namespace FIFE
 
         FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
         auto instance           = m_fontManager->getFontInstance(handle);
-        auto* adapter           = new FontInstanceIFontAdapter(std::move(instance));
+        auto adapter            = std::make_unique<FontInstanceIFontAdapter>(std::move(instance));
         if (auto definition = m_fontManager->getFontDefinition(handle)) {
             adapter->setAntiAlias(definition->antialias);
             adapter->setGlyphSpacing(definition->glyphSpacing);
             adapter->setRowSpacing(definition->rowSpacing);
             adapter->setDynamicColoring(definition->recoloring);
-            adapter->setColor(
-                definition->color.r,
-                definition->color.g,
-                definition->color.b,
-                definition->color.a);
+            adapter->setColor(definition->color.r, definition->color.g, definition->color.b, definition->color.a);
         }
-        m_fonts.push_back(adapter);
-        return adapter;
+        auto* ptr = adapter.get();
+        m_fonts.push_back(std::move(adapter));
+        return ptr;
     }
 
     void FifechanManager::releaseFont(fcn::Font* font)
     {
         auto i = m_fonts.begin();
         while (i != m_fonts.end()) {
-            if ((*i) == font) {
+            if (i->get() == font) {
                 m_fonts.erase(i);
-                delete font;
                 return;
             }
             ++i;
@@ -296,7 +281,7 @@ namespace FIFE
     {
         auto it = m_fonts.begin();
         while (it != m_fonts.end()) {
-            auto* ifont = dynamic_cast<IFont*>(*it);
+            auto* ifont = dynamic_cast<IFont*>(it->get());
             if (ifont != nullptr) {
                 ifont->invalidate();
             }
@@ -337,7 +322,7 @@ namespace FIFE
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "FifechanManager::translateKeyEvent() - Unknown event type: {}",
                     static_cast<int>(fcnevt.getType())));

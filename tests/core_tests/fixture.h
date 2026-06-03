@@ -26,11 +26,9 @@ struct TestFixture
         std::shared_ptr<FIFE::VFS> vfs;
         std::shared_ptr<FIFE::ImageManager> img;
 
-        TestFixture()
+        TestFixture() : tm(std::make_shared<FIFE::TimeManager>()), vfs(std::make_shared<FIFE::VFS>())
         {
-            tm  = std::make_shared<FIFE::TimeManager>();
-            vfs = std::make_shared<FIFE::VFS>();
-            vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
+            vfs->addSource(std::make_unique<FIFE::VFSDirectory>(vfs.get()));
             img = std::make_shared<FIFE::ImageManager>();
         }
 };

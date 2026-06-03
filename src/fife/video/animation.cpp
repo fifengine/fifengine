@@ -81,7 +81,7 @@ namespace FIFE
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
 
-        std::string const name = oss.str();
+        std::string name = oss.str();
         ++uniqueNumber;
 
         return name;
@@ -140,7 +140,7 @@ namespace FIFE
     {
         ImagePtr image;
         if (isValidIndex(index)) {
-            image = m_frames[static_cast<size_t>(index)].image;
+            image = m_frames.at(static_cast<size_t>(index)).image;
             if (image->getState() == IResource::RES_NOT_LOADED) {
                 image->load();
             }
@@ -184,9 +184,9 @@ namespace FIFE
     {
         if (isValidIndex(index)) {
             assert(
-                m_frames[static_cast<size_t>(index)].duration <=
+                m_frames.at(static_cast<size_t>(index)).duration <=
                 static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
-            return static_cast<int32_t>(m_frames[static_cast<size_t>(index)].duration);
+            return static_cast<int32_t>(m_frames.at(static_cast<size_t>(index)).duration);
         }
         return -1;
     }

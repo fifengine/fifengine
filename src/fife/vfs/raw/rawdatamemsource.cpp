@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <span>
 
 // 3rd party library includes
 
@@ -13,28 +14,26 @@
 namespace FIFE
 {
 
-    RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len)
+    RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(len)
     {
     }
 
-    RawDataMemSource::~RawDataMemSource()
-    {
-        delete[] m_data;
-    }
+    RawDataMemSource::~RawDataMemSource() = default;
 
     uint32_t RawDataMemSource::getSize() const
     {
-        return m_datalen;
+        return static_cast<uint32_t>(m_data.size());
     }
 
     void RawDataMemSource::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
     {
-        std::copy(m_data + start, m_data + start + length, buffer);
+        auto const src = std::span(m_data).subspan(start, length);
+        std::copy(src.begin(), src.end(), buffer);
     }
 
-    uint8_t* RawDataMemSource::getRawData() const
+    uint8_t* RawDataMemSource::getRawData()
     {
-        return m_data;
+        return m_data.data();
     }
 
 } // namespace FIFE

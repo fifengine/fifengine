@@ -44,10 +44,11 @@ namespace FIFE
 
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -101,7 +102,7 @@ namespace FIFE
             m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
         }
         for (; instance_it != instances.end(); ++instance_it) {
-            Instance* instance          = (*instance_it)->instance;
+            Instance const * instance   = (*instance_it)->instance;
             std::string const * saytext = instance->getSayText();
             if (saytext != nullptr) {
                 Rect const & ir = (*instance_it)->dimensions;

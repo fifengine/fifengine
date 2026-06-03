@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,7 @@
 // FIFE includes
 #include "model/metamodel/ipather.h"
 #include "model/structures/location.h"
+#include "routepathersearch.h"
 #include "util/structures/priorityqueue.h"
 
 namespace FIFE
@@ -25,7 +27,7 @@ namespace FIFE
 
     class Cell;
     class CellCache;
-    class RoutePatherSearch;
+    class Route;
     class Route;
 
     class FIFE_API RoutePather : public IPather
@@ -37,6 +39,8 @@ namespace FIFE
             RoutePather() : m_nextFreeSessionId(0), m_maxTicks(1000)
             {
             }
+
+            ~RoutePather();
 
             /** Creates a route between the start and end location that needs be solved.
              *
@@ -167,6 +171,9 @@ namespace FIFE
 
             //! A map of currently running sessions (searches).
             SessionQueue m_sessions;
+
+            //! Storage for owned search objects (raw pointers in m_sessions reference these).
+            std::map<int32_t, std::unique_ptr<RoutePatherSearch>> m_searchStore;
 
             //! A list of session ids that have been registered.
             SessionList m_registeredSessionIds;

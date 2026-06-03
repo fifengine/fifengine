@@ -9,7 +9,7 @@
 #include <string_view>
 
 /**
- * CMake replacement tokens used by configure_file(@ONLY):
+ * CMake replacement tokens used by configure_file(\@ONLY):
  *
  * FIFE_NAME
  * FIFE_DESC

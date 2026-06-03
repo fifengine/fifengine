@@ -22,22 +22,23 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_FO_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     DAT1::DAT1(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
-        FL_LOG(_log, std::format("MFFalloutDAT1loading: {} filesize: {}", file, m_data->getDataLength()));
+        FL_LOG(_log(), std::format("MFFalloutDAT1loading: {} filesize: {}", file, m_data->getDataLength()));
 
         m_data->setIndex(0);
 
         uint32_t const dircount = m_data->read32Big();
         m_data->moveIndex(4 * 3);
 
-        FL_LOG(_log, std::format("MFFalloutDAT1number of directories {}", dircount));
+        FL_LOG(_log(), std::format("MFFalloutDAT1number of directories {}", dircount));
 
         // Sanity check. Each dir entry needs min. 16 bytes.
         if (dircount * 16 > m_data->getDataLength()) {
@@ -53,7 +54,7 @@ namespace FIFE
             dir_names.push_back(name);
         }
 
-        for (auto& dir_name : dir_names) {
+        for (auto const & dir_name : dir_names) {
             loadFileList(dir_name);
         }
     }
@@ -122,7 +123,7 @@ namespace FIFE
         }
 
         size_t const lastIndex = path.size();
-        if (lastIndex != 0 && path[lastIndex - 1] != '/') {
+        if (lastIndex != 0 && path.at(lastIndex - 1) != '/') {
             path += '/';
         }
 

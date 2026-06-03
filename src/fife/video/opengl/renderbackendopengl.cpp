@@ -34,12 +34,12 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
             static Logger log(LM_VIDEO);
             return log;
         }();
 
-        Logger& _guiLog = []() -> Logger& {
+        Logger& _guiLog = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
             static Logger log(LM_GUI);
             return log;
         }();
@@ -143,7 +143,6 @@ namespace FIFE
             bool stencil_test        = false;
             bool color               = true;
             std::array<uint8_t, 4> rgba{};
-            std::array<uint8_t, 2> reserved{};
     };
 
     RenderBackendOpenGL::RenderBackendOpenGL(SDL_Color const & colorkey) :
@@ -156,22 +155,22 @@ namespace FIFE
         m_context(nullptr)
     {
 
-        m_state.tex_enabled[0]      = false;
-        m_state.tex_enabled[1]      = false;
-        m_state.tex_enabled[2]      = false;
-        m_state.tex_enabled[3]      = false;
-        m_state.texture[0]          = 0;
-        m_state.texture[1]          = 0;
-        m_state.texture[2]          = 0;
-        m_state.texture[3]          = 0;
+        m_state.tex_enabled.at(0)   = false;
+        m_state.tex_enabled.at(1)   = false;
+        m_state.tex_enabled.at(2)   = false;
+        m_state.tex_enabled.at(3)   = false;
+        m_state.texture.at(0)       = 0;
+        m_state.texture.at(1)       = 0;
+        m_state.texture.at(2)       = 0;
+        m_state.texture.at(3)       = 0;
         m_state.active_tex          = 0;
         m_state.alpha_test          = 0.0;
         m_state.vertex_pointer_size = 2;
         m_state.color_pointer       = nullptr;
-        m_state.tex_pointer[0]      = nullptr;
-        m_state.tex_pointer[1]      = nullptr;
-        m_state.tex_pointer[2]      = nullptr;
-        m_state.tex_pointer[3]      = nullptr;
+        m_state.tex_pointer.at(0)   = nullptr;
+        m_state.tex_pointer.at(1)   = nullptr;
+        m_state.tex_pointer.at(2)   = nullptr;
+        m_state.tex_pointer.at(3)   = nullptr;
         m_state.vertex_pointer      = nullptr;
 
         m_state.sten_enabled = false;
@@ -183,16 +182,16 @@ namespace FIFE
         m_state.lightmodel    = 0;
         m_state.light_enabled = false;
 
-        m_state.env_color[0]  = 0;
-        m_state.env_color[1]  = 0;
-        m_state.env_color[2]  = 0;
-        m_state.env_color[3]  = 0;
-        m_state.blend_src     = GL_SRC_ALPHA;
-        m_state.blend_dst     = GL_ONE_MINUS_SRC_ALPHA;
-        m_state.alpha_enabled = true;
-        m_state.scissor_test  = true;
-        m_state.depth_enabled = true;
-        m_state.color_enabled = true;
+        m_state.env_color.at(0) = 0;
+        m_state.env_color.at(1) = 0;
+        m_state.env_color.at(2) = 0;
+        m_state.env_color.at(3) = 0;
+        m_state.blend_src       = GL_SRC_ALPHA;
+        m_state.blend_dst       = GL_ONE_MINUS_SRC_ALPHA;
+        m_state.alpha_enabled   = true;
+        m_state.scissor_test    = true;
+        m_state.depth_enabled   = true;
+        m_state.color_enabled   = true;
     }
 
     RenderBackendOpenGL::~RenderBackendOpenGL()
@@ -490,12 +489,12 @@ namespace FIFE
         // a rough way to fill the index buffer, result is: 0, 1, 2, 0, 2, 3 | 4, 5, 6, 4, 6, 7
         uint32_t index = 0;
         for (std::vector<uint32_t>::size_type i = 0; i != m_indices.size(); i += 6) {
-            m_indices[i]     = index;
-            m_indices[i + 1] = index + 1;
-            m_indices[i + 2] = index + 2;
-            m_indices[i + 3] = index;
-            m_indices[i + 4] = index + 2;
-            m_indices[i + 5] = index + 3;
+            m_indices.at(i)     = index;
+            m_indices.at(i + 1) = index + 1;
+            m_indices.at(i + 2) = index + 2;
+            m_indices.at(i + 3) = index;
+            m_indices.at(i + 4) = index + 2;
+            m_indices.at(i + 5) = index + 3;
             index += 4;
         }
 
@@ -519,100 +518,108 @@ namespace FIFE
         RenderBackend::endFrame();
     }
 
-    Image* RenderBackendOpenGL::createImage(IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(IResourceLoader* loader)
     {
-        return new GLImage(loader);
+        return std::make_unique<GLImage>(loader);
     }
 
-    Image* RenderBackendOpenGL::createImage(std::string const & name, IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(std::string const & name, IResourceLoader* loader)
     {
-        return new GLImage(name, loader);
+        return std::make_unique<GLImage>(name, loader);
     }
 
-    Image* RenderBackendOpenGL::createImage(SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(SDL_Surface* surface)
     {
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // Let SDL do this for us.
 
         if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
-            FL_WARN(_log, std::format(
-                "RB::createImage: surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
-                surface->w,
-                surface->h,
-                surface->pitch,
-                static_cast<unsigned>(surface->format),
-                static_cast<unsigned>(m_rgba_format.format),
-                surface->format == m_rgba_format.format));
+            FL_WARN(
+                _log,
+                std::format(
+                    "RB::createImage: surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
+                    surface->w,
+                    surface->h,
+                    surface->pitch,
+                    static_cast<unsigned>(surface->format),
+                    static_cast<unsigned>(m_rgba_format.format),
+                    surface->format == m_rgba_format.format));
         }
 
         if (surface->format == m_rgba_format.format) {
-            return new GLImage(surface);
+            return std::make_unique<GLImage>(surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
 
         if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
-            FL_WARN(_log, std::format(
-                "  RB::createImage conv={}x{} pitch={} fmt={:#x}",
-                conv->w,
-                conv->h,
-                conv->pitch,
-                static_cast<unsigned>(conv->format)));
+            FL_WARN(
+                _log,
+                std::format(
+                    "  RB::createImage conv={}x{} pitch={} fmt={:#x}",
+                    conv->w,
+                    conv->h,
+                    conv->pitch,
+                    static_cast<unsigned>(conv->format)));
         }
 
-        auto* image       = new GLImage(conv);
+        auto image = std::make_unique<GLImage>(conv);
 
         SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendOpenGL::createImage(std::string const & name, SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(std::string const & name, SDL_Surface* surface)
     {
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // It's easiest to let SDL do this for us.
 
         if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
-            FL_WARN(_log, std::format(
-                "RB::createImage(name): name='{}' surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
-                name,
-                surface->w,
-                surface->h,
-                surface->pitch,
-                static_cast<unsigned>(surface->format),
-                static_cast<unsigned>(m_rgba_format.format),
-                surface->format == m_rgba_format.format));
+            FL_WARN(
+                _log,
+                std::format(
+                    "RB::createImage(name): name='{}' surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
+                    name,
+                    surface->w,
+                    surface->h,
+                    surface->pitch,
+                    static_cast<unsigned>(surface->format),
+                    static_cast<unsigned>(m_rgba_format.format),
+                    surface->format == m_rgba_format.format));
         }
 
         if (surface->format == m_rgba_format.format) {
-            return new GLImage(name, surface);
+            return std::make_unique<GLImage>(name, surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
 
         if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
-            FL_WARN(_log, std::format(
-                "  RB::createImage(name) conv={}x{} pitch={} fmt={:#x}",
-                conv->w,
-                conv->h,
-                conv->pitch,
-                static_cast<unsigned>(conv->format)));
+            FL_WARN(
+                _log,
+                std::format(
+                    "  RB::createImage(name) conv={}x{} pitch={} fmt={:#x}",
+                    conv->w,
+                    conv->h,
+                    conv->pitch,
+                    static_cast<unsigned>(conv->format)));
         }
 
-        auto* image       = new GLImage(name, conv);
+        auto image = std::make_unique<GLImage>(name, conv);
 
         SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendOpenGL::createImage(uint8_t const * data, uint32_t width, uint32_t height)
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(uint8_t const * data, uint32_t width, uint32_t height)
     {
-        return new GLImage(data, width, height);
+        return std::make_unique<GLImage>(data, width, height);
     }
 
-    Image* RenderBackendOpenGL::createImage(
+    std::unique_ptr<Image> RenderBackendOpenGL::createImage(
         std::string const & name, uint8_t const * data, uint32_t width, uint32_t height)
     {
-        return new GLImage(name, data, width, height);
+        return std::make_unique<GLImage>(name, data, width, height);
     }
 
     void RenderBackendOpenGL::setLightingModel(uint32_t lighting)
@@ -621,7 +628,7 @@ namespace FIFE
             if (m_state.lightmodel != 0) {
                 disableLighting();
                 glDisable(GL_COLOR_MATERIAL);
-            } else if (lighting != 0) {
+            } else {
                 enableLighting();
                 glEnable(GL_LIGHT0);
                 glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -638,7 +645,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::enableTextures(uint32_t texUnit)
     {
-        if (!m_state.tex_enabled[texUnit]) {
+        if (!m_state.tex_enabled.at(texUnit)) {
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
                 glActiveTexture(GL_TEXTURE0 + texUnit);
@@ -647,7 +654,7 @@ namespace FIFE
                 m_state.active_client_tex = texUnit;
                 glClientActiveTexture(GL_TEXTURE0 + texUnit);
             }
-            m_state.tex_enabled[texUnit] = true;
+            m_state.tex_enabled.at(texUnit) = true;
 
             glEnable(GL_TEXTURE_2D);
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -656,7 +663,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::disableTextures(uint32_t texUnit)
     {
-        if (m_state.tex_enabled[texUnit]) {
+        if (m_state.tex_enabled.at(texUnit)) {
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
                 glActiveTexture(GL_TEXTURE0 + texUnit);
@@ -665,7 +672,7 @@ namespace FIFE
                 m_state.active_client_tex = texUnit;
                 glClientActiveTexture(GL_TEXTURE0 + texUnit);
             }
-            m_state.tex_enabled[texUnit] = false;
+            m_state.tex_enabled.at(texUnit) = false;
 
             glDisable(GL_TEXTURE_2D);
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -686,13 +693,13 @@ namespace FIFE
         }
 
         // Some GUI paths bind textures directly, so the cached id can drift from real GL state.
-        m_state.texture[texUnit] = texId;
+        m_state.texture.at(texUnit) = texId;
         glBindTexture(GL_TEXTURE_2D, texId);
     }
 
     void RenderBackendOpenGL::bindTexture(GLuint texId)
     {
-        m_state.texture[m_state.active_tex] = texId;
+        m_state.texture.at(m_state.active_tex) = texId;
         glBindTexture(GL_TEXTURE_2D, texId);
     }
 
@@ -838,10 +845,10 @@ namespace FIFE
 
             memcpy(m_state.env_color.data(), rgba, sizeof(uint8_t) * 4);
             std::array<GLfloat, 4> const rgbaf = {
-                static_cast<float>(m_state.env_color[0]) / 255.0F,
-                static_cast<float>(m_state.env_color[1]) / 255.0F,
-                static_cast<float>(m_state.env_color[2]) / 255.0F,
-                static_cast<float>(m_state.env_color[3]) / 255.0F};
+                static_cast<float>(m_state.env_color.at(0)) / 255.0F,
+                static_cast<float>(m_state.env_color.at(1)) / 255.0F,
+                static_cast<float>(m_state.env_color.at(2)) / 255.0F,
+                static_cast<float>(m_state.env_color.at(3)) / 255.0F};
 
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
@@ -850,7 +857,7 @@ namespace FIFE
                 glClientActiveTexture(GL_TEXTURE0 + texUnit);
             }
 
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, &rgbaf[0]);
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, &rgbaf.at(0));
         }
     }
 
@@ -873,7 +880,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::setTexCoordPointer(uint32_t texUnit, GLsizei stride, GLvoid const * ptr)
     {
-        if (m_state.tex_pointer[texUnit] != ptr) {
+        if (m_state.tex_pointer.at(texUnit) != ptr) {
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
                 glActiveTexture(GL_TEXTURE0 + texUnit);
@@ -882,7 +889,7 @@ namespace FIFE
                 m_state.active_client_tex = texUnit;
                 glClientActiveTexture(GL_TEXTURE0 + texUnit);
             }
-            m_state.tex_pointer[texUnit] = ptr;
+            m_state.tex_pointer.at(texUnit) = ptr;
             glTexCoordPointer(2, GL_FLOAT, stride, ptr);
         }
     }
@@ -1095,42 +1102,49 @@ namespace FIFE
                 return;
             }
 
-            auto const & v0 = m_renderTextureDatas[firstVertex + 0];
-            auto const & v1 = m_renderTextureDatas[firstVertex + 1];
-            auto const & v2 = m_renderTextureDatas[firstVertex + 2];
-            auto const & v3 = m_renderTextureDatas[firstVertex + 3];
+            auto const & v0 = m_renderTextureDatas.at(firstVertex + 0);
+            auto const & v1 = m_renderTextureDatas.at(firstVertex + 1);
+            auto const & v2 = m_renderTextureDatas.at(firstVertex + 2);
+            auto const & v3 = m_renderTextureDatas.at(firstVertex + 3);
 
-            float const minX = std::min(std::min(v0.vertex[0], v1.vertex[0]), std::min(v2.vertex[0], v3.vertex[0]));
-            float const maxX = std::max(std::max(v0.vertex[0], v1.vertex[0]), std::max(v2.vertex[0], v3.vertex[0]));
-            float const minY = std::min(std::min(v0.vertex[1], v1.vertex[1]), std::min(v2.vertex[1], v3.vertex[1]));
-            float const maxY = std::max(std::max(v0.vertex[1], v1.vertex[1]), std::max(v2.vertex[1], v3.vertex[1]));
+            float const minX =
+                std::min(std::min(v0.vertex.at(0), v1.vertex.at(0)), std::min(v2.vertex.at(0), v3.vertex.at(0)));
+            float const maxX =
+                std::max(std::max(v0.vertex.at(0), v1.vertex.at(0)), std::max(v2.vertex.at(0), v3.vertex.at(0)));
+            float const minY =
+                std::min(std::min(v0.vertex.at(1), v1.vertex.at(1)), std::min(v2.vertex.at(1), v3.vertex.at(1)));
+            float const maxY =
+                std::max(std::max(v0.vertex.at(1), v1.vertex.at(1)), std::max(v2.vertex.at(1), v3.vertex.at(1)));
 
             if ((maxX - minX) != 33.0F || (maxY - minY) != 16.0F) {
                 return;
             }
 
-            GLint scissorBox[4] = {0, 0, 0, 0};
-            glGetIntegerv(GL_SCISSOR_BOX, scissorBox);
+            std::array<GLint, 4> scissorBox = {0, 0, 0, 0};
+            glGetIntegerv(GL_SCISSOR_BOX, scissorBox.data());
             GLboolean const scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
 
-            FL_LOG(_guiLog, std::format(
-                "renderWithoutZ flush: tex={} quad=({:.1f},{:.1f})-({:.1f},{:.1f}) size=({:.1f}x{:.1f}) elemCount={} colorEnabled={} scissorEnabled={} scissor=({},{} {}x{}) blend=({}, {})",
-                textureId,
-                minX,
-                minY,
-                maxX,
-                maxY,
-                maxX - minX,
-                maxY - minY,
-                elementCount,
-                m_state.color_enabled,
-                scissorEnabled == GL_TRUE,
-                scissorBox[0],
-                scissorBox[1],
-                scissorBox[2],
-                scissorBox[3],
-                src,
-                dst));
+            FL_LOG(
+                _guiLog,
+                std::format(
+                    "renderWithoutZ flush: tex={} quad=({:.1f},{:.1f})-({:.1f},{:.1f}) size=({:.1f}x{:.1f}) "
+                    "elemCount={} colorEnabled={} scissorEnabled={} scissor=({},{} {}x{}) blend=({}, {})",
+                    textureId,
+                    minX,
+                    minY,
+                    maxX,
+                    maxY,
+                    maxX - minX,
+                    maxY - minY,
+                    elementCount,
+                    m_state.color_enabled,
+                    scissorEnabled == GL_TRUE,
+                    scissorBox[0],
+                    scissorBox[1],
+                    scissorBox[2],
+                    scissorBox[3],
+                    src,
+                    dst));
         };
 
         // stride
@@ -1143,23 +1157,23 @@ namespace FIFE
         disableAlphaTest();
         disableDepthTest();
 
-        if (m_renderObjects[0].overlay_type == OVERLAY_TYPE_NONE) {
+        if (m_renderObjects.at(0).overlay_type == OVERLAY_TYPE_NONE) {
             // texture without color/alpha
-            if (!m_renderObjects[0].color) {
+            if (!m_renderObjects.at(0).color) {
                 // set pointer
                 disableColorArray();
-                setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
-                setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+                setVertexPointer(2, strideT, &m_renderTextureDatas.at(0).vertex);
+                setTexCoordPointer(0, strideT, &m_renderTextureDatas.at(0).texel);
                 indexBuffer     = m_tIndices.data();
                 currentIndex    = &indexT;
                 currentElements = &elementsT;
                 // texture with color/alpha
-            } else if (m_renderObjects[0].texture_id != 0) {
+            } else if (m_renderObjects.at(0).texture_id != 0) {
                 // set pointer
                 enableColorArray();
-                setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
-                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
-                setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+                setVertexPointer(2, strideTC, &m_renderTextureColorDatas.at(0).vertex);
+                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas.at(0).texel);
+                setColorPointer(strideTC, &m_renderTextureColorDatas.at(0).color);
                 indexBuffer     = m_tcIndices.data();
                 currentIndex    = &indexTC;
                 currentElements = &elementsTC;
@@ -1167,8 +1181,8 @@ namespace FIFE
             } else {
                 // set pointer
                 enableColorArray();
-                setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
-                setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+                setVertexPointer(2, strideP, &m_renderPrimitiveDatas.at(0).vertex);
+                setColorPointer(strideP, &m_renderPrimitiveDatas.at(0).color);
                 indexBuffer     = m_pIndices.data();
                 currentIndex    = &indexP;
                 currentElements = &elementsP;
@@ -1176,15 +1190,15 @@ namespace FIFE
             // multitexture overlay
         } else {
             // set pointer
-            setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
-            setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
-            setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+            setVertexPointer(2, stride2TC, &m_renderMultitextureDatas.at(0).vertex);
+            setColorPointer(stride2TC, &m_renderMultitextureDatas.at(0).color);
+            setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas.at(0).texel);
             indexBuffer     = m_tc2Indices.data();
             currentIndex    = &index2TC;
             currentElements = &elements2TC;
         }
 
-        for (auto& ro : m_renderObjects) {
+        for (auto const & ro : m_renderObjects) {
             // first we look for changes
             if (ro.mode != mode) {
                 type   = true;
@@ -1247,15 +1261,15 @@ namespace FIFE
                         enableColorArray();
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
                             if (ro.texture_id != 0) {
-                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
-                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
-                                setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas.at(0).vertex);
+                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas.at(0).texel);
+                                setColorPointer(strideTC, &m_renderTextureColorDatas.at(0).color);
                                 indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
-                                setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
-                                setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+                                setVertexPointer(2, strideP, &m_renderPrimitiveDatas.at(0).vertex);
+                                setColorPointer(strideP, &m_renderPrimitiveDatas.at(0).color);
                                 indexBuffer     = m_pIndices.data();
                                 currentElements = &elementsP;
                                 currentIndex    = &indexP;
@@ -1264,8 +1278,8 @@ namespace FIFE
                     } else if (!ro.color && m_state.color_enabled) {
                         disableColorArray();
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
-                            setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
-                            setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+                            setVertexPointer(2, strideT, &m_renderTextureDatas.at(0).vertex);
+                            setTexCoordPointer(0, strideT, &m_renderTextureDatas.at(0).texel);
                             indexBuffer     = m_tIndices.data();
                             currentElements = &elementsT;
                             currentIndex    = &indexT;
@@ -1284,22 +1298,22 @@ namespace FIFE
                         if (ro.texture_id != 0) {
                             enableTextures(0);
                             if (m_state.color_enabled) {
-                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
-                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
-                                setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas.at(0).vertex);
+                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas.at(0).texel);
+                                setColorPointer(strideTC, &m_renderTextureColorDatas.at(0).color);
                                 indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
-                                setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
-                                setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+                                setVertexPointer(2, strideT, &m_renderTextureDatas.at(0).vertex);
+                                setTexCoordPointer(0, strideT, &m_renderTextureDatas.at(0).texel);
                                 indexBuffer     = m_tIndices.data();
                                 currentIndex    = &indexT;
                                 currentElements = &elementsT;
                             }
                         } else {
-                            setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
-                            setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+                            setVertexPointer(2, strideP, &m_renderPrimitiveDatas.at(0).vertex);
+                            setColorPointer(strideP, &m_renderPrimitiveDatas.at(0).color);
                             indexBuffer     = m_pIndices.data();
                             currentElements = &elementsP;
                             currentIndex    = &indexP;
@@ -1310,14 +1324,14 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(2);
                         bindTexture(1, m_maskOverlay);
-                        setEnvironmentalColor(1, &ro.rgba[0]);
+                        setEnvironmentalColor(1, &ro.rgba.at(0));
                         enableTextures(0);
 
                         // set pointer
-                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
-                        setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
-                        setTexCoordPointer(1, stride2TC, &m_renderMultitextureDatas[0].texel2);
-                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas.at(0).vertex);
+                        setColorPointer(stride2TC, &m_renderMultitextureDatas.at(0).color);
+                        setTexCoordPointer(1, stride2TC, &m_renderMultitextureDatas.at(0).texel2);
+                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas.at(0).texel);
                         indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = m_maskOverlay;
@@ -1328,14 +1342,14 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(1);
                         bindTexture(2, ro.overlay_id);
-                        setEnvironmentalColor(2, &ro.rgba[0]);
+                        setEnvironmentalColor(2, &ro.rgba.at(0));
                         enableTextures(0);
 
                         // set pointer
-                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
-                        setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
-                        setTexCoordPointer(2, stride2TC, &m_renderMultitextureDatas[0].texel2);
-                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas.at(0).vertex);
+                        setColorPointer(stride2TC, &m_renderMultitextureDatas.at(0).color);
+                        setTexCoordPointer(2, stride2TC, &m_renderMultitextureDatas.at(0).texel2);
+                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas.at(0).texel);
                         indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = ro.overlay_id;
@@ -1346,14 +1360,14 @@ namespace FIFE
                         disableTextures(2);
                         disableTextures(1);
                         bindTexture(3, ro.overlay_id);
-                        setEnvironmentalColor(3, &ro.rgba[0]);
+                        setEnvironmentalColor(3, &ro.rgba.at(0));
                         enableTextures(0);
 
                         // set pointer
-                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
-                        setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
-                        setTexCoordPointer(3, stride2TC, &m_renderMultitextureDatas[0].texel2);
-                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+                        setVertexPointer(2, stride2TC, &m_renderMultitextureDatas.at(0).vertex);
+                        setColorPointer(stride2TC, &m_renderMultitextureDatas.at(0).color);
+                        setTexCoordPointer(3, stride2TC, &m_renderMultitextureDatas.at(0).texel2);
+                        setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas.at(0).texel);
                         indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = ro.overlay_id;
@@ -1372,15 +1386,15 @@ namespace FIFE
                         texture_id = ro.texture_id;
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
                             if (m_state.color_enabled) {
-                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
-                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
-                                setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+                                setVertexPointer(2, strideTC, &m_renderTextureColorDatas.at(0).vertex);
+                                setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas.at(0).texel);
+                                setColorPointer(strideTC, &m_renderTextureColorDatas.at(0).color);
                                 indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
-                                setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
-                                setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+                                setVertexPointer(2, strideT, &m_renderTextureDatas.at(0).vertex);
+                                setTexCoordPointer(0, strideT, &m_renderTextureDatas.at(0).texel);
                                 indexBuffer     = m_tIndices.data();
                                 currentElements = &elementsT;
                                 currentIndex    = &indexT;
@@ -1390,8 +1404,8 @@ namespace FIFE
                         disableTextures(0);
                         texture_id = 0;
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
-                            setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
-                            setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+                            setVertexPointer(2, strideP, &m_renderPrimitiveDatas.at(0).vertex);
+                            setColorPointer(strideP, &m_renderPrimitiveDatas.at(0).color);
                             indexBuffer     = m_pIndices.data();
                             currentElements = &elementsP;
                             currentIndex    = &indexP;
@@ -1478,8 +1492,8 @@ namespace FIFE
         uint32_t const stride = sizeof(renderDataZ);
 
         // set pointer
-        setVertexPointer(3, stride, &m_renderTextureDatasZ[0].vertex);
-        setTexCoordPointer(0, stride, &m_renderTextureDatasZ[0].texel);
+        setVertexPointer(3, stride, &m_renderTextureDatasZ.at(0).vertex);
+        setTexCoordPointer(0, stride, &m_renderTextureDatasZ.at(0).texel);
 
         // array index
         int32_t index = 0;
@@ -1497,7 +1511,7 @@ namespace FIFE
         enableLighting();
         disableColorArray();
 
-        for (auto& ro : m_renderTextureObjectsZ) {
+        for (auto const & ro : m_renderTextureObjectsZ) {
             // if changes then we render all previously elements
             if (ro.texture_id != texture_id) {
                 if (*currentElements > 0) {
@@ -1506,7 +1520,7 @@ namespace FIFE
                         GL_TRIANGLES,
                         toGLsizei(*currentElements),
                         GL_UNSIGNED_INT,
-                        &m_indices[toSizeTIndex(*currentIndex)]);
+                        &m_indices.at(toSizeTIndex(*currentIndex)));
                     *currentIndex += *currentElements;
                 }
 
@@ -1528,7 +1542,7 @@ namespace FIFE
 
         // render
         glDrawElements(
-            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices[toSizeTIndex(*currentIndex)]);
+            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices.at(toSizeTIndex(*currentIndex)));
 
         // reset all states
         disableLighting();
@@ -1547,8 +1561,8 @@ namespace FIFE
         uint32_t const stride = sizeof(renderDataZ);
 
         // set pointer
-        setVertexPointer(3, stride, &m_renderZ_datas[0].vertex);
-        setTexCoordPointer(0, stride, &m_renderZ_datas[0].texel);
+        setVertexPointer(3, stride, &m_renderZ_datas.at(0).vertex);
+        setTexCoordPointer(0, stride, &m_renderZ_datas.at(0).texel);
 
         enableAlphaTest();
         enableDepthTest();
@@ -1577,9 +1591,9 @@ namespace FIFE
         uint32_t const stride = sizeof(renderDataColorZ);
 
         // set pointer
-        setVertexPointer(3, stride, &m_renderTextureColorDatasZ[0].vertex);
-        setTexCoordPointer(0, stride, &m_renderTextureColorDatasZ[0].texel);
-        setColorPointer(stride, &m_renderTextureColorDatasZ[0].color);
+        setVertexPointer(3, stride, &m_renderTextureColorDatasZ.at(0).vertex);
+        setTexCoordPointer(0, stride, &m_renderTextureColorDatasZ.at(0).texel);
+        setColorPointer(stride, &m_renderTextureColorDatasZ.at(0).color);
 
         // array index
         int32_t index = 0;
@@ -1597,7 +1611,7 @@ namespace FIFE
         enableTextures(0);
         enableLighting();
 
-        for (auto& ro : m_renderTextureColorObjectsZ) {
+        for (auto const & ro : m_renderTextureColorObjectsZ) {
             // if changes then we render all previously elements
             if (ro.texture_id != texture_id) {
                 if (*currentElements > 0) {
@@ -1606,7 +1620,7 @@ namespace FIFE
                         GL_TRIANGLES,
                         toGLsizei(*currentElements),
                         GL_UNSIGNED_INT,
-                        &m_indices[toSizeTIndex(*currentIndex)]);
+                        &m_indices.at(toSizeTIndex(*currentIndex)));
                     *currentIndex += *currentElements;
                 }
 
@@ -1628,7 +1642,7 @@ namespace FIFE
 
         // render
         glDrawElements(
-            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices[toSizeTIndex(*currentIndex)]);
+            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices.at(toSizeTIndex(*currentIndex)));
 
         // reset all states
         disableLighting();
@@ -1652,12 +1666,12 @@ namespace FIFE
         uint32_t const stride = sizeof(renderData2TCZ);
 
         // set pointer
-        setVertexPointer(3, stride, &m_renderMultitextureDatasZ[0].vertex);
-        setTexCoordPointer(0, stride, &m_renderMultitextureDatasZ[0].texel);
-        setTexCoordPointer(1, stride, &m_renderMultitextureDatasZ[0].texel2);
-        setTexCoordPointer(2, stride, &m_renderMultitextureDatasZ[0].texel2);
-        setTexCoordPointer(3, stride, &m_renderMultitextureDatasZ[0].texel2);
-        setColorPointer(stride, &m_renderMultitextureDatasZ[0].color);
+        setVertexPointer(3, stride, &m_renderMultitextureDatasZ.at(0).vertex);
+        setTexCoordPointer(0, stride, &m_renderMultitextureDatasZ.at(0).texel);
+        setTexCoordPointer(1, stride, &m_renderMultitextureDatasZ.at(0).texel2);
+        setTexCoordPointer(2, stride, &m_renderMultitextureDatasZ.at(0).texel2);
+        setTexCoordPointer(3, stride, &m_renderMultitextureDatasZ.at(0).texel2);
+        setColorPointer(stride, &m_renderMultitextureDatasZ.at(0).color);
 
         // array index
         int32_t index = 0;
@@ -1679,7 +1693,7 @@ namespace FIFE
         enableTextures(0);
         enableLighting();
 
-        for (auto& ro : m_renderMultitextureObjectsZ) {
+        for (auto const & ro : m_renderMultitextureObjectsZ) {
             // first we look for changes
             if (ro.texture_id != texture_id) {
                 texture = true;
@@ -1700,7 +1714,7 @@ namespace FIFE
                         GL_TRIANGLES,
                         toGLsizei(*currentElements),
                         GL_UNSIGNED_INT,
-                        &m_indices[toSizeTIndex(*currentIndex)]);
+                        &m_indices.at(toSizeTIndex(*currentIndex)));
                     *currentIndex += *currentElements;
                 }
                 // multitexturing
@@ -1718,7 +1732,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(2);
                         bindTexture(1, m_maskOverlay);
-                        setEnvironmentalColor(1, &ro.rgba[0]);
+                        setEnvironmentalColor(1, &ro.rgba.at(0));
                         enableTextures(0);
 
                         texture_id2 = m_maskOverlay;
@@ -1727,7 +1741,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(1);
                         bindTexture(2, ro.overlay_id);
-                        setEnvironmentalColor(2, &ro.rgba[0]);
+                        setEnvironmentalColor(2, &ro.rgba.at(0));
                         enableTextures(0);
 
                         texture_id2 = ro.overlay_id;
@@ -1736,7 +1750,7 @@ namespace FIFE
                         disableTextures(2);
                         disableTextures(1);
                         bindTexture(3, ro.overlay_id);
-                        setEnvironmentalColor(3, &ro.rgba[0]);
+                        setEnvironmentalColor(3, &ro.rgba.at(0));
                         enableTextures(0);
 
                         texture_id2 = ro.overlay_id;
@@ -1769,7 +1783,7 @@ namespace FIFE
         }
         // render
         glDrawElements(
-            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices[toSizeTIndex(*currentIndex)]);
+            GL_TRIANGLES, toGLsizei(*currentElements), GL_UNSIGNED_INT, &m_indices.at(toSizeTIndex(*currentIndex)));
 
         // reset all states
         if (overlay_type != OVERLAY_TYPE_NONE) {
@@ -1815,12 +1829,12 @@ namespace FIFE
             return false;
         }
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(x) + 0.375F;
-        rd.vertex[1] = static_cast<float>(y) + 0.375F;
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(x) + 0.375F;
+        rd.vertex.at(1) = static_cast<float>(y) + 0.375F;
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
         m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
@@ -1834,16 +1848,16 @@ namespace FIFE
     void RenderBackendOpenGL::drawLine(Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p1.x) + 0.375F;
-        rd.vertex[1] = static_cast<float>(p1.y) + 0.375F;
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p1.x) + 0.375F;
+        rd.vertex.at(1) = static_cast<float>(p1.y) + 0.375F;
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p2.x) + 0.375F;
-        rd.vertex[1] = static_cast<float>(p2.y) + 0.375F;
+        rd.vertex.at(0) = static_cast<float>(p2.x) + 0.375F;
+        rd.vertex.at(1) = static_cast<float>(p2.y) + 0.375F;
         m_renderPrimitiveDatas.push_back(rd);
 
         m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
@@ -1870,21 +1884,21 @@ namespace FIFE
         float const cornerY = halfW * Mathf::Sin(angle);
 
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
-        rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p1.x) + cornerX;
+        rd.vertex.at(1) = static_cast<float>(p1.y) + cornerY;
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
-        rd.vertex[0] = static_cast<float>(p2.x) + cornerX;
-        rd.vertex[1] = static_cast<float>(p2.y) + cornerY;
+        rd.vertex.at(0) = static_cast<float>(p2.x) + cornerX;
+        rd.vertex.at(1) = static_cast<float>(p2.y) + cornerY;
         m_renderPrimitiveDatas.push_back(rd);
-        rd.vertex[0] = static_cast<float>(p2.x) - cornerX;
-        rd.vertex[1] = static_cast<float>(p2.y) - cornerY;
+        rd.vertex.at(0) = static_cast<float>(p2.x) - cornerX;
+        rd.vertex.at(1) = static_cast<float>(p2.y) - cornerY;
         m_renderPrimitiveDatas.push_back(rd);
-        rd.vertex[0] = static_cast<float>(p1.x) - cornerX;
-        rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
+        rd.vertex.at(0) = static_cast<float>(p1.x) - cornerX;
+        rd.vertex.at(1) = static_cast<float>(p1.y) - cornerY;
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -1914,13 +1928,13 @@ namespace FIFE
             drawFillCircle(old, capRadius, r, g, b, a);
         } else {
             renderDataP rd{};
-            rd.color[0] = r;
-            rd.color[1] = g;
-            rd.color[2] = b;
-            rd.color[3] = a;
+            rd.color.at(0) = r;
+            rd.color.at(1) = g;
+            rd.color.at(2) = b;
+            rd.color.at(3) = a;
             for (; it != points.end(); ++it) {
-                rd.vertex[0] = static_cast<float>((*it).x);
-                rd.vertex[1] = static_cast<float>((*it).y);
+                rd.vertex.at(0) = static_cast<float>((*it).x);
+                rd.vertex.at(1) = static_cast<float>((*it).y);
                 m_renderPrimitiveDatas.push_back(rd);
                 m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
             }
@@ -1956,15 +1970,15 @@ namespace FIFE
             drawFillCircle(old, capRadius, r, g, b, a);
         } else {
             renderDataP rd{};
-            rd.color[0] = r;
-            rd.color[1] = g;
-            rd.color[2] = b;
-            rd.color[3] = a;
+            rd.color.at(0) = r;
+            rd.color.at(1) = g;
+            rd.color.at(2) = b;
+            rd.color.at(3) = a;
             for (int32_t i = 0; i <= (elements * steps); ++i) {
                 t += step;
                 Point const next = getBezierPoint(points, elements, t);
-                rd.vertex[0]     = static_cast<float>(old.x);
-                rd.vertex[1]     = static_cast<float>(old.y);
+                rd.vertex.at(0)  = static_cast<float>(old.x);
+                rd.vertex.at(1)  = static_cast<float>(old.y);
                 m_renderPrimitiveDatas.push_back(rd);
                 old = next;
                 m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
@@ -1978,20 +1992,20 @@ namespace FIFE
         Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p1.x);
-        rd.vertex[1] = static_cast<float>(p1.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p1.x);
+        rd.vertex.at(1) = static_cast<float>(p1.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p2.x);
-        rd.vertex[1] = static_cast<float>(p2.y);
+        rd.vertex.at(0) = static_cast<float>(p2.x);
+        rd.vertex.at(1) = static_cast<float>(p2.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p3.x);
-        rd.vertex[1] = static_cast<float>(p3.y);
+        rd.vertex.at(0) = static_cast<float>(p3.x);
+        rd.vertex.at(1) = static_cast<float>(p3.y);
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -2006,21 +2020,21 @@ namespace FIFE
         Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x);
-        rd.vertex[1] = static_cast<float>(p.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p.x);
+        rd.vertex.at(1) = static_cast<float>(p.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p.x + w);
+        rd.vertex.at(0) = static_cast<float>(p.x + w);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[1] = static_cast<float>(p.y + h);
+        rd.vertex.at(1) = static_cast<float>(p.y + h);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p.x);
+        rd.vertex.at(0) = static_cast<float>(p.x);
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -2035,21 +2049,21 @@ namespace FIFE
         Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x);
-        rd.vertex[1] = static_cast<float>(p.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p.x);
+        rd.vertex.at(1) = static_cast<float>(p.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[1] = static_cast<float>(p.y + h);
+        rd.vertex.at(1) = static_cast<float>(p.y + h);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p.x + w);
+        rd.vertex.at(0) = static_cast<float>(p.x + w);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[1] = static_cast<float>(p.y);
+        rd.vertex.at(1) = static_cast<float>(p.y);
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -2071,24 +2085,24 @@ namespace FIFE
         uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p1.x);
-        rd.vertex[1] = static_cast<float>(p1.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p1.x);
+        rd.vertex.at(1) = static_cast<float>(p1.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p2.x);
-        rd.vertex[1] = static_cast<float>(p2.y);
+        rd.vertex.at(0) = static_cast<float>(p2.x);
+        rd.vertex.at(1) = static_cast<float>(p2.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p3.x);
-        rd.vertex[1] = static_cast<float>(p3.y);
+        rd.vertex.at(0) = static_cast<float>(p3.x);
+        rd.vertex.at(1) = static_cast<float>(p3.y);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p4.x);
-        rd.vertex[1] = static_cast<float>(p4.y);
+        rd.vertex.at(0) = static_cast<float>(p4.x);
+        rd.vertex.at(1) = static_cast<float>(p4.y);
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -2103,21 +2117,21 @@ namespace FIFE
         Point const & p, uint8_t const size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x - size);
-        rd.vertex[1] = static_cast<float>(p.y + size);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p.x - size);
+        rd.vertex.at(1) = static_cast<float>(p.y + size);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p.x + size);
+        rd.vertex.at(0) = static_cast<float>(p.x + size);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[1] = static_cast<float>(p.y - size);
+        rd.vertex.at(1) = static_cast<float>(p.y - size);
         m_renderPrimitiveDatas.push_back(rd);
 
-        rd.vertex[0] = static_cast<float>(p.x - size);
+        rd.vertex.at(0) = static_cast<float>(p.x - size);
         m_renderPrimitiveDatas.push_back(rd);
 
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
@@ -2138,13 +2152,13 @@ namespace FIFE
         float angle          = 0.0F;
 
         renderDataP rd{};
-        rd.color[0] = r;
-        rd.color[1] = g;
-        rd.color[2] = b;
-        rd.color[3] = a;
+        rd.color.at(0) = r;
+        rd.color.at(1) = g;
+        rd.color.at(2) = b;
+        rd.color.at(3) = a;
         for (int32_t i = 0; i < subdivisions - 1; ++i) {
-            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
-            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
+            rd.vertex.at(0) = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             angle += step;
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
@@ -2168,17 +2182,17 @@ namespace FIFE
 
         // center vertex
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x);
-        rd.vertex[1] = static_cast<float>(p.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p.x);
+        rd.vertex.at(1) = static_cast<float>(p.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
         // reversed because of culling faces
         for (int32_t i = 0; i <= subdivisions; ++i) {
-            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
-            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
+            rd.vertex.at(0) = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             angle -= step;
             // forms triangle with start index, the last and a new one
@@ -2205,14 +2219,14 @@ namespace FIFE
         }
 
         renderDataP rd{};
-        rd.color[0] = r;
-        rd.color[1] = g;
-        rd.color[2] = b;
-        rd.color[3] = a;
-        float angle = static_cast<float>(s) * step;
+        rd.color.at(0) = r;
+        rd.color.at(1) = g;
+        rd.color.at(2) = b;
+        rd.color.at(3) = a;
+        float angle    = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step, ++elements) {
-            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
-            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
+            rd.vertex.at(0) = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
         }
@@ -2239,19 +2253,19 @@ namespace FIFE
         uint32_t lastIndex   = index;
         // center vertex
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x);
-        rd.vertex[1] = static_cast<float>(p.y);
-        rd.color[0]  = r;
-        rd.color[1]  = g;
-        rd.color[2]  = b;
-        rd.color[3]  = a;
+        rd.vertex.at(0) = static_cast<float>(p.x);
+        rd.vertex.at(1) = static_cast<float>(p.y);
+        rd.color.at(0)  = r;
+        rd.color.at(1)  = g;
+        rd.color.at(2)  = b;
+        rd.color.at(3)  = a;
         m_renderPrimitiveDatas.push_back(rd);
         int32_t elements = 0;
         // reversed because of culling faces
         float angle = static_cast<float>(e) * step;
         for (; s <= e; ++s, angle -= step, ++elements) {
-            rd.vertex[0] = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
-            rd.vertex[1] = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
+            rd.vertex.at(0) = (radiusF * Mathf::Cos(angle)) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radiusF * Mathf::Sin(angle)) + static_cast<float>(p.y);
 
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index, the last and a new one
@@ -2280,24 +2294,24 @@ namespace FIFE
         uint32_t lastIndex   = index;
         // center vertex
         renderDataP rd{};
-        rd.vertex[0] = static_cast<float>(p.x);
-        rd.vertex[1] = static_cast<float>(p.y);
-        rd.color[0]  = red;
-        rd.color[1]  = green;
-        rd.color[2]  = blue;
-        rd.color[3]  = intensity;
+        rd.vertex.at(0) = static_cast<float>(p.x);
+        rd.vertex.at(1) = static_cast<float>(p.y);
+        rd.color.at(0)  = red;
+        rd.color.at(1)  = green;
+        rd.color.at(2)  = blue;
+        rd.color.at(3)  = intensity;
         m_renderPrimitiveDatas.push_back(rd);
         for (float angle = 0; angle <= Mathf::twoPi(); angle += step, elements += 3) {
-            rd.vertex[0] = (radius * Mathf::Cos(angle + step) * xstretch) + static_cast<float>(p.x);
-            rd.vertex[1] = (radius * Mathf::Sin(angle + step) * ystretch) + static_cast<float>(p.y);
-            rd.color[0]  = 0;
-            rd.color[1]  = 0;
-            rd.color[2]  = 0;
-            rd.color[3]  = 255;
+            rd.vertex.at(0) = (radius * Mathf::Cos(angle + step) * xstretch) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radius * Mathf::Sin(angle + step) * ystretch) + static_cast<float>(p.y);
+            rd.color.at(0)  = 0;
+            rd.color.at(1)  = 0;
+            rd.color.at(2)  = 0;
+            rd.color.at(3)  = 255;
             m_renderPrimitiveDatas.push_back(rd);
 
-            rd.vertex[0] = (radius * Mathf::Cos(angle) * xstretch) + static_cast<float>(p.x);
-            rd.vertex[1] = (radius * Mathf::Sin(angle) * ystretch) + static_cast<float>(p.y);
+            rd.vertex.at(0) = (radius * Mathf::Cos(angle) * xstretch) + static_cast<float>(p.x);
+            rd.vertex.at(1) = (radius * Mathf::Sin(angle) * ystretch) + static_cast<float>(p.y);
             m_renderPrimitiveDatas.push_back(rd);
             // forms triangle with start index and two new ones
             std::array<uint32_t, 3> indices{index, ++lastIndex, ++lastIndex};
@@ -2313,59 +2327,48 @@ namespace FIFE
         RenderObject ro(GL_TRIANGLES, 6, id);
 
         if ((rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16)) {
-            FL_LOG(_guiLog, std::format(
-                "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
-                id,
-                rect.x,
-                rect.y,
-                rect.w,
-                rect.h,
-                alpha,
-                rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) : std::string("null"),
-                st[0],
-                st[1],
-                st[2],
-                st[3],
-                (alpha == 255 && rgba == nullptr) ? "texture-only" : (rgba != nullptr ? "overlay-color" : "texture-alpha")));
-        } else if (rect.w >= 40 && rect.w <= 400 && rect.h >= 10 && rect.h <= 40) {
-            FL_WARN(_log, std::format(
-                "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
-                id,
-                rect.x,
-                rect.y,
-                rect.w,
-                rect.h,
-                alpha,
-                rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) : std::string("null"),
-                st[0],
-                st[1],
-                st[2],
-                st[3],
-                (alpha == 255 && rgba == nullptr) ? "texture-only" : (rgba != nullptr ? "overlay-color" : "texture-alpha")));
+            FL_LOG(
+                _guiLog,
+                std::format(
+                    "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} "
+                    "st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
+                    id,
+                    rect.x,
+                    rect.y,
+                    rect.w,
+                    rect.h,
+                    alpha,
+                    rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) :
+                                      std::string("null"),
+                    st[0],
+                    st[1],
+                    st[2],
+                    st[3],
+                    (alpha == 255 && rgba == nullptr) ? "texture-only" : "overlay-color"));
         }
 
         // texture quad without alpha
         if (alpha == 255 && (rgba == nullptr)) {
             renderDataT rd{};
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[0]  = st[0];
-            rd.texel[1]  = st[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(0)  = st[0];
+            rd.texel.at(1)  = st[1];
             m_renderTextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[1]  = st[3];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(1)  = st[3];
             m_renderTextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[0]  = st[2];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(0)  = st[2];
             m_renderTextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[1]  = st[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(1)  = st[1];
             m_renderTextureDatas.push_back(rd);
 
             ro.color = false;
@@ -2376,42 +2379,42 @@ namespace FIFE
         } else {
             if (rgba != nullptr) {
                 renderData2TC rd{};
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[0]  = st[0];
-                rd.texel[1]  = st[1];
-                rd.texel2[0] = 0.0;
-                rd.texel2[1] = 0.0;
-                rd.color[0]  = 255;
-                rd.color[1]  = 255;
-                rd.color[2]  = 255;
-                rd.color[3]  = alpha;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(0)  = st[0];
+                rd.texel.at(1)  = st[1];
+                rd.texel2.at(0) = 0.0;
+                rd.texel2.at(1) = 0.0;
+                rd.color.at(0)  = 255;
+                rd.color.at(1)  = 255;
+                rd.color.at(2)  = 255;
+                rd.color.at(3)  = alpha;
                 m_renderMultitextureDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[1]  = st[3];
-                rd.texel2[1] = 1.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(1)  = st[3];
+                rd.texel2.at(1) = 1.0;
                 m_renderMultitextureDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[0]  = st[2];
-                rd.texel2[0] = 1.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(0)  = st[2];
+                rd.texel2.at(0) = 1.0;
                 m_renderMultitextureDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[1]  = st[1];
-                rd.texel2[1] = 0.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(1)  = st[1];
+                rd.texel2.at(1) = 0.0;
                 m_renderMultitextureDatas.push_back(rd);
 
                 ro.color        = true;
                 ro.overlay_type = OVERLAY_TYPE_COLOR;
-                ro.rgba[0]      = rgba[0];
-                ro.rgba[1]      = rgba[1];
-                ro.rgba[2]      = rgba[2];
-                ro.rgba[3]      = rgba[3];
+                ro.rgba.at(0)   = rgba[0];
+                ro.rgba.at(1)   = rgba[1];
+                ro.rgba.at(2)   = rgba[2];
+                ro.rgba.at(3)   = rgba[3];
 
                 uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
                 std::array<uint32_t, 6> indices{index, index + 1, index + 2, index, index + 2, index + 3};
@@ -2419,29 +2422,29 @@ namespace FIFE
                 // texture quad with alpha
             } else {
                 renderDataTC rd{};
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[0]  = st[0];
-                rd.texel[1]  = st[1];
-                rd.color[0]  = 255;
-                rd.color[1]  = 255;
-                rd.color[2]  = 255;
-                rd.color[3]  = alpha;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(0)  = st[0];
+                rd.texel.at(1)  = st[1];
+                rd.color.at(0)  = 255;
+                rd.color.at(1)  = 255;
+                rd.color.at(2)  = 255;
+                rd.color.at(3)  = alpha;
                 m_renderTextureColorDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[1]  = st[3];
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(1)  = st[3];
                 m_renderTextureColorDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[0]  = st[2];
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(0)  = st[2];
                 m_renderTextureColorDatas.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[1]  = st[1];
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(1)  = st[1];
                 m_renderTextureColorDatas.push_back(rd);
 
                 ro.color = true;
@@ -2465,34 +2468,34 @@ namespace FIFE
     {
         if (rgba != nullptr) {
             renderData2TC rd{};
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[0]  = st1[0];
-            rd.texel[1]  = st1[1];
-            rd.texel2[0] = st2[0];
-            rd.texel2[1] = st2[1];
-            rd.color[0]  = 255;
-            rd.color[1]  = 255;
-            rd.color[2]  = 255;
-            rd.color[3]  = alpha;
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(0)  = st1[0];
+            rd.texel.at(1)  = st1[1];
+            rd.texel2.at(0) = st2[0];
+            rd.texel2.at(1) = st2[1];
+            rd.color.at(0)  = 255;
+            rd.color.at(1)  = 255;
+            rd.color.at(2)  = 255;
+            rd.color.at(3)  = alpha;
             m_renderMultitextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[1]  = st1[3];
-            rd.texel2[1] = st2[3];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(1)  = st1[3];
+            rd.texel2.at(1) = st2[3];
             m_renderMultitextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[0]  = st1[2];
-            rd.texel2[0] = st2[2];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(0)  = st1[2];
+            rd.texel2.at(0) = st2[2];
             m_renderMultitextureDatas.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[1]  = st1[1];
-            rd.texel2[1] = st2[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(1)  = st1[1];
+            rd.texel2.at(1) = st2[1];
             m_renderMultitextureDatas.push_back(rd);
 
             uint32_t const index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
@@ -2501,10 +2504,10 @@ namespace FIFE
 
             RenderObject ro(GL_TRIANGLES, 6, id1, id2);
             ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
-            ro.rgba[0]      = rgba[0];
-            ro.rgba[1]      = rgba[1];
-            ro.rgba[2]      = rgba[2];
-            ro.rgba[3]      = rgba[3];
+            ro.rgba.at(0)   = rgba[0];
+            ro.rgba.at(1)   = rgba[1];
+            ro.rgba.at(2)   = rgba[2];
+            ro.rgba.at(3)   = rgba[3];
             m_renderObjects.push_back(ro);
         }
     }
@@ -2573,26 +2576,26 @@ namespace FIFE
             rd->texel[1] = st[1];*/
 
             renderDataZ rd{};
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.vertex[2] = vertexZ;
-            rd.texel[0]  = st[0];
-            rd.texel[1]  = st[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.vertex.at(2) = vertexZ;
+            rd.texel.at(0)  = st[0];
+            rd.texel.at(1)  = st[1];
             m_renderTextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[1]  = st[3];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(1)  = st[3];
             m_renderTextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[0]  = st[2];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(0)  = st[2];
             m_renderTextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[1]  = st[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(1)  = st[1];
             m_renderTextureDatasZ.push_back(rd);
 
             RenderZObject ro{};
@@ -2602,72 +2605,72 @@ namespace FIFE
             // multitexture with color, second texel is used for m_maskOverlay
             if (rgba != nullptr) {
                 renderData2TCZ rd{};
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.vertex[2] = vertexZ;
-                rd.texel[0]  = st[0];
-                rd.texel[1]  = st[1];
-                rd.texel2[0] = 0.0;
-                rd.texel2[1] = 0.0;
-                rd.color[0]  = 255;
-                rd.color[1]  = 255;
-                rd.color[2]  = 255;
-                rd.color[3]  = alpha;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.vertex.at(2) = vertexZ;
+                rd.texel.at(0)  = st[0];
+                rd.texel.at(1)  = st[1];
+                rd.texel2.at(0) = 0.0;
+                rd.texel2.at(1) = 0.0;
+                rd.color.at(0)  = 255;
+                rd.color.at(1)  = 255;
+                rd.color.at(2)  = 255;
+                rd.color.at(3)  = alpha;
                 m_renderMultitextureDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[1]  = st[3];
-                rd.texel2[1] = 1.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(1)  = st[3];
+                rd.texel2.at(1) = 1.0;
                 m_renderMultitextureDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[0]  = st[2];
-                rd.texel2[0] = 1.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(0)  = st[2];
+                rd.texel2.at(0) = 1.0;
                 m_renderMultitextureDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[1]  = st[1];
-                rd.texel2[1] = 0.0;
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(1)  = st[1];
+                rd.texel2.at(1) = 0.0;
                 m_renderMultitextureDatasZ.push_back(rd);
 
                 RenderObject ro(GL_TRIANGLES, 6, id);
                 ro.color        = true;
                 ro.overlay_type = OVERLAY_TYPE_COLOR;
-                ro.rgba[0]      = rgba[0];
-                ro.rgba[1]      = rgba[1];
-                ro.rgba[2]      = rgba[2];
-                ro.rgba[3]      = rgba[3];
+                ro.rgba.at(0)   = rgba[0];
+                ro.rgba.at(1)   = rgba[1];
+                ro.rgba.at(2)   = rgba[2];
+                ro.rgba.at(3)   = rgba[3];
                 m_renderMultitextureObjectsZ.push_back(ro);
                 // texture with alpha
             } else {
                 renderDataColorZ rd{};
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.vertex[2] = vertexZ;
-                rd.texel[0]  = st[0];
-                rd.texel[1]  = st[1];
-                rd.color[0]  = 255;
-                rd.color[1]  = 255;
-                rd.color[2]  = 255;
-                rd.color[3]  = alpha;
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.vertex.at(2) = vertexZ;
+                rd.texel.at(0)  = st[0];
+                rd.texel.at(1)  = st[1];
+                rd.color.at(0)  = 255;
+                rd.color.at(1)  = 255;
+                rd.color.at(2)  = 255;
+                rd.color.at(3)  = alpha;
                 m_renderTextureColorDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[1]  = st[3];
+                rd.vertex.at(0) = static_cast<float>(rect.x);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(1)  = st[3];
                 m_renderTextureColorDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-                rd.texel[0]  = st[2];
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+                rd.texel.at(0)  = st[2];
                 m_renderTextureColorDatasZ.push_back(rd);
 
-                rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-                rd.vertex[1] = static_cast<float>(rect.y);
-                rd.texel[1]  = st[1];
+                rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+                rd.vertex.at(1) = static_cast<float>(rect.y);
+                rd.texel.at(1)  = st[1];
                 m_renderTextureColorDatasZ.push_back(rd);
 
                 RenderZObject ro{};
@@ -2689,43 +2692,43 @@ namespace FIFE
     {
         if (rgba != nullptr) {
             renderData2TCZ rd{};
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.vertex[2] = vertexZ;
-            rd.texel[0]  = st1[0];
-            rd.texel[1]  = st1[1];
-            rd.texel2[0] = st2[0];
-            rd.texel2[1] = st2[1];
-            rd.color[0]  = 255;
-            rd.color[1]  = 255;
-            rd.color[2]  = 255;
-            rd.color[3]  = alpha;
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.vertex.at(2) = vertexZ;
+            rd.texel.at(0)  = st1[0];
+            rd.texel.at(1)  = st1[1];
+            rd.texel2.at(0) = st2[0];
+            rd.texel2.at(1) = st2[1];
+            rd.color.at(0)  = 255;
+            rd.color.at(1)  = 255;
+            rd.color.at(2)  = 255;
+            rd.color.at(3)  = alpha;
             m_renderMultitextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[1]  = st1[3];
-            rd.texel2[1] = st2[3];
+            rd.vertex.at(0) = static_cast<float>(rect.x);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(1)  = st1[3];
+            rd.texel2.at(1) = st2[3];
             m_renderMultitextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y + rect.h);
-            rd.texel[0]  = st1[2];
-            rd.texel2[0] = st2[2];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y + rect.h);
+            rd.texel.at(0)  = st1[2];
+            rd.texel2.at(0) = st2[2];
             m_renderMultitextureDatasZ.push_back(rd);
 
-            rd.vertex[0] = static_cast<float>(rect.x + rect.w);
-            rd.vertex[1] = static_cast<float>(rect.y);
-            rd.texel[1]  = st1[1];
-            rd.texel2[1] = st2[1];
+            rd.vertex.at(0) = static_cast<float>(rect.x + rect.w);
+            rd.vertex.at(1) = static_cast<float>(rect.y);
+            rd.texel.at(1)  = st1[1];
+            rd.texel2.at(1) = st2[1];
             m_renderMultitextureDatasZ.push_back(rd);
 
             RenderObject ro(GL_TRIANGLES, 6, id1, id2);
             ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
-            ro.rgba[0]      = rgba[0];
-            ro.rgba[1]      = rgba[1];
-            ro.rgba[2]      = rgba[2];
-            ro.rgba[3]      = rgba[3];
+            ro.rgba.at(0)   = rgba[0];
+            ro.rgba.at(1)   = rgba[1];
+            ro.rgba.at(2)   = rgba[2];
+            ro.rgba.at(3)   = rgba[3];
             m_renderMultitextureObjectsZ.push_back(ro);
         }
     }
@@ -2750,7 +2753,7 @@ namespace FIFE
             glBindTexture(GL_TEXTURE_2D, m_maskOverlay);
         }
 
-        m_state.texture[1] = m_maskOverlay;
+        m_state.texture.at(1) = m_maskOverlay;
 
         // Texture Unit 1
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -2977,9 +2980,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
+            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
         }
 
         if (SDL_MUSTLOCK(dst)) {
@@ -3093,7 +3096,7 @@ namespace FIFE
 
         if (m_target_discard) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        } else if (!m_target_discard && (!GLEW_EXT_framebuffer_object || !m_useframebuffer)) {
+        } else if (!GLEW_EXT_framebuffer_object || !m_useframebuffer) {
             // if we wanna just add something to render target, we need to first render previous contents
             addImageToArray(
                 targetid,
@@ -3144,14 +3147,14 @@ namespace FIFE
         std::vector<GuiVertex> const & vertices,
         std::vector<int> const & indices,
         DoublePoint const & translation,
-        ImagePtr texture)
+        ImagePtr texture)  // NOLINT(performance-unnecessary-value-param)
     {
 
         glPushMatrix();
         glTranslatef(static_cast<GLfloat>(translation.x), static_cast<GLfloat>(translation.y), 0.0F);
 
-        glVertexPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices[0].position);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(GuiVertex), &vertices[0].color);
+        glVertexPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices.at(0).position);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(GuiVertex), &vertices.at(0).color);
 
         GLuint texId = 0;
 
@@ -3168,7 +3171,7 @@ namespace FIFE
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, texId);
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices[0].texCoords);
+            glTexCoordPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices.at(0).texCoords);
         }
 
         glDrawElements(GL_TRIANGLES, toGLsizei(indices.size()), GL_UNSIGNED_INT, indices.data());

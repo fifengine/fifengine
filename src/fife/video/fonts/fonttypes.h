@@ -86,7 +86,7 @@ namespace FIFE
     struct FontFaceKey
     {
             AssetHandle asset;
-            int ptsize = 0;
+            int ptsize                                 = 0;
             bool operator==(FontFaceKey const &) const = default;
     };
 

@@ -22,7 +22,9 @@ namespace FIFE
 
     VFSSource::~VFSSource()
     {
-        m_vfs->removeSource(this);
+        if (m_vfs != nullptr) {
+            m_vfs->removeSource(this);
+        }
     }
 
 } // namespace FIFE
@@ -35,10 +37,10 @@ std::string FIFE::VFSSource::fixPath(std::string path) const
 
     size_t pos = 0;
     while ((pos = path.find('\\')) != std::string::npos) {
-        path[pos] = '/';
+        path.at(pos) = '/';
     }
 
-    if (path[0] == '/') {
+    if (path.at(0) == '/') {
         path = path.substr(1, path.length());
     }
 

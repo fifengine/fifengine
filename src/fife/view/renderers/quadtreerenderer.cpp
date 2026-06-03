@@ -30,10 +30,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -95,7 +96,7 @@ namespace FIFE
     {
         CellGrid const * cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
         InstanceTree* itree = layer->getInstanceTree();

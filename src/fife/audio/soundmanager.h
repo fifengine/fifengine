@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
@@ -358,7 +359,7 @@ namespace FIFE
             void setEmitterSource(SoundEmitter* emitter);
 
             //! emitter-vector, holds all emitters
-            std::vector<SoundEmitter*> m_emitterVec;
+            std::vector<std::unique_ptr<SoundEmitter>> m_emitterVec;
             //! OpenAL context
             ALCcontext* m_context;
             //! OpenAL device
@@ -383,7 +384,7 @@ namespace FIFE
             //! Map that holds active Emitters together with the used source handle
             std::map<SoundEmitter*, ALuint> m_activeEmitters;
 
-            SoundEffectManager* m_effectManager;
+            std::unique_ptr<SoundEffectManager> m_effectManager;
 
             //! A map that holds the groups together with the appended emitters.
             EmitterGroups m_groups;

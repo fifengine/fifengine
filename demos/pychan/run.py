@@ -162,6 +162,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         credits.capture(lambda: credits._setText("Credits"), event_name="mouseExited")
 
         # import example modules
+        from bordertypes import BorderTypesExample
         from colortester import ColorExample
         from dynamic import DynamicExample
         from dynamicgraph import DynamicGraphExample
@@ -183,6 +184,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
             "Adjusting Container": PyChanExample("gui/adjustingcontainer.xml"),
             "All Widgets": PyChanExample("gui/all_widgets.xml"),
             "Basic Styling": StylingExample(),
+            "Border Types": BorderTypesExample(),
             "Circular Box": PyChanExample("gui/circularcontainer.xml"),
             "Dynamic Widgets": DynamicExample(),
             "Sliders": SliderExample(),

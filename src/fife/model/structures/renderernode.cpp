@@ -21,10 +21,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     class NodeInstanceDeleteListener : public InstanceDeleteListener
@@ -115,6 +116,7 @@ namespace FIFE
     {
         if (this != &source) {
             changeInstance(source.m_instance);
+            m_instance = source.m_instance;
             m_location = source.m_location;
             m_layer    = source.m_layer;
             m_point    = source.m_point;
@@ -174,14 +176,14 @@ namespace FIFE
     void RendererNode::setRelative(Location const & relative_location)
     {
         if (m_instance == nullptr) {
-            FL_WARN(_log, "RendererNode::setRelative(Location) - No instance attached.");
+            FL_WARN(_log(), "RendererNode::setRelative(Location) - No instance attached.");
         }
         m_location = relative_location;
     }
     void RendererNode::setRelative(Location const & relative_location, Point const & relative_point)
     {
         if (m_instance == nullptr) {
-            FL_WARN(_log, "RendererNode::setRelative(Location, Point) - No instance attached.");
+            FL_WARN(_log(), "RendererNode::setRelative(Location, Point) - No instance attached.");
         }
         m_location = relative_location;
         m_point    = relative_point;
@@ -189,7 +191,7 @@ namespace FIFE
     void RendererNode::setRelative(Point const & relative_point)
     {
         if (m_instance == nullptr || !m_location.isValid()) {
-            FL_WARN(_log, "RendererNode::setRelative(Point) - No instance or location attached.");
+            FL_WARN(_log(), "RendererNode::setRelative(Point) - No instance or location attached.");
         }
         m_point = relative_point;
     }
@@ -197,28 +199,28 @@ namespace FIFE
     Instance* RendererNode::getAttachedInstance()
     {
         if (m_instance == nullptr) {
-            FL_WARN(_log, "RendererNode::getAttachedInstance() - No instance attached.");
+            FL_WARN(_log(), "RendererNode::getAttachedInstance() - No instance attached.");
         }
         return m_instance;
     }
     Location RendererNode::getAttachedLocation()
     {
         if (m_instance != nullptr || !m_location.isValid()) {
-            FL_WARN(_log, "RendererNode::getAttachedLocation() - No location attached.");
+            FL_WARN(_log(), "RendererNode::getAttachedLocation() - No location attached.");
         }
         return m_location;
     }
     Layer* RendererNode::getAttachedLayer()
     {
         if (m_layer == nullptr) {
-            FL_WARN(_log, "RendererNode::getAttachedLayer() - No layer attached.");
+            FL_WARN(_log(), "RendererNode::getAttachedLayer() - No layer attached.");
         }
         return m_layer;
     }
     Point RendererNode::getAttachedPoint()
     {
         if (m_instance != nullptr || m_location.isValid()) {
-            FL_WARN(_log, "RendererNode::getAttachedPoint() - No point attached.");
+            FL_WARN(_log(), "RendererNode::getAttachedPoint() - No point attached.");
         }
         return m_point;
     }
@@ -226,14 +228,14 @@ namespace FIFE
     Location RendererNode::getOffsetLocation()
     {
         if (m_instance == nullptr || !m_location.isValid()) {
-            FL_WARN(_log, "RendererNode::getOffsetLocation() - No location as offset used.");
+            FL_WARN(_log(), "RendererNode::getOffsetLocation() - No location as offset used.");
         }
         return m_location;
     }
     Point RendererNode::getOffsetPoint()
     {
         if (m_instance == nullptr && !m_location.isValid()) {
-            FL_WARN(_log, "RendererNode::getOffsetPoint() - No point as offset used.");
+            FL_WARN(_log(), "RendererNode::getOffsetPoint() - No point as offset used.");
         }
         return m_point;
     }
@@ -326,7 +328,7 @@ namespace FIFE
         } else if (m_layer == nullptr) {
             // FIXME
             FL_WARN(
-                _log,
+                _log(),
                 "RendererNode::getCalculatedPoint(Camera, Layer) - "
                 "No layer attached. So we use the first active layer of the renderer.");
             setAttached(layer);

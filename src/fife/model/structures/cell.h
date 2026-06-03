@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -353,7 +354,7 @@ namespace FIFE
             Zone* m_zone;
 
             //! Pointer to Transistion
-            TransitionInfo* m_transition;
+            std::unique_ptr<TransitionInfo> m_transition;
 
             //! already inserted
             bool m_inserted;

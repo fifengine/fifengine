@@ -10,6 +10,7 @@
 #include <cassert>
 #include <limits>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -30,10 +31,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_AUDIO);
             return log;
-        }();
+        }
     } // namespace
 
     SoundManager::SoundManager() :
@@ -45,22 +47,15 @@ namespace FIFE
         m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
         m_state(SM_STATE_INACTIV),
         m_sources(),
-        m_createdSources(0),
-        m_effectManager(nullptr)
+        m_createdSources(0)
     {
     }
 
     SoundManager::~SoundManager()
     {
-        // delete all soundemitters
-        for (auto& it : m_emitterVec) {
-            delete it;
-        }
-        m_emitterVec.clear();
         // delete all sources
         alDeleteSources(m_createdSources, &m_sources[0]);
-        // delete effect manager
-        delete m_effectManager;
+        m_emitterVec.clear();
 
         if (m_device != nullptr) {
             alcDestroyContext(m_context);
@@ -69,7 +64,7 @@ namespace FIFE
         }
 
         if (alcGetError(nullptr) != ALC_NO_ERROR) {
-            FL_ERR(_log, "error closing openal device");
+            FL_ERR(_log(), "error closing openal device");
         }
     }
 
@@ -78,26 +73,26 @@ namespace FIFE
         m_device = alcOpenDevice(nullptr);
 
         if ((m_device == nullptr) || alcGetError(m_device) != ALC_NO_ERROR) {
-            FL_ERR(_log, "Could not open audio device - deactivating audio module");
+            FL_ERR(_log(), "Could not open audio device - deactivating audio module");
             m_device = nullptr;
             return;
         }
 
         m_context = alcCreateContext(m_device, nullptr);
         if ((m_context == nullptr) || alcGetError(m_device) != ALC_NO_ERROR) {
-            FL_ERR(_log, "Couldn't create audio context - deactivating audio module");
+            FL_ERR(_log(), "Couldn't create audio context - deactivating audio module");
             m_device = nullptr;
             return;
         }
 
         alcMakeContextCurrent(m_context);
         if (alcGetError(m_device) != ALC_NO_ERROR) {
-            FL_ERR(_log, "Couldn't change current audio context - deactivating audio module");
+            FL_ERR(_log(), "Couldn't change current audio context - deactivating audio module");
             m_device = nullptr;
             return;
         }
         // create and initialize the effect manager
-        m_effectManager = new SoundEffectManager();
+        m_effectManager = std::make_unique<SoundEffectManager>();
         m_effectManager->init(m_device);
 
         // set listener position
@@ -163,7 +158,7 @@ namespace FIFE
     void SoundManager::play()
     {
         m_state = SM_STATE_PLAY;
-        for (auto* emitter : m_emitterVec) {
+        for (auto& emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -174,7 +169,7 @@ namespace FIFE
     void SoundManager::pause()
     {
         m_state = SM_STATE_PAUSE;
-        for (auto* emitter : m_emitterVec) {
+        for (auto& emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -185,7 +180,7 @@ namespace FIFE
     void SoundManager::stop()
     {
         m_state = SM_STATE_STOP;
-        for (auto* emitter : m_emitterVec) {
+        for (auto& emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -195,7 +190,7 @@ namespace FIFE
 
     void SoundManager::rewind()
     {
-        for (auto* emitter : m_emitterVec) {
+        for (auto& emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -258,7 +253,7 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 3> vec{};
             alGetListenerfv(AL_POSITION, vec.data());
-            return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
         }
         return AudioSpaceCoordinate();
     }
@@ -282,7 +277,7 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 6> vec{};
             alGetListenerfv(AL_ORIENTATION, vec.data());
-            return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
         }
         return AudioSpaceCoordinate();
     }
@@ -303,7 +298,7 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 3> vec{};
             alGetListenerfv(AL_VELOCITY, vec.data());
-            return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
         }
         return AudioSpaceCoordinate();
     }
@@ -344,7 +339,7 @@ namespace FIFE
         auto maxDistance                       = static_cast<double>(m_maxDistance);
 
         // first check emitters
-        for (auto* emitter : m_emitterVec) {
+        for (auto& emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -357,7 +352,7 @@ namespace FIFE
             if (!clip || !plays) {
                 if (active) {
                     emitter->update();
-                    releaseSource(emitter);
+                    releaseSource(emitter.get());
                 }
                 continue;
             }
@@ -373,12 +368,12 @@ namespace FIFE
             // remove active not in range
             if (!inRange) {
                 if (active) {
-                    releaseSource(emitter);
+                    releaseSource(emitter.get());
                 }
                 continue;
             }
             if (!active && !m_freeSources.empty()) {
-                setEmitterSource(emitter);
+                setEmitterSource(emitter.get());
             }
         }
         // then update active
@@ -389,7 +384,7 @@ namespace FIFE
 
     SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const
     {
-        return m_emitterVec.at(emitterId);
+        return m_emitterVec.at(emitterId).get();
     }
 
     SoundEmitter* SoundManager::createEmitter()
@@ -399,15 +394,17 @@ namespace FIFE
             if (m_emitterVec.at(index) == nullptr) {
                 assert(index <= std::numeric_limits<uint32_t>::max());
                 uint32_t const emitterIndex = static_cast<uint32_t>(index);
-                ptr                         = new SoundEmitter(this, emitterIndex);
-                m_emitterVec.at(index)      = ptr;
+                auto newEmitter             = std::make_unique<SoundEmitter>(this, emitterIndex);
+                ptr                         = newEmitter.get();
+                m_emitterVec.at(index)      = std::move(newEmitter);
                 break;
             }
         }
         if (ptr == nullptr) {
             assert(m_emitterVec.size() <= std::numeric_limits<uint32_t>::max());
-            ptr = new SoundEmitter(this, static_cast<uint32_t>(m_emitterVec.size()));
-            m_emitterVec.push_back(ptr);
+            auto newEmitter = std::make_unique<SoundEmitter>(this, static_cast<uint32_t>(m_emitterVec.size()));
+            ptr             = newEmitter.get();
+            m_emitterVec.push_back(std::move(newEmitter));
         }
         return ptr;
     }
@@ -421,12 +418,11 @@ namespace FIFE
 
     void SoundManager::releaseEmitter(uint32_t emitterId)
     {
-        SoundEmitter** ptr = &m_emitterVec.at(emitterId);
-        if ((*ptr)->isActive()) {
-            releaseSource(*ptr);
+        auto& ptr = m_emitterVec.at(emitterId);
+        if (ptr && ptr->isActive()) {
+            releaseSource(ptr.get());
         }
-        delete *ptr;
-        *ptr = nullptr;
+        ptr.reset();
     }
 
     void SoundManager::deleteEmitter(SoundEmitter* emitter)
@@ -439,7 +435,7 @@ namespace FIFE
         std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
         ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
         if (!ret.second) {
-            FL_WARN(_log, "SoundEmitter already have an source handler");
+            FL_WARN(_log(), "SoundEmitter already have an source handler");
         }
         emitter->setSource(m_freeSources.front());
         m_freeSources.pop();
@@ -454,7 +450,7 @@ namespace FIFE
                 m_activeEmitters.erase(it);
                 emitter->setSource(0);
             } else {
-                FL_WARN(_log, "SoundEmitter can not release source handler");
+                FL_WARN(_log(), "SoundEmitter can not release source handler");
             }
         }
     }
@@ -626,7 +622,7 @@ namespace FIFE
         }
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "SoundEmitter can not removed from unknown group");
+            FL_WARN(_log(), "SoundEmitter can not removed from unknown group");
             return;
         }
         bool found      = false;
@@ -641,7 +637,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log, "SoundEmitter could not be found in the given group.");
+            FL_WARN(_log(), "SoundEmitter could not be found in the given group.");
             return;
         }
     }
@@ -653,7 +649,7 @@ namespace FIFE
         }
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "SoundEmitter can not remove unknown group");
+            FL_WARN(_log(), "SoundEmitter can not remove unknown group");
             return;
         }
         std::vector<SoundEmitter*> emitters = groupIt->second;
@@ -683,7 +679,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not played");
+            FL_WARN(_log(), "Unknown group can not played");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -696,7 +692,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not paused");
+            FL_WARN(_log(), "Unknown group can not paused");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -709,7 +705,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not stopped");
+            FL_WARN(_log(), "Unknown group can not stopped");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -722,7 +718,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not rewinded");
+            FL_WARN(_log(), "Unknown group can not rewinded");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -735,7 +731,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not set gain");
+            FL_WARN(_log(), "Unknown group can not set gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -748,7 +744,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not set max gain");
+            FL_WARN(_log(), "Unknown group can not set max gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -761,7 +757,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log, "Unknown group can not set min gain");
+            FL_WARN(_log(), "Unknown group can not set min gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();

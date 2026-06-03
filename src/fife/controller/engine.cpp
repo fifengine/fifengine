@@ -77,29 +77,14 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_CONTROLLER);
             return log;
-        }();
+        }
     } // namespace
 
-    Engine::Engine() :
-        m_renderbackend(nullptr),
-        m_guimanager(nullptr),
-        m_eventmanager(nullptr),
-        m_soundmanager(nullptr),
-        m_timemanager(nullptr),
-        m_imagemanager(nullptr),
-        m_animationmanager(nullptr),
-        m_soundclipmanager(nullptr),
-        m_vfs(nullptr),
-        m_model(nullptr),
-        m_logmanager(&LogManager::instance()),
-        m_cursor(nullptr),
-        m_destroyed(false),
-
-        m_offrenderer(nullptr),
-        m_targetrenderer(nullptr)
+    Engine::Engine() : m_logmanager(&LogManager::instance()), m_destroyed(false)
 
     {
 #ifdef USE_COCOA
@@ -108,7 +93,7 @@ namespace FIFE
         void* cocoa_lib;
         cocoa_lib = dlopen("/System/Library/Frameworks/Cocoa.framework/Cocoa", RTLD_LAZY);
         void (*nsappload)(void);
-        nsappload = (void (*)())dlsym(cocoa_lib, "NSApplicationLoad");
+        nsappload = reinterpret_cast<void (*)()>(dlsym(cocoa_lib, "NSApplicationLoad"));
         nsappload();
 
         // Create an autorelease pool, so autoreleased SDL objects don't leak.
@@ -132,12 +117,12 @@ namespace FIFE
         return m_devcaps;
     }
 
-    void Engine::setGuiManager(IGUIManager* guimanager)
+    void Engine::setGuiManager(std::unique_ptr<IGUIManager> guimanager)
     {
-        m_guimanager = guimanager;
-        if (auto* fifechan = dynamic_cast<FifechanManager*>(guimanager)) {
+        if (auto* fifechan = dynamic_cast<FifechanManager*>(guimanager.get())) {
             fifechan->setFontManager(m_fontManager.get());
         }
+        m_guimanager = std::move(guimanager);
     }
 
     void Engine::loadFontManifestFromString(std::string const & xml)
@@ -171,85 +156,85 @@ namespace FIFE
     {
         m_destroyed = false;
 
-        FL_LOG(_log, std::format("Fifengine v{}", FIFE::app_version::get_version()));
-        FL_LOG(_log, "================== Engine initialize start =================");
-        m_timemanager = new TimeManager();
-        FL_LOG(_log, "Time manager created");
+        FL_LOG(_log(), std::format("Fifengine v{}", FIFE::app_version::get_version()));
+        FL_LOG(_log(), "================== Engine initialize start =================");
+        m_timemanager = std::make_unique<TimeManager>();
+        FL_LOG(_log(), "Time manager created");
 
-        FL_LOG(_log, "Creating VFS");
-        m_vfs = new VFS();
+        FL_LOG(_log(), "Creating VFS");
+        m_vfs = std::make_unique<VFS>();
 
-        FL_LOG(_log, "Adding root directory to VFS");
-        m_vfs->addSource(new VFSDirectory(m_vfs));
-        m_vfs->addProvider(new DirectoryProvider());
+        FL_LOG(_log(), "Adding root directory to VFS");
+        m_vfs->addSource(std::make_unique<VFSDirectory>(m_vfs.get()));
+        m_vfs->addProvider(std::make_unique<DirectoryProvider>());
 
-        FL_LOG(_log, "Adding zip provider to VFS");
-        m_vfs->addProvider(new ZipProvider());
+        FL_LOG(_log(), "Adding zip provider to VFS");
+        m_vfs->addProvider(std::make_unique<ZipProvider>());
 
-        //FL_LOG(_log, "Adding Fallout DAT2 provider to VFS");
-        //m_vfs->addProvider(ProviderDAT2());
+        // FL_LOG(_log(), "Adding Fallout DAT2 provider to VFS");
+        // m_vfs->addProvider(ProviderDAT2());
 
-        //FL_LOG(_log, "Adding Fallout DAT1 provider to VFS");
-        //m_vfs->addProvider(ProviderDAT1());
+        // FL_LOG(_log(), "Adding Fallout DAT1 provider to VFS");
+        // m_vfs->addProvider(ProviderDAT1());
 
         TTF_Init();
 
-        FL_LOG(_log, "Creating FontManager");
+        FL_LOG(_log(), "Creating FontManager");
         {
             auto resolver = std::make_unique<AssetResolver>();
-            resolver->addProvider(std::make_unique<VfsAssetProvider>(m_vfs));
+            resolver->addProvider(std::make_unique<VfsAssetProvider>(m_vfs.get()));
             resolver->addProvider(std::make_unique<FilesystemAssetProvider>(m_settings.getFontPaths()));
             m_fontManager = std::make_unique<FontManager>(std::move(resolver));
         }
 
         try {
             if (m_vfs->exists("config/fonts.xml")) {
-                FL_LOG(_log, "Loading font manifest from config/fonts.xml");
+                FL_LOG(_log(), "Loading font manifest from config/fonts.xml");
                 std::unique_ptr<RawData> fontManifest(m_vfs->open("config/fonts.xml"));
                 if (fontManifest) {
                     auto bytes = fontManifest->getDataInBytes();
-                    std::string xmlContent(reinterpret_cast<char*>(bytes.data()), bytes.size());
+                    std::string const xmlContent(reinterpret_cast<char*>(bytes.data()), bytes.size());
                     m_fontManager->loadManifestFromString(xmlContent);
                 }
             }
         } catch (std::exception const & e) {
-            FL_WARN(_log, std::format("Failed to load font manifest: {}", e.what()));
+            FL_WARN(_log(), std::format("Failed to load font manifest: {}", e.what()));
         }
 
-        FL_LOG(_log, "Engine pre-init done");
+        FL_LOG(_log(), "Engine pre-init done");
 
-        FL_LOG(_log, "Creating event manager");
-        m_eventmanager = new EventManager();
+        FL_LOG(_log(), "Creating event manager");
+        m_eventmanager = std::make_unique<EventManager>();
         m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
         m_eventmanager->setMouseAccelerationEnabled(m_settings.isMouseAccelerationEnabled());
         m_eventmanager->setJoystickSupport(m_settings.isJoystickSupport());
 
-        FL_LOG(_log, "Creating resource managers");
+        FL_LOG(_log(), "Creating resource managers");
 
-        m_imagemanager     = new ImageManager();
-        m_animationmanager = new AnimationManager();
-        m_soundclipmanager = new SoundClipManager();
+        m_imagemanager     = std::make_unique<ImageManager>();
+        m_animationmanager = std::make_unique<AnimationManager>();
+        m_soundclipmanager = std::make_unique<SoundClipManager>();
 
-        FL_LOG(_log, "Creating render backend");
+        FL_LOG(_log(), "Creating render backend");
         std::string const rbackend(m_settings.getRenderBackend());
         if (rbackend == "SDL") {
-            m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
-            FL_LOG(_log, "SDL Render backend created");
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
+            FL_LOG(_log(), "SDL Render backend created");
         } else {
 #ifdef HAVE_OPENGL
-            m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
-            FL_LOG(_log, "OpenGL Render backend created");
+            m_renderbackend = std::make_unique<RenderBackendOpenGL>(m_settings.getColorKey());
+            FL_LOG(_log(), "OpenGL Render backend created");
 #else
-            m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
             // Remember  the choice so we pick the right graphics class.
             rbackend = "SDL";
             FL_WARN(
-                _log,
+                _log(),
                 "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render "
                 "backend");
 #endif
         }
-        FL_LOG(_log, "Initializing render backend");
+        FL_LOG(_log(), "Initializing render backend");
         m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
         // we always set this to false
         // m_renderbackend->setAlphaOptimizerEnabled(false);
@@ -272,7 +257,7 @@ namespace FIFE
             std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
             if (std::ranges::find(drivers, driver) == drivers.end()) {
                 FL_WARN(
-                    _log,
+                    _log(),
                     "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
                 driver = "";
             }
@@ -287,14 +272,14 @@ namespace FIFE
             std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
             if (std::ranges::find(drivers, driver) == drivers.end()) {
                 FL_WARN(
-                    _log,
+                    _log(),
                     "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
                 driver = "";
             }
             m_devcaps.setRenderDriverName(driver);
         }
 
-        FL_LOG(_log, "Querying device capabilities");
+        FL_LOG(_log(), "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
 
         uint8_t const displayCount = m_devcaps.getDisplayCount();
@@ -306,7 +291,7 @@ namespace FIFE
         uint8_t selectedDisplay        = requestedDisplay;
         if (requestedDisplay >= displayCount) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "Selected display index {} is out of range [0, {}] and will fall back to display 0.",
                     static_cast<int32_t>(requestedDisplay),
@@ -327,7 +312,7 @@ namespace FIFE
         if (selectedWidth != requestedWidth || selectedHeight != requestedHeight) {
 
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "Requested resolution {}x{} exceeds selected display bounds {}x{}. Clamping to {}x{}.",
                     requestedWidth,
@@ -339,7 +324,7 @@ namespace FIFE
         }
 
         FL_LOG(
-            _log,
+            _log(),
             std::format(
                 "Using display index {} out of {} displays with resolution {}x{}",
                 static_cast<int32_t>(selectedDisplay),
@@ -362,9 +347,9 @@ namespace FIFE
         m_screenMode.setWindowPositionX(m_settings.getWindowPositionX());
         m_screenMode.setWindowPositionY(m_settings.getWindowPositionY());
 
-        FL_LOG(_log, "Creating main screen");
+        FL_LOG(_log(), "Creating main screen");
         m_renderbackend->createMainScreen(m_screenMode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
-        FL_LOG(_log, "Main screen created");
+        FL_LOG(_log(), "Main screen created");
 
         if (SDL_Window* win = RenderBackend::instance()->getWindow()) {
             SDL_StartTextInput(win);
@@ -376,37 +361,37 @@ namespace FIFE
         }
 
 #endif
-        FL_LOG(_log, "Creating sound manager");
-        m_soundmanager = new SoundManager();
+        FL_LOG(_log(), "Creating sound manager");
+        m_soundmanager = std::make_unique<SoundManager>();
         m_soundmanager->setVolume(m_settings.getInitialVolume() / 10.0F);
 
-        FL_LOG(_log, "Creating renderers");
-        m_offrenderer    = new OffRenderer(m_renderbackend);
-        m_targetrenderer = new TargetRenderer(m_renderbackend);
-        m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
-        m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
-        m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
-        m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
-        m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50));
-        m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
-        m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70));
-        m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
-        m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
-        m_renderers.push_back(new CellRenderer(m_renderbackend, 100));
-        m_renderers.push_back(new PathRenderer(m_renderbackend, 105));
+        FL_LOG(_log(), "Creating renderers");
+        m_offrenderer    = std::make_unique<OffRenderer>(m_renderbackend.get());
+        m_targetrenderer = std::make_unique<TargetRenderer>(m_renderbackend.get());
+        m_renderers.push_back(std::make_unique<InstanceRenderer>(m_renderbackend.get(), 10));
+        m_renderers.push_back(std::make_unique<GridRenderer>(m_renderbackend.get(), 20));
+        m_renderers.push_back(std::make_unique<CellSelectionRenderer>(m_renderbackend.get(), 30));
+        m_renderers.push_back(std::make_unique<BlockingInfoRenderer>(m_renderbackend.get(), 40));
+        m_renderers.push_back(std::make_unique<FloatingTextRenderer>(m_renderbackend.get(), 50));
+        m_renderers.push_back(std::make_unique<QuadTreeRenderer>(m_renderbackend.get(), 60));
+        m_renderers.push_back(std::make_unique<CoordinateRenderer>(m_renderbackend.get(), 70));
+        m_renderers.push_back(std::make_unique<GenericRenderer>(m_renderbackend.get(), 80));
+        m_renderers.push_back(std::make_unique<LightRenderer>(m_renderbackend.get(), 90));
+        m_renderers.push_back(std::make_unique<CellRenderer>(m_renderbackend.get(), 100));
+        m_renderers.push_back(std::make_unique<PathRenderer>(m_renderbackend.get(), 105));
 
-        FL_LOG(_log, "Creating model");
-        m_model = new Model(m_renderbackend, m_renderers);
-        FL_LOG(_log, "Adding pathers to model");
-        m_model->adoptPather(new RoutePather());
-        FL_LOG(_log, "Adding grid prototypes to model");
-        m_model->adoptCellGrid(new SquareGrid());
-        m_model->adoptCellGrid(new HexGrid(false));
-        m_model->adoptCellGrid(new HexGrid(true));
+        FL_LOG(_log(), "Creating model");
+        m_model = std::make_unique<Model>(m_renderbackend.get(), m_renderers);
+        FL_LOG(_log(), "Adding pathers to model");
+        m_model->adoptPather(std::make_unique<RoutePather>());
+        FL_LOG(_log(), "Adding grid prototypes to model");
+        m_model->adoptCellGrid(std::make_unique<SquareGrid>());
+        m_model->adoptCellGrid(std::make_unique<HexGrid>(false));
+        m_model->adoptCellGrid(std::make_unique<HexGrid>(true));
 
-        m_cursor = new Cursor(m_renderbackend);
+        m_cursor = std::make_unique<Cursor>(m_renderbackend.get());
         m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
-        FL_LOG(_log, "Engine initialized");
+        FL_LOG(_log(), "Engine initialized");
     }
 
     Engine::~Engine()
@@ -418,29 +403,8 @@ namespace FIFE
 
     void Engine::destroy()
     {
-        FL_LOG(_log, "Destructing engine");
-        delete m_cursor;
-        delete m_model;
-        delete m_soundmanager;
-        delete m_guimanager;
-
-        delete m_animationmanager;
-        delete m_imagemanager;
-        delete m_soundclipmanager;
-        delete m_eventmanager;
-
-        // properly remove all the renderers created during init
-        delete m_offrenderer;
-        delete m_targetrenderer;
-        auto rendererIter = m_renderers.begin();
-        for (; rendererIter != m_renderers.end(); ++rendererIter) {
-            delete *rendererIter;
-        }
-        m_renderers.clear();
-
-        delete m_renderbackend;
-        delete m_vfs;
-        delete m_timemanager;
+        FL_LOG(_log(), "Destructing engine");
+        // unique_ptr members automatically cleaned up
 
         TTF_Quit();
         SDL_Quit();
@@ -449,7 +413,7 @@ namespace FIFE
         objc_msgSend(m_autoreleasePool, sel_registerName("release"));
 #endif
 
-        FL_LOG(_log, "================== Engine destructed ==================");
+        FL_LOG(_log(), "================== Engine destructed ==================");
         m_destroyed = true;
     }
     void Engine::initializePumping()
@@ -490,7 +454,7 @@ namespace FIFE
         m_changelisteners.push_back(listener);
     }
 
-    void Engine::removeChangeListener(IEngineChangeListener* listener)
+    void Engine::removeChangeListener(IEngineChangeListener const * listener)
     {
         auto i = m_changelisteners.begin();
         while (i != m_changelisteners.end()) {

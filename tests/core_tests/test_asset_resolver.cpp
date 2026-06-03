@@ -141,8 +141,8 @@ TEST_CASE("AssetHandle IDs are unique across calls", "[asset][resolver]")
 TEST_CASE("VfsAssetProvider canResolve with existing VFS file", "[asset][vfs][integration]")
 {
     auto vfs = std::make_shared<VFS>();
-    vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
-    vfs->addProvider(new FIFE::DirectoryProvider());
+    vfs->addSource(std::make_unique<FIFE::VFSDirectory>(vfs.get()));
+    vfs->addProvider(std::make_unique<FIFE::DirectoryProvider>());
 
     VfsAssetProvider provider(vfs.get());
 

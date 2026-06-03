@@ -26,11 +26,11 @@ namespace FIFE
     class FIFE_API AssetResolver
     {
         public:
-            AssetResolver() = default;
-            AssetResolver(AssetResolver &&) = default;
-            AssetResolver & operator=(AssetResolver &&) = default;
-            AssetResolver(AssetResolver const &) = delete;
-            AssetResolver & operator=(AssetResolver const &) = delete;
+            AssetResolver()                                 = default;
+            AssetResolver(AssetResolver&&)                  = default;
+            AssetResolver& operator=(AssetResolver&&)       = default;
+            AssetResolver(AssetResolver const &)            = delete;
+            AssetResolver& operator=(AssetResolver const &) = delete;
 
             void addProvider(std::unique_ptr<AssetProvider> provider);
             AssetHandle resolve(AssetRequest const & request) const;

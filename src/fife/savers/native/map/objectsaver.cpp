@@ -30,10 +30,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_SAVERS);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -378,6 +379,6 @@ namespace FIFE
 
         doc.SaveFile(filename.c_str());
 
-        FL_DBG(_log, "Saved object '" + m_object->getName() + "' to " + filename);
+        FL_DBG(_log(), "Saved object '" + m_object->getName() + "' to " + filename);
     }
 } // namespace FIFE

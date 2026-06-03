@@ -20,10 +20,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_AUDIO);
             return log;
-        }();
+        }
     } // namespace
 
     SoundFilter::SoundFilter(SoundFilterType type) :
@@ -31,7 +32,7 @@ namespace FIFE
     {
 
         alGenFilters(1, &m_filter);
-        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating filter");
+        CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error creating filter");
         setFilterType(type);
     }
 
@@ -60,7 +61,7 @@ namespace FIFE
         } else if (m_type == SF_FILTER_BANDPASS) {
             alFilteri(m_filter, AL_FILTER_TYPE, AL_FILTER_BANDPASS);
         }
-        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting filter");
+        CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error setting filter");
     }
 
     SoundFilterType SoundFilter::getFilterType() const

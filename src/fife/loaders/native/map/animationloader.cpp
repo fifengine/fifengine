@@ -27,10 +27,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     AnimationLoader::AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager) :
@@ -85,7 +86,7 @@ namespace FIFE
 
     AnimationPtr AnimationLoader::load(std::string const & filename)
     {
-        std::string const animationFilename = filename;
+        std::string const & animationFilename = filename;
 
         XML::Document doc;
 
@@ -109,7 +110,7 @@ namespace FIFE
                 }
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -128,7 +129,7 @@ namespace FIFE
         } else if (XML::HasName(root, "animation")) {
             animElem = root;
         }
-        if (animElem) {
+        if (animElem != nullptr) {
             animation = loadAnimation(filename, animElem);
         }
 
@@ -163,7 +164,7 @@ namespace FIFE
                 }
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             // TODO - should we abort here
             //        or rethrow the exception

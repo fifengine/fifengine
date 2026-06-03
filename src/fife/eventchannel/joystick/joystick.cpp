@@ -23,10 +23,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_EVTCHANNEL);
             return log;
-        }();
+        }
         uint8_t clampJoystickCount(int value)
         {
             if (value <= 0) {
@@ -97,7 +98,7 @@ namespace FIFE
             m_instanceId = SDL_GetJoystickID(m_joystickHandle);
 
             std::array<char, 33> tmp{};
-            SDL_GUID guid = SDL_GetJoystickGUID(m_joystickHandle);
+            SDL_GUID const guid = SDL_GetJoystickGUID(m_joystickHandle);
             SDL_GUIDToString(guid, tmp.data(), tmp.size());
             m_guidStr = std::string(tmp.data());
 

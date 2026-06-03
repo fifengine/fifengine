@@ -20,10 +20,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     PathRenderer::PathRenderer(RenderBackend* renderbackend, int32_t position) : RendererBase(renderbackend, position)
@@ -51,8 +52,9 @@ namespace FIFE
     void PathRenderer::addPath(Instance* inst, PathStyleConfig const & config)
     {
         assert("inst must not be null" && inst);
-        if (!inst)
+        if (inst == nullptr) {
             return;
+        }
         m_configs[inst] = config;
         m_cache[inst]   = CachedPath{};
     }
@@ -94,34 +96,37 @@ namespace FIFE
         assert("cam must not be null" && cam);
         assert("layer must not be null" && layer);
         Route* route = inst->getRoute();
-        if (!route) {
+        if (route == nullptr) {
             m_cache[inst].dirty = false;
             return;
         }
 
         auto& cache = m_cache[inst];
-        if (!cache.dirty && cache.routeSessionId == route->getSessionId())
+        if (!cache.dirty && cache.routeSessionId == route->getSessionId()) {
             return;
+        }
 
         cache.screenPts.clear();
         Path const & path = route->getPath();
         CellGrid* cg      = layer->getCellGrid();
-        if (!cg) {
-            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw path");
+        if (cg == nullptr) {
+            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw path");
             cache.dirty = false;
             return;
         }
         cache.screenPts.reserve(path.size());
 
         for (auto const & loc : path) {
-            if (loc.getLayer() != layer)
+            if (loc.getLayer() != layer) {
                 continue;
+            }
 
             ExactModelCoordinate const mapCenter = cg->toMapCoordinates(loc.getLayerCoordinates());
             Point3D const screenPt               = cam->toScreenCoordinates(mapCenter);
 
-            if (!isPointInView(screenPt, cam))
+            if (!isPointInView(screenPt, cam)) {
                 continue;
+            }
 
             cache.screenPts.push_back(screenPt);
         }
@@ -137,8 +142,9 @@ namespace FIFE
         for (auto& [inst, cfg] : m_configs) {
             updateCache(inst, cam, layer);
             auto const & cache = m_cache[inst];
-            if (cache.screenPts.size() < 2)
+            if (cache.screenPts.size() < 2) {
                 continue;
+            }
 
             switch (cfg.style) {
             case PLS_SOLID:
@@ -164,9 +170,9 @@ namespace FIFE
         assert("screen points must not be empty" && !c.screenPts.empty());
         std::vector<Point> pts;
         pts.reserve(c.screenPts.size());
-        for (auto const & sp : c.screenPts) {
-            pts.emplace_back(sp.x, sp.y);
-        }
+        std::ranges::transform(c.screenPts, std::back_inserter(pts), [](auto const & sp) {
+            return Point(sp.x, sp.y);
+        });
         m_renderbackend->drawPolyLine(
             pts, static_cast<uint8_t>(cfg.width), cfg.color.r, cfg.color.g, cfg.color.b, cfg.color.a);
     }
@@ -180,8 +186,8 @@ namespace FIFE
         float lastY   = static_cast<float>(c.screenPts.at(0).y);
 
         for (size_t i = 1; i < c.screenPts.size(); ++i) {
-            float const nextX = static_cast<float>(c.screenPts[i].x);
-            float const nextY = static_cast<float>(c.screenPts[i].y);
+            float const nextX = static_cast<float>(c.screenPts.at(i).x);
+            float const nextY = static_cast<float>(c.screenPts.at(i).y);
             float const segLen =
                 static_cast<float>(std::hypot(static_cast<double>(nextX - lastX), static_cast<double>(nextY - lastY)));
             if (segLen < 0.1F) {
@@ -225,8 +231,9 @@ namespace FIFE
     void PathRenderer::drawArrows([[maybe_unused]] Camera* cam, CachedPath const & c, PathStyleConfig const & cfg)
     {
         assert("screen points must have at least 2 points" && c.screenPts.size() >= 2);
-        if (c.screenPts.size() < 2)
+        if (c.screenPts.size() < 2) {
             return;
+        }
 
         auto drawArrowAt = [&](Point3D const & from, Point3D const & to) {
             float const angle = std::atan2(static_cast<float>(to.y - from.y), static_cast<float>(to.x - from.x));

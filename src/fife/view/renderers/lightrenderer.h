@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -327,7 +328,7 @@ namespace FIFE
             void reset();
 
         private:
-            std::map<std::string, std::vector<LightRendererElementInfo*>> m_groups;
+            std::map<std::string, std::vector<std::unique_ptr<LightRendererElementInfo>>> m_groups;
     };
 
 } // namespace FIFE

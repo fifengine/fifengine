@@ -19,10 +19,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEW);
             return log;
-        }();
+        }
     } // namespace
 
     // use some big value, so that non-positioned renderers show on top
@@ -97,8 +98,8 @@ namespace FIFE
     {
         clearActiveLayers();
 
-        std::list<Layer*> const & tmp = map->getLayers();
-        auto it                       = tmp.begin();
+        auto tmp = map->getLayers();
+        auto it  = tmp.begin();
         for (; it != tmp.end(); ++it) {
             addActiveLayer(*it);
         }

@@ -766,6 +766,7 @@ set(
   src/fife/gui/fifechan/console/console.i
   src/fife/gui/fifechan/fifechanmanager.i
   src/fife/gui/fifechan/widgets/widgets.i
+  src/fife/video/fonts/fontmanager.i
 )
 
 set(

@@ -28,10 +28,14 @@
 
 namespace FIFE
 {
-    static Logger& _log = []() -> Logger& {
-        static Logger log(LM_EVTCHANNEL);
-        return log;
-    }();
+    namespace
+    {
+        Logger& _log()
+        {
+            static Logger log(LM_EVTCHANNEL);
+            return log;
+        }
+    } // namespace
 
     EventManager::EventManager() :
 
@@ -696,7 +700,7 @@ namespace FIFE
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "fillKeyEvent() Invalid key event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
             return;
@@ -714,15 +718,15 @@ namespace FIFE
     {
         if (sdlevt.type == SDL_EVENT_TEXT_INPUT) {
             txtevt.setType(TextEvent::INPUT);
-            Text const t(&sdlevt.text.text[0]);
+            Text const t(sdlevt.text.text);
             txtevt.setText(t);
         } else if (sdlevt.type == SDL_EVENT_TEXT_EDITING) {
             txtevt.setType(TextEvent::EDIT);
-            Text const t(&sdlevt.edit.text[0], sdlevt.edit.start, sdlevt.edit.length);
+            Text const t(sdlevt.edit.text, sdlevt.edit.start, sdlevt.edit.length);
             txtevt.setText(t);
         } else {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "fillTextEvent() Invalid text event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
         }

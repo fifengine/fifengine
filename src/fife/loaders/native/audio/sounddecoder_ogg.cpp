@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <limits>
+#include <span>
 
 // Platform specific includes
 
@@ -24,10 +25,11 @@ namespace FIFE
         /** Logger to use for this source file.
          *  @relates Logger
          */
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_AUDIO);
             return log;
-        }();
+        }
 
         /* OggVorbis Callback functions
          */
@@ -142,12 +144,13 @@ namespace FIFE
         // decode the stream
         m_datasize = 0;
 
+        auto const buf = std::span(m_data, static_cast<size_t>(length));
         while (length - m_datasize > 0) {
             uint64_t const remaining_bytes = length - m_datasize;
             int const chunk_size           = static_cast<int>(
                 std::min<uint64_t>(remaining_bytes, static_cast<uint64_t>(std::numeric_limits<int>::max())));
 
-            ret = ov_read(&m_ovf, m_data + m_datasize, chunk_size, 0, 2, 1, &stream);
+            ret = ov_read(&m_ovf, &buf[static_cast<size_t>(m_datasize)], chunk_size, 0, 2, 1, &stream);
             if (ret > 0) {
                 m_datasize += static_cast<uint64_t>(ret);
             } else if (ret == OV_HOLE) {

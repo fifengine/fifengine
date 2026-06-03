@@ -134,12 +134,12 @@ namespace FIFE
             /** Gets given text as Image
              *  The rsulting image is pooled, so it's not that time critical
              */
-            virtual Image* getAsImage(std::string const & text) = 0;
+            virtual Image* getAsImage(std::string const & text) const = 0;
 
             /** Gets given text as Image. Text is splitted on multiple lines based "\n" marks
              *  The rsulting image is pooled, so it's not that time critical
              */
-            virtual Image* getAsImageMultiline(std::string const & text) = 0;
+            virtual Image* getAsImageMultiline(std::string const & text) const = 0;
 
             virtual std::string splitTextToWidth(std::string const & text, int32_t render_width) = 0;
 

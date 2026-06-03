@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cstdio>
 #include <format>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -31,10 +32,11 @@ namespace FIFE
         /** Logger to use for this source file.
          *  @relates Logger
          */
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     size_t Atlas::getImageCount() const
@@ -98,24 +100,18 @@ namespace FIFE
         XML::Document atlasFile;
 
         try {
-            RawData* data = m_vfs->open(atlasFilename);
+            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(atlasFile, xml)) {
-                        delete data;
                         return false;
                     }
                 } else {
-                    delete data;
                     return false;
                 }
-
-                // done with data delete resource
-                delete data;
-                data = nullptr;
             }
         } catch (NotFound&) {
             return false;
@@ -148,24 +144,19 @@ namespace FIFE
         AtlasPtr atlas;
 
         try {
-            RawData* data = m_vfs->open(atlasFilename);
+            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
-                        delete data;
                         return atlas;
                     }
-
-                    // done with data delete resource
-                    delete data;
-                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -200,24 +191,19 @@ namespace FIFE
         std::vector<AtlasPtr> atlasVector;
 
         try {
-            RawData* data = m_vfs->open(atlasFilename);
+            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
-                        delete data;
                         return atlasVector;
                     }
-
-                    // done with data delete resource
-                    delete data;
-                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            FL_ERR(_log(), e.what());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -263,7 +249,8 @@ namespace FIFE
 
             // Atlas itself doesn't have appended id
             fs::path const atlasImagePath = atlasPathDirectory / atlasSource;
-            atlas.reset(new Atlas(atlasImagePath.string()));
+            auto atlasTemp                = std::make_unique<Atlas>(atlasImagePath.string());
+            atlas                         = SharedPtr<Atlas>(atlasTemp.release());
 
             // End-user could create the same atlas for the second time.
             // Since we don't hold any data for Atlases like ImageManager we need to recreate
@@ -308,7 +295,6 @@ namespace FIFE
                 }
             } else {
                 // Create subimages with automatic id and same size
-                int frame          = 0;
                 int atlasWidth     = 0;
                 int atlasHeight    = 0;
                 int subimageWidth  = 0;
@@ -328,6 +314,7 @@ namespace FIFE
                     int const x_rows = atlasWidth / subimageWidth;
                     int const y_rows = atlasHeight / subimageHeight;
                     Rect region(0, 0, subimageWidth, subimageHeight);
+                    int frame = 0;
                     for (int y = 0; y < y_rows; ++y) {
                         region.y = y * subimageHeight;
                         for (int x = 0; x < x_rows; ++x) {
@@ -359,6 +346,6 @@ namespace FIFE
     AtlasLoader* createDefaultAtlasLoader(
         Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager)
     {
-        return new AtlasLoader(model, vfs, imageManager, animationManager);
+        return std::make_unique<AtlasLoader>(model, vfs, imageManager, animationManager).release();
     }
 } // namespace FIFE

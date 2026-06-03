@@ -13,10 +13,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_EXCEPTION);
             return log;
-        }();
+        }
     } // namespace
 
     Exception::Exception(std::string const & msg) : std::runtime_error(msg), m_what(msg)

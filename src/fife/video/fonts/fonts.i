@@ -34,7 +34,7 @@ namespace FIFE {
 		virtual int32_t getWidth(const std::string& text) const = 0;
 		virtual int getHeight() const = 0;
 		virtual int32_t getStringIndexAt(const std::string& text, int32_t x) const = 0;
-		virtual Image* getAsImage(const std::string& text) = 0;
+		virtual Image* getAsImage(const std::string& text) const = 0;
 		virtual void invalidate() = 0;
 	};
 

@@ -36,16 +36,13 @@ static char const * const RAW_FILE        = "tests/data/test.map";
 TEST_CASE("DAT2::open decompresses LZSS entry correctly", "[dat2][vfs]")
 {
 
-    std::shared_ptr<TimeManager> const timemanager = std::make_shared<TimeManager>();
-
-    std::shared_ptr<VFS> const vfs = std::make_shared<VFS>();
-    vfs->addSource(new VFSDirectory(vfs.get()));
+    [[maybe_unused]] std::shared_ptr<TimeManager> const timemanager = std::make_shared<TimeManager>();
+    std::shared_ptr<VFS> const vfs                                  = std::make_shared<VFS>();
+    vfs->addSource(std::make_unique<VFSDirectory>(vfs.get()));
     CHECK(vfs->exists(COMPRESSED_FILE));
 
     try {
-        std::cout << "adding Source" << '\n';
-        vfs->addSource(new DAT2(vfs.get(), COMPRESSED_FILE));
-        std::cout << "added Source" << '\n';
+        vfs->addSource(std::make_unique<DAT2>(vfs.get(), COMPRESSED_FILE));
     } catch (Exception& e) {
         std::cout << e.what() << '\n';
     }
@@ -67,8 +64,8 @@ TEST_CASE("DAT2::open decompresses LZSS entry correctly", "[dat2][vfs]")
     fcomp->readInto(d_comp.data(), fcomp->getDataLength());
     // std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
-        uint8_t const rawc  = d_raw[i];
-        uint8_t const compc = d_comp[i];
+        uint8_t const rawc  = d_raw.at(i);
+        uint8_t const compc = d_comp.at(i);
         CHECK((compc) == (rawc));
         // std::cout
         //	<< "raw: " << std::setbase(16) << rawc

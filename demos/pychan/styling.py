@@ -12,15 +12,18 @@ STYLES = {
         "default": {
             "border_size": 2,
             "margins": (0, 0),
-            "base_color": fifechan.Color(128, 128, 128),
-            "foreground_color": fifechan.Color(255, 255, 255),
-            "background_color": fifechan.Color(55, 55, 55),
+            "base_color": fifechan.Color(42, 42, 55),
+            "foreground_color": fifechan.Color(210, 210, 220),
+            "background_color": fifechan.Color(32, 32, 42),
+            "border_color": fifechan.Color(65, 65, 85),
+            "selection_color": fifechan.Color(70, 90, 140),
             "font": "samanata_small",
         },
         "Button": {
             "border_size": 2,
             "margins": (20, 5),
             "min_size": (100, 20),
+            "base_color": fifechan.Color(55, 58, 75),
             "font": "samanata_small",
         },
         "CheckBox": {
@@ -38,6 +41,7 @@ STYLES = {
             "margins": (10, 10),
             "opaque": False,
             "titlebar_height": 30,
+            "base_color": fifechan.Color(38, 38, 50),
             "background_image": "gui/backgrounds/background.png",
             "font": "samanata_large",
         },
@@ -50,8 +54,13 @@ STYLES = {
     },
     "greenzone": {
         "default": {
-            "base_color": fifechan.Color(80, 200, 80),
-            "background_color": fifechan.Color(200, 250, 200),
+            "base_color": fifechan.Color(55, 80, 60),
+            "foreground_color": fifechan.Color(190, 230, 190),
+            "background_color": fifechan.Color(35, 55, 40),
+            "border_color": fifechan.Color(70, 110, 75),
+        },
+        "Button": {
+            "base_color": fifechan.Color(60, 95, 70),
         },
         "Window": {
             "titlebar_height": 30,

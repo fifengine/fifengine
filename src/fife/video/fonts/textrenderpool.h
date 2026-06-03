@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <list>
+#include <memory>
 #include <string>
 // 3rd party library includes
 #include <SDL3/SDL.h>
@@ -70,7 +71,7 @@ namespace FIFE
                     int row_spacing;
                     uint64_t timestamp;
 
-                    Image* image;
+                    std::unique_ptr<Image> image;
             };
 
             using type_pool = std::list<s_pool_entry>;

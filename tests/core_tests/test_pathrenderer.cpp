@@ -14,12 +14,17 @@
 #include "view/rendererbase.h"
 #include "view/renderers/pathrenderer.h"
 
+namespace
+{
+    static int dummy_inst_storage[5];
+}
+
 // ── Mock RenderBackend ──────────────────────────────────────────────────
 namespace
 {
     struct MockRenderBackend : FIFE::RenderBackend
     {
-            MockRenderBackend() : FIFE::RenderBackend(SDL_Color{0, 0, 0, 255})
+            MockRenderBackend() : FIFE::RenderBackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255})
             {
             }
 
@@ -28,152 +33,200 @@ namespace
                 static std::string const n = "MockRenderBackend";
                 return n;
             }
-            void init(std::string const &) override
+            void init(std::string const & backendId) override
             {
             }
             void clearBackBuffer() override
             {
             }
-            void setLightingModel(uint32_t) override
+            void setLightingModel(uint32_t mode) override
             {
             }
             uint32_t getLightingModel() const override
             {
                 return 0;
             }
-            void setLighting(float, float, float) override
+            void setLighting(float r, float g, float b) override
             {
             }
             void resetLighting() override
             {
             }
-            void resetStencilBuffer(uint8_t) override
+            void resetStencilBuffer(uint8_t value) override
             {
             }
-            void changeBlending(int32_t, int32_t) override
+            void changeBlending(int32_t src, int32_t dst) override
             {
             }
-            void createMainScreen(FIFE::ScreenMode const &, std::string const &, std::string const &) override
+            void createMainScreen(
+                FIFE::ScreenMode const & mode, std::string const & title, std::string const & icon) override
             {
             }
-            void setScreenMode(FIFE::ScreenMode const &) override
+            void setScreenMode(FIFE::ScreenMode const & mode) override
             {
             }
-            FIFE::Image* createImage(FIFE::IResourceLoader*) override
-            {
-                return nullptr;
-            }
-            FIFE::Image* createImage(std::string const &, FIFE::IResourceLoader*) override
+            std::unique_ptr<FIFE::Image> createImage(FIFE::IResourceLoader* loader) override
             {
                 return nullptr;
             }
-            FIFE::Image* createImage(uint8_t const *, uint32_t, uint32_t) override
+            std::unique_ptr<FIFE::Image> createImage(
+                std::string const & filename, FIFE::IResourceLoader* loader) override
             {
                 return nullptr;
             }
-            FIFE::Image* createImage(SDL_Surface*) override
+            std::unique_ptr<FIFE::Image> createImage(uint8_t const * data, uint32_t width, uint32_t height) override
             {
                 return nullptr;
             }
-            FIFE::Image* createImage(std::string const &, SDL_Surface*) override
+            std::unique_ptr<FIFE::Image> createImage(SDL_Surface* surface) override
+            {
+                return nullptr;
+            }
+            std::unique_ptr<FIFE::Image> createImage(std::string const & filename, SDL_Surface* surface) override
             {
                 return nullptr;
             }
             void renderVertexArrays() override
             {
             }
-            void captureScreen(std::string const &) override
+            void captureScreen(std::string const & filename) override
             {
             }
-            void captureScreen(std::string const &, uint32_t, uint32_t) override
+            void captureScreen(std::string const & filename, uint32_t x, uint32_t y) override
             {
             }
-            bool putPixel(int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
                 return true;
             }
-            void drawLine(FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawLine(
+                FIFE::Point const & p1, FIFE::Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
             }
             void drawThickLine(
-                FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+                FIFE::Point const & p1, FIFE::Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w)
+                override
             {
             }
-            void drawPolyLine(std::vector<FIFE::Point> const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawPolyLine(
+                std::vector<FIFE::Point> const & pts, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w) override
             {
             }
             void drawBezier(
-                std::vector<FIFE::Point> const &, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+                std::vector<FIFE::Point> const & pts,
+                int32_t steps,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a,
+                uint8_t w) override
             {
             }
-            FIFE::Image* createImage(std::string const &, uint8_t const *, uint32_t, uint32_t) override
+            std::unique_ptr<FIFE::Image> createImage(
+                std::string const & filename, uint8_t const * data, uint32_t width, uint32_t height) override
             {
                 return nullptr;
             }
             void drawTriangle(
-                FIFE::Point const &, FIFE::Point const &, FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
-                override
+                FIFE::Point const & p1,
+                FIFE::Point const & p2,
+                FIFE::Point const & p3,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a) override
             {
             }
-            void drawRectangle(FIFE::Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawRectangle(
+                FIFE::Point const & pt, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
             }
-            void fillRectangle(FIFE::Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void fillRectangle(
+                FIFE::Point const & pt, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
             }
             void drawQuad(
-                FIFE::Point const &,
-                FIFE::Point const &,
-                FIFE::Point const &,
-                FIFE::Point const &,
-                uint8_t,
-                uint8_t,
-                uint8_t,
-                uint8_t) override
+                FIFE::Point const & p1,
+                FIFE::Point const & p2,
+                FIFE::Point const & p3,
+                FIFE::Point const & p4,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a) override
             {
             }
-            void drawVertex(FIFE::Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawVertex(FIFE::Point const & pt, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint8_t w) override
             {
             }
-            void drawCircle(FIFE::Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawCircle(
+                FIFE::Point const & center, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
             }
-            void drawFillCircle(FIFE::Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+            void drawFillCircle(
+                FIFE::Point const & center, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
             }
             void drawCircleSegment(
-                FIFE::Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+                FIFE::Point const & center,
+                uint32_t radius,
+                int32_t startAngle,
+                int32_t endAngle,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a) override
             {
             }
             void drawFillCircleSegment(
-                FIFE::Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t) override
+                FIFE::Point const & center,
+                uint32_t radius,
+                int32_t startAngle,
+                int32_t endAngle,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a) override
             {
             }
             void drawLightPrimitive(
-                FIFE::Point const &, uint8_t, float, int32_t, float, float, uint8_t, uint8_t, uint8_t) override
+                FIFE::Point const & pt,
+                uint8_t brightness,
+                float scale,
+                int32_t angle,
+                float xStretch,
+                float yStretch,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b) override
             {
             }
-            void addImageToArray(uint32_t, FIFE::Rect const &, float const *, uint8_t, uint8_t const *) override
+            void addImageToArray(
+                uint32_t id,
+                FIFE::Rect const & rect,
+                float const * texCoords,
+                uint8_t opacity,
+                uint8_t const * color) override
             {
             }
             void changeRenderInfos(
-                FIFE::RenderDataType,
-                uint16_t,
-                int32_t,
-                int32_t,
-                bool,
-                bool,
-                uint8_t,
-                FIFE::GLConstants,
-                FIFE::GLConstants,
-                FIFE::OverlayType) override
+                FIFE::RenderDataType type,
+                uint16_t src,
+                int32_t x,
+                int32_t y,
+                bool fog,
+                bool lighting,
+                uint8_t alpha,
+                FIFE::GLConstants srcBlend,
+                FIFE::GLConstants dstBlend,
+                FIFE::OverlayType overlay) override
             {
             }
             void renderGuiGeometry(
-                std::vector<FIFE::GuiVertex> const &,
-                std::vector<int> const &,
-                FIFE::DoublePoint const &,
-                FIFE::ImagePtr) override
+                std::vector<FIFE::GuiVertex> const & verts,
+                std::vector<int> const & indices,
+                FIFE::DoublePoint const & offset,
+                FIFE::ImagePtr image) override
             {
             }
             void enableScissorTest() override
@@ -182,15 +235,19 @@ namespace
             void disableScissorTest() override
             {
             }
-            void attachRenderTarget(FIFE::ImagePtr&, bool) override
+            void attachRenderTarget(FIFE::ImagePtr& target, bool enabled) override
             {
             }
             void detachRenderTarget() override
             {
             }
-            void setClipArea(FIFE::Rect const &, bool) override
+
+        protected:
+            void setClipArea(FIFE::Rect const & rect, bool enabled) override
             {
             }
+
+        public:
     };
 
     struct MockContainer : FIFE::IRendererContainer
@@ -198,8 +255,9 @@ namespace
             FIFE::PathRenderer* pathRenderer{nullptr};
             FIFE::RendererBase* getRenderer(std::string const & name) override
             {
-                if (name == "PathRenderer")
+                if (name == "PathRenderer") {
                     return pathRenderer;
+                }
                 return nullptr;
             }
     };
@@ -223,17 +281,17 @@ TEST_CASE("PathLineStyle enum values", "[pathrenderer]")
 
 TEST_CASE("PathStyleConfig default values", "[pathrenderer]")
 {
-    FIFE::PathStyleConfig cfg;
+    FIFE::PathStyleConfig const cfg;
     CHECK_EQ(cfg.color.r, 0);
     CHECK_EQ(cfg.color.g, 100);
     CHECK_EQ(cfg.color.b, 255);
     CHECK_EQ(cfg.color.a, 255);
-    CHECK_EQ(cfg.width, 2.0f);
+    CHECK_EQ(cfg.width, 2.0F);
     CHECK_EQ(cfg.style, FIFE::PLS_SOLID);
-    CHECK_EQ(cfg.dashLength, 12.0f);
-    CHECK_EQ(cfg.dashGap, 6.0f);
+    CHECK_EQ(cfg.dashLength, 12.0F);
+    CHECK_EQ(cfg.dashGap, 6.0F);
     CHECK_EQ(cfg.drawArrows, false);
-    CHECK_EQ(cfg.arrowSize, 10.0f);
+    CHECK_EQ(cfg.arrowSize, 10.0F);
 }
 
 TEST_CASE("PathRenderer construction and basic properties", "[pathrenderer]")
@@ -255,19 +313,19 @@ TEST_CASE("PathRenderer add/remove/clear paths", "[pathrenderer]")
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
-    FIFE::Instance* const i1 = reinterpret_cast<FIFE::Instance*>(static_cast<uintptr_t>(0x100));
-    FIFE::Instance* const i2 = reinterpret_cast<FIFE::Instance*>(static_cast<uintptr_t>(0x200));
+    FIFE::Instance* const i1 = static_cast<FIFE::Instance*>(static_cast<void*>(&dummy_inst_storage[0]));
+    FIFE::Instance* const i2 = static_cast<FIFE::Instance*>(static_cast<void*>(&dummy_inst_storage[1]));
 
     FIFE::PathStyleConfig cfg;
-    cfg.color = {255, 0, 0, 255};
-    cfg.width = 4.0f;
+    cfg.color = SDL_Color{.r = 255, .g = 0, .b = 0, .a = 255};
+    cfg.width = 4.0F;
 
     pr.addPath(i1, cfg);
     pr.addPath(i2, cfg);
 
     // Overwrite existing path style via setPathStyle
     FIFE::PathStyleConfig cfg2;
-    cfg2.color = {0, 255, 0, 255};
+    cfg2.color = SDL_Color{.r = 0, .g = 255, .b = 0, .a = 255};
     cfg2.style = FIFE::PLS_DASHED;
     pr.setPathStyle(i1, cfg2);
 
@@ -285,8 +343,8 @@ TEST_CASE("PathRenderer setPathStyle for non-existent instance no-ops", "[pathre
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
-    FIFE::Instance* const dummy = reinterpret_cast<FIFE::Instance*>(static_cast<uintptr_t>(0xDEAD));
-    FIFE::PathStyleConfig cfg;
+    FIFE::Instance* const dummy = static_cast<FIFE::Instance*>(static_cast<void*>(&dummy_inst_storage[2]));
+    FIFE::PathStyleConfig const cfg;
     pr.setPathStyle(dummy, cfg);
 }
 
@@ -295,7 +353,7 @@ TEST_CASE("PathRenderer removePath for non-existent instance no-ops", "[pathrend
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
-    FIFE::Instance* const dummy = reinterpret_cast<FIFE::Instance*>(static_cast<uintptr_t>(0xBEEF));
+    FIFE::Instance* const dummy = static_cast<FIFE::Instance*>(static_cast<void*>(&dummy_inst_storage[3]));
     pr.removePath(dummy);
 }
 
@@ -306,7 +364,7 @@ TEST_CASE("PathRenderer getInstance", "[pathrenderer]")
     MockContainer mc;
     mc.pathRenderer = &pr;
 
-    FIFE::PathRenderer* retrieved = FIFE::PathRenderer::getInstance(&mc);
+    FIFE::PathRenderer const * retrieved = FIFE::PathRenderer::getInstance(&mc);
     CHECK_EQ(retrieved, &pr);
 }
 
@@ -319,19 +377,19 @@ TEST_CASE("PathRenderer getInstance returns null for missing renderer", "[pathre
 TEST_CASE("PathStyleConfig can be copied", "[pathrenderer]")
 {
     FIFE::PathStyleConfig a;
-    a.color     = {10, 20, 30, 40};
-    a.width     = 5.0f;
+    a.color     = SDL_Color{.r = 10, .g = 20, .b = 30, .a = 40};
+    a.width     = 5.0F;
     a.style     = FIFE::PLS_ARROWED;
-    a.arrowSize = 15.0f;
+    a.arrowSize = 15.0F;
 
-    FIFE::PathStyleConfig b = a;
+    FIFE::PathStyleConfig const b = a;
     CHECK_EQ(b.color.r, 10);
     CHECK_EQ(b.color.g, 20);
     CHECK_EQ(b.color.b, 30);
     CHECK_EQ(b.color.a, 40);
-    CHECK_EQ(b.width, 5.0f);
+    CHECK_EQ(b.width, 5.0F);
     CHECK_EQ(b.style, FIFE::PLS_ARROWED);
-    CHECK_EQ(b.arrowSize, 15.0f);
+    CHECK_EQ(b.arrowSize, 15.0F);
 }
 
 TEST_CASE("PathRenderer clone propagates configs", "[pathrenderer]")
@@ -339,10 +397,10 @@ TEST_CASE("PathRenderer clone propagates configs", "[pathrenderer]")
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
-    FIFE::Instance* const inst = reinterpret_cast<FIFE::Instance*>(static_cast<uintptr_t>(0x100));
+    FIFE::Instance* const inst = static_cast<FIFE::Instance*>(static_cast<void*>(&dummy_inst_storage[4]));
     FIFE::PathStyleConfig cfg;
-    cfg.color = {100, 200, 50, 255};
-    cfg.width = 3.0f;
+    cfg.color = SDL_Color{.r = 100, .g = 200, .b = 50, .a = 255};
+    cfg.width = 3.0F;
     cfg.style = FIFE::PLS_DASHED;
     pr.addPath(inst, cfg);
 

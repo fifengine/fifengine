@@ -34,10 +34,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIEWVIEW);
             return log;
-        }();
+        }
     } // namespace
 
     CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position) :
@@ -83,12 +84,12 @@ namespace FIFE
     {
         CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
         CellCache* cache = layer->getCellCache();
         if (cache == nullptr) {
-            FL_WARN(_log, "No cellcache on layer created, cannot draw cells");
+            FL_WARN(_log(), "No cellcache on layer created, cannot draw cells");
             return;
         }
 
@@ -120,10 +121,10 @@ namespace FIFE
                     }
                     m_renderbackend->drawLine(
                         pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-                    ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+                    ScreenPoint const spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(0)));
                     Point const pt3(spt1.x, spt1.y);
                     ScreenPoint const spt2 =
-                        cam->toScreenCoordinates(cg->toMapCoordinates(vertices[static_cast<size_t>(halfind)]));
+                        cam->toScreenCoordinates(cg->toMapCoordinates(vertices.at(static_cast<size_t>(halfind))));
                     Point const pt4(spt2.x, spt2.y);
                     m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
                 }

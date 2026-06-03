@@ -616,14 +616,13 @@ namespace FIFE
         }
         assert("footprint cell cost must be non-negative" && cost >= 0.0);
         // Ensure the cost vector exists for this rotation
-        auto& costs = m_multiProperty->m_footprintCosts[rotation];
-        // Find the corresponding footprint to determine the vector size
         auto fit = m_multiProperty->m_footprintCache.find(rotation);
         if (fit != m_multiProperty->m_footprintCache.end() && cellIndex < fit->second.size()) {
+            auto& costs = m_multiProperty->m_footprintCosts[rotation];
             if (costs.size() <= cellIndex) {
                 costs.resize(fit->second.size(), 1.0);
             }
-            costs[cellIndex] = cost;
+            costs.at(cellIndex) = cost;
         }
     }
 
@@ -632,7 +631,7 @@ namespace FIFE
         if (m_multiProperty != nullptr) {
             auto it = m_multiProperty->m_footprintCosts.find(rotation);
             if (it != m_multiProperty->m_footprintCosts.end() && cellIndex < it->second.size()) {
-                return it->second[cellIndex];
+                return it->second.at(cellIndex);
             }
         }
         if (m_inherited != nullptr) {

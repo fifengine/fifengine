@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <format>
 #include <limits>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -35,10 +36,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_NATIVE_LOADERS);
             return log;
-        }();
+        }
     } // namespace
 
     ObjectLoader::ObjectLoader(
@@ -55,13 +57,15 @@ namespace FIFE
         if (animationLoader) {
             m_animationLoader = animationLoader;
         } else {
-            m_animationLoader.reset(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
+            auto animTemp     = std::make_unique<AnimationLoader>(m_vfs, m_imageManager, m_animationManager);
+            m_animationLoader = SharedPtr<IAnimationLoader>(animTemp.release());
         }
 
         if (atlasLoader) {
             m_atlasLoader = atlasLoader;
         } else {
-            m_atlasLoader.reset(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
+            auto atlasTemp = std::make_unique<AtlasLoader>(m_model, m_vfs, m_imageManager, m_animationManager);
+            m_atlasLoader  = SharedPtr<IAtlasLoader>(atlasTemp.release());
         }
     }
 
@@ -98,7 +102,7 @@ namespace FIFE
         XML::Document objectFile;
 
         try {
-            RawData* data = m_vfs->open(objectPath.string());
+            auto data = std::unique_ptr<RawData>(m_vfs->open(objectPath.string()));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -108,34 +112,29 @@ namespace FIFE
                         std::ostringstream oss;
                         oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
                             << '\n';
-                        FL_ERR(_log, oss.str());
+                        FL_ERR(_log(), oss.str());
 
-                        delete data;
                         return false;
                     }
                 } else {
                     std::ostringstream oss;
                     oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
                         << '\n';
-                    FL_ERR(_log, oss.str());
+                    FL_ERR(_log(), oss.str());
 
                     return false;
                 }
-
-                // done with data delete resource
-                delete data;
-                data = nullptr;
             } else {
                 std::ostringstream oss;
                 oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
-                FL_ERR(_log, oss.str());
+                FL_ERR(_log(), oss.str());
 
                 return false;
             }
         } catch (NotFound&) {
             std::ostringstream oss;
             oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
-            FL_ERR(_log, oss.str());
+            FL_ERR(_log(), oss.str());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -163,26 +162,21 @@ namespace FIFE
         XML::Document objectFile;
 
         try {
-            RawData* data = m_vfs->open(objectPath.string());
+            auto data = std::unique_ptr<RawData>(m_vfs->open(objectPath.string()));
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(objectFile, xml)) {
-                        delete data;
                         return;
                     }
                 }
-
-                // done with data delete resource
-                delete data;
-                data = nullptr;
             }
         } catch (NotFound&) {
             std::ostringstream oss;
             oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
-            FL_ERR(_log, oss.str());
+            FL_ERR(_log(), oss.str());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -258,7 +252,7 @@ namespace FIFE
                             try {
                                 obj = m_model->createObject(objectId, namespaceId);
                             } catch (NameClash& e) {
-                                FL_ERR(_log, e.what());
+                                FL_ERR(_log(), e.what());
 
                                 // TODO - handle exception
                                 assert(false);
@@ -446,8 +440,7 @@ namespace FIFE
                             if (soundElement != nullptr) {
                                 char const * clip = XML::Attribute(soundElement, "source");
                                 if (clip != nullptr) {
-                                    auto* audio = new ActionAudio();
-                                    action->adoptAudio(audio);
+                                    auto audio = std::make_unique<ActionAudio>();
                                     audio->setSoundFileName(clip);
 
                                     char const * group = XML::Attribute(soundElement, "group");
@@ -519,6 +512,8 @@ namespace FIFE
                                         XML::QueryAttribute(soundElement, "z_velocity", &vz);
                                         audio->setVelocity(AudioSpaceCoordinate(vx, vy, vz));
                                     }
+
+                                    action->adoptAudio(audio.release());
                                 }
                             }
 

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 #include <limits>
+#include <memory>
 
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/metamodel/ipather.h"
@@ -18,7 +19,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 using FIFE::Cell;
-using FIFE::CellCache;
 using FIFE::CellTypeInfo;
 using FIFE::CTYPE_CELL_BLOCKER;
 using FIFE::CTYPE_DYNAMIC_BLOCKER;
@@ -42,55 +42,51 @@ namespace
             TimeManager tm;
             SquareGrid grid;
             RoutePather pather;
-            Layer* layer{nullptr};
-            Object* blockerObj{nullptr};
-            Object* markerObj{nullptr};
-            Object* multiObj{nullptr};
-            Object* part1{nullptr};
+            std::unique_ptr<Layer> layer;
+            std::unique_ptr<Object> blockerObj;
+            std::unique_ptr<Object> markerObj;
+            std::unique_ptr<Object> multiObj;
+            std::unique_ptr<Object> part1;
 
             PathFixture()
             {
-                layer = new Layer("test_layer", nullptr, &grid);
+                layer = std::make_unique<Layer>("test_layer", nullptr, &grid);
                 assert("layer must exist" && layer != nullptr);
                 layer->setWalkable(true);
                 layer->createCellCache();
 
-                blockerObj = new Object("obstacle", "test");
+                blockerObj = std::make_unique<Object>("obstacle", "test");
                 blockerObj->setBlocking(true);
                 blockerObj->setStatic(true);
 
                 // Non-blocking marker to force cell cache to cover needed area
-                markerObj = new Object("marker", "test");
+                markerObj = std::make_unique<Object>("marker", "test");
                 markerObj->setBlocking(false);
 
-                multiObj = new Object("multi", "test");
+                multiObj = std::make_unique<Object>("multi", "test");
                 multiObj->setBlocking(true);
                 multiObj->setStatic(true);
                 multiObj->setPather(&pather);
 
-                part1 = new Object("multi_part", "test");
+                part1 = std::make_unique<Object>("multi_part", "test");
                 part1->setMultiPart(true);
                 part1->addMultiPartCoordinate(0, ModelCoordinate(1, 0, 0));
 
                 multiObj->addMultiPartId("multi_part");
-                multiObj->addMultiPart(part1);
+                multiObj->addMultiPart(part1.get());
             }
 
-            ~PathFixture()
-            {
-                delete layer;
-                delete blockerObj;
-                delete markerObj;
-                delete multiObj;
-                delete part1;
-            }
+            PathFixture(PathFixture const &)            = delete;
+            PathFixture& operator=(PathFixture const &) = delete;
+            PathFixture(PathFixture&&)                  = default;
+            PathFixture& operator=(PathFixture&&)       = default;
 
             // Creates non-blocking markers at path corridor extremes so the cell cache
             // covers the full area needed for pathfinding. Markers persist for test duration.
-            void seedCellRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+            void seedCellRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2) const
             {
-                Instance* m1 = layer->createInstance(markerObj, ModelCoordinate(x1, y1, 0));
-                Instance* m2 = layer->createInstance(markerObj, ModelCoordinate(x2, y2, 0));
+                Instance* m1 = layer->createInstance(markerObj.get(), ModelCoordinate(x1, y1, 0));
+                Instance* m2 = layer->createInstance(markerObj.get(), ModelCoordinate(x2, y2, 0));
                 // markers stay alive for the test, don't delete them
                 (void)m1;
                 (void)m2;
@@ -126,32 +122,30 @@ TEST_CASE("W3-T0A: multi-cell ignored as blocker by non-blocking walker", "[mult
     f.seedCellRect(4, 4, 12, 6);
 
     // Place multi-cell at (5,5) with sub at (6,5)
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Place obstacle at (8,5)
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(8, 5, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(8, 5, 0));
     f.layer->update();
 
     // Non-blocking walker starts from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(12, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
     CHECK(route->getPathLength() > 0);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W3-T0A: multi-cell destination cell validity from clean start", "[multicell][path]")
@@ -159,30 +153,28 @@ TEST_CASE("W3-T0A: multi-cell destination cell validity from clean start", "[mul
     PathFixture f;
     f.seedCellRect(4, 4, 8, 6);
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 5, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(7, 5, 0));
     f.layer->update();
 
     // Walker from (4,5), dest (6,5) near blocked sub-cell (7,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(6, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W3-T0A: single-cell object paths around multi-cell obstacle", "[multicell][path]")
@@ -192,30 +184,28 @@ TEST_CASE("W3-T0A: single-cell object paths around multi-cell obstacle", "[multi
     f.seedCellRect(3, 3, 8, 7);
 
     // Multi-cell obstacle at (5,5)+(6,5)
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Single-cell walker
-    Object* walkerObj = new Object("walker", "test");
+    auto walkerObj = std::make_unique<Object>("walker", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
 
-    f.layer->createInstance(walkerObj, ModelCoordinate(3, 5, 0));
+    f.layer->createInstance(walkerObj.get(), ModelCoordinate(3, 5, 0));
     f.layer->update();
 
-    Location start(f.layer);
+    Location start(f.layer.get());
     start.setLayerCoordinates(ModelCoordinate(3, 5, 0));
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(8, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
     CHECK(route->getPathLength() > 0);
 
-    clearLayer(f.layer);
-    delete walkerObj;
-    delete route;
+    clearLayer(f.layer.get());
 }
 
 TEST_CASE("W3-T0A: multi-cell path blocked ahead", "[multicell][path]")
@@ -223,32 +213,30 @@ TEST_CASE("W3-T0A: multi-cell path blocked ahead", "[multicell][path]")
     PathFixture f;
     f.seedCellRect(4, 3, 8, 7);
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Block at (7,5),(7,4),(7,6) — completely block x=7 column
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 5, 0));
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 4, 0));
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(7, 6, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(7, 5, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(7, 4, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(7, 6, 0));
     f.layer->update();
 
     // Walker from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(8, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 // ============================================================
@@ -259,17 +247,16 @@ TEST_CASE("W3-T0B: multi-cell route from same start and end is rejected", "[mult
 {
     PathFixture f;
     f.seedCellRect(5, 5, 5, 5);
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
-    Location loc(f.layer);
+    Location loc(f.layer.get());
     loc.setLayerCoordinates(ModelCoordinate(5, 5, 0));
 
-    Route* route = f.pather.createRoute(loc, loc, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(loc, loc, true));
     CHECK(route != nullptr);
 
-    clearLayer(f.layer);
-    delete route;
+    clearLayer(f.layer.get());
 }
 
 TEST_CASE("W3-T0B: multi-cell rotated before pathfinding", "[multicell][path][edge]")
@@ -278,7 +265,7 @@ TEST_CASE("W3-T0B: multi-cell rotated before pathfinding", "[multicell][path][ed
     f.part1->addMultiPartCoordinate(90, ModelCoordinate(0, 1, 0));
     f.seedCellRect(4, 4, 10, 7);
 
-    Instance* multi = f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    Instance* multi = f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Rotate: sub-instance moves from (6,5) to (5,6)
@@ -286,19 +273,19 @@ TEST_CASE("W3-T0B: multi-cell rotated before pathfinding", "[multicell][path][ed
     f.layer->update();
 
     // Non-blocking walker starts from clean cell (4,5) — not on the multi-cell
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     // Route from (4,5) to (10,5) — the rotated multi-cell occupies (5,5) and (5,6)
     // Cells at y=5 from (4,5) to (10,5) must route around the multi-cell at (5,5)
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(10, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
     CHECK(route->getPathLength() > 0);
@@ -307,8 +294,6 @@ TEST_CASE("W3-T0B: multi-cell rotated before pathfinding", "[multicell][path][ed
     CHECK(!route->isReplanned());
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 // ============================================================
@@ -325,28 +310,26 @@ TEST_CASE("W4-T0A: soft-blocked footprint cells are passable at higher cost", "[
     // Mark the sub-cell offset as soft-blocked (cost 5.0)
     f.multiObj->setFootprintCellCost(0, 1, 5.0);
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Walker from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(12, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
     CHECK(route->getPathLength() > 0);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W4-T0A: hard-blocked footprint cell (infinite cost) blocks movement", "[multicell][path]")
@@ -358,27 +341,25 @@ TEST_CASE("W4-T0A: hard-blocked footprint cell (infinite cost) blocks movement",
 
     f.multiObj->setFootprintCellCost(0, 1, std::numeric_limits<double>::max());
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
     f.layer->update();
 
     // Walker from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(8, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W4-T0A: mixed soft/hard footprint routes around hard cells through soft", "[multicell][path][.]")
@@ -403,32 +384,32 @@ TEST_CASE("W4-T2: replan cost threshold and early-out checks", "[multicell][path
     f.seedCellRect(2, 4, 8, 6);
 
     // Multi-cell obstacle at (5,5) with sub at (6,5)
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
 
     // Walker: non-blocking, starts at clean cell (2,5)
-    Object* walkerObj = new Object("walker", "test");
+    auto walkerObj = std::make_unique<Object>("walker", "test");
     walkerObj->setBlocking(false); // Walker does not block its own start cell
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(2, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(2, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation(); // (2,5) — unblocked cell
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(8, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
 
     // shouldAttemptReplan: blocker at (6,5) not at destination → should retry
     Cell* midCell = f.layer->getCellCache()->getCell(ModelCoordinate(6, 5, 0));
     REQUIRE(midCell != nullptr);
-    CHECK(f.pather.shouldAttemptReplan(route, midCell));
+    CHECK(f.pather.shouldAttemptReplan(route.get(), midCell));
 
     // shouldAttemptReplan: blocker at destination → should not retry
     Cell* endCell = f.layer->getCellCache()->getCell(ModelCoordinate(8, 5, 0));
     REQUIRE(endCell != nullptr);
-    CHECK(!f.pather.shouldAttemptReplan(route, endCell));
+    CHECK(!f.pather.shouldAttemptReplan(route.get(), endCell));
 
     // Cost getters with a valid path
     double const totalCost = route->getTotalCost();
@@ -438,8 +419,6 @@ TEST_CASE("W4-T2: replan cost threshold and early-out checks", "[multicell][path
     CHECK(remaining > 0.0);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W4-T2: replacePathKeepingProgress preserves position", "[multicell][path][.]")
@@ -455,33 +434,31 @@ TEST_CASE("W4-T2: replan not attempted when destination cell is blocked", "[mult
     PathFixture f;
     f.seedCellRect(4, 5, 13, 7);
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
 
     // Block the destination cell (12,5)
-    f.layer->createInstance(f.blockerObj, ModelCoordinate(12, 5, 0));
+    f.layer->createInstance(f.blockerObj.get(), ModelCoordinate(12, 5, 0));
 
     // Walker from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(12, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
 
     // Verify shouldAttemptReplan rejects because destination is blocked
     Cell* blockerCell = f.layer->getCellCache()->getCell(ModelCoordinate(12, 5, 0));
     REQUIRE(blockerCell != nullptr);
-    CHECK(!f.pather.shouldAttemptReplan(route, blockerCell));
+    CHECK(!f.pather.shouldAttemptReplan(route.get(), blockerCell));
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }
 
 TEST_CASE("W4-T2: replan with cost threshold avoids expensive detours", "[multicell][path]")
@@ -489,20 +466,20 @@ TEST_CASE("W4-T2: replan with cost threshold avoids expensive detours", "[multic
     PathFixture f;
     f.seedCellRect(4, 3, 15, 7);
 
-    f.layer->createInstance(f.multiObj, ModelCoordinate(5, 5, 0));
+    f.layer->createInstance(f.multiObj.get(), ModelCoordinate(5, 5, 0));
 
     // Walker from clean cell (4,5)
-    Object* walkerObj = new Object("w", "test");
+    auto walkerObj = std::make_unique<Object>("w", "test");
     walkerObj->setBlocking(false);
     walkerObj->setPather(&f.pather);
-    Instance* walker = f.layer->createInstance(walkerObj, ModelCoordinate(4, 5, 0));
+    Instance* walker = f.layer->createInstance(walkerObj.get(), ModelCoordinate(4, 5, 0));
     f.layer->update();
 
     Location start = walker->getLocation();
-    Location end(f.layer);
+    Location end(f.layer.get());
     end.setLayerCoordinates(ModelCoordinate(12, 5, 0));
 
-    Route* route = f.pather.createRoute(start, end, true);
+    auto route = std::unique_ptr<Route>(f.pather.createRoute(start, end, true));
     REQUIRE(route != nullptr);
     CHECK(route->getRouteStatus() == ROUTE_SOLVED);
     CHECK(route->getPathLength() > 0);
@@ -514,6 +491,4 @@ TEST_CASE("W4-T2: replan with cost threshold avoids expensive detours", "[multic
     CHECK(totalCost > 0.0);
 
     f.layer->deleteInstance(walker);
-    delete walkerObj;
-    delete route;
 }

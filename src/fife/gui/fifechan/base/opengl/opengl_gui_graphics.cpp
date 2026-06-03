@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <format>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -30,10 +31,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
 
         bool shouldLogShowHideBand(int32_t x, int32_t y, [[maybe_unused]] int32_t width, int32_t height)
         {
@@ -71,22 +73,25 @@ namespace FIFE
         int32_t const renderY           = dstY + clip.yOffset;
 
         if (shouldLogShowHideBand(renderX, renderY, width, height)) {
-            FL_LOG(_log, std::format(
-                "OpenGLGuiGraphics::drawImage global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) color=({}, {}, {}, {})",
-                renderX,
-                renderY,
-                width,
-                height,
-                clip.x,
-                clip.y,
-                clip.width,
-                clip.height,
-                clip.xOffset,
-                clip.yOffset,
-                mColor.r,
-                mColor.g,
-                mColor.b,
-                mColor.a));
+            FL_LOG(
+                _log(),
+                std::format(
+                    "OpenGLGuiGraphics::drawImage global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) "
+                    "color=({}, {}, {}, {})",
+                    renderX,
+                    renderY,
+                    width,
+                    height,
+                    clip.x,
+                    clip.y,
+                    clip.width,
+                    clip.height,
+                    clip.xOffset,
+                    clip.yOffset,
+                    mColor.r,
+                    mColor.g,
+                    mColor.b,
+                    mColor.a));
         }
 
         fifeimg->render(Rect(renderX, renderY, width, height));
@@ -110,7 +115,7 @@ namespace FIFE
             break;
         default:
             FL_WARN(
-                _log,
+                _log(),
                 std::format("OpenGLGuiGraphics::drawText() - Unknown alignment: {}", static_cast<int>(alignment)));
             mFont->drawString(this, text, x, y);
         }
@@ -202,22 +207,25 @@ namespace FIFE
         int32_t const renderY          = rectangle.y + top.yOffset;
 
         if (shouldLogShowHideBand(renderX, renderY, rectangle.width, rectangle.height)) {
-            FL_LOG(_log, std::format(
-                "OpenGLGuiGraphics::fillRectangle global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) color=({}, {}, {}, {})",
-                renderX,
-                renderY,
-                rectangle.width,
-                rectangle.height,
-                top.x,
-                top.y,
-                top.width,
-                top.height,
-                top.xOffset,
-                top.yOffset,
-                mColor.r,
-                mColor.g,
-                mColor.b,
-                mColor.a));
+            FL_LOG(
+                _log(),
+                std::format(
+                    "OpenGLGuiGraphics::fillRectangle global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, "
+                    "offY={}) color=({}, {}, {}, {})",
+                    renderX,
+                    renderY,
+                    rectangle.width,
+                    rectangle.height,
+                    top.x,
+                    top.y,
+                    top.width,
+                    top.height,
+                    top.xOffset,
+                    top.yOffset,
+                    mColor.r,
+                    mColor.g,
+                    mColor.b,
+                    mColor.a));
         }
 
         m_renderbackend->fillRectangle(
@@ -277,29 +285,40 @@ namespace FIFE
         if (surface == nullptr) {
             return;
         }
-        FL_WARN(_log, std::format(
-            "drawSurface: dst=({},{}) fmt={:#x} w={} h={} pitch={}",
-            dstX, dstY,
-            static_cast<unsigned>(surface->format),
-            surface->w, surface->h, surface->pitch));
+        FL_WARN(
+            _log(),
+            std::format(
+                "drawSurface: dst=({},{}) fmt={:#x} w={} h={} pitch={}",
+                dstX,
+                dstY,
+                static_cast<unsigned>(surface->format),
+                surface->w,
+                surface->h,
+                surface->pitch));
         if (surface->w > 0 && surface->h > 0) {
-            auto* px = static_cast<uint32_t*>(surface->pixels);
-            FL_WARN(_log, std::format(
-                "  first pixel={:#010x} center pixel={:#010x}",
-                px[0],
-                px[(surface->h/2) * (surface->pitch/4) + (surface->w/2)]));
+            auto const px = std::span(
+                static_cast<uint32_t const *>(surface->pixels), static_cast<size_t>((surface->pitch / 4) * surface->h));
+            FL_WARN(
+                _log(),
+                std::format(
+                    "  first pixel={:#010x} center pixel={:#010x}",
+                    px[0],
+                    px[static_cast<size_t>((surface->h / 2) * (surface->pitch / 4) + (surface->w / 2))]));
         }
         fcn::ClipRectangle const & top = mClipStack.top();
         SDL_Surface* dup               = SDL_DuplicateSurface(surface);
-        Image* image                   = m_renderbackend->createImage(dup);
-        if (image == nullptr) {
+        auto image                     = m_renderbackend->createImage(dup);
+        if (!image) {
             SDL_DestroySurface(dup);
             return;
         }
-        Rect renderRect(dstX + top.xOffset, dstY + top.yOffset, image->getWidth(), image->getHeight());
+        Rect const renderRect(
+            dstX + top.xOffset,
+            dstY + top.yOffset,
+            static_cast<int>(image->getWidth()),
+            static_cast<int>(image->getHeight()));
         image->render(renderRect);
         m_renderbackend->renderVertexArrays();
-        delete image;
     }
 
     void OpenGLGuiGraphics::_beginDraw()

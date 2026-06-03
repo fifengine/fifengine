@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <stack>
 #include <string>
@@ -33,10 +34,11 @@ namespace FIFE
 
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_STRUCTURES);
             return log;
-        }();
+        }
     } // namespace
 
     class CellCacheChangeListener : public LayerChangeListener
@@ -72,9 +74,8 @@ namespace FIFE
 
                         // propagate blocking change to sub-instances before updating cells
                         if (blochange) {
-                            assert(
-                                "multi-cell blocking change must propagate to sub-instances" &&
-                                !instance->getMultiInstances().empty());
+                            auto const & multiInstances = instance->getMultiInstances();
+                            assert(!multiInstances.empty());
                             instance->propagateBlockingToSubInstances();
                             // update cell blocking info for all occupied cells
                             ModelCoordinate const mc =
@@ -100,10 +101,10 @@ namespace FIFE
                             // for the new rotation footprint (so setLocation off-grid check
                             // doesn't reject the move, W5-T4/W6-T4)
                             if (rotchange) {
-                                ModelCoordinate newMc = instance->getLocationRef().getLayerCoordinates();
-                                CellGrid* cgPre       = m_layer->getCellGrid();
+                                ModelCoordinate const newMc = instance->getLocationRef().getLayerCoordinates();
+                                CellGrid* cgPre             = m_layer->getCellGrid();
                                 for (auto* si : instance->getMultiInstances()) {
-                                    std::vector<ModelCoordinate> preCoords = cgPre->toMultiCoordinates(
+                                    std::vector<ModelCoordinate> const preCoords = cgPre->toMultiCoordinates(
                                         newMc, si->getObject()->getMultiPartCoordinates(instance->getRotation()));
                                     for (auto const & pc : preCoords) {
                                         if (m_layer->getCellCache()->getCell(pc) == nullptr) {
@@ -259,17 +260,15 @@ namespace FIFE
                             if (!cache->isInCellCache(loc)) {
                                 cache->resize();
                             }
-                            Cell* cell = cache->getCell(*mcit);
-                            if (cell != nullptr) {
-                                cell->addInstance(*it);
-                            }
+                            Cell* cell = cache->createCell(*mcit);
+                            assert("cell must exist after createCell" && cell != nullptr);
+                            cell->addInstance(*it);
                         }
                     }
                 }
-                Cell* cell = cache->getCell(mc);
-                if (cell != nullptr) {
-                    cell->addInstance(instance);
-                }
+                Cell* cell = cache->createCell(mc);
+                assert("cell must exist after createCell" && cell != nullptr);
+                cell->addInstance(instance);
             }
 
             void onInstanceDelete(Layer* layer, Instance* instance) override
@@ -441,13 +440,13 @@ namespace FIFE
         m_layer(layer),
         m_defaultCostMulti(1.0),
         m_defaultSpeedMulti(1.0),
-        m_cellListener(new CellCacheChangeListener(m_layer)),
+        m_cellListener(std::make_unique<CellCacheChangeListener>(m_layer)),
         m_neighborZ(-1),
         m_blockingUpdate(false),
         m_sizeUpdate(false),
         m_searchNarrow(true),
         m_staticSize(false),
-        m_cellZoneListener(new ZoneCellChangeListener(this))
+        m_cellZoneListener(std::make_unique<ZoneCellChangeListener>(this))
     {
         // set base size
         ModelCoordinate min;
@@ -458,8 +457,8 @@ namespace FIFE
         m_size.x = min.x;
         m_size.y = min.y;
 
-        m_layer->addChangeListener(m_cellListener);
-        m_layer->addChangeListener(m_cellListener);
+        m_layer->addChangeListener(m_cellListener.get());
+        m_layer->addChangeListener(m_cellListener.get());
         std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {
             auto layit = interacts.begin();
@@ -471,7 +470,7 @@ namespace FIFE
                 m_size.x = std::min(min.x, m_size.x);
                 m_size.y = std::min(min.y, m_size.y);
                 // add listener
-                (*layit)->addChangeListener(m_cellListener);
+                (*layit)->addChangeListener(m_cellListener.get());
             }
         }
 
@@ -480,7 +479,7 @@ namespace FIFE
 
         m_cells.resize(m_width);
         for (uint32_t i = 0; i < m_width; ++i) {
-            m_cells[i].resize(m_height, nullptr);
+            m_cells.at(i).resize(m_height);
         }
     }
 
@@ -489,47 +488,27 @@ namespace FIFE
         // reset cache
         reset();
         // remove listener from layers
-        m_layer->removeChangeListener(m_cellListener);
+        m_layer->removeChangeListener(m_cellListener.get());
         std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {
             auto layit = interacts.begin();
             for (; layit != interacts.end(); ++layit) {
-                (*layit)->removeChangeListener(m_cellListener);
+                (*layit)->removeChangeListener(m_cellListener.get());
             }
         }
-        // delete listener
-        delete m_cellListener;
-        delete m_cellZoneListener;
     }
 
     void CellCache::reset()
     {
-        // delete zones
-        if (!m_zones.empty()) {
-            auto it = m_zones.begin();
-            for (; it != m_zones.end(); ++it) {
-                delete *it;
-            }
-            m_zones.clear();
-        }
         // clear all containers
+        m_zones.clear();
         m_costsToCells.clear();
         m_costsTable.clear();
         m_costMultipliers.clear();
         m_speedMultipliers.clear();
         m_narrowCells.clear();
         m_cellAreas.clear();
-        // delete cells
-        if (!m_cells.empty()) {
-            auto it = m_cells.begin();
-            for (; it != m_cells.end(); ++it) {
-                auto cit = (*it).begin();
-                for (; cit != (*it).end(); ++cit) {
-                    delete *cit;
-                }
-            }
-            m_cells.clear();
-        }
+        m_cells.clear();
         // reset default cost and speed
         m_defaultCostMulti  = 1.0;
         m_defaultSpeedMulti = 1.0;
@@ -560,25 +539,23 @@ namespace FIFE
             uint32_t const w = static_cast<uint32_t>(std::abs(newsize.w - newsize.x) + 1);
             uint32_t const h = static_cast<uint32_t>(std::abs(newsize.h - newsize.y) + 1);
 
-            std::vector<std::vector<Cell*>> cells;
+            std::vector<std::vector<std::unique_ptr<Cell>>> cells;
             cells.resize(w);
             for (uint32_t i = 0; i < w; ++i) {
-                cells[i].resize(h, nullptr);
+                cells.at(i).resize(h);
             }
             std::vector<Layer*> const & interacts = m_layer->getInteractLayers();
             for (uint32_t y = 0; y < h; ++y) {
                 for (uint32_t x = 0; x < w; ++x) {
                     // transfer cells
                     ModelCoordinate const mc(newsize.x + static_cast<int32_t>(x), newsize.y + static_cast<int32_t>(y));
-                    Cell* cell          = nullptr;
                     int32_t const old_x = mc.x - m_size.x;
                     int32_t const old_y = mc.y - m_size.y;
                     // out of range in the old size, so we create a new cell
                     if (old_x < 0 || std::cmp_greater_equal(old_x, m_width) || old_y < 0 ||
                         std::cmp_greater_equal(old_y, m_height)) {
                         int32_t const coordId = static_cast<int32_t>(x + (y * w));
-                        cell                  = new Cell(coordId, mc, m_layer);
-                        cells[x][y]           = cell;
+                        auto cell             = std::make_unique<Cell>(coordId, mc, m_layer);
 
                         std::list<Instance*> cell_instances;
                         m_layer->getInstanceTree()->findInstances(mc, 0, 0, cell_instances);
@@ -604,46 +581,36 @@ namespace FIFE
                             // add instances to cell
                             cell->addInstances(cell_instances);
                         }
-                        // transfer ownership
+                        cells.at(x).at(y) = std::move(cell);
                     } else {
-                        cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
-                        m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = nullptr;
-                        cells[x][y]                                                         = cell;
+                        cells.at(x).at(y) =
+                            std::move(m_cells.at(static_cast<uint32_t>(old_x)).at(static_cast<uint32_t>(old_y)));
                         int32_t const coordId = static_cast<int32_t>(x + (y * w));
-                        cell->setCellId(coordId);
-                        cell->resetNeighbors();
-                    }
-                }
-            }
-            // delete old unused cells
-            auto it = m_cells.begin();
-            for (; it != m_cells.end(); ++it) {
-                auto cit = (*it).begin();
-                for (; cit != (*it).end(); ++cit) {
-                    if (*cit != nullptr) {
-                        delete *cit;
-                        *cit = nullptr;
+                        if (cells.at(x).at(y) == nullptr) {
+                            cells.at(x).at(y) = std::make_unique<Cell>(coordId, mc, m_layer);
+                        } else {
+                            cells.at(x).at(y)->setCellId(coordId);
+                            cells.at(x).at(y)->resetNeighbors();
+                        }
                     }
                 }
             }
             // use new values
-            m_cells  = cells;
+            m_cells  = std::move(cells);
             m_size   = newsize;
             m_width  = w;
             m_height = h;
 
             bool const zCheck = m_neighborZ != -1;
             // fill neighbors into cells
-            it = m_cells.begin();
-            for (; it != m_cells.end(); ++it) {
-                auto cit = (*it).begin();
-                for (; cit != (*it).end(); ++cit) {
-                    int32_t const cellZ = (*cit)->getLayerCoordinates().z;
+            for (auto const & row : m_cells) {
+                for (auto const & cellPtr : row) {
+                    int32_t const cellZ = cellPtr->getLayerCoordinates().z;
                     std::vector<ModelCoordinate> coordinates;
-                    m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
-                    for (auto& coordinate : coordinates) {
+                    m_layer->getCellGrid()->getAccessibleCoordinates(cellPtr->getLayerCoordinates(), coordinates);
+                    for (auto const & coordinate : coordinates) {
                         Cell* c = getCell(coordinate);
-                        if (*cit == c || (c == nullptr)) {
+                        if (cellPtr.get() == c || (c == nullptr)) {
                             continue;
                         }
                         if (zCheck) {
@@ -651,12 +618,12 @@ namespace FIFE
                                 continue;
                             }
                         }
-                        (*cit)->addNeighbor(c);
+                        cellPtr->addNeighbor(c);
                     }
                 }
             }
         }
-    }
+    } // CellCache::resize
 
     void CellCache::createCells()
     {
@@ -666,8 +633,9 @@ namespace FIFE
                 ModelCoordinate const mc(m_size.x + static_cast<int32_t>(x), m_size.y + static_cast<int32_t>(y));
                 Cell* cell = getCell(mc);
                 if (cell == nullptr) {
-                    cell          = new Cell(convertCoordToInt(mc), mc, m_layer);
-                    m_cells[x][y] = cell;
+                    auto newCell        = std::make_unique<Cell>(convertCoordToInt(mc), mc, m_layer);
+                    cell                = newCell.get();
+                    m_cells.at(x).at(y) = std::move(newCell);
                 }
                 // fill Instances into Cell
                 std::list<Instance*> cell_instances;
@@ -697,38 +665,34 @@ namespace FIFE
             }
         }
         // fill neighbors into cells
-        auto it = m_cells.begin();
-        for (; it != m_cells.end(); ++it) {
-            auto cit = (*it).begin();
-            for (; cit != (*it).end(); ++cit) {
+        for (auto const & row : m_cells) {
+            for (auto const & cellPtr : row) {
                 uint8_t accessible = 0;
                 bool const selfblocker =
-                    (*cit)->getCellType() == CTYPE_STATIC_BLOCKER || (*cit)->getCellType() == CTYPE_CELL_BLOCKER;
+                    cellPtr->getCellType() == CTYPE_STATIC_BLOCKER || cellPtr->getCellType() == CTYPE_CELL_BLOCKER;
                 std::vector<ModelCoordinate> coordinates;
-                m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
-                for (auto& coordinate : coordinates) {
+                m_layer->getCellGrid()->getAccessibleCoordinates(cellPtr->getLayerCoordinates(), coordinates);
+                for (auto const & coordinate : coordinates) {
                     Cell* c = getCell(coordinate);
-                    if (*cit == c || (c == nullptr)) {
+                    if (cellPtr.get() == c || (c == nullptr)) {
                         continue;
                     }
                     if (!selfblocker && c->getCellType() != CTYPE_STATIC_BLOCKER &&
                         c->getCellType() != CTYPE_CELL_BLOCKER) {
                         ++accessible;
                     }
-                    (*cit)->addNeighbor(c);
+                    cellPtr->addNeighbor(c);
                 }
                 // add cell to narrow cells and add listener for zone change
                 if (m_searchNarrow && !selfblocker && accessible < 3) {
-                    addNarrowCell(*cit);
+                    addNarrowCell(cellPtr.get());
                 }
             }
         }
         // create Zones
-        it = m_cells.begin();
-        for (; it != m_cells.end(); ++it) {
-            auto cit = (*it).begin();
-            for (; cit != (*it).end(); ++cit) {
-                Cell* cell = *cit;
+        for (auto const & row : m_cells) {
+            for (auto const & cellPtr : row) {
+                Cell* cell = cellPtr.get();
                 if ((cell->getZone() != nullptr) || cell->isInserted()) {
                     continue;
                 }
@@ -759,11 +723,9 @@ namespace FIFE
 
     void CellCache::forceUpdate()
     {
-        auto it = m_cells.begin();
-        for (; it != m_cells.end(); ++it) {
-            auto cit = (*it).begin();
-            for (; cit != (*it).end(); ++cit) {
-                (*cit)->updateCellInfo();
+        for (auto const & row : m_cells) {
+            for (auto const & cellPtr : row) {
+                cellPtr->updateCellInfo();
             }
         }
     }
@@ -771,7 +733,8 @@ namespace FIFE
     void CellCache::addCell(Cell* cell)
     {
         ModelCoordinate const mc = cell->getLayerCoordinates();
-        m_cells[static_cast<size_t>(mc.x - m_size.x)][static_cast<size_t>(mc.y - m_size.y)] = cell;
+        m_cells.at(static_cast<size_t>(mc.x - m_size.x)).at(static_cast<size_t>(mc.y - m_size.y)) =
+            std::unique_ptr<Cell>(cell);
     }
 
     Cell* CellCache::createCell(ModelCoordinate const & mc)
@@ -787,8 +750,13 @@ namespace FIFE
                     std::max(m_size.h, mc.y));
                 resize(expanded);
             }
-            cell = new Cell(convertCoordToInt(mc), mc, m_layer);
-            m_cells[static_cast<size_t>(mc.x - m_size.x)][static_cast<size_t>(mc.y - m_size.y)] = cell;
+            cell = getCell(mc);
+            if (cell == nullptr) {
+                auto newCell = std::make_unique<Cell>(convertCoordToInt(mc), mc, m_layer);
+                cell         = newCell.get();
+                m_cells.at(static_cast<size_t>(mc.x - m_size.x)).at(static_cast<size_t>(mc.y - m_size.y)) =
+                    std::move(newCell);
+            }
         }
         assert("createCell must return a valid cell" && cell != nullptr);
         return cell;
@@ -803,12 +771,20 @@ namespace FIFE
             return nullptr;
         }
 
-        return m_cells[static_cast<uint32_t>(x)][static_cast<uint32_t>(y)];
+        return m_cells.at(static_cast<uint32_t>(x)).at(static_cast<uint32_t>(y)).get();
     }
 
-    std::vector<std::vector<Cell*>> const & CellCache::getCells()
+    std::vector<std::vector<Cell*>> CellCache::getCells()
     {
-        return m_cells;
+        std::vector<std::vector<Cell*>> result;
+        result.resize(m_cells.size());
+        for (size_t i = 0; i < m_cells.size(); ++i) {
+            result.at(i).reserve(m_cells.at(i).size());
+            for (auto const & cellPtr : m_cells[i]) {
+                result[i].push_back(cellPtr.get());
+            }
+        }
+        return result;
     }
 
     void CellCache::removeCell(Cell* cell)
@@ -834,7 +810,7 @@ namespace FIFE
     {
         interact->setInteract(true, m_layer->getName());
         m_layer->addInteractLayer(interact);
-        interact->addChangeListener(m_cellListener);
+        interact->addChangeListener(m_cellListener.get());
         Rect const newsize = calculateCurrentSize();
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
             resize();
@@ -895,7 +871,7 @@ namespace FIFE
 
     LayerChangeListener* CellCache::getCellCacheChangeListener()
     {
-        return m_cellListener;
+        return m_cellListener.get();
     }
 
     Layer* CellCache::getLayer()
@@ -1413,7 +1389,7 @@ namespace FIFE
         while (search) {
             bool found = false;
             if (!m_zones.empty()) {
-                if (std::ranges::any_of(m_zones, [id](Zone const * z) {
+                if (std::ranges::any_of(m_zones, [id](auto const & z) {
                         return z->getId() == id;
                     })) {
                     found = true;
@@ -1422,42 +1398,44 @@ namespace FIFE
             }
             search = found;
         }
-        Zone* zi = new Zone(id);
-        m_zones.push_back(zi);
+        auto zi   = std::make_unique<Zone>(id);
+        Zone* raw = zi.get();
+        m_zones.push_back(std::move(zi));
 
-        return zi;
+        return raw;
     }
 
-    std::vector<Zone*> const & CellCache::getZones()
+    std::vector<Zone*> CellCache::getZones()
     {
-        return m_zones;
+        std::vector<Zone*> result;
+        result.reserve(m_zones.size());
+        std::ranges::transform(m_zones, std::back_inserter(result), [](auto const & z) {
+            return z.get();
+        });
+        return result;
     }
 
     Zone* CellCache::getZone(uint32_t id)
     {
-        Zone* zi = nullptr;
-        auto it  = std::ranges::find_if(m_zones, [id](Zone const * z) {
+        auto it = std::ranges::find_if(m_zones, [id](auto const & z) {
             return z->getId() == id;
         });
         if (it != m_zones.end()) {
-            zi = *it;
+            return it->get();
         }
 
-        if (zi == nullptr) {
-            zi = new Zone(id);
-            m_zones.push_back(zi);
-        }
-
-        return zi;
+        auto zi   = std::make_unique<Zone>(id);
+        Zone* raw = zi.get();
+        m_zones.push_back(std::move(zi));
+        return raw;
     }
 
     void CellCache::removeZone(Zone* zone)
     {
-        auto it = std::ranges::find_if(m_zones, [zone](Zone const * z) {
-            return z == zone;
+        auto it = std::ranges::find_if(m_zones, [zone](auto const & z) {
+            return z.get() == zone;
         });
         if (it != m_zones.end()) {
-            delete *it;
             m_zones.erase(it);
         }
     }
@@ -1472,7 +1450,7 @@ namespace FIFE
         Zone* newZone = createZone();
         std::stack<Cell*> cellstack;
         std::vector<Cell*> const & neighbors = cell->getNeighbors();
-        auto it                              = std::ranges::find_if(neighbors, [](Cell* nc) {
+        auto it                              = std::ranges::find_if(neighbors, [](Cell const * nc) {
             return nc->isInserted() && !nc->isZoneProtected() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                    nc->getCellType() != CTYPE_CELL_BLOCKER;
         });
@@ -1523,7 +1501,7 @@ namespace FIFE
     {
         std::pair<std::set<Cell*>::iterator, bool> const insertiter = m_narrowCells.insert(cell);
         if (insertiter.second) {
-            cell->addChangeListener(m_cellZoneListener);
+            cell->addChangeListener(m_cellZoneListener.get());
         }
     }
 
@@ -1536,7 +1514,7 @@ namespace FIFE
     {
         auto it = m_narrowCells.find(cell);
         if (it != m_narrowCells.end()) {
-            (*it)->removeChangeListener(m_cellZoneListener);
+            (*it)->removeChangeListener(m_cellZoneListener.get());
             m_narrowCells.erase(it);
         }
     }
@@ -1545,7 +1523,7 @@ namespace FIFE
     {
         auto it = m_narrowCells.begin();
         for (; it != m_narrowCells.end(); ++it) {
-            (*it)->removeChangeListener(m_cellZoneListener);
+            (*it)->removeChangeListener(m_cellZoneListener.get());
         }
         m_narrowCells.clear();
     }

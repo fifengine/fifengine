@@ -18,7 +18,7 @@ namespace FIFE
 {
     // Key values are accessed via fcn::Key::XXX from the generated enum.
 
-    CommandLine::CommandLine() : m_history_position(0), m_caretVisible(true)
+    CommandLine::CommandLine() : m_history(), m_history_position(0), m_caretVisible(true)
     {
 
         m_blinkTimer.setInterval(500);
@@ -71,7 +71,7 @@ namespace FIFE
                 if (++m_history_position == m_history.size()) {
                     setText(m_cmdline);
                 } else {
-                    setText(m_history[m_history_position]);
+                    setText(m_history.at(m_history_position));
                 }
             }
         } else if (keyType == fcn::Key::UP && !m_history.empty()) {
@@ -80,7 +80,7 @@ namespace FIFE
                     m_cmdline = getText();
                 }
                 --m_history_position;
-                setText(m_history[m_history_position]);
+                setText(m_history.at(m_history_position));
             }
         } else if (keyType == fcn::Key::KEY_RETURN) {
             if (!getText().empty()) {

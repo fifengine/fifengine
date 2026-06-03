@@ -11,6 +11,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <span>
 #include <sstream>
 #include <string>
 
@@ -60,26 +61,28 @@ namespace FIFE
         }
 
         SDL_LockSurface(surface);
-        uint8_t const * src                    = data;
-        uint8_t* dst                           = static_cast<uint8_t*>(surface->pixels);
+        std::span<uint8_t const> const src_span(data, static_cast<size_t>(height) * static_cast<size_t>(width) * 4U);
+        std::span<uint8_t> const dst_span(
+            static_cast<uint8_t*>(surface->pixels),
+            static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
         int const pitch                        = surface->pitch;
         SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
         int const bpp                          = SDL_BYTESPERPIXEL(surface->format);
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
+            size_t const y_base = static_cast<size_t>(y) * static_cast<size_t>(pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
-                uint8_t const r      = src[idx + 0];
-                uint8_t const g      = src[idx + 1];
-                uint8_t const b      = src[idx + 2];
-                uint8_t const a      = src[idx + 3];
+                uint8_t const r      = src_span[idx + 0];
+                uint8_t const g      = src_span[idx + 1];
+                uint8_t const b      = src_span[idx + 2];
+                uint8_t const a      = src_span[idx + 3];
                 uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
-                    std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
+                    std::memcpy(&dst_span[y_base + (static_cast<size_t>(x) * 4U)], &pixel, sizeof(pixel));
                 } else {
                     std::memcpy(
-                        row + (static_cast<size_t>(x) * static_cast<size_t>(bpp)),
+                        &dst_span[y_base + (static_cast<size_t>(x) * static_cast<size_t>(bpp))],
                         &pixel,
                         static_cast<size_t>(std::min(bpp, 4)));
                 }
@@ -104,26 +107,28 @@ namespace FIFE
         }
 
         SDL_LockSurface(surface);
-        uint8_t const * src                    = data;
-        uint8_t* dst                           = static_cast<uint8_t*>(surface->pixels);
+        std::span<uint8_t const> const src_span(data, static_cast<size_t>(height) * static_cast<size_t>(width) * 4U);
+        std::span<uint8_t> const dst_span(
+            static_cast<uint8_t*>(surface->pixels),
+            static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
         int const pitch                        = surface->pitch;
         SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(surface->format);
         int const bpp                          = SDL_BYTESPERPIXEL(surface->format);
 
         for (uint32_t y = 0; y < height; ++y) {
-            uint8_t* row = dst + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
+            size_t const y_base = static_cast<size_t>(y) * static_cast<size_t>(pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
-                uint8_t const r      = src[idx + 0];
-                uint8_t const g      = src[idx + 1];
-                uint8_t const b      = src[idx + 2];
-                uint8_t const a      = src[idx + 3];
+                uint8_t const r      = src_span[idx + 0];
+                uint8_t const g      = src_span[idx + 1];
+                uint8_t const b      = src_span[idx + 2];
+                uint8_t const a      = src_span[idx + 3];
                 uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
-                    std::memcpy(row + (static_cast<size_t>(x) * 4U), &pixel, sizeof(pixel));
+                    std::memcpy(&dst_span[y_base + (static_cast<size_t>(x) * 4U)], &pixel, sizeof(pixel));
                 } else {
                     std::memcpy(
-                        row + (static_cast<size_t>(x) * static_cast<size_t>(bpp)),
+                        &dst_span[y_base + (static_cast<size_t>(x) * static_cast<size_t>(bpp))],
                         &pixel,
                         static_cast<size_t>(std::min(bpp, 4)));
                 }
@@ -230,26 +235,28 @@ namespace FIFE
         SDL_PixelFormatDetails const * const details = SDL_GetPixelFormatDetails(m_surface->format);
         int32_t const bpp                            = SDL_BYTESPERPIXEL(m_surface->format);
 
-        Uint8* const p = [&]() -> Uint8* {
+        std::span<Uint8 const> const pixels_span(
+            static_cast<Uint8 const *>(m_surface->pixels),
+            static_cast<size_t>(m_surface->h) * static_cast<size_t>(m_surface->pitch));
+        Uint8 const * const p = [&]() -> Uint8 const * {
             if (!isSharedImage()) {
                 if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
                     return nullptr;
                 }
-                return static_cast<Uint8*>(m_surface->pixels) +
-                       (static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch)) +
-                       (static_cast<size_t>(x) * static_cast<size_t>(bpp));
-            } else {
-                if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
-                    ((y + m_subimagerect.y) >= m_surface->h)) {
-                    return nullptr;
-                }
-                return static_cast<Uint8*>(m_surface->pixels) +
-                       (static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch)) +
-                       (static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp));
+                return &pixels_span
+                    [static_cast<size_t>(y) * static_cast<size_t>(m_surface->pitch) +
+                     static_cast<size_t>(x) * static_cast<size_t>(bpp)];
             }
+            if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
+                ((y + m_subimagerect.y) >= m_surface->h)) {
+                return nullptr;
+            }
+            return &pixels_span
+                [static_cast<size_t>(y + m_subimagerect.y) * static_cast<size_t>(m_surface->pitch) +
+                 static_cast<size_t>(x + m_subimagerect.x) * static_cast<size_t>(bpp)];
         }();
 
-        if (!p) {
+        if (p == nullptr) {
             (void)r;
             (void)g;
             (void)b;
@@ -269,13 +276,14 @@ namespace FIFE
             pixel = pixel16;
         } break;
 
-        case 3:
+        case 3: {
+            auto const p_span = std::span(p, 3U);
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-                pixel = static_cast<uint32_t>(p[0] << 16 | p[1] << 8 | p[2]);
+                pixel = static_cast<uint32_t>(p_span[0] << 16 | p_span[1] << 8 | p_span[2]);
             } else {
-                pixel = static_cast<uint32_t>(p[0] | p[1] << 8 | p[2] << 16);
+                pixel = static_cast<uint32_t>(p_span[0] | p_span[1] << 8 | p_span[2] << 16);
             }
-            break;
+        } break;
 
         case 4:
             std::memcpy(&pixel, p, sizeof(pixel));
@@ -379,9 +387,12 @@ namespace FIFE
         int32_t const bpp                      = SDL_BYTESPERPIXEL(surface->format);
         SDL_LockSurface(surface);
 
-        Uint8* p = static_cast<Uint8*>(surface->pixels) +
-                   (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
-                   (static_cast<size_t>(x) * static_cast<size_t>(bpp));
+        std::span<Uint8> const pixels_span(
+            static_cast<Uint8*>(surface->pixels),
+            static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
+        Uint8* p = &pixels_span
+                       [static_cast<size_t>(y) * static_cast<size_t>(surface->pitch) +
+                        static_cast<size_t>(x) * static_cast<size_t>(bpp)];
 
         Uint32 const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
         switch (bpp) {
@@ -394,17 +405,18 @@ namespace FIFE
             std::memcpy(p, &pixel16, sizeof(pixel16));
         } break;
 
-        case 3:
+        case 3: {
+            auto p_span = std::span(p, 3U);
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-                p[0] = (pixel >> 16) & 0xff;
-                p[1] = (pixel >> 8) & 0xff;
-                p[2] = pixel & 0xff;
+                p_span[0] = static_cast<uint8_t>((pixel >> 16) & 0xff);
+                p_span[1] = static_cast<uint8_t>((pixel >> 8) & 0xff);
+                p_span[2] = static_cast<uint8_t>(pixel & 0xff);
             } else {
-                p[0] = pixel & 0xff;
-                p[1] = (pixel >> 8) & 0xff;
-                p[2] = (pixel >> 16) & 0xff;
+                p_span[0] = static_cast<uint8_t>(pixel & 0xff);
+                p_span[1] = static_cast<uint8_t>((pixel >> 8) & 0xff);
+                p_span[2] = static_cast<uint8_t>((pixel >> 16) & 0xff);
             }
-            break;
+        } break;
 
         case 4:
             std::memcpy(p, &pixel, sizeof(pixel));

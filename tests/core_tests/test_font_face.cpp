@@ -11,7 +11,7 @@
 #include "video/fonts/fontface.h"
 #include "video/fonts/fonttypes.h"
 #include "video/fonts/imagefontface.h"
-#include "video/fonts/truetypefontface.h"
+#include "video/fonts/truetypefontface.h">
 #include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;
@@ -29,10 +29,10 @@ TEST_CASE("FontFace base class")
 
 TEST_CASE("TrueTypeFontFace from file")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     AssetHandle handle{1};
-    std::string fontPath = "tests/data/FreeMono.ttf";
+    std::string const fontPath = "tests/data/FreeMono.ttf";
     TrueTypeFontFace face(handle, fontPath, 12);
 
     REQUIRE(face.getAssetHandle().id == 1);
@@ -44,7 +44,7 @@ TEST_CASE("TrueTypeFontFace from file")
 
 TEST_CASE("TrueTypeFontFace invalid file throws")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     AssetHandle handle{2};
     REQUIRE_THROWS_AS(TrueTypeFontFace(handle, "nonexistent.ttf", 12), std::exception);
 }
@@ -52,12 +52,12 @@ TEST_CASE("TrueTypeFontFace invalid file throws")
 TEST_CASE("ImageFontFace from PNG")
 {
     AssetHandle handle{3};
-    std::string fontPath = "tests/data/rpgfont.png";
+    std::string const fontPath = "tests/data/rpgfont.png";
 
     std::ifstream f(fontPath.c_str());
     if (f.good()) {
         f.close();
-        std::string glyphs =
+        std::string const glyphs =
             " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
         ImageFontFace face(handle, fontPath, glyphs);
         REQUIRE(face.getAssetHandle().id == 3);
@@ -77,7 +77,7 @@ TEST_CASE("ImageFontFace empty glyph string throws")
 
 TEST_CASE("TrueTypeFontFace supports ASCII range")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     AssetHandle handle{5};
     TrueTypeFontFace face(handle, "tests/data/FreeMono.ttf", 12);
 
@@ -89,7 +89,7 @@ TEST_CASE("TrueTypeFontFace supports ASCII range")
 
 TEST_CASE("TrueTypeFontFace from memory")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
 
     std::ifstream file("tests/data/FreeMono.ttf", std::ios::binary | std::ios::ate);
     REQUIRE(file.is_open());
@@ -100,7 +100,8 @@ TEST_CASE("TrueTypeFontFace from memory")
     file.close();
 
     AssetHandle handle{10};
-    TrueTypeFontFace face(handle, reinterpret_cast<uint8_t const *>(buf.data()), buf.size(), 12, "memory");
+    TrueTypeFontFace face(
+        handle, static_cast<uint8_t const *>(static_cast<void const *>(buf.data())), buf.size(), 12, "memory");
 
     REQUIRE(face.getAssetHandle().id == 10);
     REQUIRE(face.getFont() != nullptr);
@@ -110,7 +111,7 @@ TEST_CASE("TrueTypeFontFace from memory")
 
 TEST_CASE("TrueTypeFontFace invalid point size throws")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     AssetHandle handle{2};
     REQUIRE_THROWS_AS(TrueTypeFontFace(handle, "tests/data/FreeMono.ttf", 0), std::exception);
     REQUIRE_THROWS_AS(TrueTypeFontFace(handle, "tests/data/FreeMono.ttf", -1), std::exception);
@@ -118,7 +119,7 @@ TEST_CASE("TrueTypeFontFace invalid point size throws")
 
 TEST_CASE("TrueTypeFontFace memory constructor null data throws")
 {
-    FontTestFixture fixture;
+    FontTestFixture const fixture;
     AssetHandle handle{3};
     REQUIRE_THROWS_AS(TrueTypeFontFace(handle, nullptr, 0, 12, "null"), std::exception);
 }

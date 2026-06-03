@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cstddef>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -42,10 +43,11 @@ namespace FIFE
         if (isReadable(file)) {
             VFSSource* source = nullptr;
             if (hasSource(file)) {
-                source = m_sources[file];
+                source = m_sources[file].get();
             } else {
-                source          = new ZipSource(getVFS(), file);
-                m_sources[file] = source;
+                auto newSource  = std::make_unique<ZipSource>(getVFS(), file);
+                source          = newSource.get();
+                m_sources[file] = std::move(newSource);
             }
             return source;
         }
@@ -56,7 +58,7 @@ namespace FIFE
     {
         VFSSource* source = nullptr;
         if (hasSource(path)) {
-            source = m_sources.find(path)->second;
+            source = m_sources.find(path)->second.get();
         }
         return source;
     }

@@ -271,7 +271,7 @@ namespace FIFE
     Point RenderBackend::getBezierPoint(std::vector<Point> const & points, int32_t elements, float t)
     {
         if (t < 0.0) {
-            return points[0];
+            return points.at(0);
         }
         if (t >= static_cast<double>(elements)) {
             return points.back();
@@ -304,8 +304,8 @@ namespace FIFE
                     diffn--;
                 }
             }
-            px += static_cast<double>(points[pointIndex].x) * blend;
-            py += static_cast<double>(points[pointIndex].y) * blend;
+            px += static_cast<double>(points.at(pointIndex).x) * blend;
+            py += static_cast<double>(points.at(pointIndex).y) * blend;
         }
 
         return Point(static_cast<int32_t>(px), static_cast<int32_t>(py));
@@ -328,84 +328,79 @@ namespace FIFE
         Point p;
         // straight line
         if (n == 1) {
-            newPoints.push_back(points[0]);
-            p.x = (((2 * points[0].x) + points[1].x) / 3);
-            p.y = (((2 * points[0].y) + points[1].y) / 3);
+            newPoints.push_back(points.at(0));
+            p.x = (((2 * points.at(0).x) + points.at(1).x) / 3);
+            p.y = (((2 * points.at(0).y) + points.at(1).y) / 3);
             newPoints.push_back(p);
-            p.x = (2 * p.x) - points[0].x;
-            p.y = (2 * p.y) - points[0].y;
+            p.x = (2 * p.x) - points.at(0).x;
+            p.y = (2 * p.y) - points.at(0).y;
             newPoints.push_back(p);
-            newPoints.push_back(points[1]);
+            newPoints.push_back(points.at(1));
             return;
         }
 
         // calculate x and y values
-        auto* xrhs = new float[segmentCount];
-        auto* yrhs = new float[segmentCount];
+        std::vector<float> xrhs(segmentCount);
+        std::vector<float> yrhs(segmentCount);
         // first
-        xrhs[0] = static_cast<float>(points[0].x) + static_cast<float>(2 * points[1].x);
-        yrhs[0] = static_cast<float>(points[0].y) + static_cast<float>(2 * points[1].y);
+        xrhs.at(0) = static_cast<float>(points.at(0).x) + static_cast<float>(2 * points.at(1).x);
+        yrhs.at(0) = static_cast<float>(points.at(0).y) + static_cast<float>(2 * points.at(1).y);
         // last
-        xrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].x) + points[segmentCount].x) / 2.0F;
-        yrhs[segmentCount - 1] = static_cast<float>((8 * points[segmentCount - 1].y) + points[segmentCount].y) / 2.0F;
+        xrhs.at(segmentCount - 1) =
+            static_cast<float>((8 * points.at(segmentCount - 1).x) + points.at(segmentCount).x) / 2.0F;
+        yrhs.at(segmentCount - 1) =
+            static_cast<float>((8 * points.at(segmentCount - 1).y) + points.at(segmentCount).y) / 2.0F;
         // rest
         for (size_t i = 1; i + 1 < segmentCount; ++i) {
-            xrhs[i] = static_cast<float>((4 * points[i].x) + (2 * points[i + 1].x));
-            yrhs[i] = static_cast<float>((4 * points[i].y) + (2 * points[i + 1].y));
+            xrhs.at(i) = static_cast<float>((4 * points.at(i).x) + (2 * points.at(i + 1).x));
+            yrhs.at(i) = static_cast<float>((4 * points.at(i).y) + (2 * points.at(i + 1).y));
         }
 
-        auto* x    = new float[segmentCount];
-        auto* y    = new float[segmentCount];
-        auto* xtmp = new float[segmentCount];
-        auto* ytmp = new float[segmentCount];
-        float xb   = 2.0;
-        float yb   = 2.0;
-        x[0]       = xrhs[0] / xb;
-        y[0]       = yrhs[0] / yb;
+        std::vector<float> x(segmentCount);
+        std::vector<float> y(segmentCount);
+        std::vector<float> xtmp(segmentCount);
+        std::vector<float> ytmp(segmentCount);
+        float xb = 2.0;
+        float yb = 2.0;
+        x.at(0)  = xrhs.at(0) / xb;
+        y.at(0)  = yrhs.at(0) / yb;
         // Decomposition and forward substitution.
         for (size_t i = 1; i < segmentCount; ++i) {
-            xtmp[i] = 1.0F / xb;
-            ytmp[i] = 1.0F / yb;
-            xb      = (i + 1 < segmentCount ? 4.0F : 3.5F) - xtmp[i];
-            yb      = (i + 1 < segmentCount ? 4.0F : 3.5F) - ytmp[i];
-            x[i]    = (xrhs[i] - x[i - 1]) / xb;
-            y[i]    = (yrhs[i] - y[i - 1]) / yb;
+            xtmp.at(i) = 1.0F / xb;
+            ytmp.at(i) = 1.0F / yb;
+            xb         = (i + 1 < segmentCount ? 4.0F : 3.5F) - xtmp.at(i);
+            yb         = (i + 1 < segmentCount ? 4.0F : 3.5F) - ytmp.at(i);
+            x.at(i)    = (xrhs.at(i) - x.at(i - 1)) / xb;
+            y.at(i)    = (yrhs.at(i) - y.at(i - 1)) / yb;
         }
         // Backward substitution
         for (size_t i = 1; i < segmentCount; ++i) {
             size_t const backIndex = segmentCount - i;
-            x[backIndex - 1] -= xtmp[backIndex] * x[backIndex];
-            y[backIndex - 1] -= ytmp[backIndex] * y[backIndex];
+            x.at(backIndex - 1) -= xtmp.at(backIndex) * x.at(backIndex);
+            y.at(backIndex - 1) -= ytmp.at(backIndex) * y.at(backIndex);
         }
 
         // start point
-        newPoints.push_back(points[0]);
+        newPoints.push_back(points.at(0));
         for (size_t i = 0; i + 1 < segmentCount; ++i) {
-            p.x = static_cast<int32_t>(x[i]);
-            p.y = static_cast<int32_t>(y[i]);
+            p.x = static_cast<int32_t>(x.at(i));
+            p.y = static_cast<int32_t>(y.at(i));
             newPoints.push_back(p);
-            p.x = static_cast<int32_t>(static_cast<float>(2 * points[i + 1].x) - x[i + 1]);
-            p.y = static_cast<int32_t>(static_cast<float>(2 * points[i + 1].y) - y[i + 1]);
+            p.x = static_cast<int32_t>(static_cast<float>(2 * points.at(i + 1).x) - x.at(i + 1));
+            p.y = static_cast<int32_t>(static_cast<float>(2 * points.at(i + 1).y) - y.at(i + 1));
             newPoints.push_back(p);
 
-            newPoints.push_back(points[i + 1]);
+            newPoints.push_back(points.at(i + 1));
         }
-        p.x = static_cast<int32_t>(x[segmentCount - 1]);
-        p.y = static_cast<int32_t>(y[segmentCount - 1]);
+        p.x = static_cast<int32_t>(x.at(segmentCount - 1));
+        p.y = static_cast<int32_t>(y.at(segmentCount - 1));
         newPoints.push_back(p);
         p.x = static_cast<int32_t>(
-            (static_cast<float>(points[segmentCount].x) + x[segmentCount - 1]) / static_cast<float>(2));
+            (static_cast<float>(points.at(segmentCount).x) + x.at(segmentCount - 1)) / static_cast<float>(2));
         p.y = static_cast<int32_t>(
-            (static_cast<float>(points[segmentCount].y) + y[segmentCount - 1]) / static_cast<float>(2));
+            (static_cast<float>(points.at(segmentCount).y) + y.at(segmentCount - 1)) / static_cast<float>(2));
         newPoints.push_back(p);
         // end point
-        newPoints.push_back(points[segmentCount]);
-
-        delete[] xrhs;
-        delete[] yrhs;
-        delete[] x;
-        delete[] y;
-        delete[] xtmp;
-        delete[] ytmp;
+        newPoints.push_back(points.at(segmentCount));
     }
 } // namespace FIFE

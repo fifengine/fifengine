@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <deque>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -86,13 +87,13 @@ namespace FIFE
 
             Camera* m_camera;
             Layer* m_layer;
-            CacheLayerChangeListener* m_layerObserver;
-            CacheTree* m_tree;
+            std::unique_ptr<CacheLayerChangeListener> m_layerObserver;
+            std::unique_ptr<CacheTree> m_tree;
             ImagePtr m_cacheImage;
 
             std::map<Instance*, int32_t> m_instance_map;
-            std::vector<Entry*> m_entries;
-            std::vector<RenderItem*> m_renderItems;
+            std::vector<std::unique_ptr<Entry>> m_entries;
+            std::vector<std::unique_ptr<RenderItem>> m_renderItems;
             std::set<int32_t> m_entriesToUpdate;
             std::deque<int32_t> m_freeEntries;
 

@@ -26,15 +26,16 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VFS);
             return log;
-        }();
+        }
     } // namespace
 
     VFSDirectory::VFSDirectory(VFS* vfs, std::string root) : VFSSource(vfs), m_root(std::move(root))
     {
-        FL_DBG(_log, std::format("VFSDirectory created with root path {}", m_root));
+        FL_DBG(_log(), std::format("VFSDirectory created with root path {}", m_root));
         if (!m_root.empty() && *(m_root.end() - 1) != '/') {
             m_root.append(1, '/');
         }
@@ -73,7 +74,7 @@ namespace FIFE
         std::string dir = m_root;
 
         // Avoid double slashes
-        if (path[0] == '/' && m_root[m_root.size() - 1] == '/') {
+        if (path.at(0) == '/' && m_root.at(m_root.size() - 1) == '/') {
             dir.append(path.substr(1));
         } else {
             dir.append(path);

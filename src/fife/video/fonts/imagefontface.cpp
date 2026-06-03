@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <span>
 #include <stdexcept>
 #include <string>
 
@@ -24,7 +25,7 @@ namespace FIFE
         }
 
         m_sheet = IMG_Load(filepath.c_str());
-        if (!m_sheet) {
+        if (m_sheet == nullptr) {
             throw std::runtime_error("Failed to load glyph sheet: " + filepath);
         }
 
@@ -35,11 +36,13 @@ namespace FIFE
     ImageFontFace::~ImageFontFace()
     {
         for (auto& [codepoint, info] : m_glyphs) {
-            if (info.surface)
+            if (info.surface != nullptr) {
                 SDL_DestroySurface(info.surface);
+            }
         }
-        if (m_sheet)
+        if (m_sheet != nullptr) {
             SDL_DestroySurface(m_sheet);
+        }
     }
 
     bool ImageFontFace::supports(uint32_t codepoint) const
@@ -67,47 +70,54 @@ namespace FIFE
         SDL_Surface* converted = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA8888);
         assert("Surface conversion failed" && converted != nullptr);
 
-        uint32_t* pixels = static_cast<uint32_t*>(converted->pixels);
-        int width        = converted->w;
-        int pitch_px     = converted->pitch / 4;
+        size_t const width = static_cast<size_t>(converted->w);
+        int const pitch_px = converted->pitch / 4;
+        auto const pixels  = std::span(
+            static_cast<uint32_t const *>(converted->pixels),
+            static_cast<size_t>(pitch_px) * static_cast<size_t>(converted->h));
 
-        uint32_t separator = pixels[0];
+        uint32_t const separator = pixels[0];
 
         size_t x = 0;
-        for (size_t i = 0; i < glyphs.size(); ++i) {
-            uint32_t codepoint = static_cast<unsigned char>(glyphs[i]);
+        for (auto c : glyphs) {
+            uint32_t const codepoint = static_cast<unsigned char>(c);
 
-            while (x < static_cast<size_t>(width) && pixels[x] == separator) {
+            while (x < width && pixels[x] == separator) {
                 ++x;
             }
-            if (x >= static_cast<size_t>(width))
+            if (x >= width) {
                 break;
+            }
 
-            size_t glyphStart = x;
+            size_t const glyphStart = x;
 
-            while (x < static_cast<size_t>(width) && pixels[x] != separator) {
+            while (x < width && pixels[x] != separator) {
                 ++x;
             }
-            size_t glyphEnd = x;
+            size_t const glyphEnd = x;
 
-            int glyphWidth = static_cast<int>(glyphEnd - glyphStart);
+            int const glyphWidth = static_cast<int>(glyphEnd - glyphStart);
 
             SDL_Surface* glyphSub = SDL_CreateSurface(glyphWidth, converted->h, SDL_PIXELFORMAT_RGBA8888);
             assert("Glyph sub-surface creation failed" && glyphSub != nullptr);
 
-            uint32_t const * srcPixels = pixels;
-            uint32_t* dstPixels        = static_cast<uint32_t*>(glyphSub->pixels);
-            int dstPitchPx             = glyphSub->pitch / 4;
+            size_t const dstPitchPx = static_cast<size_t>(glyphSub->pitch) / 4U;
+            auto dstPixels          = std::span(
+                static_cast<uint32_t*>(glyphSub->pixels),
+                static_cast<size_t>(dstPitchPx) * static_cast<size_t>(glyphSub->h));
 
             for (int row = 0; row < converted->h; ++row) {
                 for (int col = 0; col < glyphWidth; ++col) {
-                    dstPixels[row * dstPitchPx + col] = srcPixels[row * pitch_px + glyphStart + col];
+                    dstPixels[static_cast<size_t>(row) * static_cast<size_t>(dstPitchPx) + static_cast<size_t>(col)] =
+                        pixels
+                            [static_cast<size_t>(row) * static_cast<size_t>(pitch_px) +
+                             static_cast<size_t>(glyphStart) + static_cast<size_t>(col)];
                 }
             }
 
-            m_glyphs[codepoint] = {glyphSub, glyphWidth};
+            m_glyphs[codepoint] = GlyphInfo{.surface = glyphSub, .width = glyphWidth};
 
-            while (x < static_cast<size_t>(width) && pixels[x] == separator) {
+            while (x < width && pixels[x] == separator) {
                 ++x;
             }
         }

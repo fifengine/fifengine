@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -109,10 +110,7 @@ namespace FIFE
 
             /** Get the layers on this map.
              */
-            std::list<Layer*> const & getLayers() const
-            {
-                return m_layers;
-            }
+            std::list<Layer*> getLayers() const;
 
             /** Get the layer with the given id.
              */
@@ -235,14 +233,14 @@ namespace FIFE
              */
             TriggerController* getTriggerController() const
             {
-                return m_triggerController;
+                return m_triggerController.get();
             };
 
         private:
             std::string m_name;
             std::string m_filename;
 
-            std::list<Layer*> m_layers;
+            std::list<std::unique_ptr<Layer>> m_layers;
             TimeProvider m_timeProvider;
 
             Map(Map const & map);
@@ -269,7 +267,7 @@ namespace FIFE
             //! holds instances which should be transferred on the next update
             std::map<Instance*, Location> m_transferInstances;
 
-            TriggerController* m_triggerController;
+            std::unique_ptr<TriggerController> m_triggerController;
     };
 
 } // namespace FIFE

@@ -22,26 +22,31 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_HEXGRID);
             return log;
-        }();
+        }
 
-        double const HEX_WIDTH       = 1;
-        double const HEX_TO_EDGE     = HEX_WIDTH / 2;
+        double const HEX_WIDTH   = 1;
+        double const HEX_TO_EDGE = HEX_WIDTH / 2;
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_TO_CORNER = []() -> double const & {
             static double const val = 0.5 / Mathd::Cos(Mathd::pi() / 6);
             return val;
         }();
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_EDGE_HALF = []() -> double const & {
             static double const val = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
             return val;
         }();
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & VERTICAL_MULTIP = []() -> double const & {
             static double const val = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
             return val;
         }();
         double const VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
+        // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_EDGE_GRADIENT = []() -> double const & {
             static double const val = 1 / Mathd::Sqrt(3);
             return val;
@@ -50,12 +55,12 @@ namespace FIFE
 
     HexGrid::HexGrid(bool axial) : m_axial(axial)
     {
-        FL_DBG(_log, "Constructing new HexGrid");
-        FL_DBG(_log, std::format("HEX_WIDTH {}", HEX_WIDTH));
-        FL_DBG(_log, std::format("HEX_TO_EDGE {}", HEX_TO_EDGE));
-        FL_DBG(_log, std::format("HEX_TO_CORNER {}", HEX_TO_CORNER));
-        FL_DBG(_log, std::format("HEX_EDGE_HALF {}", HEX_EDGE_HALF));
-        FL_DBG(_log, std::format("VERTICAL_MULTIP {}", VERTICAL_MULTIP));
+        FL_DBG(_log(), "Constructing new HexGrid");
+        FL_DBG(_log(), std::format("HEX_WIDTH {}", HEX_WIDTH));
+        FL_DBG(_log(), std::format("HEX_TO_EDGE {}", HEX_TO_EDGE));
+        FL_DBG(_log(), std::format("HEX_TO_CORNER {}", HEX_TO_CORNER));
+        FL_DBG(_log(), std::format("HEX_EDGE_HALF {}", HEX_EDGE_HALF));
+        FL_DBG(_log(), std::format("VERTICAL_MULTIP {}", VERTICAL_MULTIP));
     }
 
     CellGrid* HexGrid::clone()
@@ -154,7 +159,7 @@ namespace FIFE
         tranformed_coords.y *= VERTICAL_MULTIP;
         ExactModelCoordinate const result = m_matrix * tranformed_coords;
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "layercoords ({}, {}, {}) converted to map: ({}, {}, {})",
                 layer_coords.x,
@@ -172,7 +177,7 @@ namespace FIFE
         layer_coords.y /= VERTICAL_MULTIP;
         layer_coords.x -= getXZigzagOffset(layer_coords.y);
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "mapcoords ({}, {}, {}) converted to layer: ({}, {}, {})",
                 map_coord.x,
@@ -187,7 +192,7 @@ namespace FIFE
     ModelCoordinate HexGrid::toLayerCoordinates(ExactModelCoordinate const & map_coord)
     {
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "==============\nConverting map coords ({}, {}, {}) to int32_t layer coords...",
                 map_coord.x,
@@ -272,7 +277,7 @@ namespace FIFE
 
     void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, ModelCoordinate const & cell)
     {
-        FL_DBG(_log, std::format("===============\ngetting vertices for ({}, {}, {})", cell.x, cell.y, cell.z));
+        FL_DBG(_log(), std::format("===============\ngetting vertices for ({}, {}, {})", cell.x, cell.y, cell.z));
         vtx.clear();
         auto x             = static_cast<double>(cell.x);
         auto y             = static_cast<double>(cell.y);
@@ -283,7 +288,7 @@ namespace FIFE
             horiz_shift = 0;
             if (cell.y % 2 != 0) {
                 horiz_shift = HEX_TO_EDGE;
-                FL_DBG(_log, "on uneven row");
+                FL_DBG(_log(), "on uneven row");
             }
         }
         double tx = 0.0;
@@ -292,7 +297,7 @@ namespace FIFE
         auto const addPt = [&vtx](double px, double py) {
             vtx.emplace_back(px, py);
         };
-        // FL_DBG(_log, LMsg("Added point ") << px << ", " << py)
+        // FL_DBG(_log(), LMsg("Added point ") << px << ", " << py)
         ty = y - (VERTICAL_MULTIP_INV * HEX_EDGE_HALF);
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
         addPt(tx, ty);

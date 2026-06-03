@@ -24,10 +24,11 @@ namespace FIFE
     namespace
     {
         uint64_t const UNDEFINED_TIME_DELTA = 999999;
-        Logger& _log                        = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_UTIL);
             return log;
-        }();
+        }
     } // namespace
 
     TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0)
@@ -128,7 +129,7 @@ namespace FIFE
 
     void TimeManager::printStatistics() const
     {
-        FL_LOG(_log, std::format("Timers: {}", m_events_list.size()));
+        FL_LOG(_log(), std::format("Timers: {}", m_events_list.size()));
     }
 
 } // namespace FIFE

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -59,7 +60,7 @@ namespace FIFE
              * after you call this function, especialy don't delete it!
              * @param provider the new provider
              */
-            void addProvider(VFSSourceProvider* provider);
+            void addProvider(std::unique_ptr<VFSSourceProvider> provider);
 
             /** tries to create a new VFSSource for the given file
              *
@@ -76,7 +77,7 @@ namespace FIFE
             void addNewSource(std::string const & path);
 
             /** Add a new VFSSource */
-            void addSource(VFSSource* source);
+            void addSource(std::unique_ptr<VFSSource> source);
 
             /** remove a VFSSource */
             void removeSource(VFSSource* source);
@@ -173,10 +174,10 @@ namespace FIFE
             VFSSource* findSourceForFile(std::string const & file) const;
 
         private:
-            using type_providers = std::vector<VFSSourceProvider*>;
+            using type_providers = std::vector<std::unique_ptr<VFSSourceProvider>>;
             type_providers m_providers;
 
-            using type_sources = std::vector<VFSSource*>;
+            using type_sources = std::vector<std::unique_ptr<VFSSource>>;
             type_sources m_sources;
 
             std::set<std::string> filterList(std::set<std::string> const & list, std::string const & fregex) const;

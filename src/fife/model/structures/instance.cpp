@@ -39,7 +39,7 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
             static Logger log(LM_INSTANCE);
             return log;
         }();
@@ -183,7 +183,8 @@ namespace FIFE
                 ++i;
             }
             // Really remove "removed" listeners.
-            m_changeListeners.erase(std::ranges::remove(m_changeListeners, nullptr).begin(), m_changeListeners.end());
+            auto [first, last] = std::ranges::remove(m_changeListeners, nullptr);
+            m_changeListeners.erase(first, last);
         }
     }
 
@@ -349,7 +350,6 @@ namespace FIFE
                 CellGrid const * grid = loc.getLayer()->getCellGrid();
                 CellCache* cache      = loc.getLayer()->getCellCache();
                 if (grid != nullptr && cache != nullptr) {
-                    std::vector<ModelCoordinate> fpOffsets;
                     auto const & parts = m_object->getMultiParts();
                     for (auto* part : parts) {
                         if (part == m_object) {
@@ -904,7 +904,8 @@ namespace FIFE
             return ICHANGE_NO_CHANGES;
         }
         // remove DeleteListeners
-        m_deleteListeners.erase(std::ranges::remove(m_deleteListeners, nullptr).begin(), m_deleteListeners.end());
+        auto [first, last] = std::ranges::remove(m_deleteListeners, nullptr);
+        m_deleteListeners.erase(first, last);
 
         if (m_activity->m_timeProvider == nullptr) {
             bindTimeProvider();
@@ -994,8 +995,8 @@ namespace FIFE
             }
             ++i;
         }
-        m_activity->m_actionListeners.erase(
-            std::ranges::remove(m_activity->m_actionListeners, nullptr).begin(), m_activity->m_actionListeners.end());
+        auto [first, last] = std::ranges::remove(m_activity->m_actionListeners, nullptr);
+        m_activity->m_actionListeners.erase(first, last);
     }
 
     void Instance::cancelAction()
@@ -1028,8 +1029,8 @@ namespace FIFE
             }
             ++i;
         }
-        m_activity->m_actionListeners.erase(
-            std::ranges::remove(m_activity->m_actionListeners, nullptr).begin(), m_activity->m_actionListeners.end());
+        auto [first, last] = std::ranges::remove(m_activity->m_actionListeners, nullptr);
+        m_activity->m_actionListeners.erase(first, last);
     }
 
     Action* Instance::getCurrentAction() const

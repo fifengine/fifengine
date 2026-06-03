@@ -32,10 +32,11 @@ namespace FIFE
      */
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_VIDEO);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -121,8 +122,10 @@ namespace FIFE
 
         int displayCount        = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID displayId =
-            (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
+        SDL_DisplayID const displayId =
+            (std::cmp_less(displayIndex, displayCount)) ?
+                displays[displayIndex] :
+                SDL_GetPrimaryDisplay(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
         uint16_t createHeight       = height;
@@ -229,12 +232,12 @@ namespace FIFE
         }
 
         FL_LOG(
-            _log,
+            _log(),
             std::format(
                 "RenderBackendSDLVideomode {}x{} at {} bpp with {} Hz",
                 width,
                 height,
-                int32_t(bitsPerPixel),
+                static_cast<int32_t>(bitsPerPixel),
                 displayMode.refresh_rate));
 
         // this is needed, otherwise we would have screen pixel formats which will not work with
@@ -260,51 +263,51 @@ namespace FIFE
         RenderBackend::endFrame();
     }
 
-    Image* RenderBackendSDL::createImage(IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendSDL::createImage(IResourceLoader* loader)
     {
-        return new SDLImage(loader);
+        return std::make_unique<SDLImage>(loader);
     }
 
-    Image* RenderBackendSDL::createImage(std::string const & name, IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendSDL::createImage(std::string const & name, IResourceLoader* loader)
     {
-        return new SDLImage(name, loader);
+        return std::make_unique<SDLImage>(name, loader);
     }
 
-    Image* RenderBackendSDL::createImage(SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendSDL::createImage(SDL_Surface* surface)
     {
         if (surface->format == m_rgba_format.format) {
-            return new SDLImage(surface);
+            return std::make_unique<SDLImage>(surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
-        auto* image       = new SDLImage(conv);
+        auto image        = std::make_unique<SDLImage>(conv);
 
         SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendSDL::createImage(std::string const & name, SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendSDL::createImage(std::string const & name, SDL_Surface* surface)
     {
         if (surface->format == m_rgba_format.format) {
-            return new SDLImage(name, surface);
+            return std::make_unique<SDLImage>(name, surface);
         }
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
-        auto* image       = new SDLImage(name, conv);
+        auto image        = std::make_unique<SDLImage>(name, conv);
 
         SDL_DestroySurface(surface);
         return image;
     }
 
-    Image* RenderBackendSDL::createImage(uint8_t const * data, uint32_t width, uint32_t height)
+    std::unique_ptr<Image> RenderBackendSDL::createImage(uint8_t const * data, uint32_t width, uint32_t height)
     {
-        return new SDLImage(data, width, height);
+        return std::make_unique<SDLImage>(data, width, height);
     }
 
-    Image* RenderBackendSDL::createImage(
+    std::unique_ptr<Image> RenderBackendSDL::createImage(
         std::string const & name, uint8_t const * data, uint32_t width, uint32_t height)
     {
-        return new SDLImage(name, data, width, height);
+        return std::make_unique<SDLImage>(name, data, width, height);
     }
 
     void RenderBackendSDL::setLightingModel(uint32_t lighting)
@@ -411,7 +414,7 @@ namespace FIFE
         float const cornerX = halfW * Mathf::Cos(angle);
         float const cornerY = halfW * Mathf::Sin(angle);
         int32_t yMax        = p1.y;
-        int32_t yMin        = p1.y;
+        int32_t yMin        = yMax;
 
         std::vector<Point> points;
         Point p(
@@ -443,21 +446,21 @@ namespace FIFE
             std::vector<int32_t> xs;
             std::size_t j = n - 1;
             for (std::size_t i = 0; i < n; j = i++) {
-                if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
+                if ((points.at(i).y < y && y <= points.at(j).y) || (points.at(j).y < y && y <= points.at(i).y)) {
                     auto x = static_cast<int32_t>(
-                        static_cast<float>(points[i].x) +
-                        (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
-                         static_cast<float>(points[j].x - points[i].x)));
+                        static_cast<float>(points.at(i).x) +
+                        (static_cast<float>(y - points.at(i).y) / static_cast<float>(points.at(j).y - points.at(i).y) *
+                         static_cast<float>(points.at(j).x - points.at(i).x)));
                     xs.push_back(x);
-                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs[k - 1] > xs[k]; --k) {
-                        std::swap(xs[k - 1], xs[k]);
+                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs.at(k - 1) > xs.at(k); --k) {
+                        std::swap(xs.at(k - 1), xs.at(k));
                     }
                 }
             }
 
             for (std::size_t i = 0; i < xs.size(); i += 2) {
-                int32_t x1       = xs[i];
-                int32_t const x2 = xs[i + 1];
+                int32_t x1       = xs.at(i);
+                int32_t const x2 = xs.at(i + 1);
                 // vertical line
                 while (x1 <= x2) {
                     putPixel(x1, y, r, g, b, a);
@@ -703,7 +706,7 @@ namespace FIFE
         std::vector<Point> points;
         points.push_back(p);
         int32_t yMax = p.y;
-        int32_t yMin = p.y;
+        int32_t yMin = yMax;
         float angle  = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step) {
             Point const newPoint(
@@ -729,21 +732,21 @@ namespace FIFE
             std::vector<int32_t> xs;
             std::size_t j = n - 1;
             for (std::size_t i = 0; i < n; j = i++) {
-                if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
+                if ((points.at(i).y < y && y <= points.at(j).y) || (points.at(j).y < y && y <= points.at(i).y)) {
                     auto x = static_cast<int32_t>(
-                        static_cast<float>(points[i].x) +
-                        (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
-                         static_cast<float>(points[j].x - points[i].x)));
+                        static_cast<float>(points.at(i).x) +
+                        (static_cast<float>(y - points.at(i).y) / static_cast<float>(points.at(j).y - points.at(i).y) *
+                         static_cast<float>(points.at(j).x - points.at(i).x)));
                     xs.push_back(x);
-                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs[k - 1] > xs[k]; --k) {
-                        std::swap(xs[k - 1], xs[k]);
+                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs.at(k - 1) > xs.at(k); --k) {
+                        std::swap(xs.at(k - 1), xs.at(k));
                     }
                 }
             }
 
             for (std::size_t i = 0; i < xs.size(); i += 2) {
-                int32_t x1       = xs[i];
-                int32_t const x2 = xs[i + 1];
+                int32_t x1       = xs.at(i);
+                int32_t const x2 = xs.at(i + 1);
                 // vertical line
                 while (x1 <= x2) {
                     putPixel(x1, y, r, g, b, a);
@@ -836,34 +839,27 @@ namespace FIFE
             uint32_t* src_help_pointer = src_pointer;
             auto* dst_pointer          = static_cast<uint32_t*>(dst->pixels);
 
-            int32_t x      = 0;
-            int32_t y      = 0;
-            int32_t* sx_ca = nullptr;
-            int32_t* sy_ca = nullptr;
-            auto sx        = static_cast<int32_t>(0xffff * src->w / dst->w);
-            auto sy        = static_cast<int32_t>(0xffff * src->h / dst->h);
-            int32_t sx_c   = 0;
-            int32_t sy_c   = 0;
+            int32_t x    = 0;
+            int32_t y    = 0;
+            auto sx      = static_cast<int32_t>(0xffff * src->w / dst->w);
+            auto sy      = static_cast<int32_t>(0xffff * src->h / dst->h);
+            int32_t sx_c = 0;
+            int32_t sy_c = 0;
 
             // Allocates memory and calculates row wide&height
-            auto* sx_a = new int32_t[static_cast<size_t>(dst->w) + 1];
-            sx_ca      = sx_a;
+            std::vector<int32_t> sx_a(static_cast<size_t>(dst->w) + 1);
             for (x = 0; x <= dst->w; x++) {
-                *sx_ca = sx_c;
-                sx_ca++;
+                sx_a.at(static_cast<size_t>(x)) = sx_c;
                 sx_c &= 0xffff;
                 sx_c += sx;
             }
 
-            auto* sy_a = new int32_t[static_cast<size_t>(dst->h) + 1];
-            sy_ca      = sy_a;
+            std::vector<int32_t> sy_a(static_cast<size_t>(dst->h) + 1);
             for (y = 0; y <= dst->h; y++) {
-                *sy_ca = sy_c;
-                sy_ca++;
+                sy_a.at(static_cast<size_t>(y)) = sy_c;
                 sy_c &= 0xffff;
                 sy_c += sy;
             }
-            sy_ca = sy_a;
 
             // Transfers the image data
 
@@ -877,17 +873,18 @@ namespace FIFE
 
             for (y = 0; y < dst->h; y++) {
                 src_pointer = src_help_pointer;
-                sx_ca       = sx_a;
                 for (x = 0; x < dst->w; x++) {
                     *dst_pointer = *src_pointer;
-                    sx_ca++;
-                    src_pointer += (*sx_ca >> 16);
-                    dst_pointer++;
+                    src_pointer +=
+                        (sx_a.at(static_cast<size_t>(x) + 1U) >>
+                         16);      // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                    ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                 }
-                sy_ca++;
+                size_t const syIdx        = static_cast<size_t>(y) + 1U;
                 auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
-                size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-                src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
+                size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
+                src_help_pointer          = reinterpret_cast<uint32_t*>(
+                    srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             }
 
             if (SDL_MUSTLOCK(dst)) {
@@ -902,8 +899,6 @@ namespace FIFE
             // Free memory
             SDL_DestroySurface(src);
             SDL_DestroySurface(dst);
-            delete[] sx_a;
-            delete[] sy_a;
         }
     }
 

@@ -29,10 +29,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& {
+        Logger& _log()
+        {
             static Logger log(LM_AUDIO);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -207,7 +208,7 @@ namespace FIFE
             alSourceQueueBuffers(m_source, 1, &buffer);
         }
 
-        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error while streaming")
+        CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error while streaming")
     }
 
     uint32_t SoundEmitter::getId() const
@@ -374,7 +375,7 @@ namespace FIFE
             alSourcei(m_source, AL_LOOPING, AL_FALSE);
         }
 
-        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error attaching sound clip")
+        CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error attaching sound clip")
     }
 
     void SoundEmitter::detachSoundClip()
@@ -389,7 +390,7 @@ namespace FIFE
         if (isActive()) {
             // detach all buffers
             alSourcei(m_source, AL_BUFFER, AL_NONE);
-            CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error detaching sound clip");
+            CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error detaching sound clip");
         }
         if (m_soundClip->isStream()) {
             m_soundClip->quitStreaming(m_streamId);
@@ -629,7 +630,7 @@ namespace FIFE
                 break;
             }
 
-            CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting cursor position")
+            CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error setting cursor position")
         } else {
             switch (type) {
             case SD_BYTE_POS:
@@ -660,7 +661,7 @@ namespace FIFE
                 alSourcePlay(m_source);
             }
 
-            CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting stream cursor position")
+            CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error setting stream cursor position")
         }
     }
 
@@ -698,7 +699,7 @@ namespace FIFE
             }
         }
 
-        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error getting cursor")
+        CHECK_OPENAL_LOG(_log(), LogManager::LEVEL_ERROR, "error getting cursor")
 
         return pos;
     }
@@ -972,7 +973,7 @@ namespace FIFE
     uint8_t SoundEmitter::getEffectNumber(SoundEffect const * effect)
     {
         uint8_t number = 0;
-        for (auto& m_effect : m_effects) {
+        for (SoundEffect const * m_effect : m_effects) {
             if (effect == m_effect) {
                 break;
             }
@@ -1038,7 +1039,7 @@ namespace FIFE
             ++i;
         }
 
-        FL_WARN(_log, "Cannot remove unknown listener");
+        FL_WARN(_log(), "Cannot remove unknown listener");
     }
 
     void SoundEmitter::callOnSoundFinished()
@@ -1049,6 +1050,7 @@ namespace FIFE
                 (*i)->onSoundFinished(m_emitterId, m_soundClipId);
             }
         }
-        m_listeners.erase(std::ranges::remove(m_listeners, nullptr).begin(), m_listeners.end());
+        auto [first, last] = std::ranges::remove(m_listeners, nullptr);
+        m_listeners.erase(first, last);
     }
 } // namespace FIFE

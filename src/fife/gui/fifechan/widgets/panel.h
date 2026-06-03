@@ -52,20 +52,13 @@ namespace fcn
 
             // Inherited from ResizableWindow
 
-            void resizeToContent(bool recursiv = true) override;
             void expandContent(bool recursiv = true) override;
 
             // Inherited from ResizableWindow / MouseListener
 
-            void mouseEntered(MouseEvent& mouseEvent) override;
-
-            void mouseExited(MouseEvent& mouseEvent) override;
-
             void mousePressed(MouseEvent& mouseEvent) override;
 
             void mouseReleased(MouseEvent& mouseEvent) override;
-
-            void mouseMoved(MouseEvent& mouseEvent) override;
 
             void mouseDragged(MouseEvent& mouseEvent) override;
 
