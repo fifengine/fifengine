@@ -17,6 +17,7 @@ cmake -S "$SCRIPT_DIR" \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
       -DVCPKG_TARGET_TRIPLET=x64-linux \
+      -DVCPKG_MANIFEST_INSTALL=ON \
       -DVCPKG_INSTALLED_DIR="$VCPKG_DIR" \
       -DCMAKE_PREFIX_PATH="$VCPKG_DIR"
 
