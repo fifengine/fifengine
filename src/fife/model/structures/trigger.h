@@ -79,6 +79,9 @@ namespace FIFE
              * Triggers should always be given a name.
              * The maps trigger controller should guarantee the uniqueness of the name.
              */
+            Trigger(Trigger const &)            = delete;
+            Trigger& operator=(Trigger const &) = delete;
+
             Trigger();
 
             /** Constructor with name
@@ -91,7 +94,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~Trigger();
+            virtual ~Trigger() override;
 
             /** Add a listener to the trigger.
              *
@@ -111,7 +114,7 @@ namespace FIFE
              * This listener will no longer get called.  The Trigger does
              * NOT free the listener so you must be sure to do this.
              */
-            void removeTriggerListener(ITriggerListener* listener);
+            void removeTriggerListener(ITriggerListener const * listener);
 
             /** Reset trigger
              *

@@ -48,7 +48,7 @@ namespace FIFE
 
             /** Gets the string, encoded as UTF-8.
              */
-            std::string getAsString() const
+            std::string const & getAsString() const
             {
                 return m_text;
             }

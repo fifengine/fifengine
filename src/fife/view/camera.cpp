@@ -88,14 +88,6 @@ namespace FIFE
 
         m_position(ExactModelCoordinate(0, 0, 0)),
 
-        m_matrix(),
-        m_inverse_matrix(),
-
-        m_vs_matrix(),
-        m_vs_inverse_matrix(),
-        m_vscreen_2_screen(),
-        m_screen_2_vscreen(),
-
         m_tilt(0),
         m_rotation(0),
         m_zoom(1),
@@ -402,7 +394,7 @@ namespace FIFE
         m_curOrigin = toScreenCoordinates(m_position);
     }
 
-    ExactModelCoordinate Camera::getPosition() const
+    ExactModelCoordinate const & Camera::getPosition() const
     {
         return m_position;
     }

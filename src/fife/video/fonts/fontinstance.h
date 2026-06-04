@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#pragma once
+#ifndef FIFE_VIDEO_FONTS_FONTINSTANCE_H
+#define FIFE_VIDEO_FONTS_FONTINSTANCE_H
 
 #include <memory>
 #include <string>
@@ -93,3 +94,5 @@ namespace FIFE
     };
 
 } // namespace FIFE
+
+#endif

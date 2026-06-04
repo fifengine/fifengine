@@ -31,15 +31,15 @@ namespace FIFE
             explicit SDLImage(uint8_t const * data, uint32_t width, uint32_t height);
             SDLImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height);
 
-            virtual ~SDLImage();
-            virtual void invalidate();
-            virtual void setSurface(SDL_Surface* surface);
-            virtual void render(Rect const & rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr);
-            virtual size_t getSize();
-            virtual void useSharedImage(ImagePtr const & shared, Rect const & region);
-            virtual void forceLoadInternal();
-            virtual void load();
-            virtual void free();
+            virtual ~SDLImage() override;
+            virtual void invalidate() override;
+            virtual void setSurface(SDL_Surface* surface) override;
+            virtual void render(Rect const & rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr) override;
+            virtual size_t getSize() override;
+            virtual void useSharedImage(ImagePtr const & shared, Rect const & region) override;
+            virtual void forceLoadInternal() override;
+            virtual void load() override;
+            virtual void free() override;
 
             SDL_Texture* getTexture();
             void setTexture(SDL_Texture* texture);

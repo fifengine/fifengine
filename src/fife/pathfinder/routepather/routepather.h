@@ -43,7 +43,7 @@ namespace FIFE
             RoutePather(RoutePather const &)            = delete;
             RoutePather& operator=(RoutePather const &) = delete;
 
-            ~RoutePather();
+            ~RoutePather() override;
 
             /** Creates a route between the start and end location that needs be solved.
              *
@@ -55,7 +55,10 @@ namespace FIFE
              * then this cost id is used instead of the default cost.
              */
             Route* createRoute(
-                Location const & start, Location const & end, bool immediate = false, std::string const & costId = "");
+                Location const & start,
+                Location const & end,
+                bool immediate             = false,
+                std::string const & costId = "") override;
 
             /** Solves the route to create a path.
              *
@@ -66,7 +69,7 @@ namespace FIFE
              * immediately, otherwise false.
              * @return A boolean, if true the route could be solved, otherwise false.
              */
-            bool solveRoute(Route* route, int32_t priority = MEDIUM_PRIORITY, bool immediate = false);
+            bool solveRoute(Route* route, int32_t priority = MEDIUM_PRIORITY, bool immediate = false) override;
 
             /** Follows the path of the route.
              *
@@ -76,7 +79,7 @@ namespace FIFE
              * @param nextLocation A reference to the next location returned by the pather.
              * @return A boolean, if true the route could be followed, otherwise false.
              */
-            bool followRoute(Location const & current, Route* route, double speed, Location& nextLocation);
+            bool followRoute(Location const & current, Route* route, double speed, Location& nextLocation) override;
 
             /** Updates the route pather.
              *
@@ -85,7 +88,7 @@ namespace FIFE
              * continues updating the next session until it runs out of time.
              * @see setMaxTicks()
              */
-            void update();
+            void update() override;
 
             /** Cancels a session.
              *
@@ -95,22 +98,22 @@ namespace FIFE
              * @param sessionId The id of the session to cancel.
              * @return True if the session could be canceled false otherwise.
              */
-            bool cancelSession(int32_t sessionId);
+            bool cancelSession(int32_t sessionId) override;
 
             /** Sets maximal ticks (update steps) to solve routes. @see update()
              * @param ticks A integer which holds the steps. default is 1000
              */
-            void setMaxTicks(int32_t ticks);
+            void setMaxTicks(int32_t ticks) override;
 
             /** Returns maximal ticks (update steps) to solve routes. @see update()
              * @return A integer which holds the steps. default is 1000
              */
-            int32_t getMaxTicks();
+            int32_t getMaxTicks() override;
 
             /** Returns name of the pathfinder.
              * @return A string that contains the name of the pathfinder.
              */
-            std::string getName() const;
+            std::string getName() const override;
 
             /** Attempts to replan a route when a blocker is detected mid-follow.
              *  Compares alternative path cost to original; only accepts if within threshold.

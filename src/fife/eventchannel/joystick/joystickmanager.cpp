@@ -72,6 +72,7 @@ namespace FIFE
         for (int32_t i = 0; i < count; ++i) {
             addJoystick(i);
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
         SDL_free(joysticks);
         // enable joystick and gamecontroller events
         SDL_SetJoystickEventsEnabled(true);
@@ -182,6 +183,7 @@ namespace FIFE
         }
 
         std::string stringMapping(mapping);
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
         SDL_free(mapping);
         // add missing platform if needed
         if (stringMapping.find_last_of(',') != stringMapping.length() - 1) {

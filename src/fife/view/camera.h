@@ -204,7 +204,7 @@ namespace FIFE
             /** Gets map point of the camera
              * @return The camera position on the map
              */
-            ExactModelCoordinate getPosition() const;
+            ExactModelCoordinate const & getPosition() const;
 
             /** Gets screen point of the camera
              * @return camera screen point

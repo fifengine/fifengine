@@ -30,7 +30,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~DropEvent() = default;
+            virtual ~DropEvent() override = default;
 
             /** Gets the path for the file that is droped.
              */
@@ -46,61 +46,12 @@ namespace FIFE
                 m_path = path;
             }
 
-            /** Marks events as consumed.
-             */
-            virtual void consume()
-            {
-                InputEvent::consume();
-            }
-
-            /** Checks whether event is consumed.
-             */
-            virtual bool isConsumed() const
-            {
-                return InputEvent::isConsumed();
-            }
-
-            /** Marks events as consumed by widget library.
-             */
-            virtual void consumedByWidgets()
-            {
-                InputEvent::consumedByWidgets();
-            }
-
-            /** Checks whether event is consumed by widget library.
-             */
-            virtual bool isConsumedByWidgets() const
-            {
-                return InputEvent::isConsumedByWidgets();
-            }
-
-            /** Gets the source of the event.
-             */
-            virtual IEventSource* getSource() const
-            {
-                return InputEvent::getSource();
-            }
-
-            /** Sets the source of the event.
-             */
-            virtual void setSource(IEventSource* source)
-            {
-                InputEvent::setSource(source);
-            }
-
             /** Gets the name of the event.
              */
-            virtual std::string const & getName() const
+            virtual std::string const & getName() const override
             {
                 static std::string const eventName("DropEvent");
                 return eventName;
-            }
-
-            /** Gets the debugstring of the event.
-             */
-            virtual std::string getDebugString() const
-            {
-                return InputEvent::getDebugString();
             }
 
         private:

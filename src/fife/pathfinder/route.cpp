@@ -5,6 +5,7 @@
 #include "route.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
 #include <iterator>
 #include <limits>
@@ -333,7 +334,7 @@ namespace FIFE
             }
             // For multi-cell, also check if any footprint cells at each path position are blocked
             if (m_object != nullptr && m_object->isMultiObject()) {
-                for (auto& it : m_path) {
+                for (auto const & it : m_path) {
                     Layer* layer = it.getLayer();
                     if (layer == nullptr) {
                         continue;
@@ -347,13 +348,9 @@ namespace FIFE
                     for (auto const & fc : footprint) {
                         if (layer->cellContainsBlockingInstance(fc)) {
                             // Check if this blocker is part of the multi-cell's own path cells
-                            bool isSelf = false;
-                            for (auto& pathCell : m_path) {
-                                if (pathCell.getLayerCoordinates() == fc && pathCell.getLayer() == layer) {
-                                    isSelf = true;
-                                    break;
-                                }
-                            }
+                            bool const isSelf = std::any_of(m_path.begin(), m_path.end(), [&](auto const & pathCell) {
+                                return pathCell.getLayerCoordinates() == fc && pathCell.getLayer() == layer;
+                            });
                             if (!isSelf) {
                                 p.push_back(it);
                                 break;

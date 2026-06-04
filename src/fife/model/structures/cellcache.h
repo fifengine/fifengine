@@ -108,7 +108,7 @@ namespace FIFE
 
             /** Destructor
              */
-            ~CellCache();
+            ~CellCache() override;
 
             /** Resets the CellCache
              */
@@ -320,7 +320,7 @@ namespace FIFE
             /** Removes a cell from costs.
              * @param cell A pointer to the cell.
              */
-            void removeCellFromCost(Cell* cell);
+            void removeCellFromCost(Cell const * cell);
 
             /** Removes a cell from a cost identifier.
              * @param costId A const reference to the cost identifier.
@@ -344,7 +344,7 @@ namespace FIFE
              * @param cell A pointer to the cell.
              * @return A vector which contains the cost ids.
              */
-            std::vector<std::string> getCellCosts(Cell* cell);
+            std::vector<std::string> getCellCosts(Cell const * cell);
 
             /** Gets if cell is assigned to cost identifier.
              * @param costId A const reference to the cost identifier.
@@ -450,14 +450,14 @@ namespace FIFE
             /** Removes a cell as transition.
              * @param cell A pointer to transition cell.
              */
-            void removeTransition(Cell* cell);
+            void removeTransition(Cell const * cell);
 
             /** Returns transistion cells of this CellCache.
              * @param layer A pointer to the layer which should be the target of the transition. If NULL all
              * transistions be returned.
              * @return A vector which contains the transition cells.
              */
-            std::vector<Cell*> getTransitionCells(Layer* layer = nullptr);
+            std::vector<Cell*> getTransitionCells(Layer const * layer = nullptr);
 
             /** Returns zones of this CellCache.
              * @return A vector which contains the zones.
@@ -539,7 +539,7 @@ namespace FIFE
             /** Removes the cell from all areas.
              * @param cell A pointer to the cell which should be removed.
              */
-            void removeCellFromArea(Cell* cell);
+            void removeCellFromArea(Cell const * cell);
 
             /** Removes the cell from a area.
              * @param id A const reference to string that contains the area id.
@@ -573,7 +573,7 @@ namespace FIFE
              * @param cell A pointer to the cell.
              * @return A vector that contains the area ids.
              */
-            std::vector<std::string> getCellAreas(Cell* cell);
+            std::vector<std::string> getCellAreas(Cell const * cell);
 
             /** Returns all cells of an area.
              * @param id A const reference to string that contains the area id.

@@ -65,7 +65,7 @@ namespace FIFE
             /**
              * Destructor
              */
-            ~Route();
+            ~Route() override;
 
             /** Sets route status.
              * @param status The seach status that should be set.

@@ -8,13 +8,15 @@
 #include <string>
 #include <vector>
 
+// 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
+
 // FIFE includes
 #include "fixture.h"
 #include "video/fonts/fontface.h"
 #include "video/fonts/fonttypes.h"
 #include "video/fonts/imagefontface.h"
 #include "video/fonts/truetypefontface.h"
-#include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;
 using FIFE::FontFace;

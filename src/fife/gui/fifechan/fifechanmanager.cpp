@@ -90,7 +90,8 @@ namespace FIFE
             return false;
         }
 
-        bool const overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
+        bool const overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) !=
+                                nullptr; // NOLINT(cppcoreguidelines-init-variables)
 
         switch (evt.type) {
         case SDL_EVENT_MOUSE_WHEEL:
@@ -265,7 +266,7 @@ namespace FIFE
         return ptr;
     }
 
-    void FifechanManager::releaseFont(fcn::Font* font)
+    void FifechanManager::releaseFont(fcn::Font const * font)
     {
         auto i = m_fonts.begin();
         while (i != m_fonts.end()) {

@@ -40,7 +40,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~KeyEvent() = default;
+            virtual ~KeyEvent() override = default;
 
             KeyEventType getType() const
             {
@@ -69,71 +69,10 @@ namespace FIFE
                 m_key = key;
             }
 
-            virtual bool isAltPressed() const
-            {
-                return InputEvent::isAltPressed();
-            }
-            virtual void setAltPressed(bool pressed)
-            {
-                InputEvent::setAltPressed(pressed);
-            }
-            virtual bool isControlPressed() const
-            {
-                return InputEvent::isControlPressed();
-            }
-            virtual void setControlPressed(bool pressed)
-            {
-                InputEvent::setControlPressed(pressed);
-            }
-            virtual bool isMetaPressed() const
-            {
-                return InputEvent::isMetaPressed();
-            }
-            virtual void setMetaPressed(bool pressed)
-            {
-                InputEvent::setMetaPressed(pressed);
-            }
-            virtual bool isShiftPressed() const
-            {
-                return InputEvent::isShiftPressed();
-            }
-            virtual void setShiftPressed(bool pressed)
-            {
-                InputEvent::setShiftPressed(pressed);
-            }
-
-            virtual void consume()
-            {
-                InputEvent::consume();
-            }
-            virtual bool isConsumed() const
-            {
-                return InputEvent::isConsumed();
-            }
-            virtual void consumedByWidgets()
-            {
-                InputEvent::consumedByWidgets();
-            }
-            virtual bool isConsumedByWidgets() const
-            {
-                return InputEvent::isConsumedByWidgets();
-            }
-            virtual IEventSource* getSource() const
-            {
-                return InputEvent::getSource();
-            }
-            virtual void setSource(IEventSource* source)
-            {
-                InputEvent::setSource(source);
-            }
-            virtual std::string const & getName() const
+            virtual std::string const & getName() const override
             {
                 static std::string const eventName("KeyEvent");
                 return eventName;
-            }
-            virtual std::string getDebugString() const
-            {
-                return InputEvent::getDebugString();
             }
 
         private:

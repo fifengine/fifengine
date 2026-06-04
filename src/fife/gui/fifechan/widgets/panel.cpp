@@ -166,8 +166,8 @@ namespace fcn
         if (m_docked) {
             if (isMovable() && mMoved) {
                 Rectangle const rec = getDockedArea()->getChildrenArea();
-                int32_t x           = mouseEvent.getX() - mDragOffsetX + getX();
-                int32_t y           = mouseEvent.getY() - mDragOffsetY + getY();
+                int32_t x = mouseEvent.getX() - mDragOffsetX + getX(); // NOLINT(cppcoreguidelines-init-variables)
+                int32_t y = mouseEvent.getY() - mDragOffsetY + getY(); // NOLINT(cppcoreguidelines-init-variables)
                 if (x < 0) {
                     x = 0;
                 } else if (x + getWidth() > rec.width) {

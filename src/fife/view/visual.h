@@ -66,7 +66,7 @@ namespace FIFE
             /**
              * Destructor
              */
-            virtual ~Visual2DGfx();
+            virtual ~Visual2DGfx() override;
 
         protected:
             /** Constructor

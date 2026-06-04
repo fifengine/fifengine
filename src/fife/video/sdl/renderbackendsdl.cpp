@@ -120,9 +120,9 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        int displayCount        = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID const displayId =
+        int displayCount              = 0;
+        SDL_DisplayID* displays       = SDL_GetDisplays(&displayCount);
+        SDL_DisplayID const displayId = // NOLINT(cppcoreguidelines-init-variables)
             (std::cmp_less(displayIndex, displayCount)) ?
                 displays[displayIndex] :
                 SDL_GetPrimaryDisplay(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -182,6 +182,7 @@ namespace FIFE
                 yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
             }
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
         SDL_free(displays);
 
         m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
@@ -250,11 +251,6 @@ namespace FIFE
 
         // update the screen mode with the actual flags used
         m_screenMode = mode;
-    }
-
-    void RenderBackendSDL::startFrame()
-    {
-        RenderBackend::startFrame();
     }
 
     void RenderBackendSDL::endFrame()

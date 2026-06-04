@@ -30,7 +30,7 @@ namespace FIFE
 
             /** Destructor
              */
-            virtual ~CellGrid();
+            virtual ~CellGrid() override;
 
             /** Gets the coordinates that are accesible from given point
              *  only cells adjacent to given cell are considered in the evaluation

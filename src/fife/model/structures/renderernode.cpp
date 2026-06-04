@@ -244,7 +244,7 @@ namespace FIFE
     {
         return m_instance;
     }
-    Location RendererNode::getLocation()
+    Location const & RendererNode::getLocation()
     {
         return m_location;
     }

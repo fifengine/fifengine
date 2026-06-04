@@ -260,7 +260,7 @@ namespace FIFE
 
             /** Return the position of the SoundEmitter in the virtual audio space.
              */
-            AudioSpaceCoordinate getPosition() const;
+            AudioSpaceCoordinate const & getPosition() const;
 
             /** Return if it is a positional SoundEmitter.
              */
@@ -272,7 +272,7 @@ namespace FIFE
 
             /** Return the direction of the SoundEmitter in the virtual audio space.
              */
-            AudioSpaceCoordinate getDirection() const;
+            AudioSpaceCoordinate const & getDirection() const;
 
             /** Sets pitch multiplier. Can only be positiv.
              */
@@ -288,7 +288,7 @@ namespace FIFE
 
             /** Return the velocity of the SoundEmitter in the virtual audio space.
              */
-            AudioSpaceCoordinate getVelocity() const;
+            AudioSpaceCoordinate const & getVelocity() const;
 
             /** Sets inner angle of the sound cone, in degrees. Default 360
              */

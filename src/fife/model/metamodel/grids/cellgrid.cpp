@@ -26,8 +26,6 @@ namespace FIFE
     } // namespace
 
     CellGrid::CellGrid() :
-        m_matrix(),
-        m_inverse_matrix(),
         m_xshift(0),
         m_yshift(0),
         m_zshift(0),

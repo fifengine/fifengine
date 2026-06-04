@@ -66,8 +66,8 @@ namespace FIFE
              */
             DAT1(VFS* vfs, std::string const & file);
 
-            bool fileExists(std::string const & name) const;
-            RawData* open(std::string const & file) const;
+            bool fileExists(std::string const & name) const override;
+            RawData* open(std::string const & file) const override;
 
             /** Get the needed information to unpack and extract a file from the
              * DAT file.
@@ -80,8 +80,8 @@ namespace FIFE
              */
             RawDataDAT1::s_info const & getInfo(std::string const & name) const;
 
-            std::set<std::string> listFiles(std::string const & pathstr) const;
-            std::set<std::string> listDirectories(std::string const & pathstr) const;
+            std::set<std::string> listFiles(std::string const & pathstr) const override;
+            std::set<std::string> listDirectories(std::string const & pathstr) const override;
 
         private:
             std::string m_datpath;

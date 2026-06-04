@@ -124,7 +124,7 @@ namespace fcn
 
     void ResizableWindow::restoreCursor()
     {
-        FIFE::MouseCursorType const type = m_saved.cursorType;
+        FIFE::MouseCursorType const type = m_saved.cursorType; // NOLINT(cppcoreguidelines-init-variables)
         switch (type) {
         case FIFE::CURSOR_NATIVE:
             m_cursor->set(m_saved.cursorId);

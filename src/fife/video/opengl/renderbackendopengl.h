@@ -30,37 +30,38 @@ namespace FIFE
     {
         public:
             explicit RenderBackendOpenGL(SDL_Color const & colorkey);
-            virtual ~RenderBackendOpenGL();
+            virtual ~RenderBackendOpenGL() override;
 
             RenderBackendOpenGL(RenderBackendOpenGL const &)            = delete;
             RenderBackendOpenGL& operator=(RenderBackendOpenGL const &) = delete;
 
-            virtual std::string const & getName() const;
-            virtual void startFrame();
-            virtual void endFrame();
-            virtual void init(std::string const & driver);
-            virtual void clearBackBuffer();
-            virtual void setLightingModel(uint32_t lighting);
-            virtual uint32_t getLightingModel() const;
-            virtual void setLighting(float red, float green, float blue);
-            virtual void resetLighting();
-            virtual void resetStencilBuffer(uint8_t buffer);
-            virtual void changeBlending(int32_t src, int32_t dst);
+            virtual std::string const & getName() const override;
+            virtual void endFrame() override;
+            virtual void init(std::string const & driver) override;
+            virtual void clearBackBuffer() override;
+            virtual void setLightingModel(uint32_t lighting) override;
+            virtual uint32_t getLightingModel() const override;
+            virtual void setLighting(float red, float green, float blue) override;
+            virtual void resetLighting() override;
+            virtual void resetStencilBuffer(uint8_t buffer) override;
+            virtual void changeBlending(int32_t src, int32_t dst) override;
 
-            virtual void createMainScreen(ScreenMode const & mode, std::string const & title, std::string const & icon);
-            virtual void setScreenMode(ScreenMode const & mode);
+            virtual void createMainScreen(
+                ScreenMode const & mode, std::string const & title, std::string const & icon) override;
+            virtual void setScreenMode(ScreenMode const & mode) override;
 
-            virtual std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr);
-            virtual std::unique_ptr<Image> createImage(std::string const & name, IResourceLoader* loader = nullptr);
-            virtual std::unique_ptr<Image> createImage(uint8_t const * data, uint32_t width, uint32_t height);
+            virtual std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr) override;
             virtual std::unique_ptr<Image> createImage(
-                std::string const & name, uint8_t const * data, uint32_t width, uint32_t height);
-            virtual std::unique_ptr<Image> createImage(SDL_Surface* surface);
-            virtual std::unique_ptr<Image> createImage(std::string const & name, SDL_Surface* surface);
+                std::string const & name, IResourceLoader* loader = nullptr) override;
+            virtual std::unique_ptr<Image> createImage(uint8_t const * data, uint32_t width, uint32_t height) override;
+            virtual std::unique_ptr<Image> createImage(
+                std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) override;
+            virtual std::unique_ptr<Image> createImage(SDL_Surface* surface) override;
+            virtual std::unique_ptr<Image> createImage(std::string const & name, SDL_Surface* surface) override;
 
-            virtual void renderVertexArrays();
+            virtual void renderVertexArrays() override;
             virtual void addImageToArray(
-                uint32_t id, Rect const & rec, float const * st, uint8_t alpha, uint8_t const * rgba);
+                uint32_t id, Rect const & rec, float const * st, uint8_t alpha, uint8_t const * rgba) override;
             virtual void addImageToArray(
                 Rect const & rect,
                 uint32_t id1,
@@ -92,17 +93,20 @@ namespace FIFE
                 uint8_t stenref,
                 GLConstants stenop,
                 GLConstants stenfunc,
-                OverlayType otype = OVERLAY_TYPE_NONE);
+                OverlayType otype = OVERLAY_TYPE_NONE) override;
 
-            virtual void captureScreen(std::string const & filename);
-            virtual void captureScreen(std::string const & filename, uint32_t width, uint32_t height);
+            virtual void captureScreen(std::string const & filename) override;
+            virtual void captureScreen(std::string const & filename, uint32_t width, uint32_t height) override;
 
-            virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-            virtual void drawLine(Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+            virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
+            virtual void drawLine(
+                Point const & p1, Point const & p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             virtual void drawThickLine(
-                Point const & p1, Point const & p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                Point const & p1, Point const & p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+                override;
             virtual void drawPolyLine(
-                std::vector<Point> const & points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                std::vector<Point> const & points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+                override;
             virtual void drawBezier(
                 std::vector<Point> const & points,
                 int32_t steps,
@@ -110,13 +114,14 @@ namespace FIFE
                 uint8_t r,
                 uint8_t g,
                 uint8_t b,
-                uint8_t a = 255);
+                uint8_t a = 255) override;
             virtual void drawTriangle(
-                Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+                override;
             virtual void drawRectangle(
-                Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             virtual void fillRectangle(
-                Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             virtual void drawQuad(
                 Point const & p1,
                 Point const & p2,
@@ -125,11 +130,13 @@ namespace FIFE
                 uint8_t r,
                 uint8_t g,
                 uint8_t b,
-                uint8_t a = 255);
-            virtual void drawVertex(Point const & p, uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-            virtual void drawCircle(Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                uint8_t a = 255) override;
+            virtual void drawVertex(
+                Point const & p, uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
+            virtual void drawCircle(
+                Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             virtual void drawFillCircle(
-                Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+                Point const & p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             virtual void drawCircleSegment(
                 Point const & p,
                 uint32_t radius,
@@ -138,7 +145,7 @@ namespace FIFE
                 uint8_t r,
                 uint8_t g,
                 uint8_t b,
-                uint8_t a = 255);
+                uint8_t a = 255) override;
             virtual void drawFillCircleSegment(
                 Point const & p,
                 uint32_t radius,
@@ -147,7 +154,7 @@ namespace FIFE
                 uint8_t r,
                 uint8_t g,
                 uint8_t b,
-                uint8_t a = 255);
+                uint8_t a = 255) override;
             virtual void drawLightPrimitive(
                 Point const & p,
                 uint8_t intensity,
@@ -157,19 +164,19 @@ namespace FIFE
                 float ystretch,
                 uint8_t red,
                 uint8_t green,
-                uint8_t blue);
+                uint8_t blue) override;
 
-            virtual void enableScissorTest();
-            virtual void disableScissorTest();
+            virtual void enableScissorTest() override;
+            virtual void disableScissorTest() override;
 
-            virtual void attachRenderTarget(ImagePtr& img, bool discard);
-            virtual void detachRenderTarget();
+            virtual void attachRenderTarget(ImagePtr& img, bool discard) override;
+            virtual void detachRenderTarget() override;
 
             virtual void renderGuiGeometry(
                 std::vector<GuiVertex> const & vertices,
                 std::vector<int> const & indices,
                 DoublePoint const & translation,
-                ImagePtr texture);
+                ImagePtr texture) override;
 
             void enableTextures(uint32_t texUnit);
             void disableTextures(uint32_t texUnit);
@@ -177,7 +184,7 @@ namespace FIFE
             void bindTexture(GLuint texId);
 
         protected:
-            virtual void setClipArea(Rect const & cliparea, bool clear);
+            virtual void setClipArea(Rect const & cliparea, bool clear) override;
 
             void enableLighting();
             void disableLighting();

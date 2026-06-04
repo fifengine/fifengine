@@ -45,15 +45,15 @@ namespace FIFE
 
             QuadTreeRenderer(QuadTreeRenderer const & old);
 
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~QuadTreeRenderer();
+            virtual ~QuadTreeRenderer() override;
 
-            void render(Camera* cam, Layer* layer, RenderList& instances);
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
 
-            std::string getName()
+            std::string getName() override
             {
                 return "QuadTreeRenderer";
             }

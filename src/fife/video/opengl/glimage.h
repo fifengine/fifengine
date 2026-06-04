@@ -44,26 +44,30 @@ namespace FIFE
             explicit GLImage(uint8_t const * data, uint32_t width, uint32_t height);
             GLImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height);
 
-            virtual ~GLImage();
-            virtual void invalidate();
-            virtual void setSurface(SDL_Surface* surface);
-            virtual void render(Rect const & rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr);
+            virtual ~GLImage() override;
+            virtual void invalidate() override;
+            virtual void setSurface(SDL_Surface* surface) override;
+            virtual void render(Rect const & rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr) override;
             virtual void render(
-                Rect const & rect, ImagePtr const & overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr);
+                Rect const & rect,
+                ImagePtr const & overlay,
+                uint8_t alpha       = 255,
+                uint8_t const * rgb = nullptr) override;
 
-            virtual void renderZ(Rect const & rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = nullptr);
+            virtual void renderZ(
+                Rect const & rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = nullptr) override;
             virtual void renderZ(
                 Rect const & rect,
                 float vertexZ,
                 ImagePtr const & overlay,
                 uint8_t alpha       = 255,
-                uint8_t const * rgb = nullptr);
+                uint8_t const * rgb = nullptr) override;
 
-            virtual void useSharedImage(ImagePtr const & shared, Rect const & region);
-            virtual void forceLoadInternal();
-            virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, ImagePtr const & img);
-            virtual void load();
-            virtual void free();
+            virtual void useSharedImage(ImagePtr const & shared, Rect const & region) override;
+            virtual void forceLoadInternal() override;
+            virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, ImagePtr const & img) override;
+            virtual void load() override;
+            virtual void free() override;
 
             GLuint getTexId() const;
             GLfloat const * getTexCoords() const;

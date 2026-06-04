@@ -457,8 +457,7 @@ namespace FIFE
             static_cast<size_t>(height) * static_cast<size_t>(m_surface->pitch)};
         int32_t const pitch = m_surface->pitch;
 
-        if ((m_surface != nullptr) &&
-            ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16))) {
+        if ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16)) {
             FL_LOG(
                 _guiLog(),
                 std::format(
@@ -562,10 +561,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t r = data_span[pos + 0];
-                    uint8_t g = data_span[pos + 1];
-                    uint8_t b = data_span[pos + 2];
-                    uint8_t a = data_span[pos + 3];
+                    uint8_t r = data_span[pos + 0]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t g = data_span[pos + 1]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t b = data_span[pos + 2]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t a = data_span[pos + 3]; // NOLINT(cppcoreguidelines-init-variables)
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -692,8 +691,11 @@ namespace FIFE
                     // SDL surfaces can have padded row pitch; repack to a tightly packed buffer.
                     std::vector<uint8_t> packed(static_cast<size_t>(tightPitch) * static_cast<size_t>(height));
                     for (uint32_t y = 0; y < height; ++y) {
-                        uint8_t const * srcRow = &data_span[static_cast<size_t>(y) * static_cast<size_t>(pitch)];
-                        uint8_t* dstRow        = &packed[static_cast<size_t>(y) * static_cast<size_t>(tightPitch)];
+                        uint8_t const * srcRow =
+                            &data_span
+                                [static_cast<size_t>(y) *
+                                 static_cast<size_t>(pitch)]; // NOLINT(cppcoreguidelines-init-variables)
+                        uint8_t* dstRow = &packed[static_cast<size_t>(y) * static_cast<size_t>(tightPitch)];
                         std::memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
                     }
 
@@ -719,10 +721,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t a = data_span[pos + 3];
-                    uint8_t b = data_span[pos + 2];
-                    uint8_t g = data_span[pos + 1];
-                    uint8_t r = data_span[pos + 0];
+                    uint8_t a = data_span[pos + 3]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t b = data_span[pos + 2]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t g = data_span[pos + 1]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t r = data_span[pos + 0]; // NOLINT(cppcoreguidelines-init-variables)
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled

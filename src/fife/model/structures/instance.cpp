@@ -219,7 +219,7 @@ namespace FIFE
                 CellGrid const * grid = layer->getCellGrid();
                 if (cache != nullptr && grid != nullptr) {
                     std::set<Object*> const & overlapCheck = object->getMultiParts();
-                    for (auto* part : overlapCheck) {
+                    for (auto const * part : overlapCheck) {
                         if (part == m_object) {
                             continue;
                         }
@@ -351,7 +351,7 @@ namespace FIFE
                 CellCache const * cache = loc.getLayer()->getCellCache();
                 if (grid != nullptr && cache != nullptr) {
                     auto const & parts = m_object->getMultiParts();
-                    for (auto* part : parts) {
+                    for (auto const * part : parts) {
                         if (part == m_object) {
                             continue;
                         }
@@ -383,7 +383,7 @@ namespace FIFE
         }
     }
 
-    Location Instance::getLocation() const
+    Location const & Instance::getLocation() const
     {
         return m_location;
     }
@@ -1203,7 +1203,7 @@ namespace FIFE
         }
         if (m_location.getLayer() != nullptr) {
             Map* map = m_location.getLayer()->getMap();
-            if ((map != nullptr) && (map->getTimeProvider() != nullptr)) {
+            if (map != nullptr) {
                 return map->getTimeProvider()->getTotalMultiplier();
             }
         }
@@ -1225,7 +1225,7 @@ namespace FIFE
         }
         if (m_location.getLayer() != nullptr) {
             Map* map = m_location.getLayer()->getMap();
-            if ((map != nullptr) && (map->getTimeProvider() != nullptr)) {
+            if (map != nullptr) {
                 return map->getTimeProvider()->getGameTime64();
             }
         }

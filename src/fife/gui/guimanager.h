@@ -25,7 +25,7 @@ namespace FIFE
         public:
             /** Destructor.
              */
-            virtual ~IGUIManager() = default;
+            virtual ~IGUIManager() override = default;
 
             /** Performs the GUI logic and draws the GUI accordingly.
              *

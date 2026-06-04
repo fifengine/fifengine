@@ -151,7 +151,7 @@ namespace FIFE
         }
     }
 
-    void Trigger::removeTriggerListener(ITriggerListener* listener)
+    void Trigger::removeTriggerListener(ITriggerListener const * listener)
     {
         auto i = m_triggerListeners.begin();
         while (i != m_triggerListeners.end()) {

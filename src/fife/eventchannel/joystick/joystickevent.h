@@ -52,7 +52,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~JoystickEvent() = default;
+            virtual ~JoystickEvent() override = default;
 
             /** Return the event type.
              */
@@ -166,38 +166,10 @@ namespace FIFE
                 m_controller = value;
             }
 
-            virtual void consume()
-            {
-                InputEvent::consume();
-            }
-            virtual bool isConsumed() const
-            {
-                return InputEvent::isConsumed();
-            }
-            virtual void consumedByWidgets()
-            {
-                InputEvent::consumedByWidgets();
-            }
-            virtual bool isConsumedByWidgets() const
-            {
-                return InputEvent::isConsumedByWidgets();
-            }
-            virtual IEventSource* getSource() const
-            {
-                return InputEvent::getSource();
-            }
-            virtual void setSource(IEventSource* source)
-            {
-                InputEvent::setSource(source);
-            }
-            virtual std::string const & getName() const
+            virtual std::string const & getName() const override
             {
                 static std::string const eventName("JostickEvent");
                 return eventName;
-            }
-            virtual std::string getDebugString() const
-            {
-                return InputEvent::getDebugString();
             }
 
         private:

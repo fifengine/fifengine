@@ -221,7 +221,7 @@ namespace FIFE
         m_changeListeners.push_back(listener);
     }
 
-    void Map::removeChangeListener(MapChangeListener* listener)
+    void Map::removeChangeListener(MapChangeListener const * listener)
     {
         auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {

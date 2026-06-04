@@ -84,7 +84,7 @@ namespace FIFE
 
             /** Destructor
              */
-            ~Map();
+            ~Map() override;
 
             /** Get the name for this map.
              */
@@ -164,7 +164,7 @@ namespace FIFE
             /** Removes associated change listener
              * @param listener to remove
              */
-            void removeChangeListener(MapChangeListener* listener);
+            void removeChangeListener(MapChangeListener const * listener);
 
             /** Returns true, if map information was changed during previous update round
              */

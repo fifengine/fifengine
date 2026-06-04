@@ -113,7 +113,7 @@ namespace FIFE
              *  @note does not return const Location&, since swig wont be const correct
              *  @return current location
              */
-            Location getLocation() const;
+            Location const & getLocation() const;
 
             /** Gets reference of current location of instance
              *  @return reference to current location

@@ -94,7 +94,7 @@ namespace FIFE
 
             /** Destructs a Layer instance
              */
-            ~Layer();
+            ~Layer() override;
 
             /** Get the name of this layer.
              */
@@ -166,7 +166,7 @@ namespace FIFE
             /** Returns instances that match given rect.
              * @param rec rect where to fetch instances from
              */
-            std::list<Instance*> getInstancesIn(Rect& rec);
+            std::list<Instance*> getInstancesIn(Rect const & rec);
 
             /** Returns instances that match given line between pt1 and pt2.
              * @param pt1 A const reference to the ModelCoordinate where to start from.
@@ -315,7 +315,7 @@ namespace FIFE
             /** Removes a interact layer from the walkable layer.
              * @param layer A pointer to the interact layer that should be removed.
              */
-            void removeInteractLayer(Layer* layer);
+            void removeInteractLayer(Layer const * layer);
 
             /** Called from Map to create a CellCache. Only walkable layers can create one CellCache.
              */
@@ -338,7 +338,7 @@ namespace FIFE
             /** Removes associated change listener
              * @param listener to remove
              */
-            void removeChangeListener(LayerChangeListener* listener);
+            void removeChangeListener(LayerChangeListener const * listener);
 
             /** Returns true, if layer information was changed during previous update round
              */

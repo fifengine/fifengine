@@ -229,6 +229,7 @@ namespace FIFE
                     nonZero));
         }
 
+        // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {
                 int fixedCount                     = 0;

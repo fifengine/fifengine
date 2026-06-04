@@ -24,7 +24,7 @@ namespace FIFE
             uint8_t r, g, b, a;
     };
 
-    void SDL_BlendRow_RGBA8_to_RGBA8(uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
+    void SDL_BlendRow_RGBA8_to_RGBA8([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
         auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
         auto dstSpan = std::span<ColorRGBA8>{static_cast<ColorRGBA8*>(static_cast<void*>(dst)), n};
@@ -41,7 +41,7 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA8_to_RGB8(uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
+    void SDL_BlendRow_RGBA8_to_RGB8([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
         auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
         auto dstSpan = std::span<ColorRGB8>{static_cast<ColorRGB8*>(static_cast<void*>(dst)), n};
@@ -57,7 +57,7 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA8_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
+    void SDL_BlendRow_RGBA8_to_RGB565([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
         auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
         auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), n};
@@ -74,7 +74,7 @@ namespace FIFE
         }
     }
 
-    void SDL_BlendRow_RGBA4_to_RGB565(uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
+    void SDL_BlendRow_RGBA4_to_RGB565([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
         auto srcSpan = std::span<uint16_t const>{static_cast<uint16_t const *>(static_cast<void const *>(src)), n};
         auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), n};

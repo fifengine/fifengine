@@ -26,11 +26,11 @@ namespace FIFE
             SoundDecoderOgg(SoundDecoderOgg const &)            = delete;
             SoundDecoderOgg& operator=(SoundDecoderOgg const &) = delete;
 
-            ~SoundDecoderOgg();
+            ~SoundDecoderOgg() override;
 
             /** Returns the decoded length of the file in bytes
              */
-            uint64_t getDecodedLength() const
+            uint64_t getDecodedLength() const override
             {
                 return m_declength;
             }
@@ -39,34 +39,34 @@ namespace FIFE
              *
              * @return True, if the positioning was successful
              */
-            bool setCursor(uint64_t pos);
+            bool setCursor(uint64_t pos) override;
 
             /** Request the decoding of the next part of the stream.
              *
              * @param length The length of the decoded part
              * @return 0 (False), if decoding was successful
              */
-            bool decode(uint64_t length);
+            bool decode(uint64_t length) override;
 
             /** Returns the next decoded buffer.
              *
              * The length of the buffer is returned by getBufferSize().
              */
-            void* getBuffer() const
+            void* getBuffer() const override
             {
                 return m_data;
             }
 
             /** Returns the byte-size of the buffer returned by getBuffer().
              */
-            uint64_t getBufferSize()
+            uint64_t getBufferSize() override
             {
                 return m_datasize;
             }
 
             /** Releases the buffer returned by getBuffer()
              */
-            void releaseBuffer();
+            void releaseBuffer() override;
 
         private:
             std::unique_ptr<RawData> m_file;

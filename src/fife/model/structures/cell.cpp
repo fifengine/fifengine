@@ -148,7 +148,7 @@ namespace FIFE
         updateCellBlockingInfo();
     }
 
-    bool Cell::isNeighbor(Cell* cell)
+    bool Cell::isNeighbor(Cell const * cell)
     {
         auto it = m_neighbors.begin();
         for (; it != m_neighbors.end(); ++it) {
@@ -415,7 +415,7 @@ namespace FIFE
         m_deleteListeners.push_back(listener);
     }
 
-    void Cell::removeDeleteListener(CellDeleteListener* listener)
+    void Cell::removeDeleteListener(CellDeleteListener const * listener)
     {
         auto it = m_deleteListeners.begin();
         for (; it != m_deleteListeners.end(); ++it) {
@@ -442,7 +442,7 @@ namespace FIFE
         m_changeListeners.push_back(listener);
     }
 
-    void Cell::removeChangeListener(CellChangeListener* listener)
+    void Cell::removeChangeListener(CellChangeListener const * listener)
     {
         auto it = m_changeListeners.begin();
         for (; it != m_changeListeners.end(); ++it) {

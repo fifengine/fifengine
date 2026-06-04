@@ -385,11 +385,11 @@ namespace FIFE
         if (!Mathd::Equal(distance, 0.0) && !pop) {
             Location const prevNode      = route->getPreviousNode();
             CellCache* prevCache         = prevNode.getLayer()->getCellCache();
-            CellGrid const * prevGrid    = prevNode.getLayer()->getCellGrid();
             ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
             tmpCell                      = prevCache->getCell(prevNode.getLayerCoordinates());
             if (tmpCell != nullptr) {
-                prevPos.z = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
+                CellGrid const * prevGrid = prevNode.getLayer()->getCellGrid();
+                prevPos.z                 = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
             }
             double const cell_dz = (targetPos.z - prevPos.z);
             if (!Mathd::Equal(cell_dz, 0.0)) {

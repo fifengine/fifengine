@@ -401,7 +401,7 @@ namespace FIFE
             static_cast<ALint>(filter));
     }
 
-    void SoundEffectManager::deactivateEffect(SoundEffect* effect, SoundEmitter* emitter)
+    void SoundEffectManager::deactivateEffect(SoundEffect const * effect, SoundEmitter* emitter)
     {
         if (!effect->isEnabled()) {
             return;

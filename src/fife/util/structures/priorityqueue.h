@@ -5,6 +5,7 @@
 #define FIFE_SOLVER_INDEXEDPQ_H
 
 // Platform specific includes
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <list>
@@ -146,14 +147,9 @@ namespace FIFE
              */
             ElementListIt getElementIterator(index_type const & index)
             {
-
-                for (ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i) {
-                    if (i->first == index) {
-                        return i;
-                    }
-                }
-
-                return m_elements.end();
+                return std::find_if(m_elements.begin(), m_elements.end(), [&index](auto const & elem) {
+                    return elem.first == index;
+                });
             }
 
             /** The comparison function, used to compare two elements.

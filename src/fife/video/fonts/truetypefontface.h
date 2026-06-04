@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#pragma once
+#ifndef FIFE_VIDEO_FONTS_TRUETYPEFONTFACE_H
+#define FIFE_VIDEO_FONTS_TRUETYPEFONTFACE_H
 
 #include <SDL3_ttf/SDL_ttf.h>
 
@@ -44,3 +45,5 @@ namespace FIFE
     };
 
 } // namespace FIFE
+
+#endif

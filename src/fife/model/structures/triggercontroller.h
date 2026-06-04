@@ -45,7 +45,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~TriggerController();
+            virtual ~TriggerController() override;
 
             /** Creates a trigger.
              *
@@ -196,14 +196,6 @@ namespace FIFE
             std::vector<std::string> getAllTriggerNames();
 
         private:
-            /** Checks to see if the trigger name already exists.
-             *
-             * @param name The name of the trigger to check
-             *
-             * @return true if the name already exists, false otherwise.
-             */
-            bool exists(std::string const & name);
-
             //! Pointer to the map this controller is associated with.
             Map* m_map [[maybe_unused]]; // TODO: implement map-level trigger operations
 

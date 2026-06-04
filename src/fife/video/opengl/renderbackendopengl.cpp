@@ -281,9 +281,9 @@ namespace FIFE
         int32_t const windowX      = mode.getWindowPositionX();
         int32_t const windowY      = mode.getWindowPositionY();
 
-        int displayCount        = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID const displayId =
+        int displayCount              = 0;
+        SDL_DisplayID* displays       = SDL_GetDisplays(&displayCount);
+        SDL_DisplayID const displayId = // NOLINT(cppcoreguidelines-init-variables)
             (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
@@ -338,6 +338,7 @@ namespace FIFE
                 yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
             }
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
         SDL_free(displays);
 
         m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
@@ -503,11 +504,6 @@ namespace FIFE
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicebufferId);
         // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-
-    void RenderBackendOpenGL::startFrame()
-    {
-        RenderBackend::startFrame();
     }
 
     void RenderBackendOpenGL::endFrame()
@@ -1868,15 +1864,15 @@ namespace FIFE
     {
         float const xDiff = static_cast<float>(p2.x - p1.x);
         float const yDiff = static_cast<float>(p2.y - p1.y);
-        float const halfW = static_cast<float>(width) / 2.0F;
+        float const halfW = static_cast<float>(width) / 2.0F; // NOLINT(cppcoreguidelines-init-variables)
         float angle       = (Mathf::ATan2(yDiff, xDiff) * (180.0F / Mathf::pi())) + 90.0F;
         if (angle < 0.0F) {
             angle += 360.0F;
         } else if (angle > 360.0F) {
             angle -= 360.0F;
         }
-        angle *= Mathf::pi() / 180.0F;
-        float const cornerX = halfW * Mathf::Cos(angle);
+        angle *= Mathf::pi() / 180.0F;                   // NOLINT(cppcoreguidelines-init-variables)
+        float const cornerX = halfW * Mathf::Cos(angle); // NOLINT(cppcoreguidelines-init-variables)
         float const cornerY = halfW * Mathf::Sin(angle);
 
         renderDataP rd{};
@@ -2143,9 +2139,10 @@ namespace FIFE
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        float const radiusF  = static_cast<float>(radius);
-        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
-        float angle          = 0.0F;
+        float const radiusF  = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
+        float const step =
+            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
+        float angle = 0.0F;
 
         renderDataP rd{};
         rd.color.at(0) = r;
@@ -2170,8 +2167,9 @@ namespace FIFE
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        float const radiusF  = static_cast<float>(radius);
-        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float const radiusF  = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
+        float const step =
+            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
         float angle          = Mathf::twoPi();
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
@@ -2202,7 +2200,7 @@ namespace FIFE
     void RenderBackendOpenGL::drawCircleSegment(
         Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float const radiusF = static_cast<float>(radius);
+        float const radiusF = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
         float const step    = Mathf::twoPi() / 360.0F;
         int32_t elements    = 0;
         int32_t s           = (sangle + 360) % 360;
@@ -2234,8 +2232,8 @@ namespace FIFE
     void RenderBackendOpenGL::drawFillCircleSegment(
         Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float const radiusF = static_cast<float>(radius);
-        float const step    = Mathf::twoPi() / 360.0F;
+        float const radiusF = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
+        float const step    = Mathf::twoPi() / 360.0F;    // NOLINT(cppcoreguidelines-init-variables)
         int32_t s           = (sangle + 360) % 360;
         int32_t e           = (eangle + 360) % 360;
         if (e == 0) {
@@ -2284,7 +2282,8 @@ namespace FIFE
         uint8_t green,
         uint8_t blue)
     {
-        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float const step =
+            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
         uint32_t elements    = 0;
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;

@@ -53,7 +53,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~Image();
+            virtual ~Image() override;
 
             /** Invalidates the Image causing it to be reset or re-loaded
              */
@@ -165,9 +165,9 @@ namespace FIFE
 
             void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 
-            virtual size_t getSize();
-            virtual void load();
-            virtual void free();
+            virtual size_t getSize() override;
+            virtual void load() override;
+            virtual void free() override;
 
             /** After this call all image data will be taken from the given image and its subregion
              */

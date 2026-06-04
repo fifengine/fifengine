@@ -60,7 +60,7 @@ namespace FIFE
              * @param startInt The start coordinate as integer identifier.
              * @param cache A pointer to the start CellCache.
              */
-            void createSearchFrontier(int32_t startInt, CellCache* cache);
+            void createSearchFrontier(int32_t startInt, CellCache const * cache);
 
             /** Calculates path parts per layer.
              *

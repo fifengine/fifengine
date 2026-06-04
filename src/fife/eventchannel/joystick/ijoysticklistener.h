@@ -57,7 +57,7 @@ namespace FIFE
              */
             virtual void deviceRemoved(JoystickEvent& evt) = 0;
 
-            virtual ~IJoystickListener() = default;
+            virtual ~IJoystickListener() override = default;
     };
 
 } // namespace FIFE

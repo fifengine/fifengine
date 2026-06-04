@@ -42,12 +42,12 @@ namespace FIFE
 
             /** Destructor. Decreases the reference count of all referred images.
              */
-            ~Animation();
+            ~Animation() override;
 
-            virtual size_t getSize();
+            virtual size_t getSize() override;
 
-            virtual void load();
-            virtual void free();
+            virtual void load() override;
+            virtual void free() override;
 
             void invalidate();
 

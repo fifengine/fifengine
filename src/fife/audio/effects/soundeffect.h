@@ -1022,7 +1022,7 @@ namespace FIFE
 
             /** Return reflections pan.
              */
-            AudioSpaceCoordinate getReflectionsPan() const;
+            AudioSpaceCoordinate const & getReflectionsPan() const;
 
             /** Sets late reverb gain, the overall amount of later reverberation relative to gain.
              * @param value Range 0.0 to 10.0, default 1.26.
@@ -1052,7 +1052,7 @@ namespace FIFE
 
             /** Return late reverb pan.
              */
-            AudioSpaceCoordinate getLateReverbPan() const;
+            AudioSpaceCoordinate const & getLateReverbPan() const;
 
             /** Sets echo time, the rate at which the cyclic echo repeats itself along
              * the reverberation decay.

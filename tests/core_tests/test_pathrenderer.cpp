@@ -223,15 +223,6 @@ static_assert(static_cast<int>(FIFE::PLS_ARROWED) == 2, "PLS_ARROWED must be 2")
 static_assert(static_cast<int>(FIFE::PLS_GRADIENT) == 3, "PLS_GRADIENT must be 3");
 static_assert(static_cast<int>(FIFE::PLS_HEATMAP) == 4, "PLS_HEATMAP must be 4");
 
-TEST_CASE("PathLineStyle enum values", "[pathrenderer]")
-{
-    CHECK(static_cast<int>(FIFE::PLS_SOLID) == 0);
-    CHECK(static_cast<int>(FIFE::PLS_DASHED) == 1);
-    CHECK(static_cast<int>(FIFE::PLS_ARROWED) == 2);
-    CHECK(static_cast<int>(FIFE::PLS_GRADIENT) == 3);
-    CHECK(static_cast<int>(FIFE::PLS_HEATMAP) == 4);
-}
-
 TEST_CASE("PathStyleConfig default values", "[pathrenderer]")
 {
     FIFE::PathStyleConfig const cfg;

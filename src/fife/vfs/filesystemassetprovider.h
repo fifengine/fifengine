@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#pragma once
+#ifndef FIFE_VFS_FILESYSTEMASSETPROVIDER_H
+#define FIFE_VFS_FILESYSTEMASSETPROVIDER_H
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -28,3 +29,5 @@ namespace FIFE
     };
 
 } // namespace FIFE
+
+#endif

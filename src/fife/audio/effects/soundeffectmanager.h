@@ -109,7 +109,7 @@ namespace FIFE
             /**
              * Internal function to do the OpenAL calls to deactivate the SoundEffect for the SoundEmitter.
              */
-            void deactivateEffect(SoundEffect* effect, SoundEmitter* emitter);
+            void deactivateEffect(SoundEffect const * effect, SoundEmitter* emitter);
 
             /**
              * Creates SoundFilter of the specific type.

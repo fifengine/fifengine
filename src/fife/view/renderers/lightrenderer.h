@@ -272,13 +272,13 @@ namespace FIFE
             LightRenderer(LightRenderer const & old);
             LightRenderer& operator=(LightRenderer const &) = delete;
 
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~LightRenderer();
-            void render(Camera* cam, Layer* layer, RenderList& instances);
-            std::string getName()
+            virtual ~LightRenderer() override;
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
+            std::string getName() override
             {
                 return "LightRenderer";
             }
@@ -326,7 +326,7 @@ namespace FIFE
             std::vector<LightRendererElementInfo*> getLightInfo(std::string const & group);
             void removeAll(std::string const & group);
             void removeAll();
-            void reset();
+            void reset() override;
 
         private:
             std::map<std::string, std::vector<std::unique_ptr<LightRendererElementInfo>>> m_groups;

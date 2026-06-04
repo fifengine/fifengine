@@ -75,8 +75,10 @@ namespace FIFE
 
     void Console::reLayout()
     {
-        int32_t const w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
-        int32_t const h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
+        int32_t const w =
+            RenderBackend::instance()->getScreenWidth() * 4 / 5; // NOLINT(cppcoreguidelines-init-variables)
+        int32_t const h =
+            RenderBackend::instance()->getScreenHeight() * 4 / 5; // NOLINT(cppcoreguidelines-init-variables)
         int32_t const b        = 0;
         int32_t const input_h  = getFont()->getHeight();
         int32_t const bbar_h   = input_h;
@@ -146,7 +148,8 @@ namespace FIFE
     void Console::updateCaption()
     {
         std::string caption = "FIFE Console - FPS: ";
-        double const fps    = 1e3 / TimeManager::instance()->getAverageFrameTime();
+        double const fps =
+            1e3 / TimeManager::instance()->getAverageFrameTime(); // NOLINT(cppcoreguidelines-init-variables)
         caption += std::to_string(fps);
         m_status->setCaption(caption);
     }

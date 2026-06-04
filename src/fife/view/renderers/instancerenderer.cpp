@@ -894,7 +894,7 @@ namespace FIFE
         return info.outline.get();
     }
 
-    Image* InstanceRenderer::bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
+    Image* InstanceRenderer::bindMultiOutline(OutlineInfo& info, RenderItem const & vc, Camera* cam)
     {
         static_cast<void>(cam);
         // NOTE: Since r3721 outline is just the 'border' so to render everything correctly

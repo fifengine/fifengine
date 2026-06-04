@@ -172,6 +172,9 @@ namespace FIFE
              *  @param y The Y position of the starting node.
              *  @param starting_size The width and height of the starting node.
              */
+            QuadTree(QuadTree const &)            = delete;
+            QuadTree& operator=(QuadTree const &) = delete;
+
             explicit QuadTree(int32_t x = 0, int32_t y = 0, int32_t starting_size = MinimumSize)
             {
                 assert(starting_size > 1);

@@ -239,9 +239,10 @@ namespace FIFE
     {
         SoundBufferEntry const * ptr = m_buffervec.at(streamid).get();
 
-        bool const reachedEOF = std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
-            return getStream(streamid, buffer);
-        });
+        bool const reachedEOF =
+            std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) { // NOLINT(cppcoreguidelines-init-variables)
+                return getStream(streamid, buffer);
+            });
         (void)reachedEOF;
     }
 

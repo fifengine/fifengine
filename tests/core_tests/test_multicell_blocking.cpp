@@ -94,11 +94,11 @@ TEST_CASE("W1-T0A: multi-cell blocking on initial placement", "[multicell]")
     Instance* inst   = f.layer->createInstance(f.mainObj.get(), ModelCoordinate(5, 5, 0));
     CellCache* cache = f.layer->getCellCache();
 
-    Cell* mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
+    Cell const * mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
     REQUIRE(mainCell != nullptr);
     CHECK(mainCell->getCellType() == CTYPE_STATIC_BLOCKER);
 
-    Cell* subCell = cache->getCell(ModelCoordinate(6, 5, 0));
+    Cell const * subCell = cache->getCell(ModelCoordinate(6, 5, 0));
     REQUIRE(subCell != nullptr);
     CHECK(isBlocked(subCell->getCellType()));
 
@@ -114,8 +114,8 @@ TEST_CASE("W1-T0A: multi-cell blocking toggle propagates to sub-cells", "[multic
 
     inst->setBlocking(false);
     f.layer->update();
-    Cell* mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
-    Cell* subCell  = cache->getCell(ModelCoordinate(6, 5, 0));
+    Cell const * mainCell = cache->getCell(ModelCoordinate(5, 5, 0));
+    Cell const * subCell  = cache->getCell(ModelCoordinate(6, 5, 0));
 
     REQUIRE(mainCell != nullptr);
     REQUIRE(subCell != nullptr);
@@ -139,7 +139,7 @@ TEST_CASE("W1-T0A: multi-cell rotation updates occupied cells", "[multicell]")
     CellCache* cache = f.layer->getCellCache();
 
     f.layer->update();
-    Cell* oldCell = cache->getCell(ModelCoordinate(6, 5, 0));
+    Cell const * oldCell = cache->getCell(ModelCoordinate(6, 5, 0));
     REQUIRE(oldCell != nullptr);
     CHECK(oldCell->getCellType() == CTYPE_STATIC_BLOCKER);
 
@@ -147,11 +147,11 @@ TEST_CASE("W1-T0A: multi-cell rotation updates occupied cells", "[multicell]")
     f.layer->update();
     f.layer->update();
 
-    Cell* updatedOldCell      = cache->getCell(ModelCoordinate(6, 5, 0));
-    bool const oldCellCleared = (updatedOldCell == nullptr) || (updatedOldCell->getCellType() == CTYPE_NO_BLOCKER);
+    Cell const * updatedOldCell = cache->getCell(ModelCoordinate(6, 5, 0));
+    bool const oldCellCleared   = (updatedOldCell == nullptr) || (updatedOldCell->getCellType() == CTYPE_NO_BLOCKER);
     CHECK(oldCellCleared);
 
-    Cell* newCell = cache->getCell(ModelCoordinate(5, 6, 0));
+    Cell const * newCell = cache->getCell(ModelCoordinate(5, 6, 0));
     REQUIRE(newCell != nullptr);
     CHECK(isBlocked(newCell->getCellType()));
 
@@ -235,8 +235,8 @@ TEST_CASE("baseline: single cell blocking change propagates to cell type", "[mul
 
     Instance* inst = f.layer->createInstance(singleObj.get(), ModelCoordinate(5, 5, 0));
     inst->setOverrideBlocking(true);
-    CellCache* cache = f.layer->getCellCache();
-    Cell* cell       = cache->getCell(ModelCoordinate(5, 5, 0));
+    CellCache* cache  = f.layer->getCellCache();
+    Cell const * cell = cache->getCell(ModelCoordinate(5, 5, 0));
     REQUIRE(cell != nullptr);
     CHECK(cell->getCellType() == CTYPE_STATIC_BLOCKER);
 

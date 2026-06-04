@@ -146,7 +146,7 @@ namespace FIFE
              * @param cell A pointer to cell.
              * @return True if cell is a neighbor, otherwise false.
              */
-            bool isNeighbor(Cell* cell);
+            bool isNeighbor(Cell const * cell);
 
             /** Called to update cell data.
              * This function updates internal cell data and notifies listeners as needed.
@@ -300,7 +300,7 @@ namespace FIFE
             /** Removes cell delete listener.
              * @param listener A pointer to the listener.
              */
-            void removeDeleteListener(CellDeleteListener* listener);
+            void removeDeleteListener(CellDeleteListener const * listener);
 
             /** Called when a cell gets deleted on this cell. If a delete listener was added.
              * @param cell A pointer to the cell which will be deleted.
@@ -318,7 +318,7 @@ namespace FIFE
              * @param listener A pointer to the listener.
              * @see CellChangeListener
              */
-            void removeChangeListener(CellChangeListener* listener);
+            void removeChangeListener(CellChangeListener const * listener);
 
             /** Called when a instance entered this cell.
              * @param instance A pointer to the instance which will be entered.

@@ -60,6 +60,7 @@ namespace FIFE
             uint32_t const dataOffset      = getLocalFileDataOffset(entryData.offset);
 
             m_zipfile->setIndex(dataOffset);
+            // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays, modernize-avoid-c-arrays)
             auto data = std::make_unique<uint8_t[]>(entryData.size_real);
             if (entryData.comp == 8) {
                 FL_DBG(

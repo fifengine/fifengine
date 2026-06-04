@@ -1187,7 +1187,7 @@ namespace FIFE
         alEffectfv(m_effect, AL_EAXREVERB_REFLECTIONS_PAN, vec.data());
     }
 
-    AudioSpaceCoordinate EaxReverb::getReflectionsPan() const
+    AudioSpaceCoordinate const & EaxReverb::getReflectionsPan() const
     {
         return m_reflectionsPan;
     }
@@ -1234,7 +1234,7 @@ namespace FIFE
         alEffectfv(m_effect, AL_EAXREVERB_LATE_REVERB_PAN, vec.data());
     }
 
-    AudioSpaceCoordinate EaxReverb::getLateReverbPan() const
+    AudioSpaceCoordinate const & EaxReverb::getLateReverbPan() const
     {
         return m_lateReverbPan;
     }

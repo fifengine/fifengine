@@ -241,7 +241,7 @@ namespace FIFE
         m_internData.direction = direction;
     }
 
-    AudioSpaceCoordinate SoundEmitter::getDirection() const
+    AudioSpaceCoordinate const & SoundEmitter::getDirection() const
     {
         return m_internData.direction;
     }
@@ -717,7 +717,7 @@ namespace FIFE
         m_internData.position = position;
     }
 
-    AudioSpaceCoordinate SoundEmitter::getPosition() const
+    AudioSpaceCoordinate const & SoundEmitter::getPosition() const
     {
         return m_internData.position;
     }
@@ -769,7 +769,7 @@ namespace FIFE
         m_internData.velocity = velocity;
     }
 
-    AudioSpaceCoordinate SoundEmitter::getVelocity() const
+    AudioSpaceCoordinate const & SoundEmitter::getVelocity() const
     {
         return m_internData.velocity;
     }

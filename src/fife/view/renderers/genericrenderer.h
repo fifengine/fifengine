@@ -206,11 +206,11 @@ namespace FIFE
 
             /** Makes copy of this renderer.
              */
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~GenericRenderer();
+            virtual ~GenericRenderer() override;
 
             /** This method is called by the view to ask renderer to draw its rendering aspect based on
              * given parameters.
@@ -219,13 +219,13 @@ namespace FIFE
              * @param layer Current layer to be rendered
              * @param instances Instances on the current layer
              */
-            void render(Camera* cam, Layer* layer, RenderList& instances);
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
 
             /** Returns the renderer name.
              *
              * @return The name as string.
              */
-            std::string getName()
+            std::string getName() override
             {
                 return "GenericRenderer";
             }
@@ -392,7 +392,7 @@ namespace FIFE
 
             /** Resets the renderer.
              */
-            void reset();
+            void reset() override;
 
         private:
             //! A map that holds the groups together with the appended render elements.

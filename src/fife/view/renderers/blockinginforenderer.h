@@ -36,17 +36,17 @@ namespace FIFE
 
             /** Makes copy of this renderer.
              */
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~BlockingInfoRenderer();
+            virtual ~BlockingInfoRenderer() override;
 
             /** Returns the renderer name.
              *
              * @return The name as string.
              */
-            std::string getName()
+            std::string getName() override
             {
                 return "BlockingInfoRenderer";
             }
@@ -58,7 +58,7 @@ namespace FIFE
              * @param layer Current layer to be rendered
              * @param instances Instances on the current layer
              */
-            void render(Camera* cam, Layer* layer, RenderList& instances);
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
 
             /** Changes the used color.
              *

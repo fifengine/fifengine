@@ -1153,7 +1153,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromCost(Cell* cell)
+    void CellCache::removeCellFromCost(Cell const * cell)
     {
         auto it = m_costsToCells.begin();
         for (; it != m_costsToCells.end();) {
@@ -1196,7 +1196,7 @@ namespace FIFE
         return cells;
     }
 
-    std::vector<std::string> CellCache::getCellCosts(Cell* cell)
+    std::vector<std::string> CellCache::getCellCosts(Cell const * cell)
     {
         std::vector<std::string> costs;
         auto it = m_costsToCells.begin();
@@ -1353,7 +1353,7 @@ namespace FIFE
         m_transitions.push_back(cell);
     }
 
-    void CellCache::removeTransition(Cell* cell)
+    void CellCache::removeTransition(Cell const * cell)
     {
         auto it = m_transitions.begin();
         for (; it != m_transitions.end(); ++it) {
@@ -1364,7 +1364,7 @@ namespace FIFE
         }
     }
 
-    std::vector<Cell*> CellCache::getTransitionCells(Layer* layer)
+    std::vector<Cell*> CellCache::getTransitionCells(Layer const * layer)
     {
         if (layer == nullptr) {
             return m_transitions;
@@ -1551,7 +1551,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromArea(Cell* cell)
+    void CellCache::removeCellFromArea(Cell const * cell)
     {
         auto it = m_cellAreas.begin();
         while (it != m_cellAreas.end()) {
@@ -1608,7 +1608,7 @@ namespace FIFE
         return areas;
     }
 
-    std::vector<std::string> CellCache::getCellAreas(Cell* cell)
+    std::vector<std::string> CellCache::getCellAreas(Cell const * cell)
     {
         std::vector<std::string> areas;
         auto it = m_cellAreas.begin();

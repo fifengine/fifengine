@@ -69,39 +69,39 @@ namespace FIFE
 
             /** Destructor
              */
-            virtual ~EventManager();
+            virtual ~EventManager() override;
 
-            void addCommandListener(ICommandListener* listener);
-            void addCommandListenerFront(ICommandListener* listener);
-            void removeCommandListener(ICommandListener* listener);
+            void addCommandListener(ICommandListener* listener) override;
+            void addCommandListenerFront(ICommandListener* listener) override;
+            void removeCommandListener(ICommandListener* listener) override;
 
-            void dispatchCommand(Command& command);
+            void dispatchCommand(Command& command) override;
 
-            void addKeyListener(IKeyListener* listener);
-            void addKeyListenerFront(IKeyListener* listener);
-            void removeKeyListener(IKeyListener* listener);
+            void addKeyListener(IKeyListener* listener) override;
+            void addKeyListenerFront(IKeyListener* listener) override;
+            void removeKeyListener(IKeyListener* listener) override;
 
-            void addTextListener(ITextListener* listener);
-            void addTextListenerFront(ITextListener* listener);
-            void removeTextListener(ITextListener* listener);
+            void addTextListener(ITextListener* listener) override;
+            void addTextListenerFront(ITextListener* listener) override;
+            void removeTextListener(ITextListener* listener) override;
 
-            void addMouseListener(IMouseListener* listener);
-            void addMouseListenerFront(IMouseListener* listener);
-            void removeMouseListener(IMouseListener* listener);
+            void addMouseListener(IMouseListener* listener) override;
+            void addMouseListenerFront(IMouseListener* listener) override;
+            void removeMouseListener(IMouseListener* listener) override;
 
-            void addSdlEventListener(ISdlEventListener* listener);
-            void addSdlEventListenerFront(ISdlEventListener* listener);
-            void removeSdlEventListener(ISdlEventListener* listener);
+            void addSdlEventListener(ISdlEventListener* listener) override;
+            void addSdlEventListenerFront(ISdlEventListener* listener) override;
+            void removeSdlEventListener(ISdlEventListener* listener) override;
 
-            void addDropListener(IDropListener* listener);
-            void addDropListenerFront(IDropListener* listener);
-            void removeDropListener(IDropListener* listener);
+            void addDropListener(IDropListener* listener) override;
+            void addDropListenerFront(IDropListener* listener) override;
+            void removeDropListener(IDropListener* listener) override;
 
             void addJoystickListener(IJoystickListener* listener);
             void addJoystickListenerFront(IJoystickListener* listener);
             void removeJoystickListener(IJoystickListener* listener);
 
-            EventSourceType getEventSourceType();
+            EventSourceType getEventSourceType() override;
 
             /** Process the SDL event queue.
              * This is to be called only by the engine itself once per frame.

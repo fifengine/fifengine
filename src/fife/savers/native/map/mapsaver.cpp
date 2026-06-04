@@ -5,6 +5,7 @@
 #include "mapsaver.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <set>
 #include <sstream>
@@ -445,13 +446,10 @@ namespace FIFE
                 continue;
             }
 
-            bool layerActive = false;
-            for (auto* activeLayer : renderer->getActiveLayers()) {
-                if (activeLayer->getName() == layer.getName()) {
-                    layerActive = true;
-                    break;
-                }
-            }
+            bool const layerActive = std::any_of(
+                renderer->getActiveLayers().begin(), renderer->getActiveLayers().end(), [&](Layer const * activeLayer) {
+                    return activeLayer->getName() == layer.getName();
+                });
             if (!layerActive) {
                 continue;
             }
@@ -475,13 +473,10 @@ namespace FIFE
                 continue;
             }
 
-            bool layerActive = false;
-            for (auto* activeLayer : renderer->getActiveLayers()) {
-                if (activeLayer->getName() == layer.getName()) {
-                    layerActive = true;
-                    break;
-                }
-            }
+            bool const layerActive = std::any_of(
+                renderer->getActiveLayers().begin(), renderer->getActiveLayers().end(), [&](Layer const * activeLayer) {
+                    return activeLayer->getName() == layer.getName();
+                });
             if (!layerActive) {
                 continue;
             }

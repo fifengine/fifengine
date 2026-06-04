@@ -14,7 +14,7 @@ template <class Seq>
 void purge(Seq& c)
 {
     typename Seq::iterator i;
-    for (i = c.begin(); i != c.end(); i++) {
+    for (i = c.begin(); i != c.end(); ++i) {
         delete *i;
         *i = 0;
     }
@@ -27,14 +27,14 @@ void purge(InpIt begin, InpIt end)
     while (begin != end) {
         delete *begin;
         *begin = 0;
-        begin++;
+        ++begin;
     }
 }
 template <class Seq>
 void purge_map(Seq& c)
 {
     typename Seq::iterator i;
-    for (i = c.begin(); i != c.end(); i++) {
+    for (i = c.begin(); i != c.end(); ++i) {
         delete i->second;
         i->second = 0;
     }
@@ -47,7 +47,7 @@ void purge_map(InpIt begin, InpIt end)
     while (begin != end) {
         delete begin->second;
         begin->second = 0;
-        begin++;
+        ++begin;
     }
 }
 #endif // PURGE_H

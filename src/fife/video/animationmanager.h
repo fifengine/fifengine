@@ -43,15 +43,15 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~AnimationManager();
+            virtual ~AnimationManager() override;
 
             AnimationManager(AnimationManager const &)            = delete;
             AnimationManager& operator=(AnimationManager const &) = delete;
 
-            virtual size_t getMemoryUsed() const;
-            virtual size_t getTotalResourcesCreated() const;
-            virtual size_t getTotalResourcesLoaded() const;
-            virtual size_t getTotalResources() const;
+            virtual size_t getMemoryUsed() const override;
+            virtual size_t getTotalResourcesCreated() const override;
+            virtual size_t getTotalResourcesLoaded() const override;
+            virtual size_t getTotalResources() const override;
 
             /** Creates a blank Animation but does not load it immediately
              *

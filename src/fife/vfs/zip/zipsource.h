@@ -35,7 +35,7 @@ namespace FIFE
     {
         public:
             ZipSource(VFS* vfs, std::string const & zip_file);
-            ~ZipSource();
+            ~ZipSource() override;
 
             ZipSource(ZipSource const &)            = delete;
             ZipSource& operator=(ZipSource const &) = delete;
@@ -45,11 +45,11 @@ namespace FIFE
              * thread-safe, and will probably break if called from multiple
              * threads at the same time.
              */
-            bool fileExists(std::string const & file) const;
-            std::set<std::string> listFiles(std::string const & path) const;
-            std::set<std::string> listDirectories(std::string const & path) const;
+            bool fileExists(std::string const & file) const override;
+            std::set<std::string> listFiles(std::string const & path) const override;
+            std::set<std::string> listDirectories(std::string const & path) const override;
 
-            virtual RawData* open(std::string const & path) const;
+            virtual RawData* open(std::string const & path) const override;
 
         private:
             /**

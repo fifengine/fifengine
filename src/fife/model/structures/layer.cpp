@@ -295,7 +295,7 @@ namespace FIFE
         return matching_instances;
     }
 
-    std::list<Instance*> Layer::getInstancesIn(Rect& rec)
+    std::list<Instance*> Layer::getInstancesIn(Rect const & rec)
     {
         std::list<Instance*> matching_instances;
         ModelCoordinate const mc(rec.x, rec.y);
@@ -595,7 +595,7 @@ namespace FIFE
         return m_interacts;
     }
 
-    void Layer::removeInteractLayer(Layer* layer)
+    void Layer::removeInteractLayer(Layer const * layer)
     {
         if (m_walkable) {
             auto it = m_interacts.begin();
@@ -678,7 +678,7 @@ namespace FIFE
         m_changeListeners.push_back(listener);
     }
 
-    void Layer::removeChangeListener(LayerChangeListener* listener)
+    void Layer::removeChangeListener(LayerChangeListener const * listener)
     {
         auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {

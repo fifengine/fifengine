@@ -36,14 +36,15 @@ namespace FIFE
             InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 
             InstanceRenderer(InstanceRenderer const & old);
+            InstanceRenderer& operator=(InstanceRenderer const &) = delete;
 
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~InstanceRenderer();
-            void render(Camera* cam, Layer* layer, RenderList& instances);
-            std::string getName()
+            virtual ~InstanceRenderer() override;
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
+            std::string getName() override
             {
                 return "InstanceRenderer";
             }
@@ -116,7 +117,7 @@ namespace FIFE
 
             /** Removes all stuff
              */
-            void reset();
+            void reset() override;
 
             /** Sets the interval in seconds (default is 60).
              */
@@ -236,7 +237,7 @@ namespace FIFE
             /** Binds new outline (if needed) to the instance's OutlineInfo
              */
             Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
-            Image* bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
+            Image* bindMultiOutline(OutlineInfo& info, RenderItem const & vc, Camera* cam);
             Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
 
             ImagePtr getMultiColorOverlay(RenderItem const & vc, OverlayColors* colors = nullptr);

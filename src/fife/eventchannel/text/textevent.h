@@ -41,7 +41,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~TextEvent() = default;
+            virtual ~TextEvent() override = default;
 
             TextEventType getType() const
             {
@@ -61,38 +61,10 @@ namespace FIFE
                 m_text = text;
             }
 
-            virtual void consume()
-            {
-                InputEvent::consume();
-            }
-            virtual bool isConsumed() const
-            {
-                return InputEvent::isConsumed();
-            }
-            virtual void consumedByWidgets()
-            {
-                InputEvent::consumedByWidgets();
-            }
-            virtual bool isConsumedByWidgets() const
-            {
-                return InputEvent::isConsumedByWidgets();
-            }
-            virtual IEventSource* getSource() const
-            {
-                return InputEvent::getSource();
-            }
-            virtual void setSource(IEventSource* source)
-            {
-                InputEvent::setSource(source);
-            }
-            virtual std::string const & getName() const
+            virtual std::string const & getName() const override
             {
                 static std::string const eventName("TextEvent");
                 return eventName;
-            }
-            virtual std::string getDebugString() const
-            {
-                return InputEvent::getDebugString();
             }
 
         private:

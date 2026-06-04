@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#pragma once
+#ifndef FIFE_VIDEO_FONTS_FONTTYPES_H
+#define FIFE_VIDEO_FONTS_FONTTYPES_H
 
 #include <SDL3/SDL_pixels.h>
 
@@ -52,7 +53,7 @@ namespace FIFE
             bool operator==(AssetHandle const &) const = default;
     };
 
-#if !defined(NDEBUG)
+#ifndef NDEBUG
     struct AssetDebugInfo
     {
             std::string uri;
@@ -137,3 +138,5 @@ struct std::hash<FIFE::FontInstanceKey>
             return h;
         }
 };
+
+#endif

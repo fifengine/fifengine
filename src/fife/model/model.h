@@ -49,7 +49,7 @@ namespace FIFE
             /** Destructor
              *
              */
-            ~Model();
+            ~Model() override;
 
             /** Add a map this model, and get a pointer to it.
              * The returned pointer is owned by the Model, so don't delete it!
@@ -58,7 +58,7 @@ namespace FIFE
 
             /** Remove a map from this model
              */
-            void deleteMap(Map*);
+            void deleteMap(Map const *);
 
             /** Get all the maps in the model.
              */

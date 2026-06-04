@@ -72,7 +72,7 @@ namespace FIFE
             Point getOffsetPoint();
 
             Instance* getInstance();
-            Location getLocation();
+            Location const & getLocation();
             Location const & getLocationRef();
             Layer* getLayer();
             Point getPoint();

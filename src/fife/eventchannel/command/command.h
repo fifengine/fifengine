@@ -33,7 +33,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~Command() = default;
+            virtual ~Command() override = default;
 
             /** Gets the type of this command
              * @return type of this command
@@ -65,47 +65,12 @@ namespace FIFE
                 m_code = code;
             }
 
-            /** Marks events as consumed.
-             */
-            virtual void consume()
-            {
-                Event::consume();
-            }
-
-            /** Checks whether event is consumed.
-             */
-            virtual bool isConsumed() const
-            {
-                return Event::isConsumed();
-            }
-
-            /** Gets the source of the event.
-             */
-            virtual IEventSource* getSource() const
-            {
-                return Event::getSource();
-            }
-
-            /** Sets the source of the event.
-             */
-            virtual void setSource(IEventSource* source)
-            {
-                Event::setSource(source);
-            }
-
             /** Gets the name of the event.
              */
-            virtual std::string const & getName() const
+            virtual std::string const & getName() const override
             {
                 static std::string const eventName("Command");
                 return eventName;
-            }
-
-            /** Gets the debugstring of the event.
-             */
-            virtual std::string getDebugString() const
-            {
-                return Event::getDebugString();
             }
 
         private:

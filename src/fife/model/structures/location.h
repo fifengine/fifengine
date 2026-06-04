@@ -108,7 +108,7 @@ namespace FIFE
             /** Gets exact layer coordinates set to this location
              * @return exact layer coordinates
              */
-            ExactModelCoordinate getExactLayerCoordinates() const;
+            ExactModelCoordinate const & getExactLayerCoordinates() const;
 
             /** Gets exact layer coordinates of this location mapped on given layer
              *  @throws NotSet in the following cases:

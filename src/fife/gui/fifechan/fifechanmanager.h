@@ -61,7 +61,7 @@ namespace FIFE
             FifechanManager();
             /** Destructor.
              */
-            virtual ~FifechanManager();
+            virtual ~FifechanManager() override;
 
             FifechanManager(FifechanManager const &)            = delete;
             FifechanManager& operator=(FifechanManager const &) = delete;
@@ -76,7 +76,7 @@ namespace FIFE
              *
              * This will be called each frame.
              */
-            virtual void turn();
+            virtual void turn() override;
 
             /** Inits the Fifechan GUI Manager.
              * @param backend The GUI backend object to use
@@ -92,7 +92,7 @@ namespace FIFE
              * @param width The new width.
              * @param height The new height.
              */
-            void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+            void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
             /** Adds a new widget.
              *
@@ -180,11 +180,11 @@ namespace FIFE
 
             /** Releases given font.
              */
-            void releaseFont(fcn::Font* font);
+            void releaseFont(fcn::Font const * font);
 
             void invalidateFonts();
 
-            virtual bool onSdlEvent(SDL_Event& evt);
+            virtual bool onSdlEvent(SDL_Event& evt) override;
 
             KeyEvent translateKeyEvent(fcn::KeyEvent const & evt);
             MouseEvent translateMouseEvent(fcn::MouseEvent const & evt);

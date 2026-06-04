@@ -790,6 +790,7 @@ namespace FIFE
             char* clipboard = SDL_GetClipboardText();
             if (clipboard != nullptr) {
                 text = std::string(clipboard);
+                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
                 SDL_free(clipboard);
             }
         }

@@ -108,7 +108,7 @@ namespace FIFE
         return m_exact_layer_coords;
     }
 
-    ExactModelCoordinate Location::getExactLayerCoordinates() const
+    ExactModelCoordinate const & Location::getExactLayerCoordinates() const
     {
         return m_exact_layer_coords;
     }
@@ -173,7 +173,7 @@ namespace FIFE
 
     std::ostream& operator<<(std::ostream& os, Location const & l)
     {
-        ExactModelCoordinate const p = l.getExactLayerCoordinates();
+        ExactModelCoordinate const & p = l.getExactLayerCoordinates();
         return os << "x=" << p.x << ", y=" << p.y;
     }
 

@@ -53,7 +53,6 @@ namespace FIFE
 
     FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
-        m_renderbackend(renderbackend),
         m_font(nullptr),
         m_font_color(false),
         m_color{.r = 255, .g = 255, .b = 255, .a = 255},
@@ -67,7 +66,6 @@ namespace FIFE
 
     FloatingTextRenderer::FloatingTextRenderer(FloatingTextRenderer const & old) :
         RendererBase(old),
-        m_renderbackend(old.m_renderbackend),
         m_font(old.m_font),
         m_font_color(old.m_font_color),
         m_color(old.m_color),

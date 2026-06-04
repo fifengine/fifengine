@@ -168,7 +168,7 @@ namespace FIFE
         throw NotFound(std::string("Tried to get non-existent map: ") + identifier + ".");
     }
 
-    void Model::deleteMap(Map* map)
+    void Model::deleteMap(Map const * map)
     {
         auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
@@ -244,7 +244,7 @@ namespace FIFE
         // Check if any instances exist. If yes - bail out.
         for (auto const & m_map : m_maps) {
             auto layers = m_map->getLayers();
-            for (auto const & layer : layers) {
+            for (auto const * layer : layers) {
                 for (auto const & kt : layer->getInstances()) {
                     Object const * o = kt->getObject();
                     if (o == object) {

@@ -30,14 +30,14 @@ namespace FIFE
 
             GridRenderer(GridRenderer const & old);
 
-            RendererBase* clone();
+            RendererBase* clone() override;
 
             /** Destructor.
              */
-            virtual ~GridRenderer();
+            virtual ~GridRenderer() override;
 
-            void render(Camera* cam, Layer* layer, RenderList& instances);
-            std::string getName()
+            void render(Camera* cam, Layer* layer, RenderList& instances) override;
+            std::string getName() override
             {
                 return "GridRenderer";
             }

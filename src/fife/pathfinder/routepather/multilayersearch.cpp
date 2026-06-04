@@ -115,7 +115,7 @@ namespace FIFE
 
     MultiLayerSearch::~MultiLayerSearch() = default;
 
-    void MultiLayerSearch::createSearchFrontier(int32_t startInt, CellCache* cache)
+    void MultiLayerSearch::createSearchFrontier(int32_t startInt, CellCache const * cache)
     {
         // reset all
         m_sortedFrontier.clear();

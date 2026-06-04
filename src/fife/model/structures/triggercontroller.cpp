@@ -263,10 +263,4 @@ namespace FIFE
         return names;
     }
 
-    bool TriggerController::exists(std::string const & name)
-    {
-        auto it = m_triggerNameMap.find(name);
-        return it != m_triggerNameMap.end();
-    }
-
 } // namespace FIFE

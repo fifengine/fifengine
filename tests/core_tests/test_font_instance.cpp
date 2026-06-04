@@ -72,7 +72,7 @@ TEST_CASE("FontFamily selectFace returns correct weight")
     family.addFace(face400, FontWeight::Regular);
     family.addFace(face700, FontWeight::Bold);
 
-    auto* selected = family.selectFace(FontWeight::Bold, false, 0x0041);
+    auto const * selected = family.selectFace(FontWeight::Bold, false, 0x0041);
     REQUIRE(selected != nullptr);
     REQUIRE(selected->getAssetHandle().id == 2);
 }
@@ -84,7 +84,7 @@ TEST_CASE("FontFamily selectFace fallback to first face when no match")
     FontFamily family("Test");
     family.addFace(face, FontWeight::Light);
 
-    auto* selected = family.selectFace(FontWeight::Bold, false, 0xFFFF);
+    auto const * selected = family.selectFace(FontWeight::Bold, false, 0xFFFF);
     REQUIRE(selected != nullptr);
     REQUIRE(selected->getAssetHandle().id == 1);
 }
@@ -97,7 +97,7 @@ TEST_CASE("FontFamily selectFace with codepoint support")
     FontFamily family("Test");
     family.addFace(face, FontWeight::Regular);
 
-    auto* selected = family.selectFace(FontWeight::Regular, false, 0x0041);
+    auto const * selected = family.selectFace(FontWeight::Regular, false, 0x0041);
     REQUIRE(selected != nullptr);
 }
 
@@ -178,7 +178,7 @@ TEST_CASE("FontFamily fallback chain selection")
     family.addFace(primary, FontWeight::Regular);
     family.addFallback("Fallback");
 
-    auto* sel = family.selectFace(FontWeight::Regular, false, 0x0041);
+    auto const * sel = family.selectFace(FontWeight::Regular, false, 0x0041);
     REQUIRE(sel != nullptr);
     REQUIRE(sel->getAssetHandle().id == 1);
 }
@@ -191,7 +191,7 @@ TEST_CASE("FontFamily selectFace uses fallback for unsupported codepoint")
     FontFamily family("Test");
     family.addFace(regular, FontWeight::Regular);
 
-    auto* sel = family.selectFace(FontWeight::Regular, false, 0xFFFF);
+    auto const * sel = family.selectFace(FontWeight::Regular, false, 0xFFFF);
     REQUIRE(sel != nullptr);
     REQUIRE(sel->getAssetHandle().id == 1);
 }
