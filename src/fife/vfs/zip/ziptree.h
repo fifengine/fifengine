@@ -27,6 +27,8 @@ namespace FIFE
              */
             ZipTree();
 
+            ~ZipTree();
+
             ZipTree(ZipTree const &)            = delete;
             ZipTree& operator=(ZipTree const &) = delete;
             /**

@@ -94,7 +94,7 @@ namespace FIFE
 
     int32_t const MIN_COORD = -9999999;
     int32_t const MAX_COORD = 9999999;
-    void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
+    void CoordinateRenderer::render(Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances)
     {
         if (m_font == nullptr) {
             // no font selected.. nothing to render

@@ -12,7 +12,6 @@
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "util/time/timemanager.h"
-
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 

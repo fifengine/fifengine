@@ -185,8 +185,11 @@ namespace FIFE
 
     bool VFS::isDirectory(std::string const & path) const
     {
-        // Add a slash in case there isn't one in the string
-        std::string const newpath       = path + "/";
+        // Normalize separators (Windows may provide backslashes) and add
+        // a trailing slash so splitting is consistent across platforms.
+        std::string normalized = path;
+        std::replace(normalized.begin(), normalized.end(), '\\', '/');
+        std::string const newpath       = normalized + "/";
         std::vector<std::string> tokens = split(newpath, '/');
 
         std::string currentpath = "/";

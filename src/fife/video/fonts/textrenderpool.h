@@ -40,6 +40,9 @@ namespace FIFE
              */
             explicit TextRenderPool(size_t poolSize = 200);
 
+            TextRenderPool(TextRenderPool const &)            = delete;
+            TextRenderPool& operator=(TextRenderPool const &) = delete;
+
             /** Destructor
              */
             ~TextRenderPool();

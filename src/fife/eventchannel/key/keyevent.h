@@ -126,15 +126,6 @@ namespace FIFE
             {
                 InputEvent::setSource(source);
             }
-            virtual int32_t getTimeStamp() const
-            {
-                return SDLTimeCompat::toInt32Ticks(InputEvent::getTimeStamp64());
-            }
-            virtual void setTimeStamp(int32_t timestamp)
-            {
-                InputEvent::setTimeStamp64(SDLTimeCompat::fromLegacy32Ticks(timestamp));
-            }
-
             virtual std::string const & getName() const
             {
                 static std::string const eventName("KeyEvent");

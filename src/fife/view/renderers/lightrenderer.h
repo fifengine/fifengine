@@ -270,6 +270,7 @@ namespace FIFE
             LightRenderer(RenderBackend* renderbackend, int32_t position);
 
             LightRenderer(LightRenderer const & old);
+            LightRenderer& operator=(LightRenderer const &) = delete;
 
             RendererBase* clone();
 

@@ -15,6 +15,8 @@ namespace fs = std::filesystem;
 namespace FIFE
 {
 
+    ZipTree::~ZipTree() = default;
+
     ZipTree::ZipTree() : m_rootNode(std::make_unique<ZipNode>("/"))
     {
     }

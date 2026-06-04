@@ -395,7 +395,7 @@ namespace FIFE
         SDL_Joystick* joy         = sdlDeviceIndex ? SDL_OpenJoystick(*sdlDeviceIndex) : nullptr;
         if (joy != nullptr) {
             SDL_GUID const guid = SDL_GetJoystickGUID(joy);
-            SDL_GUIDToString(guid, tmp.data(), tmp.size());
+            SDL_GUIDToString(guid, tmp.data(), static_cast<int>(tmp.size()));
             SDL_CloseJoystick(joy);
         } else {
             tmp.at(0) = '\0';
@@ -424,8 +424,7 @@ namespace FIFE
         if (!joystick->isController()) {
             return;
         }
-        std::pair<std::map<std::string, uint8_t>::iterator, bool> ret;
-        ret = m_gamepadGuids.insert(std::pair<std::string, uint8_t>(joystick->getGuid(), 1));
+        auto ret = m_gamepadGuids.insert(std::pair<std::string, uint8_t>(joystick->getGuid(), uint8_t{1}));
         if (!ret.second) {
             ++ret.first->second;
         }
