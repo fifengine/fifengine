@@ -8,7 +8,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "fife_unittest.h"
+#include <catch2/catch_test_macros.hpp>
 
 // 3rd party library includes
 #include <utf8cpp/utf8.h>
@@ -51,14 +51,14 @@ TEST_CASE("utf8_russian_hello", "[core][utf]")
     std::string s = make_utf8(russian.data(), russian.size());
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x041F); // П
-    CHECK_EQ(utf8::unchecked::next(it), 0x0440); // р
-    CHECK_EQ(utf8::unchecked::next(it), 0x0438); // и
-    CHECK_EQ(utf8::unchecked::next(it), 0x0432); // в
-    CHECK_EQ(utf8::unchecked::next(it), 0x0435); // е
-    CHECK_EQ(utf8::unchecked::next(it), 0x0442); // т
+    CHECK((utf8::unchecked::next(it)) == (0x041F)); // П
+    CHECK((utf8::unchecked::next(it)) == (0x0440)); // р
+    CHECK((utf8::unchecked::next(it)) == (0x0438)); // и
+    CHECK((utf8::unchecked::next(it)) == (0x0432)); // в
+    CHECK((utf8::unchecked::next(it)) == (0x0435)); // е
+    CHECK((utf8::unchecked::next(it)) == (0x0442)); // т
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 10);
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (10));
 }
 
 TEST_CASE("utf8_french_hello", "[core][utf]")
@@ -69,8 +69,8 @@ TEST_CASE("utf8_french_hello", "[core][utf]")
     std::string s = make_utf8(french.data(), french.size());
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 16);
-    CHECK_EQ(utf8::unchecked::peek_next(s.data()), 0x0042); // B
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (16));
+    CHECK((utf8::unchecked::peek_next(s.data())) == (0x0042)); // B
 }
 
 TEST_CASE("utf8_french_accents", "[core][utf]")
@@ -80,10 +80,10 @@ TEST_CASE("utf8_french_accents", "[core][utf]")
     std::string s                = make_utf8(french.data(), french.size());
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x00E9); // é
-    CHECK_EQ(utf8::unchecked::next(it), 0x006C); // l
+    CHECK((utf8::unchecked::next(it)) == (0x00E9)); // é
+    CHECK((utf8::unchecked::next(it)) == (0x006C)); // l
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 2);
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (2));
 }
 
 TEST_CASE("utf8_italian_hello", "[core][utf]")
@@ -94,13 +94,13 @@ TEST_CASE("utf8_italian_hello", "[core][utf]")
     std::string s = make_utf8(italian.data(), italian.size());
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 10);
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (10));
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x0043); // C
-    CHECK_EQ(utf8::unchecked::next(it), 0x0069); // i
-    CHECK_EQ(utf8::unchecked::next(it), 0x0061); // a
-    CHECK_EQ(utf8::unchecked::next(it), 0x006F); // o
+    CHECK((utf8::unchecked::next(it)) == (0x0043)); // C
+    CHECK((utf8::unchecked::next(it)) == (0x0069)); // i
+    CHECK((utf8::unchecked::next(it)) == (0x0061)); // a
+    CHECK((utf8::unchecked::next(it)) == (0x006F)); // o
 }
 
 TEST_CASE("utf8_hebrew_hello", "[core][utf]")
@@ -111,13 +111,13 @@ TEST_CASE("utf8_hebrew_hello", "[core][utf]")
     std::string s = make_utf8(hebrew.data(), hebrew.size() - 1);
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 9);
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (9));
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x05E9); // ש
-    CHECK_EQ(utf8::unchecked::next(it), 0x05DC); // ל
-    CHECK_EQ(utf8::unchecked::next(it), 0x05D5); // ו
-    CHECK_EQ(utf8::unchecked::next(it), 0x05DD); // ם
+    CHECK((utf8::unchecked::next(it)) == (0x05E9)); // ש
+    CHECK((utf8::unchecked::next(it)) == (0x05DC)); // ל
+    CHECK((utf8::unchecked::next(it)) == (0x05D5)); // ו
+    CHECK((utf8::unchecked::next(it)) == (0x05DD)); // ם
 }
 
 TEST_CASE("utf8_japanese_hello", "[core][utf]")
@@ -127,15 +127,15 @@ TEST_CASE("utf8_japanese_hello", "[core][utf]")
     std::string s                  = make_utf8(japanese.data(), japanese.size());
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x65E5); // 日
-    CHECK_EQ(utf8::unchecked::next(it), 0x672C); // 本
+    CHECK((utf8::unchecked::next(it)) == (0x65E5)); // 日
+    CHECK((utf8::unchecked::next(it)) == (0x672C)); // 本
 
     std::vector<uint32_t> codepoints;
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(codepoints));
-    CHECK_EQ(codepoints.size(), 2U);
-    CHECK_EQ(codepoints.at(0), 0x65E5);
-    CHECK_EQ(codepoints.at(1), 0x672C);
+    CHECK((codepoints.size()) == (2U));
+    CHECK((codepoints.at(0)) == (0x65E5));
+    CHECK((codepoints.at(1)) == (0x672C));
 }
 
 TEST_CASE("utf8_emoji_wave_globe", "[core][utf]")
@@ -145,13 +145,13 @@ TEST_CASE("utf8_emoji_wave_globe", "[core][utf]")
     std::string s               = make_utf8(emoji.data(), emoji.size());
 
     char const * it = s.data();
-    CHECK_EQ(utf8::unchecked::next(it), 0x0001F44B); // 👋
-    CHECK_EQ(utf8::unchecked::next(it), 0x0001F30D); // 🌍
+    CHECK((utf8::unchecked::next(it)) == (0x0001F44B)); // 👋
+    CHECK((utf8::unchecked::next(it)) == (0x0001F30D)); // 🌍
 
     std::vector<uint32_t> codepoints;
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     utf8::unchecked::utf8to32(s.data(), s.data() + s.size(), std::back_inserter(codepoints));
-    CHECK_EQ(codepoints.size(), 2U);
+    CHECK((codepoints.size()) == (2U));
 }
 
 TEST_CASE("utf8_mixed_languages", "[core][utf]")
@@ -162,17 +162,17 @@ TEST_CASE("utf8_mixed_languages", "[core][utf]")
     std::string s = make_utf8(mixed.data(), mixed.size());
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    CHECK_EQ(utf8::unchecked::distance(s.data(), s.data() + s.size()), 8);
+    CHECK((utf8::unchecked::distance(s.data(), s.data() + s.size())) == (8));
 
     char const * it    = s.data();
     uint32_t const cp1 = utf8::unchecked::next(it);
     uint32_t const cp2 = utf8::unchecked::next(it);
     uint32_t const cp3 = utf8::unchecked::next(it);
     uint32_t const cp4 = utf8::unchecked::next(it);
-    CHECK_EQ(cp1, 72);
-    CHECK_EQ(cp2, 101);
-    CHECK_EQ(cp3, 108);
-    CHECK_EQ(cp4, 108);
+    CHECK((cp1) == (72));
+    CHECK((cp2) == (101));
+    CHECK((cp3) == (108));
+    CHECK((cp4) == (108));
 }
 
 TEST_CASE("utf8_append_codepoints", "[core][utf]")
@@ -184,7 +184,7 @@ TEST_CASE("utf8_append_codepoints", "[core][utf]")
     utf8::unchecked::append(0x006c, std::back_inserter(result)); // l
     utf8::unchecked::append(0x0064, std::back_inserter(result)); // d
 
-    CHECK_EQ(result, "World");
+    CHECK((result) == ("World"));
 }
 
 TEST_CASE("utf8_append_russian", "[core][utf]")
@@ -199,8 +199,8 @@ TEST_CASE("utf8_append_russian", "[core][utf]")
 
     static constexpr auto expected =
         std::to_array<unsigned char>({0xD0, 0x9F, 0xD1, 0x80, 0xD0, 0xB8, 0xD0, 0xB2, 0xD0, 0xB5, 0xD1, 0x82});
-    CHECK_EQ(result.size(), 12U);
-    CHECK_EQ(std::memcmp(result.data(), expected.data(), 12), 0);
+    CHECK((result.size()) == (12U));
+    CHECK(std::memcmp(result.data(), expected.data(), 12) == 0);
 }
 
 TEST_CASE("utf8_roundtrip_russian", "[core][utf]")
@@ -217,8 +217,8 @@ TEST_CASE("utf8_roundtrip_russian", "[core][utf]")
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     utf8::unchecked::utf32to8(utf32.data(), utf32.data() + utf32.size(), std::back_inserter(result));
 
-    CHECK_EQ(result.size(), s.size());
-    CHECK_EQ(std::memcmp(result.data(), s.data(), s.size()), 0);
+    CHECK((result.size()) == (s.size()));
+    CHECK(std::memcmp(result.data(), s.data(), s.size()) == 0);
 }
 
 TEST_CASE("utf8_prior_navigation", "[core][utf]")
@@ -229,9 +229,9 @@ TEST_CASE("utf8_prior_navigation", "[core][utf]")
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     char const * it = s.data() + s.size();
 
-    CHECK_EQ(utf8::unchecked::prior(it), 0x8A9E); // 語
-    CHECK_EQ(utf8::unchecked::prior(it), 0x672C); // 本
-    CHECK_EQ(utf8::unchecked::prior(it), 0x65E5); // 日
+    CHECK((utf8::unchecked::prior(it)) == (0x8A9E)); // 語
+    CHECK((utf8::unchecked::prior(it)) == (0x672C)); // 本
+    CHECK((utf8::unchecked::prior(it)) == (0x65E5)); // 日
 }
 
 TEST_CASE("utf8_advance_through_languages", "[core][utf]")
@@ -244,10 +244,10 @@ TEST_CASE("utf8_advance_through_languages", "[core][utf]")
     char const * it1 = s.data();
     utf8::unchecked::advance(it1, 5);
     uint32_t const cp1 = utf8::unchecked::next(it1);
-    CHECK_EQ(cp1, 1055); // П = 0x041F
+    CHECK((cp1) == (1055)); // П = 0x041F
 
     char const * it2 = s.data();
     utf8::unchecked::advance(it2, 6);
     uint32_t const cp2 = utf8::unchecked::next(it2);
-    CHECK_EQ(cp2, 1088); // р = 0x0440
+    CHECK((cp2) == (1088)); // р = 0x0440
 }

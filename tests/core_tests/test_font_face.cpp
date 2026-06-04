@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Standard C++ library includes
 #include <cstdlib>
 #include <fstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
+// FIFE includes
 #include "fixture.h"
 #include "video/fonts/fontface.h"
 #include "video/fonts/fonttypes.h"

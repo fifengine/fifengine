@@ -11,7 +11,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "fife_unittest.h"
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "vfs/raw/rawdata.h"
@@ -39,31 +39,31 @@ TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", 
     CHECK_THROWS_AS(vfs->open("does-not-exist"), NotFound);
     std::set<std::string> const dirlist = vfs->listDirectories("ziptest_content");
 
-    CHECK_EQ(dirlist.size(), 4);
+    CHECK((dirlist.size()) == (4));
     CHECK(dirlist.contains("maps"));
     CHECK(dirlist.contains("testdir1"));
     CHECK(dirlist.contains("testdir2"));
     CHECK(dirlist.contains("testdir3"));
 
     std::set<std::string> filelist = vfs->listFiles("ziptest_content");
-    CHECK_EQ(filelist.size(), 0);
+    CHECK((filelist.size()) == (0));
     filelist = vfs->listFiles("ziptest_content/testdir1");
 
-    CHECK_EQ(filelist.size(), 4);
+    CHECK((filelist.size()) == (4));
     CHECK(filelist.contains("file"));
     CHECK(filelist.contains("file-a"));
     CHECK(filelist.contains("file-b"));
     CHECK(filelist.contains("file-c"));
 
-    CHECK_EQ(vfs->listFiles("ziptest_content/testdir3").size(), 0);
-    CHECK_EQ(vfs->listDirectories("ziptest_content/testdir1").size(), 0);
+    CHECK((vfs->listFiles("ziptest_content/testdir3").size()) == (0));
+    CHECK((vfs->listDirectories("ziptest_content/testdir1").size()) == (0));
 
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("ziptest_content/maps/test.map"));
     auto fraw  = std::unique_ptr<RawData>(vfs->open(RAW_FILE));
     auto fcomp = std::unique_ptr<RawData>(vfs->open("ziptest_content/maps/test.map"));
 
-    CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
+    CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
     auto smaller_len = std::min(fraw->getDataLength(), fcomp->getDataLength());
 
     std::vector<uint8_t> d_raw(fraw->getDataLength());
@@ -74,6 +74,6 @@ TEST_CASE("ZipSource::open decompresses stored and deflated entries correctly", 
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t const rawc  = d_raw.at(i);
         uint8_t const compc = d_comp.at(i);
-        CHECK_EQ(rawc, compc);
+        CHECK((rawc) == (compc));
     }
 }

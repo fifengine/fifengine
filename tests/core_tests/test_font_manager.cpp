@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Standard C++ library includes
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
 
+// 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
+
+// FIFE includes
 #include "fixture.h"
 #include "video/fonts/assetresolver.h"
 #include "video/fonts/fontfacecache.h"
@@ -16,7 +21,6 @@
 #include "video/fonts/fonttypes.h"
 #include "video/fonts/imagefontface.h"
 #include "video/fonts/truetypefontface.h"
-#include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;
 using FIFE::AssetProvider;

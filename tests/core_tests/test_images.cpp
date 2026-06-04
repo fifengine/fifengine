@@ -10,8 +10,8 @@
 #include <vector>
 
 // Platform specific includes
-#include "fife_unittest.h"
 #include "fixture.h"
+#include <catch2/catch_test_macros.hpp>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>
@@ -45,10 +45,10 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         uint8_t b                          = 0;
         uint8_t a                          = 0;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
-        CHECK_EQ(r, 0);
-        CHECK_EQ(g, 0);
-        CHECK_EQ(b, 0);
-        CHECK_EQ(a, 255);
+        CHECK((r) == (0));
+        CHECK((g) == (0));
+        CHECK((b) == (0));
+        CHECK((a) == (255));
         SDL_DestroySurface(surf);
     }
 
@@ -91,10 +91,10 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
         uint8_t b                          = 0;
         uint8_t a                          = 0;
         SDL_GetRGBA(*static_cast<uint32_t const *>(surf->pixels), fmt, nullptr, &r, &g, &b, &a);
-        CHECK_EQ(r, surf_r);
-        CHECK_EQ(g, surf_g);
-        CHECK_EQ(b, surf_b);
-        CHECK_EQ(a, surf_a);
+        CHECK((r) == (surf_r));
+        CHECK((g) == (surf_g));
+        CHECK((b) == (surf_b));
+        CHECK((a) == (surf_a));
         SDL_DestroySurface(surf);
     }
 
@@ -232,6 +232,6 @@ TEST_CASE("RenderBackendSDL alpha optimizer renders fife_logo.png and alpha_fidg
         renderbackend.endFrame();
     }
 
-    CHECK_NE(img.get()->getSurface(), nullptr);
-    CHECK_NE(SDL_GetPixelFormatDetails(alpha_img.get()->getSurface()->format)->Amask, 0);
+    CHECK((img.get()->getSurface()) != (nullptr));
+    CHECK((SDL_GetPixelFormatDetails(alpha_img.get()->getSurface()->format)->Amask) != (0));
 }

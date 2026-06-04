@@ -7,8 +7,8 @@
 #include <string>
 
 // Platform specific includes
-#include "fife_unittest.h"
 #include "fixture.h"
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "util/structures/rect.h"
@@ -53,8 +53,8 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
     int const w      = static_cast<int>(W / 12);
     uint32_t const H = atlas->getHeight();
     int const h      = static_cast<int>(H / 12);
-    CHECK_NE(w, 0);
-    CHECK_NE(h, 0);
+    CHECK((w) != (0));
+    CHECK((h) != (0));
 
     ImagePtr subImage = imageManager->create();
     subImage->useSharedImage(atlas, Rect(0, 0, w, h));

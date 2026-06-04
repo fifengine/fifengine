@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Standard C++ library includes
 #include <limits>
 #include <memory>
 
+// 3rd party library includes
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+// FIFE includes
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/metamodel/ipather.h"
 #include "model/metamodel/modelcoords.h"
@@ -15,8 +21,6 @@
 #include "pathfinder/route.h"
 #include "pathfinder/routepather/routepather.h"
 #include "util/time/timemanager.h"
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
 
 using FIFE::Cell;
 using FIFE::CellTypeInfo;

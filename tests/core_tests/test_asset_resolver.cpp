@@ -5,12 +5,12 @@
 #include <string>
 #include <vector>
 
-#include "fife_unittest.h"
 #include "vfs/directoryprovider.h"
 #include "vfs/filesystemassetprovider.h"
 #include "vfs/vfsassetprovider.h"
 #include "vfs/vfsdirectory.h"
 #include "video/fonts/assetresolver.h"
+#include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;
 using FIFE::AssetProvider;
@@ -54,7 +54,7 @@ TEST_CASE("AssetResolver returns handle from single provider", "[asset][resolver
     req.id      = "test";
     req.source  = "test.txt";
     auto handle = resolver.resolve(req);
-    CHECK_EQ(handle.id, 42);
+    CHECK((handle.id) == (42));
 }
 
 TEST_CASE("AssetResolver tries providers in priority order", "[asset][resolver]")
@@ -66,7 +66,7 @@ TEST_CASE("AssetResolver tries providers in priority order", "[asset][resolver]"
     AssetRequest req;
     req.id      = "test";
     auto handle = resolver.resolve(req);
-    CHECK_EQ(handle.id, 2);
+    CHECK((handle.id) == (2));
 }
 
 TEST_CASE("AssetResolver returns invalid handle when no provider canResolve", "[asset][resolver]")
@@ -77,20 +77,20 @@ TEST_CASE("AssetResolver returns invalid handle when no provider canResolve", "[
     AssetRequest req;
     req.id      = "test";
     auto handle = resolver.resolve(req);
-    CHECK_EQ(handle.id, 0);
+    CHECK((handle.id) == (0));
 }
 
 TEST_CASE("VfsAssetProvider returns correct priority", "[asset][vfs]")
 {
     auto vfs = std::make_shared<VFS>();
     VfsAssetProvider provider(vfs.get());
-    CHECK_EQ(provider.priority(), 100);
+    CHECK((provider.priority()) == (100));
 }
 
 TEST_CASE("FilesystemAssetProvider returns correct priority", "[asset][filesystem]")
 {
     FilesystemAssetProvider provider(std::vector<std::string>{});
-    CHECK_EQ(provider.priority(), 200);
+    CHECK((provider.priority()) == (200));
 }
 
 TEST_CASE("AssetResolver sorts providers by priority regardless of add order", "[asset][resolver]")
@@ -104,7 +104,7 @@ TEST_CASE("AssetResolver sorts providers by priority regardless of add order", "
     req.id      = "test";
     auto handle = resolver.resolve(req);
 
-    CHECK_EQ(handle.id, 2);
+    CHECK((handle.id) == (2));
 }
 
 TEST_CASE("Empty AssetResolver returns invalid handle", "[asset][resolver]")
@@ -114,7 +114,7 @@ TEST_CASE("Empty AssetResolver returns invalid handle", "[asset][resolver]")
     AssetRequest req;
     req.id      = "test";
     auto handle = resolver.resolve(req);
-    CHECK_EQ(handle.id, 0);
+    CHECK((handle.id) == (0));
 }
 
 TEST_CASE("AssetHandle IDs are unique across calls", "[asset][resolver]")
@@ -133,9 +133,9 @@ TEST_CASE("AssetHandle IDs are unique across calls", "[asset][resolver]")
         ids     = {h1.id, h2.id, h3.id};
     }
 
-    CHECK_NE(ids[0], ids[1]);
-    CHECK_NE(ids[1], ids[2]);
-    CHECK_NE(ids[0], ids[2]);
+    CHECK((ids[0]) != (ids[1]));
+    CHECK((ids[1]) != (ids[2]));
+    CHECK((ids[0]) != (ids[2]));
 }
 
 TEST_CASE("VfsAssetProvider canResolve with existing VFS file", "[asset][vfs][integration]")

@@ -7,7 +7,7 @@
 #include <iostream>
 
 // Platform specific includes
-#include "fife_unittest.h"
+#include <catch2/catch_test_macros.hpp>
 
 // 3rd party library includes
 
@@ -77,16 +77,16 @@ TEST_CASE("SharedPtr::operator= preserves data after source reset", "[core][shar
     SharedPtr<Data> shptr(new Data(5, 10));
 
     SharedPtr<Data> copy = shptr;
-    CHECK_EQ(shptr.useCount(), 2);
+    CHECK((shptr.useCount()) == (2));
 
     shptr.reset();
     CHECK(!shptr);
 
-    CHECK_EQ(copy.useCount(), 1);
+    CHECK((copy.useCount()) == (1));
     CHECK(copy.unique());
 
-    CHECK_EQ(copy->x, 5);
-    CHECK_EQ(copy->y, 10);
+    CHECK((copy->x) == (5));
+    CHECK((copy->y) == (10));
 
     copy.reset();
     CHECK(!copy);
@@ -104,16 +104,16 @@ TEST_CASE("SharedPtr::copy constructor preserves data after source reset", "[cor
     SharedPtr<Data> shptr(new Data(5, 10));
 
     SharedPtr<Data> copy(shptr);
-    CHECK_EQ(shptr.useCount(), 2);
+    CHECK((shptr.useCount()) == (2));
 
     shptr.reset();
     CHECK(!shptr);
 
-    CHECK_EQ(copy.useCount(), 1);
+    CHECK((copy.useCount()) == (1));
     CHECK(copy.unique());
 
-    CHECK_EQ(copy->x, 5);
-    CHECK_EQ(copy->y, 10);
+    CHECK((copy->x) == (5));
+    CHECK((copy->y) == (10));
 
     copy.reset();
     CHECK(!copy);
@@ -134,18 +134,18 @@ TEST_CASE("SharedPtr::operator-> and operator* access underlying data", "[core][
     shptr->y = 10;
 
     SharedPtr<Data> copy(shptr);
-    CHECK_EQ(shptr.useCount(), 2);
+    CHECK((shptr.useCount()) == (2));
 
     shptr.reset();
     CHECK(!shptr);
 
     Data const d = *copy;
 
-    CHECK_EQ(copy.useCount(), 1);
+    CHECK((copy.useCount()) == (1));
     CHECK(copy.unique());
 
-    CHECK_EQ(d.x, 5);
-    CHECK_EQ(d.y, 10);
+    CHECK((d.x) == (5));
+    CHECK((d.y) == (10));
 
     copy.reset();
     CHECK(!copy);
@@ -187,7 +187,7 @@ TEST_CASE("SharedPtr<Base> to Derived calls virtual function correctly", "[core]
 {
     SharedPtr<Data> const shptr(new SubData(2, 4, 6));
 
-    CHECK_EQ(shptr->total(), 12);
+    CHECK((shptr->total()) == (12));
 }
 
 /**
@@ -203,8 +203,8 @@ TEST_CASE("SharedPtr::operator== and operator!= compare pointers correctly", "[c
     SharedPtr<Data> copy(shptr);
     SharedPtr<Data> shptr2(new Data(4, 8));
 
-    CHECK_EQ(shptr, copy);
-    CHECK_NE(shptr, shptr2);
+    CHECK((shptr) == (copy));
+    CHECK((shptr) != (shptr2));
 }
 
 /**
@@ -219,16 +219,16 @@ TEST_CASE("SharedPtr::reset with new data isolates copies", "[core][sharedptr]")
     SharedPtr<Data> shptr(new Data(2, 4));
     SharedPtr<Data> const copy(shptr);
 
-    CHECK_EQ(copy.useCount(), 2);
+    CHECK((copy.useCount()) == (2));
     shptr.reset(new Data(6, 8)); // NOLINT(cppcoreguidelines-owning-memory)
-    CHECK_EQ(copy.useCount(), 1);
+    CHECK((copy.useCount()) == (1));
 
     // shptr holding values we expect?
-    CHECK_EQ(shptr->x, 6);
-    CHECK_EQ(shptr->y, 8);
+    CHECK((shptr->x) == (6));
+    CHECK((shptr->y) == (8));
 
-    CHECK_EQ(copy->x, 2);
-    CHECK_EQ(copy->y, 4);
+    CHECK((copy->x) == (2));
+    CHECK((copy->y) == (4));
 
     shptr.reset();
     CHECK(!shptr);

@@ -6,7 +6,7 @@
 #include <type_traits>
 
 // Platform specific includes
-#include "fife_unittest.h"
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "video/fonts/fonttypes.h"

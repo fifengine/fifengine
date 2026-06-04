@@ -9,8 +9,8 @@
 #include <string>
 
 // Platform specific includes
-#include "fife_unittest.h"
 #include "fixture.h"
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "gui/fifechan/base/gui_image.h"

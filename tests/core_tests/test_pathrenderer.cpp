@@ -8,7 +8,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "fife_unittest.h"
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "video/renderbackend.h"
@@ -235,16 +235,16 @@ TEST_CASE("PathLineStyle enum values", "[pathrenderer]")
 TEST_CASE("PathStyleConfig default values", "[pathrenderer]")
 {
     FIFE::PathStyleConfig const cfg;
-    CHECK_EQ(cfg.color.r, 0);
-    CHECK_EQ(cfg.color.g, 100);
-    CHECK_EQ(cfg.color.b, 255);
-    CHECK_EQ(cfg.color.a, 255);
-    CHECK_EQ(cfg.width, 2.0F);
-    CHECK_EQ(cfg.style, FIFE::PLS_SOLID);
-    CHECK_EQ(cfg.dashLength, 12.0F);
-    CHECK_EQ(cfg.dashGap, 6.0F);
-    CHECK_EQ(cfg.drawArrows, false);
-    CHECK_EQ(cfg.arrowSize, 10.0F);
+    CHECK((cfg.color.r) == (0));
+    CHECK((cfg.color.g) == (100));
+    CHECK((cfg.color.b) == (255));
+    CHECK((cfg.color.a) == (255));
+    CHECK((cfg.width) == (2.0F));
+    CHECK((cfg.style) == (FIFE::PLS_SOLID));
+    CHECK((cfg.dashLength) == (12.0F));
+    CHECK((cfg.dashGap) == (6.0F));
+    CHECK((cfg.drawArrows) == (false));
+    CHECK((cfg.arrowSize) == (10.0F));
 }
 
 TEST_CASE("PathRenderer construction and basic properties", "[pathrenderer]")
@@ -252,12 +252,12 @@ TEST_CASE("PathRenderer construction and basic properties", "[pathrenderer]")
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
-    CHECK_EQ(pr.getName(), "PathRenderer");
+    CHECK((pr.getName()) == ("PathRenderer"));
     CHECK(pr.isEnabled() == false);
 
     // Clone preserves name and disabled state
     std::unique_ptr<FIFE::RendererBase> cloned(pr.clone());
-    CHECK_EQ(cloned->getName(), "PathRenderer");
+    CHECK((cloned->getName()) == ("PathRenderer"));
     CHECK(cloned->isEnabled() == false);
 }
 
@@ -318,7 +318,7 @@ TEST_CASE("PathRenderer getInstance", "[pathrenderer]")
     mc.pathRenderer = &pr;
 
     FIFE::PathRenderer const * retrieved = FIFE::PathRenderer::getInstance(&mc);
-    CHECK_EQ(retrieved, &pr);
+    CHECK((retrieved) == (&pr));
 }
 
 TEST_CASE("PathRenderer getInstance returns null for missing renderer", "[pathrenderer]")
@@ -336,13 +336,13 @@ TEST_CASE("PathStyleConfig can be copied", "[pathrenderer]")
     a.arrowSize = 15.0F;
 
     FIFE::PathStyleConfig const b = a;
-    CHECK_EQ(b.color.r, 10);
-    CHECK_EQ(b.color.g, 20);
-    CHECK_EQ(b.color.b, 30);
-    CHECK_EQ(b.color.a, 40);
-    CHECK_EQ(b.width, 5.0F);
-    CHECK_EQ(b.style, FIFE::PLS_ARROWED);
-    CHECK_EQ(b.arrowSize, 15.0F);
+    CHECK((b.color.r) == (10));
+    CHECK((b.color.g) == (20));
+    CHECK((b.color.b) == (30));
+    CHECK((b.color.a) == (40));
+    CHECK((b.width) == (5.0F));
+    CHECK((b.style) == (FIFE::PLS_ARROWED));
+    CHECK((b.arrowSize) == (15.0F));
 }
 
 TEST_CASE("PathRenderer clone propagates configs", "[pathrenderer]")
@@ -358,7 +358,7 @@ TEST_CASE("PathRenderer clone propagates configs", "[pathrenderer]")
     pr.addPath(inst, cfg);
 
     std::unique_ptr<FIFE::RendererBase> cloned(pr.clone());
-    CHECK_EQ(cloned->getName(), "PathRenderer");
+    CHECK((cloned->getName()) == ("PathRenderer"));
 
     // The cloned renderer shuold also be disabled
     CHECK(cloned->isEnabled() == false);
