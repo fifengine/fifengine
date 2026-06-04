@@ -37,35 +37,35 @@ namespace FIFE
 
             void updateTarget();
             void drawSurface(SDL_Surface* surface, int dstX, int dstY) override;
-            virtual void drawImage(
+            void drawImage(
                 fcn::Image const * image,
                 int32_t srcX,
                 int32_t srcY,
                 int32_t dstX,
                 int32_t dstY,
                 int32_t width,
-                int32_t height);
+                int32_t height) override;
 
-            virtual void drawText(std::string const & text, int32_t x, int32_t y, fcn::Graphics::Alignment alignment);
-            virtual void drawPoint(int32_t x, int32_t y);
-            virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
-            virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width);
-            virtual void drawPolyLine(fcn::PointVector const & points, uint32_t width);
-            virtual void drawBezier(fcn::PointVector const & points, int32_t steps, uint32_t width);
-            virtual void drawRectangle(fcn::Rectangle const & rectangle);
-            virtual void fillRectangle(fcn::Rectangle const & rectangle);
-            virtual void drawCircle(fcn::Point const & p, uint32_t radius);
-            virtual void drawFillCircle(fcn::Point const & p, uint32_t radius);
-            virtual void drawCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle);
-            virtual void drawFillCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle);
+            void drawText(std::string const & text, int32_t x, int32_t y, fcn::Graphics::Alignment alignment) override;
+            void drawPoint(int32_t x, int32_t y) override;
+            void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) override;
+            void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width) override;
+            void drawPolyLine(fcn::PointVector const & points, uint32_t width) override;
+            void drawBezier(fcn::PointVector const & points, int32_t steps, uint32_t width) override;
+            void drawRectangle(fcn::Rectangle const & rectangle) override;
+            void fillRectangle(fcn::Rectangle const & rectangle) override;
+            void drawCircle(fcn::Point const & p, uint32_t radius) override;
+            void drawFillCircle(fcn::Point const & p, uint32_t radius) override;
+            void drawCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle) override;
+            void drawFillCircleSegment(fcn::Point const & p, uint32_t radius, int32_t sangle, int32_t eangle) override;
 
-            virtual void _beginDraw();
-            virtual void _endDraw();
+            void _beginDraw() override;
+            void _endDraw() override;
 
-            virtual bool pushClipArea(fcn::Rectangle area);
-            virtual void popClipArea();
+            bool pushClipArea(fcn::Rectangle area) override;
+            void popClipArea() override;
 
-            virtual void setColor(fcn::Color const & color);
+            void setColor(fcn::Color const & color) override;
 
         private:
             RenderBackendOpenGL* m_renderbackend;
