@@ -56,7 +56,8 @@ namespace FIFE
             explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache)
             {
             }
-            ~CacheLayerChangeListener() override                                  = default;
+            ~CacheLayerChangeListener() override = default;
+
             CacheLayerChangeListener(CacheLayerChangeListener const &)            = delete;
             CacheLayerChangeListener& operator=(CacheLayerChangeListener const &) = delete;
             CacheLayerChangeListener(CacheLayerChangeListener&&)                  = delete;
@@ -83,9 +84,11 @@ namespace FIFE
             LayerCache* m_cache;
     };
 
-    /** Comparison functions for sorting
+    /**
+     * Comparison functions for sorting
      */
-    // used screenpoint z for sorting, calculated from camera
+
+    // uses screenpoint z for sorting, calculated from camera
     class InstanceDistanceSortCamera
     {
         public:
@@ -99,7 +102,8 @@ namespace FIFE
                 return lhs->screenpoint.z < rhs->screenpoint.z;
             }
     };
-    // used instance location and camera rotation for sorting
+
+    // uses instance location and camera rotation for sorting
     class InstanceDistanceSortLocation
     {
         public:
@@ -167,7 +171,8 @@ namespace FIFE
             double ytox;
             double ytoy;
     };
-    // used screenpoint z for sorting and as fallback first the instance location z and then the stack position
+
+    // uses screenpoint z for sorting and as fallback first the instance location z and then the stack position
     class InstanceDistanceSortCameraAndLocation
     {
         public:
@@ -620,10 +625,13 @@ namespace FIFE
             // assumed all have the same size
             if (actionVisual->isAnimationOverlay()) {
                 std::map<int32_t, AnimationPtr> animations = actionVisual->getAnimationOverlay(angle);
-                auto it                                    = animations.begin();
-                auto animOverlays                          = std::make_unique<std::vector<ImagePtr>>();
+
+                auto it           = animations.begin();
+                auto animOverlays = std::make_unique<std::vector<ImagePtr>>();
+
                 std::unique_ptr<std::vector<OverlayColors*>> animationColorOverlays =
                     colorOverlay ? std::make_unique<std::vector<OverlayColors*>>() : nullptr;
+
                 for (; it != animations.end(); ++it) {
                     uint64_t animationTime =
                         instance->getActionRuntime64() % SDLTimeCompat::fromLegacy32Ticks(it->second->getDuration());
@@ -634,8 +642,9 @@ namespace FIFE
                         OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
                         if (co != nullptr) {
                             AnimationPtr const ovAnim = co->getColorOverlayAnimation();
-                            animationTime             = instance->getActionRuntime64() %
-                                                        SDLTimeCompat::fromLegacy32Ticks(ovAnim->getDuration());
+
+                            animationTime = instance->getActionRuntime64() %
+                                            SDLTimeCompat::fromLegacy32Ticks(ovAnim->getDuration());
                             co->setColorOverlayImage(ovAnim->getFrameByTimestamp64(animationTime));
                         }
                         animationColorOverlays->push_back(co);

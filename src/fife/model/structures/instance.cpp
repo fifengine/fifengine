@@ -9,6 +9,7 @@
 #include <format>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -107,6 +108,7 @@ namespace FIFE
     };
 
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
+        m_action(nullptr),
         m_location(source.m_location),
         m_oldLocation(source.m_location),
         m_speed(0),

@@ -4,8 +4,10 @@
 #ifndef FIFE_PATHRENDERER_H
 #define FIFE_PATHRENDERER_H
 
+// Standard C++ library includes
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 

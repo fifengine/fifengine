@@ -26,11 +26,6 @@ namespace fcn
             static FIFE::Logger log(LM_GUI);
             return log;
         }
-
-        bool shouldLogCaption(std::string const & caption)
-        {
-            return caption == "Text 1" || caption == "Text 2" || caption == "Text 3" || caption == "Credits";
-        }
     } // namespace
 
     ClickLabel::ClickLabel() :
@@ -116,7 +111,8 @@ namespace fcn
         if (isTextWrapping() && (mGuiFont != nullptr)) {
             int32_t const w = getWidth() - static_cast<int32_t>(2 * getBorderSize()) -
                               static_cast<int32_t>(getPaddingLeft()) - static_cast<int32_t>(getPaddingRight());
-            mWrappedText    = mGuiFont->splitTextToWidth(mCaption, w);
+
+            mWrappedText = mGuiFont->splitTextToWidth(mCaption, w);
         }
     }
 
@@ -143,9 +139,12 @@ namespace fcn
                 if (getParent() != nullptr) {
                     w = getParent()->getChildrenArea().width;
                 }
+
                 int32_t textW = w - static_cast<int32_t>(2 * getBorderSize()) - static_cast<int32_t>(getPaddingLeft()) -
                                 static_cast<int32_t>(getPaddingRight());
+
                 int32_t const maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
+
                 if (textW < 1) {
                     w     = maxW;
                     textW = (w - static_cast<int32_t>(2 * getBorderSize())) - static_cast<int32_t>(getPaddingLeft()) -
@@ -158,7 +157,8 @@ namespace fcn
                 mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
             } else {
                 FIFE::Image const * image = mGuiFont->getAsImageMultiline(mCaption);
-                w                         = static_cast<int32_t>(
+
+                w = static_cast<int32_t>(
                     image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight());
             }
             std::string const & text  = isTextWrapping() ? mWrappedText : mCaption;
@@ -225,35 +225,6 @@ namespace fcn
                 break;
             default:
                 fcn::throwException("Unknown alignment.");
-            }
-
-            if (shouldLogCaption(mCaption)) {
-                Rectangle const childrenArea = getChildrenArea();
-                FIFE::FL_LOG(
-                    _log(),
-                    std::format(
-                        "ClickLabel::draw caption='{}' widget=({},{} {}x{}) children=({},{} {}x{}) textPos=({}, {}) "
-                        "image={}x{} padding=({}, {}, {}, {}) border={} opaque={} visible={}",
-                        mCaption,
-                        getX(),
-                        getY(),
-                        getWidth(),
-                        getHeight(),
-                        childrenArea.x,
-                        childrenArea.y,
-                        childrenArea.width,
-                        childrenArea.height,
-                        textX,
-                        textY,
-                        image->getWidth(),
-                        image->getHeight(),
-                        getPaddingTop(),
-                        getPaddingRight(),
-                        getPaddingBottom(),
-                        getPaddingLeft(),
-                        getBorderSize(),
-                        isOpaque(),
-                        isVisible()));
             }
 
             mGuiFont->drawMultiLineString(graphics, text, textX, textY);

@@ -11,9 +11,9 @@
 
 // Platform specific includes
 #include "fixture.h"
-#include <catch2/catch_test_macros.hpp>
 
 // 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
 #include <SDL3/SDL.h>
 
 // FIFE includes

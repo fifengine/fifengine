@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <format>
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>

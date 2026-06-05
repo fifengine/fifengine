@@ -1006,7 +1006,7 @@ namespace FIFE
 
     void SoundEmitter::deactivateEffects()
     {
-        for (auto& m_effect : m_effects) {
+        for (auto const * m_effect : m_effects) {
             if (m_effect != nullptr) {
                 m_manager->deactivateEffect(m_effect, this);
             }

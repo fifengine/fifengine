@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
+
 // Standard C++ library includes
 #include <cstdint>
 #include <memory>
@@ -8,7 +11,6 @@
 
 // Platform specific includes
 #include "fixture.h"
-#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "util/structures/rect.h"
@@ -88,6 +90,3 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
     imageManager->removeAll();
     CHECK((0) == (imageManager->getTotalResources()));
 }
-// need this here because SDL redefines
-
-// main to SDL_main in SDL_main.h

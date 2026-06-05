@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
 #include <fifechan.hpp>
 
 // Standard C++ library includes
@@ -10,7 +12,6 @@
 
 // Platform specific includes
 #include "fixture.h"
-#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "gui/fifechan/base/gui_image.h"

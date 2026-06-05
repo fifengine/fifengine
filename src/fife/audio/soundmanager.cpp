@@ -425,7 +425,7 @@ namespace FIFE
         ptr.reset();
     }
 
-    void SoundManager::deleteEmitter(SoundEmitter* emitter)
+    void SoundManager::deleteEmitter(SoundEmitter* emitter) // cppcheck-suppress constParameterPointer
     {
         releaseEmitter(emitter->getId());
     }
@@ -535,7 +535,7 @@ namespace FIFE
         m_effectManager->activateEffect(effect, emitter);
     }
 
-    void SoundManager::deactivateEffect(SoundEffect* effect, SoundEmitter* emitter)
+    void SoundManager::deactivateEffect(SoundEffect const * effect, SoundEmitter* emitter)
     {
         if (!m_effectManager) {
             return;
@@ -591,7 +591,7 @@ namespace FIFE
         m_effectManager->removeEmitterFromDirectSoundFilter(filter, emitter);
     }
 
-    void SoundManager::activateFilter(SoundFilter* filter, SoundEmitter* emitter)
+    void SoundManager::activateFilter(SoundFilter const * filter, SoundEmitter const * emitter)
     {
         if (!m_effectManager) {
             return;
@@ -599,7 +599,7 @@ namespace FIFE
         m_effectManager->activateFilter(filter, emitter);
     }
 
-    void SoundManager::deactivateFilter(SoundFilter* filter, SoundEmitter* emitter)
+    void SoundManager::deactivateFilter(SoundFilter const * filter, SoundEmitter const * emitter)
     {
         if (!m_effectManager) {
             return;

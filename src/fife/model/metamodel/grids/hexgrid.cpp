@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cstdint>
 #include <format>
+#include <memory>
 #include <string>
 #include <vector>
 

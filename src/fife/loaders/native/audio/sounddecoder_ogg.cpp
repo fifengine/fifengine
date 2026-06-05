@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <span>
 
 // Platform specific includes
@@ -128,7 +129,7 @@ namespace FIFE
 
     SoundDecoderOgg::~SoundDecoderOgg()
     {
-        releaseBuffer();
+        m_data.reset();
         ov_clear(&m_ovf);
     }
 

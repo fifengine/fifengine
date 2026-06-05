@@ -296,12 +296,12 @@ namespace FIFE
         m_buffervec.at(streamid).reset();
     }
 
-    void SoundClip::adobtDecoder(SoundDecoder* decoder)
+    void SoundClip::adobtDecoder(SoundDecoder* decoder) // cppcheck-suppress constParameterPointer
     {
         m_decoder.reset(decoder);
     }
 
-    void SoundClip::setDecoder(SoundDecoder* decoder)
+    void SoundClip::setDecoder(SoundDecoder* decoder) // cppcheck-suppress constParameterPointer
     {
         m_decoder.reset(decoder);
     }

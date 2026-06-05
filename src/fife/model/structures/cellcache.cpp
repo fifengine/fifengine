@@ -1165,7 +1165,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromCost(std::string const & costId, Cell* cell)
+    void CellCache::removeCellFromCost(std::string const & costId, Cell const * cell)
     {
         StringCellPair const result = m_costsToCells.equal_range(costId);
         auto it                     = result.first;
@@ -1208,7 +1208,7 @@ namespace FIFE
         return costs;
     }
 
-    bool CellCache::existsCostForCell(std::string const & costId, Cell* cell)
+    bool CellCache::existsCostForCell(std::string const & costId, Cell const * cell)
     {
         StringCellPair const result = m_costsToCells.equal_range(costId);
         auto it                     = result.first;
@@ -1563,7 +1563,7 @@ namespace FIFE
         }
     }
 
-    void CellCache::removeCellFromArea(std::string const & id, Cell* cell)
+    void CellCache::removeCellFromArea(std::string const & id, Cell const * cell)
     {
         StringCellPair const result = m_cellAreas.equal_range(id);
         auto it                     = result.first;
@@ -1631,7 +1631,7 @@ namespace FIFE
         return cells;
     }
 
-    bool CellCache::isCellInArea(std::string const & id, Cell* cell)
+    bool CellCache::isCellInArea(std::string const & id, Cell const * cell)
     {
         StringCellPair const result = m_cellAreas.equal_range(id);
         auto it                     = result.first;

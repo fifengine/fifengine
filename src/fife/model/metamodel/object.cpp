@@ -8,6 +8,7 @@
 #include <cassert>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -153,7 +154,7 @@ namespace FIFE
         return m_inherited;
     }
 
-    void Object::adoptVisual(IVisual* visual)
+    void Object::adoptVisual(IVisual* visual) // cppcheck-suppress constParameterPointer
     {
         if (m_visual && m_visual.get() != visual) {
             // m_visual will be reset below, old one auto-destructs

@@ -5,6 +5,7 @@
 #include "cellselectionrenderer.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <vector>
 
 // 3rd party library includes

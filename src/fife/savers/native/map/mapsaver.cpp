@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>

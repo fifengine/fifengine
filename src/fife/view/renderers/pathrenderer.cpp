@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// Corresponding header include
 #include "pathrenderer.h"
 
+// Standard C++ library includes
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <memory>
 #include <vector>
 
 #include "model/metamodel/grids/cellgrid.h"

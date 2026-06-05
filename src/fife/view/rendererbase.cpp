@@ -79,7 +79,7 @@ namespace FIFE
         }
     }
 
-    void RendererBase::removeActiveLayer(Layer* layer)
+    void RendererBase::removeActiveLayer(Layer* layer) // cppcheck-suppress constParameterPointer
     {
         m_active_layers.remove(layer);
     }
@@ -94,7 +94,7 @@ namespace FIFE
         return std::ranges::find(m_active_layers, layer) != m_active_layers.end();
     }
 
-    void RendererBase::activateAllLayers(Map* map)
+    void RendererBase::activateAllLayers(Map const * map)
     {
         clearActiveLayers();
 

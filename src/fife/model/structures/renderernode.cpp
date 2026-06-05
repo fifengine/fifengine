@@ -5,6 +5,7 @@
 #include "renderernode.h"
 
 // Standard C++ library includes
+#include <memory>
 
 // 3rd party library includes
 

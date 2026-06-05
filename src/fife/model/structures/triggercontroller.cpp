@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <format>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -216,7 +217,7 @@ namespace FIFE
         }
     }
 
-    void TriggerController::removeTriggerFromInstance(std::string const & triggerName, Instance* instance)
+    void TriggerController::removeTriggerFromInstance(std::string const & triggerName, Instance const * instance)
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {

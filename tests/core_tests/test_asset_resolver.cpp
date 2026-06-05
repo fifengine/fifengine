@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+// 3rd party library includes
+#include <catch2/catch_test_macros.hpp>
+
+// Standard C++ library includes
 #include <memory>
 #include <string>
 #include <vector>
 
+// FIFE includes
 #include "vfs/directoryprovider.h"
 #include "vfs/filesystemassetprovider.h"
 #include "vfs/vfsassetprovider.h"
 #include "vfs/vfsdirectory.h"
-#include "video/fonts/assetresolver.h">
-#include <catch2/catch_test_macros.hpp>
+#include "video/fonts/assetresolver.h"
 
 using FIFE::AssetHandle;
 using FIFE::AssetProvider;

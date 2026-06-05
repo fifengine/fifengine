@@ -5,6 +5,7 @@
 #include "renderitem.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <utility>
 #include <vector>
 

@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 // 3rd party library includes

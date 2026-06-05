@@ -186,7 +186,7 @@ namespace FIFE
              * @param triggerName The name of the trigger.  This must be unique per map.
              * @param instance The instance pointer where the Trigger is detached from.
              */
-            void removeTriggerFromInstance(std::string const & triggerName, Instance* instance);
+            void removeTriggerFromInstance(std::string const & triggerName, Instance const * instance);
 
             /** Returns a vector with all trigger pointers.
              */

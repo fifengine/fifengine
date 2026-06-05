@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 #include <vector>
 

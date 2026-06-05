@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <memory>
 
 // 3rd party library includes
 

@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
+#include <memory>
 #include <string>
 #include <utility>
 

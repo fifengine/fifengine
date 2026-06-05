@@ -181,7 +181,7 @@ namespace FIFE
     {
         // remove listener from instances
         if (!m_assigned_instances.empty()) {
-            reset();
+            InstanceRenderer::reset();
         }
     }
 

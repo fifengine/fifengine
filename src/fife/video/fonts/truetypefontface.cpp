@@ -12,7 +12,7 @@
 namespace FIFE
 {
 
-    TrueTypeFontFace::TrueTypeFontFace(AssetHandle handle, std::string const & filepath, int ptsize) :
+    TrueTypeFontFace::TrueTypeFontFace(AssetHandle handle, std::string const & filepath, int ptsize) : // cppcheck-suppress uninitMemberVar
         FontFace(handle), m_ptsize(ptsize)
     {
         if (filepath.empty()) {
@@ -28,6 +28,7 @@ namespace FIFE
         initCoverage();
     }
 
+    // cppcheck-suppress uninitMemberVar
     TrueTypeFontFace::TrueTypeFontFace(
         AssetHandle handle, uint8_t const * data, size_t size, int ptsize, std::string const & /*name*/) :
         FontFace(handle), m_ptsize(ptsize)

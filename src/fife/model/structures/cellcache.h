@@ -326,7 +326,7 @@ namespace FIFE
              * @param costId A const reference to the cost identifier.
              * @param cell A pointer to the cell.
              */
-            void removeCellFromCost(std::string const & costId, Cell* cell);
+            void removeCellFromCost(std::string const & costId, Cell const * cell);
 
             /** Removes cells from a cost identifier.
              * @param costId A const reference to the cost identifier.
@@ -351,7 +351,7 @@ namespace FIFE
              * @param cell A pointer to the cell.
              * @return A boolean, true if the cell is assigned to the cost identifier, otherwise false.
              */
-            bool existsCostForCell(std::string const & costId, Cell* cell);
+            bool existsCostForCell(std::string const & costId, Cell const * cell);
 
             /** Returns cost for movement between these two adjacent coordinates.
              * @param adjacent A const reference to the start ModelCoordinate.
@@ -545,7 +545,7 @@ namespace FIFE
              * @param id A const reference to string that contains the area id.
              * @param cell A pointer to the cell which should be removed.
              */
-            void removeCellFromArea(std::string const & id, Cell* cell);
+            void removeCellFromArea(std::string const & id, Cell const * cell);
 
             /** Removes few cells from a area.
              * @param id A const reference to string that contains the area id.
@@ -586,7 +586,7 @@ namespace FIFE
              * @param cell A pointer to the cell which is used for the check.
              * @return A boolean, true if the cell is part of the area, otherwise false.
              */
-            bool isCellInArea(std::string const & id, Cell* cell);
+            bool isCellInArea(std::string const & id, Cell const * cell);
 
             /** Sets the cache size to static so that automatic resize is disabled.
              * @param staticSize A boolean, true if the cache size is static, otherwise false.

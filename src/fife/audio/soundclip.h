@@ -47,7 +47,7 @@ namespace FIFE
             explicit SoundClip(IResourceLoader* loader = nullptr);
             explicit SoundClip(std::string const & name, IResourceLoader* loader = nullptr);
 
-            ~SoundClip();
+            ~SoundClip() override;
 
             SoundClip(SoundClip const &)            = delete;
             SoundClip& operator=(SoundClip const &) = delete;
@@ -118,10 +118,10 @@ namespace FIFE
              */
             SoundDecoder* getDecoder() const;
 
-            virtual size_t getSize();
+            size_t getSize() override;
 
-            virtual void load();
-            virtual void free();
+            void load() override;
+            void free() override;
 
         private:
             // is stream?
