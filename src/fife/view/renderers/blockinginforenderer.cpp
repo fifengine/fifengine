@@ -44,9 +44,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* BlockingInfoRenderer::clone()
+    std::unique_ptr<RendererBase> BlockingInfoRenderer::clone()
     {
-        return new BlockingInfoRenderer(*this);
+        return std::make_unique<BlockingInfoRenderer>(*this);
     }
 
     BlockingInfoRenderer::~BlockingInfoRenderer() = default;

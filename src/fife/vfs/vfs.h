@@ -109,10 +109,10 @@ namespace FIFE
             /** Open a file
              *
              * @param path the file to open
-             * @return the opened file; delete this when done.
+             * @return the opened file.
              * @throws NotFound if the file cannot be found
              */
-            RawData* open(std::string const & path);
+            std::unique_ptr<RawData> open(std::string const & path);
 
             /** Read a file, returning nullptr instead of throwing on failure.
              *
@@ -121,9 +121,9 @@ namespace FIFE
              * the file is not found in any source.
              *
              * @param path the file to read
-             * @return the opened file (delete when done), or nullptr if not found
+             * @return the opened file, or nullptr if not found
              */
-            RawData* readFile(std::string const & path);
+            std::unique_ptr<RawData> readFile(std::string const & path);
 
             /** Get a filelist of the given directory
              *

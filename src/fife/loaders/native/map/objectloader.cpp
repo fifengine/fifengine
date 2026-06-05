@@ -102,7 +102,7 @@ namespace FIFE
         XML::Document objectFile;
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(objectPath.string()));
+            auto data = m_vfs->open(objectPath.string());
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -162,7 +162,7 @@ namespace FIFE
         XML::Document objectFile;
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(objectPath.string()));
+            auto data = m_vfs->open(objectPath.string());
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {

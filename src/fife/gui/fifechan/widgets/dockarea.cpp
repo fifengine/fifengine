@@ -176,13 +176,13 @@ namespace fcn
             if (childDim.isIntersecting(dim)) {
                 if (getLayout() == Container::LayoutPolicy::Horizontal) {
                     if (dim.x < childDim.x) {
-                        if (dim.x + dim.width <= childDim.x + (childDim.width / 2)) {
+                        if (dim.x + dim.width <= childDim.x + (childDim.width / 2)) { // NOLINT(bugprone-branch-clone)
                             placeBefore = *currChild;
                         } else {
                             placeAfter = *currChild;
                         }
                     } else {
-                        if (dim.x <= childDim.x + (childDim.width / 2)) {
+                        if (dim.x <= childDim.x + (childDim.width / 2)) { // NOLINT(bugprone-branch-clone)
                             placeBefore = *currChild;
                         } else {
                             placeAfter = *currChild;
@@ -191,13 +191,13 @@ namespace fcn
                 }
                 if (getLayout() == Container::LayoutPolicy::Vertical) {
                     if (dim.y < childDim.y) {
-                        if (dim.y + dim.height <= childDim.y + (childDim.height / 2)) {
+                        if (dim.y + dim.height <= childDim.y + (childDim.height / 2)) { // NOLINT(bugprone-branch-clone)
                             placeBefore = *currChild;
                         } else {
                             placeAfter = *currChild;
                         }
                     } else {
-                        if (dim.y <= childDim.y + (childDim.height / 2)) {
+                        if (dim.y <= childDim.y + (childDim.height / 2)) { // NOLINT(bugprone-branch-clone)
                             placeBefore = *currChild;
                         } else {
                             placeAfter = *currChild;

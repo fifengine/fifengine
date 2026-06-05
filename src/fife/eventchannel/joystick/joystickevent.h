@@ -52,7 +52,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~JoystickEvent() override = default;
+            ~JoystickEvent() override = default;
 
             /** Return the event type.
              */
@@ -166,7 +166,7 @@ namespace FIFE
                 m_controller = value;
             }
 
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("JostickEvent");
                 return eventName;

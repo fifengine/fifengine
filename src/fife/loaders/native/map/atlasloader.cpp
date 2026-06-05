@@ -100,7 +100,7 @@ namespace FIFE
         XML::Document atlasFile;
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
+            auto data = m_vfs->open(atlasFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -144,7 +144,7 @@ namespace FIFE
         AtlasPtr atlas;
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
+            auto data = m_vfs->open(atlasFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -191,7 +191,7 @@ namespace FIFE
         std::vector<AtlasPtr> atlasVector;
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(atlasFilename));
+            auto data = m_vfs->open(atlasFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -304,7 +304,7 @@ namespace FIFE
                 XML::QueryAttribute(atlasElem, "subimage_width", &subimageWidth);
                 XML::QueryAttribute(atlasElem, "subimage_height", &subimageHeight);
                 // file extension of the atlas is also used as subimage extension
-                std::string extension = GetExtension(std::string(atlasSource));
+                std::string const extension = GetExtension(std::string(atlasSource));
                 // we need an atlas id
                 if (atlasId == nullptr) {
                     atlasId = atlasSource;

@@ -131,7 +131,7 @@ namespace FIFE
             if (m_isStream) {
                 // erase all elements from the list
                 for (auto& buf : m_buffervec) {
-                    if (buf && buf->buffers[0] != 0) {
+                    if (buf && buf->buffers.at(0) != 0) {
                         alDeleteBuffers(BUFFER_NUM, buf->buffers.data());
                     }
                 }
@@ -139,7 +139,7 @@ namespace FIFE
                 // for non-streaming soundclips
                 SoundBufferEntry const * ptr = m_buffervec.at(0).get();
                 for (uint32_t i = 0; i < ptr->usedbufs; i++) {
-                    alDeleteBuffers(1, ptr->buffers.data() + i);
+                    alDeleteBuffers(1, &ptr->buffers[i]);
                 }
             }
             m_buffervec.clear();
@@ -288,7 +288,7 @@ namespace FIFE
         // release the buffers
         SoundBufferEntry* ptr = m_buffervec.at(streamid).get();
         alDeleteBuffers(BUFFER_NUM, ptr->buffers.data());
-        ptr->buffers[0] = 0;
+        ptr->buffers.at(0) = 0;
     }
 
     void SoundClip::endStreaming(uint32_t streamid)

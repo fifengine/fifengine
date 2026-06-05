@@ -42,9 +42,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* CellSelectionRenderer::clone()
+    std::unique_ptr<RendererBase> CellSelectionRenderer::clone()
     {
-        return new CellSelectionRenderer(*this);
+        return std::make_unique<CellSelectionRenderer>(*this);
     }
 
     CellSelectionRenderer::~CellSelectionRenderer() = default;

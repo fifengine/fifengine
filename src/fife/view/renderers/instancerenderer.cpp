@@ -13,6 +13,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -148,7 +149,7 @@ namespace FIFE
             check();
         });
         // create delete listener
-        m_delete_listener = new InstanceRendererDeleteListener(this);
+        m_delete_listener = std::make_unique<InstanceRendererDeleteListener>(this);
     }
 
     InstanceRenderer::InstanceRenderer(InstanceRenderer const & old) :
@@ -168,12 +169,12 @@ namespace FIFE
             check();
         });
         // create delete listener
-        m_delete_listener = new InstanceRendererDeleteListener(this);
+        m_delete_listener = std::make_unique<InstanceRendererDeleteListener>(this);
     }
 
-    RendererBase* InstanceRenderer::clone()
+    std::unique_ptr<RendererBase> InstanceRenderer::clone()
     {
-        return new InstanceRenderer(*this);
+        return std::make_unique<InstanceRenderer>(*this);
     }
 
     InstanceRenderer::~InstanceRenderer()
@@ -182,8 +183,6 @@ namespace FIFE
         if (!m_assigned_instances.empty()) {
             reset();
         }
-        // delete listener
-        delete m_delete_listener;
     }
 
     void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
@@ -597,7 +596,7 @@ namespace FIFE
                         ImagePtr multiColorOverlay;
                         if (recoloring) {
                             // create temp OverlayColors
-                            auto* temp        = new OverlayColors(oc->getColorOverlayImage());
+                            auto temp         = std::make_unique<OverlayColors>(oc->getColorOverlayImage());
                             auto alphaFactor1 = static_cast<float>(cc.at(3) / 255.0);
                             std::map<Color, Color> const & defaultColors = oc->getColors();
                             for (auto const & defaultColor : defaultColors) {
@@ -622,8 +621,7 @@ namespace FIFE
                             factor.at(3) = toUint8Channel(255 - static_cast<int32_t>(factor.at(3)));
                             factor.at(3) = std::min(cc.at(3), factor.at(3));
                             // get overlay image with temp colors
-                            multiColorOverlay = getMultiColorOverlay(vc, temp);
-                            delete temp;
+                            multiColorOverlay = getMultiColorOverlay(vc, temp.get());
                         } else {
                             multiColorOverlay = getMultiColorOverlay(vc, oc);
                             factor.at(3)      = 0;
@@ -686,7 +684,7 @@ namespace FIFE
                 std::array<uint8_t, 4> factor{0, 0, 0, it->second.getAlpha()};
                 if (recoloring) {
                     // create temp OverlayColors
-                    auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
+                    auto temp                = std::make_unique<OverlayColors>(colorOverlay->getColorOverlayImage());
                     float const alphaFactor1 = alphaFraction(cc.at(3));
                     std::map<Color, Color> const & defaultColors = colorOverlay->getColors();
                     for (auto const & defaultColor : defaultColors) {
@@ -711,8 +709,7 @@ namespace FIFE
                     factor.at(3) = toUint8Channel(255 - static_cast<int32_t>(factor.at(3)));
                     factor.at(3) = std::min(cc.at(3), factor.at(3));
                     // get overlay image with temp colors
-                    multiColorOverlay = getMultiColorOverlay(vc, temp);
-                    delete temp;
+                    multiColorOverlay = getMultiColorOverlay(vc, temp.get());
                 }
                 if (!multiColorOverlay) {
                     multiColorOverlay = getMultiColorOverlay(vc);
@@ -1224,7 +1221,7 @@ namespace FIFE
             std::pair<InstanceToEffects_t::iterator, bool> const iter =
                 m_assigned_instances.insert(std::make_pair(instance, OUTLINE));
             if (iter.second) {
-                instance->addDeleteListener(m_delete_listener);
+                instance->addDeleteListener(m_delete_listener.get());
             } else {
                 Effect& effect = iter.first->second;
                 if ((effect & OUTLINE) != OUTLINE) {
@@ -1268,7 +1265,7 @@ namespace FIFE
             std::pair<InstanceToEffects_t::iterator, bool> const iter =
                 m_assigned_instances.insert(std::make_pair(instance, COLOR));
             if (iter.second) {
-                instance->addDeleteListener(m_delete_listener);
+                instance->addDeleteListener(m_delete_listener.get());
             } else {
                 Effect& effect = iter.first->second;
                 if ((effect & COLOR) != COLOR) {
@@ -1310,7 +1307,7 @@ namespace FIFE
             std::pair<InstanceToEffects_t::iterator, bool> const iter =
                 m_assigned_instances.insert(std::make_pair(instance, AREA));
             if (iter.second) {
-                instance->addDeleteListener(m_delete_listener);
+                instance->addDeleteListener(m_delete_listener.get());
             } else {
                 Effect& effect = iter.first->second;
                 if ((effect & AREA) != AREA) {
@@ -1325,7 +1322,7 @@ namespace FIFE
         auto it = m_assigned_instances.find(instance);
         if (it != m_assigned_instances.end()) {
             if (it->second == OUTLINE) {
-                instance->removeDeleteListener(m_delete_listener);
+                instance->removeDeleteListener(m_delete_listener.get());
                 m_instance_outlines.erase(instance);
                 m_assigned_instances.erase(it);
             } else if ((it->second & OUTLINE) == OUTLINE) {
@@ -1340,7 +1337,7 @@ namespace FIFE
         auto it = m_assigned_instances.find(instance);
         if (it != m_assigned_instances.end()) {
             if (it->second == COLOR) {
-                instance->removeDeleteListener(m_delete_listener);
+                instance->removeDeleteListener(m_delete_listener.get());
                 m_instance_colorings.erase(instance);
                 m_assigned_instances.erase(it);
             } else if ((it->second & COLOR) == COLOR) {
@@ -1355,7 +1352,7 @@ namespace FIFE
         auto it = m_assigned_instances.find(instance);
         if (it != m_assigned_instances.end()) {
             if (it->second == AREA) {
-                instance->removeDeleteListener(m_delete_listener);
+                instance->removeDeleteListener(m_delete_listener.get());
                 m_instance_areas.erase(instance);
                 m_assigned_instances.erase(it);
             } else if ((it->second & AREA) == AREA) {
@@ -1373,7 +1370,7 @@ namespace FIFE
                 auto it = m_assigned_instances.find((*outline_it).first);
                 if (it != m_assigned_instances.end()) {
                     if (it->second == OUTLINE) {
-                        (*outline_it).first->removeDeleteListener(m_delete_listener);
+                        (*outline_it).first->removeDeleteListener(m_delete_listener.get());
                         m_assigned_instances.erase(it);
                     } else if ((it->second & OUTLINE) == OUTLINE) {
                         it->second -= OUTLINE;
@@ -1392,7 +1389,7 @@ namespace FIFE
                 auto it = m_assigned_instances.find((*color_it).first);
                 if (it != m_assigned_instances.end()) {
                     if (it->second == COLOR) {
-                        (*color_it).first->removeDeleteListener(m_delete_listener);
+                        (*color_it).first->removeDeleteListener(m_delete_listener.get());
                         m_assigned_instances.erase(it);
                     } else if ((it->second & COLOR) == COLOR) {
                         it->second -= COLOR;
@@ -1411,7 +1408,7 @@ namespace FIFE
                 auto it = m_assigned_instances.find((*area_it).first);
                 if (it != m_assigned_instances.end()) {
                     if (it->second == AREA) {
-                        (*area_it).first->removeDeleteListener(m_delete_listener);
+                        (*area_it).first->removeDeleteListener(m_delete_listener.get());
                         m_assigned_instances.erase(it);
                     } else if ((it->second & AREA) == AREA) {
                         it->second -= AREA;
@@ -1549,7 +1546,7 @@ namespace FIFE
             m_instance_outlines.erase(instance);
             m_instance_colorings.erase(instance);
             m_instance_areas.erase(instance);
-            instance->removeDeleteListener(m_delete_listener);
+            instance->removeDeleteListener(m_delete_listener.get());
             m_assigned_instances.erase(it);
         }
     }

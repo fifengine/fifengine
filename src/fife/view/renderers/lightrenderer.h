@@ -272,11 +272,11 @@ namespace FIFE
             LightRenderer(LightRenderer const & old);
             LightRenderer& operator=(LightRenderer const &) = delete;
 
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~LightRenderer() override;
+            ~LightRenderer() override;
             void render(Camera* cam, Layer* layer, RenderList& instances) override;
             std::string getName() override
             {

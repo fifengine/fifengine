@@ -132,10 +132,8 @@ namespace FIFE
             }
         }
 
-        auto r_it = m_renderers.begin();
-        for (; r_it != m_renderers.end(); ++r_it) {
-            r_it->second->reset();
-            delete r_it->second;
+        for (auto& [name, renderer] : m_renderers) {
+            renderer->reset();
         }
         m_renderers.clear();
         delete m_map_observer;
@@ -780,14 +778,14 @@ found_non_transparent_pixel:;
         }
     } // namespace
 
-    void Camera::addRenderer(RendererBase* renderer)
+    void Camera::addRenderer(std::unique_ptr<RendererBase> renderer)
     {
         renderer->setRendererListener(this);
-        m_renderers[renderer->getName()] = renderer;
         if (renderer->isEnabled()) {
-            m_pipeline.push_back(renderer);
+            m_pipeline.push_back(renderer.get());
         }
         m_pipeline.sort(pipelineSort);
+        m_renderers[renderer->getName()] = std::move(renderer);
     }
 
     void Camera::onRendererPipelinePositionChanged([[maybe_unused]] RendererBase* renderer)
@@ -812,7 +810,8 @@ found_non_transparent_pixel:;
 
     RendererBase* Camera::getRenderer(std::string const & name)
     {
-        return m_renderers[name];
+        auto it = m_renderers.find(name);
+        return it != m_renderers.end() ? it->second.get() : nullptr;
     }
 
     void Camera::resetRenderers()
@@ -825,7 +824,7 @@ found_non_transparent_pixel:;
 
     void Camera::addLayer(Layer* layer)
     {
-        m_cache[layer] = new LayerCache(this);
+        m_cache[layer] = std::make_unique<LayerCache>(this);
         m_cache[layer]->setLayer(layer);
         m_layerToInstances[layer] = RenderList();
         refresh();
@@ -833,7 +832,6 @@ found_non_transparent_pixel:;
 
     void Camera::removeLayer(Layer* layer)
     {
-        delete m_cache[layer];
         m_cache.erase(layer);
         m_layerToInstances.erase(layer);
         if (m_location.getLayer() == layer) {
@@ -1003,7 +1001,7 @@ found_non_transparent_pixel:;
         // ToDo: Remove this function from the camera class to something like engine pre-render.
         // ToDo: Check if partial rendering of only updated RenderItems to existing FBO is possible/faster in our case.
         // ToDo: Add and fix support for SDL backend, for SDL it works only on the lowest layer(alpha/transparent bug).
-        LayerCache* cache   = m_cache[layer];
+        LayerCache* cache   = m_cache[layer].get();
         ImagePtr cacheImage = cache->getCacheImage();
         if (cacheImage.get() == nullptr) {
             // the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
@@ -1067,10 +1065,10 @@ found_non_transparent_pixel:;
         auto layers   = m_map->getLayers();
         auto layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
-            LayerCache* cache = m_cache[*layer_it];
+            LayerCache* cache = m_cache[*layer_it].get();
             if (cache == nullptr) {
                 addLayer(*layer_it);
-                cache = m_cache[*layer_it];
+                cache = m_cache[*layer_it].get();
                 FL_ERR(_log(), std::format("Layer Cache miss! (This shouldn't happen!){}", (*layer_it)->getName()));
             }
             RenderList& instancesToRender = m_layerToInstances[*layer_it];

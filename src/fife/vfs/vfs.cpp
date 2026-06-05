@@ -20,6 +20,7 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "vfs/filesystem.h"
+#include "vfs/raw/rawdata.h"
 #include "vfssource.h"
 #include "vfssourceprovider.h"
 
@@ -207,7 +208,7 @@ namespace FIFE
         return true;
     }
 
-    RawData* VFS::open(std::string const & path)
+    std::unique_ptr<RawData> VFS::open(std::string const & path)
     {
         FL_DBG(_log(), std::format("Opening: {}", path));
 
@@ -270,7 +271,7 @@ namespace FIFE
         return results;
     }
 
-    RawData* VFS::readFile(std::string const & path)
+    std::unique_ptr<RawData> VFS::readFile(std::string const & path)
     {
         VFSSource const * source = getSourceForFile(path);
         if (source == nullptr) {

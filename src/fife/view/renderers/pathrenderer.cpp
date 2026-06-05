@@ -37,9 +37,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* PathRenderer::clone()
+    std::unique_ptr<RendererBase> PathRenderer::clone()
     {
-        return new PathRenderer(*this);
+        return std::make_unique<PathRenderer>(*this);
     }
 
     PathRenderer::~PathRenderer() = default;

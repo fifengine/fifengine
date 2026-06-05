@@ -44,7 +44,7 @@ namespace FIFE
                 ModelCoordinate const & position, std::vector<ModelCoordinate> const & orig, bool reverse) override;
             std::vector<ModelCoordinate> getCoordinatesInLine(
                 ModelCoordinate const & start, ModelCoordinate const & end) override;
-            CellGrid* clone() override;
+            std::unique_ptr<CellGrid> clone() override;
     };
 } // namespace FIFE
 

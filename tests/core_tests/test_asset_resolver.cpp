@@ -9,7 +9,7 @@
 #include "vfs/filesystemassetprovider.h"
 #include "vfs/vfsassetprovider.h"
 #include "vfs/vfsdirectory.h"
-#include "video/fonts/assetresolver.h"
+#include "video/fonts/assetresolver.h">
 #include <catch2/catch_test_macros.hpp>
 
 using FIFE::AssetHandle;

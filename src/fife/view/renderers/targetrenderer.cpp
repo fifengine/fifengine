@@ -46,14 +46,12 @@ namespace FIFE
     void RenderTarget::addLine(
         std::string const & group, Point const & n1, Point const & n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        OffRendererElementInfo* info = new OffRendererLineInfo(n1, n2, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererLineInfo>(n1, n2, r, g, b, a));
     }
 
     void RenderTarget::addPoint(std::string const & group, Point const & n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        OffRendererElementInfo* info = new OffRendererPointInfo(n, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererPointInfo>(n, r, g, b, a));
     }
 
     void RenderTarget::addTriangle(
@@ -66,8 +64,7 @@ namespace FIFE
         uint8_t b,
         uint8_t a)
     {
-        OffRendererElementInfo* info = new OffRendererTriangleInfo(n1, n2, n3, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererTriangleInfo>(n1, n2, n3, r, g, b, a));
     }
 
     void RenderTarget::addQuad(
@@ -81,49 +78,38 @@ namespace FIFE
         uint8_t b,
         uint8_t a)
     {
-        OffRendererElementInfo* info = new OffRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererQuadInfo>(n1, n2, n3, n4, r, g, b, a));
     }
 
     void RenderTarget::addVertex(
         std::string const & group, Point const & n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererVertexInfo>(n, size, r, g, b, a));
     }
 
     void RenderTarget::addText(std::string const & group, Point const & n, IFont* font, std::string const & text)
     {
-        OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererTextInfo>(n, font, text));
     }
 
     void RenderTarget::addImage(std::string const & group, Point const & n, ImagePtr const & image)
     {
-        OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererImageInfo>(n, image));
     }
 
     void RenderTarget::addAnimation(std::string const & group, Point const & n, AnimationPtr const & animation)
     {
-        OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererAnimationInfo>(n, animation));
     }
 
     void RenderTarget::resizeImage(
         std::string const & group, Point const & n, ImagePtr const & image, int32_t width, int32_t height)
     {
-        OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<OffRendererResizeInfo>(n, image, width, height));
     }
 
     void RenderTarget::removeAll(std::string const & group)
     {
-        auto info_it = m_groups[group].begin();
-        for (; info_it != m_groups[group].end(); ++info_it) {
-            delete *info_it;
-        }
-        m_groups[group].clear();
         m_groups.erase(group);
     }
 

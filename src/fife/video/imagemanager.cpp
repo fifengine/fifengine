@@ -134,11 +134,8 @@ namespace FIFE
     {
         size_t const pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
 
-        auto* pixdata = new uint8_t[pixelBufferSize];
-
-        memset(pixdata, 0, pixelBufferSize);
-        auto ptr = RenderBackend::instance()->createImage(pixdata, width, height);
-        delete[] pixdata;
+        std::vector<uint8_t> pixdata(pixelBufferSize, 0);
+        auto ptr = RenderBackend::instance()->createImage(pixdata.data(), width, height);
         ptr->setState(IResource::RES_LOADED);
         return add(std::move(ptr));
     }
@@ -150,10 +147,8 @@ namespace FIFE
             remove(nit->second);
         }
         size_t const pixelBufferSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 4U;
-        auto* pixdata                = new uint8_t[pixelBufferSize];
-        memset(pixdata, 0, pixelBufferSize);
-        auto ptr = RenderBackend::instance()->createImage(name, pixdata, width, height);
-        delete[] pixdata;
+        std::vector<uint8_t> pixdata(pixelBufferSize, 0);
+        auto ptr = RenderBackend::instance()->createImage(name, pixdata.data(), width, height);
         ptr->setState(IResource::RES_LOADED);
         return add(std::move(ptr));
     }

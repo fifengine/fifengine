@@ -47,7 +47,7 @@ namespace FIFE
 
             PathRenderer(PathRenderer const & old);
 
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             ~PathRenderer() override;
 

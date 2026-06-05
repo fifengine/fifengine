@@ -44,10 +44,7 @@ namespace FIFE
     {
     }
 
-    RenderItem::~RenderItem()
-    {
-        delete m_overlay;
-    }
+    RenderItem::~RenderItem() = default;
 
     int32_t RenderItem::getStaticImageIndexByAngle(int32_t angle, Instance* itemInstance)
     {
@@ -60,7 +57,7 @@ namespace FIFE
         }
         if (objVis->isColorOverlay()) {
             if (m_overlay == nullptr) {
-                m_overlay = new OverlayData();
+                m_overlay = std::make_unique<OverlayData>();
             }
             m_overlay->colorOverlay = objVis->getStaticColorOverlay(angle);
         }
@@ -77,7 +74,7 @@ namespace FIFE
     void RenderItem::setAnimationOverlay(std::vector<ImagePtr>* ao, std::vector<OverlayColors*>* aco)
     {
         if (m_overlay == nullptr) {
-            m_overlay = new OverlayData();
+            m_overlay = std::make_unique<OverlayData>();
         }
         m_overlay->animationOverlayImages = ao;
         m_overlay->animationColorOverlays = aco;
@@ -102,7 +99,7 @@ namespace FIFE
     void RenderItem::setColorOverlay(OverlayColors* co)
     {
         if (m_overlay == nullptr) {
-            m_overlay = new OverlayData();
+            m_overlay = std::make_unique<OverlayData>();
         }
         m_overlay->colorOverlay = co;
     }
@@ -117,10 +114,7 @@ namespace FIFE
 
     void RenderItem::deleteOverlayData()
     {
-        if (m_overlay != nullptr) {
-            delete m_overlay;
-            m_overlay = nullptr;
-        }
+        m_overlay.reset();
     }
 
     void RenderItem::reset()

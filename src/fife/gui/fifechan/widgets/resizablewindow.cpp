@@ -21,6 +21,7 @@ namespace fcn
     ResizableWindow::ResizableWindow() :
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
+        m_cursors(),
         m_borderDistance(5),
         m_resizable(true),
         m_resizableTop(true),
@@ -43,6 +44,7 @@ namespace fcn
     ResizableWindow::ResizableWindow(bool resizable) :
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
+        m_cursors(),
         m_borderDistance(5),
         m_resizable(resizable),
         m_resizableTop(true),
@@ -65,6 +67,7 @@ namespace fcn
     ResizableWindow::ResizableWindow(std::string const & caption, bool resizable) :
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
+        m_cursors(),
         m_borderDistance(5),
         m_resizable(resizable),
         m_resizableTop(true),
@@ -150,17 +153,15 @@ namespace fcn
             m_saved.cursorImage.reset();
             m_saved.cursorAnimation.reset();
             break;
-        case FIFE::CURSOR_IMAGE:
-            m_saved.cursorType = type;
-            m_saved.cursorId   = FIFE::NC_ARROW;
-            ;
+        case FIFE::CURSOR_IMAGE: // NOLINT(bugprone-branch-clone)
+            m_saved.cursorType  = type;
+            m_saved.cursorId    = FIFE::NC_ARROW;
             m_saved.cursorImage = m_cursor->getImage();
             m_saved.cursorAnimation.reset();
             break;
         case FIFE::CURSOR_ANIMATION:
             m_saved.cursorType = type;
             m_saved.cursorId   = FIFE::NC_ARROW;
-            ;
             m_saved.cursorImage.reset();
             m_saved.cursorAnimation = m_cursor->getAnimation();
             break;

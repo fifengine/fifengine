@@ -63,9 +63,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* CellRenderer::clone()
+    std::unique_ptr<RendererBase> CellRenderer::clone()
     {
-        return new CellRenderer(*this);
+        return std::make_unique<CellRenderer>(*this);
     }
 
     CellRenderer::~CellRenderer() = default;

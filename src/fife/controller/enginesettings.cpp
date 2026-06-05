@@ -136,8 +136,8 @@ namespace FIFE
 
     void EngineSettings::setRenderBackend(std::string const & renderbackend)
     {
-        std::vector<std::string> pv = getPossibleRenderBackends();
-        auto i                      = std::ranges::find(pv, renderbackend);
+        std::vector<std::string> const pv = getPossibleRenderBackends();
+        auto i                            = std::ranges::find(pv, renderbackend);
         if (i != pv.end()) {
             m_renderbackend = renderbackend;
             return;

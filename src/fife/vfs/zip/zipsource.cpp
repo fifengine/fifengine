@@ -48,7 +48,7 @@ namespace FIFE
         return m_zipTree.getNode(path.string()) != nullptr;
     }
 
-    RawData* ZipSource::open(std::string const & path) const
+    std::unique_ptr<RawData> ZipSource::open(std::string const & path) const
     {
         fs::path const filePath(path);
         ZipNode const * node = m_zipTree.getNode(filePath.string());
@@ -60,7 +60,6 @@ namespace FIFE
             uint32_t const dataOffset      = getLocalFileDataOffset(entryData.offset);
 
             m_zipfile->setIndex(dataOffset);
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays, modernize-avoid-c-arrays)
             auto data = std::make_unique<uint8_t[]>(entryData.size_real);
             if (entryData.comp == 8) {
                 FL_DBG(
@@ -102,7 +101,7 @@ namespace FIFE
                 return nullptr;
             }
 
-            return new RawData(new ZipFileSource(data.release(), entryData.size_real));
+            return std::make_unique<RawData>(new ZipFileSource(data.release(), entryData.size_real));
         }
 
         return nullptr;

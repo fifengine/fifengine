@@ -54,7 +54,7 @@ namespace FIFE
              */
             void* getBuffer() const override
             {
-                return m_data;
+                return m_data.get();
             }
 
             /** Returns the byte-size of the buffer returned by getBuffer().
@@ -72,7 +72,7 @@ namespace FIFE
             std::unique_ptr<RawData> m_file;
             uint64_t m_declength;
             uint64_t m_datasize;
-            char* m_data;
+            std::unique_ptr<char[]> m_data;
             OggVorbis_File m_ovf;
     };
 } // namespace FIFE

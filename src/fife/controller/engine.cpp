@@ -190,10 +190,10 @@ namespace FIFE
         try {
             if (m_vfs->exists("config/fonts.xml")) {
                 FL_LOG(_log(), "Loading font manifest from config/fonts.xml");
-                std::unique_ptr<RawData> fontManifest(m_vfs->open("config/fonts.xml"));
+                auto fontManifest = m_vfs->open("config/fonts.xml");
                 if (fontManifest) {
                     auto bytes = fontManifest->getDataInBytes();
-                    std::string const xmlContent(reinterpret_cast<char*>(bytes.data()), bytes.size());
+                    std::string const xmlContent(bytes.begin(), bytes.end());
                     m_fontManager->loadManifestFromString(xmlContent);
                 }
             }

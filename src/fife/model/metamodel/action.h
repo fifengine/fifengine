@@ -34,7 +34,7 @@ namespace FIFE
 
             /** Destructor
              */
-            virtual ~Action() override;
+            ~Action() override;
 
             /** Get the name for this action.
              */

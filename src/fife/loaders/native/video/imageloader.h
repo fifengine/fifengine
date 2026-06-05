@@ -21,7 +21,7 @@ namespace FIFE
     {
         public:
             ImageLoader() = default;
-            virtual void load(IResource* res) override;
+            void load(IResource* res) override;
     };
 } // namespace FIFE
 #endif

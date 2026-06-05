@@ -11,6 +11,7 @@
 #include <iostream>
 #include <limits>
 #include <map>
+#include <memory>
 #include <optional>
 #include <ranges>
 #include <string>
@@ -67,13 +68,11 @@ namespace FIFE
         m_mappingSaver  = ControllerMappingSaver();
 
         // add already connected joysticks / controllers
-        int count                 = 0;
-        SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
+        int count      = 0;
+        auto joysticks = std::unique_ptr<SDL_JoystickID, decltype(&SDL_free)>(SDL_GetJoysticks(&count), &SDL_free);
         for (int32_t i = 0; i < count; ++i) {
             addJoystick(i);
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
-        SDL_free(joysticks);
         // enable joystick and gamecontroller events
         SDL_SetJoystickEventsEnabled(true);
         SDL_SetGamepadEventsEnabled(true);
@@ -81,10 +80,6 @@ namespace FIFE
 
     JoystickManager::~JoystickManager()
     {
-        for (auto& m_joystick : m_joysticks) {
-            delete m_joystick;
-        }
-
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD);
     }
 
@@ -96,20 +91,21 @@ namespace FIFE
             })) {
             return joystick;
         }
-        std::string guidStr = getGuidString(deviceIndex);
+        std::string const guidStr = getGuidString(deviceIndex);
 
-        auto it = std::ranges::find_if(m_joysticks, [&guidStr](Joystick* j) {
+        auto it = std::ranges::find_if(m_joysticks, [&guidStr](auto const & j) {
             return !j->isConnected() && j->getGuid() == guidStr;
         });
         if (it != m_joysticks.end()) {
-            joystick = *it;
+            joystick = it->get();
         }
         if (joystick == nullptr) {
             if (std::cmp_greater(m_joysticks.size(), std::numeric_limits<int32_t>::max())) {
                 throw InvalidFormat("Too many joystick instances registered");
             }
-            joystick = new Joystick(static_cast<int32_t>(m_joysticks.size()), deviceIndex);
-            m_joysticks.push_back(joystick);
+            auto joy = std::make_unique<Joystick>(static_cast<int32_t>(m_joysticks.size()), deviceIndex);
+            joystick = joy.get();
+            m_joysticks.push_back(std::move(joy));
         } else {
             joystick->setDeviceIndex(deviceIndex);
         }
@@ -125,7 +121,7 @@ namespace FIFE
         Joystick* joy = nullptr;
         auto it       = m_joystickIndices.find(instanceId);
         if (it != m_joystickIndices.end()) {
-            joy = m_joysticks.at(it->second);
+            joy = m_joysticks.at(it->second).get();
         }
         return joy;
     }
@@ -177,14 +173,12 @@ namespace FIFE
     std::string JoystickManager::getStringMapping(std::string const & guid)
     {
         SDL_GUID const realGuid = SDL_StringToGUID(guid.c_str());
-        char* mapping           = SDL_GetGamepadMappingForGUID(realGuid);
+        auto mapping = std::unique_ptr<char, decltype(&SDL_free)>(SDL_GetGamepadMappingForGUID(realGuid), &SDL_free);
         if (mapping == nullptr) {
             throw SDLException(SDL_GetError());
         }
 
-        std::string stringMapping(mapping);
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
-        SDL_free(mapping);
+        std::string stringMapping(mapping.get());
         // add missing platform if needed
         if (stringMapping.find_last_of(',') != stringMapping.length() - 1) {
             stringMapping += ",";

@@ -222,6 +222,16 @@ print(s)\n\
 	_FIFE_EXC_HANDLER(Exception)
 }
 
+/* Typemap for std::unique_ptr<T> return types */
+%define %fife_unique_ptr_out(TYPE)
+%typemap(out) std::unique_ptr<TYPE> {
+    std::unique_ptr<TYPE> uptr(std::move($1));
+    %set_output(SWIG_NewPointerObj(uptr.release(), $descriptor(TYPE *), SWIG_POINTER_OWN | %newpointer_flags));
+}
+%enddef
+%fife_unique_ptr_out(FIFE::RawData)
+%fife_unique_ptr_out(FIFE::MapSaver)
+
 /* SWIG_INCLUSIONS */
 @CMAKE_SWIG_INCLUSIONS@
 

@@ -49,7 +49,7 @@ namespace FIFE
             std::set<std::string> listFiles(std::string const & path) const override;
             std::set<std::string> listDirectories(std::string const & path) const override;
 
-            virtual RawData* open(std::string const & path) const override;
+            std::unique_ptr<RawData> open(std::string const & path) const override;
 
         private:
             /**

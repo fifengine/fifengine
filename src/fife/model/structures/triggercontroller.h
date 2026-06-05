@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -45,7 +46,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~TriggerController() override;
+            ~TriggerController() override;
 
             /** Creates a trigger.
              *
@@ -199,10 +200,10 @@ namespace FIFE
             //! Pointer to the map this controller is associated with.
             Map* m_map [[maybe_unused]]; // TODO: implement map-level trigger operations
 
-            using TriggerNameMap              = std::map<std::string, Trigger*>;
-            using TriggerNameMapIterator      = std::map<std::string, Trigger*>::iterator;
-            using TriggerNameMapConstIterator = std::map<std::string, Trigger*>::const_iterator;
-            using TriggerNameMapPair          = std::pair<std::string, Trigger*>;
+            using TriggerNameMap              = std::map<std::string, std::unique_ptr<Trigger>>;
+            using TriggerNameMapIterator      = std::map<std::string, std::unique_ptr<Trigger>>::iterator;
+            using TriggerNameMapConstIterator = std::map<std::string, std::unique_ptr<Trigger>>::const_iterator;
+            using TriggerNameMapPair          = std::pair<std::string, std::unique_ptr<Trigger>>;
             //! Trigger name map
             TriggerNameMap m_triggerNameMap;
     };

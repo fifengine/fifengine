@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -76,7 +77,7 @@ namespace FIFE
 
             /** Makes copy of this renderer
              */
-            virtual RendererBase* clone() = 0;
+            virtual std::unique_ptr<RendererBase> clone() = 0;
 
             /** Destructor
              */

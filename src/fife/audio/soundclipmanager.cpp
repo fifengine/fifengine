@@ -81,8 +81,8 @@ namespace FIFE
 
     SoundClipPtr SoundClipManager::create(IResourceLoader* loader)
     {
-        auto* ptr = new SoundClip(loader);
-        return add(ptr);
+        auto ptr = std::make_unique<SoundClip>(loader);
+        return add(ptr.release());
     }
 
     SoundClipPtr SoundClipManager::create(std::string const & name, IResourceLoader* loader)
@@ -99,8 +99,8 @@ namespace FIFE
             return get(name);
         }
 
-        auto* ptr = new SoundClip(name, loader);
-        return add(ptr);
+        auto ptr = std::make_unique<SoundClip>(name, loader);
+        return add(ptr.release());
     }
 
     SoundClipPtr SoundClipManager::load(std::string const & name, IResourceLoader* loader)

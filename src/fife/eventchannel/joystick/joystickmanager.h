@@ -11,6 +11,7 @@
 #include <deque>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -124,7 +125,7 @@ namespace FIFE
             std::vector<Joystick*> m_activeJoysticks;
 
             //! All "known" Joysticks. Useful if a user reconnect a Joystick.
-            std::vector<Joystick*> m_joysticks;
+            std::vector<std::unique_ptr<Joystick>> m_joysticks;
 
             //! Map to hold the relation between Joystick InstanceId and JoystickId
             std::map<int32_t, uint32_t> m_joystickIndices;

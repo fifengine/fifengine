@@ -70,9 +70,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* CoordinateRenderer::clone()
+    std::unique_ptr<RendererBase> CoordinateRenderer::clone()
     {
-        return new CoordinateRenderer(*this);
+        return std::make_unique<CoordinateRenderer>(*this);
     }
 
     CoordinateRenderer::~CoordinateRenderer() = default;

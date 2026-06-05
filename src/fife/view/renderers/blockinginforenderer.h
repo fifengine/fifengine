@@ -36,11 +36,11 @@ namespace FIFE
 
             /** Makes copy of this renderer.
              */
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~BlockingInfoRenderer() override;
+            ~BlockingInfoRenderer() override;
 
             /** Returns the renderer name.
              *

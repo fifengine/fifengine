@@ -103,7 +103,7 @@ namespace FIFE
         std::string const mapFilename = mapPath.string();
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(mapFilename));
+            auto data = m_vfs->open(mapFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -879,17 +879,17 @@ namespace FIFE
             return;
         }
 
-        std::vector<Camera*> const & cameras = map->getCameras();
+        auto const & cameras = map->getCameras();
         if (cameras.empty()) {
             return;
         }
 
         std::map<std::string, Camera*> cameraMap;
-        for (Camera* cam : cameras) {
-            cameraMap[cam->getName()] = cam;
+        for (auto const & cam : cameras) {
+            cameraMap[cam->getName()] = cam.get();
         }
 
-        Camera* defaultCamera = cameras.at(0);
+        Camera* defaultCamera = cameras.at(0).get();
 
         for (LightData const & ld : m_lightData) {
             Layer* layer = map->getLayer(ld.layerName);
@@ -1013,7 +1013,7 @@ namespace FIFE
         std::string const mapFilename = mapPath.string();
 
         try {
-            auto data = std::unique_ptr<RawData>(m_vfs->open(mapFilename));
+            auto data = m_vfs->open(mapFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {

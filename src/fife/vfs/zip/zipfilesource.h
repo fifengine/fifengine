@@ -20,10 +20,10 @@ namespace FIFE
     {
         public:
             ZipFileSource(uint8_t* data, uint32_t datalen);
-            virtual ~ZipFileSource() override;
+            ~ZipFileSource() override;
 
-            virtual uint32_t getSize() const override;
-            virtual void readInto(uint8_t* target, uint32_t start, uint32_t len) override;
+            uint32_t getSize() const override;
+            void readInto(uint8_t* target, uint32_t start, uint32_t len) override;
 
         private:
             uint8_t* m_data;

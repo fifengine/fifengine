@@ -26,7 +26,7 @@ namespace FIFE {
 		void removeSource(const std::string& path);
 
 		bool exists(const std::string& file) const;
-		RawData* open(const std::string& path);
+		std::unique_ptr<RawData> open(const std::string& path);
 
 		std::set<std::string> listFiles(const std::string& path) const;
 		std::set<std::string> listDirectories(const std::string& path) const;

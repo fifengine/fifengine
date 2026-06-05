@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <utility>
 
 // 3rd party library includes
@@ -89,9 +90,10 @@ namespace FIFE
         if (object->getVisual<ObjectVisual>() != nullptr) {
             throw Duplicate("Object already contains visualization");
         }
-        auto* v = new ObjectVisual();
-        object->adoptVisual(v);
-        return v;
+        auto v    = std::unique_ptr<ObjectVisual>(new ObjectVisual());
+        auto* raw = v.release();
+        object->adoptVisual(raw);
+        return raw;
     }
 
     void ObjectVisual::addStaticImage(uint32_t angle, int32_t image_index)
@@ -162,11 +164,11 @@ namespace FIFE
 
     ObjectVisual* ObjectVisual::clone() const
     {
-        auto* v              = new ObjectVisual();
+        auto v               = std::unique_ptr<ObjectVisual>(new ObjectVisual());
         v->m_angle2img       = m_angle2img;
         v->m_colorOverlayMap = m_colorOverlayMap;
         v->m_map             = m_map;
-        return v;
+        return v.release();
     }
 
     InstanceVisual::InstanceVisual() : m_instance(nullptr), m_stackposition(0), m_transparency(0), m_visible(true)
@@ -178,10 +180,11 @@ namespace FIFE
         if (instance->getVisual<InstanceVisual>() != nullptr) {
             throw Duplicate("Instance already contains visualization");
         }
-        auto* v = new InstanceVisual();
-        instance->setVisual(v);
+        auto v        = std::unique_ptr<InstanceVisual>(new InstanceVisual());
         v->m_instance = instance;
-        return v;
+        auto* raw     = v.release();
+        instance->setVisual(raw);
+        return raw;
     }
 
     InstanceVisual::~InstanceVisual() = default;
@@ -232,9 +235,10 @@ namespace FIFE
         if (action->getVisual<ActionVisual>() != nullptr) {
             throw Duplicate("Action already contains visualization");
         }
-        auto* v = new ActionVisual();
-        action->adoptVisual(v);
-        return v;
+        auto v    = std::unique_ptr<ActionVisual>(new ActionVisual());
+        auto* raw = v.release();
+        action->adoptVisual(raw);
+        return raw;
     }
 
     void ActionVisual::addAnimation(uint32_t angle, AnimationPtr const & animationptr)
@@ -399,12 +403,12 @@ namespace FIFE
 
     ActionVisual* ActionVisual::clone() const
     {
-        auto* v                       = new ActionVisual();
+        auto v                        = std::unique_ptr<ActionVisual>(new ActionVisual());
         v->m_animation_map            = m_animation_map;
         v->m_animationOverlayMap      = m_animationOverlayMap;
         v->m_colorOverlayMap          = m_colorOverlayMap;
         v->m_colorAnimationOverlayMap = m_colorAnimationOverlayMap;
         v->m_map                      = m_map;
-        return v;
+        return v.release();
     }
 } // namespace FIFE

@@ -32,9 +32,9 @@ namespace FIFE
 
     SquareGrid::SquareGrid() = default;
 
-    CellGrid* SquareGrid::clone()
+    std::unique_ptr<CellGrid> SquareGrid::clone()
     {
-        auto* nGrid = new SquareGrid();
+        auto nGrid = std::make_unique<SquareGrid>();
         nGrid->setRotation(m_rotation);
         nGrid->setXScale(m_xscale);
         nGrid->setYScale(m_yscale);

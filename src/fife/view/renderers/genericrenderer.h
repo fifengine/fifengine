@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -206,11 +207,11 @@ namespace FIFE
 
             /** Makes copy of this renderer.
              */
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~GenericRenderer() override;
+            ~GenericRenderer() override;
 
             /** This method is called by the view to ask renderer to draw its rendering aspect based on
              * given parameters.
@@ -396,7 +397,7 @@ namespace FIFE
 
         private:
             //! A map that holds the groups together with the appended render elements.
-            std::map<std::string, std::vector<GenericRendererElementInfo*>> m_groups;
+            std::map<std::string, std::vector<std::unique_ptr<GenericRendererElementInfo>>> m_groups;
     };
 
 } // namespace FIFE

@@ -195,7 +195,7 @@ namespace FIFE
 
             /** Get a list containing all cameras.
              */
-            std::vector<Camera*> const & getCameras() const;
+            std::vector<std::unique_ptr<Camera>> const & getCameras() const;
 
             /** Return the number of enabled cameras in this map.
              */
@@ -253,7 +253,7 @@ namespace FIFE
             std::vector<Layer*> m_changedLayers;
 
             //! holds the cameras attached to this map
-            std::vector<Camera*> m_cameras;
+            std::vector<std::unique_ptr<Camera>> m_cameras;
 
             //! pointer to renderbackend
             RenderBackend* m_renderBackend;

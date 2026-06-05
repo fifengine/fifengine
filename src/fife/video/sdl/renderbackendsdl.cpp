@@ -182,7 +182,7 @@ namespace FIFE
                 yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
             }
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
 
         m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
@@ -871,16 +871,15 @@ namespace FIFE
                 src_pointer = src_help_pointer;
                 for (x = 0; x < dst->w; x++) {
                     *dst_pointer = *src_pointer;
-                    src_pointer +=
-                        (sx_a.at(static_cast<size_t>(x) + 1U) >>
-                         16);      // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                    src_pointer += // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                        (sx_a.at(static_cast<size_t>(x) + 1U) >> 16);
                     ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                 }
                 size_t const syIdx        = static_cast<size_t>(y) + 1U;
-                auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+                auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
                 size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
-                src_help_pointer          = reinterpret_cast<uint32_t*>(
-                    srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(
+                    srcBytes + srcRowOffset)); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             }
 
             if (SDL_MUSTLOCK(dst)) {

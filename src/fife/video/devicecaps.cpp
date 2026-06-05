@@ -229,10 +229,10 @@ namespace FIFE
                     }
                 }
             }
-            // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+            // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
             SDL_free(static_cast<void*>(modes));
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
 
         // sort the list to keep the most preferred modes at the top of the selection process
@@ -368,7 +368,7 @@ namespace FIFE
     {
         int displayCount        = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
         assert(displayCount >= 0);
         assert(std::cmp_less_equal(displayCount, std::numeric_limits<uint8_t>::max()));
@@ -381,14 +381,14 @@ namespace FIFE
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
         if (displays == nullptr || count <= 0 || display >= static_cast<uint8_t>(count)) {
             if (displays != nullptr) {
-                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
                 SDL_free(static_cast<void*>(displays));
             }
             throw NotSupported("Could not find a matching display!");
         }
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         SDL_DisplayID const displayId = displays[display];
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
         return displayId;
     }

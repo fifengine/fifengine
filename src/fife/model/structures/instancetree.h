@@ -39,7 +39,7 @@ namespace FIFE
             /** Destructor
              *
              */
-            virtual ~InstanceTree() override;
+            ~InstanceTree() override;
 
             /** Adds an instance to the quad tree.
              *

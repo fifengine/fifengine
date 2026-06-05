@@ -61,7 +61,7 @@ namespace FIFE
             FifechanManager();
             /** Destructor.
              */
-            virtual ~FifechanManager() override;
+            ~FifechanManager() override;
 
             FifechanManager(FifechanManager const &)            = delete;
             FifechanManager& operator=(FifechanManager const &) = delete;
@@ -76,7 +76,7 @@ namespace FIFE
              *
              * This will be called each frame.
              */
-            virtual void turn() override;
+            void turn() override;
 
             /** Inits the Fifechan GUI Manager.
              * @param backend The GUI backend object to use
@@ -184,7 +184,7 @@ namespace FIFE
 
             void invalidateFonts();
 
-            virtual bool onSdlEvent(SDL_Event& evt) override;
+            bool onSdlEvent(SDL_Event& evt) override;
 
             KeyEvent translateKeyEvent(fcn::KeyEvent const & evt);
             MouseEvent translateMouseEvent(fcn::MouseEvent const & evt);

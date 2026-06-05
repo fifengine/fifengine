@@ -63,9 +63,9 @@ namespace FIFE
         FL_DBG(_log(), std::format("VERTICAL_MULTIP {}", VERTICAL_MULTIP));
     }
 
-    CellGrid* HexGrid::clone()
+    std::unique_ptr<CellGrid> HexGrid::clone()
     {
-        auto* nGrid = new HexGrid(m_axial);
+        auto nGrid = std::make_unique<HexGrid>(m_axial);
         nGrid->setRotation(m_rotation);
         nGrid->setXScale(m_xscale);
         nGrid->setYScale(m_yscale);

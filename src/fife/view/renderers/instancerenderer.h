@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -38,11 +39,11 @@ namespace FIFE
             InstanceRenderer(InstanceRenderer const & old);
             InstanceRenderer& operator=(InstanceRenderer const &) = delete;
 
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~InstanceRenderer() override;
+            ~InstanceRenderer() override;
             void render(Camera* cam, Layer* layer, RenderList& instances) override;
             std::string getName() override
             {
@@ -228,7 +229,7 @@ namespace FIFE
             Timer m_timer;
 
             // InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
-            InstanceDeleteListener* m_delete_listener;
+            std::unique_ptr<InstanceDeleteListener> m_delete_listener;
             using InstanceToEffects_t = std::map<Instance*, Effect>;
             InstanceToEffects_t m_assigned_instances;
 

@@ -139,12 +139,12 @@ namespace FIFE
 
         // release buffer and allocate new memory
         releaseBuffer();
-        m_data = new char[length];
+        m_data = std::make_unique<char[]>(length);
 
         // decode the stream
         m_datasize = 0;
 
-        auto const buf = std::span(m_data, static_cast<size_t>(length));
+        auto const buf = std::span(m_data.get(), static_cast<size_t>(length));
         while (length - m_datasize > 0) {
             uint64_t const remaining_bytes = length - m_datasize;
             int const chunk_size           = static_cast<int>(
@@ -176,9 +176,6 @@ namespace FIFE
 
     void SoundDecoderOgg::releaseBuffer()
     {
-        if (m_data != nullptr) {
-            delete[] m_data;
-            m_data = nullptr;
-        }
+        m_data.reset();
     }
 } // namespace FIFE

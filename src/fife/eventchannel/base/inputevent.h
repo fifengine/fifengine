@@ -110,7 +110,7 @@ namespace FIFE
 
             /** Gets the name of the event.
              */
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("InputEvent");
                 return eventName;
@@ -118,7 +118,7 @@ namespace FIFE
 
             /** Gets attribute string of the event.
              */
-            virtual std::string getAttrStr() const override
+            std::string getAttrStr() const override
             {
                 std::stringstream ss;
                 ss << Event::getAttrStr() << '\n';

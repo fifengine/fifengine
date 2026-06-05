@@ -20,7 +20,7 @@ namespace FIFE
     {
         public:
             OggLoader() = default;
-            virtual void load(IResource* res) override;
+            void load(IResource* res) override;
     };
 } // namespace FIFE
 

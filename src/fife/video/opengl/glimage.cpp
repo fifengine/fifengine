@@ -64,11 +64,12 @@ namespace FIFE
                 int32_t const clampedY = std::clamp(y, 0, surface->h - 1);
                 auto const * pixels    = static_cast<uint32_t const *>(surface->pixels);
                 int32_t const pitchPx  = surface->pitch / 4;
-                uint32_t const pixel   = pixels[(clampedY * pitchPx) + clampedX];
-                uint8_t r              = 0;
-                uint8_t g              = 0;
-                uint8_t b              = 0;
-                uint8_t a              = 0;
+                uint32_t const pixel =
+                    pixels[(clampedY * pitchPx) + clampedX]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                uint8_t r = 0;
+                uint8_t g = 0;
+                uint8_t b = 0;
+                uint8_t a = 0;
                 SDL_GetRGBA(pixel, fmt, SDL_GetSurfacePalette(surface), &r, &g, &b, &a);
                 return std::format("({},{})={:#010x}/rgba({},{},{},{})", clampedX, clampedY, pixel, r, g, b, a);
             };
@@ -103,7 +104,14 @@ namespace FIFE
                     uint8_t g = 0;
                     uint8_t b = 0;
                     uint8_t a = 0;
-                    SDL_GetRGBA(pixels[(y * pitchPx) + x], fmt, SDL_GetSurfacePalette(surface), &r, &g, &b, &a);
+                    SDL_GetRGBA(
+                        pixels[(y * pitchPx) + x],
+                        fmt,
+                        SDL_GetSurfacePalette(surface),
+                        &r,
+                        &g,
+                        &b,
+                        &a); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
                     if (a == 0) {
                         continue;

@@ -41,7 +41,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~TextEvent() override = default;
+            ~TextEvent() override = default;
 
             TextEventType getType() const
             {
@@ -61,7 +61,7 @@ namespace FIFE
                 m_text = text;
             }
 
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("TextEvent");
                 return eventName;

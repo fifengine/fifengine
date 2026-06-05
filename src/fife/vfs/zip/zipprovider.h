@@ -41,7 +41,7 @@ namespace FIFE
             bool isReadable(std::string const & file) const override;
             VFSSource* createSource(std::string const & file) override;
             VFSSource* getSource(std::string const & path) const override;
-            virtual bool hasSource(std::string const & path) const override;
+            bool hasSource(std::string const & path) const override;
 
         private:
             std::map<std::string, std::unique_ptr<VFSSource>> m_sources;

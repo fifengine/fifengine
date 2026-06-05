@@ -5,7 +5,7 @@
 #include "controllermappingsaver.h"
 
 // Standard C++ library includes
-#include <cstdio>
+#include <fstream>
 #include <string>
 
 // 3rd party library includes
@@ -17,15 +17,8 @@ namespace FIFE
 {
     void ControllerMappingSaver::save(std::string const & data, std::string const & filename)
     {
-        FILE* fp = nullptr;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-        fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
-#else
-        fp = fopen(filename.c_str(), "w");
-#endif
-        if (fp != nullptr) {
-            fputs(data.c_str(), fp);
-            fclose(fp);
+        if (std::ofstream fp(filename); fp.is_open()) {
+            fp << data;
         }
     }
 } // namespace FIFE

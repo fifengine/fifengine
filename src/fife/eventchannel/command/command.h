@@ -33,7 +33,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~Command() override = default;
+            ~Command() override = default;
 
             /** Gets the type of this command
              * @return type of this command
@@ -67,7 +67,7 @@ namespace FIFE
 
             /** Gets the name of the event.
              */
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("Command");
                 return eventName;

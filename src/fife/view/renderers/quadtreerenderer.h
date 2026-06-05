@@ -45,11 +45,11 @@ namespace FIFE
 
             QuadTreeRenderer(QuadTreeRenderer const & old);
 
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~QuadTreeRenderer() override;
+            ~QuadTreeRenderer() override;
 
             void render(Camera* cam, Layer* layer, RenderList& instances) override;
 

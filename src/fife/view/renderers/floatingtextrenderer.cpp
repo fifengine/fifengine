@@ -77,9 +77,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* FloatingTextRenderer::clone()
+    std::unique_ptr<RendererBase> FloatingTextRenderer::clone()
     {
-        return new FloatingTextRenderer(*this);
+        return std::make_unique<FloatingTextRenderer>(*this);
     }
 
     FloatingTextRenderer::~FloatingTextRenderer() = default;

@@ -66,6 +66,8 @@ namespace FIFE
         m_had_widget(false),
         m_lastMotionX(0),
         m_lastMotionY(0),
+        m_fonts(),
+        m_widgets(),
         m_fontsize(0),
         m_logic_executed(false),
         m_enabled_console(true)
@@ -158,10 +160,10 @@ namespace FIFE
 
     void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
-        if (m_backend == "SDL") {
-            dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+        if (m_backend == "SDL") { // NOLINT(bugprone-branch-clone)
+            static_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else {
-            dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+            static_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         }
         m_fcn_topcontainer->setDimension(
             fcn::Rectangle(
@@ -234,8 +236,8 @@ namespace FIFE
 
     fcn::Font* FifechanManager::createFont(std::string const & path, uint32_t size)
     {
-        std::string fontpath = path;
-        int32_t fontsize     = static_cast<int32_t>(size);
+        std::string fontpath   = path;
+        int32_t const fontsize = static_cast<int32_t>(size);
 
         if (fontpath.empty()) {
             fontpath = m_fontpath;

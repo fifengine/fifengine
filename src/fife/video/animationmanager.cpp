@@ -84,8 +84,8 @@ namespace FIFE
 
     AnimationPtr AnimationManager::create(IResourceLoader* loader)
     {
-        auto* ptr = new Animation(loader);
-        return add(ptr);
+        auto ptr = std::make_unique<Animation>(loader);
+        return add(ptr.release());
     }
 
     AnimationPtr AnimationManager::create(std::string const & name, IResourceLoader* loader)
@@ -100,8 +100,8 @@ namespace FIFE
             return getPtr(name);
         }
 
-        auto* ptr = new Animation(name, loader);
-        return add(ptr);
+        auto ptr = std::make_unique<Animation>(name, loader);
+        return add(ptr.release());
     }
 
     AnimationPtr AnimationManager::load(std::string const & name, IResourceLoader* loader)

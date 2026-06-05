@@ -32,7 +32,7 @@ namespace FIFE
              */
             virtual void onCommand(Command& command) = 0;
 
-            virtual ~ICommandListener() override = default;
+            ~ICommandListener() override = default;
     };
 
 } // namespace FIFE

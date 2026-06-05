@@ -95,10 +95,10 @@ namespace FIFE
         }
     }
 
-    RawData* DAT2::open(std::string const & file) const
+    std::unique_ptr<RawData> DAT2::open(std::string const & file) const
     {
         RawDataDAT2::s_info const & info = getInfo(file);
-        return new RawData(new RawDataDAT2(getVFS(), m_datpath, info));
+        return std::make_unique<RawData>(new RawDataDAT2(getVFS(), m_datpath, info));
     }
 
     bool DAT2::fileExists(std::string const & name) const

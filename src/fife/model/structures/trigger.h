@@ -94,7 +94,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~Trigger() override;
+            ~Trigger() override;
 
             /** Add a listener to the trigger.
              *

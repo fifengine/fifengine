@@ -131,7 +131,7 @@ namespace fcn
             }
             int32_t index          = 0;
             uint64_t const elapsed = mTimemanager->now64() - mAnimtime;
-            if (isRepeating()) {
+            if (isRepeating()) { // NOLINT(bugprone-branch-clone)
                 index = mAnimation->getFrameIndex64(
                     elapsed % FIFE::SDLTimeCompat::fromLegacy32Ticks(mAnimation->getDuration()));
             } else {

@@ -8,7 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
-// #include <vector>
+#include <memory>
 
 // 3rd party library includes
 
@@ -91,7 +91,7 @@ namespace FIFE
             Location m_location;
             Layer* m_layer;
             Point m_point;
-            InstanceDeleteListener* m_listener;
+            std::unique_ptr<InstanceDeleteListener> m_listener;
     };
 } // namespace FIFE
 

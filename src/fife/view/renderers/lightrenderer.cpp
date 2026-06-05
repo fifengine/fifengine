@@ -265,10 +265,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* LightRenderer::clone()
+    std::unique_ptr<RendererBase> LightRenderer::clone()
     {
-        auto copy = std::make_unique<LightRenderer>(*this);
-        return copy.release();
+        return std::make_unique<LightRenderer>(*this);
     }
 
     LightRenderer::~LightRenderer() = default;

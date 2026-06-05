@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ namespace FIFE
 
             /** Destructor
              */
-            virtual ~CellGrid() override;
+            ~CellGrid() override;
 
             /** Gets the coordinates that are accesible from given point
              *  only cells adjacent to given cell are considered in the evaluation
@@ -260,7 +261,7 @@ namespace FIFE
 
             /** Returns clone of this cellgrid
              */
-            virtual CellGrid* clone() = 0;
+            virtual std::unique_ptr<CellGrid> clone() = 0;
 
         protected:
             void updateMatrices();

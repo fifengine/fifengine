@@ -12,6 +12,7 @@
 #include <deque>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -69,7 +70,7 @@ namespace FIFE
 
             /** Destructor
              */
-            virtual ~EventManager() override;
+            ~EventManager() override;
 
             void addCommandListener(ICommandListener* listener) override;
             void addCommandListenerFront(ICommandListener* listener) override;
@@ -229,7 +230,7 @@ namespace FIFE
             uint64_t m_lastTicks;
             float m_oldVelocity;
 
-            JoystickManager* m_joystickManager;
+            std::unique_ptr<JoystickManager> m_joystickManager;
     };
 } // namespace FIFE
 

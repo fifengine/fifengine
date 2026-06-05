@@ -45,9 +45,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* GridRenderer::clone()
+    std::unique_ptr<RendererBase> GridRenderer::clone()
     {
-        return new GridRenderer(*this);
+        return std::make_unique<GridRenderer>(*this);
     }
 
     GridRenderer::~GridRenderer() = default;

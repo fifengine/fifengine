@@ -23,7 +23,7 @@ namespace FIFE
     {
         VFS* vfs = VFS::instance();
 
-        std::unique_ptr<RawData> data(vfs->open(filename));
+        auto data            = vfs->open(filename);
         size_t const datalen = data->getDataLength();
         std::vector<uint8_t> darray(datalen);
         data->readInto(darray.data(), datalen);

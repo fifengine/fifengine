@@ -79,7 +79,7 @@ namespace FIFE
             DAT2(VFS* vfs, std::string const & file);
 
             bool fileExists(std::string const & name) const override;
-            RawData* open(std::string const & file) const override;
+            std::unique_ptr<RawData> open(std::string const & file) const override;
 
             /** Get Information needed to unpack and extract data
              *

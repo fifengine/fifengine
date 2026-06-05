@@ -30,7 +30,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~DropEvent() override = default;
+            ~DropEvent() override = default;
 
             /** Gets the path for the file that is droped.
              */
@@ -48,7 +48,7 @@ namespace FIFE
 
             /** Gets the name of the event.
              */
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("DropEvent");
                 return eventName;

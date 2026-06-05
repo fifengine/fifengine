@@ -48,9 +48,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* QuadTreeRenderer::clone()
+    std::unique_ptr<RendererBase> QuadTreeRenderer::clone()
     {
-        return new QuadTreeRenderer(*this);
+        return std::make_unique<QuadTreeRenderer>(*this);
     }
 
     QuadTreeRenderer::~QuadTreeRenderer() = default;

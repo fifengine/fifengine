@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <set>
 #include <string>
 
@@ -50,10 +51,10 @@ namespace FIFE
             /** open a file inside this source
              *
              * @param file the file to open
-             * @return a new RawData*
+             * @return a new RawData
              * @throws CannotOpenFile if the file can't be found
              */
-            virtual RawData* open(std::string const & file) const = 0;
+            virtual std::unique_ptr<RawData> open(std::string const & file) const = 0;
 
             /** list all files in a directory of this source
              *

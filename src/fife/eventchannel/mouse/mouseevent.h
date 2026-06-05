@@ -64,7 +64,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~MouseEvent() override = default;
+            ~MouseEvent() override = default;
 
             /**
              * Gets the button of the mouse event.
@@ -120,12 +120,12 @@ namespace FIFE
                 m_y = y;
             }
 
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("MouseEvent");
                 return eventName;
             }
-            virtual std::string getAttrStr() const override
+            std::string getAttrStr() const override
             {
                 std::stringstream ss;
                 ss << InputEvent::getAttrStr() << '\n';

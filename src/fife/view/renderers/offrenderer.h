@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -234,7 +235,7 @@ namespace FIFE
             void removeAll();
 
         private:
-            std::map<std::string, std::vector<OffRendererElementInfo*>> m_groups;
+            std::map<std::string, std::vector<std::unique_ptr<OffRendererElementInfo>>> m_groups;
             RenderBackend* m_renderbackend;
             bool m_enabled;
             Rect m_area;

@@ -5,6 +5,7 @@
 #include "directoryprovider.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -29,8 +30,10 @@ namespace FIFE
             if (hasSource(path)) {
                 source = m_sources[path];
             } else {
-                source          = new VFSDirectory(getVFS(), path);
+                auto vfsDir     = std::make_unique<VFSDirectory>(getVFS(), path);
+                source          = vfsDir.get();
                 m_sources[path] = source;
+                vfsDir.release();
             }
             return source;
         }

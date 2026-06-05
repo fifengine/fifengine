@@ -374,9 +374,9 @@ namespace FIFE
         setEnabled(false);
     }
 
-    RendererBase* GenericRenderer::clone()
+    std::unique_ptr<RendererBase> GenericRenderer::clone()
     {
-        return new GenericRenderer(*this);
+        return std::make_unique<GenericRenderer>(*this);
     }
 
     GenericRenderer::~GenericRenderer() = default;
@@ -389,14 +389,12 @@ namespace FIFE
         uint8_t b,
         uint8_t a)
     {
-        GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererLineInfo>(n1, n2, r, g, b, a));
     }
     void GenericRenderer::addPoint(
         std::string const & group, RendererNode const & n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererPointInfo>(n, r, g, b, a));
     }
     void GenericRenderer::addTriangle(
         std::string const & group,
@@ -408,8 +406,7 @@ namespace FIFE
         uint8_t b,
         uint8_t a)
     {
-        GenericRendererElementInfo* info = new GenericRendererTriangleInfo(n1, n2, n3, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererTriangleInfo>(n1, n2, n3, r, g, b, a));
     }
     void GenericRenderer::addQuad(
         std::string const & group,
@@ -422,32 +419,27 @@ namespace FIFE
         uint8_t b,
         uint8_t a)
     {
-        GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererQuadInfo>(n1, n2, n3, n4, r, g, b, a));
     }
     void GenericRenderer::addVertex(
         std::string const & group, RendererNode const & n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererVertexInfo>(n, size, r, g, b, a));
     }
     void GenericRenderer::addText(
         std::string const & group, RendererNode const & n, IFont* font, std::string const & text, bool zoomed)
     {
-        GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text, zoomed);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererTextInfo>(n, font, text, zoomed));
     }
     void GenericRenderer::addImage(
         std::string const & group, RendererNode const & n, ImagePtr const & image, bool zoomed)
     {
-        GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image, zoomed);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererImageInfo>(n, image, zoomed));
     }
     void GenericRenderer::addAnimation(
         std::string const & group, RendererNode const & n, AnimationPtr const & animation, bool zoomed)
     {
-        GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation, zoomed);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererAnimationInfo>(n, animation, zoomed));
     }
     void GenericRenderer::resizeImage(
         std::string const & group,
@@ -457,28 +449,16 @@ namespace FIFE
         int32_t height,
         bool zoomed)
     {
-        GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height, zoomed);
-        m_groups[group].push_back(info);
+        m_groups[group].push_back(std::make_unique<GenericRendererResizeInfo>(n, image, width, height, zoomed));
     }
     void GenericRenderer::removeAll(std::string const & group)
     {
-        auto info_it = m_groups[group].begin();
-        for (; info_it != m_groups[group].end(); ++info_it) {
-            delete *info_it;
-        }
         m_groups[group].clear();
         m_groups.erase(group);
     }
     // Remove all groups
     void GenericRenderer::removeAll()
     {
-        auto it = m_groups.begin();
-        for (; it != m_groups.end(); ++it) {
-            auto info_it = it->second.begin();
-            for (; info_it != it->second.end(); ++info_it) {
-                delete *info_it;
-            }
-        }
         m_groups.clear();
     }
     // Clear all groups

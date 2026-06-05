@@ -40,7 +40,7 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~KeyEvent() override = default;
+            ~KeyEvent() override = default;
 
             KeyEventType getType() const
             {
@@ -69,7 +69,7 @@ namespace FIFE
                 m_key = key;
             }
 
-            virtual std::string const & getName() const override
+            std::string const & getName() const override
             {
                 static std::string const eventName("KeyEvent");
                 return eventName;

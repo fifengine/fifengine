@@ -44,15 +44,15 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~ImageManager() override;
+            ~ImageManager() override;
 
             ImageManager(ImageManager const &)            = delete;
             ImageManager& operator=(ImageManager const &) = delete;
 
-            virtual size_t getMemoryUsed() const override;
-            virtual size_t getTotalResourcesCreated() const override;
-            virtual size_t getTotalResourcesLoaded() const override;
-            virtual size_t getTotalResources() const override;
+            size_t getMemoryUsed() const override;
+            size_t getTotalResourcesCreated() const override;
+            size_t getTotalResourcesLoaded() const override;
+            size_t getTotalResources() const override;
 
             /** Creates a blank Image but does not load it immediately
              *

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <vector>
 
 // 3rd party library includes
@@ -106,7 +107,7 @@ namespace FIFE
             int32_t currentFrame;
 
             // pointer to overlay data class
-            OverlayData* m_overlay;
+            std::unique_ptr<OverlayData> m_overlay;
 
         private:
             int32_t m_cachedStaticImgId;

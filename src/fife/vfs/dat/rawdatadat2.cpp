@@ -25,7 +25,7 @@ namespace FIFE
         RawDataMemSource(info.unpackedLength)
     {
 
-        std::unique_ptr<RawData> input(vfs->open(datfile));
+        auto input = vfs->open(datfile);
         input->setIndex(info.offset);
 
         if (info.type == 1) { // compressed

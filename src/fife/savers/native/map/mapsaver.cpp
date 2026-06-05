@@ -382,8 +382,7 @@ namespace FIFE
             }
         }
 
-        using CameraContainer   = std::vector<Camera*>;
-        CameraContainer cameras = map.getCameras();
+        auto const & cameras = map.getCameras();
         for (auto& camera : cameras) {
             if (camera->getMap()->getName() == map.getName()) {
                 XML::Element* cameraElement = doc.NewElement("camera");
@@ -436,12 +435,11 @@ namespace FIFE
     void MapSaver::writeLayerLights(
         Map const & map, Layer const & layer, XML::Document& doc, XML::Element* layerElement)
     {
-        using CameraContainer           = std::vector<Camera*>;
-        CameraContainer const & cameras = map.getCameras();
+        auto const & cameras = map.getCameras();
 
         bool hasLights = false;
         for (auto const & camera : cameras) {
-            LightRenderer* renderer = LightRenderer::getInstance(camera);
+            LightRenderer* renderer = LightRenderer::getInstance(camera.get());
             if (renderer == nullptr) {
                 continue;
             }
@@ -468,7 +466,7 @@ namespace FIFE
         layerElement->InsertEndChild(lightsElement);
 
         for (auto const & camera : cameras) {
-            LightRenderer* renderer = LightRenderer::getInstance(camera);
+            LightRenderer* renderer = LightRenderer::getInstance(camera.get());
             if (renderer == nullptr) {
                 continue;
             }
@@ -551,9 +549,9 @@ namespace FIFE
         }
     }
 
-    MapSaver* createDefaultMapSaver(Model* model, ImageManager* imageManager)
+    std::unique_ptr<MapSaver> createDefaultMapSaver(Model* model, ImageManager* imageManager)
     {
-        MapSaver* saver = new MapSaver();
+        auto saver = std::make_unique<MapSaver>();
 
         AnimationSaverPtr const animSaver(new AnimationSaver());
         AtlasSaverPtr const atlasSaver(new AtlasSaver());

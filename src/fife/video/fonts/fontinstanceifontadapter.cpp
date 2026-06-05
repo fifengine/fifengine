@@ -477,9 +477,9 @@ namespace FIFE
         rect.h = static_cast<int32_t>(image->getHeight());
 
         if (shouldLogGuiText(text)) {
-            SDL_Surface* surface = image->getSurface();
-            uint32_t firstPixel  = 0;
-            uint32_t centerPixel = 0;
+            SDL_Surface const * surface = image->getSurface();
+            uint32_t firstPixel         = 0;
+            uint32_t centerPixel        = 0;
             if (surface != nullptr && surface->pixels != nullptr && surface->w > 0 && surface->h > 0) {
                 auto const pixels = std::span(
                     static_cast<uint32_t const *>(surface->pixels),

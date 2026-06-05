@@ -64,7 +64,6 @@ namespace FIFE
                     }
                     delete m_route;
                 }
-                delete m_target;
             }
             ActionInfo(ActionInfo const &)            = delete;
             ActionInfo& operator=(ActionInfo const &) = delete;
@@ -74,7 +73,7 @@ namespace FIFE
             // Current action, owned by object
             Action* m_action{nullptr};
             // target location for ongoing movement
-            Location* m_target{nullptr};
+            std::unique_ptr<Location> m_target;
             // current movement speed
             double m_speed{0};
             // should action be repeated? used only for non-moving actions, moving ones repeat until movement is
@@ -110,11 +109,6 @@ namespace FIFE
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
         m_location(source.m_location),
         m_oldLocation(source.m_location),
-        m_action(nullptr),
-        m_soundSource(nullptr),
-        m_actionInfo(nullptr),
-        m_sayInfo(nullptr),
-        m_timeProvider(nullptr),
         m_speed(0),
         m_rotation(source.m_rotation),
         m_oldRotation(source.m_rotation),
@@ -126,10 +120,6 @@ namespace FIFE
 
     Instance::InstanceActivity::~InstanceActivity()
     {
-        delete m_actionInfo;
-        delete m_sayInfo;
-        delete m_timeProvider;
-        delete m_soundSource;
     }
 
     void Instance::InstanceActivity::update(Instance& source)
@@ -305,17 +295,13 @@ namespace FIFE
             }
         }
 
-        delete m_activity;
         delete m_visual;
-        if (m_ownObject) {
-            delete m_object;
-        }
     }
 
     void Instance::initializeChanges()
     {
         if (m_activity == nullptr) {
-            m_activity = new InstanceActivity(*this);
+            m_activity = std::make_unique<InstanceActivity>(*this);
         }
         if (m_location.getLayer() != nullptr) {
             m_location.getLayer()->setInstanceActivityStatus(this, true);
@@ -513,10 +499,9 @@ namespace FIFE
         if (m_activity->m_actionInfo != nullptr) {
             cancelAction();
         }
-        m_activity->m_actionInfo           = new ActionInfo(m_object->getPather(), m_location);
+        m_activity->m_actionInfo           = std::make_unique<ActionInfo>(m_object->getPather(), m_location);
         m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
         if (m_activity->m_actionInfo->m_action == nullptr) {
-            delete m_activity->m_actionInfo;
             m_activity->m_actionInfo = nullptr;
             throw NotFound(std::string("action ") + actionName + " not found");
         }
@@ -527,7 +512,7 @@ namespace FIFE
         // start sound
         if (m_activity->m_actionInfo->m_action->getAudio() != nullptr) {
             if (m_activity->m_soundSource == nullptr) {
-                m_activity->m_soundSource = new SoundSource(this);
+                m_activity->m_soundSource = std::make_unique<SoundSource>(this);
             }
             m_activity->m_soundSource->setActionAudio(m_activity->m_actionInfo->m_action->getAudio());
         } else if ((old_action != nullptr) && (old_action->getAudio() != nullptr)) {
@@ -560,7 +545,7 @@ namespace FIFE
             }
         }
         initializeAction(actionName);
-        m_activity->m_actionInfo->m_target = new Location(target);
+        m_activity->m_actionInfo->m_target = std::make_unique<Location>(target);
         m_activity->m_actionInfo->m_speed  = speed;
         FL_DBG(
             _log,
@@ -575,19 +560,20 @@ namespace FIFE
 
         Route* route = m_activity->m_actionInfo->m_route;
         if (route == nullptr) {
-            route = new Route(m_location, *m_activity->m_actionInfo->m_target);
-            route->setRotation(getRotation());
+            auto newRoute = std::make_unique<Route>(m_location, *m_activity->m_actionInfo->m_target);
+            newRoute->setRotation(getRotation());
             if (!costId.empty()) {
-                route->setCostId(costId);
+                newRoute->setCostId(costId);
             }
             if (isMultiCell()) {
-                route->setObject(m_object);
-                route->setOccupiedArea(m_location.getLayer()->getCellGrid()->toMultiCoordinates(
+                newRoute->setObject(m_object);
+                newRoute->setOccupiedArea(m_location.getLayer()->getCellGrid()->toMultiCoordinates(
                     m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
             } else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
-                route->setObject(m_object);
+                newRoute->setObject(m_object);
             }
-            m_activity->m_actionInfo->m_route = route;
+            m_activity->m_actionInfo->m_route = newRoute.release();
+            route                             = m_activity->m_actionInfo->m_route;
             if (!m_activity->m_actionInfo->m_pather->solveRoute(route)) {
                 setFacingLocation(target);
                 finalizeAction();
@@ -598,7 +584,7 @@ namespace FIFE
     void Instance::follow(std::string const & actionName, Instance* leader, double const speed)
     {
         initializeAction(actionName);
-        m_activity->m_actionInfo->m_target = new Location(leader->getLocationRef());
+        m_activity->m_actionInfo->m_target = std::make_unique<Location>(leader->getLocationRef());
         m_activity->m_actionInfo->m_speed  = speed;
         m_activity->m_actionInfo->m_leader = leader;
         leader->addDeleteListener(this);
@@ -617,7 +603,7 @@ namespace FIFE
     void Instance::follow(std::string const & actionName, Route* route, double const speed)
     {
         initializeAction(actionName);
-        m_activity->m_actionInfo->m_target       = new Location(route->getEndNode());
+        m_activity->m_actionInfo->m_target       = std::make_unique<Location>(route->getEndNode());
         m_activity->m_actionInfo->m_speed        = speed;
         m_activity->m_actionInfo->m_route        = route;
         m_activity->m_actionInfo->m_delete_route = false;
@@ -643,7 +629,7 @@ namespace FIFE
     void Instance::cancelMovement(uint32_t length)
     {
         if (m_activity != nullptr) {
-            ActionInfo const * info = m_activity->m_actionInfo;
+            ActionInfo const * info = m_activity->m_actionInfo.get();
             if (info != nullptr) {
                 Route* route = info->m_route;
                 if (route != nullptr) {
@@ -656,7 +642,7 @@ namespace FIFE
     Route* Instance::getRoute()
     {
         if (m_activity != nullptr) {
-            ActionInfo const * info = m_activity->m_actionInfo;
+            ActionInfo const * info = m_activity->m_actionInfo.get();
             if (info != nullptr) {
                 return info->m_route;
             }
@@ -762,11 +748,10 @@ namespace FIFE
     void Instance::say(std::string const & text, uint32_t duration)
     {
         initializeChanges();
-        delete m_activity->m_sayInfo;
         m_activity->m_sayInfo = nullptr;
 
         if (!text.empty()) {
-            m_activity->m_sayInfo               = new SayInfo(text, duration);
+            m_activity->m_sayInfo               = std::make_unique<SayInfo>(text, duration);
             m_activity->m_sayInfo->m_start_time = getRuntime64();
         }
     }
@@ -781,7 +766,7 @@ namespace FIFE
 
     bool Instance::processMovement()
     {
-        ActionInfo* info = m_activity->m_actionInfo;
+        ActionInfo* info = m_activity->m_actionInfo.get();
         Route* route     = info->m_route;
         Location target;
         if (info->m_leader != nullptr) {
@@ -790,9 +775,10 @@ namespace FIFE
             target = *info->m_target;
         }
         if (route == nullptr) {
-            route = new Route(m_location, *info->m_target);
-            route->setRotation(getRotation());
-            info->m_route = route;
+            auto newRoute = std::make_unique<Route>(m_location, *info->m_target);
+            newRoute->setRotation(getRotation());
+            info->m_route = newRoute.release();
+            route         = info->m_route;
             if (isMultiCell()) {
                 route->setObject(m_object);
                 route->setOccupiedArea(m_location.getLayer()->getCellGrid()->toMultiCoordinates(
@@ -910,7 +896,7 @@ namespace FIFE
         if (m_activity->m_timeProvider == nullptr) {
             bindTimeProvider();
         }
-        ActionInfo* info = m_activity->m_actionInfo;
+        ActionInfo* info = m_activity->m_actionInfo.get();
         if (info != nullptr) {
             //			FL_DBG(_log, "updating instance");
 
@@ -953,7 +939,6 @@ namespace FIFE
             (m_activity->m_actionInfo == nullptr) && m_changeInfo == ICHANGE_NO_CHANGES &&
             m_activity->m_actionListeners.empty() && m_activity->m_changeListeners.empty()) {
             // delete superfluous activity
-            delete m_activity;
             m_activity = nullptr;
             return ICHANGE_NO_CHANGES;
         }
@@ -970,8 +955,7 @@ namespace FIFE
             m_activity->m_actionInfo->m_leader->removeDeleteListener(this);
         }
 
-        Action* action = m_activity->m_actionInfo->m_action;
-        delete m_activity->m_actionInfo;
+        Action* action           = m_activity->m_actionInfo->m_action;
         m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the finalized action
@@ -1009,8 +993,7 @@ namespace FIFE
             m_activity->m_actionInfo->m_leader->removeDeleteListener(this);
         }
 
-        Action* action = m_activity->m_actionInfo->m_action;
-        delete m_activity->m_actionInfo;
+        Action* action           = m_activity->m_actionInfo->m_action;
         m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the canceled action
@@ -1117,17 +1100,16 @@ namespace FIFE
         if (m_activity->m_timeProvider != nullptr) {
             multiplier = m_activity->m_timeProvider->getMultiplier();
         }
-        delete m_activity->m_timeProvider;
         m_activity->m_timeProvider = nullptr;
 
         if (m_location.getLayer() != nullptr) {
             Map* map = m_location.getLayer()->getMap();
             if (map != nullptr) {
-                m_activity->m_timeProvider = new TimeProvider(map->getTimeProvider());
+                m_activity->m_timeProvider = std::make_unique<TimeProvider>(map->getTimeProvider());
             }
         }
         if (m_activity->m_timeProvider == nullptr) {
-            m_activity->m_timeProvider = new TimeProvider(nullptr);
+            m_activity->m_timeProvider = std::make_unique<TimeProvider>(nullptr);
         }
         m_activity->m_timeProvider->setMultiplier(multiplier);
     }
@@ -1482,7 +1464,8 @@ namespace FIFE
             m_ownObject       = true;
             auto* ov          = m_object->getVisual<ObjectVisual>();
             ObjectVisual* nov = nullptr;
-            m_object          = new Object(m_object->getName(), m_object->getNamespace(), m_object);
+            m_ownedObject     = std::make_unique<Object>(m_object->getName(), m_object->getNamespace(), m_object);
+            m_object          = m_ownedObject.get();
             if (ov == nullptr) {
                 ObjectVisual::create(m_object);
             } else {

@@ -44,10 +44,10 @@ namespace FIFE
              */
             ~Animation() override;
 
-            virtual size_t getSize() override;
+            size_t getSize() override;
 
-            virtual void load() override;
-            virtual void free() override;
+            void load() override;
+            void free() override;
 
             void invalidate();
 

@@ -50,10 +50,6 @@ namespace FIFE
 
     Map::~Map()
     {
-        for (auto* cam : m_cameras) {
-            delete cam;
-        }
-        m_cameras.clear();
         deleteLayers();
     }
 
@@ -248,7 +244,7 @@ namespace FIFE
         for (; iter != m_renderers.end(); ++iter) {
             raw->addRenderer((*iter)->clone());
         }
-        m_cameras.push_back(camera.release());
+        m_cameras.push_back(std::move(camera));
         return raw;
     }
 
@@ -257,7 +253,6 @@ namespace FIFE
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             if ((*iter)->getName() == id) {
-                delete *iter;
                 m_cameras.erase(iter);
                 break;
             }
@@ -269,14 +264,14 @@ namespace FIFE
         auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             if ((*iter)->getName() == id) {
-                return *iter;
+                return iter->get();
             }
         }
 
         return nullptr;
     }
 
-    std::vector<Camera*> const & Map::getCameras() const
+    std::vector<std::unique_ptr<Camera>> const & Map::getCameras() const
     {
         return m_cameras;
     }

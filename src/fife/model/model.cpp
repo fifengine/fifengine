@@ -131,7 +131,7 @@ namespace FIFE
         auto it = m_adoptedGrids.begin();
         for (; it != m_adoptedGrids.end(); ++it) {
             if ((*it)->getType() == gridtype) {
-                auto newcg    = std::unique_ptr<CellGrid>((*it)->clone());
+                auto newcg    = (*it)->clone();
                 CellGrid* ptr = newcg.get();
                 m_createdGrids.push_back(std::move(newcg));
                 return ptr;
@@ -290,7 +290,7 @@ namespace FIFE
 
     Object* Model::getObject(std::string const & id, std::string const & name_space)
     {
-        namespace_t* nspace = selectNamespace(name_space);
+        namespace_t const * nspace = selectNamespace(name_space);
         if (nspace != nullptr) {
             auto it = nspace->second.find(id);
             if (it != nspace->second.end()) {

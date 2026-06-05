@@ -37,11 +37,11 @@ namespace FIFE
 
             /** Makes copy of this renderer.
              */
-            RendererBase* clone() override;
+            std::unique_ptr<RendererBase> clone() override;
 
             /** Destructor.
              */
-            virtual ~FloatingTextRenderer() override;
+            ~FloatingTextRenderer() override;
 
             /** This method is called by the view to ask renderer to draw its rendering aspect based on
              * given parameters.

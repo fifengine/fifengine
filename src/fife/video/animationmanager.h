@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -43,15 +44,15 @@ namespace FIFE
 
             /** Destructor.
              */
-            virtual ~AnimationManager() override;
+            ~AnimationManager() override;
 
             AnimationManager(AnimationManager const &)            = delete;
             AnimationManager& operator=(AnimationManager const &) = delete;
 
-            virtual size_t getMemoryUsed() const override;
-            virtual size_t getTotalResourcesCreated() const override;
-            virtual size_t getTotalResourcesLoaded() const override;
-            virtual size_t getTotalResources() const override;
+            size_t getMemoryUsed() const override;
+            size_t getTotalResourcesCreated() const override;
+            size_t getTotalResourcesLoaded() const override;
+            size_t getTotalResources() const override;
 
             /** Creates a blank Animation but does not load it immediately
              *

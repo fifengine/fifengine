@@ -35,7 +35,7 @@ namespace FIFE
 
         std::string const filename = res->getName();
 
-        RawData* rdptr = vfs->open(filename);
-        dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));
+        auto rdptr = vfs->open(filename);
+        dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr.release()));
     }
 } // namespace FIFE

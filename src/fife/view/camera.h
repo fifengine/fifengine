@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <list>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -350,7 +351,7 @@ namespace FIFE
 
             /** Adds new renderer on the view. Ownership is transferred to the camera.
              */
-            void addRenderer(RendererBase* renderer);
+            void addRenderer(std::unique_ptr<RendererBase> renderer);
 
             /** Gets renderer with given name
              */
@@ -499,7 +500,7 @@ namespace FIFE
             Transform m_transform;
 
             // list of renderers managed by the view
-            std::map<std::string, RendererBase*> m_renderers;
+            std::map<std::string, std::unique_ptr<RendererBase>> m_renderers;
             std::list<RendererBase*> m_pipeline;
             // false, if view has not been updated
             bool m_updated;
@@ -507,7 +508,7 @@ namespace FIFE
             // caches layer -> instances structure between renders e.g. to fast query of mouse picking order
             t_layer_to_instances m_layerToInstances;
 
-            std::map<Layer*, LayerCache*> m_cache;
+            std::map<Layer*, std::unique_ptr<LayerCache>> m_cache;
             MapObserver* m_map_observer;
 
             // is lighting enable

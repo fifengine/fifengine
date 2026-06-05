@@ -338,7 +338,7 @@ namespace FIFE
                 yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
             }
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
 
         m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
@@ -1093,7 +1093,8 @@ namespace FIFE
                 return;
             }
 
-            uint32_t const firstVertex = indexBuffer[currentIndexValue];
+            uint32_t const firstVertex =
+                indexBuffer[currentIndexValue]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             if ((firstVertex + 3) >= m_renderTextureDatas.size()) {
                 return;
             }
@@ -1239,7 +1240,11 @@ namespace FIFE
                 if (*currentElements > 0) {
                     logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
                     // render
-                    glDrawElements(mode, toGLsizei(*currentElements), GL_UNSIGNED_INT, indexBuffer + *currentIndex);
+                    glDrawElements(
+                        mode,
+                        toGLsizei(*currentElements),
+                        GL_UNSIGNED_INT,
+                        indexBuffer + *currentIndex); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                     *currentIndex += *currentElements;
                 }
                 // switch mode
@@ -2319,6 +2324,7 @@ namespace FIFE
     void RenderBackendOpenGL::addImageToArray(
         uint32_t id, Rect const & rect, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         RenderObject ro(GL_TRIANGLES, 6, id);
 
         if ((rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16)) {
@@ -2450,6 +2456,7 @@ namespace FIFE
             }
         }
         m_renderObjects.push_back(ro);
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     void RenderBackendOpenGL::addImageToArray(
@@ -2461,6 +2468,7 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (rgba != nullptr) {
             renderData2TC rd{};
             rd.vertex.at(0) = static_cast<float>(rect.x);
@@ -2505,6 +2513,7 @@ namespace FIFE
             ro.rgba.at(3)   = rgba[3];
             m_renderObjects.push_back(ro);
         }
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     RenderBackendOpenGL::RenderZObjectTest* RenderBackendOpenGL::getRenderBufferObject(GLuint texture_id)
@@ -2535,6 +2544,7 @@ namespace FIFE
     void RenderBackendOpenGL::addImageToArrayZ(
         uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         // texture quad without alpha and coloring
         if (alpha == 255 && (rgba == nullptr)) {
             // ToDo: Consider if this is better.
@@ -2673,6 +2683,7 @@ namespace FIFE
                 m_renderTextureColorObjectsZ.push_back(ro);
             }
         }
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     void RenderBackendOpenGL::addImageToArrayZ(
@@ -2685,6 +2696,7 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (rgba != nullptr) {
             renderData2TCZ rd{};
             rd.vertex.at(0) = static_cast<float>(rect.x);
@@ -2726,6 +2738,7 @@ namespace FIFE
             ro.rgba.at(3)   = rgba[3];
             m_renderMultitextureObjectsZ.push_back(ro);
         }
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     void RenderBackendOpenGL::prepareForOverlays()
@@ -2847,10 +2860,10 @@ namespace FIFE
 
     void RenderBackendOpenGL::captureScreen(std::string const & filename)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         uint32_t const swidth  = getWidth();
         uint32_t const sheight = getHeight();
 
-        uint8_t* pixels = nullptr;
         SDL_Surface* surface =
             SDL_CreateSurface(toInt32Dimension(swidth), toInt32Dimension(sheight), SDL_PIXELFORMAT_RGB24);
 
@@ -2859,13 +2872,13 @@ namespace FIFE
         }
 
         SDL_LockSurface(surface);
-        pixels = new uint8_t[static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 3U];
-        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        std::vector<uint8_t> pixels(static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 3U);
+        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
         auto* imagepixels = static_cast<uint8_t*>(surface->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
-            uint8_t* rowbegin = pixels + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 3U);
-            uint8_t* rowend   = rowbegin + (static_cast<size_t>(swidth) * 3U);
+            uint8_t const * rowbegin = pixels.data() + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 3U);
+            uint8_t const * rowend   = rowbegin + (static_cast<size_t>(swidth) * 3U);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2877,11 +2890,12 @@ namespace FIFE
         Image::saveAsPng(filename, *surface);
 
         SDL_DestroySurface(surface);
-        delete[] pixels;
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     void RenderBackendOpenGL::captureScreen(std::string const & filename, uint32_t width, uint32_t height)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         uint32_t const swidth  = getWidth();
         uint32_t const sheight = getHeight();
         bool const same_size   = (width == swidth && height == sheight);
@@ -2895,7 +2909,6 @@ namespace FIFE
             return;
         }
 
-        uint8_t* pixels = nullptr;
         // create source surface
         SDL_Surface* src =
             SDL_CreateSurface(toInt32Dimension(swidth), toInt32Dimension(sheight), SDL_PIXELFORMAT_RGBA8888);
@@ -2907,14 +2920,14 @@ namespace FIFE
         if (SDL_MUSTLOCK(src)) {
             SDL_LockSurface(src);
         }
-        pixels = new uint8_t[static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 4U];
-        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        std::vector<uint8_t> pixels(static_cast<size_t>(swidth) * static_cast<size_t>(sheight) * 4U);
+        glReadPixels(0, 0, toGLsizei(swidth), toGLsizei(sheight), GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 
         auto* imagepixels = static_cast<uint8_t*>(src->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = toInt32Dimension(sheight) - 1; y >= 0; --y) {
-            uint8_t* rowbegin = pixels + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 4U);
-            uint8_t* rowend   = rowbegin + (static_cast<size_t>(swidth) * 4U);
+            uint8_t const * rowbegin = pixels.data() + (static_cast<size_t>(y) * static_cast<size_t>(swidth) * 4U);
+            uint8_t const * rowend   = rowbegin + (static_cast<size_t>(swidth) * 4U);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2940,8 +2953,8 @@ namespace FIFE
         int32_t sy_c   = 0;
 
         // Allocates memory and calculates row wide&height
-        auto* sx_a = new int32_t[static_cast<std::size_t>(dst->w) + 1U];
-        sx_ca      = sx_a;
+        std::vector<int32_t> sx_a(static_cast<std::size_t>(dst->w) + 1U);
+        sx_ca = sx_a.data();
         for (x = 0; x <= dst->w; x++) {
             *sx_ca = sx_c;
             sx_ca++;
@@ -2949,15 +2962,15 @@ namespace FIFE
             sx_c += sx;
         }
 
-        auto* sy_a = new int32_t[static_cast<std::size_t>(dst->h) + 1U];
-        sy_ca      = sy_a;
+        std::vector<int32_t> sy_a(static_cast<std::size_t>(dst->h) + 1U);
+        sy_ca = sy_a.data();
         for (y = 0; y <= dst->h; y++) {
             *sy_ca = sy_c;
             sy_ca++;
             sy_c &= 0xffff;
             sy_c += sy;
         }
-        sy_ca = sy_a;
+        sy_ca = sy_a.data();
 
         // Transfers the image data
 
@@ -2967,7 +2980,7 @@ namespace FIFE
 
         for (y = 0; y < dst->h; y++) {
             src_pointer = src_help_pointer;
-            sx_ca       = sx_a;
+            sx_ca       = sx_a.data();
             for (x = 0; x < dst->w; x++) {
                 *dst_pointer = *src_pointer;
                 sx_ca++;
@@ -2975,9 +2988,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
+            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
         }
 
         if (SDL_MUSTLOCK(dst)) {
@@ -2992,9 +3005,7 @@ namespace FIFE
         // Free memory
         SDL_DestroySurface(src);
         SDL_DestroySurface(dst);
-        delete[] sx_a;
-        delete[] sy_a;
-        delete[] pixels;
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     void RenderBackendOpenGL::setClipArea(Rect const & cliparea, bool clear)

@@ -62,7 +62,7 @@ namespace FIFE {
 			Camera* addCamera(const std::string& id, const Rect& viewport);
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
-			std::vector<Camera*>& getCameras();
+			std::vector<std::unique_ptr<Camera>>& getCameras();
 
 			void setFilename(const std::string& file);
 			const std::string& getFilename() const;

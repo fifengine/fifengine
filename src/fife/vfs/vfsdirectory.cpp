@@ -53,9 +53,9 @@ namespace FIFE
         return file.is_open();
     }
 
-    RawData* VFSDirectory::open(std::string const & file) const
+    std::unique_ptr<RawData> VFSDirectory::open(std::string const & file) const
     {
-        return new RawData(new RawDataFile(m_root + file));
+        return std::make_unique<RawData>(new RawDataFile(m_root + file));
     }
 
     std::set<std::string> VFSDirectory::listFiles(std::string const & path) const

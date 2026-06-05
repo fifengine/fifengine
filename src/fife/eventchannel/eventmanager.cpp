@@ -9,6 +9,7 @@
 #include <deque>
 #include <format>
 #include <iostream>
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -49,15 +50,11 @@ namespace FIFE
         m_oldX(0),
         m_oldY(0),
         m_lastTicks(0),
-        m_oldVelocity(0.0),
-        m_joystickManager(nullptr)
+        m_oldVelocity(0.0)
     {
     }
 
-    EventManager::~EventManager()
-    {
-        delete m_joystickManager;
-    }
+    EventManager::~EventManager() = default;
 
     namespace
     {
@@ -787,11 +784,9 @@ namespace FIFE
     {
         std::string text;
         if (SDL_HasClipboardText()) {
-            char* clipboard = SDL_GetClipboardText();
-            if (clipboard != nullptr) {
-                text = std::string(clipboard);
-                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
-                SDL_free(clipboard);
+            auto clipboard = std::unique_ptr<char, decltype(&SDL_free)>(SDL_GetClipboardText(), &SDL_free);
+            if (clipboard) {
+                text = std::string(clipboard.get());
             }
         }
         return text;
@@ -805,9 +800,8 @@ namespace FIFE
     void EventManager::setJoystickSupport(bool support)
     {
         if (support && (m_joystickManager == nullptr)) {
-            m_joystickManager = new JoystickManager();
+            m_joystickManager = std::make_unique<JoystickManager>();
         } else if (!support && (m_joystickManager != nullptr)) {
-            delete m_joystickManager;
             m_joystickManager = nullptr;
         }
     }

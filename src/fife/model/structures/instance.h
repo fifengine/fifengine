@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -582,13 +583,13 @@ namespace FIFE
                     //! action on previous round. NOTE: might become invalid, only used for address comparison
                     Action* m_action;
                     //! sound source of action audio on previous round
-                    SoundSource* m_soundSource;
+                    std::unique_ptr<SoundSource> m_soundSource;
                     //! action information, allocated when actions are bind
-                    ActionInfo* m_actionInfo;
+                    std::unique_ptr<ActionInfo> m_actionInfo;
                     //! text to say + duration, allocated when something is said
-                    SayInfo* m_sayInfo;
+                    std::unique_ptr<SayInfo> m_sayInfo;
                     //! time scaler for this instance
-                    TimeProvider* m_timeProvider;
+                    std::unique_ptr<TimeProvider> m_timeProvider;
                     //! speed on previous round
                     double m_speed;
                     //! rotation on previous round
@@ -610,10 +611,12 @@ namespace FIFE
             std::string m_costId;
             //! vector that holds all multi instances
             std::vector<Instance*> m_multiInstances;
-            InstanceActivity* m_activity;
+            std::unique_ptr<InstanceActivity> m_activity;
 
             //! object where instantiated from
             Object* m_object;
+            //! owned object (set when visual customization is applied)
+            std::unique_ptr<Object> m_ownedObject;
             //! instance visualization
             IVisual* m_visual;
             //! pointer to the main multi instance

@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -121,7 +122,7 @@ namespace FIFE
             template <typename T>
             T* getVisual() const
             {
-                return dynamic_cast<T*>(m_visual);
+                return dynamic_cast<T*>(m_visual.get());
             }
 
             /** Sets if object blocks movement
@@ -386,7 +387,7 @@ namespace FIFE
             Object* m_inherited;
 
             //! pointer to object visual
-            IVisual* m_visual;
+            std::unique_ptr<IVisual> m_visual;
 
             class FIFE_API BasicObjectProperty
             {
@@ -394,14 +395,11 @@ namespace FIFE
                     //! Constructor
                     BasicObjectProperty();
 
-                    //! Destructor
-                    ~BasicObjectProperty();
-
                     //! area id
                     std::string m_area;
 
                     //! holds action ids and assigned actions
-                    std::map<std::string, Action*>* m_actions;
+                    std::map<std::string, std::unique_ptr<Action>> m_actions;
 
                     //! pointer to default action
                     Action* m_defaultAction;
@@ -422,9 +420,6 @@ namespace FIFE
                 public:
                     //! Constructor
                     MovableObjectProperty();
-
-                    //! Destructor
-                    ~MovableObjectProperty();
 
                     //! cost identifier
                     std::string m_costId;
@@ -450,9 +445,6 @@ namespace FIFE
                 public:
                     //! Constructor
                     MultiObjectProperty();
-
-                    //! Destructor
-                    ~MultiObjectProperty();
 
                     //! list with part identifiers
                     std::list<std::string> m_multiPartIds;
@@ -488,9 +480,9 @@ namespace FIFE
                     bool m_restrictedRotation;
             };
 
-            BasicObjectProperty* m_basicProperty;
-            MovableObjectProperty* m_moveProperty;
-            MultiObjectProperty* m_multiProperty;
+            std::unique_ptr<BasicObjectProperty> m_basicProperty;
+            std::unique_ptr<MovableObjectProperty> m_moveProperty;
+            std::unique_ptr<MultiObjectProperty> m_multiProperty;
     };
 
 } // namespace FIFE

@@ -35,32 +35,19 @@ namespace FIFE
     {
     }
 
-    TriggerController::~TriggerController()
-    {
-        auto it = m_triggerNameMap.begin();
-        for (; it != m_triggerNameMap.end(); ++it) {
-            delete it->second;
-        }
-    }
+    TriggerController::~TriggerController() = default;
 
     Trigger* TriggerController::createTrigger(std::string const & triggerName)
     {
-        // assert(!exists(triggerName));
-
-        auto* trigger = new Trigger(triggerName);
-
-        std::pair<TriggerNameMapIterator, bool> returnValue;
-        returnValue = m_triggerNameMap.insert(TriggerNameMapPair(triggerName, trigger));
-
-        if (!returnValue.second) {
-            delete trigger;
+        auto trigger        = std::make_unique<Trigger>(triggerName);
+        auto [it, inserted] = m_triggerNameMap.emplace(triggerName, std::move(trigger));
+        if (!inserted) {
             FL_WARN(
                 _log(),
                 std::format(
                     "TriggerController::createTrigger() - Trigger {} already exists.... ignoring.", triggerName));
         }
-
-        return returnValue.first->second;
+        return it->second.get();
     }
 
     Trigger* TriggerController::createTriggerOnCoordinate(
@@ -151,18 +138,14 @@ namespace FIFE
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            return it->second;
+            return it->second.get();
         }
         return nullptr;
     }
 
     void TriggerController::deleteTrigger(std::string const & triggerName)
     {
-        auto it = m_triggerNameMap.find(triggerName);
-        if (it != m_triggerNameMap.end()) {
-            delete it->second;
-            m_triggerNameMap.erase(it);
-        }
+        m_triggerNameMap.erase(triggerName);
     }
 
     void TriggerController::removeTriggerFromCoordinate(
@@ -248,7 +231,7 @@ namespace FIFE
         std::vector<Trigger*> triggers;
         auto it = m_triggerNameMap.begin();
         for (; it != m_triggerNameMap.end(); ++it) {
-            triggers.push_back(it->second);
+            triggers.push_back(it->second.get());
         }
         return triggers;
     }

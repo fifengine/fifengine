@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -47,7 +48,7 @@ namespace FIFE
         XML::Document animFile;
 
         try {
-            RawData* data = m_vfs->open(animationFilename);
+            auto data = m_vfs->open(animationFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
@@ -55,14 +56,9 @@ namespace FIFE
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(animFile, xml)) {
-                        delete data;
                         return false;
                     }
                 }
-
-                // done with data delete resource
-                delete data;
-                data = nullptr;
             }
         } catch (NotFound&) {
             return false;
@@ -93,20 +89,15 @@ namespace FIFE
         AnimationPtr animation;
 
         try {
-            RawData* data = m_vfs->open(animationFilename);
+            auto data = m_vfs->open(animationFilename);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
-                        delete data;
                         return animation;
                     }
-
-                    // done with data delete resource
-                    delete data;
-                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
@@ -147,20 +138,15 @@ namespace FIFE
         std::vector<AnimationPtr> animationVector;
 
         try {
-            RawData* data = m_vfs->open(animationFile);
+            auto data = m_vfs->open(animationFile);
 
             if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     std::string const xml = data->readString(data->getDataLength());
 
                     if (!XML::Parse(doc, xml)) {
-                        delete data;
                         return animationVector;
                     }
-
-                    // done with data delete resource
-                    delete data;
-                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {

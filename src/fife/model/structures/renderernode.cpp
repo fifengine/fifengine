@@ -120,14 +120,13 @@ namespace FIFE
             m_location = source.m_location;
             m_layer    = source.m_layer;
             m_point    = source.m_point;
-            m_listener = source.m_listener != nullptr ? source.m_listener : new NodeInstanceDeleteListener(this);
+            m_listener = std::make_unique<NodeInstanceDeleteListener>(this);
         }
         return *this;
     }
     RendererNode::~RendererNode()
     {
         removeInstance(m_instance);
-        delete m_listener;
     }
 
     void RendererNode::setAttached(
@@ -270,7 +269,7 @@ namespace FIFE
         checkDeleteListener();
         m_instance = instance;
         if (m_instance != nullptr) {
-            m_instance->addDeleteListener(m_listener);
+            m_instance->addDeleteListener(m_listener.get());
         }
     }
 
@@ -281,11 +280,11 @@ namespace FIFE
         }
         checkDeleteListener();
         if (m_instance != nullptr) {
-            m_instance->removeDeleteListener(m_listener);
+            m_instance->removeDeleteListener(m_listener.get());
         }
         m_instance = instance;
         if (m_instance != nullptr) {
-            m_instance->addDeleteListener(m_listener);
+            m_instance->addDeleteListener(m_listener.get());
         }
     }
 
@@ -293,7 +292,7 @@ namespace FIFE
     {
         if (m_instance == instance && (instance != nullptr)) {
             if (listener) {
-                m_instance->removeDeleteListener(m_listener);
+                m_instance->removeDeleteListener(m_listener.get());
             }
             m_instance = nullptr;
         }
@@ -304,7 +303,7 @@ namespace FIFE
         if (m_listener != nullptr) {
             return;
         }
-        m_listener = new NodeInstanceDeleteListener(this);
+        m_listener = std::make_unique<NodeInstanceDeleteListener>(this);
     }
 
     Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, bool const zoomed)

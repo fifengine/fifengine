@@ -67,7 +67,7 @@ namespace FIFE
             DAT1(VFS* vfs, std::string const & file);
 
             bool fileExists(std::string const & name) const override;
-            RawData* open(std::string const & file) const override;
+            std::unique_ptr<RawData> open(std::string const & file) const override;
 
             /** Get the needed information to unpack and extract a file from the
              * DAT file.

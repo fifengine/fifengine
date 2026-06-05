@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -87,7 +88,7 @@ namespace FIFE
             RenderTarget(RenderTarget const & rhs);            /* = delete */
             RenderTarget& operator=(RenderTarget const & rhs); /* = delete */
 
-            std::map<std::string, std::vector<OffRendererElementInfo*>> m_groups;
+            std::map<std::string, std::vector<std::unique_ptr<OffRendererElementInfo>>> m_groups;
             RenderBackend* m_renderbackend;
             ImagePtr m_target;
     };

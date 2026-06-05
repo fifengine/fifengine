@@ -32,7 +32,7 @@ namespace FIFE
              */
             virtual void fileDropped(DropEvent& evt) = 0;
 
-            virtual ~IDropListener() override = default;
+            ~IDropListener() override = default;
     };
 
 } // namespace FIFE

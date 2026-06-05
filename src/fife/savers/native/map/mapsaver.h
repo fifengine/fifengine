@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -58,10 +59,8 @@ namespace FIFE
     };
 
     /** convenience function for creating the default fife map saver
-     * deleting the object returned from this function is the
-     * responsibility of the caller
      */
-    FIFE_API MapSaver* createDefaultMapSaver(Model* model, ImageManager* imageManager);
+    FIFE_API std::unique_ptr<MapSaver> createDefaultMapSaver(Model* model, ImageManager* imageManager);
 } // namespace FIFE
 
 #endif

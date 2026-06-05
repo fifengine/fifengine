@@ -35,7 +35,7 @@ namespace FIFE
             ~VFSDirectory() override;
 
             bool fileExists(std::string const & filename) const override;
-            RawData* open(std::string const & filename) const override;
+            std::unique_ptr<RawData> open(std::string const & filename) const override;
 
             std::set<std::string> listFiles(std::string const & path) const override;
 
