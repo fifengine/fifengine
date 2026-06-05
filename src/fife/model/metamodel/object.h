@@ -394,12 +394,22 @@ namespace FIFE
                 public:
                     //! Constructor
                     BasicObjectProperty();
+                    //! Destructor (out-of-line to avoid requiring Action to be complete here)
+                    ~BasicObjectProperty();
+                    // non-copyable because it holds unique_ptr<Action>
+                    BasicObjectProperty(BasicObjectProperty const &) = delete;
+                    BasicObjectProperty & operator=(BasicObjectProperty const &) = delete;
+                    // allow move
+                    BasicObjectProperty(BasicObjectProperty &&) noexcept = default;
+                    BasicObjectProperty & operator=(BasicObjectProperty &&) noexcept = default;
 
                     //! area id
                     std::string m_area;
 
                     //! holds action ids and assigned actions
-                    std::map<std::string, std::unique_ptr<Action>> m_actions;
+                    // Use a function-pointer deleter to avoid requiring Action to be a complete type
+                    // in every translation unit that includes this header.
+                    std::map<std::string, std::unique_ptr<Action, void (*)(Action *)>> m_actions;
 
                     //! pointer to default action
                     Action* m_defaultAction;
@@ -420,6 +430,11 @@ namespace FIFE
                 public:
                     //! Constructor
                     MovableObjectProperty();
+                    // non-copyable to be explicit (contains raw pointers but keep consistent semantics)
+                    MovableObjectProperty(MovableObjectProperty const &) = delete;
+                    MovableObjectProperty & operator=(MovableObjectProperty const &) = delete;
+                    MovableObjectProperty(MovableObjectProperty &&) noexcept = default;
+                    MovableObjectProperty & operator=(MovableObjectProperty &&) noexcept = default;
 
                     //! cost identifier
                     std::string m_costId;
@@ -445,6 +460,11 @@ namespace FIFE
                 public:
                     //! Constructor
                     MultiObjectProperty();
+                    // non-copyable because it contains containers with non-copyable elements
+                    MultiObjectProperty(MultiObjectProperty const &) = delete;
+                    MultiObjectProperty & operator=(MultiObjectProperty const &) = delete;
+                    MultiObjectProperty(MultiObjectProperty &&) noexcept = default;
+                    MultiObjectProperty & operator=(MultiObjectProperty &&) noexcept = default;
 
                     //! list with part identifiers
                     std::list<std::string> m_multiPartIds;

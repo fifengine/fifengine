@@ -269,8 +269,12 @@ namespace FIFE
              */
             LightRenderer(RenderBackend* renderbackend, int32_t position);
 
-            LightRenderer(LightRenderer const & old);
+            // Non-copyable: owns element containers with unique_ptr
+            LightRenderer(LightRenderer const &) = delete;
             LightRenderer& operator=(LightRenderer const &) = delete;
+            // Allow move semantics
+            LightRenderer(LightRenderer&&) noexcept = default;
+            LightRenderer& operator=(LightRenderer&&) noexcept = default;
 
             std::unique_ptr<RendererBase> clone() override;
 

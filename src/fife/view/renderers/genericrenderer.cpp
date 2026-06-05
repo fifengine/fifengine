@@ -370,14 +370,10 @@ namespace FIFE
         setEnabled(false);
     }
 
-    GenericRenderer::GenericRenderer(GenericRenderer const & old) : RendererBase(old)
-    {
-        setEnabled(false);
-    }
-
     std::unique_ptr<RendererBase> GenericRenderer::clone()
     {
-        return std::make_unique<GenericRenderer>(*this);
+        // GenericRenderer is non-copyable; return a fresh instance with same pipeline position.
+        return std::make_unique<GenericRenderer>(m_renderbackend, getPipelinePosition());
     }
 
     GenericRenderer::~GenericRenderer() = default;

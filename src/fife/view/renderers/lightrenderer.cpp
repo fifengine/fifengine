@@ -260,14 +260,10 @@ namespace FIFE
         setEnabled(false);
     }
 
-    LightRenderer::LightRenderer(LightRenderer const & old) : RendererBase(old)
-    {
-        setEnabled(false);
-    }
-
     std::unique_ptr<RendererBase> LightRenderer::clone()
     {
-        return std::make_unique<LightRenderer>(*this);
+        // LightRenderer is non-copyable; return a fresh LightRenderer with same pipeline position.
+        return std::make_unique<LightRenderer>(m_renderbackend, getPipelinePosition());
     }
 
     LightRenderer::~LightRenderer() = default;

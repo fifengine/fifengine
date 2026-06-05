@@ -30,6 +30,11 @@ namespace FIFE
             static Logger log(LM_STRUCTURES);
             return log;
         }
+
+        void trigger_deleter(Trigger* trigger)
+        {
+            delete trigger;
+        }
     } // namespace
 
     TriggerController::TriggerController(Map* map) : m_map(map)
@@ -40,7 +45,7 @@ namespace FIFE
 
     Trigger* TriggerController::createTrigger(std::string const & triggerName)
     {
-        auto trigger        = std::make_unique<Trigger>(triggerName);
+        std::unique_ptr<Trigger, void (*)(Trigger *)> trigger(new Trigger(triggerName), &trigger_deleter);
         auto [it, inserted] = m_triggerNameMap.emplace(triggerName, std::move(trigger));
         if (!inserted) {
             FL_WARN(

@@ -38,6 +38,16 @@ namespace FIFE
     {
     }
 
+    Object::BasicObjectProperty::~BasicObjectProperty() = default;
+
+    namespace {
+        // deleter for Action used by unique_ptr<Action, void(*)(Action*)>
+        void action_deleter(Action* a)
+        {
+            delete a;
+        }
+    }
+
     Object::MovableObjectProperty::MovableObjectProperty() : m_pather(nullptr), m_cost(1.0), m_speed(1.0), m_zRange(0)
     {
     }
@@ -67,7 +77,7 @@ namespace FIFE
             throw NameClash(identifier);
         }
 
-        auto a      = std::make_unique<Action>(identifier);
+        std::unique_ptr<Action, void (*)(Action *)> a(new Action(identifier), &action_deleter);
         Action* raw = a.get();
         m_basicProperty->m_actions.emplace(identifier, std::move(a));
         if (is_default || (m_basicProperty->m_defaultAction == nullptr)) {
