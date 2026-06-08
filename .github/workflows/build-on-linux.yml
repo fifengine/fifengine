@@ -584,7 +584,7 @@ jobs:
 
       - name: 📦 Upload Coverage to Codecov
         if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' && github.event_name != 'pull_request' }}
-        uses: codecov/codecov-action@v6 # https://github.com/codecov/codecov-action
+        uses: codecov/codecov-action@v7 # https://github.com/codecov/codecov-action
         with:
           files: ${{ env.BUILD_DIR }}/coverage/coverage.lcov
           disable_search: true
