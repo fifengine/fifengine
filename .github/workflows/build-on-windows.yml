@@ -39,10 +39,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-VS2026-Readme.md
+        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
         - {
             job_name: "Win | VC18 | Shared | Release",
-            os: windows-2025-vs2026,
+            os: windows-2025,
             preset: vc18-x64-windows-rel,
             triplet: x64-windows,
             artifact-name: libfife-vc18-x64-windows
@@ -50,14 +50,14 @@ jobs:
         # disabled, because "Linker cannot open file 'python314_d.lib'"
         # - {
         #     job_name: "Win | VC18 | Shared | Debug",
-        #     os: windows-2025-vs2026,
+        #     os: windows-2025,
         #     preset: vc18-x64-windows-dbg,
         #     triplet: x64-windows,
         #     artifact-name: libfife-vc18-x64-windows-debug
         #   }
         - {
             job_name: "Win | VC18 | Shared | RDI",
-            os: windows-2025-vs2026,
+            os: windows-2025,
             preset: vc18-x64-windows-rdi,
             triplet: x64-windows,
             artifact-name: libfife-vc18-x64-windows-rdi
