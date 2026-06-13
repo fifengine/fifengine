@@ -301,13 +301,11 @@ class ResizableWindow(Window):
 
     def _setCursors(self, cursors):
         if cursors is not None:
-            i = 0
-            for c in cursors:
+            for i, c in enumerate(cursors):
                 if isinstance(c, str):
                     # we need a fife image
                     c = get_manager().loadImage(c, gui=False)
                 self.real_widget.set(self.DIRECTION_LIST[i], c)
-                i += 1
 
     def _getCursors(self):
         cursors = []

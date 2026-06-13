@@ -5,12 +5,11 @@
 
 import random
 
-from fife import fife
 from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting
-from fife.extensions.pychan.internal import get_manager
 from fife.extensions.savers import saveMapFile
 
+from fife import fife
 from scripts.common.eventlistenerbase import EventListenerBase
 
 from .agents.agent import create_anonymous_agents

@@ -307,7 +307,7 @@ class FifePychanSettings(Setting):
                             + entry.name
                             + ". Valid options: "
                             + str(entry.initialdata)
-                        )
+                        ) from None
                 elif isinstance(entry.initialdata, dict):
                     try:
                         value = list(entry.initialdata.values()).index(value)
@@ -319,7 +319,7 @@ class FifePychanSettings(Setting):
                             + entry.name
                             + ". Valid options: "
                             + str(list(entry.initialdata.values()))
-                        )
+                        ) from None
                 entry.initializeWidget(widget, value)
 
     def _applySettings(self):

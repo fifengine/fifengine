@@ -9,10 +9,10 @@
 
 """Rio de Hola demo application."""
 
+import contextlib
 import cProfile
 import os
 
-from fife import fife
 from fife.extensions import *  # noqa: F403
 from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
@@ -21,6 +21,8 @@ from fife.extensions.pychan.internal import get_manager
 from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from scripts import world
 from scripts.common import eventlistenerbase
+
+from fife import fife
 
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
@@ -113,15 +115,14 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
             self.quit = True
             result = "quitting"
         elif command.lower() in ("help", "help()"):
-            get_manager().getConsole().println(open("misc/infotext.txt").read())
+            with open("misc/infotext.txt") as f:
+                get_manager().getConsole().println(f.read())
             result = "-- End of help --"
         else:
             result = self.world.onConsoleCommand(command)
         if not result:
-            try:
+            with contextlib.suppress(Exception):
                 result = str(eval(command))
-            except Exception:
-                pass
         if not result:
             result = "no result"
         return result
@@ -139,7 +140,8 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
             self.aboutWindow = pychan.loadXML("gui/help.xml")
             self.aboutWindow.mapEvents({"closeButton": self.aboutWindow.hide})
             textbox = self.aboutWindow.findChild(name="helpText")
-            textbox.text = open("misc/infotext.txt").read()
+            with open("misc/infotext.txt") as f:
+                textbox.text = f.read()
             self.aboutWindow.adaptLayout()
         self.aboutWindow.show()
 

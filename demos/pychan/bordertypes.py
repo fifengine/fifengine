@@ -7,9 +7,10 @@ Displays bordered boxes side by side with different border sizes,
 colors, and widget types so you can visually verify correctness.
 """
 
-from fife import fifechan
 from fife.extensions import pychan
 from run import PyChanExample
+
+from fife import fifechan
 
 STYLES = {
     "border_0": {
@@ -153,6 +154,7 @@ class BorderTypesExample(PyChanExample):
             pychan.manager.addStyle(name, style)
 
     def start(self):
+        """Start the border types demo."""
         self.widget = pychan.loadXML(self.xmlFile)
         self.widget.mapEvents(
             {

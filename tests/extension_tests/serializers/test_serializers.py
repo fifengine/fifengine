@@ -119,7 +119,6 @@ class TestSerializersExceptions:
         assert issubclass(NotFound, SerializerError)
 
 
-
 class TestSimpleXMLSerializer:
     def test_class_exists(self):
         from fife.extensions.serializers.simplexml import SimpleXMLSerializer

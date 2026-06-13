@@ -122,9 +122,8 @@ class ReturnItemQuest(Quest):
         """
         completed = False
 
-        if self._requiredgold > 0:
-            if actor.gold >= self._requiredgold:
-                completed = True
+        if self._requiredgold > 0 and actor.gold >= self._requiredgold:
+            completed = True
 
         for item in self._requireditems:
             if item in actor.inventory:

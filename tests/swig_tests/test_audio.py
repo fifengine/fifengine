@@ -3,8 +3,9 @@
 
 import time
 
-from fife import fife
 from fife.extensions import fifelog
+
+from fife import fife
 
 
 def test_left_right(engine_minimized):

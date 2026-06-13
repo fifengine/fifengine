@@ -47,7 +47,13 @@ class XMLDialog:
         Data to distribute to widgets.
     """
 
-    def __init__(self, xml, ok_field=None, cancel_field=None, initial_data={}, data={}):
+    def __init__(
+        self, xml, ok_field=None, cancel_field=None, initial_data=None, data=None
+    ):
+        if data is None:
+            data = {}
+        if initial_data is None:
+            initial_data = {}
         self.gui = loadXML(xml)
         self.ok_field = ok_field
         self.cancel_field = cancel_field
@@ -272,7 +278,7 @@ def yesNoCancel(message="", caption="Message"):
     return dialog.execute()
 
 
-def select(message="", options=[], caption="Message"):
+def select(message="", options=None, caption="Message"):
     """
     Display a selection dialog with a list of options.
 
@@ -290,6 +296,8 @@ def select(message="", options=[], caption="Message"):
     object or None
         The selected item, or None if cancelled.
     """
+    if options is None:
+        options = []
     text = _make_text(message)
     dialog = XMLDialog(StringIO(SELECT_BOX_XML))
     dialog.size = screen_width() // 3, (2 * screen_height()) // 3

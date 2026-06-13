@@ -7,5 +7,3 @@ class TestPychanWidgetsCommon:
         from fife.extensions.pychan.widgets.common import get_manager
 
         assert get_manager() is None
-
-

@@ -4,7 +4,6 @@
 """Common PyChan widget base classes and utilities."""
 
 import warnings
-
 import weakref
 
 from fife import fife, fifechan
@@ -344,7 +343,13 @@ class Widget:
             self.real_widget.requestFocus()
 
     def _focusHandler(self):
-        """Resolve the active FocusHandler from the widget."""
+        """Resolve the active FocusHandler from the widget.
+
+        Returns
+        -------
+        FocusHandler
+            The active focus handler.
+        """
         return self.real_widget._getFocusHandler()
 
     def isModalFocusable(self):
@@ -386,9 +391,8 @@ class Widget:
             DeprecationWarning,
             stacklevel=2,
         )
-        if self.isVisible():
-            if self.isModalFocusable():
-                self._focusHandler().pushModal(self.real_widget)
+        if self.isVisible() and self.isModalFocusable():
+            self._focusHandler().pushModal(self.real_widget)
 
     def releaseModalFocus(self):
         """Release modal focus.
@@ -465,9 +469,8 @@ class Widget:
             DeprecationWarning,
             stacklevel=2,
         )
-        if self.isVisible():
-            if self.isModalMouseInputFocusable():
-                self._focusHandler().pushModal(self.real_widget)
+        if self.isVisible() and self.isModalMouseInputFocusable():
+            self._focusHandler().pushModal(self.real_widget)
 
     def releaseModalMouseInputFocus(self):
         """Release modal mouse input focus.
@@ -492,10 +495,7 @@ class Widget:
         bool
             True only if all keys are attributes and their value is the same.
         """
-        for k, v in list(kwargs.items()):
-            if v != getattr(self, k, None):
-                return False
-        return True
+        return all(v == getattr(self, k, None) for k, v in list(kwargs.items()))
 
     def capture(self, callback, event_name="action", group_name="default"):
         """
@@ -636,7 +636,6 @@ class Widget:
             # On the first pass, diffH=0 because the container size is 0
             # and getChildrenArea also returns 0.
             self.real_widget.adaptLayout(recurse)
-
 
     def beforeShow(self):
         """
@@ -1276,7 +1275,7 @@ class Widget:
 
     def _setMargins(self, margin):
         # Shorthand property
-        if isinstance(margin, tuple) or isinstance(margin, list):
+        if isinstance(margin, (tuple, list)):
             if len(margin) == 4:
                 # 0=top, 1=right, 2=bottom, 3=left
                 self.real_widget.setMarginTop(margin[0])
@@ -1311,7 +1310,7 @@ class Widget:
 
     def _setPadding(self, padding):
         # Shorthand property
-        if isinstance(padding, tuple) or isinstance(padding, list):
+        if isinstance(padding, (tuple, list)):
             if len(padding) == 4:
                 # 0=top, 1=right, 2=bottom, 3=left
                 self.real_widget.setPaddingTop(padding[0])
@@ -1371,10 +1370,14 @@ class Widget:
         if parent and not issubclass(type(parent), Widget):
             raise RuntimeError("Parent must be subclass of the Widget type.")
 
-        if self.__parent is not None and self.__parent() is not parent:
-            if self.__parent() is not None and parent is not None:
-                print("Widget containment fumble:", self, self.__parent, parent)
-                self.__parent().removeChild(self)
+        if (
+            self.__parent is not None
+            and self.__parent() is not parent
+            and self.__parent() is not None
+            and parent is not None
+        ):
+            print("Widget containment fumble:", self, self.__parent, parent)
+            self.__parent().removeChild(self)
         if parent is not None:
             self.__parent = weakref.ref(parent)
         else:

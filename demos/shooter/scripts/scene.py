@@ -5,9 +5,9 @@
 
 """Scene and scene-graph management for the shooter demo."""
 
-from fife import fife
 from fife.fife import FloatRect as Rect  # noqa: F401
 
+from fife import fife
 from scripts.common.baseobject import (
     SHTR_ENEMYSHIP,
     SHTR_LASTBOSS,
@@ -50,7 +50,7 @@ class SceneNode:
     def __init__(self, spaceobjects=None):
         """Initialize a scene node with optional existing spaceobjects."""
         if not spaceobjects:
-            self._spaceobjects = list()
+            self._spaceobjects = []
         else:
             self._spaceobjects = spaceobjects
 
@@ -83,10 +83,10 @@ class Scene:
         )
         self._soundmanager.enableSoundEffect(self._soundeffect)
 
-        self._nodes = list()
+        self._nodes = []
 
         self._player = None
-        self._objectstodelete = list()
+        self._objectstodelete = []
 
         self._maxnodes = 128
         self._xscale = 0
@@ -108,13 +108,13 @@ class Scene:
 
     def destroyScene(self):
         """Remove all objects from the scene and delete their instances."""
-        nodestodelete = list()
-        objtodelete = list()
+        nodestodelete = []
+        objtodelete = []
 
         for node in self._nodes:
             nodestodelete.append(node)
             for obj in node.spaceobjects:
-                objtodelete.append(node)
+                objtodelete.append(obj)
 
             for obj in objtodelete:
                 if obj in node.spaceobjects:
@@ -123,7 +123,7 @@ class Scene:
                         obj.instance = None
                     node.spaceobjects.remove(obj)
 
-            objtodelete = list()
+            objtodelete = []
 
         for node in nodestodelete:
             if node in self._nodes:
@@ -132,15 +132,15 @@ class Scene:
     def initScene(self, mapobj):
         """Initialize the scene and scene graph from the map object."""
         # initialize our scene array to some arbitrary size
-        for i in range(0, self._maxnodes):
+        for _i in range(0, self._maxnodes):
             self._nodes.append(SceneNode())
 
         self._player = Player(self, "player")
         self._player.init()
         self._player.start()
 
-        enemies = list()
-        powerups = list()
+        enemies = []
+        powerups = []
 
         temp = self._layer.getInstances("dodge1")
         enemies.extend(temp)
@@ -289,7 +289,7 @@ class Scene:
         list
             A combined list of objects in the specified node index range.
         """
-        objects = list()
+        objects = []
 
         for i in range(rangeL, rangeR):
             objects.extend(self._nodes[i].spaceobjects)
@@ -353,7 +353,7 @@ class Scene:
         for obj in self._objectstodelete:
             self.removeObjectFromScene(obj)
 
-        self._objectstodelete = list()
+        self._objectstodelete = []
 
     def update(self, time, keystate):
         """Advance the scene state by one frame and run game logic."""
@@ -393,11 +393,10 @@ class Scene:
 
         # update objects on the screen
         for obj in screenlist:
-            if obj.type == SHTR_LASTBOSS:
-                if bottomright.x > (
-                    (obj.location.getExactLayerCoordinates().x * self._xscale) + 0.5
-                ):
-                    self.stopCamera()
+            if obj.type == SHTR_LASTBOSS and bottomright.x > (
+                (obj.location.getExactLayerCoordinates().x * self._xscale) + 0.5
+            ):
+                self.stopCamera()
 
             if not (obj.type == SHTR_PLAYER and self._gameover):
                 obj.update()
@@ -432,22 +431,25 @@ class Scene:
                 for o in pcollide:
                     # cant get hit by your own bullet
                     if (
-                        obj.owner != o
-                        and o.type != SHTR_PROJECTILE
-                        and o.type != SHTR_POWERUP
+                        (
+                            obj.owner != o
+                            and o.type != SHTR_PROJECTILE
+                            and o.type != SHTR_POWERUP
+                        )
+                        and o.running
+                        and obj.boundingbox.intersects(o.boundingbox)
                     ):
-                        if o.running and obj.boundingbox.intersects(o.boundingbox):
-                            if o != self._player and obj.owner.type == SHTR_PLAYER:
-                                o.applyHit(obj.damage)
-                                # check if enemy ship was destroyed
-                                if not o.running:
-                                    self._player.applyScore(o.scorevalue)
+                        if o != self._player and obj.owner.type == SHTR_PLAYER:
+                            o.applyHit(obj.damage)
+                            # check if enemy ship was destroyed
+                            if not o.running:
+                                self._player.applyScore(o.scorevalue)
+                            obj.destroy()
+                        elif o == self._player:
+                            # player got hit by a projectile
+                            if not self._player.invulnerable:
+                                self.playerHit(obj.damage)
                                 obj.destroy()
-                            elif o == self._player:
-                                # player got hit by a projectile
-                                if not self._player.invulnerable:
-                                    self.playerHit(obj.damage)
-                                    obj.destroy()
 
                 # queue list of projectiles to remove (ttl expired or has been destroyed)
                 if not obj.running:

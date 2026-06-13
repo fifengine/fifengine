@@ -7,8 +7,9 @@ Provide a simple base class that registers for FIFE input and console
 events and exposes no-op handlers that subclasses can override.
 """
 
-from fife import fife
 from fife.extensions.pychan.internal import get_manager
+
+from fife import fife
 
 
 class EventListenerBase(

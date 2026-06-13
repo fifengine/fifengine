@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-from fife import fife
 from fife.extensions.fifelog import LogManager
+
+from fife import fife
 
 
 def test_logmanager_construct(engine_minimized):

@@ -1219,6 +1219,5 @@ class Window(Container):
     movable = property(_getMovable, _setMovable)
 
     def adaptLayout(self, recurse=True):
+        """Adapt the layout of this container."""
         super().adaptLayout(recurse)
-
-

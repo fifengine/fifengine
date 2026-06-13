@@ -5,9 +5,9 @@
 
 """Player ship and action listener implementations for the shooter demo."""
 
-from fife import fife
 from fife.fife import FloatRect as Rect
 
+from fife import fife
 from scripts.common.baseobject import SHTR_PLAYER, old_div
 from scripts.ships.shipbase import Ship, ShipActionListener
 from scripts.weapons import Cannon

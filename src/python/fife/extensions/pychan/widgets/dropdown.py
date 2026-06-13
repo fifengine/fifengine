@@ -57,9 +57,8 @@ class DropDown(Widget):
                 self.selected = selected
             else:
                 raise RuntimeError("Invalid selected item index specified for dropdown!")
-        elif selected is None and items is not None:
-            if len(items) > 0:
-                self.selected = 0
+        elif selected is None and items is not None and len(items) > 0:
+            self.selected = 0
 
         self.real_widget = fifechan.DropDown(self._items)
         super().__init__(

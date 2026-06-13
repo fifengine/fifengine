@@ -5,9 +5,9 @@
 
 """Enemy ship implementations for the shooter demo."""
 
-from fife import fife
 from fife.extensions import fife_timer
 
+from fife import fife
 from scripts.common.baseobject import SHTR_ENEMYSHIP, SHTR_LASTBOSS
 from scripts.ships.shipbase import Ship, ShipActionListener
 from scripts.weapons import Cannon, FireBall, FireBallBurst, FireBallSpread

@@ -22,6 +22,3 @@ class TestProperties:
         from fife.extensions.pychan.properties import ImageProperty
 
         assert ImageProperty is not None
-
-
-

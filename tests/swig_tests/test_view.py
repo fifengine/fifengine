@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import contextlib
 import time
 
 from fife import fife
@@ -82,7 +83,5 @@ def test_camera(engine):
 
     engine.finalizePumping()
 
-    try:
+    with contextlib.suppress(Exception):
         engine.destroy()
-    except Exception:
-        pass

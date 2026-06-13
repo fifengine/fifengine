@@ -49,7 +49,9 @@ def _parsePosition(position):
         if y_pos not in [EXPLICIT, TOP, CENTER, BOTTOM]:
             raise ValueError("invalid y position")
     except (AttributeError, TypeError, ValueError):
-        raise PyChanException("Malformed position definition: " + repr(position))
+        raise PyChanException(
+            "Malformed position definition: " + repr(position)
+        ) from None
     return x_pos, x_delta, y_pos, y_delta
 
 

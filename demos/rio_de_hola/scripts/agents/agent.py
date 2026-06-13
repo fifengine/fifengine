@@ -4,7 +4,6 @@
 """Agent base and helpers for rio_de_hola demo."""
 
 from fife import fife
-
 from scripts.common.common import ProgrammingError
 
 
@@ -76,10 +75,8 @@ def create_anonymous_agents(settings, model, objectName, layer, agentClass):
     """
     agents = []
     instances = [a for a in layer.getInstances() if a.getObject().getName() == objectName]
-    i = 0
-    for a in instances:
+    for i, a in enumerate(instances):
         agentName = f"{objectName}:i:{i}"
-        i += 1
         agent = agentClass(settings, model, agentName, layer, False)
         agent.agent = a
         a.addActionListener(agent)

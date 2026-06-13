@@ -67,4 +67,3 @@ def gui2text(text):
     if isinstance(text, bytes):
         return text.decode("utf-8")
     return str(text)
-

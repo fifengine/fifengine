@@ -199,7 +199,13 @@ class GuiAnimations(PyChanExample):
             self._reset_anim()
 
     def _find_optional_child(self, name):
-        """Return a child widget when present, otherwise None."""
+        """Return a child widget when present, otherwise None.
+
+        Returns
+        -------
+        widget or None
+            The child widget if found, otherwise None.
+        """
         try:
             return self.widget.findChild(name=name)
         except Exception:

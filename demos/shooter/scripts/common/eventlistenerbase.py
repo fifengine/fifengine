@@ -5,8 +5,9 @@
 
 """Event listener base classes and adapters for the shooter demo."""
 
-from fife import fife
 from fife.extensions.pychan.internal import get_manager
+
+from fife import fife
 
 
 class EventListenerBase(

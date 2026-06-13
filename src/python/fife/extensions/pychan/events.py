@@ -424,7 +424,7 @@ class EventMapper:
             A list of captured event descriptors in the form "name/group".
         """
         events = []
-        for event_type, listener in list(self.listener.items()):
+        for _event_type, listener in list(self.listener.items()):
             for event_name, group in list(listener.events.items()):
                 for group_name in list(group.keys()):
                     events.append(f"{event_name}/{group_name}")

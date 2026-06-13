@@ -7,8 +7,9 @@
 
 from math import sqrt
 
-from fife import fife
 from fife.fife import FloatRect as Rect
+
+from fife import fife
 
 
 def old_div(a, b):

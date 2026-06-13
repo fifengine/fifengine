@@ -3,10 +3,11 @@
 
 """Demo for dynamic graph plotting with interactive points."""
 
-from fife import fife
 from fife.extensions import pychan
 from fife.fifechan import Point
 from run import PyChanExample
+
+from fife import fife
 
 
 class DynamicGraphExample(PyChanExample):

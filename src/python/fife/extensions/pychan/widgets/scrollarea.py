@@ -186,17 +186,15 @@ class ScrollArea(Widget):
 
         If `leaves_first` is True the content is visited before this widget.
         """
-        if leaves_first:
-            if self._content:
-                self._content.deepApply(
-                    visitorFunc, leaves_first=leaves_first, shown_only=shown_only
-                )
+        if leaves_first and self._content:
+            self._content.deepApply(
+                visitorFunc, leaves_first=leaves_first, shown_only=shown_only
+            )
         visitorFunc(self)
-        if not leaves_first:
-            if self._content:
-                self._content.deepApply(
-                    visitorFunc, leaves_first=leaves_first, shown_only=shown_only
-                )
+        if not leaves_first and self._content:
+            self._content.deepApply(
+                visitorFunc, leaves_first=leaves_first, shown_only=shown_only
+            )
 
     def _visibilityToScrollPolicy(self, visibility):
         if visibility:
@@ -204,9 +202,7 @@ class ScrollArea(Widget):
         return fifechan.ScrollArea.ScrollPolicy_ShowNever
 
     def _scrollPolicyToVisibility(self, policy):
-        if policy == fifechan.ScrollArea.ScrollPolicy_ShowNever:
-            return False
-        return True
+        return policy != fifechan.ScrollArea.ScrollPolicy_ShowNever
 
     def _setHorizontalScrollbar(self, visibility):
         self.real_widget.setHorizontalScrollPolicy(

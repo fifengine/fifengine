@@ -6,7 +6,6 @@
 """Base ship objects and listeners for the shooter demo."""
 
 from fife import fife
-
 from scripts.common.baseobject import SHTR_PLAYER, SpaceObject
 
 
@@ -35,7 +34,7 @@ class ShipActionListener(fife.InstanceActionListener):
                 self._ship._flashing = False
                 self._ship._flashnumber = 0
 
-        if action.getName() == "explode" and not self._ship.type == SHTR_PLAYER:
+        if action.getName() == "explode" and self._ship.type != SHTR_PLAYER:
             self._ship.removeFromScene()
 
     def onInstanceActionCancelled(self, instance, action):

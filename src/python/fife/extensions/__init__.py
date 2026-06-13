@@ -1,5 +1,7 @@
 """FIFE extensions package."""
 
+import contextlib
+
 __all__ = [
     "basicapplication",
     "fife_compat",
@@ -15,7 +17,7 @@ __all__ = [
 
 # Import common extension modules so names in `__all__` are defined for
 # tools that check exports (and to provide a stable package API).
-try:
+with contextlib.suppress(Exception):
     from . import (
         basicapplication,
         fife_compat,
@@ -28,6 +30,3 @@ try:
         pythonize,
         savers,
     )
-except Exception:
-    # Avoid import-time failures in analysis tools or partial installs.
-    pass

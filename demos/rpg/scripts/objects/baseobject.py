@@ -6,7 +6,6 @@
 """Base game object utilities for the RPG demo."""
 
 from fife import fife
-
 from scripts.misc.exceptions import InstanceNotFoundError
 from scripts.misc.serializer import Serializer
 
@@ -168,15 +167,9 @@ class BaseGameObject(Serializer):
         if not valuedict:
             return
 
-        if "posx" in valuedict:
-            x = float(valuedict["posx"])
-        else:
-            x = 0
+        x = float(valuedict["posx"]) if "posx" in valuedict else 0
 
-        if "posy" in valuedict:
-            y = float(valuedict["posy"])
-        else:
-            y = 0
+        y = float(valuedict["posy"]) if "posy" in valuedict else 0
 
         self.setMapPosition(x, y)
 

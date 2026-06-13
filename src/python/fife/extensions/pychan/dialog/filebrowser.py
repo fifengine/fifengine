@@ -171,10 +171,9 @@ class FileBrowser:
         self._widget.hide()
         selection = self._widget.collectData("fileList")
 
-        if self.savefile:
-            if self._widget.collectData("saveField"):
-                self.fileSelected(self.path, self._widget.collectData("saveField"))
-                return
+        if self.savefile and self._widget.collectData("saveField"):
+            self.fileSelected(self.path, self._widget.collectData("saveField"))
+            return
 
         if selection >= 0 and selection < len(self.file_list):
             self.fileSelected(self.path, self.file_list[selection])

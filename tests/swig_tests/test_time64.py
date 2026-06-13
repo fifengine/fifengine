@@ -7,8 +7,9 @@ import random
 import time
 from unittest import mock
 
-from fife import fife
 import pytest
+
+from fife import fife
 
 
 def _to_signed32(value):
@@ -63,7 +64,9 @@ def test_event_timestamp64_rejects_out_of_range_values(engine_minimized, value):
         (0xFFFFFFFF, -1),
     ],
 )
-def test_event_timestamp32_near_rollover_boundary(engine_minimized, value64, expected_legacy32):
+def test_event_timestamp32_near_rollover_boundary(
+    engine_minimized, value64, expected_legacy32
+):
     del engine_minimized
 
     cmd = fife.Command()
@@ -80,7 +83,9 @@ def test_event_timestamp32_near_rollover_boundary(engine_minimized, value64, exp
         (0x100000001, 1),
     ],
 )
-def test_event_timestamp32_crosses_rollover_boundary(engine_minimized, value64, expected_legacy32):
+def test_event_timestamp32_crosses_rollover_boundary(
+    engine_minimized, value64, expected_legacy32
+):
     del engine_minimized
 
     cmd = fife.Command()

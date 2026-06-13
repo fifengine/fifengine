@@ -14,6 +14,7 @@ from fife.extensions.pychan.attrs import (
     PointAttr,
     UnicodeAttr,
 )
+from fife.extensions.pychan.exceptions import ParserError
 
 
 class TestAttrClasses:
@@ -54,7 +55,7 @@ class TestAttrClasses:
 
     def test_int_attr_parse_invalid(self):
         attr = IntAttr("test")
-        with pytest.raises(Exception):  # ParserError
+        with pytest.raises(ParserError):
             attr.parse("not_an_int")
 
     def test_float_attr_parse(self):
@@ -77,7 +78,7 @@ class TestAttrClasses:
 
     def test_mixed_list_attr_parse(self):
         attr = MixedListAttr("test")
-        with pytest.raises(Exception):  # ParserError - requires specific format
+        with pytest.raises(ParserError):
             attr.parse("1,2,hello")
 
     def test_bool_list_attr_parse(self):

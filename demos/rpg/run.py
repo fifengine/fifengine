@@ -13,9 +13,10 @@ the demo settings.
 import cProfile
 import os
 
-from fife import fife  # noqa: E402
 from fife.extensions.pychan.fife_pychansettings import FifePychanSettings  # noqa: E402
 from scripts.rpg import RPGApplication  # noqa: E402
+
+from fife import fife  # noqa: E402
 
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 

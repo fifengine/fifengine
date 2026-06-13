@@ -106,7 +106,7 @@ def createProperties():
         # to get properties to work.
         class_._property_names = {name for name, method in getters}
 
-        def _setattr_wrapper_(self, *args):
+        def _setattr_wrapper_(self, *args, name=name, class_=class_):
             if name in class_._property_names:
                 object.__setattr__(self, *args)
             else:

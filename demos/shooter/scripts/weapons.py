@@ -6,7 +6,6 @@
 """Projectile and weapon implementations for the shooter demo."""
 
 from fife import fife
-
 from scripts.common.baseobject import SHTR_PROJECTILE, SpaceObject
 
 

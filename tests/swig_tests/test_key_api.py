@@ -11,9 +11,15 @@ import os
 import sys
 
 # Prefer installed wheel (venv), fall back to repo source tree
-_venv = os.path.join(os.path.dirname(__file__), "..", "..", ".venv-uh",
-                     "lib", f"python{sys.version_info.major}.{sys.version_info.minor}",
-                     "site-packages")
+_venv = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    ".venv-uh",
+    "lib",
+    f"python{sys.version_info.major}.{sys.version_info.minor}",
+    "site-packages",
+)
 if os.path.isdir(_venv) and _venv not in sys.path:
     sys.path.insert(0, _venv)
 _src = os.path.join(os.path.dirname(__file__), "..", "..", "src", "python")
@@ -25,27 +31,92 @@ from fife import fife  # noqa: E402
 # -- Sanity: module-level keys exist ------------------------------------------
 
 MODULE_KEYS = [
-    "KEY_UNKNOWN", "RETURN", "ESCAPE", "BACKSPACE", "TAB", "SPACE",
-    "F1", "F5", "F12", "F13", "F16", "F24",
-    "PRINTSCREEN", "DELETE", "HOME", "END",
-    "UP", "DOWN", "LEFT", "RIGHT", "INSERT",
-    "PAGEUP", "PAGEDOWN", "CAPSLOCK", "NUMLOCKCLEAR", "SCROLLLOCK",
-    "LCTRL", "LSHIFT", "LALT", "LGUI",
-    "RCTRL", "RSHIFT", "RALT", "RGUI",
-    "KEY_LESS", "KEY_GREATER",
-    "KP_0", "KP_1", "KP_2", "KP_3", "KP_4",
-    "KP_5", "KP_6", "KP_7", "KP_8", "KP_9",
-    "KP_DIVIDE", "KP_MULTIPLY", "KP_MINUS", "KP_PLUS",
-    "KP_ENTER", "KP_PERIOD",
-    "VOLUMEUP", "VOLUMEDOWN", "MUTE",
-    "MEDIA_PLAY", "MEDIA_PAUSE", "MEDIA_STOP",
-    "MEDIA_NEXT_TRACK", "MEDIA_PREVIOUS_TRACK", "MEDIA_EJECT",
-    "HELP", "MENU", "APPLICATION", "POWER", "SLEEP", "WAKE",
-    "AC_SEARCH", "AC_HOME", "AC_BACK", "AC_FORWARD",
-    "AC_STOP", "AC_REFRESH", "AC_BOOKMARKS",
-    "MODE", "LEFT_TAB", "LEVEL5_SHIFT", "MULTI_KEY_COMPOSE",
-    "LMETA", "RMETA", "LHYPER", "RHYPER",
-    "SOFTLEFT", "SOFTRIGHT", "CALL", "ENDCALL",
+    "KEY_UNKNOWN",
+    "RETURN",
+    "ESCAPE",
+    "BACKSPACE",
+    "TAB",
+    "SPACE",
+    "F1",
+    "F5",
+    "F12",
+    "F13",
+    "F16",
+    "F24",
+    "PRINTSCREEN",
+    "DELETE",
+    "HOME",
+    "END",
+    "UP",
+    "DOWN",
+    "LEFT",
+    "RIGHT",
+    "INSERT",
+    "PAGEUP",
+    "PAGEDOWN",
+    "CAPSLOCK",
+    "NUMLOCKCLEAR",
+    "SCROLLLOCK",
+    "LCTRL",
+    "LSHIFT",
+    "LALT",
+    "LGUI",
+    "RCTRL",
+    "RSHIFT",
+    "RALT",
+    "RGUI",
+    "KEY_LESS",
+    "KEY_GREATER",
+    "KP_0",
+    "KP_1",
+    "KP_2",
+    "KP_3",
+    "KP_4",
+    "KP_5",
+    "KP_6",
+    "KP_7",
+    "KP_8",
+    "KP_9",
+    "KP_DIVIDE",
+    "KP_MULTIPLY",
+    "KP_MINUS",
+    "KP_PLUS",
+    "KP_ENTER",
+    "KP_PERIOD",
+    "VOLUMEUP",
+    "VOLUMEDOWN",
+    "MUTE",
+    "MEDIA_PLAY",
+    "MEDIA_PAUSE",
+    "MEDIA_STOP",
+    "MEDIA_NEXT_TRACK",
+    "MEDIA_PREVIOUS_TRACK",
+    "MEDIA_EJECT",
+    "HELP",
+    "MENU",
+    "APPLICATION",
+    "POWER",
+    "SLEEP",
+    "WAKE",
+    "AC_SEARCH",
+    "AC_HOME",
+    "AC_BACK",
+    "AC_FORWARD",
+    "AC_STOP",
+    "AC_REFRESH",
+    "AC_BOOKMARKS",
+    "MODE",
+    "LEFT_TAB",
+    "LEVEL5_SHIFT",
+    "MULTI_KEY_COMPOSE",
+    "LMETA",
+    "RMETA",
+    "LHYPER",
+    "RHYPER",
+    "SOFTLEFT",
+    "SOFTRIGHT",
+    "CALL",
+    "ENDCALL",
 ]
 
 
@@ -58,7 +129,9 @@ def test_module_key_values_unique():
     seen = {}
     for name in MODULE_KEYS:
         val = getattr(fife, name)
-        assert val not in seen, f"Key collision: {seen[val]} and {name} both have value {val}"
+        assert val not in seen, (
+            f"Key collision: {seen[val]} and {name} both have value {val}"
+        )
         seen[val] = name
 
 

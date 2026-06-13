@@ -74,12 +74,15 @@ class Setting:
             self._appdata = os.path.dirname(self._settings_file)
             self._settings_file = os.path.basename(self._settings_file)
 
-        if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
-            if os.path.exists(self._default_settings_file) and copy_dist:
-                shutil.copyfile(
-                    self._default_settings_file,
-                    os.path.join(self._appdata, self._settings_file),
-                )
+        if (
+            not os.path.exists(os.path.join(self._appdata, self._settings_file))
+            and os.path.exists(self._default_settings_file)
+            and copy_dist
+        ):
+            shutil.copyfile(
+                self._default_settings_file,
+                os.path.join(self._appdata, self._settings_file),
+            )
 
         # valid values possible for the engineSettings
         self._validSetting = {}
@@ -549,11 +552,10 @@ class Setting:
                                         self._settingsFromFile[module][name].append(
                                             checking_element
                                         )
-                            if not module_valid:
-                                if self._logger:
-                                    self._logger.log_log(
-                                        checking_element + " is not a valid logModule"
-                                    )
+                            if not module_valid and self._logger:
+                                self._logger.log_log(
+                                    checking_element + " is not a valid logModule"
+                                )
                     elif name == "FrameLimit":
                         if e_value > 0:
                             self._settingsFromFile[module][name] = e_value
@@ -563,13 +565,12 @@ class Setting:
                                     e_value
                                     + " is not a valid FrameLimit setting.  You must specify a positive integer!"
                                 )
-                    elif name == "MouseSensitivity":
-                        self._settingsFromFile[module][name] = e_value
-                    elif name == "MouseAcceleration":
-                        self._settingsFromFile[module][name] = e_value
-                    elif name == "NativeImageCursor":
-                        self._settingsFromFile[module][name] = e_value
-                    elif name == "JoystickSupport":
+                    elif (
+                        name == "MouseSensitivity"
+                        or name == "MouseAcceleration"
+                        or name == "NativeImageCursor"
+                        or name == "JoystickSupport"
+                    ):
                         self._settingsFromFile[module][name] = e_value
 
                     elif name == "Display":
@@ -597,21 +598,18 @@ class Setting:
                         self._settingsFromFile[module][name] = e_value
 
                     else:
-                        if isinstance(
-                            self._settingsFromFile[module][name], list
-                        ) or isinstance(self._settingsFromFile[module][name], dict):
+                        if isinstance(self._settingsFromFile[module][name], (list, dict)):
                             valid = False
                             for value in self._validSetting[module][name]:
                                 if value == e_value:
                                     valid = True
                                     self._settingsFromFile[module][name] = e_value
-                            if not valid:
-                                if self._logger:
-                                    self._logger.log_log(
-                                        "Setting "
-                                        + name
-                                        + " got invalid value. Setting to Default."
-                                    )
+                            if not valid and self._logger:
+                                self._logger.log_log(
+                                    "Setting "
+                                    + name
+                                    + " got invalid value. Setting to Default."
+                                )
                         else:
                             self._settingsFromFile[module][name] = e_value
 
@@ -699,7 +697,7 @@ class Setting:
                     + " is neither in settings.xml nor it has a default value set"
                 )
 
-    def set(self, module, name, value, extra_attrs={}):
+    def set(self, module, name, value, extra_attrs=None):
         """
         Set a setting to a specified value.
 
@@ -715,6 +713,8 @@ class Setting:
             Extra attributes to be stored in the XML file.
         """
         # update the setting cache
+        if extra_attrs is None:
+            extra_attrs = {}
         if module in self._settingsFromFile:
             self._settingsFromFile[module][name] = value
         else:

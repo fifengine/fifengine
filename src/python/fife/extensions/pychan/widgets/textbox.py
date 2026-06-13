@@ -147,9 +147,11 @@ class TextBox(Widget):
             return
         try:
             try:
-                self.text = str(open(filename).read(), "utf8")
+                with open(filename) as f:
+                    self.text = str(f.read(), "utf8")
             except TypeError:
-                self.text = open(filename).read()
+                with open(filename) as f:
+                    self.text = f.read()
         except Exception as e:
             self.text = str(e)
 

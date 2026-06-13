@@ -6,7 +6,6 @@ from functools import partial
 
 from . import exceptions
 
-
 # Functools ###
 
 
@@ -40,7 +39,7 @@ def applyOnlySuitable(func, *args, **kwargs):
     elif hasattr(func, code_name):
         code = func.__code__
         varnames = code.co_varnames[0 : code.co_argcount]
-    elif hasattr(func, "__call__"):
+    elif callable(func):
         call_func = func.__call__
         if hasattr(call_func, func_name):
             code = call_func.__func__.__code__
@@ -54,7 +53,7 @@ def applyOnlySuitable(func, *args, **kwargs):
         return original_func(*args, **kwargs)
     if code.co_flags & 8:
         return original_func(*args, **kwargs)
-    for name, value in list(kwargs.items()):
+    for name, _value in list(kwargs.items()):
         if name not in varnames:
             del kwargs[name]
     return original_func(*args, **kwargs)
@@ -150,7 +149,7 @@ def repeatALot(n=1000):
 
     def wrap_f(f):
         def new_f(*args, **kwargs):
-            for i in range(n):
+            for _i in range(n):
                 f(*args, **kwargs)
             return f(*args, **kwargs)
 

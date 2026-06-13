@@ -6,7 +6,6 @@
 """Power-up objects for the shooter demo."""
 
 from fife import fife  # noqa: F401
-
 from scripts.common.baseobject import SHTR_POWERUP, SpaceObject
 from scripts.weapons import CannonSpread5
 

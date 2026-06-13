@@ -9,8 +9,6 @@ import os
 import uuid
 
 from fife import fife
-from fife.extensions.pychan.internal import get_manager
-
 from scripts.actors.baseactor import (
     AttackAction,
     EnterPortalAction,
@@ -355,8 +353,7 @@ class GameController:
         )
         self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
         font = self._engine.getFontManager().getFont(
-            "FreeSans",
-            self._settings.get("FIFE", "DefaultFontSize", 16)
+            "FreeSans", self._settings.get("FIFE", "DefaultFontSize", 16)
         )
         self._floatingtextrenderer.setFont(font)
         self._floatingtextrenderer.setBackground(255, 100, 100, 165)

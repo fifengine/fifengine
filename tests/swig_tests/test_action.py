@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+import contextlib
+
 from fife import fife
 
 
@@ -94,7 +96,5 @@ def test_walk_around(engine):
     engine.finalizePumping()
     map_obj.removeCamera("foo")
 
-    try:
+    with contextlib.suppress(Exception):
         engine.destroy()
-    except Exception:
-        pass

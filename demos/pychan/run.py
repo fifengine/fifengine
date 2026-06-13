@@ -16,10 +16,11 @@ by the Pychan examples in the demos/pychan folder.
 import os
 import sys
 
-from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import pychanbasicapplication
 from fife.extensions.pychan.dialogs import trace
+
+from fife import fife
 
 
 class PyChanExample:
@@ -166,10 +167,10 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         from colortester import ColorExample
         from dynamic import DynamicExample
         from dynamicgraph import DynamicGraphExample
+        from guianimation import GuiAnimations
         from iconprogressbar import IconProgressBarExample
         from imageprogressbar import ImageProgressBarExample
         from modalfocus import ModalFocusExample
-        from guianimation import GuiAnimations
         from showhide import ShowHideExample
         from sliders import SliderExample
         from stretching import StretchingExample
@@ -224,9 +225,8 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
         if self.currentExample:
             self.currentExample.stop()
         self.currentExample = self.examples[self.demoList.selected_item]
-        self.gui.findChild(name="xmlSource").text = open(
-            self.currentExample.xmlFile
-        ).read()
+        with open(self.currentExample.xmlFile) as f:
+            self.gui.findChild(name="xmlSource").text = f.read()
         self.currentExample.start()
 
     def loadRuntimeXML(self):
@@ -238,9 +238,8 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
             self.currentExample.stop()
 
         # save source to file
-        tmp = open("gui/tmp.xml", "w")
-        tmp.write(self.gui.findChild(name="xmlSource").text)
-        tmp.close()
+        with open("gui/tmp.xml", "w") as tmp:
+            tmp.write(self.gui.findChild(name="xmlSource").text)
         # change the xml path, load it and reset the path
         xml_orig = self.currentExample.xmlFile
         self.currentExample.xmlFile = "gui/tmp.xml"
@@ -297,8 +296,5 @@ if __name__ == "__main__":
 
     print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
-    if len(sys.argv) == 2:
-        app = TestXMLApplication(sys.argv[1])
-    else:
-        app = DemoApplication()
+    app = TestXMLApplication(sys.argv[1]) if len(sys.argv) == 2 else DemoApplication()
     app.run()

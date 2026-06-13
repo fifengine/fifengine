@@ -8,8 +8,9 @@ import os
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
 
-from fife import fife  # noqa: F401
 from fife.extensions import pychan
+
+from fife import fife  # noqa: F401
 
 
 class MainMenu:
@@ -171,7 +172,7 @@ class HighScores:
         else:
             self._widget = pychan.loadXML("gui/hstemplate.xml")
 
-        self._scores = list()
+        self._scores = []
 
         for i in range(1, 11):
             self._widget.findChild(name=str(i))
@@ -194,24 +195,18 @@ class HighScores:
         bool
             True if `score` is higher than at least one existing high score.
         """
-        for highscore in self._scores:
-            if score > highscore._score:
-                return True
-
-        return False
+        return any(score > highscore._score for highscore in self._scores)
 
     def addHighScore(self, score):
         """Insert a new high score and persist the list."""
         if not self.isHighScore(score._score):
             return
 
-        i = 0
         element = 0
-        for highscore in self._scores:
+        for i, highscore in enumerate(self._scores):
             if score._score > highscore._score:
                 element = i
                 break
-            i += 1
 
         self._scores.insert(element, score)
         # remove last element
@@ -236,158 +231,157 @@ class HighScores:
 
     def saveHighScores(self):
         """Persist the high scores to the XML file."""
-        self._file = open("gui/highscores.xml", "w")
-        self._xmlout = XMLGenerator(self._file, "ascii")
-        self._xmlout.startDocument()
+        with open("gui/highscores.xml", "w") as self._file:
+            self._xmlout = XMLGenerator(self._file, "ascii")
+            self._xmlout.startDocument()
 
-        self._indent_level = ""
+            self._indent_level = ""
 
-        # <Container name="HighScores" position="0,0" size="1024,768" border_size="0" base_color="0,0,0" opaque="0">
+            # <Container name="HighScores" position="0,0" size="1024,768" border_size="0" base_color="0,0,0" opaque="0">
 
-        attr_values = {
-            (None, "name"): "HighScores",
-            (None, "position"): "0,0",
-            (None, "size"): "1024,768",
-            (None, "border_size"): "0",
-            (None, "base_color"): "0,0,0",
-            (None, "opaque"): "0",
-        }
-        attr_names = {
-            (None, "name"): "name",
-            (None, "position"): "position",
-            (None, "size"): "size",
-            (None, "border_size"): "border_size",
-            (None, "base_color"): "base_color",
-            (None, "opaque"): "opaque",
-        }
+            attr_values = {
+                (None, "name"): "HighScores",
+                (None, "position"): "0,0",
+                (None, "size"): "1024,768",
+                (None, "border_size"): "0",
+                (None, "base_color"): "0,0,0",
+                (None, "opaque"): "0",
+            }
+            attr_names = {
+                (None, "name"): "name",
+                (None, "position"): "position",
+                (None, "size"): "size",
+                (None, "border_size"): "border_size",
+                (None, "base_color"): "base_color",
+                (None, "opaque"): "opaque",
+            }
 
-        container_attrs = AttributesNSImpl(attr_values, attr_names)
-        self.startElement("Container", container_attrs)
+            container_attrs = AttributesNSImpl(attr_values, attr_names)
+            self.startElement("Container", container_attrs)
 
-        # <VBox opaque='1' base_color="188, 0, 0" position="412,200" name="high_score">
+            # <VBox opaque='1' base_color="188, 0, 0" position="412,200" name="high_score">
 
-        attr_values = {
-            (None, "opaque"): "1",
-            (None, "base_color"): "188,0,0",
-            (None, "position"): "412,200",
-            (None, "name"): "high_score",
-        }
+            attr_values = {
+                (None, "opaque"): "1",
+                (None, "base_color"): "188,0,0",
+                (None, "position"): "412,200",
+                (None, "name"): "high_score",
+            }
 
-        attr_names = {
-            (None, "opaque"): "opaque",
-            (None, "base_color"): "base_color",
-            (None, "position"): "position",
-            (None, "name"): "name",
-        }
+            attr_names = {
+                (None, "opaque"): "opaque",
+                (None, "base_color"): "base_color",
+                (None, "position"): "position",
+                (None, "name"): "name",
+            }
 
-        vbox_attrs = AttributesNSImpl(attr_values, attr_names)
-        self.startElement("VBox", vbox_attrs)
+            vbox_attrs = AttributesNSImpl(attr_values, attr_names)
+            self.startElement("VBox", vbox_attrs)
 
-        # <Label name="high_scores" text="High Scores" min_size="100,0" border_size="0"/>
+            # <Label name="high_scores" text="High Scores" min_size="100,0" border_size="0"/>
 
-        self.startElement("HBox", AttributesNSImpl({}, {}))
-        attr_values = {
-            (None, "name"): "high_scores",
-            (None, "text"): "High Scores",
-            (None, "min_size"): "100,0",
-            (None, "border_size"): "0",
-        }
-
-        attr_names = {
-            (None, "name"): "name",
-            (None, "text"): "text",
-            (None, "min_size"): "min_size",
-            (None, "border_size"): "border_size",
-        }
-        self.startElement("Label", AttributesNSImpl(attr_values, attr_names))
-        self.endElement("Label")
-
-        self.endElement("HBox")
-
-        i = 1
-        for score in self._scores:
             self.startElement("HBox", AttributesNSImpl({}, {}))
-
-            plc_attr_values = {
-                (None, "name"): str(i),
-                (None, "text"): str(i),
-                (None, "min_size"): "20,0",
-                (None, "border_size"): "5",
+            attr_values = {
+                (None, "name"): "high_scores",
+                (None, "text"): "High Scores",
+                (None, "min_size"): "100,0",
+                (None, "border_size"): "0",
             }
 
-            plc_attr_names = {
+            attr_names = {
                 (None, "name"): "name",
                 (None, "text"): "text",
                 (None, "min_size"): "min_size",
                 (None, "border_size"): "border_size",
             }
-
-            name_attr_values = {
-                (None, "name"): str(i) + "name",
-                (None, "text"): score._name,
-                (None, "min_size"): "50,0",
-                (None, "border_size"): "5",
-            }
-
-            name_attr_names = {
-                (None, "name"): "name",
-                (None, "text"): "text",
-                (None, "min_size"): "min_size",
-                (None, "border_size"): "border_size",
-            }
-
-            score_attr_values = {
-                (None, "name"): str(i) + "score",
-                (None, "text"): str(score._score),
-                (None, "min_size"): "150,0",
-                (None, "border_size"): "5",
-            }
-
-            score_attr_names = {
-                (None, "name"): "name",
-                (None, "text"): "text",
-                (None, "min_size"): "min_size",
-                (None, "border_size"): "border_size",
-            }
-
-            self.startElement("Label", AttributesNSImpl(plc_attr_values, plc_attr_names))
-            self.endElement("Label")
-            self.startElement(
-                "Label", AttributesNSImpl(name_attr_values, name_attr_names)
-            )
-            self.endElement("Label")
-            self.startElement(
-                "Label", AttributesNSImpl(score_attr_values, score_attr_names)
-            )
+            self.startElement("Label", AttributesNSImpl(attr_values, attr_names))
             self.endElement("Label")
 
             self.endElement("HBox")
-            i += 1
 
-        # <Button name="close" text="Close" min_size="100,0" border_size="0"/>
+            for i, score in enumerate(self._scores, start=1):
+                self.startElement("HBox", AttributesNSImpl({}, {}))
 
-        attr_values = {
-            (None, "name"): "close",
-            (None, "text"): "Close",
-            (None, "min_size"): "100,0",
-            (None, "border_size"): "0",
-        }
+                plc_attr_values = {
+                    (None, "name"): str(i),
+                    (None, "text"): str(i),
+                    (None, "min_size"): "20,0",
+                    (None, "border_size"): "5",
+                }
 
-        attr_names = {
-            (None, "name"): "name",
-            (None, "text"): "text",
-            (None, "min_size"): "min_size",
-            (None, "border_size"): "border_size",
-        }
+                plc_attr_names = {
+                    (None, "name"): "name",
+                    (None, "text"): "text",
+                    (None, "min_size"): "min_size",
+                    (None, "border_size"): "border_size",
+                }
 
-        self.startElement("Button", AttributesNSImpl(attr_values, attr_names))
-        self.endElement("Button")
+                name_attr_values = {
+                    (None, "name"): str(i) + "name",
+                    (None, "text"): score._name,
+                    (None, "min_size"): "50,0",
+                    (None, "border_size"): "5",
+                }
 
-        self.endElement("VBox")
-        self.endElement("Container")
+                name_attr_names = {
+                    (None, "name"): "name",
+                    (None, "text"): "text",
+                    (None, "min_size"): "min_size",
+                    (None, "border_size"): "border_size",
+                }
 
-        self._xmlout.endDocument()
-        self._file.close()
+                score_attr_values = {
+                    (None, "name"): str(i) + "score",
+                    (None, "text"): str(score._score),
+                    (None, "min_size"): "150,0",
+                    (None, "border_size"): "5",
+                }
+
+                score_attr_names = {
+                    (None, "name"): "name",
+                    (None, "text"): "text",
+                    (None, "min_size"): "min_size",
+                    (None, "border_size"): "border_size",
+                }
+
+                self.startElement(
+                    "Label", AttributesNSImpl(plc_attr_values, plc_attr_names)
+                )
+                self.endElement("Label")
+                self.startElement(
+                    "Label", AttributesNSImpl(name_attr_values, name_attr_names)
+                )
+                self.endElement("Label")
+                self.startElement(
+                    "Label", AttributesNSImpl(score_attr_values, score_attr_names)
+                )
+                self.endElement("Label")
+
+                self.endElement("HBox")
+
+            # <Button name="close" text="Close" min_size="100,0" border_size="0"/>
+
+            attr_values = {
+                (None, "name"): "close",
+                (None, "text"): "Close",
+                (None, "min_size"): "100,0",
+                (None, "border_size"): "0",
+            }
+
+            attr_names = {
+                (None, "name"): "name",
+                (None, "text"): "text",
+                (None, "min_size"): "min_size",
+                (None, "border_size"): "border_size",
+            }
+
+            self.startElement("Button", AttributesNSImpl(attr_values, attr_names))
+            self.endElement("Button")
+
+            self.endElement("VBox")
+            self.endElement("Container")
+
+            self._xmlout.endDocument()
 
     def show(self):
         """Show the high scores widget."""

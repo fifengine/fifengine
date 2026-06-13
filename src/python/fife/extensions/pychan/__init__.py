@@ -278,7 +278,7 @@ def loadFonts(font_file):
     """
     import xml.etree.ElementTree as ET
 
-    from .compat import fife, in_fife
+    from .compat import in_fife
 
     if not in_fife or not manager:
         raise ImportError("PyChan must be initialized before loading fonts.")
@@ -333,7 +333,7 @@ def loadFonts(font_file):
                 attrs += f' row_spacing="{face["row_spacing"]}"'
             if int(face["glyph_spacing"]):
                 attrs += f' glyph_spacing="{face["glyph_spacing"]}"'
-            lines.append(f'    <face{ftype_attr}{attrs}>{face["source"]}</face>')
+            lines.append(f"    <face{ftype_attr}{attrs}>{face['source']}</face>")
         lines.append("  </family>")
     lines.append("</fonts>")
 
@@ -419,7 +419,9 @@ class _GuiLoader(__GuiLoaderBase):
                     attr.set(obj, value)
                     return
         except GuiXMLError as e:
-            raise GuiXMLError(f"Error parsing attr '{name}'='{value}' for '{obj}': '{e}'")
+            raise GuiXMLError(
+                f"Error parsing attr '{name}'='{value}' for '{obj}': '{e}'"
+            ) from e
         raise GuiXMLError(f"Unknown GUI Attribute '{name}' on '{repr(obj)}'")
 
     def startElement(self, name, attrs):
@@ -433,9 +435,9 @@ class _GuiLoader(__GuiLoaderBase):
         self.indent += " " * 4
 
     def _createInstance(self, cls, name, attrs):
-        obj = cls(parent=self.root)                 # (1) Create widget with current root as parent
+        obj = cls(parent=self.root)  # (1) Create widget with current root as parent
         for k, v in list(attrs.items()):
-            self._setAttr(obj, k, v)                # (2) Set all XML attributes
+            self._setAttr(obj, k, v)  # (2) Set all XML attributes
 
         if self.root:
             if isinstance(obj, Tab):
@@ -444,8 +446,8 @@ class _GuiLoader(__GuiLoaderBase):
                 else:
                     raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
             else:
-                self.root.addChild(obj)            # (3) Add widget to current root container
-        self.root = obj                            # (4) This widget becomes new root
+                self.root.addChild(obj)  # (3) Add widget to current root container
+        self.root = obj  # (4) This widget becomes new root
 
     def endElement(self, name):
         self.indent = self.indent[:-4]

@@ -6,9 +6,9 @@
 
 import copy
 
-from fife import fife
 from fife.extensions import pychan
 
+from fife import fife
 from scripts.common.baseobject import old_div
 from scripts.common.eventlistenerbase import EventListenerBase
 from scripts.common.joysticklistener import JoystickListener
@@ -326,14 +326,13 @@ class World(EventListenerBase):
             if self._scene.paused:
                 self._scene.unpause(self._timemanager.now64() - self._starttime)
 
-            self._scene.update(self._timemanager.now64() - self._starttime, self._keystate)
+            self._scene.update(
+                self._timemanager.now64() - self._starttime, self._keystate
+            )
 
             # update the HUD
             avgframe = self._timemanager.getAverageFrameTime()
-            if avgframe > 0:
-                fps = old_div(1, (old_div(avgframe, 1000)))
-            else:
-                fps = 0
+            fps = old_div(1, old_div(avgframe, 1000)) if avgframe > 0 else 0
             fpstxt = f"{fps:3.2f}"
             self._hudwindow.setFPSText(str(fpstxt))
 

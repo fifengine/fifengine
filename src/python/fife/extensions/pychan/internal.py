@@ -5,7 +5,7 @@
 
 from fife.extensions import fife_timer as timer
 
-from .compat import fife, fifechan, in_fife
+from .compat import fifechan, in_fife
 from .exceptions import InitializationError
 
 
@@ -254,10 +254,7 @@ class Manager:
 
         style_copy = {}
         for k, v in list(style.items()):
-            if isinstance(k, tuple):
-                new_k = tuple(map(_toClass, k))
-            else:
-                new_k = _toClass(k)
+            new_k = tuple(map(_toClass, k)) if isinstance(k, tuple) else _toClass(k)
             style_copy[new_k] = v
         return style_copy
 

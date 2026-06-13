@@ -8,10 +8,10 @@
 import os
 import time
 
-from fife import fife
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 
+from fife import fife
 from scripts.gamecontroller import GameController
 
 
@@ -52,9 +52,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         fife.ConsoleExecuter.__init__(self)
         get_manager().getConsole().setConsoleExecuter(self)
 
-        keyfilter = KeyFilter(
-            [fife.Key.ESCAPE, fife.Key.GRAVE, fife.Key.PRINTSCREEN]
-        )
+        keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.GRAVE, fife.Key.PRINTSCREEN])
         keyfilter.__disown__()
 
         self._eventmanager.setKeyFilter(keyfilter)
@@ -114,7 +112,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
             helptextfile = self._gamecontroller.settings.get(
                 "RPG", "HelpText", "misc/help.txt"
             )
-            get_manager().getConsole().println(open(helptextfile).read())
+            with open(helptextfile) as f:
+                get_manager().getConsole().println(f.read())
             result = "--OK--"
         elif cmd[0].lower() in ("eval"):
             try:

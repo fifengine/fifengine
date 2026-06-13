@@ -3,9 +3,10 @@
 
 """Demo for widget styling and theming."""
 
-from fife import fifechan
 from fife.extensions import pychan
 from run import PyChanExample
+
+from fife import fifechan
 
 STYLES = {
     "new default": {
@@ -80,13 +81,11 @@ class StylingExample(PyChanExample):
         for name, style in list(STYLES.items()):
             pychan.manager.addStyle(name, style)
 
-
-
     def start(self):
         """Start the example by loading XML and applying styles."""
         self.styledCredits = pychan.loadXML("gui/all_widgets.xml")
         self.styledCredits.distributeInitialData(
-            {"demoList": [x for x in dir(pychan)], "demoText": pychan.__doc__}
+            {"demoList": list(dir(pychan)), "demoText": pychan.__doc__}
         )
 
         self.widget = pychan.loadXML(self.xmlFile)

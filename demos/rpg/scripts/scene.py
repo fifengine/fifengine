@@ -7,9 +7,9 @@
 import os
 import uuid
 
-from fife import fife
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
+from fife import fife
 from scripts.actors.baseactor import Actor
 from scripts.actors.player import Player
 from scripts.actors.questgiver import QuestGiver
@@ -65,10 +65,7 @@ class Scene(Serializer):
             If the object template or its model cannot be found in the model
             settings.
         """
-        if objectid:
-            identifier = objectid
-        else:
-            identifier = str(uuid.uuid1())
+        identifier = objectid or str(uuid.uuid1())
 
         try:
             objdict = self._modelsettings.get("objects", objectname, {})
@@ -124,7 +121,7 @@ class Scene(Serializer):
                 newobject.deserialize(objdict)
 
         except KeyError:
-            raise ObjectNotFoundError
+            raise ObjectNotFoundError from None
 
         return newobject
 
@@ -285,7 +282,7 @@ class Scene(Serializer):
         try:
             return self._objectlist[objid]
         except KeyError:
-            raise ObjectNotFoundError(objid + " was not found on the scene.")
+            raise ObjectNotFoundError(objid + " was not found on the scene.") from None
 
     def addObjectToScene(self, obj):
         """Add `obj` to the scene, raising if it is already present.
@@ -317,7 +314,7 @@ class Scene(Serializer):
             raise ObjectNotFoundError(
                 obj.id
                 + " could not be removed from the scene as it was not found in the scene."
-            )
+            ) from None
 
     def serialize(self):
         """Serialize the current scene and player state to save files."""

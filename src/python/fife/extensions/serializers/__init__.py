@@ -103,7 +103,6 @@ def norm_path(path):
     return "/".join(path.split(os.path.sep))
 
 
-
 def root_subfile(masterfile, subfile):
     """
     Return new path for given subfile rooted against masterfile.
@@ -137,7 +136,7 @@ def root_subfile(masterfile, subfile):
             break
 
     pathstr = ""
-    for f in master_leftovers[:-1]:
+    for _f in master_leftovers[:-1]:
         pathstr += ".." + s
     pathstr += s.join(sub_leftovers)
     return pathstr

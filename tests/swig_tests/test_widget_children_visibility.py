@@ -21,7 +21,13 @@ from fife import fifechan
 
 
 def compute_children_area_origin(win):
-    """Return (x, y) origin of the Window's children area in parent space."""
+    """Return (x, y) origin of the Window's children area in parent space.
+
+    Returns
+    -------
+    tuple of int
+        The (x, y) origin coordinates.
+    """
     b = win.getBorderSize()
     pl = win.getPaddingLeft()
     pt = win.getPaddingTop()
@@ -31,7 +37,13 @@ def compute_children_area_origin(win):
 
 
 def make_widget(w=50, h=16):
-    """Create a simple Container widget for testing visibility."""
+    """Create a simple Container widget for testing visibility.
+
+    Returns
+    -------
+    Container
+        A fifechan Container widget with the given dimensions.
+    """
     wgt = fifechan.Container()
     wgt.setSize(w, h)
     return wgt
@@ -41,6 +53,11 @@ def rects_intersect(r1, r2):
     """Check if two (x, y, w, h) rectangles intersect.
 
     Mirrors fifechan's ``Rectangle::isIntersecting`` logic.
+
+    Returns
+    -------
+    bool
+        True if the rectangles intersect.
     """
     x1, y1, w1, h1 = r1
     x2, y2, w2, h2 = r2
@@ -84,8 +101,7 @@ class TestWidgetChildrenVisibility:
         ca_x, ca_y = compute_children_area_origin(win)
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
 
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert rects_intersect(children_area, rendered), (
             f"child at ({wgt.getX()}, {wgt.getY()}) should be visible "
@@ -104,8 +120,7 @@ class TestWidgetChildrenVisibility:
         ca_x, ca_y = compute_children_area_origin(win)
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
 
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert not rects_intersect(children_area, rendered), (
             f"child at ({wgt.getX()}, {wgt.getY()}) should be hidden "
@@ -123,8 +138,7 @@ class TestWidgetChildrenVisibility:
         ca_x, ca_y = compute_children_area_origin(win)
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
 
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert not rects_intersect(children_area, rendered), (
             f"child at ({wgt.getX()}, {wgt.getY()}) should be hidden "
@@ -142,8 +156,7 @@ class TestWidgetChildrenVisibility:
         win.add(wgt)
 
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert rects_intersect(children_area, rendered), (
             f"child explicitly at children area origin ({ca_x}, {ca_y}) "
@@ -160,8 +173,7 @@ class TestWidgetChildrenVisibility:
         win.add(wgt)
 
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert rects_intersect(children_area, rendered), (
             f"partially visible child should intersect, rendered={rendered}"
@@ -176,8 +188,7 @@ class TestWidgetChildrenVisibility:
 
         ca_x, ca_y = compute_children_area_origin(win)
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert not rects_intersect(children_area, rendered), (
             f"zero-width child should not be visible, rendered={rendered}"
@@ -195,8 +206,7 @@ class TestWidgetChildrenVisibility:
         wgt.setPosition(win.getWidth() + 10, ca_y)
 
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
-        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(),
-                    wgt.getWidth(), wgt.getHeight())
+        rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
         assert not rects_intersect(children_area, rendered), (
             f"child right of content should be hidden, rendered={rendered}"
@@ -217,8 +227,12 @@ class TestWidgetChildrenVisibility:
         ca_x, ca_y = compute_children_area_origin(win)
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
 
-        vbox_rendered = (ca_x + vbox.getX(), ca_y + vbox.getY(),
-                         vbox.getWidth(), vbox.getHeight())
+        vbox_rendered = (
+            ca_x + vbox.getX(),
+            ca_y + vbox.getY(),
+            vbox.getWidth(),
+            vbox.getHeight(),
+        )
 
         assert rects_intersect(children_area, vbox_rendered), (
             f"VBox in Window should be visible, rendered={vbox_rendered}"
@@ -226,9 +240,12 @@ class TestWidgetChildrenVisibility:
 
         vbox_ca_x = 0
         vbox_ca_y = 0
-        child_rendered = (vbox_rendered[0] + vbox_ca_x + child.getX(),
-                          vbox_rendered[1] + vbox_ca_y + child.getY(),
-                          child.getWidth(), child.getHeight())
+        child_rendered = (
+            vbox_rendered[0] + vbox_ca_x + child.getX(),
+            vbox_rendered[1] + vbox_ca_y + child.getY(),
+            child.getWidth(),
+            child.getHeight(),
+        )
 
         assert rects_intersect(children_area, child_rendered), (
             f"nested child in VBox should be visible, "

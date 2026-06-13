@@ -209,6 +209,7 @@ class TestPychanWidgetsCommonModule:
 
         assert callable(get_manager)
 
+
 class TestPychanLayoutModule:
     def test_constants(self):
         from fife.extensions.pychan.widgets.layout import (

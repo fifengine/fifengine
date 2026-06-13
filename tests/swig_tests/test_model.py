@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 import pytest
+
 from fife import fife
 
 
@@ -366,7 +367,7 @@ def test_hex_grid(engine_minimized):
     curpos = fife.ModelCoordinate(*curpos)
     accessiblepts = fife.ModelCoordinateVector()
     grid.getAccessibleCoordinates(curpos, accessiblepts)
-    costpts = [fife.ModelCoordinate(*pt) for pt in cost.keys()]
+    costpts = [fife.ModelCoordinate(*pt) for pt in cost]
     for pt in costpts:
         assert pt in accessiblepts
     for pt in accessiblepts:
@@ -413,7 +414,7 @@ def test_square_grid(engine_minimized):
     curpos = fife.ModelCoordinate(*curpos)
     accessiblepts = fife.ModelCoordinateVector()
     grid.getAccessibleCoordinates(curpos, accessiblepts)
-    costpts = [fife.ModelCoordinate(*pt) for pt in cost.keys()]
+    costpts = [fife.ModelCoordinate(*pt) for pt in cost]
     for pt in costpts:
         assert pt in accessiblepts
     for pt in accessiblepts:
@@ -464,7 +465,7 @@ def test_diag_square_grid(engine_minimized):
     curpos = fife.ModelCoordinate(*curpos)
     accessiblepts = fife.ModelCoordinateVector()
     grid.getAccessibleCoordinates(curpos, accessiblepts)
-    costpts = [fife.ModelCoordinate(*pt) for pt in cost.keys()]
+    costpts = [fife.ModelCoordinate(*pt) for pt in cost]
     for pt in costpts:
         assert pt in accessiblepts
     for pt in accessiblepts:

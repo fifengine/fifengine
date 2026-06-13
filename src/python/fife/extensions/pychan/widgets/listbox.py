@@ -100,9 +100,8 @@ class ListBox(Widget):
                 self.selected = selected
             else:
                 raise RuntimeError("Invalid selected item index specified for listbox!")
-        elif selected is None and items is not None:
-            if len(items) > 0:
-                self.selected = 0
+        elif selected is None and items is not None and len(items) > 0:
+            self.selected = 0
 
         super().__init__(
             parent=parent,

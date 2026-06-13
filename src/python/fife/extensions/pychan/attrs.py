@@ -89,7 +89,7 @@ class PointAttr(Attr):
         except (TypeError, ValueError):
             raise ParserError(
                 str(self.name) + " expected a comma separated list of two integers."
-            )
+            ) from None
 
 
 class ColorAttr(Attr):
@@ -125,9 +125,9 @@ class ColorAttr(Attr):
                         raise ParserError(
                             str(self.name)
                             + f" expected a color (Failed: 0 <= {c} <= 255)"
-                        )
+                        ) from None
         except (TypeError, ValueError, ParserError):
-            raise ParserError(str(self.name) + " expected a color.")
+            raise ParserError(str(self.name) + " expected a color.") from None
 
         return r, g, b, a
 
@@ -151,7 +151,7 @@ class IntAttr(Attr):
         try:
             return int(value)
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a single integer.")
+            raise ParserError(str(self.name) + " expected a single integer.") from None
 
 
 class BoolAttr(Attr):
@@ -199,7 +199,7 @@ class FloatAttr(Attr):
         try:
             return float(value)
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a float.")
+            raise ParserError(str(self.name) + " expected a float.") from None
 
 
 class ListAttr(Attr):
@@ -222,7 +222,7 @@ class ListAttr(Attr):
             result = list(map(str, str(value).split(",")))
             return result
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a list with strings.")
+            raise ParserError(str(self.name) + " expected a list with strings.") from None
 
 
 class UnicodeListAttr(Attr):
@@ -245,7 +245,9 @@ class UnicodeListAttr(Attr):
             result = list(map(str, str(value).split(",")))
             return result
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a list with unicode strings.")
+            raise ParserError(
+                str(self.name) + " expected a list with unicode strings."
+            ) from None
 
 
 class IntListAttr(Attr):
@@ -268,7 +270,7 @@ class IntListAttr(Attr):
             result = list(map(int, str(value).split(",")))
             return result
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a list with ints.")
+            raise ParserError(str(self.name) + " expected a list with ints.") from None
 
 
 class BoolListAttr(Attr):
@@ -291,7 +293,7 @@ class BoolListAttr(Attr):
             result = list(map(bool, str(value).split(",")))
             return result
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a list with bools.")
+            raise ParserError(str(self.name) + " expected a list with bools.") from None
 
 
 class FloatListAttr(Attr):
@@ -314,7 +316,7 @@ class FloatListAttr(Attr):
             result = list(map(float, str(value).split(",")))
             return result
         except (TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a list with floats.")
+            raise ParserError(str(self.name) + " expected a list with floats.") from None
 
 
 ATTRIBUTE_TYPE = {
@@ -356,8 +358,8 @@ class MixedListAttr(Attr):
                 m = ATTRIBUTE_TYPE.get(type)
                 if m is None:
                     raise ParserError("Unknown attribute type " + type + ".")
-                method = getattr(m(self), "parse")
+                method = m(self).parse
                 result.append(method(val))
             return result
         except (AttributeError, IndexError, TypeError, ValueError):
-            raise ParserError(str(self.name) + " expected a mixed list.")
+            raise ParserError(str(self.name) + " expected a mixed list.") from None

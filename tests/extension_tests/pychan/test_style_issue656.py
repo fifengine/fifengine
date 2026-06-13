@@ -7,8 +7,14 @@ import pytest
 
 
 def _make_manager():
-    """Create a Manager instance without invoking __init__ (which needs engine)."""
-    from fife.extensions.pychan.internal import Manager, DEFAULT_STYLE
+    """Create a Manager instance without invoking __init__ (which needs engine).
+
+    Returns
+    -------
+    Manager
+        A Manager instance with default style registered.
+    """
+    from fife.extensions.pychan.internal import DEFAULT_STYLE, Manager
 
     mgr = object.__new__(Manager)
     mgr.styles = {}
