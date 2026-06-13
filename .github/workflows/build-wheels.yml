@@ -110,7 +110,13 @@ jobs:
           key: cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-vcpkg-wheels-${{ matrix.config.preset }}-
+
+      - name: 🎯 Setup UV Cache
+        id: cache-uv
+        uses: actions/cache@v5
+        with:
+          path: ~\AppData\Local\uv\cache
+          key: uv-cache-wheels-${{ runner.os }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
@@ -121,7 +127,6 @@ jobs:
           key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-deps-wheels-${{ matrix.config.preset }}-
 
       - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
@@ -151,12 +156,12 @@ jobs:
           vcpkg integrate install
 
       - name: 📦 1.3 VCPKG - Install dependencies
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
-        #if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake ^
@@ -164,12 +169,12 @@ jobs:
             -B "%DEPS_DIR%\build" ^
             -G Ninja ^
             -DCMAKE_BUILD_TYPE=Release ^
-            -DFIFE_DEPENDENCIES_ROOT="%DEPS_DIR%" ^
             -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%"
+
       - name: 🏗️ 2.2 Install non-vcpkg dependencies
-        #if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake --build "%DEPS_DIR%\build" --parallel
@@ -199,7 +204,7 @@ jobs:
       - name: 🛠️ 3.2 Install wheel building tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install check-wheel-contents
+          python -m pip install uv
           python -m pip install cibuildwheel
 
       - name: 🔧 3.3 Normalize paths for cibuildwheel
@@ -246,9 +251,10 @@ jobs:
             python -m delvewheel repair {wheel} --wheel-dir {dest_dir} --ignore-existing
 
       - name: 🛠️ 3.5 Verify wheels
+        shell: bash
         run: |
           ls wheelhouse/*.whl
-          python -m check_wheel_contents --config pyproject.toml wheelhouse/*.whl
+          uv tool run --from check-wheel-contents check-wheel-contents --config pyproject.toml wheelhouse/*.whl
 
       - name: 🚬 Smoke Test (Basic Import)
         shell: bash
@@ -375,7 +381,13 @@ jobs:
           key: cache-vcpkg-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-vcpkg-linux-wheels-${{ matrix.config.preset }}
+
+      - name: 🎯 Setup UV Cache
+        id: cache-uv-linux-wheels
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/uv
+          key: uv-cache-wheels-${{ runner.os }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps-linux-wheels
@@ -386,7 +398,6 @@ jobs:
           key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-deps-linux-wheels-${{ matrix.config.preset }}
 
       - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
@@ -404,10 +415,12 @@ jobs:
           "${VCPKG_ROOT}/vcpkg" integrate install
 
       - name: 📦 1.3 Install VCPKG dependencies
+        if: steps.cache-vcpkg-linux-wheels.outputs.cache-hit != 'true'
         run: |
           "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
+        if: steps.cache-deps-linux-wheels.outputs.cache-hit != 'true'
         run: |
           cmake \
             -S dependencies \
@@ -419,8 +432,26 @@ jobs:
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
+        if: steps.cache-deps-linux-wheels.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
+
+      - name: 💾 Save Dependencies cache
+        if: ${{ always() && !cancelled() && steps.cache-deps-linux-wheels.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+
+      - name: 🎯 Setup Build Directory Cache
+        id: cache-build-dir-linux-wheels
+        uses: actions/cache@v5
+        with:
+          path: build
+          key: build-dir-linux-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            build-dir-linux-${{ github.ref }}-
 
       - name: 🛠️ 3.1 Show uv version
         run: |
@@ -428,6 +459,7 @@ jobs:
 
       - name: 🛠️ 3.2 Build Linux wheel
         env:
+          SKBUILD_BUILD_DIR: build/{wheel_tag}
           CMAKE_ARGS: >
             -DENABLE_FIFEGUI=ON
             -DBUILD_PYTHON_BINDINGS=ON
@@ -443,7 +475,7 @@ jobs:
       - name: 🛠️ 3.3 Verify wheels
         run: |
           ls wheelhouse/*.whl
-          uvx --from check-wheel-contents check-wheel-contents --config pyproject.toml wheelhouse/*.whl
+          uv tool run --from check-wheel-contents check-wheel-contents --config pyproject.toml wheelhouse/*.whl
 
       - name: 🐍 Prepare wheel test environment
         run: |

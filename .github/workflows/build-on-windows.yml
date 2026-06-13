@@ -111,10 +111,9 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.23 # https://github.com/hendrikmuhs/ccache-action
         with:
           variant: sccache
-          key: build-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('.github/workflows/build.yml') }}
+          key: build-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('.github/workflows/build-on-windows.yml') }}
           restore-keys: |
             build-${{ matrix.config.preset }}-${{ github.ref }}
-            build-${{ matrix.config.preset }}
 
       - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
@@ -128,7 +127,6 @@ jobs:
           key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-vcpkg-${{ matrix.config.preset }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
@@ -139,7 +137,6 @@ jobs:
           key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-deps-${{ matrix.config.preset }}
 
       - name: 🔽 1.1 Update VCPKG (latest TAG)
         run: |
@@ -169,12 +166,12 @@ jobs:
           vcpkg integrate install
 
       - name: 📦 1.3 VCPKG - Install dependencies
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
-        #if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake ^
@@ -187,10 +184,18 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%"
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
-        #if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cmake --build "%DEPS_DIR%\build" --parallel
+
+      - name: 💾 Save Dependencies cache
+        if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
 
       # Notes:
       # - SWIG: the detection uses the CMake FindSWIG module, which looks for SWIG_EXECUTABLE and SWIG_DIR.
