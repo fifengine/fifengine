@@ -74,7 +74,7 @@ jobs:
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}\vcpkg_installed
       SOURCE_DIR:          ${{ github.workspace }}
       BUILD_DIR:           ${{ github.workspace }}\build
-      DEPS_DIR:            ${{ github.workspace }}\out\fife-dependencies
+      DEPS_DIR:            ${{ github.workspace }}\out\fife-dependencies\${{ matrix.config.triplet }}
 
     defaults:
       run:
@@ -335,7 +335,7 @@ jobs:
       VCPKG_ROOT: /opt/vcpkg
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       SOURCE_DIR: ${{ github.workspace }}
-      DEPS_DIR: ${{ github.workspace }}/out/fife-dependencies
+      DEPS_DIR: ${{ github.workspace }}/out/fife-dependencies/${{ matrix.config.triplet }}
 
     defaults:
       run:
