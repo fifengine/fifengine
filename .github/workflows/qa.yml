@@ -94,11 +94,6 @@ jobs:
         run: |
           cpplint --recursive src include tests examples
 
-      - name: 🛠️ Identify places where 'reinterpret_cast' is used
-        run: |
-          grep -rniw --include=\*.{cpp,hpp} "reinterpret_cast" src include tests examples
-        continue-on-error: true
-
 # ---------------------------------------------------------------------------------------
 
   cppcheck:
@@ -217,6 +212,26 @@ jobs:
       - name: 🛠️ Check for MAYBE, PROBABLY, BROKEN, WORKAROUND comments (src)
         run: |
           rg -i '\b(?:MAYBE|PROBABLY|BROKEN|WORKAROUND)\b' src
+
+      - name: 🛠️ Identify reinterpret_cast usage (src, tests)
+        continue-on-error: true
+        run: |
+          rg -n -g '*.{cpp,hpp}' '\breinterpret_cast\b' src tests
+
+      - name: 🛠️ Identify const_cast usage (src, tests)
+        continue-on-error: true
+        run: |
+          rg -n -g '*.{cpp,hpp}' '\bconst_cast\b' src tests
+
+      - name: 🛠️ Identify static_cast usage (src, tests)
+        continue-on-error: true
+        run: |
+          rg -n -g '*.{cpp,hpp}' '\bstatic_cast\b' src tests
+
+      - name: 🛠️ Identify dynamic_cast usage (src, tests)
+        continue-on-error: true
+        run: |
+          rg -n -g '*.{cpp,hpp}' '\bdynamic_cast\b' src tests
 
       - name: 🛠️ Check SWIG interface files for comments (src/**/*.i)
         run: |
