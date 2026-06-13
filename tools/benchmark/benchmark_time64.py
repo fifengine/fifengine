@@ -26,7 +26,9 @@ def _bootstrap_runtime_paths(repo_root):
         sys.path.insert(0, str(local_build))
         _prepend_env_path("PYTHONPATH", local_build)
 
-    dependency_lib = repo_root / "out" / "fife-dependencies" / "x64-linux" / "install" / "lib"
+    dependency_lib = (
+        repo_root / "out" / "fife-dependencies" / "x64-linux" / "install" / "lib"
+    )
     if dependency_lib.is_dir():
         _prepend_env_path("LD_LIBRARY_PATH", dependency_lib)
 
@@ -38,9 +40,25 @@ def _set_headless_defaults():
 
 def _preload_native_libs(repo_root):
     candidates = [
-        repo_root / "out" / "fife-dependencies" / "x64-linux" / "install" / "lib" / "libfifechan.so.0.2.0",
-        repo_root / "out" / "fife-dependencies" / "x64-linux" / "install" / "lib" / "libfifechan.so",
-        repo_root / "out" / "build" / "clang22-x64-linux-dbg-cov" / "libfifengine.so.0.5.0",
+        repo_root
+        / "out"
+        / "fife-dependencies"
+        / "x64-linux"
+        / "install"
+        / "lib"
+        / "libfifechan.so.0.2.0",
+        repo_root
+        / "out"
+        / "fife-dependencies"
+        / "x64-linux"
+        / "install"
+        / "lib"
+        / "libfifechan.so",
+        repo_root
+        / "out"
+        / "build"
+        / "clang22-x64-linux-dbg-cov"
+        / "libfifengine.so.0.5.0",
         repo_root / "out" / "build" / "clang22-x64-linux-dbg-cov" / "libfifengine.so",
     ]
     for lib in candidates:
@@ -128,7 +146,9 @@ def main():
 
         results = [
             _measure("scheduler_performance_updates_25000", bench_scheduler_updates),
-            _measure("event_queue_overhead_timestamp_ops_10005", bench_event_timestamp_ops),
+            _measure(
+                "event_queue_overhead_timestamp_ops_10005", bench_event_timestamp_ops
+            ),
             _measure("serialization_impact_json_roundtrip", bench_json_roundtrip),
             _measure("serialization_impact_pickle_roundtrip", bench_pickle_roundtrip),
         ]

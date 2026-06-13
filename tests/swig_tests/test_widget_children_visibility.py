@@ -175,9 +175,9 @@ class TestWidgetChildrenVisibility:
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
         rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
-        assert rects_intersect(children_area, rendered), (
-            f"partially visible child should intersect, rendered={rendered}"
-        )
+        assert rects_intersect(
+            children_area, rendered
+        ), f"partially visible child should intersect, rendered={rendered}"
 
     def test_zero_size_child_not_visible(self):
         """A child with zero width or height should not be visible."""
@@ -190,9 +190,9 @@ class TestWidgetChildrenVisibility:
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
         rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
-        assert not rects_intersect(children_area, rendered), (
-            f"zero-width child should not be visible, rendered={rendered}"
-        )
+        assert not rects_intersect(
+            children_area, rendered
+        ), f"zero-width child should not be visible, rendered={rendered}"
 
     def test_child_right_of_content_area_is_hidden(self):
         """A child completely to the right of the content area
@@ -208,9 +208,9 @@ class TestWidgetChildrenVisibility:
         children_area = (ca_x, ca_y, win.getWidth(), win.getHeight())
         rendered = (ca_x + wgt.getX(), ca_y + wgt.getY(), wgt.getWidth(), wgt.getHeight())
 
-        assert not rects_intersect(children_area, rendered), (
-            f"child right of content should be hidden, rendered={rendered}"
-        )
+        assert not rects_intersect(
+            children_area, rendered
+        ), f"child right of content should be hidden, rendered={rendered}"
 
     def test_child_in_vbox_in_window_is_visible(self):
         """A child inside a VBox inside a Window should be visible."""
@@ -234,9 +234,9 @@ class TestWidgetChildrenVisibility:
             vbox.getHeight(),
         )
 
-        assert rects_intersect(children_area, vbox_rendered), (
-            f"VBox in Window should be visible, rendered={vbox_rendered}"
-        )
+        assert rects_intersect(
+            children_area, vbox_rendered
+        ), f"VBox in Window should be visible, rendered={vbox_rendered}"
 
         vbox_ca_x = 0
         vbox_ca_y = 0

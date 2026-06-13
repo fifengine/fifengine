@@ -54,9 +54,9 @@ class TestStyleIssue656:
 
         stored = mgr.styles["custom"]
         assert Label in stored
-        assert stored[Label]["border_size"] == 5, (
-            f"Expected border_size=5 from custom style, got {stored[Label]['border_size']}"
-        )
+        assert (
+            stored[Label]["border_size"] == 5
+        ), f"Expected border_size=5 from custom style, got {stored[Label]['border_size']}"
 
     def test_mixed_tuple_and_single_keys_in_one_style(self):
         """A style with both tuple and single keys should work correctly."""
@@ -89,6 +89,6 @@ class TestStyleIssue656:
         mgr = _make_manager()
 
         for cls in (Container, HBox, VBox):
-            assert cls in mgr.styles["default"], (
-                f"{cls.__name__} should have its own key (flattened from tuple)"
-            )
+            assert (
+                cls in mgr.styles["default"]
+            ), f"{cls.__name__} should have its own key (flattened from tuple)"

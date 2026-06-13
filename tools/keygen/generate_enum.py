@@ -64,26 +64,26 @@ namespace FIFE
 
 # Names that would conflict with other symbols in the FIFE namespace.
 CONFLICT_RENAME = {
-    'LESS': 'KEY_LESS',
-    'GREATER': 'KEY_GREATER',
-    'UNKNOWN': 'KEY_UNKNOWN',
-    'DELETE': 'KEY_DELETE',   # <winnt.h>
-    'OUT': 'KEY_OUT',         # <windef.h>
-    'IN': 'KEY_IN',           # <windef.h>
-    'NEAR': 'KEY_NEAR',       # <windef.h>
-    'FAR': 'KEY_FAR',         # <windef.h>
-    'CANCEL': 'KEY_CANCEL',   # <winuser.h>
-    'CLEAR': 'KEY_CLEAR',     # <winuser.h>
-    'COPY': 'KEY_COPY',       # <winuser.h>
-    'SELECT': 'KEY_SELECT',   # <winuser.h>
+    "LESS": "KEY_LESS",
+    "GREATER": "KEY_GREATER",
+    "UNKNOWN": "KEY_UNKNOWN",
+    "DELETE": "KEY_DELETE",  # <winnt.h>
+    "OUT": "KEY_OUT",  # <windef.h>
+    "IN": "KEY_IN",  # <windef.h>
+    "NEAR": "KEY_NEAR",  # <windef.h>
+    "FAR": "KEY_FAR",  # <windef.h>
+    "CANCEL": "KEY_CANCEL",  # <winuser.h>
+    "CLEAR": "KEY_CLEAR",  # <winuser.h>
+    "COPY": "KEY_COPY",  # <winuser.h>
+    "SELECT": "KEY_SELECT",  # <winuser.h>
 }
 
 
 def to_enum_name(name: str) -> str:
     """Convert SDLK_FOO to FOO, prefix numeric-leading names with _."""
-    s = name.removeprefix('SDLK_')
+    s = name.removeprefix("SDLK_")
     if s and s[0].isdigit():
-        s = '_' + s
+        s = "_" + s
     # Rename conflicting names
     if s in CONFLICT_RENAME:
         return CONFLICT_RENAME[s]
@@ -91,31 +91,33 @@ def to_enum_name(name: str) -> str:
 
 
 def generate(data: dict) -> str:
-    v = data['version']
+    v = data["version"]
     maj, min_, mic = v
     version_num = maj * 1_000_000 + min_ * 1_000 + mic
 
     lines = []
-    for k in data['keys']:
-        name = k['name']
-        value = k['value']
-        comment = k['comment']
+    for k in data["keys"]:
+        name = k["name"]
+        value = k["value"]
+        comment = k["comment"]
         enum_entry = to_enum_name(name)
         if comment:
-            lines.append(f'            {enum_entry:20s} = {value}u, // {comment}')
+            lines.append(f"            {enum_entry:20s} = {value}u, // {comment}")
         else:
-            lines.append(f'            {enum_entry:20s} = {value}u,')
+            lines.append(f"            {enum_entry:20s} = {value}u,")
 
-    body = '\n'.join(lines)
+    body = "\n".join(lines)
 
     return HEADER.format(
-        version=f'{maj}.{min_}.{mic}',
-        maj=maj, min=min_, mic=mic,
+        version=f"{maj}.{min_}.{mic}",
+        maj=maj,
+        min=min_,
+        mic=mic,
         version_num=version_num,
         body=body,
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     data = json.load(sys.stdin)
-    print(generate(data), end='')
+    print(generate(data), end="")

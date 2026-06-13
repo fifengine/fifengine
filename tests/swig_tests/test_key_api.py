@@ -129,9 +129,9 @@ def test_module_key_values_unique():
     seen = {}
     for name in MODULE_KEYS:
         val = getattr(fife, name)
-        assert val not in seen, (
-            f"Key collision: {seen[val]} and {name} both have value {val}"
-        )
+        assert (
+            val not in seen
+        ), f"Key collision: {seen[val]} and {name} both have value {val}"
         seen[val] = name
 
 
