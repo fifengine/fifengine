@@ -189,7 +189,7 @@ namespace FIFE
         // Normalize separators (Windows may provide backslashes) and add
         // a trailing slash so splitting is consistent across platforms.
         std::string normalized = path;
-        std::replace(normalized.begin(), normalized.end(), '\\', '/');
+        std::ranges::replace(normalized, '\\', '/');
         std::string const newpath       = normalized + "/";
         std::vector<std::string> tokens = split(newpath, '/');
 

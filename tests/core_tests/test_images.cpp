@@ -13,8 +13,9 @@
 #include "fixture.h"
 
 // 3rd party library includes
-#include <catch2/catch_test_macros.hpp>
 #include <SDL3/SDL.h>
+
+#include <catch2/catch_test_macros.hpp>
 
 // FIFE includes
 #include "util/structures/rect.h"
@@ -70,7 +71,7 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
             static_cast<uint8_t const *>(s->pixels), static_cast<size_t>(s->h) * static_cast<size_t>(s->pitch));
         size_t const offset =
             (static_cast<size_t>(172) * static_cast<size_t>(s->pitch)) + (static_cast<size_t>(134) * 4U);
-        std::memcpy(&pix, &pixel_span[offset], sizeof(pix));
+        std::memcpy(&pix, pixel_span.data() + offset, sizeof(pix));
         SDL_GetRGBA(pix, f, nullptr, &surf_r, &surf_g, &surf_b, &surf_a);
     }
 

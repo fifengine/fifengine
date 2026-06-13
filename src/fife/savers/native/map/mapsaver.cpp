@@ -384,7 +384,7 @@ namespace FIFE
         }
 
         auto const & cameras = map.getCameras();
-        for (auto& camera : cameras) {
+        for (auto const & camera : cameras) {
             if (camera->getMap()->getName() == map.getName()) {
                 XML::Element* cameraElement = doc.NewElement("camera");
 

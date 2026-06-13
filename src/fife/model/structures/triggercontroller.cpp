@@ -33,7 +33,7 @@ namespace FIFE
 
         void trigger_deleter(Trigger* trigger)
         {
-            delete trigger;
+            delete trigger; // NOLINT(cppcoreguidelines-owning-memory)
         }
     } // namespace
 
@@ -45,7 +45,7 @@ namespace FIFE
 
     Trigger* TriggerController::createTrigger(std::string const & triggerName)
     {
-        std::unique_ptr<Trigger, void (*)(Trigger *)> trigger(new Trigger(triggerName), &trigger_deleter);
+        std::unique_ptr<Trigger, void (*)(Trigger*)> trigger(new Trigger(triggerName), &trigger_deleter);
         auto [it, inserted] = m_triggerNameMap.emplace(triggerName, std::move(trigger));
         if (!inserted) {
             FL_WARN(

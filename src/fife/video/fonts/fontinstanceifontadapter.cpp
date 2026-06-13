@@ -214,7 +214,7 @@ namespace FIFE
                 static_cast<size_t>((renderedText->pitch / 4) * renderedText->h));
             auto const totalPx = px.size();
             for (size_t i = 0; i < totalPx && i < 10000; ++i) {
-                if (px[i] != 0) {
+                if (*(px.data() + i) != 0) {
                     ++nonZero;
                 }
             }
@@ -222,9 +222,10 @@ namespace FIFE
                 _log(),
                 std::format(
                     "  first={:#010x} center={:#010x} nonZero/{}k={}",
-                    px[0],
-                    px[static_cast<size_t>(
-                        ((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))],
+                    *(px.data() + 0),
+                    // NOLINTNEXTLINE(bugprone-misplaced-widening-cast)
+                    *(px.data() +
+                      static_cast<size_t>(((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))),
                     totalPx > 10000 ? 10 : totalPx / 1000,
                     nonZero));
         }
@@ -246,9 +247,9 @@ namespace FIFE
                         uint8_t g = 0;
                         uint8_t b = 0;
                         uint8_t a = 0;
-                        SDL_GetRGBA(row[static_cast<size_t>(x)], fmt, nullptr, &r, &g, &b, &a);
+                        SDL_GetRGBA(*(row.data() + static_cast<size_t>(x)), fmt, nullptr, &r, &g, &b, &a);
                         if (a == 0 && (r != 0 || g != 0 || b != 0)) {
-                            row[static_cast<size_t>(x)] = 0;
+                            *(row.data() + static_cast<size_t>(x)) = 0;
                             ++fixedCount;
                         }
                     }
@@ -484,8 +485,10 @@ namespace FIFE
                 auto const pixels = std::span(
                     static_cast<uint32_t const *>(surface->pixels),
                     static_cast<size_t>((surface->pitch / 4) * surface->h));
-                firstPixel  = pixels[0];
-                centerPixel = pixels[static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2))];
+                firstPixel = *(pixels.data() + 0);
+                // NOLINTNEXTLINE(bugprone-misplaced-widening-cast)
+                centerPixel = *(
+                    pixels.data() + static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2)));
             }
             FL_LOG(
                 _log(),

@@ -66,8 +66,6 @@ namespace FIFE
         m_had_widget(false),
         m_lastMotionX(0),
         m_lastMotionY(0),
-        m_fonts(),
-        m_widgets(),
         m_fontsize(0),
         m_logic_executed(false),
         m_enabled_console(true)
@@ -161,9 +159,9 @@ namespace FIFE
     void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
         if (m_backend == "SDL") { // NOLINT(bugprone-branch-clone)
-            static_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+            dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else {
-            static_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+            dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         }
         m_fcn_topcontainer->setDimension(
             fcn::Rectangle(

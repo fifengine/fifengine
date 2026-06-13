@@ -64,9 +64,9 @@ namespace FIFE
                 Uint8 g = 0;
                 Uint8 b = 0;
                 Uint8 a = 0;
-                SDL_GetRGBA(allPixels[rowStart + static_cast<size_t>(x)], fmt, nullptr, &r, &g, &b, &a);
+                SDL_GetRGBA(*(allPixels.data() + rowStart + static_cast<size_t>(x)), fmt, nullptr, &r, &g, &b, &a);
                 if (a == 0) {
-                    allPixels[rowStart + static_cast<size_t>(x)] = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
+                    *(allPixels.data() + rowStart + static_cast<size_t>(x)) = SDL_MapRGBA(fmt, nullptr, 0, 0, 0, 0);
                 }
             }
         }

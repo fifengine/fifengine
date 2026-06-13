@@ -139,7 +139,7 @@ namespace FIFE
                 // for non-streaming soundclips
                 SoundBufferEntry const * ptr = m_buffervec.at(0).get();
                 for (uint32_t i = 0; i < ptr->usedbufs; i++) {
-                    alDeleteBuffers(1, &ptr->buffers[i]);
+                    alDeleteBuffers(1, &ptr->buffers.at(i));
                 }
             }
             m_buffervec.clear();

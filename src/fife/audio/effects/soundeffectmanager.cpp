@@ -41,7 +41,7 @@ namespace FIFE
         {
             void const * ptr = alGetProcAddress(name);
             static_assert(sizeof(T) == sizeof(void*));
-            return std::bit_cast<T>(ptr);
+            return std::bit_cast<T>(ptr); // NOLINT(bugprone-bitwise-pointer-cast)
         }
 
         // Effect Slots

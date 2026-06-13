@@ -37,6 +37,7 @@ namespace FIFE
 
             ZipProvider(ZipProvider const &)            = delete;
             ZipProvider& operator=(ZipProvider const &) = delete;
+            ~ZipProvider() override;
 
             bool isReadable(std::string const & file) const override;
             VFSSource* createSource(std::string const & file) override;

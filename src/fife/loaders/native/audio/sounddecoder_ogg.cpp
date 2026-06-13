@@ -151,7 +151,7 @@ namespace FIFE
             int const chunk_size           = static_cast<int>(
                 std::min<uint64_t>(remaining_bytes, static_cast<uint64_t>(std::numeric_limits<int>::max())));
 
-            ret = ov_read(&m_ovf, &buf[static_cast<size_t>(m_datasize)], chunk_size, 0, 2, 1, &stream);
+            ret = ov_read(&m_ovf, buf.data() + static_cast<size_t>(m_datasize), chunk_size, 0, 2, 1, &stream);
             if (ret > 0) {
                 m_datasize += static_cast<uint64_t>(ret);
             } else if (ret == OV_HOLE) {

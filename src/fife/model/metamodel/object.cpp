@@ -40,13 +40,14 @@ namespace FIFE
 
     Object::BasicObjectProperty::~BasicObjectProperty() = default;
 
-    namespace {
+    namespace
+    {
         // deleter for Action used by unique_ptr<Action, void(*)(Action*)>
         void action_deleter(Action* a)
         {
-            delete a;
+            delete a; // NOLINT(cppcoreguidelines-owning-memory)
         }
-    }
+    } // namespace
 
     Object::MovableObjectProperty::MovableObjectProperty() : m_pather(nullptr), m_cost(1.0), m_speed(1.0), m_zRange(0)
     {
@@ -57,10 +58,7 @@ namespace FIFE
     }
 
     Object::Object(std::string identifier, std::string name_space, Object* inherited) :
-        m_name(std::move(identifier)),
-        m_namespace(std::move(name_space)),
-
-        m_inherited(inherited)
+        m_name(std::move(identifier)), m_namespace(std::move(name_space)), m_inherited(inherited)
     {
     }
 
@@ -77,13 +75,19 @@ namespace FIFE
             throw NameClash(identifier);
         }
 
-        std::unique_ptr<Action, void (*)(Action *)> a(new Action(identifier), &action_deleter);
+        std::unique_ptr<Action, void (*)(Action*)> a(new Action(identifier), &action_deleter);
+
         Action* raw = a.get();
+
         m_basicProperty->m_actions.emplace(identifier, std::move(a));
+
         if (is_default || (m_basicProperty->m_defaultAction == nullptr)) {
             m_basicProperty->m_defaultAction = raw;
         }
-        return raw;
+
+        // a is moved into the map at L84.
+        // raw points to the now-map-owned object and not a dangling local.
+        return raw; // cppcheck-suppress returnDanglingLifetime
     }
 
     Action* Object::getAction(std::string const & identifier, bool deepsearch) const

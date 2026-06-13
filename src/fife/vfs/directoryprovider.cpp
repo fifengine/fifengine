@@ -31,9 +31,8 @@ namespace FIFE
                 source = m_sources[path];
             } else {
                 auto vfsDir     = std::make_unique<VFSDirectory>(getVFS(), path);
-                source          = vfsDir.get();
+                source          = vfsDir.release();
                 m_sources[path] = source;
-                vfsDir.release();
             }
             return source;
         }

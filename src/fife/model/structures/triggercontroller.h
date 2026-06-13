@@ -45,11 +45,11 @@ namespace FIFE
             explicit TriggerController(Map* map);
 
             // Non-copyable: owns Trigger instances via unique_ptr
-            TriggerController(TriggerController const &) = delete;
-            TriggerController & operator=(TriggerController const &) = delete;
+            TriggerController(TriggerController const &)            = delete;
+            TriggerController& operator=(TriggerController const &) = delete;
             // Allow move
-            TriggerController(TriggerController &&) noexcept = default;
-            TriggerController & operator=(TriggerController &&) noexcept = default;
+            TriggerController(TriggerController&&) noexcept            = default;
+            TriggerController& operator=(TriggerController&&) noexcept = default;
 
             /** Destructor.
              */
@@ -207,10 +207,10 @@ namespace FIFE
             //! Pointer to the map this controller is associated with.
             Map* m_map [[maybe_unused]]; // TODO: implement map-level trigger operations
 
-            using TriggerNameMap              = std::map<std::string, std::unique_ptr<Trigger, void (*)(Trigger *)>>;
+            using TriggerNameMap              = std::map<std::string, std::unique_ptr<Trigger, void (*)(Trigger*)>>;
             using TriggerNameMapIterator      = TriggerNameMap::iterator;
             using TriggerNameMapConstIterator = TriggerNameMap::const_iterator;
-            using TriggerNameMapPair          = std::pair<std::string, std::unique_ptr<Trigger, void (*)(Trigger *)>>;
+            using TriggerNameMapPair          = std::pair<std::string, std::unique_ptr<Trigger, void (*)(Trigger*)>>;
             //! Trigger name map
             TriggerNameMap m_triggerNameMap;
     };

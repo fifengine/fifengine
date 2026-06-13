@@ -235,11 +235,11 @@ namespace FIFE
             void removeAll();
 
             // non-copyable: contains containers of unique_ptr
-            OffRenderer(OffRenderer const &) = delete;
-            OffRenderer & operator=(OffRenderer const &) = delete;
+            OffRenderer(OffRenderer const &)            = delete;
+            OffRenderer& operator=(OffRenderer const &) = delete;
             // allow move if needed
-            OffRenderer(OffRenderer &&) noexcept = default;
-            OffRenderer & operator=(OffRenderer &&) noexcept = default;
+            OffRenderer(OffRenderer&&) noexcept            = default;
+            OffRenderer& operator=(OffRenderer&&) noexcept = default;
 
         private:
             std::map<std::string, std::vector<std::unique_ptr<OffRendererElementInfo>>> m_groups;

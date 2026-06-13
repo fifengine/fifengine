@@ -35,12 +35,12 @@ namespace FIFE
         ImageManager* imgManager = ImageManager::instance();
 
         if (imgManager->exists(filename)) {
-            return new GuiImage(imgManager->get(filename));
+            return new GuiImage(imgManager->get(filename)); // NOLINT(cppcoreguidelines-owning-memory)
         }
         // load demanded image
         ImagePtr tmpimg = imgManager->load(filename);
         if (tmpimg->getWidth() >= ATLAS_SIZE || tmpimg->getHeight() >= ATLAS_SIZE) {
-            return new GuiImage(tmpimg);
+            return new GuiImage(tmpimg); // NOLINT(cppcoreguidelines-owning-memory)
         }
         // look for a place for an image of given size
         AtlasBlock const * block = m_atlasbook->getBlock(tmpimg->getWidth(), tmpimg->getHeight());
@@ -74,6 +74,6 @@ namespace FIFE
             static_cast<int32_t>(block->getHeight()));
         img->useSharedImage(m_atlases.at(block->page), region);
 
-        return new GuiImage(img);
+        return new GuiImage(img); // NOLINT(cppcoreguidelines-owning-memory)
     }
 } // namespace FIFE

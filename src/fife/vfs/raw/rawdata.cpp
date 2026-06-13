@@ -163,7 +163,7 @@ namespace FIFE
         outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(static_cast<uint8_t*>(static_cast<void*>(outbuffer.data())), static_cast<size_t>(size));
+        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)

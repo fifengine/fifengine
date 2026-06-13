@@ -780,8 +780,8 @@ namespace FIFE
         result.resize(m_cells.size());
         for (size_t i = 0; i < m_cells.size(); ++i) {
             result.at(i).reserve(m_cells.at(i).size());
-            for (auto const & cellPtr : m_cells[i]) {
-                result[i].push_back(cellPtr.get());
+            for (auto const & cellPtr : m_cells.at(i)) {
+                result.at(i).push_back(cellPtr.get());
             }
         }
         return result;

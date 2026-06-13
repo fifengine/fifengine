@@ -19,15 +19,6 @@
 
 namespace fcn
 {
-    namespace
-    {
-        FIFE::Logger& _log()
-        {
-            static FIFE::Logger log(LM_GUI);
-            return log;
-        }
-    } // namespace
-
     ClickLabel::ClickLabel() :
         mGuiFont(nullptr), mAlignment(Graphics::Alignment::Left), mOpaque(true), mTextWrapping(false)
     {

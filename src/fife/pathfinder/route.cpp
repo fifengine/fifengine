@@ -348,7 +348,7 @@ namespace FIFE
                     for (auto const & fc : footprint) {
                         if (layer->cellContainsBlockingInstance(fc)) {
                             // Check if this blocker is part of the multi-cell's own path cells
-                            bool const isSelf = std::any_of(m_path.begin(), m_path.end(), [&](auto const & pathCell) {
+                            bool const isSelf = std::ranges::any_of(m_path, [&](auto const & pathCell) {
                                 return pathCell.getLayerCoordinates() == fc && pathCell.getLayer() == layer;
                             });
                             if (!isSelf) {

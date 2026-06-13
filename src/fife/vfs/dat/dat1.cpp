@@ -85,7 +85,8 @@ namespace FIFE
     std::unique_ptr<RawData> DAT1::open(std::string const & file) const
     {
         RawDataDAT1::s_info const & info = getInfo(file);
-        return std::make_unique<RawData>(new RawDataDAT1(getVFS(), m_datpath, info));
+        return std::make_unique<RawData>(
+            new RawDataDAT1(getVFS(), m_datpath, info)); // NOLINT(cppcoreguidelines-owning-memory)
     }
 
     bool DAT1::fileExists(std::string const & name) const

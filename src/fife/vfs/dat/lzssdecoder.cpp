@@ -84,19 +84,19 @@ namespace FIFE
         while (ibuf < len) {
             flags >>= 1;
             if ((flags & 256) == 0) {
-                c     = inSpan[static_cast<size_t>(ibuf++)];
+                c     = *(inSpan.data() + static_cast<size_t>(ibuf++));
                 flags = static_cast<uint32_t>(c | 0xff00); /* uses higher byte cleverly to count eight */
             }
 
             if ((flags & 1) != 0U) {
-                c                                          = inSpan[static_cast<size_t>(ibuf++)];
-                outSpan[static_cast<size_t>(m_outindex++)] = static_cast<uint8_t>(c);
+                c                                                     = *(inSpan.data() + static_cast<size_t>(ibuf++));
+                *(outSpan.data() + static_cast<size_t>(m_outindex++)) = static_cast<uint8_t>(c);
 
                 buffer.at(static_cast<size_t>(r++)) = static_cast<char>(c);
                 r &= (kRingBufferSize - 1);
             } else {
-                i = inSpan[static_cast<size_t>(ibuf++)];
-                j = inSpan[static_cast<size_t>(ibuf++)];
+                i = *(inSpan.data() + static_cast<size_t>(ibuf++));
+                j = *(inSpan.data() + static_cast<size_t>(ibuf++));
 
                 i |= ((j & 0xf0) << 4);
                 j = (j & 0x0f) + kThreshold;
@@ -104,7 +104,7 @@ namespace FIFE
                 for (k = 0; k <= j; k++) {
                     c = static_cast<unsigned char>(buffer.at((i + k) & (kRingBufferSize - 1)));
 
-                    outSpan[static_cast<size_t>(m_outindex++)] = static_cast<uint8_t>(c);
+                    *(outSpan.data() + static_cast<size_t>(m_outindex++)) = static_cast<uint8_t>(c);
 
                     buffer.at(static_cast<size_t>(r++)) = static_cast<char>(c);
                     r &= (kRingBufferSize - 1);

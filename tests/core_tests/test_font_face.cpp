@@ -104,8 +104,7 @@ TEST_CASE("TrueTypeFontFace from memory")
     file.close();
 
     AssetHandle handle{10};
-    TrueTypeFontFace face(
-        handle, static_cast<uint8_t const *>(static_cast<void const *>(buf.data())), buf.size(), 12, "memory");
+    TrueTypeFontFace face(handle, reinterpret_cast<uint8_t const *>(buf.data()), buf.size(), 12, "memory");
 
     REQUIRE(face.getAssetHandle().id == 10);
     REQUIRE(face.getFont() != nullptr);

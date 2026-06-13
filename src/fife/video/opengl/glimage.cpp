@@ -298,7 +298,8 @@ namespace FIFE
                     rect.w,
                     rect.h,
                     alpha,
-                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) :
+                                     std::string("null"), // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                     m_tex_coords[0],
                     m_tex_coords[1],
                     m_tex_coords[2],
@@ -318,7 +319,8 @@ namespace FIFE
                     rect.w,
                     rect.h,
                     alpha,
-                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) : std::string("null"),
+                    rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) :
+                                     std::string("null"), // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                     m_tex_coords[0],
                     m_tex_coords[1],
                     m_tex_coords[2],
@@ -569,10 +571,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t r = data_span[pos + 0]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t g = data_span[pos + 1]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t b = data_span[pos + 2]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t a = data_span[pos + 3]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t r = *(data_span.data() + (pos + 0)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t g = *(data_span.data() + (pos + 1)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t b = *(data_span.data() + (pos + 2)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t a = *(data_span.data() + (pos + 3)); // NOLINT(cppcoreguidelines-init-variables)
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -587,7 +589,7 @@ namespace FIFE
                         g        = lum;
                         b        = lum;
                     }
-                    oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
+                    oglbuffer.at((static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x) =
                         static_cast<uint16_t>(((r >> 4) << 12) | ((g >> 4) << 8) | ((b >> 4) << 4) | ((a >> 4) << 0));
                 }
             }
@@ -621,20 +623,20 @@ namespace FIFE
                         size_t const gid =
                             static_cast<size_t>(x) + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
 
-                        uint8_t const r = oglbuffer[gid + 0];
-                        uint8_t const g = oglbuffer[gid + 1];
-                        uint8_t const b = oglbuffer[gid + 2];
+                        uint8_t const r = oglbuffer.at(gid + 0);
+                        uint8_t const g = oglbuffer.at(gid + 1);
+                        uint8_t const b = oglbuffer.at(gid + 2);
 
                         // set alpha to zero
                         if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
-                            oglbuffer[gid + 3] = 0;
+                            oglbuffer.at(gid + 3) = 0;
                         }
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         if (monochrome) {
-                            auto lum           = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
-                            oglbuffer[gid + 0] = lum;
-                            oglbuffer[gid + 1] = lum;
-                            oglbuffer[gid + 2] = lum;
+                            auto lum              = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
+                            oglbuffer.at(gid + 0) = lum;
+                            oglbuffer.at(gid + 1) = lum;
+                            oglbuffer.at(gid + 2) = lum;
                         }
                     }
                 }
@@ -661,10 +663,11 @@ namespace FIFE
                             static_cast<size_t>(x) + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         auto lum = static_cast<uint8_t>(
-                            (oglbuffer[gid + 0] * 0.3) + (oglbuffer[gid + 1] * 0.59) + (oglbuffer[gid + 2] * 0.11));
-                        oglbuffer[gid + 0] = lum;
-                        oglbuffer[gid + 1] = lum;
-                        oglbuffer[gid + 2] = lum;
+                            (oglbuffer.at(gid + 0) * 0.3) + (oglbuffer.at(gid + 1) * 0.59) +
+                            (oglbuffer.at(gid + 2) * 0.11));
+                        oglbuffer.at(gid + 0) = lum;
+                        oglbuffer.at(gid + 1) = lum;
+                        oglbuffer.at(gid + 2) = lum;
                     }
                 }
 
@@ -700,10 +703,9 @@ namespace FIFE
                     std::vector<uint8_t> packed(static_cast<size_t>(tightPitch) * static_cast<size_t>(height));
                     for (uint32_t y = 0; y < height; ++y) {
                         uint8_t const * srcRow =
-                            &data_span
-                                [static_cast<size_t>(y) *
-                                 static_cast<size_t>(pitch)]; // NOLINT(cppcoreguidelines-init-variables)
-                        uint8_t* dstRow = &packed[static_cast<size_t>(y) * static_cast<size_t>(tightPitch)];
+                            data_span.data() + (static_cast<size_t>(y) *
+                                                static_cast<size_t>(pitch)); // NOLINT(cppcoreguidelines-init-variables)
+                        uint8_t* dstRow = &packed.at(static_cast<size_t>(y) * static_cast<size_t>(tightPitch));
                         std::memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
                     }
 
@@ -729,10 +731,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t a = data_span[pos + 3]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t b = data_span[pos + 2]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t g = data_span[pos + 1]; // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t r = data_span[pos + 0]; // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t a = *(data_span.data() + (pos + 3)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t b = *(data_span.data() + (pos + 2)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t g = *(data_span.data() + (pos + 1)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t r = *(data_span.data() + (pos + 0)); // NOLINT(cppcoreguidelines-init-variables)
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -748,7 +750,7 @@ namespace FIFE
                         b        = lum;
                     }
 
-                    oglbuffer[(static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x] =
+                    oglbuffer.at((static_cast<size_t>(y) * static_cast<size_t>(m_chunk_size_w)) + x) =
                         static_cast<uint32_t>(r | (g << 8) | (b << 16) | (a << 24));
                 }
             }

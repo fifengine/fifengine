@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // 3rd party library includes
-#include <catch2/catch_test_macros.hpp>
 #include <fifechan.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 
 // Standard C++ library includes
 #include <cstdint>
@@ -45,18 +46,18 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
     GuiImageLoader imageloader;
     fcn::Image::setImageLoader(&imageloader);
 
-    fcn::Container* top = new fcn::Container();
+    auto top = std::make_unique<fcn::Container>();
     top->setDimension(fcn::Rectangle(0, 0, 200, 300));
-    fcn::Gui* gui = new fcn::Gui();
+    auto gui = std::make_unique<fcn::Gui>();
     gui->setGraphics(&graphics);
-    gui->setTop(top);
-    fcn::Label* label = new fcn::Label("Label");
+    gui->setTop(top.get());
+    auto label = std::make_unique<fcn::Label>("Label");
 
     fcn::Image const * guiimage = fcn::Image::load(IMAGE_FILE);
-    fcn::Icon* icon             = new fcn::Icon(guiimage);
+    auto icon                   = std::make_unique<fcn::Icon>(guiimage);
 
-    top->add(label, 10, 10);
-    top->add(icon, 10, 30);
+    top->add(label.get(), 10, 10);
+    top->add(icon.get(), 10, 30);
 
     ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
     REQUIRE(img);

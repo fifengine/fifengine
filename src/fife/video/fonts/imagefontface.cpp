@@ -76,13 +76,13 @@ namespace FIFE
             static_cast<uint32_t const *>(converted->pixels),
             static_cast<size_t>(pitch_px) * static_cast<size_t>(converted->h));
 
-        uint32_t const separator = pixels[0];
+        uint32_t const separator = *(pixels.data() + 0);
 
         size_t x = 0;
         for (auto c : glyphs) {
             uint32_t const codepoint = static_cast<unsigned char>(c);
 
-            while (x < width && pixels[x] == separator) {
+            while (x < width && *(pixels.data() + x) == separator) {
                 ++x;
             }
             if (x >= width) {
@@ -91,7 +91,7 @@ namespace FIFE
 
             size_t const glyphStart = x;
 
-            while (x < width && pixels[x] != separator) {
+            while (x < width && *(pixels.data() + x) != separator) {
                 ++x;
             }
             size_t const glyphEnd = x;
@@ -108,16 +108,16 @@ namespace FIFE
 
             for (int row = 0; row < converted->h; ++row) {
                 for (int col = 0; col < glyphWidth; ++col) {
-                    dstPixels[(static_cast<size_t>(row) * static_cast<size_t>(dstPitchPx)) + static_cast<size_t>(col)] =
-                        pixels
-                            [(static_cast<size_t>(row) * static_cast<size_t>(pitch_px)) +
-                             static_cast<size_t>(glyphStart) + static_cast<size_t>(col)];
+                    *(dstPixels.data() + (static_cast<size_t>(row) * static_cast<size_t>(dstPitchPx)) +
+                      static_cast<size_t>(col)) =
+                        *(pixels.data() + (static_cast<size_t>(row) * static_cast<size_t>(pitch_px)) +
+                          static_cast<size_t>(glyphStart) + static_cast<size_t>(col));
                 }
             }
 
             m_glyphs[codepoint] = GlyphInfo{.surface = glyphSub, .width = glyphWidth};
 
-            while (x < width && pixels[x] == separator) {
+            while (x < width && *(pixels.data() + x) == separator) {
                 ++x;
             }
         }

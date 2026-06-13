@@ -284,7 +284,9 @@ namespace FIFE
         int displayCount              = 0;
         SDL_DisplayID* displays       = SDL_GetDisplays(&displayCount);
         SDL_DisplayID const displayId = // NOLINT(cppcoreguidelines-init-variables)
-            (std::cmp_less(displayIndex, displayCount)) ? displays[displayIndex] : SDL_GetPrimaryDisplay();
+            (std::cmp_less(displayIndex, displayCount)) ?
+                displays[displayIndex] :
+                SDL_GetPrimaryDisplay(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
         uint16_t createWidth        = width;
         uint16_t createHeight       = height;
@@ -390,6 +392,7 @@ namespace FIFE
                 _log,
                 std::format(
                     "RenderBackendOpenGLError initializing GLEW!{}",
+                    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
                     reinterpret_cast<char const *>(glewGetErrorString(glewError))));
         }
 
@@ -1132,10 +1135,10 @@ namespace FIFE
                     elementCount,
                     m_state.color_enabled,
                     scissorEnabled == GL_TRUE,
-                    scissorBox[0],
-                    scissorBox[1],
-                    scissorBox[2],
-                    scissorBox[3],
+                    scissorBox.at(0),
+                    scissorBox.at(1),
+                    scissorBox.at(2),
+                    scissorBox.at(3),
                     src,
                     dst));
         };
@@ -1453,7 +1456,11 @@ namespace FIFE
         }
         // render
         logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
-        glDrawElements(mode, toGLsizei(*currentElements), GL_UNSIGNED_INT, indexBuffer + *currentIndex);
+        glDrawElements(
+            mode,
+            toGLsizei(*currentElements),
+            GL_UNSIGNED_INT,
+            indexBuffer + *currentIndex); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
         // reset all states
         if (overlay_type != OVERLAY_TYPE_NONE) {
@@ -2301,13 +2308,14 @@ namespace FIFE
         rd.color.at(2)  = blue;
         rd.color.at(3)  = intensity;
         m_renderPrimitiveDatas.push_back(rd);
-        for (float angle = 0; angle <= Mathf::twoPi(); angle += step, elements += 3) {
-            rd.vertex.at(0) = (radius * Mathf::Cos(angle + step) * xstretch) + static_cast<float>(p.x);
-            rd.vertex.at(1) = (radius * Mathf::Sin(angle + step) * ystretch) + static_cast<float>(p.y);
-            rd.color.at(0)  = 0;
-            rd.color.at(1)  = 0;
-            rd.color.at(2)  = 0;
-            rd.color.at(3)  = 255;
+        for (int32_t i = 0; i <= subdivisions; ++i) {
+            float const angle = static_cast<float>(i) * step;
+            rd.vertex.at(0)   = (radius * Mathf::Cos(angle + step) * xstretch) + static_cast<float>(p.x);
+            rd.vertex.at(1)   = (radius * Mathf::Sin(angle + step) * ystretch) + static_cast<float>(p.y);
+            rd.color.at(0)    = 0;
+            rd.color.at(1)    = 0;
+            rd.color.at(2)    = 0;
+            rd.color.at(3)    = 255;
             m_renderPrimitiveDatas.push_back(rd);
 
             rd.vertex.at(0) = (radius * Mathf::Cos(angle) * xstretch) + static_cast<float>(p.x);
@@ -2316,6 +2324,7 @@ namespace FIFE
             // forms triangle with start index and two new ones
             std::array<uint32_t, 3> indices{index, ++lastIndex, ++lastIndex};
             m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
+            elements += 3;
         }
         RenderObject const ro(GL_TRIANGLES, toRenderObjectSize(elements));
         m_renderObjects.push_back(ro);
@@ -2988,9 +2997,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
+            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
         }
 
         if (SDL_MUSTLOCK(dst)) {

@@ -101,7 +101,8 @@ namespace FIFE
                 return nullptr;
             }
 
-            return std::make_unique<RawData>(new ZipFileSource(data.release(), entryData.size_real));
+            return std::make_unique<RawData>(
+                new ZipFileSource(data.release(), entryData.size_real)); // NOLINT(cppcoreguidelines-owning-memory)
         }
 
         return nullptr;

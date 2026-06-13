@@ -52,6 +52,12 @@ namespace
             std::unique_ptr<Object> multiObj;
             std::unique_ptr<Object> part1;
 
+            ~PathFixture()                              = default;
+            PathFixture(PathFixture const &)            = delete;
+            PathFixture& operator=(PathFixture const &) = delete;
+            PathFixture(PathFixture&&)                  = default;
+            PathFixture& operator=(PathFixture&&)       = default;
+
             PathFixture()
             {
                 layer = std::make_unique<Layer>("test_layer", nullptr, &grid);
@@ -79,10 +85,6 @@ namespace
                 multiObj->addMultiPartId("multi_part");
                 multiObj->addMultiPart(part1.get());
             }
-
-            ~PathFixture()                              = default;
-            PathFixture(PathFixture const &)            = delete;
-            PathFixture& operator=(PathFixture const &) = delete;
 
             // Creates non-blocking markers at path corridor extremes so the cell cache
             // covers the full area needed for pathfinding. Markers persist for test duration.

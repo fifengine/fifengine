@@ -202,10 +202,10 @@ namespace FIFE
             GenericRenderer(RenderBackend* renderbackend, int32_t position);
 
             // Non-copyable: contains containers of unique_ptr
-            GenericRenderer(GenericRenderer const &) = delete;
+            GenericRenderer(GenericRenderer const &)            = delete;
             GenericRenderer& operator=(GenericRenderer const &) = delete;
             // Allow moves
-            GenericRenderer(GenericRenderer&&) noexcept = default;
+            GenericRenderer(GenericRenderer&&) noexcept            = default;
             GenericRenderer& operator=(GenericRenderer&&) noexcept = default;
 
             /** Makes copy of this renderer.

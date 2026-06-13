@@ -108,9 +108,9 @@ namespace FIFE
     };
 
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
-        m_action(nullptr),
         m_location(source.m_location),
         m_oldLocation(source.m_location),
+        m_action(nullptr),
         m_speed(0),
         m_rotation(source.m_rotation),
         m_oldRotation(source.m_rotation),
@@ -120,9 +120,7 @@ namespace FIFE
     {
     }
 
-    Instance::InstanceActivity::~InstanceActivity()
-    {
-    }
+    Instance::InstanceActivity::~InstanceActivity() = default;
 
     void Instance::InstanceActivity::update(Instance& source)
     {

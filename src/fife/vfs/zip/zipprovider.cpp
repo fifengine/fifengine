@@ -19,6 +19,8 @@
 
 namespace FIFE
 {
+    ZipProvider::~ZipProvider() = default;
+
     bool ZipProvider::isReadable(std::string const & file) const
     {
         // File name must have a .zip extension:

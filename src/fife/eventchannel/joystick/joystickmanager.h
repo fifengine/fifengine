@@ -35,11 +35,11 @@ namespace FIFE
     {
         public:
             // non-copyable because we own unique_ptrs in m_joysticks
-            JoystickManager(JoystickManager const &) = delete;
-            JoystickManager & operator=(JoystickManager const &) = delete;
+            JoystickManager(JoystickManager const &)            = delete;
+            JoystickManager& operator=(JoystickManager const &) = delete;
             // allow moves
-            JoystickManager(JoystickManager &&) noexcept = default;
-            JoystickManager & operator=(JoystickManager &&) noexcept = default;
+            JoystickManager(JoystickManager&&) noexcept            = default;
+            JoystickManager& operator=(JoystickManager&&) noexcept = default;
             /** Constructor.
              */
             JoystickManager();
