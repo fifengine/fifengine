@@ -122,7 +122,8 @@ toplevel = [
   "libfife.libs"
 ]
 ignore = [
-  "W010" # TODO? toplevel library directory contains no Python modules
+  "W010", # toplevel library directory contains no Python modules
+  "W201", # libfife.libs only exists after auditwheel repair, not in raw wheel
 ]
 
 # ---------------------------------------------------------------------
