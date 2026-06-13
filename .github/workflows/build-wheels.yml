@@ -414,7 +414,6 @@ jobs:
             -B ${{ env.DEPS_DIR }}/build \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
