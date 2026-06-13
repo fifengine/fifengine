@@ -490,7 +490,10 @@ jobs:
             ${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
         run: |
           set -euo pipefail
-          .venv-wheeltest/bin/python -c "import fife; from fife import fifechan; print('wheel import OK:', hasattr(fifechan, 'Window'))"
+          SITE_PKG=$(.venv-wheeltest/bin/python -c "import site; print(site.getsitepackages()[0])")
+          LD_LIBRARY_PATH="$SITE_PKG/fife:$LD_LIBRARY_PATH" \
+            .venv-wheeltest/bin/python -c \
+            "import fife; from fife import fifechan; print('wheel import OK:', hasattr(fifechan, 'Window'))"
 
       - name: 🧪 Python Tests ➔ extension_tests (wheel)
         env:
@@ -502,7 +505,9 @@ jobs:
           LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
         run: |
           set -euo pipefail
-          xvfb-run --auto-servernum \
+          SITE_PKG=$(.venv-wheeltest/bin/python -c "import site; print(site.getsitepackages()[0])")
+          LD_LIBRARY_PATH="$SITE_PKG/fife:$LD_LIBRARY_PATH" \
+            xvfb-run --auto-servernum \
             --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
             .venv-wheeltest/bin/python -m pytest tests/extension_tests/ -v \
             --timeout=120 --maxfail=10
@@ -517,7 +522,9 @@ jobs:
           LD_LIBRARY_PATH: ${{ env.DEPS_DIR }}/install/lib:${{ env.VCPKG_INSTALLED_DIR }}/x64-linux/lib
         run: |
           set -euo pipefail
-          xvfb-run --auto-servernum \
+          SITE_PKG=$(.venv-wheeltest/bin/python -c "import site; print(site.getsitepackages()[0])")
+          LD_LIBRARY_PATH="$SITE_PKG/fife:$LD_LIBRARY_PATH" \
+            xvfb-run --auto-servernum \
             --server-args="-screen 0 1280x1024x24 +extension GLX +render -noreset" \
             .venv-wheeltest/bin/python -m pytest tests/swig_tests/ -v \
             --timeout=120 --maxfail=10
