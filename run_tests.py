@@ -47,10 +47,7 @@ def resolve_headless_mode(cli_headless):
         return True
 
     # Default to headless mode on container/CI.
-    if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
-        return True
-
-    return False
+    return not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY")
 
 
 def genpath(somepath):
