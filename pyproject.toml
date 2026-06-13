@@ -122,6 +122,7 @@ toplevel = [
   "libfife.libs"
 ]
 ignore = [
+  "W002", # CMake SOVERSION creates libfifengine.so symlink next to .so.0.5.0
   "W010", # toplevel library directory contains no Python modules
   "W201", # libfife.libs only exists after auditwheel repair, not in raw wheel
 ]
