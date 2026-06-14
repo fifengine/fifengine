@@ -47,7 +47,7 @@ def test_all_wrapped_exceptions_have_safe_printable_str(exception_cls):
     exc = exception_cls(payload)
 
     text = _assert_printable_exception(exc)
-    message = exc.getMessage()
+    message = exc.what()
 
     assert isinstance(message, str)
     assert message != ""
