@@ -206,7 +206,7 @@ namespace FIFE
         int32_t const renderX          = rectangle.x + top.xOffset;
         int32_t const renderY          = rectangle.y + top.yOffset;
 
-        if (shouldLogShowHideBand(renderX, renderY, rectangle.width, rectangle.height)) {
+        /*if (shouldLogShowHideBand(renderX, renderY, rectangle.width, rectangle.height)) {
             FL_LOG(
                 _log(),
                 std::format(
@@ -226,7 +226,7 @@ namespace FIFE
                     mColor.g,
                     mColor.b,
                     mColor.a));
-        }
+        }*/
 
         m_renderbackend->fillRectangle(
             Point(renderX, renderY),
@@ -285,7 +285,8 @@ namespace FIFE
         if (surface == nullptr) {
             return;
         }
-        FL_WARN(
+
+        /*FL_WARN(
             _log(),
             std::format(
                 "drawSurface: dst=({},{}) fmt={:#x} w={} h={} pitch={}",
@@ -294,17 +295,20 @@ namespace FIFE
                 static_cast<unsigned>(surface->format),
                 surface->w,
                 surface->h,
-                surface->pitch));
+                surface->pitch));*/
+
         if (surface->w > 0 && surface->h > 0) {
             auto const px = std::span(
                 static_cast<uint32_t const *>(surface->pixels), static_cast<size_t>((surface->pitch / 4) * surface->h));
-            FL_WARN(
+
+            /*FL_WARN(
                 _log(),
                 std::format(
                     "  first pixel={:#010x} center pixel={:#010x}",
                     *(px.data() + 0),
                     // NOLINTNEXTLINE(bugprone-misplaced-widening-cast)
-                    *(px.data() + static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2)))));
+                    *(px.data() + static_cast<size_t>(((surface->h / 2) * (surface->pitch / 4)) + (surface->w / 2)))));*/
+
         }
         fcn::ClipRectangle const & top = mClipStack.top();
         SDL_Surface* dup               = SDL_DuplicateSurface(surface);

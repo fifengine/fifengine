@@ -36,6 +36,8 @@ namespace FIFE {
 		virtual int32_t getStringIndexAt(const std::string& text, int32_t x) const = 0;
 		virtual Image* getAsImage(const std::string& text) const = 0;
 		virtual void invalidate() = 0;
+		virtual void setDPIScale(float factor);
+		virtual float getDPIScale() const;
 	};
 
 }

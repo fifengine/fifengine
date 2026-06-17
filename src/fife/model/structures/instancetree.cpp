@@ -37,7 +37,7 @@ namespace FIFE
         InstanceList& list           = node->data();
         list.push_back(instance);
         if (m_reverse.contains(instance)) {
-            FL_WARN(_log(), "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
+            // FL_WARN(_log(), "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
             return;
         }
         m_reverse[instance] = node;
@@ -47,7 +47,7 @@ namespace FIFE
     {
         InstanceTreeNode* node = m_reverse[instance];
         if (node == nullptr) {
-            FL_WARN(_log(), "InstanceTree::removeInstance() - Instance not part of tree.");
+            // FL_WARN(_log(), "InstanceTree::removeInstance() - Instance not part of tree.");
             return;
         }
         m_reverse.erase(instance);
@@ -60,8 +60,8 @@ namespace FIFE
             list.erase(it);
             return;
         }
-        FL_WARN(
-            _log(), "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
+        // FL_WARN(
+        // _log(), "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
     }
 
     class InstanceListCollector

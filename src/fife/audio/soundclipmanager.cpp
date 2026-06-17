@@ -90,12 +90,12 @@ namespace FIFE
     {
         if (exists(name)) {
             {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "SoundClipManager::create(std::string, IResourceLoader* loader) - Resource name {} was "
-                        "previously created.  Returning original SoundClip...",
-                        name));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "SoundClipManager::create(std::string, IResourceLoader* loader) - Resource name {} was "
+                // "previously created.  Returning original SoundClip...",
+                // name));
             }
             return get(name);
         }
@@ -122,11 +122,11 @@ namespace FIFE
 
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
             {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "SoundClipManager::load(std::string) - Resource name {} was not found and could not be loaded.",
-                        name));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "SoundClipManager::load(std::string) - Resource name {} was not found and could not be loaded.",
+                // name));
             }
             remove(name);
         }
@@ -149,11 +149,11 @@ namespace FIFE
                 SoundClipNameMapPair(returnValue.first->second->getName(), returnValue.first->second));
         } else {
             {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "SoundClipManager::add(IResource*) - Resource {} already exists.... ignoring.",
-                        res->getName()));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "SoundClipManager::add(IResource*) - Resource {} already exists.... ignoring.",
+                // res->getName()));
             }
         }
 
@@ -185,7 +185,8 @@ namespace FIFE
         }
 
         {
-            FL_WARN(_log(), std::format("SoundClipManager::reload(std::string) - Resource name {} not found.", name));
+            // FL_WARN(_log(), std::format("SoundClipManager::reload(std::string) - Resource name {} not found.",
+            // name));
         }
     }
 
@@ -202,9 +203,9 @@ namespace FIFE
         }
 
         {
-            FL_WARN(
-                _log(),
-                std::format("SoundClipManager::reload(ResourceHandle) - Resource handle {} not found.", handle));
+            // FL_WARN(
+            // _log(),
+            // std::format("SoundClipManager::reload(ResourceHandle) - Resource handle {} not found.", handle));
         }
     }
 
@@ -251,7 +252,7 @@ namespace FIFE
         }
 
         {
-            FL_WARN(_log(), std::format("SoundClipManager::free(std::string) - Resource name {} not found.", name));
+            // FL_WARN(_log(), std::format("SoundClipManager::free(std::string) - Resource name {} not found.", name));
         }
     }
 
@@ -266,8 +267,8 @@ namespace FIFE
         }
 
         {
-            FL_WARN(
-                _log(), std::format("SoundClipManager::free(ResourceHandle) - Resource handle {} not found.", handle));
+            // FL_WARN(
+            // _log(), std::format("SoundClipManager::free(ResourceHandle) - Resource handle {} not found.", handle));
         }
     }
 
@@ -325,10 +326,10 @@ namespace FIFE
         }
 
         {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "SoundClipManager::remove(ResourcePtr&) - Resource {} was not found.", resource->getName()));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "SoundClipManager::remove(ResourcePtr&) - Resource {} was not found.", resource->getName()));
         }
     }
 
@@ -342,8 +343,8 @@ namespace FIFE
             m_sclipNameMap.erase(nit);
         } else {
             {
-                FL_WARN(
-                    _log(), std::format("SoundClipManager::remove(std::string) - Resource {} was not found.", name));
+                // FL_WARN(
+                // _log(), std::format("SoundClipManager::remove(std::string) - Resource {} was not found.", name));
             }
             return;
         }
@@ -368,10 +369,10 @@ namespace FIFE
             m_sclipHandleMap.erase(it);
         } else {
             {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "SoundClipManager::remove(ResourceHandle) - Resource handle {} was not found.", handle));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "SoundClipManager::remove(ResourceHandle) - Resource handle {} was not found.", handle));
             }
             return;
         }
@@ -449,9 +450,9 @@ namespace FIFE
         }
 
         {
-            FL_WARN(
-                _log(),
-                std::format("SoundClipManager::get(ResourceHandle) - Resource handle {} is undefined.", handle));
+            // FL_WARN(
+            // _log(),
+            // std::format("SoundClipManager::get(ResourceHandle) - Resource handle {} is undefined.", handle));
         }
 
         return {};
@@ -465,9 +466,9 @@ namespace FIFE
         }
 
         {
-            FL_WARN(
-                _log(),
-                std::format("SoundClipManager::getResourceHandle(std::string) - Resource {} is undefined.", name));
+            // FL_WARN(
+            // _log(),
+            // std::format("SoundClipManager::getResourceHandle(std::string) - Resource {} is undefined.", name));
         }
 
         return 0;

@@ -48,10 +48,10 @@ namespace FIFE
         std::unique_ptr<Trigger, void (*)(Trigger*)> trigger(new Trigger(triggerName), &trigger_deleter);
         auto [it, inserted] = m_triggerNameMap.emplace(triggerName, std::move(trigger));
         if (!inserted) {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "TriggerController::createTrigger() - Trigger {} already exists.... ignoring.", triggerName));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "TriggerController::createTrigger() - Trigger {} already exists.... ignoring.", triggerName));
         }
         return it->second.get();
     }

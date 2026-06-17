@@ -34,6 +34,7 @@ set(
   test_font_instance.cpp
   test_font_definition_loader.cpp
   test_font_manager.cpp
+  test_window.cpp
 )
 
 message(STATUS "All tests are linked into a single executable `all_tests`.")

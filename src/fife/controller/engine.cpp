@@ -35,10 +35,10 @@
 #include "vfs/zip/zipprovider.h"
 #include "video/animationmanager.h"
 #include "video/cursor.h"
-#include "video/devicecaps.h"
 #include "video/fonts/fontmanager.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
+#include "video/window/window.h"
 #ifdef HAVE_OPENGL
     #include "video/opengl/fife_opengl.h"
     #include "video/opengl/renderbackendopengl.h"
@@ -84,7 +84,7 @@ namespace FIFE
         }
     } // namespace
 
-    Engine::Engine() : m_logmanager(&LogManager::instance()), m_destroyed(false)
+    Engine::Engine() : m_logmanager(&LogManager::instance()), m_window(nullptr), m_destroyed(false)
 
     {
 #ifdef USE_COCOA
@@ -132,23 +132,37 @@ namespace FIFE
         }
     }
 
-    void Engine::changeScreenMode(ScreenMode const & mode)
+    void Engine::toggleFullscreen()
     {
-        m_cursor->invalidate();
-
-        m_imagemanager->invalidateAll();
-
-        // recreate main screen
-        m_renderbackend->createMainScreen(mode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
-
-        if (m_guimanager != nullptr) {
-            m_guimanager->resizeTopContainer(0, 0, mode.getWidth(), mode.getHeight());
+        if (m_window == nullptr) {
+            return;
         }
+        WindowSettings settings = m_window->getSettings();
+        settings.windowMode =
+            (settings.windowMode == WindowMode::Windowed) ? WindowMode::Fullscreen : WindowMode::Windowed;
+        changeWindowMode(settings);
+    }
 
-        auto i = m_changelisteners.begin();
-        while (i != m_changelisteners.end()) {
-            (*i)->onScreenModeChanged(mode);
-            ++i;
+    void Engine::toggleVSync()
+    {
+        if (m_window == nullptr) {
+            return;
+        }
+        bool const current = m_window->getVSync();
+        m_window->setVSync(!current);
+    }
+
+    void Engine::changeWindowMode(WindowSettings const & settings)
+    {
+        if (m_window == nullptr) {
+            return;
+        }
+        m_window->create(settings);
+        if (m_guimanager != nullptr) {
+            m_guimanager->resizeTopContainer(0, 0, settings.width, settings.height);
+        }
+        for (auto* listener : m_changelisteners) {
+            listener->onWindowModeChanged(settings);
         }
     }
 
@@ -326,32 +340,64 @@ namespace FIFE
         FL_LOG(
             _log(),
             std::format(
-                "Using display index {} out of {} displays with resolution {}x{}",
+                "Using display index {} (display {}) out of {} displays with resolution {}x{}",
                 static_cast<int32_t>(selectedDisplay),
+                static_cast<int32_t>(selectedDisplay + 1),
                 static_cast<int32_t>(displayCount),
                 selectedWidth,
                 selectedHeight));
 
-        uint16_t const bpp = m_settings.getBitsPerPixel();
+        WindowSettings winSettings;
+        winSettings.width       = selectedWidth;
+        winSettings.height      = selectedHeight;
+        winSettings.display     = selectedDisplay;
+        winSettings.x           = m_settings.getWindowPositionX();
+        winSettings.y           = m_settings.getWindowPositionY();
+        winSettings.title       = m_settings.getWindowTitle();
+        winSettings.icon        = m_settings.getWindowIcon();
+        winSettings.resizable   = m_settings.isWindowResizable();
+        winSettings.vsync       = m_settings.isVSync();
+        winSettings.opengl      = (rbackend == "OpenGL");
+        winSettings.windowMode  = m_settings.isFullScreen() ? WindowMode::Fullscreen : WindowMode::Windowed;
+        winSettings.scalingMode = static_cast<ScalingMode>(m_settings.getWindowScalingMode());
 
-        m_screenMode = m_devcaps.getNearestScreenMode(
-            selectedWidth,
-            selectedHeight,
-            bpp,
-            rbackend,
-            m_settings.isFullScreen(),
-            m_settings.getRefreshRate(),
-            selectedDisplay);
-
-        // Set window position
-        m_screenMode.setWindowPositionX(m_settings.getWindowPositionX());
-        m_screenMode.setWindowPositionY(m_settings.getWindowPositionY());
+        m_window = new Window();
+        m_window->create(winSettings);
+        m_window->signalResized = [this](int w, int h) {
+            if (m_imagemanager) {
+                m_imagemanager->invalidateAll();
+            }
+            if (m_guimanager) {
+                m_guimanager->resizeTopContainer(0, 0, w, h);
+            }
+            for (auto* listener : m_changelisteners) {
+                listener->onWindowResized(w, h);
+            }
+        };
+        m_window->signalDPIScaleChanged = [this](float scale) {
+            if (m_imagemanager) {
+                m_imagemanager->invalidateAll();
+            }
+            if (m_fontManager) {
+                m_fontManager->setDPIScaleForAll(scale);
+            }
+            if (m_guimanager) {
+                int const w = m_window->getWidthInPoints();
+                int const h = m_window->getHeightInPoints();
+                m_guimanager->resizeTopContainer(0, 0, w, h);
+            }
+            for (auto* listener : m_changelisteners) {
+                listener->onDPIScaleChanged(scale);
+            }
+        };
+        m_renderbackend->setWindowObject(m_window);
 
         FL_LOG(_log(), "Creating main screen");
-        m_renderbackend->createMainScreen(m_screenMode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
+        m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
         FL_LOG(_log(), "Main screen created");
+        m_window->show();
 
-        if (SDL_Window* win = RenderBackend::instance()->getWindow()) {
+        if (SDL_Window* win = m_window->getSDLWindow()) {
             SDL_StartTextInput(win);
         }
 
@@ -391,6 +437,13 @@ namespace FIFE
 
         m_cursor = std::make_unique<Cursor>(m_renderbackend.get());
         m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
+        if (m_window != nullptr) {
+            m_window->onClosed([this]() {
+                if (m_cursor != nullptr) {
+                    m_cursor->invalidate();
+                }
+            });
+        }
         FL_LOG(_log(), "Engine initialized");
     }
 
@@ -413,6 +466,9 @@ namespace FIFE
         objc_msgSend(m_autoreleasePool, sel_registerName("release"));
 #endif
 
+        delete m_window;
+        m_window = nullptr;
+
         FL_LOG(_log(), "================== Engine destructed ==================");
         m_destroyed = true;
     }
@@ -423,8 +479,26 @@ namespace FIFE
 
     void Engine::pump()
     {
+        if (m_eventmanager) {
+            bool const f11down = m_eventmanager->isKeyPressed(Keys::F11);
+            if (f11down && !m_lastF11State) {
+                toggleFullscreen();
+            }
+            m_lastF11State = f11down;
+
+            bool const ctrlPressed =
+                m_eventmanager->isKeyPressed(Keys::LCTRL) || m_eventmanager->isKeyPressed(Keys::RCTRL);
+            bool const vDown = m_eventmanager->isKeyPressed(Keys::V);
+            if (ctrlPressed && vDown && !m_lastCtrlVState) {
+                toggleVSync();
+            }
+            m_lastCtrlVState = vDown;
+        }
         m_renderbackend->startFrame();
         m_eventmanager->processEvents();
+        if (m_window != nullptr) {
+            m_window->updateDPIScaleIfNeeded();
+        }
         m_timemanager->update();
         m_soundmanager->update();
 

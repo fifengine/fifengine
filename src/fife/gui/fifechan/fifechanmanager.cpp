@@ -67,6 +67,8 @@ namespace FIFE
         m_lastMotionX(0),
         m_lastMotionY(0),
         m_fontsize(0),
+        m_fonts(),
+        m_widgets(),
         m_logic_executed(false),
         m_enabled_console(true)
     {
@@ -86,12 +88,12 @@ namespace FIFE
     bool FifechanManager::onSdlEvent(SDL_Event& evt)
     {
         if (m_input == nullptr) {
-            FL_WARN(_log(), "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
+            // FL_WARN(_log(), "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
             return false;
         }
 
-        bool const overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) !=
-                                nullptr; // NOLINT(cppcoreguidelines-init-variables)
+        bool const overWidget = // NOLINT(cppcoreguidelines-init-variables)
+            m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
 
         switch (evt.type) {
         case SDL_EVENT_MOUSE_WHEEL:
@@ -241,15 +243,15 @@ namespace FIFE
             fontpath = m_fontpath;
         }
 
-        FL_WARN(
-            _log(),
-            std::format(
-                "createFont: path='{}' fontpath='{}' size={} fontsize={} m_fontManager={}",
-                path,
-                fontpath,
-                size,
-                fontsize,
-                static_cast<void*>(m_fontManager)));
+        // FL_WARN(
+        // _log(),
+        // std::format(
+        // "createFont: path='{}' fontpath='{}' size={} fontsize={} m_fontManager={}",
+        // path,
+        // fontpath,
+        // size,
+        // fontsize,
+        // static_cast<void*>(m_fontManager)));
 
         FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
         auto instance           = m_fontManager->getFontInstance(handle);
@@ -322,11 +324,11 @@ namespace FIFE
         } else if (fcnevt.getType() == fcn::KeyEvent::Type::Released) {
             keyevt.setType(KeyEvent::RELEASED);
         } else {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "FifechanManager::translateKeyEvent() - Unknown event type: {}",
-                    static_cast<int>(fcnevt.getType())));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "FifechanManager::translateKeyEvent() - Unknown event type: {}",
+            // static_cast<int>(fcnevt.getType())));
             keyevt.setType(KeyEvent::UNKNOWN);
         }
         keyevt.setShiftPressed(fcnevt.isShiftPressed());

@@ -50,4 +50,11 @@ namespace FIFE
         return m_cache.size();
     }
 
+    void FontFaceCache::setDPIScaleForAll(float scale)
+    {
+        for (auto& [key, face] : m_cache) {
+            face->setDPIScale(scale);
+        }
+    }
+
 } // namespace FIFE

@@ -8,6 +8,9 @@
 
 %template(FontPaths) std::vector<std::string>;
 
+%include "video/window/windowsettings.i"
+%include "video/window/window.i"
+
 namespace FIFE {
 
 	class SoundManager;
@@ -22,7 +25,6 @@ namespace FIFE {
 	class Cursor;
 	class RendererBase;
 	class DeviceCaps;
-	class ScreenMode;
 	class Image;
 	class ImageManager;
 	class AnimationManager;
@@ -30,6 +32,7 @@ namespace FIFE {
 	class FontManager;
 	class OffRenderer;
 	class TargetRenderer;
+	class Window;
 
 	class EngineSettings {
 	public:
@@ -49,6 +52,10 @@ namespace FIFE {
 		int32_t getWindowPositionY() const;
 		void setVSync(bool vsync);
 		bool isVSync() const;
+		void setWindowResizable(bool resizable);
+		bool isWindowResizable() const;
+		void setWindowScalingMode(uint8_t mode);
+		uint8_t getWindowScalingMode() const;
 		void setSDLDriver(const std::string& driver);
 		const std::string& getSDLDriver() const;
 		void setInitialVolume(float volume);
@@ -120,7 +127,8 @@ namespace FIFE {
 	class IEngineChangeListener {
 	public:
 		virtual ~IEngineChangeListener() {}
-		virtual void onScreenModeChanged(const ScreenMode& newmode) = 0;
+		virtual void onWindowModeChanged(const WindowSettings& newmode) = 0;
+		virtual void onDPIScaleChanged(float scale) {}
 	};
 
 	class Engine {
@@ -134,7 +142,7 @@ namespace FIFE {
 		EngineSettings& getSettings();
 		const DeviceCaps& getDeviceCaps() const;
 		
-		void changeScreenMode(const ScreenMode& mode);
+		void changeWindowMode(const WindowSettings& settings);
 
 		void init();
 		void destroy();
@@ -154,6 +162,9 @@ namespace FIFE {
 		OffRenderer* getOffRenderer();
 		TargetRenderer* getTargetRenderer();
 		FontManager* getFontManager();
+		Window* getWindow();
+		void toggleFullscreen();
+		void toggleVSync();
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);

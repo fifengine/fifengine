@@ -23,11 +23,11 @@
 %include "util/structures/utilstructures.i"
 %include "util/resource/resource.i"
 
-namespace FIFE {
-  class ScreenMode;
-}
+%include "video/window/windowsettings.i"
+%include "video/window/display.i"
+%include "video/window/window.i"
 
-%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
+
 
 %attribute(FIFE::Color, uint8_t, r, getR, setR);
 %attribute(FIFE::Color, uint8_t, g, getG, setG);
@@ -191,7 +191,6 @@ namespace FIFE {
 
 		void captureScreen(const std::string& filename);
 		void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
-		const ScreenMode& getCurrentScreenMode() const;
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
 		uint32_t getScreenWidth() const;
@@ -279,40 +278,12 @@ namespace FIFE {
 		Cursor();
 	};
 
-	class ScreenMode {
-	public:
-		~ScreenMode();
-
-		uint16_t getWidth() const;
-		uint16_t getHeight() const;
-		uint16_t getBPP() const;
-		uint16_t getRefreshRate() const;
-		uint32_t getSDLFlags() const;
-		bool isFullScreen();
-		bool isOpenGL();
-		bool isSDL() const;
-		uint8_t getDisplay() const;
-		void setWindowPositionX(int32_t x);
-		int32_t getWindowPositionX() const;
-		void setWindowPositionY(int32_t y);
-		int32_t getWindowPositionY() const;
-		const std::string& getRenderDriverName() const;
-
-		static const uint32_t WINDOWED_OPENGL;
-		static const uint32_t FULLSCREEN_OPENGL;
-		static const uint32_t WINDOWED_SDL;
-		static const uint32_t FULLSCREEN_SDL;
-	};
-
 	class DeviceCaps {
 	public:
 		DeviceCaps();
 		~DeviceCaps();
 
 		void fillDeviceCaps();
-		std::vector<ScreenMode> getSupportedScreenModes() const;
-		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
-		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
 		std::string getVideoDriverName() const;
 		std::vector<string> getAvailableVideoDrivers() const;
 		std::string getRenderDriverName() const;

@@ -53,6 +53,7 @@ namespace FIFE
 
             void setFallbackFont(std::string const & id);
 
+            void setDPIScaleForAll(float scale);
             void clearInstanceCache();
             size_t getInstanceCacheSize() const;
             size_t getFaceCacheSize() const;

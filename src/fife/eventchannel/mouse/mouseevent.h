@@ -93,9 +93,9 @@ namespace FIFE
             }
 
             /**
-             * Gets the x coordinate of the mouse event. The coordinate is relative to
-             * the source event source.
-             * @return the x coordinate of the mouse event.
+             * Gets the x coordinate of the mouse event.
+             * @return Logical (point) x coordinate, unaffected by DPI scale.
+             *         Multiply by Window::getDPIScaleFactor() for pixel coords.
              */
             int32_t getX() const
             {
@@ -107,9 +107,9 @@ namespace FIFE
             }
 
             /**
-             * Gets the y coordinate of the mouse event. The coordinate is relative to
-             * the source event source.
-             * @return the y coordinate of the mouse event.
+             * Gets the y coordinate of the mouse event.
+             * @return Logical (point) y coordinate, unaffected by DPI scale.
+             *         Multiply by Window::getDPIScaleFactor() for pixel coords.
              */
             int32_t getY() const
             {
@@ -118,6 +118,28 @@ namespace FIFE
             void setY(int32_t y)
             {
                 m_y = y;
+            }
+
+            /** Alias for getX() - returns logical (point) coordinates. */
+            int32_t getXInPoints() const
+            {
+                return getX();
+            }
+            /** Alias for getY() - returns logical (point) coordinates. */
+            int32_t getYInPoints() const
+            {
+                return getY();
+            }
+
+            /** Returns pixel x coordinate, scaled by the given DPI factor. */
+            int32_t getXInPixels(float dpiScale) const
+            {
+                return static_cast<int32_t>(getX() * dpiScale);
+            }
+            /** Returns pixel y coordinate, scaled by the given DPI factor. */
+            int32_t getYInPixels(float dpiScale) const
+            {
+                return static_cast<int32_t>(getY() * dpiScale);
             }
 
             std::string const & getName() const override

@@ -59,11 +59,7 @@ namespace
             void changeBlending(int32_t scr, int32_t dst) override
             {
             }
-            void createMainScreen(
-                FIFE::ScreenMode const & mode, std::string const & title, std::string const & icon) override
-            {
-            }
-            void setScreenMode(FIFE::ScreenMode const & mode) override
+            void createMainScreen(std::string const & title, std::string const & icon) override
             {
             }
             std::unique_ptr<FIFE::Image> createImage(FIFE::IResourceLoader* loader) override

@@ -102,7 +102,7 @@ namespace FIFE
 
             CellGrid* cg = layer->getCellGrid();
             if (cg == nullptr) {
-                FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw selection");
+                // FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw selection");
                 continue;
             }
 

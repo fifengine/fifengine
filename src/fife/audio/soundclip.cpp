@@ -80,7 +80,7 @@ namespace FIFE
                 OggLoader loader;
                 loader.load(this);
             } else {
-                FL_WARN(_log(), std::format("No audio-decoder available for file \"{}\"!", m_name));
+                // FL_WARN(_log(), std::format("No audio-decoder available for file \"{}\"!", m_name));
                 throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
             }
         }
@@ -239,8 +239,8 @@ namespace FIFE
     {
         SoundBufferEntry const * ptr = m_buffervec.at(streamid).get();
 
-        bool const reachedEOF =
-            std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) { // NOLINT(cppcoreguidelines-init-variables)
+        bool const reachedEOF = // NOLINT(cppcoreguidelines-init-variables)
+            std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
                 return getStream(streamid, buffer);
             });
         (void)reachedEOF;

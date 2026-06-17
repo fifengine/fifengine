@@ -32,6 +32,8 @@ namespace FIFE {
 		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
 
+	%ignore Map::getCameras;
+
 	class Map : public FifeClass {
 		public:
 
@@ -62,7 +64,6 @@ namespace FIFE {
 			Camera* addCamera(const std::string& id, const Rect& viewport);
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
-			std::vector<std::unique_ptr<Camera>>& getCameras();
 
 			void setFilename(const std::string& file);
 			const std::string& getFilename() const;
@@ -72,4 +73,22 @@ namespace FIFE {
 
 			TriggerController* getTriggerController() const;
 	};
+
+	%extend Map {
+		std::vector<FIFE::Camera*> getCameraPtrs() {
+			auto const & cameras = $self->getCameras();
+			std::vector<FIFE::Camera*> result;
+			result.reserve(cameras.size());
+			for (auto const& cam : cameras) {
+				result.push_back(cam.get());
+			}
+			return result;
+		}
+	}
+
+	%pythoncode %{
+	def Map_getCameras(self):
+		return self.getCameraPtrs()
+	Map.getCameras = Map_getCameras
+	%}
 }

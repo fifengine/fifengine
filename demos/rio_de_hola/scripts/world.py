@@ -229,6 +229,7 @@ class World(EventListenerBase):
         renderer.addActiveLayer(
             self.map.getLayer(str(TDS.get("rio", "CoordinateLayerName")))
         )
+        renderer.setFont(self.engine.getFontManager().getFont("FreeSans", 16))
 
         renderer = self.cameras["main"].getRenderer("QuadTreeRenderer")
         renderer.setEnabled(True)

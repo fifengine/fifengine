@@ -34,7 +34,7 @@ namespace FIFE
     void VFSSourceProvider::setVFS(VFS* vfs)
     {
         if (m_vfs != nullptr) {
-            FL_WARN(_log(), "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
+            // FL_WARN(_log(), "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
             return;
         }
         m_vfs = vfs;

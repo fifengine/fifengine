@@ -27,6 +27,14 @@ namespace FIFE
                 return 0;
             }
 
+            virtual void setDPIScale(float /*factor*/)
+            {
+            }
+            virtual float getDPIScale() const
+            {
+                return 1.0f;
+            }
+
         protected:
             AssetHandle m_assetHandle;
     };

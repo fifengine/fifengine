@@ -286,7 +286,7 @@ namespace FIFE
             validateShared();
         }
 
-        if (shouldLogTargetRect(rect)) {
+        /*if (shouldLogTargetRect(rect)) {
             FL_LOG(
                 _guiLog(),
                 std::format(
@@ -328,7 +328,7 @@ namespace FIFE
                     m_surface != nullptr ? m_surface->w : 0,
                     m_surface != nullptr ? m_surface->h : 0,
                     m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
-        }
+        }*/
 
         rb->addImageToArray(m_texId, rect, &m_tex_coords[0], alpha, rgb);
     }
@@ -467,7 +467,7 @@ namespace FIFE
             static_cast<size_t>(height) * static_cast<size_t>(m_surface->pitch)};
         int32_t const pitch = m_surface->pitch;
 
-        if ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16)) {
+        /*if ((m_surface->w == 33 && m_surface->h == 16) || (m_surface->w == 39 && m_surface->h == 16)) {
             FL_LOG(
                 _guiLog(),
                 std::format(
@@ -504,7 +504,7 @@ namespace FIFE
                     m_tex_coords[2],
                     m_tex_coords[3],
                     summarizeSurfaceSamples(m_surface)));
-        }
+        }*/
 
         assert(!m_texId);
 
@@ -702,9 +702,8 @@ namespace FIFE
                     // SDL surfaces can have padded row pitch; repack to a tightly packed buffer.
                     std::vector<uint8_t> packed(static_cast<size_t>(tightPitch) * static_cast<size_t>(height));
                     for (uint32_t y = 0; y < height; ++y) {
-                        uint8_t const * srcRow =
-                            data_span.data() + (static_cast<size_t>(y) *
-                                                static_cast<size_t>(pitch)); // NOLINT(cppcoreguidelines-init-variables)
+                        uint8_t const * srcRow = // NOLINT(cppcoreguidelines-init-variables)
+                            data_span.data() + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
                         uint8_t* dstRow = &packed.at(static_cast<size_t>(y) * static_cast<size_t>(tightPitch));
                         std::memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
                     }

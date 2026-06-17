@@ -77,19 +77,40 @@ class ApplicationBase:
 
         self.engine.init()
 
+        self._lastWindowW = 0
+        self._lastWindowH = 0
+        self._lastDPIScale = 1.0
+
         """
 		we are giving users a valid screen resolution option that is supported
 		"""
-        screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes()
-        resolutions = list({(mode.getWidth(), mode.getHeight()) for mode in screen_modes})
+        display_count = fife.Display.getDisplayCount()
+        resolutions = []
+        common = [
+            (1024, 768),
+            (1280, 720),
+            (1366, 768),
+            (1600, 900),
+            (1920, 1080),
+            (2560, 1440),
+            (3840, 2160),
+        ]
 
-        resolutions = [f"{item[0]}x{item[1]}" for item in sorted(resolutions)[1:]]
+        for d in range(max(1, display_count)):
+            mw = fife.Display.getDisplayWidth(d)
+            mh = fife.Display.getDisplayHeight(d)
+            if mw > 0 and mh > 0:
+                resolutions.append(f"{mw}x{mh}")
+                for w, h in common:
+                    if w <= mw and h <= mh and f"{w}x{h}" not in resolutions:
+                        resolutions.append(f"{w}x{h}")
+
+        if not resolutions:
+            resolutions = ["1280x720"]
+
         self._setting.setValidResolutions(resolutions)
 
-        display_count = self.engine.getDeviceCaps().getDisplayCount()
-        displays = set(range(max(1, display_count)))
-        displays.update(mode.getDisplay() for mode in screen_modes)
-        displays = sorted(displays)
+        displays = list(range(max(1, display_count)))
 
         # Some SDL/drivers only list display 0, even with multiple monitors.
         # Ensure we have at least 2 entries so users can pick display 2 manually.
@@ -142,6 +163,13 @@ class ApplicationBase:
         engineSetting.setWindowPositionX(self._finalSetting["WindowPositionX"])
         engineSetting.setWindowPositionY(self._finalSetting["WindowPositionY"])
         engineSetting.setVSync(self._finalSetting["VSync"])
+        engineSetting.setWindowResizable(self._finalSetting["WindowResizable"])
+        if self._finalSetting["WindowScalingMode"] == "Linear":
+            engineSetting.setWindowScalingMode(0)
+        elif self._finalSetting["WindowScalingMode"] == "Integer":
+            engineSetting.setWindowScalingMode(1)
+        elif self._finalSetting["WindowScalingMode"] == "Nearest":
+            engineSetting.setWindowScalingMode(2)
         engineSetting.setVideoDriver(self._finalSetting["VideoDriver"])
         engineSetting.setSDLDriver(self._finalSetting["RenderDriver"])
         engineSetting.setLightingModel(self._finalSetting["Lighting"])
@@ -269,6 +297,30 @@ class ApplicationBase:
 
         Derived classes can specialize this for unique behavior.
         This is called every frame.
+        """
+        win = self.engine.getWindow()
+        if win:
+            w = win.getWidthInPoints()
+            h = win.getHeightInPoints()
+            if w != self._lastWindowW or h != self._lastWindowH:
+                self._lastWindowW = w
+                self._lastWindowH = h
+                self._onWindowResized(w, h)
+            dpi = win.getDPIScaleFactor()
+            if dpi != self._lastDPIScale:
+                self._lastDPIScale = dpi
+                self._onDPIScaleChanged(dpi)
+
+    def _onWindowResized(self, width, height):
+        """Handle window resize events.
+
+        Override in subclasses for custom resize handling.
+        """
+
+    def _onDPIScaleChanged(self, scale):
+        """Handle DPI scale change events.
+
+        Override in subclasses for custom DPI change handling.
         """
 
     def quit(self):

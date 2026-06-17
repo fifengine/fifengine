@@ -53,15 +53,20 @@ ensure_deps() {
     return 0
   fi
 
-  [[ $EUID -ne 0 ]] && err "Root required for package installation. Re-run with sudo or as root."
-
-  log "Installing dependencies... (${#missing[@]} missing)"
-  local pkg_list="x11-apps mesa-utils x11-utils x11-xserver-utils xauth libgl1-mesa-dri"
-  if [[ $VERBOSE -eq 0 ]]; then
-    apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "$pkg_list" >/dev/null 2>&1
-  else
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg_list"
+  if [[ $EUID -ne 0 ]]; then
+    err "Root required to install missing packages: ${missing[*]}. Re-run with sudo or as root, or install manually (e.g. sudo apt install x11-apps mesa-utils x11-utils x11-xserver-utils xauth libgl1-mesa-dri)."
   fi
+
+  log "Installing missing dependencies: ${missing[*]} (${#missing[@]} total)"
+  local pkg_list="x11-apps mesa-utils x11-utils x11-xserver-utils xauth libgl1-mesa-dri"
+  local old_debian_frontend="${DEBIAN_FRONTEND:-}"
+  export DEBIAN_FRONTEND=noninteractive
+  if [[ $VERBOSE -eq 0 ]]; then
+    apt-get update -qq && apt-get install -y -qq $pkg_list 2>&1 | tail -5
+  else
+    apt-get update && apt-get install -y $pkg_list
+  fi
+  [[ -n "$old_debian_frontend" ]] && DEBIAN_FRONTEND="$old_debian_frontend" || unset DEBIAN_FRONTEND
   log "✅ Dependencies ready."
 }
 

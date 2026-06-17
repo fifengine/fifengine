@@ -25,7 +25,7 @@
 #include "glimage.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-#include "video/devicecaps.h"
+#include "video/window/window.h"
 
 namespace FIFE
 {
@@ -152,7 +152,8 @@ namespace FIFE
         m_fbo_id(0),
         m_indicebufferId(0),
         m_target_discard(false),
-        m_context(nullptr)
+        m_context(nullptr),
+        m_integerScale(0)
     {
 
         m_state.tex_enabled.at(0)   = false;
@@ -196,13 +197,18 @@ namespace FIFE
 
     RenderBackendOpenGL::~RenderBackendOpenGL()
     {
-        glDeleteTextures(1, &m_maskOverlay);
-        if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
-            glDeleteFramebuffers(1, &m_fbo_id);
+        if (m_context != nullptr) {
+            glDeleteTextures(1, &m_maskOverlay);
+            if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
+                glDeleteFramebuffers(1, &m_fbo_id);
+            }
+            SDL_GL_DestroyContext(m_context);
+            m_context = nullptr;
         }
-        SDL_GL_DestroyContext(m_context);
-        SDL_DestroyWindow(m_window);
-        deinit();
+        if (m_windowObject == nullptr) {
+            SDL_DestroyWindow(m_window);
+            deinit();
+        }
     }
 
     std::string const & RenderBackendOpenGL::getName() const
@@ -243,194 +249,74 @@ namespace FIFE
         enableScissorTest();
     }
 
-    void RenderBackendOpenGL::createMainScreen(
-        ScreenMode const & mode, std::string const & title, std::string const & icon)
+    void RenderBackendOpenGL::createMainScreen(std::string const & title, std::string const & icon)
     {
-        setScreenMode(mode);
-        if (m_window != nullptr) {
-            if (!icon.empty()) {
-                SDL_Surface* img = IMG_Load(icon.c_str());
-                if (img != nullptr) {
-                    SDL_SetWindowIcon(m_window, img);
-                    SDL_DestroySurface(img);
-                }
-            }
-            SDL_SetWindowTitle(m_window, title.c_str());
-        }
-    }
-
-    void RenderBackendOpenGL::setScreenMode(ScreenMode const & mode)
-    {
-        bool const recreate         = m_window != nullptr;
-        uint16_t const width        = mode.getWidth();
-        uint16_t const height       = mode.getHeight();
-        uint16_t const bitsPerPixel = mode.getBPP();
-        uint32_t flags              = mode.getSDLFlags();
-        // in case of recreating
-        if (recreate) {
-            SDL_DestroyWindow(m_window);
-            m_window = nullptr;
-            m_screen = nullptr;
-
-            if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
-                glDeleteFramebuffers(1, &m_fbo_id);
-            }
-        }
-        // create window
-        uint8_t const displayIndex = mode.getDisplay();
-        int32_t const windowX      = mode.getWindowPositionX();
-        int32_t const windowY      = mode.getWindowPositionY();
-
-        int displayCount              = 0;
-        SDL_DisplayID* displays       = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID const displayId = // NOLINT(cppcoreguidelines-init-variables)
-            (std::cmp_less(displayIndex, displayCount)) ?
-                displays[displayIndex] :
-                SDL_GetPrimaryDisplay(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
-        uint16_t createWidth        = width;
-        uint16_t createHeight       = height;
-
-        // Determine X/Y position.
-        int xPos{};
-        int yPos{};
-        if (windowX >= 0 && windowY >= 0) {
-            xPos = windowX;
-            yPos = windowY;
-        } else if (mode.isFullScreen() && !pseudoFullscreen) {
-            xPos = toDisplayWindowPos(displayIndex, false);
-            yPos = toDisplayWindowPos(displayIndex, false);
-        } else {
-            SDL_Rect displayBounds;
-            if (!SDL_GetDisplayBounds(displayId, &displayBounds)) {
-                throw SDLException(SDL_GetError());
-            }
-            if (displayBounds.w <= 0 || displayBounds.h <= 0) {
-                SDL_DisplayMode const * desktopMode = SDL_GetDesktopDisplayMode(displayId);
-                if (desktopMode == nullptr) {
-                    throw SDLException(SDL_GetError());
-                }
-                displayBounds.x = 0;
-                displayBounds.y = 0;
-                displayBounds.w = desktopMode->w;
-                displayBounds.h = desktopMode->h;
-            }
-
-            if (displayCount == 1 && windowX < 0 && windowY < 0) {
-                // Some desktop setups expose all monitors as one virtual display.
-                // Center inside the first monitor area (left half heuristic) instead of centering over
-                // the whole combined desktop.
-                int32_t const monitorWidth = std::max(1, displayBounds.w / 2);
-                xPos                       = displayBounds.x + ((monitorWidth - width) / 2);
-                yPos                       = displayBounds.y + ((displayBounds.h - height) / 2);
-
-                if (pseudoFullscreen) {
-                    // SDL cannot fullscreen a sub-monitor region when only one combined display is exposed.
-                    // Emulate monitor-1 fullscreen with a borderless window on the first-monitor area.
-                    flags &= ~SDL_WINDOW_FULLSCREEN;
-                    flags |= SDL_WINDOW_BORDERLESS;
-                    createWidth  = static_cast<uint16_t>(monitorWidth);
-                    createHeight = static_cast<uint16_t>(std::max(1, displayBounds.h));
-                    xPos         = displayBounds.x;
-                    yPos         = displayBounds.y;
-                }
-            } else {
-                // Center inside the selected display bounds instead of the virtual desktop.
-                xPos = (windowX >= 0) ? windowX : displayBounds.x + ((displayBounds.w - width) / 2);
-                yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
-            }
-        }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
-        SDL_free(displays);
-
-        m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
-
         if (m_window == nullptr) {
-            throw SDLException(SDL_GetError());
+            throw SDLException("RenderBackendOpenGL::createMainScreen - no SDL window available");
         }
 
-        // Set window position if not fullscreen
-        if (!mode.isFullScreen() || pseudoFullscreen) {
-            SDL_SetWindowPosition(m_window, xPos, yPos);
-        } else {
-            SDL_SetWindowPosition(
-                m_window, toDisplayWindowPos(displayIndex, false), toDisplayWindowPos(displayIndex, false));
+        if (!icon.empty()) {
+            SDL_Surface* img = IMG_Load(icon.c_str());
+            if (img != nullptr) {
+                SDL_SetWindowIcon(m_window, img);
+                SDL_DestroySurface(img);
+            }
         }
-        // make sure the window have the right settings
-        SDL_DisplayMode displayMode;
-        SDL_zero(displayMode);
-        displayMode.format       = static_cast<SDL_PixelFormat>(mode.getFormat());
-        displayMode.w            = createWidth;
-        displayMode.h            = createHeight;
-        displayMode.refresh_rate = static_cast<float>(mode.getRefreshRate());
-        if (mode.isFullScreen() && !SDL_SetWindowFullscreenMode(m_window, &displayMode)) {
-            throw SDLException(SDL_GetError());
-        }
+        SDL_SetWindowTitle(m_window, title.c_str());
 
-        // create render context or use the old with new window
+        bool const recreate = m_context != nullptr;
         if (recreate) {
             if (!SDL_GL_MakeCurrent(m_window, m_context)) {
                 throw SDLException(SDL_GetError());
             }
         } else {
+            if (!SDL_GL_LoadLibrary(nullptr)) {
+                throw SDLException(SDL_GetError());
+            }
+            SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
             m_context = SDL_GL_CreateContext(m_window);
+            if (m_context == nullptr) {
+                throw SDLException(SDL_GetError());
+            }
+
+            glewExperimental       = GL_TRUE;
+            GLenum const glewError = glewInit();
+            if (glewError != GLEW_OK) {
+                FL_LOG(
+                    _log,
+                    std::format(
+                        "RenderBackendOpenGLError initializing GLEW!{}",
+                        reinterpret_cast<char const *>(glewGetErrorString(glewError))));
+            }
         }
-        // set the window surface as main surface, not really needed anymore
-        // For OpenGL windows, SDL_GetWindowSurface returns NULL in SDL3
-        // Create a dummy surface to maintain compatibility with existing code
-        m_screen = SDL_CreateSurface(createWidth, createHeight, SDL_PIXELFORMAT_RGBA8888);
+
+        int w = 0;
+        int h = 0;
+        SDL_GetWindowSize(m_window, &w, &h);
+        w = std::max(1, w);
+        h = std::max(1, h);
+
+        m_screen = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGBA8888);
         m_target = m_screen;
         if (m_screen == nullptr) {
             throw SDLException(SDL_GetError());
         }
 
-        // initialize GLEW
-        glewExperimental       = GL_TRUE;
-        GLenum const glewError = glewInit();
-        if (glewError != GLEW_OK) {
-            FL_LOG(
-                _log,
-                std::format(
-                    "RenderBackendOpenGLError initializing GLEW!{}",
-                    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-                    reinterpret_cast<char const *>(glewGetErrorString(glewError))));
-        }
+        m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32);
 
-        FL_LOG(
-            _log,
-            std::format(
-                "RenderBackendOpenGLVideomode {}x{} at {} bpp with {} Hz",
-                width,
-                height,
-                static_cast<int32_t>(bitsPerPixel),
-                displayMode.refresh_rate));
-
-        // this is needed, otherwise we would have screen pixel formats which will not work with
-        // our texture generation. 32 bit surfaces to BitsPerPixel texturen.
-        // Use RGBA32 (ABGR8888 on LE, RGBA8888 on BE) to match the byte order expected by
-        // GL_RGBA uploads. SDL_PIXELFORMAT_RGBA32 is the platform-independent byte-array encoding
-        // with memory order [R, G, B, A], matching GL_RGBA/GL_UNSIGNED_BYTE.
-        if (bitsPerPixel != 16) {
-            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32);
-        } else {
-            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA4444);
-        }
-
-        // update the screen mode with the actual flags used
-        m_screenMode = mode;
-
-        uint32_t viewportW = width;
-        uint32_t viewportH = height;
-        getDrawableSizeOrFallback(m_window, width, height, viewportW, viewportH);
+        uint32_t viewportW = static_cast<uint32_t>(w);
+        uint32_t viewportH = static_cast<uint32_t>(h);
+        getDrawableSizeOrFallback(
+            (m_windowObject != nullptr) ? m_windowObject->getSDLWindow() : m_window,
+            static_cast<uint32_t>(w),
+            static_cast<uint32_t>(h),
+            viewportW,
+            viewportH);
 
         glViewport(0, 0, toGLsizei(viewportW), toGLsizei(viewportH));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLdouble const left   = 0.0;
-        GLdouble const right  = static_cast<GLdouble>(width);
-        GLdouble const bottom = static_cast<GLdouble>(height);
-        GLdouble const top    = 0.0;
-        glOrtho(left, right, bottom, top, -100.0, 100.0);
+        glOrtho(0.0, static_cast<GLdouble>(w), static_cast<GLdouble>(h), 0.0, -100.0, 100.0);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -441,7 +327,6 @@ namespace FIFE
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        // dont reset
         if (!recreate) {
             glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
             glClearDepth(1.0F);
@@ -460,53 +345,9 @@ namespace FIFE
 
         glEnableClientState(GL_COLOR_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        prepareForOverlays();
-
-        glPointSize(1.0);
-        glLineWidth(1.0);
-
-        if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
-            glGenFramebuffers(1, &m_fbo_id);
-        }
-
-        if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
-            if (GLEW_EXT_texture_filter_anisotropic) {
-                GLint largest = 0;
-                glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
-                m_maxAnisotropy = static_cast<int32_t>(largest);
-            } else {
-                // if not available use trilinear filter
-                m_maxAnisotropy = 0;
-                m_textureFilter = TEXTURE_FILTER_TRILINEAR;
-            }
-        }
-
-        // sync swaping with refresh rate if VSync is enabled
         SDL_GL_SetSwapInterval(static_cast<uint8_t>(m_vSync));
-
-        // currently unused, 1000 objects x 400 textures x 4 renderDataZ
-        // m_renderZ_datas.resize(1600000);
-
-        // 6 indices x 100000 objects
-        m_indices.resize(600000);
-        // a rough way to fill the index buffer, result is: 0, 1, 2, 0, 2, 3 | 4, 5, 6, 4, 6, 7
-        uint32_t index = 0;
-        for (std::vector<uint32_t>::size_type i = 0; i != m_indices.size(); i += 6) {
-            m_indices.at(i)     = index;
-            m_indices.at(i + 1) = index + 1;
-            m_indices.at(i + 2) = index + 2;
-            m_indices.at(i + 3) = index;
-            m_indices.at(i + 4) = index + 2;
-            m_indices.at(i + 5) = index + 3;
-            index += 4;
-        }
-
-        // currently unused, create buffer and send data
-        // glGenBuffers(1, &m_indicebufferId);
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicebufferId);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void RenderBackendOpenGL::endFrame()
@@ -532,7 +373,7 @@ namespace FIFE
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // Let SDL do this for us.
 
-        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+        /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
                 _log,
                 std::format(
@@ -543,7 +384,7 @@ namespace FIFE
                     static_cast<unsigned>(surface->format),
                     static_cast<unsigned>(m_rgba_format.format),
                     surface->format == m_rgba_format.format));
-        }
+        }*/
 
         if (surface->format == m_rgba_format.format) {
             return std::make_unique<GLImage>(surface);
@@ -551,7 +392,7 @@ namespace FIFE
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
 
-        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+        /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
                 _log,
                 std::format(
@@ -560,7 +401,7 @@ namespace FIFE
                     conv->h,
                     conv->pitch,
                     static_cast<unsigned>(conv->format)));
-        }
+        }*/
 
         auto image = std::make_unique<GLImage>(conv);
 
@@ -573,7 +414,7 @@ namespace FIFE
         // Given an abritary surface, we must convert it to the format GLImage will understand.
         // It's easiest to let SDL do this for us.
 
-        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+        /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
                 _log,
                 std::format(
@@ -585,7 +426,7 @@ namespace FIFE
                     static_cast<unsigned>(surface->format),
                     static_cast<unsigned>(m_rgba_format.format),
                     surface->format == m_rgba_format.format));
-        }
+        }*/
 
         if (surface->format == m_rgba_format.format) {
             return std::make_unique<GLImage>(name, surface);
@@ -593,7 +434,7 @@ namespace FIFE
 
         SDL_Surface* conv = SDL_ConvertSurface(surface, m_rgba_format.format);
 
-        if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
+        /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
                 _log,
                 std::format(
@@ -602,7 +443,7 @@ namespace FIFE
                     conv->h,
                     conv->pitch,
                     static_cast<unsigned>(conv->format)));
-        }
+        }*/
 
         auto image = std::make_unique<GLImage>(name, conv);
 
@@ -907,6 +748,69 @@ namespace FIFE
             m_state.scissor_test = false;
             glDisable(GL_SCISSOR_TEST);
         }
+    }
+
+    void RenderBackendOpenGL::setScalingMode(ScalingMode mode)
+    {
+        RenderBackend::setScalingMode(mode);
+        if (m_window == nullptr) {
+            return;
+        }
+
+        int windowW = 0;
+        int windowH = 0;
+        if (m_windowObject != nullptr) {
+            windowW = m_windowObject->getWidthInPoints();
+            windowH = m_windowObject->getHeightInPoints();
+        } else {
+            SDL_GetWindowSize(m_window, &windowW, &windowH);
+        }
+
+        GLdouble orthoWidth  = static_cast<GLdouble>(std::max(1, windowW));
+        GLdouble orthoHeight = static_cast<GLdouble>(std::max(1, windowH));
+
+        if (mode == ScalingMode::Integer) {
+            int scale = windowW / static_cast<int>(m_baseWidth);
+            scale     = std::min(scale, windowH / static_cast<int>(m_baseHeight));
+            scale = std::max(scale, 1);
+            m_integerScale = scale;
+
+            int const vpW = static_cast<int>(m_baseWidth) * scale;
+            int const vpH = static_cast<int>(m_baseHeight) * scale;
+            int vpX       = 0;
+            int vpY       = 0;
+
+            if (m_windowObject != nullptr) {
+                int const pixelW = m_windowObject->getWidthInPixels();
+                int const pixelH = m_windowObject->getHeightInPixels();
+                vpX              = (pixelW - vpW) / 2;
+                vpY              = (pixelH - vpH) / 2;
+            } else {
+                vpX = (windowW - vpW) / 2;
+                vpY = (windowH - vpH) / 2;
+            }
+
+            glViewport(vpX, vpY, vpW, vpH);
+
+            orthoWidth  = static_cast<GLdouble>(m_baseWidth);
+            orthoHeight = static_cast<GLdouble>(m_baseHeight);
+        } else {
+            m_integerScale     = 1;
+            uint32_t viewportW = static_cast<uint32_t>(windowW);
+            uint32_t viewportH = static_cast<uint32_t>(windowH);
+            getDrawableSizeOrFallback(
+                (m_windowObject != nullptr) ? m_windowObject->getSDLWindow() : m_window,
+                static_cast<uint32_t>(windowW),
+                static_cast<uint32_t>(windowH),
+                viewportW,
+                viewportH);
+            glViewport(0, 0, toGLsizei(viewportW), toGLsizei(viewportH));
+        }
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, orthoWidth, orthoHeight, 0.0, -100.0, 100.0);
+        glMatrixMode(GL_MODELVIEW);
     }
 
     void RenderBackendOpenGL::changeBlending(int32_t src, int32_t dst)
@@ -3027,15 +2931,17 @@ namespace FIFE
         // On HiDPI displays, OpenGL viewport/scissor are in drawable pixels,
         // while FIFE layout coordinates remain in logical units.
         if (m_target == m_screen && m_window != nullptr) {
-            uint32_t drawableW = static_cast<uint32_t>(m_screen->w);
-            uint32_t drawableH = static_cast<uint32_t>(m_screen->h);
-            getDrawableSizeOrFallback(
-                m_window, static_cast<uint32_t>(m_screen->w), static_cast<uint32_t>(m_screen->h), drawableW, drawableH);
+            uint32_t const drawableW = (m_windowObject != nullptr) ? static_cast<uint32_t>(m_windowObject->getWidthInPixels()) :
+                                                  static_cast<uint32_t>(m_screen->w);
+            uint32_t const drawableH = (m_windowObject != nullptr) ? static_cast<uint32_t>(m_windowObject->getHeightInPixels()) :
+                                                  static_cast<uint32_t>(m_screen->h);
 
-            double const logicalW = static_cast<double>(std::max(1, m_screen->w));
-            double const logicalH = static_cast<double>(std::max(1, m_screen->h));
-            double const scaleX   = static_cast<double>(drawableW) / logicalW;
-            double const scaleY   = static_cast<double>(drawableH) / logicalH;
+            double const logicalW = static_cast<double>(
+                std::max(1, (m_windowObject != nullptr) ? m_windowObject->getWidthInPoints() : m_screen->w));
+            double const logicalH = static_cast<double>(
+                std::max(1, (m_windowObject != nullptr) ? m_windowObject->getHeightInPoints() : m_screen->h));
+            double const scaleX = static_cast<double>(drawableW) / logicalW;
+            double const scaleY = static_cast<double>(drawableH) / logicalH;
 
             scissorX = static_cast<GLint>(std::floor(static_cast<double>(cliparea.x) * scaleX));
             scissorY = static_cast<GLint>(std::floor(

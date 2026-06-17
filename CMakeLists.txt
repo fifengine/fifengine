@@ -397,6 +397,8 @@ set(
   src/fife/video/sdl/renderbackendsdl.cpp
   src/fife/video/sdl/sdlblendingfunctions.cpp
   src/fife/video/sdl/sdlimage.cpp
+  src/fife/video/window/display.cpp
+  src/fife/video/window/window.cpp
   src/fife/view/camera.cpp
   src/fife/view/layercache.cpp
   src/fife/view/rendererbase.cpp
@@ -618,6 +620,9 @@ set(
   src/fife/video/sdl/renderbackendsdl.h
   src/fife/video/sdl/sdlblendingfunctions.h
   src/fife/video/sdl/sdlimage.h
+  src/fife/video/window/display.h
+  src/fife/video/window/window.h
+  src/fife/video/window/windowsettings.h
   src/fife/view/camera.h
   src/fife/view/layercache.h
   src/fife/view/rendererbase.h
@@ -743,6 +748,9 @@ set(
   src/fife/vfs/vfs.i
   src/fife/video/fonts/fonts.i
   src/fife/video/video.i
+  src/fife/video/window/windowsettings.i
+  src/fife/video/window/display.i
+  src/fife/video/window/window.i
   src/fife/view/camera.i
   src/fife/view/rendererbase.i
   src/fife/view/renderers/blockinginforenderer.i
@@ -1548,6 +1556,37 @@ if(WIN32)
     install_runtime_dlls()
   endif()
 endif()
+
+#-------------------------------------------------------------------
+# Platform-specific DPI configuration templates
+#-------------------------------------------------------------------
+
+# Windows: DPI-aware manifest (for applications linking against FIFE)
+# Without this, Windows treats the app as DPI-unaware and bitmap-scales
+# the window, making getDPIScaleFactor() always return 1.0.
+# Application developers should embed this manifest in their .exe.
+configure_file(
+  "${CMAKE_SOURCE_DIR}/CMake/platform/windows_dpi_manifest.manifest.in"
+  "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
+  @ONLY
+)
+
+# macOS: Info.plist with HiDPI support
+# Without NSHighResolutionCapable=true, the app runs in the 1x backing
+# store on Retina displays, making getDPIScaleFactor() always return 1.0.
+configure_file(
+  "${CMAKE_SOURCE_DIR}/CMake/platform/macos_Info.plist.in"
+  "${PROJECT_BINARY_DIR}/platform/macos_Info.plist"
+  @ONLY
+)
+
+# Install both templates alongside the library headers for reference
+install(
+  FILES
+    "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
+    "${PROJECT_BINARY_DIR}/platform/macos_Info.plist"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/fife/platform"
+)
 
 #-------------------------------------------------------------------
 # Display Feature Summary

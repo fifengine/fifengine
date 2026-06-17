@@ -113,7 +113,7 @@ namespace FIFE
         Path const & path = route->getPath();
         CellGrid* cg      = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw path");
+            // FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw path");
             cache.dirty = false;
             return;
         }

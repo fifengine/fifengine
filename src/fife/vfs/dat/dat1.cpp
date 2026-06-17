@@ -32,14 +32,14 @@ namespace FIFE
 
     DAT1::DAT1(VFS* vfs, std::string const & file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
-        FL_LOG(_log(), std::format("MFFalloutDAT1loading: {} filesize: {}", file, m_data->getDataLength()));
+        // FL_LOG(_log(), std::format("MFFalloutDAT1loading: {} filesize: {}", file, m_data->getDataLength()));
 
         m_data->setIndex(0);
 
         uint32_t const dircount = m_data->read32Big();
         m_data->moveIndex(4 * 3);
 
-        FL_LOG(_log(), std::format("MFFalloutDAT1number of directories {}", dircount));
+        // FL_LOG(_log(), std::format("MFFalloutDAT1number of directories {}", dircount));
 
         // Sanity check. Each dir entry needs min. 16 bytes.
         if (dircount * 16 > m_data->getDataLength()) {

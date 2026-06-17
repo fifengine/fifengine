@@ -39,6 +39,8 @@ namespace FIFE
         m_windowX(-1),
         m_windowY(-1),
         m_vSync(false),
+        m_windowResizable(true),
+        m_windowScalingMode(0),
 
         m_initialvolume(MAXIMUM_VOLUME / 2.0F),
         m_renderbackend("SDL"),
@@ -92,12 +94,12 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log(),
-            std::format(
-                "EngineSettings::setBitsPerPixel() -  Tried to set screen bpp to an unsupporded value of {}.  "
-                "Setting bpp to use the default value of 0 (the current screen bpp)",
-                bitsperpixel));
+        // FL_WARN(
+        // _log(),
+        // std::format(
+        // "EngineSettings::setBitsPerPixel() -  Tried to set screen bpp to an unsupporded value of {}.  "
+        // "Setting bpp to use the default value of 0 (the current screen bpp)",
+        // bitsperpixel));
 
         m_bitsperpixel = 0; // default value
     }
@@ -115,12 +117,12 @@ namespace FIFE
     void EngineSettings::setInitialVolume(float volume)
     {
         if (volume > getMaxVolume() || volume < 0) {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "EngineSettings::setInitialVolume() -  Tried to set initial volume to an unsupporded value of "
-                    "{}.  Setting volume to the default value of 5 (minumum is 0, maximum is 10)",
-                    volume));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "EngineSettings::setInitialVolume() -  Tried to set initial volume to an unsupporded value of "
+            // "{}.  Setting volume to the default value of 5 (minumum is 0, maximum is 10)",
+            // volume));
 
             m_initialvolume = 5.0F;
             return;
@@ -142,12 +144,12 @@ namespace FIFE
             m_renderbackend = renderbackend;
             return;
         }
-        FL_WARN(
-            _log(),
-            std::format(
-                "EngineSettings::setRenderBackend() - {} is not a valid render backend .  Setting the render "
-                "backend to the default value of \"SDL\".",
-                renderbackend));
+        // FL_WARN(
+        // _log(),
+        // std::format(
+        // "EngineSettings::setRenderBackend() - {} is not a valid render backend .  Setting the render "
+        // "backend to the default value of \"SDL\".",
+        // renderbackend));
 
         m_renderbackend = "SDL";
     }
@@ -304,12 +306,12 @@ namespace FIFE
             return;
         }
 
-        FL_WARN(
-            _log(),
-            std::format(
-                "EngineSettings::setLightingModel() - {} is not a valid lighting model..  Setting the lighting "
-                "model to the default value of 0 (off)",
-                lighting));
+        // FL_WARN(
+        // _log(),
+        // std::format(
+        // "EngineSettings::setLightingModel() - {} is not a valid lighting model..  Setting the lighting "
+        // "model to the default value of 0 (off)",
+        // lighting));
 
         m_lighting = 0;
     }

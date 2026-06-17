@@ -129,7 +129,7 @@ namespace FIFE
 
     void TimeManager::printStatistics() const
     {
-        FL_LOG(_log(), std::format("Timers: {}", m_events_list.size()));
+        // FL_LOG(_log(), std::format("Timers: {}", m_events_list.size()));
     }
 
 } // namespace FIFE

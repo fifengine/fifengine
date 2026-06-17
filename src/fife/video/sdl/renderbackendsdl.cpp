@@ -24,6 +24,7 @@
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "video/devicecaps.h"
+#include "video/window/window.h"
 
 namespace FIFE
 {
@@ -61,7 +62,9 @@ namespace FIFE
     RenderBackendSDL::~RenderBackendSDL()
     {
         SDL_DestroyRenderer(m_renderer);
-        SDL_DestroyWindow(m_window);
+        if (m_windowObject == nullptr) {
+            SDL_DestroyWindow(m_window);
+        }
         deinit();
     }
 
@@ -87,10 +90,8 @@ namespace FIFE
         SDL_RenderClear(m_renderer);
     }
 
-    void RenderBackendSDL::createMainScreen(
-        ScreenMode const & mode, std::string const & title, std::string const & icon)
+    void RenderBackendSDL::createMainScreen(std::string const & title, std::string const & icon)
     {
-        setScreenMode(mode);
         if (m_window != nullptr) {
             if (!icon.empty()) {
                 SDL_Surface* img = IMG_Load(icon.c_str());
@@ -101,156 +102,37 @@ namespace FIFE
             }
             SDL_SetWindowTitle(m_window, title.c_str());
         }
-    }
 
-    void RenderBackendSDL::setScreenMode(ScreenMode const & mode)
-    {
-        uint16_t const width        = mode.getWidth();
-        uint16_t const height       = mode.getHeight();
-        uint16_t const bitsPerPixel = mode.getBPP();
-        uint32_t flags              = mode.getSDLFlags();
-        // in case of recreating
-        if (m_window != nullptr) {
-            SDL_DestroyRenderer(m_renderer);
-            SDL_DestroyWindow(m_window);
-            m_screen = nullptr;
-        }
-        // create window
-        uint8_t const displayIndex = mode.getDisplay();
-        int32_t const windowX      = mode.getWindowPositionX();
-        int32_t const windowY      = mode.getWindowPositionY();
-
-        int displayCount              = 0;
-        SDL_DisplayID* displays       = SDL_GetDisplays(&displayCount);
-        SDL_DisplayID const displayId = // NOLINT(cppcoreguidelines-init-variables)
-            (std::cmp_less(displayIndex, displayCount)) ?
-                displays[displayIndex] :
-                SDL_GetPrimaryDisplay(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        bool const pseudoFullscreen = mode.isFullScreen() && displayCount == 1;
-        uint16_t createWidth        = width;
-        uint16_t createHeight       = height;
-
-        // Determine X/Y position.
-        int xPos{};
-        int yPos{};
-        if (windowX >= 0 && windowY >= 0) {
-            xPos = windowX;
-            yPos = windowY;
-        } else if (mode.isFullScreen() && !pseudoFullscreen) {
-            xPos = toDisplayWindowPos(displayIndex, false);
-            yPos = toDisplayWindowPos(displayIndex, false);
-        } else {
-            SDL_Rect displayBounds;
-            if (!SDL_GetDisplayBounds(displayId, &displayBounds)) {
-                throw SDLException(SDL_GetError());
-            }
-            if (displayBounds.w <= 0 || displayBounds.h <= 0) {
-                SDL_DisplayMode const * desktopMode = SDL_GetDesktopDisplayMode(displayId);
-                if (desktopMode == nullptr) {
+        // If we don't have a renderer yet, create a minimal one
+        if (m_renderer == nullptr) {
+            SDL_Window* window = (m_windowObject != nullptr) ? m_windowObject->getSDLWindow() : m_window;
+            if (window != nullptr) {
+                m_renderer = SDL_CreateRenderer(window, nullptr);
+                if (m_renderer == nullptr) {
                     throw SDLException(SDL_GetError());
                 }
-                displayBounds.x = 0;
-                displayBounds.y = 0;
-                displayBounds.w = desktopMode->w;
-                displayBounds.h = desktopMode->h;
-            }
-
-            if (displayCount == 1 && windowX < 0 && windowY < 0) {
-                // Some desktop setups expose all monitors as one virtual display (X11).
-                // Center window inside the first monitor area (left half) instead
-                // of centering on the the whole combined desktop.
-                int32_t const monitorWidth = std::max(1, displayBounds.w / 2);
-
-                xPos = displayBounds.x + ((monitorWidth - width) / 2);
-                yPos = displayBounds.y + ((displayBounds.h - height) / 2);
-
-                if (pseudoFullscreen) {
-                    // SDL cannot fullscreen a sub-monitor region when only one combined display is exposed (X11).
-                    // Emulate monitor-1 fullscreen with a borderless window on the first-monitor area.
-                    flags &= ~SDL_WINDOW_FULLSCREEN;
-                    flags |= SDL_WINDOW_BORDERLESS;
-
-                    createWidth  = static_cast<uint16_t>(monitorWidth);
-                    createHeight = static_cast<uint16_t>(std::max(1, displayBounds.h));
-
-                    xPos = displayBounds.x;
-                    yPos = displayBounds.y;
+                if (!m_vSync) {
+                    SDL_SetRenderVSync(m_renderer, 0);
                 }
-            } else {
-                // Center inside the selected display bounds instead of the virtual desktop.
-                xPos = (windowX >= 0) ? windowX : displayBounds.x + ((displayBounds.w - width) / 2);
-                yPos = (windowY >= 0) ? windowY : displayBounds.y + ((displayBounds.h - height) / 2);
+                SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+                clearBackBuffer();
             }
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
-        SDL_free(displays);
 
-        m_window = SDL_CreateWindow("", createWidth, createHeight, flags);
-
-        if (m_window == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-
-        // Set window position
-        if (!mode.isFullScreen() || pseudoFullscreen) {
-            SDL_SetWindowPosition(m_window, xPos, yPos);
-        } else {
-            SDL_SetWindowPosition(
-                m_window, toDisplayWindowPos(displayIndex, false), toDisplayWindowPos(displayIndex, false));
-        }
-        // make sure the window has the right settings
-        SDL_DisplayMode displayMode;
-        SDL_zero(displayMode);
-        displayMode.format       = static_cast<SDL_PixelFormat>(mode.getFormat());
-        displayMode.w            = createWidth;
-        displayMode.h            = createHeight;
-        displayMode.refresh_rate = static_cast<float>(mode.getRefreshRate());
-        if (mode.isFullScreen() && !SDL_SetWindowFullscreenMode(m_window, &displayMode)) {
-            throw SDLException(SDL_GetError());
-        }
-
-        // create renderer
-        m_renderer = SDL_CreateRenderer(m_window, nullptr);
-        if (m_renderer == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-        // set vsync if needed
-        if (!m_vSync) {
-            SDL_SetRenderVSync(m_renderer, 0);
-        }
-        // enable alpha blending
-        SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-
-        // TODO do we need to clear here?
-        clearBackBuffer();
-
-        // set the window surface as main surface, not really needed anymore
-        // In SDL3, windows with renderers don't have surfaces, so create a dummy one
-        m_screen = SDL_CreateSurface(createWidth, createHeight, SDL_PIXELFORMAT_RGBA8888);
-        m_target = m_screen;
-        if (m_screen == nullptr) {
-            throw SDLException(SDL_GetError());
-        }
-
-        FL_LOG(
-            _log(),
-            std::format(
-                "RenderBackendSDLVideomode {}x{} at {} bpp with {} Hz",
-                width,
-                height,
-                static_cast<int32_t>(bitsPerPixel),
-                displayMode.refresh_rate));
-
-        // this is needed, otherwise we would have screen pixel formats which will not work with
-        // our texture generation. 32 bit surfaces to BitsPerPixel texturen.
-        if (bitsPerPixel != 16) {
+        // Create a dummy surface if we don't have one yet
+        if (m_screen == nullptr && m_window != nullptr) {
+            int w = 0;
+            int h = 0;
+            SDL_GetWindowSize(m_window, &w, &h);
+            uint16_t const surfaceW = static_cast<uint16_t>(std::max(1, w));
+            uint16_t const surfaceH = static_cast<uint16_t>(std::max(1, h));
+            m_screen          = SDL_CreateSurface(surfaceW, surfaceH, SDL_PIXELFORMAT_RGBA8888);
+            m_target          = m_screen;
+            if (m_screen == nullptr) {
+                throw SDLException(SDL_GetError());
+            }
             m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA8888);
-        } else {
-            m_rgba_format = *SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA4444);
         }
-
-        // update the screen mode with the actual flags used
-        m_screenMode = mode;
     }
 
     void RenderBackendSDL::endFrame()
@@ -956,5 +838,26 @@ namespace FIFE
         static_cast<void>(indices);
         static_cast<void>(translation);
         static_cast<void>(texture);
+    }
+
+    void RenderBackendSDL::setScalingMode(ScalingMode mode)
+    {
+        RenderBackend::setScalingMode(mode);
+        if (m_renderer != nullptr) {
+            if (mode == ScalingMode::Integer) {
+                SDL_SetRenderLogicalPresentation(
+                    m_renderer,
+                    static_cast<int>(m_baseWidth),
+                    static_cast<int>(m_baseHeight),
+                    SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
+                SDL_SetDefaultTextureScaleMode(m_renderer, SDL_SCALEMODE_NEAREST);
+            } else if (mode == ScalingMode::Nearest) {
+                SDL_SetRenderLogicalPresentation(m_renderer, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED);
+                SDL_SetDefaultTextureScaleMode(m_renderer, SDL_SCALEMODE_NEAREST);
+            } else {
+                SDL_SetRenderLogicalPresentation(m_renderer, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED);
+                SDL_SetDefaultTextureScaleMode(m_renderer, SDL_SCALEMODE_LINEAR);
+            }
+        }
     }
 } // namespace FIFE
