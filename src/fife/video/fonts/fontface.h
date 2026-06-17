@@ -27,8 +27,11 @@ namespace FIFE
                 return 0;
             }
 
-            virtual void setDPIScale(float /*factor*/)
+            // TODO: Implement DPI scaling for base FontFace class
+            //       Currently only TrueTypeFontFace and ImageFontFace implement setDPIScale.
+            virtual void setDPIScale(float factor)
             {
+                (void)factor;
             }
             virtual float getDPIScale() const
             {

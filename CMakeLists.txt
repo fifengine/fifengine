@@ -749,7 +749,6 @@ set(
   src/fife/video/fonts/fonts.i
   src/fife/video/video.i
   src/fife/video/window/windowsettings.i
-  src/fife/video/window/display.i
   src/fife/video/window/window.i
   src/fife/view/camera.i
   src/fife/view/rendererbase.i
@@ -1561,32 +1560,36 @@ endif()
 # Platform-specific DPI configuration templates
 #-------------------------------------------------------------------
 
-# Windows: DPI-aware manifest (for applications linking against FIFE)
-# Without this, Windows treats the app as DPI-unaware and bitmap-scales
-# the window, making getDPIScaleFactor() always return 1.0.
-# Application developers should embed this manifest in their .exe.
-configure_file(
-  "${CMAKE_SOURCE_DIR}/CMake/platform/windows_dpi_manifest.manifest.in"
-  "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
-  @ONLY
-)
-
-# macOS: Info.plist with HiDPI support
-# Without NSHighResolutionCapable=true, the app runs in the 1x backing
-# store on Retina displays, making getDPIScaleFactor() always return 1.0.
-configure_file(
-  "${CMAKE_SOURCE_DIR}/CMake/platform/macos_Info.plist.in"
-  "${PROJECT_BINARY_DIR}/platform/macos_Info.plist"
-  @ONLY
-)
-
-# Install both templates alongside the library headers for reference
-install(
-  FILES
+if(WIN32)
+  # Windows: DPI-aware manifest (for applications linking against FIFE)
+  # Without this, Windows treats the app as DPI-unaware and bitmap-scales
+  # the window, making getDPIScaleFactor() always return 1.0.
+  # Application developers should embed this manifest in their .exe.
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/platform/windows_dpi_manifest.manifest.in"
     "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
+    @ONLY
+  )
+  install(
+    FILES "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/fife/platform"
+  )
+endif()
+
+if(APPLE)
+  # macOS: Info.plist with HiDPI support
+  # Without NSHighResolutionCapable=true, the app runs in the 1x backing
+  # store on Retina displays, making getDPIScaleFactor() always return 1.0.
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/platform/macos_Info.plist.in"
     "${PROJECT_BINARY_DIR}/platform/macos_Info.plist"
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/fife/platform"
-)
+    @ONLY
+  )
+  install(
+    FILES "${PROJECT_BINARY_DIR}/platform/macos_Info.plist"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/fife/platform"
+  )
+endif()
 
 #-------------------------------------------------------------------
 # Display Feature Summary

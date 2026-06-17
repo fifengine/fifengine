@@ -148,7 +148,7 @@ namespace FIFE
     void Console::updateCaption()
     {
         std::string caption = "FIFE Console - FPS: ";
-        double const fps = // NOLINT(cppcoreguidelines-init-variables)
+        double const fps    = // NOLINT(cppcoreguidelines-init-variables)
             1e3 / TimeManager::instance()->getAverageFrameTime();
         caption += std::to_string(fps);
         m_status->setCaption(caption);

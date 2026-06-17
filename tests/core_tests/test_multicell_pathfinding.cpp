@@ -55,8 +55,8 @@ namespace
             ~PathFixture()                              = default;
             PathFixture(PathFixture const &)            = delete;
             PathFixture& operator=(PathFixture const &) = delete;
-            PathFixture(PathFixture&&)                  = default;
-            PathFixture& operator=(PathFixture&&)       = default;
+            PathFixture(PathFixture&&)                  = delete;
+            PathFixture& operator=(PathFixture&&)       = delete;
 
             PathFixture()
             {

@@ -126,8 +126,8 @@ namespace FIFE
             SDL_GetWindowSize(m_window, &w, &h);
             uint16_t const surfaceW = static_cast<uint16_t>(std::max(1, w));
             uint16_t const surfaceH = static_cast<uint16_t>(std::max(1, h));
-            m_screen          = SDL_CreateSurface(surfaceW, surfaceH, SDL_PIXELFORMAT_RGBA8888);
-            m_target          = m_screen;
+            m_screen                = SDL_CreateSurface(surfaceW, surfaceH, SDL_PIXELFORMAT_RGBA8888);
+            m_target                = m_screen;
             if (m_screen == nullptr) {
                 throw SDLException(SDL_GetError());
             }

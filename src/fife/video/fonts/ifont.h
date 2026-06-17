@@ -161,8 +161,9 @@ namespace FIFE
 
             virtual void invalidate() = 0;
 
-            virtual void setDPIScale(float /*factor*/)
+            virtual void setDPIScale(float factor)
             {
+                (void)factor;
             }
             virtual float getDPIScale() const
             {

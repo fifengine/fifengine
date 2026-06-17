@@ -770,9 +770,9 @@ namespace FIFE
         GLdouble orthoHeight = static_cast<GLdouble>(std::max(1, windowH));
 
         if (mode == ScalingMode::Integer) {
-            int scale = windowW / static_cast<int>(m_baseWidth);
-            scale     = std::min(scale, windowH / static_cast<int>(m_baseHeight));
-            scale = std::max(scale, 1);
+            int scale      = windowW / static_cast<int>(m_baseWidth);
+            scale          = std::min(scale, windowH / static_cast<int>(m_baseHeight));
+            scale          = std::max(scale, 1);
             m_integerScale = scale;
 
             int const vpW = static_cast<int>(m_baseWidth) * scale;
@@ -2931,10 +2931,12 @@ namespace FIFE
         // On HiDPI displays, OpenGL viewport/scissor are in drawable pixels,
         // while FIFE layout coordinates remain in logical units.
         if (m_target == m_screen && m_window != nullptr) {
-            uint32_t const drawableW = (m_windowObject != nullptr) ? static_cast<uint32_t>(m_windowObject->getWidthInPixels()) :
-                                                  static_cast<uint32_t>(m_screen->w);
-            uint32_t const drawableH = (m_windowObject != nullptr) ? static_cast<uint32_t>(m_windowObject->getHeightInPixels()) :
-                                                  static_cast<uint32_t>(m_screen->h);
+            uint32_t const drawableW = (m_windowObject != nullptr) ?
+                                           static_cast<uint32_t>(m_windowObject->getWidthInPixels()) :
+                                           static_cast<uint32_t>(m_screen->w);
+            uint32_t const drawableH = (m_windowObject != nullptr) ?
+                                           static_cast<uint32_t>(m_windowObject->getHeightInPixels()) :
+                                           static_cast<uint32_t>(m_screen->h);
 
             double const logicalW = static_cast<double>(
                 std::max(1, (m_windowObject != nullptr) ? m_windowObject->getWidthInPoints() : m_screen->w));
