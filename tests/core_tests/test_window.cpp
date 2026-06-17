@@ -124,12 +124,15 @@ TEST_CASE("WindowSettings_DisplayIndex")
     CHECK(ws.display == 0);
 
     ws.display = 1;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.display == 1);
 
     ws.display = 5;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.display == 5);
 
     ws.display = -1;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.display == -1);
 }
 
@@ -157,9 +160,11 @@ TEST_CASE("WindowSettings_Resizable")
     CHECK(ws.resizable == true);
 
     ws.resizable = false;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.resizable == false);
 
     ws.resizable = true;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.resizable == true);
 }
 
@@ -172,11 +177,13 @@ TEST_CASE("WindowSettings_Position")
     ws.x = 100;
     ws.y = 200;
     CHECK(ws.x == 100);
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.y == 200);
 
     ws.x = -1;
     ws.y = -1;
     CHECK(ws.x == -1);
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.y == -1);
 }
 
@@ -186,8 +193,10 @@ TEST_CASE("WindowSettings_VSync")
     CHECK(ws.vsync == true);
 
     ws.vsync = false;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.vsync == false);
 
     ws.vsync = true;
+    // cppcheck-suppress knownConditionTrueFalse
     CHECK(ws.vsync == true);
 }

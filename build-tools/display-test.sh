@@ -62,11 +62,15 @@ ensure_deps() {
   local old_debian_frontend="${DEBIAN_FRONTEND:-}"
   export DEBIAN_FRONTEND=noninteractive
   if [[ $VERBOSE -eq 0 ]]; then
-    apt-get update -qq && apt-get install -y -qq $pkg_list 2>&1 | tail -5
+    apt-get update -qq && apt-get install -y -qq "$pkg_list" 2>&1 | tail -5
   else
-    apt-get update && apt-get install -y $pkg_list
+    apt-get update && apt-get install -y "$pkg_list"
   fi
-  [[ -n "$old_debian_frontend" ]] && DEBIAN_FRONTEND="$old_debian_frontend" || unset DEBIAN_FRONTEND
+  if [[ -n "$old_debian_frontend" ]]; then
+    DEBIAN_FRONTEND="$old_debian_frontend"
+  else
+    unset DEBIAN_FRONTEND
+  fi
   log "✅ Dependencies ready."
 }
 
