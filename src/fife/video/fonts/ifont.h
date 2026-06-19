@@ -167,7 +167,7 @@ namespace FIFE
             }
             virtual float getDPIScale() const
             {
-                return 1.0f;
+                return 1.0F;
             }
     };
 } // namespace FIFE

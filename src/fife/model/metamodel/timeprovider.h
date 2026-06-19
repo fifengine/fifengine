@@ -56,7 +56,8 @@ namespace FIFE
         private:
             TimeProvider* m_master;
             float m_multiplier;
-            double m_time_static, m_time_scaled;
+            double m_time_static;
+            double m_time_scaled;
 
             /** Returns current game ticks, already scaled, more precise.
              */

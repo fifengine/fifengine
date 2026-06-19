@@ -308,8 +308,9 @@ namespace FIFE
     inline void FL_DBG([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
     {
         if constexpr (kLogEnabled) {
-            if (LogManager::instance().isVisible(logger.getModule()))
+            if (LogManager::instance().isVisible(logger.getModule())) {
                 logger.log(LogManager::LEVEL_DEBUG, std::forward<Msg>(msg));
+            }
         }
     }
 
@@ -317,8 +318,9 @@ namespace FIFE
     inline void FL_LOG([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
     {
         if constexpr (kLogEnabled) {
-            if (LogManager::instance().isVisible(logger.getModule()))
+            if (LogManager::instance().isVisible(logger.getModule())) {
                 logger.log(LogManager::LEVEL_LOG, std::forward<Msg>(msg));
+            }
         }
     }
 
@@ -326,8 +328,9 @@ namespace FIFE
     inline void FL_WARN([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
     {
         if constexpr (kLogEnabled) {
-            if (LogManager::instance().isVisible(logger.getModule()))
+            if (LogManager::instance().isVisible(logger.getModule())) {
                 logger.log(LogManager::LEVEL_WARN, std::forward<Msg>(msg));
+            }
         }
     }
 
@@ -335,8 +338,9 @@ namespace FIFE
     inline void FL_ERR([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
     {
         if constexpr (kLogEnabled) {
-            if (LogManager::instance().isVisible(logger.getModule()))
+            if (LogManager::instance().isVisible(logger.getModule())) {
                 logger.log(LogManager::LEVEL_ERROR, std::forward<Msg>(msg));
+            }
         }
     }
 
@@ -344,8 +348,9 @@ namespace FIFE
     inline void FL_PANIC([[maybe_unused]] Logger& logger, [[maybe_unused]] Msg&& msg)
     {
         if constexpr (kLogEnabled) {
-            if (LogManager::instance().isVisible(logger.getModule()))
+            if (LogManager::instance().isVisible(logger.getModule())) {
                 logger.log(LogManager::LEVEL_PANIC, std::forward<Msg>(msg));
+            }
         }
     }
 

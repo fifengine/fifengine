@@ -41,7 +41,7 @@ namespace FIFE
             }
 
         private:
-            float m_dpiScale = 1.0f;
+            float m_dpiScale = 1.0F;
             void extractGlyphs(SDL_Surface* surface, std::string const & glyphs);
 
             SDL_Surface* m_sheet = nullptr;

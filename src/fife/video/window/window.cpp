@@ -15,7 +15,7 @@
 namespace FIFE
 {
 
-    Window::Window() : m_window(nullptr), m_dpiScaleFactor(1.0f), m_windowShown(false), m_lastKnownPixelWidth(0)
+    Window::Window() : m_window(nullptr), m_dpiScaleFactor(1.0F), m_windowShown(false), m_lastKnownPixelWidth(0)
     {
     }
 
@@ -34,7 +34,7 @@ namespace FIFE
 
         m_window = SDL_CreateWindow(m_settings.title.c_str(), m_settings.width, m_settings.height, flags);
 
-        if (!m_window) {
+        if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
         }
 
@@ -49,11 +49,11 @@ namespace FIFE
 
     void Window::destroy()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_DestroyWindow(m_window);
             m_window = nullptr;
         }
-        m_dpiScaleFactor      = 1.0f;
+        m_dpiScaleFactor      = 1.0F;
         m_windowShown         = false;
         m_lastKnownPixelWidth = 0;
     }
@@ -66,7 +66,7 @@ namespace FIFE
     int Window::getWidthInPoints() const
     {
         int w = 0;
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_GetWindowSize(m_window, &w, nullptr);
         }
         return w;
@@ -75,7 +75,7 @@ namespace FIFE
     int Window::getHeightInPoints() const
     {
         int h = 0;
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_GetWindowSize(m_window, nullptr, &h);
         }
         return h;
@@ -84,7 +84,7 @@ namespace FIFE
     int Window::getWidthInPixels() const
     {
         int w = 0;
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_GetWindowSizeInPixels(m_window, &w, nullptr);
         }
         return w;
@@ -93,7 +93,7 @@ namespace FIFE
     int Window::getHeightInPixels() const
     {
         int h = 0;
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_GetWindowSizeInPixels(m_window, nullptr, &h);
         }
         return h;
@@ -101,7 +101,7 @@ namespace FIFE
 
     void Window::setFullscreenMode(WindowMode mode)
     {
-        if (!m_window) {
+        if (m_window == nullptr) {
             return;
         }
 
@@ -146,7 +146,7 @@ namespace FIFE
 
     void Window::setSize(int width, int height)
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_SetWindowSize(m_window, width, height);
             recalculateDPIScale();
         }
@@ -154,35 +154,35 @@ namespace FIFE
 
     void Window::setPosition(int x, int y)
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_SetWindowPosition(m_window, x, y);
         }
     }
 
     void Window::minimize()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_MinimizeWindow(m_window);
         }
     }
 
     void Window::maximize()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_MaximizeWindow(m_window);
         }
     }
 
     void Window::restore()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_RestoreWindow(m_window);
         }
     }
 
     void Window::show()
     {
-        if (m_window && !m_windowShown) {
+        if (m_window != nullptr && !m_windowShown) {
             SDL_ShowWindow(m_window);
             m_windowShown = true;
         }
@@ -190,7 +190,7 @@ namespace FIFE
 
     void Window::hide()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_HideWindow(m_window);
             m_windowShown = false;
         }
@@ -199,7 +199,7 @@ namespace FIFE
     void Window::setWindowTitle(std::string const & title)
     {
         m_settings.title = title;
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_SetWindowTitle(m_window, title.c_str());
         }
     }
@@ -212,15 +212,16 @@ namespace FIFE
     void Window::setVSync(bool enabled)
     {
         m_settings.vsync = enabled;
-        if (!m_window)
+        if (m_window == nullptr) {
             return;
+        }
 
         if (m_settings.opengl) {
             SDL_GL_SetSwapInterval(static_cast<uint8_t>(enabled));
         } else {
             SDL_Window* win        = m_window;
             SDL_Renderer* renderer = SDL_GetRenderer(win);
-            if (renderer) {
+            if (renderer != nullptr) {
                 SDL_SetRenderVSync(renderer, static_cast<uint8_t>(enabled));
             }
         }
@@ -273,12 +274,12 @@ namespace FIFE
 
     int Window::getRefreshRate() const
     {
-        if (!m_window) {
+        if (m_window == nullptr) {
             return 0;
         }
         SDL_DisplayID displayID      = SDL_GetDisplayForWindow(m_window);
         SDL_DisplayMode const * mode = SDL_GetCurrentDisplayMode(displayID);
-        if (mode) {
+        if (mode != nullptr) {
             return static_cast<int>(mode->refresh_rate);
         }
         return 0;
@@ -286,7 +287,7 @@ namespace FIFE
 
     void Window::updateDPIScaleIfNeeded()
     {
-        if (!m_window) {
+        if (m_window == nullptr) {
             return;
         }
         int currentPixelW;
@@ -326,8 +327,8 @@ namespace FIFE
 
     void Window::recalculateDPIScale()
     {
-        if (!m_window) {
-            m_dpiScaleFactor = 1.0f;
+        if (m_window == nullptr) {
+            m_dpiScaleFactor = 1.0F;
             return;
         }
 

@@ -26,7 +26,10 @@ namespace FIFE
     {
         public:
             uint32_t page;
-            uint32_t left, right, top, bottom;
+            uint32_t left;
+            uint32_t right;
+            uint32_t top;
+            uint32_t bottom;
 
             AtlasBlock(Rect const & rect, uint32_t page) :
                 page(page),
@@ -110,7 +113,8 @@ namespace FIFE
         private:
             AtlasBlock const * intersects(AtlasBlock const * block) const;
 
-            uint32_t width, height;
+            uint32_t width;
+            uint32_t height;
             uint32_t pixelSize;
             uint32_t page;
             int32_t freePixels;
@@ -142,7 +146,8 @@ namespace FIFE
             AtlasPage* extendCache(uint32_t minPageWidth, uint32_t minPageHeight);
 
             // How big the new atlases should be
-            uint32_t pageWidth, pageHeight;
+            uint32_t pageWidth;
+            uint32_t pageHeight;
             uint32_t pixelSize;
 
             using Pages = std::vector<AtlasPage>;

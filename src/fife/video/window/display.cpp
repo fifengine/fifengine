@@ -13,7 +13,7 @@ namespace FIFE
     {
         int count               = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        if (!displays || count <= 0 || index >= count) {
+        if (displays == nullptr || count <= 0 || index >= count) {
             SDL_free(displays);
             return 0;
         }
@@ -33,10 +33,11 @@ namespace FIFE
     std::string Display::getDisplayName(int index)
     {
         SDL_DisplayID id = getDisplayId(index);
-        if (id == 0)
+        if (id == 0) {
             return {};
+        }
         char const * name = SDL_GetDisplayName(id);
-        return name ? std::string(name) : std::string();
+        return name != nullptr ? std::string(name) : std::string();
     }
 
     SDL_Rect Display::getDisplayBounds(int index)
@@ -73,7 +74,7 @@ namespace FIFE
     {
         SDL_DisplayID id = getDisplayId(index);
         if (id == 0) {
-            return 1.0f;
+            return 1.0F;
         }
         return SDL_GetDisplayContentScale(id);
     }
@@ -84,7 +85,7 @@ namespace FIFE
         SDL_DisplayID id     = getDisplayId(index);
         if (id != 0) {
             SDL_DisplayMode const * dm = SDL_GetDesktopDisplayMode(id);
-            if (dm) {
+            if (dm != nullptr) {
                 mode = *dm;
             }
         }
@@ -95,15 +96,16 @@ namespace FIFE
     {
         std::vector<SDL_DisplayMode> modes;
         SDL_DisplayID id = getDisplayId(index);
-        if (id == 0)
+        if (id == 0) {
             return modes;
+        }
 
         int count                = 0;
         SDL_DisplayMode** dmList = SDL_GetFullscreenDisplayModes(id, &count);
-        if (dmList && count > 0) {
+        if (dmList != nullptr && count > 0) {
             modes.reserve(static_cast<size_t>(count));
             for (int i = 0; i < count; ++i) {
-                if (dmList[i]) {
+                if (dmList[i] != nullptr) {
                     modes.push_back(*dmList[i]);
                 }
             }
@@ -116,8 +118,9 @@ namespace FIFE
     {
         SDL_DisplayMode mode = {};
         SDL_DisplayID id     = getDisplayId(index);
-        if (id == 0)
+        if (id == 0) {
             return mode;
+        }
 
         SDL_GetClosestFullscreenDisplayMode(id, width, height, static_cast<float>(refreshRate), false, &mode);
         return mode;

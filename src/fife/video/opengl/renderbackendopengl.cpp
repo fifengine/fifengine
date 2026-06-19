@@ -2240,26 +2240,27 @@ namespace FIFE
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         RenderObject ro(GL_TRIANGLES, 6, id);
 
-        if ((rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16)) {
-            FL_LOG(
-                _guiLog,
-                std::format(
-                    "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} "
-                    "st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
-                    id,
-                    rect.x,
-                    rect.y,
-                    rect.w,
-                    rect.h,
-                    alpha,
-                    rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) :
-                                      std::string("null"),
-                    st[0],
-                    st[1],
-                    st[2],
-                    st[3],
-                    (alpha == 255 && rgba == nullptr) ? "texture-only" : "overlay-color"));
-        }
+        /*
+         if ((rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16)) {
+             FL_LOG(
+                 _guiLog,
+                 std::format(
+                     "RenderBackendOpenGL::addImageToArray tex={} rect=({},{} {}x{}) alpha={} rgba={} "
+                     "st=({:.3f},{:.3f},{:.3f},{:.3f}) mode={}",
+                     id,
+                     rect.x,
+                     rect.y,
+                     rect.w,
+                     rect.h,
+                     alpha,
+                     rgba != nullptr ? std::format("{},{},{},{}", rgba[0], rgba[1], rgba[2], rgba[3]) :
+                                       std::string("null"),
+                     st[0],
+                     st[1],
+                     st[2],
+                     st[3],
+                     (alpha == 255 && rgba == nullptr) ? "texture-only" : "overlay-color"));
+         }*/
 
         // texture quad without alpha
         if (alpha == 255 && (rgba == nullptr)) {

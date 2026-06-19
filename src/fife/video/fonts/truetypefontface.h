@@ -42,7 +42,7 @@ namespace FIFE
             }
 
         private:
-            float m_dpiScale = 1.0f;
+            float m_dpiScale = 1.0F;
             void initCoverage();
             void reloadFont();
 

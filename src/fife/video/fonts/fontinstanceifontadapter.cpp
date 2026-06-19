@@ -220,7 +220,7 @@ namespace FIFE
         // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {
-                int fixedCount                     = 0;
+                // int fixedCount                     = 0;
                 SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(renderedText->format);
                 int32_t const pitch_px             = renderedText->pitch / 4;
                 auto pixels                        = std::span(
@@ -237,16 +237,16 @@ namespace FIFE
                         SDL_GetRGBA(*(row.data() + static_cast<size_t>(x)), fmt, nullptr, &r, &g, &b, &a);
                         if (a == 0 && (r != 0 || g != 0 || b != 0)) {
                             *(row.data() + static_cast<size_t>(x)) = 0;
-                            ++fixedCount;
+                            //++fixedCount;
                         }
                     }
                 }
                 SDL_UnlockSurface(renderedText);
-                if (fixedCount > 0) {
+                /*if (fixedCount > 0) {
                     FL_WARN(
                         _log(),
                         std::format("  alpha-fix: zeroed {} pixels with non-zero RGB but zero alpha", fixedCount));
-                }
+                }*/
             }
         }
 
