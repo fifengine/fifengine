@@ -801,7 +801,7 @@ found_non_transparent_pixel:;
         assert(contains);
 
         if (renderer->isEnabled()) {
-            FL_LOG(_log(), std::format("Enabling renderer {}", renderer->getName()));
+            // FL_LOG(_log(), std::format("Enabling renderer {}", renderer->getName()));
             m_pipeline.push_back(renderer);
             m_pipeline.sort(pipelineSort);
         } else {

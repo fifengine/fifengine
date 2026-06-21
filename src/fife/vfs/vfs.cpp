@@ -59,7 +59,7 @@ namespace FIFE
     void VFS::addProvider(std::unique_ptr<VFSSourceProvider> provider)
     {
         provider->setVFS(this);
-        FL_LOG(_log(), std::format("new provider: {}", provider->getName()));
+        // FL_LOG(_log(), std::format("new provider: {}", provider->getName()));
         m_providers.push_back(std::move(provider));
     }
 
@@ -67,7 +67,7 @@ namespace FIFE
     {
 
         if (hasSource(path)) {
-            FL_WARN(_log(), std::format("{} is already used as VFS source", path));
+            // FL_WARN(_log(), std::format("{} is already used as VFS source", path));
             return nullptr;
         }
 
@@ -82,23 +82,23 @@ namespace FIFE
                 VFSSource* source = provider->createSource(path);
                 return source;
             } catch (Exception const & ex) {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "{} thought it could load {} but didn't succeed ({})", provider->getName(), path, ex.what()));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "{} thought it could load {} but didn't succeed ({})", provider->getName(), path, ex.what()));
                 continue;
             } catch (...) {
-                FL_WARN(
-                    _log(),
-                    std::format(
-                        "{} thought it could load {} but didn't succeed (unknown exception)",
-                        provider->getName(),
-                        path));
+                // FL_WARN(
+                // _log(),
+                // std::format(
+                // "{} thought it could load {} but didn't succeed (unknown exception)",
+                // provider->getName(),
+                // path));
                 continue;
             }
         }
 
-        FL_WARN(_log(), std::format("no provider for {} found", path));
+        // FL_WARN(_log(), std::format("no provider for {} found", path));
         return nullptr;
     }
 
@@ -108,7 +108,7 @@ namespace FIFE
         if (source) {
             addSource(std::move(source));
         } else {
-            FL_WARN(_log(), std::format("Failed to add new VFS source: {}", path));
+            // FL_WARN(_log(), std::format("Failed to add new VFS source: {}", path));
         }
     }
 
@@ -162,7 +162,7 @@ namespace FIFE
             return it->get();
         }
 
-        FL_WARN(_log(), std::format("no source for {} found", file));
+        // FL_WARN(_log(), std::format("no source for {} found", file));
         return nullptr;
     }
 

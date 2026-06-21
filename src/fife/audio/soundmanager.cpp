@@ -435,7 +435,7 @@ namespace FIFE
         std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
         ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
         if (!ret.second) {
-            FL_WARN(_log(), "SoundEmitter already have an source handler");
+            // FL_WARN(_log(), "SoundEmitter already have an source handler");
         }
         emitter->setSource(m_freeSources.front());
         m_freeSources.pop();
@@ -450,7 +450,7 @@ namespace FIFE
                 m_activeEmitters.erase(it);
                 emitter->setSource(0);
             } else {
-                FL_WARN(_log(), "SoundEmitter can not release source handler");
+                // FL_WARN(_log(), "SoundEmitter can not release source handler");
             }
         }
     }
@@ -622,7 +622,7 @@ namespace FIFE
         }
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "SoundEmitter can not removed from unknown group");
+            // FL_WARN(_log(), "SoundEmitter can not removed from unknown group");
             return;
         }
         bool found      = false;
@@ -637,7 +637,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            FL_WARN(_log(), "SoundEmitter could not be found in the given group.");
+            // FL_WARN(_log(), "SoundEmitter could not be found in the given group.");
             return;
         }
     }
@@ -649,7 +649,7 @@ namespace FIFE
         }
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "SoundEmitter can not remove unknown group");
+            // FL_WARN(_log(), "SoundEmitter can not remove unknown group");
             return;
         }
         std::vector<SoundEmitter*> emitters = groupIt->second;
@@ -679,7 +679,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not played");
+            // FL_WARN(_log(), "Unknown group can not played");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -692,7 +692,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not paused");
+            // FL_WARN(_log(), "Unknown group can not paused");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -705,7 +705,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not stopped");
+            // FL_WARN(_log(), "Unknown group can not stopped");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -718,7 +718,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not rewinded");
+            // FL_WARN(_log(), "Unknown group can not rewinded");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -731,7 +731,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not set gain");
+            // FL_WARN(_log(), "Unknown group can not set gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -744,7 +744,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not set max gain");
+            // FL_WARN(_log(), "Unknown group can not set max gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();
@@ -757,7 +757,7 @@ namespace FIFE
     {
         auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
-            FL_WARN(_log(), "Unknown group can not set min gain");
+            // FL_WARN(_log(), "Unknown group can not set min gain");
             return;
         }
         auto emitterIt = groupIt->second.begin();

@@ -48,7 +48,7 @@ namespace FIFE
 
         char const * version = XML::Attribute(root, "version");
         if (version == nullptr) {
-            FL_WARN(getFontDefLog(), "<fonts> element is missing 'version' attribute");
+            // FL_WARN(getFontDefLog(), "<fonts> element is missing 'version' attribute");
         }
 
         std::vector<FontDefinition> result;

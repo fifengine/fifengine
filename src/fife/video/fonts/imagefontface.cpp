@@ -15,7 +15,7 @@ namespace FIFE
 {
 
     ImageFontFace::ImageFontFace(AssetHandle handle, std::string const & filepath, std::string const & glyphs) :
-        FontFace(handle)
+        FontFace(handle), m_glyphsString(glyphs)
     {
         if (filepath.empty()) {
             throw std::invalid_argument("Image font file path must not be empty");
@@ -29,7 +29,8 @@ namespace FIFE
             throw std::runtime_error("Failed to load glyph sheet: " + filepath);
         }
 
-        m_height = m_sheet->h;
+        m_height         = m_sheet->h;
+        m_originalHeight = m_height;
         extractGlyphs(m_sheet, glyphs);
     }
 
@@ -61,6 +62,38 @@ namespace FIFE
         auto it = m_glyphs.find(codepoint);
         assert("Glyph must have been extracted" && it != m_glyphs.end());
         return it != m_glyphs.end() ? it->second.width : 0;
+    }
+
+    void ImageFontFace::setDPIScale(float factor)
+    {
+        if (factor <= 0.0F) {
+            return;
+        }
+        m_dpiScale = factor;
+
+        for (auto& [codepoint, info] : m_glyphs) {
+            if (info.surface != nullptr) {
+                SDL_DestroySurface(info.surface);
+            }
+        }
+        m_glyphs.clear();
+
+        extractGlyphs(m_sheet, m_glyphsString);
+
+        if (m_dpiScale != 1.0F) {
+            for (auto& [codepoint, info] : m_glyphs) {
+                int const newW      = std::max(1, static_cast<int>(static_cast<float>(info.width) * m_dpiScale));
+                int const newH      = std::max(1, static_cast<int>(static_cast<float>(m_originalHeight) * m_dpiScale));
+                SDL_Surface* scaled = SDL_ScaleSurface(info.surface, newW, newH, SDL_SCALEMODE_NEAREST);
+                if (scaled != nullptr) {
+                    SDL_DestroySurface(info.surface);
+                    info.surface = scaled;
+                    info.width   = scaled->w;
+                }
+            }
+        }
+
+        m_height = std::max(1, static_cast<int>(static_cast<float>(m_originalHeight) * m_dpiScale));
     }
 
     void ImageFontFace::extractGlyphs(SDL_Surface* surface, std::string const & glyphs)

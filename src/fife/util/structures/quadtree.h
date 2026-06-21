@@ -27,7 +27,9 @@ namespace FIFE
         protected:
             QuadNode* m_parent;
             QuadNode* m_nodes[4];
-            int32_t m_x, m_y, m_size;
+            int32_t m_x;
+            int32_t m_y;
+            int32_t m_size;
             DataType m_data;
 
         public:

@@ -140,7 +140,7 @@ namespace FIFE
 
         // release buffer and allocate new memory
         releaseBuffer();
-        m_data = std::make_unique<char[]>(length);
+        m_data = std::make_unique<char[]>(length); // NOLINT(cppcoreguidelines-avoid-c-arrays, modernize-avoid-c-arrays)
 
         // decode the stream
         m_datasize = 0;

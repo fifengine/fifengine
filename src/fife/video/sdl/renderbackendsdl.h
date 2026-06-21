@@ -20,8 +20,6 @@
 namespace FIFE
 {
 
-    class ScreenMode;
-
     /** The main class of the SDL-based renderer.
      *
      * @see RenderBackend
@@ -46,9 +44,7 @@ namespace FIFE
             void resetStencilBuffer(uint8_t buffer) override;
             void changeBlending(int32_t scr, int32_t dst) override;
 
-            void createMainScreen(
-                ScreenMode const & mode, std::string const & title, std::string const & icon) override;
-            void setScreenMode(ScreenMode const & mode) override;
+            void createMainScreen(std::string const & title, std::string const & icon) override;
 
             std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr) override;
             std::unique_ptr<Image> createImage(std::string const & name, IResourceLoader* loader = nullptr) override;
@@ -74,6 +70,8 @@ namespace FIFE
                 OverlayType otype = OVERLAY_TYPE_NONE) override;
             void captureScreen(std::string const & filename) override;
             void captureScreen(std::string const & filename, uint32_t width, uint32_t height) override;
+
+            void setScalingMode(ScalingMode mode) override;
 
             bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             void drawLine(

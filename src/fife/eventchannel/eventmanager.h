@@ -155,6 +155,8 @@ namespace FIFE
              */
             void setJoystickSupport(bool support);
 
+            bool isKeyPressed(Key::KeyType key) const;
+
             /** Return the joystick with the given instance id.
              */
             Joystick* getJoystick(int32_t instanceId);

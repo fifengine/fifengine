@@ -443,6 +443,14 @@ namespace FIFE
                 }
                 break;
             }
+            case SDL_EVENT_DISPLAY_ADDED:
+            case SDL_EVENT_DISPLAY_REMOVED:
+            case SDL_EVENT_DISPLAY_ORIENTATION:
+            case SDL_EVENT_DISPLAY_MOVED:
+            case SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED:
+            case SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED:
+                processWindowEvent(event);
+                break;
             case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
             case SDL_EVENT_GAMEPAD_BUTTON_UP:
             case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
@@ -495,6 +503,20 @@ namespace FIFE
         case SDL_EVENT_WINDOW_MINIMIZED:
         case SDL_EVENT_WINDOW_HIDDEN:
             ct = CMD_APP_ICONIFIED;
+            break;
+
+        case SDL_EVENT_WINDOW_RESIZED:
+        case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+            ct = CMD_WINDOW_RESIZED;
+            break;
+
+        case SDL_EVENT_WINDOW_MOVED:
+            ct = CMD_WINDOW_MOVED;
+            break;
+
+        case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+        case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+            ct = CMD_WINDOW_DPI_CHANGED;
             break;
 
         default:
@@ -696,10 +718,10 @@ namespace FIFE
         } else if (sdlevt.type == SDL_EVENT_KEY_UP) {
             keyevt.setType(KeyEvent::RELEASED);
         } else {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "fillKeyEvent() Invalid key event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "fillKeyEvent() Invalid key event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
             return;
         }
 
@@ -722,10 +744,10 @@ namespace FIFE
             Text const t(sdlevt.edit.text, sdlevt.edit.start, sdlevt.edit.length);
             txtevt.setText(t);
         } else {
-            FL_WARN(
-                _log(),
-                std::format(
-                    "fillTextEvent() Invalid text event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
+            // FL_WARN(
+            // _log(),
+            // std::format(
+            // "fillTextEvent() Invalid text event type of {}.  Ignoring event.", static_cast<int>(sdlevt.type)));
         }
     }
 
@@ -804,6 +826,12 @@ namespace FIFE
         } else if (!support && (m_joystickManager != nullptr)) {
             m_joystickManager = nullptr;
         }
+    }
+
+    bool EventManager::isKeyPressed(Key::KeyType key) const
+    {
+        auto it = m_keystatemap.find(static_cast<int32_t>(key));
+        return it != m_keystatemap.end() && it->second;
     }
 
     Joystick* EventManager::getJoystick(int32_t instanceId)

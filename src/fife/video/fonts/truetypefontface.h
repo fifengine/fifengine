@@ -35,11 +35,20 @@ namespace FIFE
                 return m_ptsize;
             }
 
+            void setDPIScale(float factor) override;
+            float getDPIScale() const override
+            {
+                return m_dpiScale;
+            }
+
         private:
+            float m_dpiScale = 1.0F;
             void initCoverage();
+            void reloadFont();
 
             TTF_Font* m_font = nullptr;
-            int m_ptsize;
+            int m_ptsize     = 0;
+            std::string m_filepath;
             std::vector<uint8_t> m_fontData;
             std::vector<std::pair<uint32_t, uint32_t>> m_coverage;
     };

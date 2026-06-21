@@ -321,7 +321,7 @@ jobs:
       matrix:
         config:
           - {
-              job_name: "Linux | Clang22 | Wheel + Tests",
+              job_name: "Linux | Clang22 | Release | Tests",
               image_version: "trixie-with-vulkansdk-latest",
               preset: "clang22-x64-linux-rel",
               triplet: x64-linux,

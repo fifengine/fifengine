@@ -154,6 +154,38 @@ namespace FIFE
             }
 
             /**
+             * Sets whether the window should be resizable by the user.
+             */
+            void setWindowResizable(bool resizable)
+            {
+                m_windowResizable = resizable;
+            }
+
+            /**
+             * Returns whether the window is resizable by the user.
+             */
+            bool isWindowResizable() const
+            {
+                return m_windowResizable;
+            }
+
+            /**
+             * Sets the window scaling mode (Linear, Integer, Nearest).
+             */
+            void setWindowScalingMode(uint8_t mode)
+            {
+                m_windowScalingMode = mode;
+            }
+
+            /**
+             * Returns the window scaling mode.
+             */
+            uint8_t getWindowScalingMode() const
+            {
+                return m_windowScalingMode;
+            }
+
+            /**
              * Sets the used SDL render driver. Values depends on platform
              * and is useless for the OpenGL backend.
              * If none is set, SDL use the first one that supports the requested flags.
@@ -604,6 +636,8 @@ namespace FIFE
             int32_t m_windowX;
             int32_t m_windowY;
             bool m_vSync;
+            bool m_windowResizable;
+            uint8_t m_windowScalingMode;
             std::string m_renderDriver;
             float m_initialvolume;
             std::string m_renderbackend;

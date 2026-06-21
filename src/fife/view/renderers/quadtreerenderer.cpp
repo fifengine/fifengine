@@ -97,7 +97,7 @@ namespace FIFE
     {
         CellGrid const * cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
+            // FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
         InstanceTree* itree = layer->getInstanceTree();

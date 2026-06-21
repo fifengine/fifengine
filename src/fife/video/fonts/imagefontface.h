@@ -34,11 +34,20 @@ namespace FIFE
                 return m_height;
             }
 
+            void setDPIScale(float factor) override;
+            float getDPIScale() const override
+            {
+                return m_dpiScale;
+            }
+
         private:
+            float m_dpiScale = 1.0F;
             void extractGlyphs(SDL_Surface* surface, std::string const & glyphs);
 
             SDL_Surface* m_sheet = nullptr;
             int m_height         = 0;
+            int m_originalHeight = 0;
+            std::string m_glyphsString;
             struct GlyphInfo
             {
                     SDL_Surface* surface;

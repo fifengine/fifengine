@@ -24,6 +24,7 @@
 #include "video/imagemanager.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
+#include "video/window/window.h"
 
 using FIFE::GuiImageLoader;
 using FIFE::ImageManager;
@@ -33,8 +34,10 @@ using FIFE::Rect;
 using FIFE::RenderBackend;
 using FIFE::RenderBackendOpenGL;
 using FIFE::RenderBackendSDL;
-using FIFE::ScreenMode;
 using FIFE::SdlGuiGraphics;
+using FIFE::Window;
+using FIFE::WindowMode;
+using FIFE::WindowSettings;
 
 static char const * const IMAGE_FILE = "tests/data/beach_e1.png";
 struct environment : TestFixture
@@ -76,9 +79,12 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
 TEST_CASE("GuiImageLoader renders beach_e1.png via SDL", "[gui][sdl]")
 {
     environment const env;
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
     RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
     SdlGuiGraphics graphics;
     graphics.updateTarget();
     test_gui_image(renderbackend, graphics);
@@ -87,9 +93,16 @@ TEST_CASE("GuiImageLoader renders beach_e1.png via SDL", "[gui][sdl]")
 TEST_CASE("GuiImageLoader renders beach_e1.png via OpenGL", "[gui][opengl]")
 {
     environment const env;
+    Window window;
+    try {
+        window.create(WindowSettings{.width = 800, .height = 600, .opengl = true, .windowMode = WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL not available in this environment");
+    }
     RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
     OpenGLGuiGraphics graphics;
     graphics.updateTarget();
     test_gui_image(renderbackend, graphics);
@@ -153,17 +166,27 @@ namespace
 TEST_CASE("createImage converts BGRA8888 to RGBA8888 in SDL backend", "[gui][sdl]")
 {
     environment const env;
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
     RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
     test_create_image_converts_format(renderbackend, SDL_PIXELFORMAT_RGBA8888);
 }
 
 TEST_CASE("createImage converts BGRA8888 to RGBA32 in OpenGL backend", "[gui][opengl]")
 {
     environment const env;
+    Window window;
+    try {
+        window.create(WindowSettings{.width = 800, .height = 600, .opengl = true, .windowMode = WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL not available in this environment");
+    }
     RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
     test_create_image_converts_format(renderbackend, SDL_PIXELFORMAT_RGBA32);
 }

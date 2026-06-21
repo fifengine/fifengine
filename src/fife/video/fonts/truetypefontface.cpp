@@ -12,9 +12,8 @@
 namespace FIFE
 {
 
-    TrueTypeFontFace::TrueTypeFontFace(
-        AssetHandle handle, std::string const & filepath, int ptsize) : // cppcheck-suppress uninitMemberVar
-        FontFace(handle), m_ptsize(ptsize)
+    TrueTypeFontFace::TrueTypeFontFace(AssetHandle handle, std::string const & filepath, int ptsize) :
+        FontFace(handle), m_ptsize(ptsize), m_filepath(filepath)
     {
         if (filepath.empty()) {
             throw std::invalid_argument("TrueType file path must not be empty");
@@ -22,14 +21,13 @@ namespace FIFE
         if (ptsize <= 0) {
             throw std::invalid_argument("Font size must be positive");
         }
-        m_font = TTF_OpenFont(filepath.c_str(), static_cast<float>(ptsize));
+        m_font = TTF_OpenFont(filepath.c_str(), static_cast<float>(ptsize) * m_dpiScale);
         if (m_font == nullptr) {
             throw std::runtime_error("Failed to open TrueType font: " + filepath);
         }
         initCoverage();
     }
 
-    // cppcheck-suppress uninitMemberVar
     TrueTypeFontFace::TrueTypeFontFace(
         AssetHandle handle, uint8_t const * data, size_t size, int ptsize, std::string const & /*name*/) :
         FontFace(handle), m_ptsize(ptsize)
@@ -49,7 +47,7 @@ namespace FIFE
         if (iostream == nullptr) {
             throw std::runtime_error("Failed to create SDL_IOStream from font data");
         }
-        m_font = TTF_OpenFontIO(iostream, true, static_cast<float>(ptsize));
+        m_font = TTF_OpenFontIO(iostream, true, static_cast<float>(ptsize) * m_dpiScale);
         if (m_font == nullptr) {
             throw std::runtime_error("Failed to open TrueType font from memory");
         }
@@ -75,6 +73,41 @@ namespace FIFE
             return TTF_FontHasGlyph(m_font, codepoint);
         }
         return false;
+    }
+
+    void TrueTypeFontFace::setDPIScale(float factor)
+    {
+        if (factor <= 0.0F) {
+            return;
+        }
+        m_dpiScale = factor;
+        reloadFont();
+    }
+
+    void TrueTypeFontFace::reloadFont()
+    {
+        if (m_font != nullptr) {
+            TTF_CloseFont(m_font);
+            m_font = nullptr;
+        }
+
+        float const scaledSize = static_cast<float>(m_ptsize) * m_dpiScale;
+
+        if (!m_filepath.empty()) {
+            m_font = TTF_OpenFont(m_filepath.c_str(), scaledSize);
+        } else if (!m_fontData.empty()) {
+            SDL_IOStream* iostream = SDL_IOFromConstMem(m_fontData.data(), m_fontData.size());
+            if (iostream != nullptr) {
+                m_font = TTF_OpenFontIO(iostream, true, scaledSize);
+            }
+        }
+
+        if (m_font == nullptr) {
+            throw std::runtime_error("Failed to reload TrueType font at DPI scaled size");
+        }
+
+        m_coverage.clear();
+        initCoverage();
     }
 
     void TrueTypeFontFace::initCoverage()

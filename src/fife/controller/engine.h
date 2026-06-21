@@ -24,6 +24,7 @@
 // FIFE includes
 #include "enginesettings.h"
 #include "video/devicecaps.h"
+#include "video/window/windowsettings.h"
 
 namespace FIFE
 {
@@ -31,6 +32,7 @@ namespace FIFE
     class SoundManager;
     class RenderBackend;
     class IGUIManager;
+    class Window;
     class VFS;
     class VFSSourceFactory;
     class EventManager;
@@ -54,7 +56,13 @@ namespace FIFE
 
             /** Screen mode has been changed
              */
-            virtual void onScreenModeChanged(ScreenMode const & newmode) = 0;
+            virtual void onWindowModeChanged(WindowSettings const & newmode) = 0;
+            virtual void onDPIScaleChanged(float scale)
+            {
+            }
+            virtual void onWindowResized(int width, int height)
+            {
+            }
     };
 
     /** Engine acts as a controller to the whole system
@@ -85,13 +93,13 @@ namespace FIFE
             DeviceCaps const & getDeviceCaps() const;
 
             /** Changes the screen mode.
-             * This should be called instead of the renderer's setScreenMode() function.
+             * This should be called instead of the renderer's changeWindowMode() function.
              * It takes care of any objects that need to be re-created after switching
              * screen modes.
              *
-             * @param mode A valid ScreenMode retrieved from FIFE::DeviceCaps::getNearestScreenMode()
+             * @param settings The window settings to use.
              */
-            void changeScreenMode(ScreenMode const & mode);
+            void changeWindowMode(WindowSettings const & settings);
 
             /** Initializes the engine
              */
@@ -177,6 +185,13 @@ namespace FIFE
                 return m_renderbackend.get();
             }
 
+            /** Provides access point to the Window
+             */
+            Window* getWindow() const
+            {
+                return m_window.get();
+            }
+
             /** Provides access point to the Model
              */
             Model* getModel() const
@@ -209,6 +224,10 @@ namespace FIFE
              *  Useful for Python applications that need to register fonts dynamically.
              */
             void loadFontManifestFromString(std::string const & xml);
+
+            void toggleFullscreen();
+
+            void toggleVSync();
 
             /** Returns cursor used in the engine
              */
@@ -243,6 +262,7 @@ namespace FIFE
 
         private:
             std::unique_ptr<RenderBackend> m_renderbackend;
+            std::unique_ptr<Window> m_window;
             std::unique_ptr<IGUIManager> m_guimanager;
             std::unique_ptr<EventManager> m_eventmanager;
             std::unique_ptr<SoundManager> m_soundmanager;
@@ -257,12 +277,12 @@ namespace FIFE
 
             std::unique_ptr<Cursor> m_cursor;
             bool m_destroyed;
+            bool m_lastF11State   = false;
+            bool m_lastCtrlVState = false;
 
             EngineSettings m_settings;
             std::unique_ptr<FontManager> m_fontManager;
             DeviceCaps m_devcaps;
-
-            ScreenMode m_screenMode;
 
             std::unique_ptr<OffRenderer> m_offrenderer;
             std::unique_ptr<TargetRenderer> m_targetrenderer;

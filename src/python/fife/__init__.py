@@ -28,7 +28,7 @@ def _preload_optional_gui_backend():
     package_dir = os.path.dirname(__file__)
     for library_dir in _candidate_library_dirs(package_dir):
         for library_path in sorted(
-            glob(os.path.join(library_dir, "libfifechan_sdl2.so*"))
+            glob(os.path.join(library_dir, "libfifechan_sdl3.so*"))
         ):
             try:
                 ctypes.CDLL(library_path, mode=ctypes.RTLD_GLOBAL)

@@ -193,9 +193,17 @@ Example::
 			X2 = 16,
 			UNKNOWN_BUTTON = 32
 		};
-		virtual int32_t getX() const;
-		virtual int32_t getY() const;
-		virtual MouseEventType getType() const;
+        virtual int32_t getX() const;
+        virtual int32_t getY() const;
+        %feature("docstring") getXInPoints "Logical (point) x coordinate, unaffected by DPI scale.";
+        int32_t getXInPoints() const;
+        %feature("docstring") getYInPoints "Logical (point) y coordinate, unaffected by DPI scale.";
+        int32_t getYInPoints() const;
+        %feature("docstring") getXInPixels "Pixel x coordinate, scaled by the given DPI factor.";
+        int32_t getXInPixels(float dpiScale) const;
+        %feature("docstring") getYInPixels "Pixel y coordinate, scaled by the given DPI factor.";
+        int32_t getYInPixels(float dpiScale) const;
+        virtual MouseEventType getType() const;
 		virtual MouseButtonType getButton() const;
 		virtual ~MouseEvent();
 	private:

@@ -15,6 +15,7 @@
 // FIFE includes
 #include "util/time/timemanager.h"
 #include "video/devicecaps.h"
+#include "video/window/window.h"
 
 namespace FIFE
 {
@@ -39,6 +40,10 @@ namespace FIFE
         m_alphaValue(0.3F),
         m_vSync(false),
         m_guiClip(),
+        m_windowObject(nullptr),
+        m_baseWidth(1280),
+        m_baseHeight(720),
+        m_scalingMode(ScalingMode::Linear),
         m_isframelimit(false),
         m_frame_start(0),
         m_framelimit(60)
@@ -72,25 +77,30 @@ namespace FIFE
         }
     }
 
-    ScreenMode const & RenderBackend::getCurrentScreenMode() const
-    {
-        return m_screenMode;
-    }
-
     uint32_t RenderBackend::getWidth() const
     {
+        if (m_windowObject != nullptr) {
+            return static_cast<uint32_t>(m_windowObject->getWidthInPoints());
+        }
         assert(m_screen->w >= 0);
         return static_cast<uint32_t>(m_screen->w);
     }
 
     uint32_t RenderBackend::getHeight() const
     {
+        if (m_windowObject != nullptr) {
+            return static_cast<uint32_t>(m_windowObject->getHeightInPoints());
+        }
         assert(m_screen->h >= 0);
         return static_cast<uint32_t>(m_screen->h);
     }
 
     Rect const & RenderBackend::getArea() const
     {
+        if (m_windowObject != nullptr) {
+            static Rect const r(0, 0, m_windowObject->getWidthInPoints(), m_windowObject->getHeightInPoints());
+            return r;
+        }
         assert(m_screen->w >= 0);
         assert(m_screen->h >= 0);
         static Rect const r(0, 0, m_screen->w, m_screen->h);
@@ -402,5 +412,63 @@ namespace FIFE
         newPoints.push_back(p);
         // end point
         newPoints.push_back(points.at(segmentCount));
+    }
+
+    int RenderBackend::getWidthInPoints() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getWidthInPoints();
+        }
+        return static_cast<int>(getWidth());
+    }
+
+    int RenderBackend::getWidthInPixels() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getWidthInPixels();
+        }
+        return static_cast<int>(getWidth());
+    }
+
+    int RenderBackend::getHeightInPoints() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getHeightInPoints();
+        }
+        return static_cast<int>(getHeight());
+    }
+
+    int RenderBackend::getHeightInPixels() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getHeightInPixels();
+        }
+        return static_cast<int>(getHeight());
+    }
+
+    float RenderBackend::getDPIScaleFactor() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getDPIScaleFactor();
+        }
+        return 1.0F;
+    }
+
+    void RenderBackend::setWindowObject(Window* window)
+    {
+        m_windowObject = window;
+        if (m_windowObject != nullptr) {
+            m_window = m_windowObject->getSDLWindow();
+        }
+    }
+
+    void RenderBackend::setScalingMode(ScalingMode mode)
+    {
+        m_scalingMode = mode;
+    }
+
+    ScalingMode RenderBackend::getScalingMode() const
+    {
+        return m_scalingMode;
     }
 } // namespace FIFE

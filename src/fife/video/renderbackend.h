@@ -25,6 +25,7 @@
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
 #include "video/devicecaps.h"
+#include "video/window/windowsettings.h"
 
 #ifdef HAVE_OPENGL
     #include <stack>
@@ -36,6 +37,7 @@ namespace FIFE
 {
 
     class Image;
+    class Window;
 
 #ifdef HAVE_OPENGL
     enum GLConstants : uint16_t
@@ -173,17 +175,10 @@ namespace FIFE
             void deinit();
 
             /** Creates the mainscreen (the display window).
-             * @param mode The ScreenMode to use.  @see FIFE::ScreenMode.
              * @param title The window title to use.
              * @param icon The window icon to use.
              */
-            virtual void createMainScreen(
-                ScreenMode const & mode, std::string const & title, std::string const & icon) = 0;
-
-            /** Sets the mainscreen display mode.
-             * @param mode The ScreenMode to change the display to.  @see FIFE::ScreenMode.
-             */
-            virtual void setScreenMode(ScreenMode const & mode) = 0;
+            virtual void createMainScreen(std::string const & title, std::string const & icon) = 0;
 
             virtual std::unique_ptr<Image> createImage(IResourceLoader* loader = nullptr)                           = 0;
             virtual std::unique_ptr<Image> createImage(std::string const & name, IResourceLoader* loader = nullptr) = 0;
@@ -242,11 +237,6 @@ namespace FIFE
                 return m_window;
             }
 
-            /** Get current screen mode
-             * @return The current screen mode
-             */
-            ScreenMode const & getCurrentScreenMode() const;
-
             uint32_t getWidth() const;
             uint32_t getHeight() const;
             uint32_t getScreenWidth() const
@@ -258,6 +248,44 @@ namespace FIFE
                 return getHeight();
             }
             Rect const & getArea() const;
+
+            /** Returns the Window object */
+            Window* getWindowObject() const
+            {
+                return m_windowObject;
+            }
+
+            /** Sets the Window object */
+            void setWindowObject(Window* window);
+
+            uint32_t getBaseWidth() const
+            {
+                return m_baseWidth;
+            }
+
+            uint32_t getBaseHeight() const
+            {
+                return m_baseHeight;
+            }
+
+            void setBaseWidth(uint32_t width)
+            {
+                m_baseWidth = width;
+            }
+
+            void setBaseHeight(uint32_t height)
+            {
+                m_baseHeight = height;
+            }
+
+            int getWidthInPoints() const;
+            int getWidthInPixels() const;
+            int getHeightInPoints() const;
+            int getHeightInPixels() const;
+            float getDPIScaleFactor() const;
+
+            virtual void setScalingMode(ScalingMode mode);
+            ScalingMode getScalingMode() const;
 
             /** Pushes clip area to clip stack
              *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
@@ -617,7 +645,6 @@ namespace FIFE
             bool m_isalphaoptimized;
             bool m_iscolorkeyenabled;
             SDL_Color m_colorkey;
-            ScreenMode m_screenMode;
             SDL_PixelFormatDetails m_rgba_format;
 
             bool m_isbackgroundcolor;
@@ -652,6 +679,11 @@ namespace FIFE
             std::stack<ClipInfo> m_clipstack;
 
             ClipInfo m_guiClip;
+
+            Window* m_windowObject;
+            uint32_t m_baseWidth;
+            uint32_t m_baseHeight;
+            ScalingMode m_scalingMode;
 
         private:
             bool m_isframelimit;

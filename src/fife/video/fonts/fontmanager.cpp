@@ -211,6 +211,11 @@ namespace FIFE
         return getFontHandle(key, renderFace);
     }
 
+    void FontManager::setDPIScaleForAll(float scale)
+    {
+        m_faceCache.setDPIScaleForAll(scale);
+    }
+
     void FontManager::setFallbackFont(std::string const & id)
     {
         m_fallbackId = id;

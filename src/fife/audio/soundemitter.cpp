@@ -1039,7 +1039,7 @@ namespace FIFE
             ++i;
         }
 
-        FL_WARN(_log(), "Cannot remove unknown listener");
+        // FL_WARN(_log(), "Cannot remove unknown listener");
     }
 
     void SoundEmitter::callOnSoundFinished()

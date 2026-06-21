@@ -24,6 +24,7 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "video/renderbackend.h"
 #include "video/sdl/renderbackendsdl.h"
+#include "video/window/window.h"
 
 static char const * const IMAGE_FILE       = "docs/logo/FIFE_small_c3.png";
 static char const * const ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
@@ -32,9 +33,13 @@ static char const * const SUBIMAGE_FILE    = "tests/data/rpg_tiles_01.png";
 TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[core][images]")
 {
     TestFixture const _init;
+    FIFE::Window window;
+    window.create(
+        FIFE::WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = FIFE::WindowMode::Windowed});
     FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
 
     {
         SDL_Rect const rect = {.x = 0, .y = 0, .w = 1, .h = 1};
@@ -120,10 +125,19 @@ TEST_CASE("RenderBackendSDL renders FIFE_small_c3.png with position shift", "[co
 TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
 {
     TestFixture const _init;
+    FIFE::Window window;
+    try {
+        window.create(
+            FIFE::WindowSettings{
+                .width = 800, .height = 600, .opengl = true, .windowMode = FIFE::WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL not available in this environment");
+    }
     FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
+    renderbackend.setWindowObject(&window);
     try {
-        renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+        renderbackend.createMainScreen("FIFE", "");
     } catch (FIFE::SDLException const &) {
         SKIP("OpenGL not available in this environment");
     }
@@ -143,9 +157,13 @@ TEST_CASE("RenderBackendOpenGL renders fife_logo.png", "[core][images]")
 TEST_CASE("RenderBackendSDL renders subimages from rpg_tiles_01.png", "[core][images]")
 {
     TestFixture const _init;
+    FIFE::Window window;
+    window.create(
+        FIFE::WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = FIFE::WindowMode::Windowed});
     FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
 
     FIFE::ImagePtr img = FIFE::ImageManager::instance()->load(SUBIMAGE_FILE);
     REQUIRE(img);
@@ -174,10 +192,19 @@ TEST_CASE("RenderBackendSDL renders subimages from rpg_tiles_01.png", "[core][im
 TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core][images]")
 {
     TestFixture const _init;
+    FIFE::Window window;
+    try {
+        window.create(
+            FIFE::WindowSettings{
+                .width = 800, .height = 600, .opengl = true, .windowMode = FIFE::WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL not available in this environment");
+    }
     FIFE::RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
+    renderbackend.setWindowObject(&window);
     try {
-        renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+        renderbackend.createMainScreen("FIFE", "");
     } catch (FIFE::SDLException const &) {
         SKIP("OpenGL not available in this environment");
     }
@@ -209,9 +236,13 @@ TEST_CASE("RenderBackendOpenGL renders subimages from rpg_tiles_01.png", "[core]
 TEST_CASE("RenderBackendSDL alpha optimizer renders fife_logo.png and alpha_fidgit.png", "[core][images]")
 {
     TestFixture const _init;
+    FIFE::Window window;
+    window.create(
+        FIFE::WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = FIFE::WindowMode::Windowed});
     FIFE::RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(FIFE::ScreenMode(800, 600, 32, FIFE::ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
     renderbackend.setAlphaOptimizerEnabled(true);
 
     FIFE::ImagePtr img       = FIFE::ImageManager::instance()->load(IMAGE_FILE);

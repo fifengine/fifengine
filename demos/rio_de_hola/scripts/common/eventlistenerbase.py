@@ -95,6 +95,7 @@ class EventListenerBase(
 
     def onToolsClick(self):
         """Handle a tools button click in the UI."""
+        # TODO: Implement actual tools (instance inspector, coordinate picker, etc.)
         print("No tools set up yet")
 
     def onConsoleCommand(self, command):

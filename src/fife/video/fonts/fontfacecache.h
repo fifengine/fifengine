@@ -26,6 +26,7 @@ namespace FIFE
             void remove(FontFaceKey key);
             void clear();
             size_t size() const;
+            void setDPIScaleForAll(float scale);
 
         private:
             std::unordered_map<FontFaceKey, std::shared_ptr<FontFace>> m_cache;

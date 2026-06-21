@@ -34,12 +34,12 @@ namespace FIFE
     struct FIFE_API PathStyleConfig
     {
             SDL_Color color{0, 100, 255, 255};
-            float width{2.0f};
+            float width{2.0F};
             PathLineStyle style{PLS_SOLID};
-            float dashLength{12.0f};
-            float dashGap{6.0f};
+            float dashLength{12.0F};
+            float dashGap{6.0F};
             bool drawArrows{false};
-            float arrowSize{10.0f};
+            float arrowSize{10.0F};
     };
 
     class FIFE_API PathRenderer : public RendererBase

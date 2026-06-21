@@ -29,10 +29,7 @@ class DisplayTest(test.Test):
         )
 
         display_count = self._engine.getDeviceCaps().getDisplayCount()
-        screen_modes = self._engine.getDeviceCaps().getSupportedScreenModes()
-        displays = sorted({mode.getDisplay() for mode in screen_modes})
-        if not displays:
-            displays = list(range(max(1, display_count)))
+        displays = list(range(max(1, display_count)))
 
         self._settings_dialog.setValidDisplays(displays)
         self._settings_dialog.showSettingsDialog()

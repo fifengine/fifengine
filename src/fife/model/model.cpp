@@ -117,7 +117,7 @@ namespace FIFE
                 return it->get();
             }
         }
-        FL_WARN(_log(), "No pather of requested type \"" + pathername + "\" found.");
+        // FL_WARN(_log(), "No pather of requested type \"" + pathername + "\" found.");
         return nullptr;
     }
 
@@ -137,7 +137,7 @@ namespace FIFE
                 return ptr;
             }
         }
-        FL_WARN(_log(), "No cellgrid of requested type \"" + gridtype + "\" found.");
+        // FL_WARN(_log(), "No cellgrid of requested type \"" + gridtype + "\" found.");
         return nullptr;
     }
 

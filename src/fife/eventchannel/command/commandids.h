@@ -31,6 +31,12 @@ namespace FIFE
         CMD_INPUT_FOCUS_LOST   = SDL_EVENT_WINDOW_FOCUS_LOST,
         CMD_APP_RESTORED       = SDL_EVENT_WINDOW_SHOWN,
         CMD_APP_ICONIFIED      = SDL_EVENT_WINDOW_HIDDEN,
+
+        CMD_WINDOW_RESIZED     = 100,
+        CMD_WINDOW_MOVED       = 101,
+        CMD_WINDOW_DPI_CHANGED = 102,
+        CMD_TOGGLE_FULLSCREEN  = 103,
+        CMD_TOGGLE_VSYNC       = 104,
     };
 
 } // namespace FIFE

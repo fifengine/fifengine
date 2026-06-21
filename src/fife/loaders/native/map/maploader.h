@@ -117,11 +117,11 @@ namespace FIFE
                     std::string cameraId;
 
                     // simple light
-                    float radius     = 10.0f;
+                    float radius     = 10.0F;
                     int intensity    = 128;
                     int subdivisions = 32;
-                    float xstretch   = 1.0f;
-                    float ystretch   = 1.0f;
+                    float xstretch   = 1.0F;
+                    float ystretch   = 1.0F;
                     int colorR       = 255;
                     int colorG       = 255;
                     int colorB       = 255;
@@ -139,7 +139,7 @@ namespace FIFE
                     int dstBlend = -1;
 
                     int sRef   = -1;
-                    float aRef = 0.0f;
+                    float aRef = 0.0F;
             };
 
             Model* m_model;

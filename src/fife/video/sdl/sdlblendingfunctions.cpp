@@ -16,12 +16,17 @@ namespace FIFE
 
     struct ColorRGB8
     {
-            uint8_t r, g, b;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
     };
 
     struct ColorRGBA8
     {
-            uint8_t r, g, b, a;
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
     };
 
     void SDL_BlendRow_RGBA8_to_RGBA8([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)

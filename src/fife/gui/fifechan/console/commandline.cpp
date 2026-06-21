@@ -18,7 +18,7 @@ namespace FIFE
 {
     // Key values are accessed via fcn::Key::XXX from the generated enum.
 
-    CommandLine::CommandLine() : m_history_position(0), m_caretVisible(true)
+    CommandLine::CommandLine() : m_history(), m_history_position(0), m_caretVisible(true)
     {
 
         m_blinkTimer.setInterval(500);

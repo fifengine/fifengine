@@ -60,7 +60,7 @@ namespace FIFE
     {
         m_cursor_type = CURSOR_NATIVE;
 
-        if (!SDL_ShowCursor()) {
+        if (!SDL_CursorVisible()) {
             SDL_PumpEvents();
         }
         setNativeCursor(cursor_id);
@@ -80,10 +80,10 @@ namespace FIFE
             if (!setNativeImageCursor(image)) {
                 return;
             }
-            if (!SDL_ShowCursor()) {
+            if (!SDL_CursorVisible()) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor()) {
+        } else if (SDL_CursorVisible()) {
             SDL_PumpEvents();
         }
 
@@ -102,10 +102,10 @@ namespace FIFE
             if (!setNativeImageCursor(anim->getFrameByTimestamp64(0))) {
                 return;
             }
-            if (!SDL_ShowCursor()) {
+            if (!SDL_CursorVisible()) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor()) {
+        } else if (SDL_CursorVisible()) {
             SDL_PumpEvents();
         }
         m_animtime = m_timemanager->now64();
@@ -299,7 +299,7 @@ namespace FIFE
         cursor_id          = getNativeId(cursor_id);
         SDL_Cursor* cursor = SDL_CreateSystemCursor(static_cast<SDL_SystemCursor>(cursor_id));
         if (cursor == nullptr) {
-            FL_WARN(_log(), "No cursor matching cursor_id was found.");
+            // FL_WARN(_log(), "No cursor matching cursor_id was found.");
             return;
         }
         SDL_SetCursor(cursor);
@@ -329,8 +329,8 @@ namespace FIFE
 
         SDL_Cursor* cursor = SDL_CreateColorCursor(temp_image->getSurface(), -image->getXShift(), -image->getYShift());
         if (cursor == nullptr) {
-            FL_WARN(
-                _log(), std::format("SDL_CreateColorCursor: \"{}\". Falling back to software cursor.", SDL_GetError()));
+            // FL_WARN(
+            // _log(), std::format("SDL_CreateColorCursor: \"{}\". Falling back to software cursor.", SDL_GetError()));
             if (image->isSharedImage()) {
                 ImageManager::instance()->remove(temp_image);
             }

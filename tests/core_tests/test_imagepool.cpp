@@ -17,14 +17,17 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/sdl/renderbackendsdl.h"
+#include "video/window/window.h"
 
 using FIFE::Image;
 using FIFE::ImageManager;
 using FIFE::ImagePtr;
 using FIFE::Rect;
 using FIFE::RenderBackendSDL;
-using FIFE::ScreenMode;
 using FIFE::TimeManager;
+using FIFE::Window;
+using FIFE::WindowMode;
+using FIFE::WindowSettings;
 
 static char const * const IMAGE_FILE    = "tests/data/beach_e1.png";
 static char const * const SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
@@ -38,9 +41,12 @@ TEST_CASE_METHOD(environment, "ImageManager pool loads and frees beach_e1.png an
     ImageManager* imageManager = ImageManager::instance();
     imageManager->removeAll();
 
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
     RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
     renderbackend.init("");
-    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
 
     CHECK((0) == (imageManager->getTotalResources()));
     CHECK((0) == (imageManager->getTotalResourcesLoaded()));

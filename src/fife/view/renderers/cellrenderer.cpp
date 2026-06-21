@@ -85,12 +85,12 @@ namespace FIFE
     {
         CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {
-            FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
+            // FL_WARN(_log(), "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
         CellCache* cache = layer->getCellCache();
         if (cache == nullptr) {
-            FL_WARN(_log(), "No cellcache on layer created, cannot draw cells");
+            // FL_WARN(_log(), "No cellcache on layer created, cannot draw cells");
             return;
         }
 
