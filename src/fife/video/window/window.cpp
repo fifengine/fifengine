@@ -290,7 +290,7 @@ namespace FIFE
         if (m_window == nullptr) {
             return;
         }
-        int currentPixelW;
+        int currentPixelW = 0;
         SDL_GetWindowSizeInPixels(m_window, &currentPixelW, nullptr);
         if (currentPixelW != m_lastKnownPixelWidth) {
             recalculateDPIScale();
@@ -315,7 +315,7 @@ namespace FIFE
             flags |= SDL_WINDOW_FULLSCREEN;
             break;
         case WindowMode::Borderless:
-            flags |= SDL_WINDOW_FULLSCREEN;
+            flags |= SDL_WINDOW_BORDERLESS;
             break;
         case WindowMode::Windowed:
         default:

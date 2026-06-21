@@ -82,8 +82,8 @@ namespace FIFE
 
         if (m_dpiScale != 1.0F) {
             for (auto& [codepoint, info] : m_glyphs) {
-                int const newW      = std::max(1, static_cast<int>(info.width * m_dpiScale));
-                int const newH      = std::max(1, static_cast<int>(m_originalHeight * m_dpiScale));
+                int const newW      = std::max(1, static_cast<int>(static_cast<float>(info.width) * m_dpiScale));
+                int const newH      = std::max(1, static_cast<int>(static_cast<float>(m_originalHeight) * m_dpiScale));
                 SDL_Surface* scaled = SDL_ScaleSurface(info.surface, newW, newH, SDL_SCALEMODE_NEAREST);
                 if (scaled != nullptr) {
                     SDL_DestroySurface(info.surface);
@@ -93,7 +93,7 @@ namespace FIFE
             }
         }
 
-        m_height = std::max(1, static_cast<int>(m_originalHeight * m_dpiScale));
+        m_height = std::max(1, static_cast<int>(static_cast<float>(m_originalHeight) * m_dpiScale));
     }
 
     void ImageFontFace::extractGlyphs(SDL_Surface* surface, std::string const & glyphs)

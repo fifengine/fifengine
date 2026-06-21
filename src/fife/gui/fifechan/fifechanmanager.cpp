@@ -66,8 +66,8 @@ namespace FIFE
         m_had_widget(false),
         m_lastMotionX(0),
         m_lastMotionY(0),
-        m_fontsize(0),
         m_fonts(),
+        m_fontsize(0),
         m_widgets(),
         m_logic_executed(false),
         m_enabled_console(true)

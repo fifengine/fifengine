@@ -189,7 +189,7 @@ namespace FIFE
              */
             Window* getWindow() const
             {
-                return m_window;
+                return m_window.get();
             }
 
             /** Provides access point to the Model
@@ -262,7 +262,7 @@ namespace FIFE
 
         private:
             std::unique_ptr<RenderBackend> m_renderbackend;
-            Window* m_window;
+            std::unique_ptr<Window> m_window;
             std::unique_ptr<IGUIManager> m_guimanager;
             std::unique_ptr<EventManager> m_eventmanager;
             std::unique_ptr<SoundManager> m_soundmanager;

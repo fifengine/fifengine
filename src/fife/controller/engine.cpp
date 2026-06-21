@@ -84,7 +84,7 @@ namespace FIFE
         }
     } // namespace
 
-    Engine::Engine() : m_logmanager(&LogManager::instance()), m_window(nullptr), m_destroyed(false)
+    Engine::Engine() : m_logmanager(&LogManager::instance()), m_destroyed(false)
 
     {
 #ifdef USE_COCOA
@@ -159,7 +159,8 @@ namespace FIFE
         }
         m_window->create(settings);
         if (m_guimanager != nullptr) {
-            m_guimanager->resizeTopContainer(0, 0, settings.width, settings.height);
+            m_guimanager->resizeTopContainer(
+                0U, 0U, static_cast<uint32_t>(settings.width), static_cast<uint32_t>(settings.height));
         }
         for (auto* listener : m_changelisteners) {
             listener->onWindowModeChanged(settings);
@@ -357,18 +358,18 @@ namespace FIFE
         winSettings.icon        = m_settings.getWindowIcon();
         winSettings.resizable   = m_settings.isWindowResizable();
         winSettings.vsync       = m_settings.isVSync();
-        winSettings.opengl      = (rbackend == "OpenGL");
+        winSettings.opengl      = (dynamic_cast<RenderBackendOpenGL*>(m_renderbackend.get()) != nullptr);
         winSettings.windowMode  = m_settings.isFullScreen() ? WindowMode::Fullscreen : WindowMode::Windowed;
         winSettings.scalingMode = static_cast<ScalingMode>(m_settings.getWindowScalingMode());
 
-        m_window = new Window();
+        m_window = std::make_unique<Window>();
         m_window->create(winSettings);
         m_window->signalResized = [this](int w, int h) {
             if (m_imagemanager) {
                 m_imagemanager->invalidateAll();
             }
             if (m_guimanager) {
-                m_guimanager->resizeTopContainer(0, 0, w, h);
+                m_guimanager->resizeTopContainer(0U, 0U, static_cast<uint32_t>(w), static_cast<uint32_t>(h));
             }
             for (auto* listener : m_changelisteners) {
                 listener->onWindowResized(w, h);
@@ -384,13 +385,13 @@ namespace FIFE
             if (m_guimanager) {
                 int const w = m_window->getWidthInPoints();
                 int const h = m_window->getHeightInPoints();
-                m_guimanager->resizeTopContainer(0, 0, w, h);
+                m_guimanager->resizeTopContainer(0U, 0U, static_cast<uint32_t>(w), static_cast<uint32_t>(h));
             }
             for (auto* listener : m_changelisteners) {
                 listener->onDPIScaleChanged(scale);
             }
         };
-        m_renderbackend->setWindowObject(m_window);
+        m_renderbackend->setWindowObject(m_window.get());
 
         FL_LOG(_log(), "Creating main screen");
         m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
@@ -437,13 +438,11 @@ namespace FIFE
 
         m_cursor = std::make_unique<Cursor>(m_renderbackend.get());
         m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
-        if (m_window != nullptr) {
-            m_window->onClosed([this]() {
-                if (m_cursor != nullptr) {
-                    m_cursor->invalidate();
-                }
-            });
-        }
+        m_window->onClosed([this]() {
+            if (m_cursor != nullptr) {
+                m_cursor->invalidate();
+            }
+        });
         FL_LOG(_log(), "Engine initialized");
     }
 
@@ -465,9 +464,6 @@ namespace FIFE
 #ifdef USE_COCOA
         objc_msgSend(m_autoreleasePool, sel_registerName("release"));
 #endif
-
-        delete m_window;
-        m_window = nullptr;
 
         FL_LOG(_log(), "================== Engine destructed ==================");
         m_destroyed = true;

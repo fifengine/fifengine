@@ -193,30 +193,6 @@ namespace FIFE
                 renderedText->h,
                 renderedText->pitch));*/
 
-        if (renderedText->w > 0 && renderedText->h > 0) {
-            uint32_t nonZero = 0;
-            auto const px    = std::span(
-                static_cast<uint32_t const *>(renderedText->pixels),
-                static_cast<size_t>((renderedText->pitch / 4) * renderedText->h));
-            auto const totalPx = px.size();
-            for (size_t i = 0; i < totalPx && i < 10000; ++i) {
-                if (*(px.data() + i) != 0) {
-                    ++nonZero;
-                }
-            }
-
-            /*FL_WARN(
-                _log(),
-                std::format(
-                    "  first={:#010x} center={:#010x} nonZero/{}k={}",
-                    *(px.data() + 0),
-                    // NOLINTNEXTLINE(bugprone-misplaced-widening-cast)
-                    *(px.data() +
-                      static_cast<size_t>(((renderedText->h / 2) * (renderedText->pitch / 4)) + (renderedText->w / 2))),
-                    totalPx > 10000 ? 10 : totalPx / 1000,
-                    nonZero));*/
-        }
-
         // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {

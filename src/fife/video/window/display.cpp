@@ -9,18 +9,21 @@
 namespace FIFE
 {
 
-    static SDL_DisplayID getDisplayId(int index)
+    namespace
     {
-        int count               = 0;
-        SDL_DisplayID* displays = SDL_GetDisplays(&count);
-        if (displays == nullptr || count <= 0 || index >= count) {
+        SDL_DisplayID getDisplayId(int index)
+        {
+            int count               = 0;
+            SDL_DisplayID* displays = SDL_GetDisplays(&count);
+            if (displays == nullptr || count <= 0 || index >= count) {
+                SDL_free(displays);
+                return 0;
+            }
+            SDL_DisplayID id = displays[index];
             SDL_free(displays);
-            return 0;
+            return id;
         }
-        SDL_DisplayID id = displays[index];
-        SDL_free(displays);
-        return id;
-    }
+    } // namespace
 
     int Display::getDisplayCount()
     {
@@ -109,7 +112,7 @@ namespace FIFE
                     modes.push_back(*dmList[i]);
                 }
             }
-            SDL_free(dmList);
+            SDL_free(static_cast<void*>(dmList));
         }
         return modes;
     }
