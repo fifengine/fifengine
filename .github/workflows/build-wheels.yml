@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - name: 🤘 Checkout Code
-        uses: actions/checkout@v6 # https://github.com/actions/checkout
+        uses: actions/checkout@v7 # https://github.com/actions/checkout
 
       # https://community.chocolatey.org/packages/ninja
       - name: 🔽 Install Ninja
@@ -343,7 +343,7 @@ jobs:
 
     steps:
       - name: 🤘 Checkout Code
-        uses: actions/checkout@v6 # https://github.com/actions/checkout
+        uses: actions/checkout@v7 # https://github.com/actions/checkout
 
       - name: ℹ Show Tool Versions
         run: |

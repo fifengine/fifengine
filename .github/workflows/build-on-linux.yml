@@ -81,7 +81,7 @@ jobs:
 
     steps:
       - name: 🤘 Checkout Code
-        uses: actions/checkout@v6 # https://github.com/actions/checkout
+        uses: actions/checkout@v7 # https://github.com/actions/checkout
 
       - name: 🔽 Install Build Tools
         run: |
@@ -333,7 +333,7 @@ jobs:
 
     steps:
       - name: 🤘 Checkout Code
-        uses: actions/checkout@v6 # https://github.com/actions/checkout
+        uses: actions/checkout@v7 # https://github.com/actions/checkout
 
       - name: ℹ Show Tool Versions
         run: |
