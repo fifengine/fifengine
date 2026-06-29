@@ -131,7 +131,7 @@ jobs:
 
       - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
           path: |
@@ -144,7 +144,7 @@ jobs:
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -198,7 +198,7 @@ jobs:
 
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -368,7 +368,7 @@ jobs:
 
       - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
           path: |
@@ -381,7 +381,7 @@ jobs:
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -435,7 +435,7 @@ jobs:
 
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ${{ env.DEPS_DIR }}
