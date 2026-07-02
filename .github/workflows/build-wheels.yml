@@ -101,7 +101,7 @@ jobs:
 
       - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.VCPKG_INSTALLED_DIR }}
@@ -113,14 +113,14 @@ jobs:
 
       - name: 🎯 Setup UV Cache
         id: cache-uv
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~\AppData\Local\uv\cache
           key: uv-cache-wheels-${{ runner.os }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -187,7 +187,7 @@ jobs:
 
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5 # https://github.com/actions/cache
+        uses: actions/cache/save@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -372,7 +372,7 @@ jobs:
 
       - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg-linux-wheels
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.VCPKG_INSTALLED_DIR }}
@@ -384,14 +384,14 @@ jobs:
 
       - name: 🎯 Setup UV Cache
         id: cache-uv-linux-wheels
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/uv
           key: uv-cache-wheels-${{ runner.os }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps-linux-wheels
-        uses: actions/cache@v5 # https://github.com/actions/cache
+        uses: actions/cache@v6 # https://github.com/actions/cache
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -438,7 +438,7 @@ jobs:
 
       - name: 💾 Save Dependencies cache
         if: ${{ always() && !cancelled() && steps.cache-deps-linux-wheels.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ${{ env.DEPS_DIR }}
@@ -446,7 +446,7 @@ jobs:
 
       - name: 🎯 Setup Build Directory Cache
         id: cache-build-dir-linux-wheels
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: build
           key: build-dir-linux-${{ github.ref }}-${{ github.sha }}
