@@ -15,3 +15,9 @@ updates:
     ignore:
       # ignore all updates for "https://github.com/actions/github-script"
       - dependency-name: "github-script"
+  # Enable automatic version updates for vcpkg
+  - package-ecosystem: vcpkg
+    # Look for `vcpkg.json` in the `root` directory
+    directory: "/"
+    schedule:
+      interval: "monthly"
