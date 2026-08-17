@@ -6,7 +6,7 @@
   "homepage": "https://github.com/fifengine/fifengine",
   "license": "LGPL-2.1",
   "supports": "windows, (linux, osx)",
-  "builtin-baseline": "cd61e1e26a038e82d6550a3ebbe0fbbfe7da78e3",
+  "builtin-baseline": "9e593bb18ea69cc5095e012465dcd675a822ed0d",
   "dependencies": [
     "catch2",
     {
