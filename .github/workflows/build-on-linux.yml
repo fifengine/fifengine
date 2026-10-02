@@ -89,7 +89,6 @@ jobs:
           sudo apt-get install -y \
             software-properties-common \
             ninja-build \
-            cmake \
             jq \
             wget \
             git \
@@ -112,13 +111,26 @@ jobs:
           sudo apt-get install -y \
             autoconf autoconf-archive automake libtool \
             build-essential git make \
-            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            pkg-config ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
             libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
             libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
             libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
+          # NOTE: cmake is intentionally not installed from apt: Debian ships
+          # cmake 3.31.x, but the vcpkg port scripts need >= 4.3
+          # (string(JSON ... STRING_ENCODE), microsoft/vcpkg#53260).
+
+      - name: ✅ Verify CMake version
+        run: |
+          cmake --version
+          ver="$(cmake --version | head -1 | sed 's/cmake version //' | cut -d. -f1,2)"
+          major="${ver%.*}"; minor="${ver#*.}"
+          if [ "$major" -lt 4 ] || { [ "$major" -eq 4 ] && [ "$minor" -lt 3 ]; }; then
+            echo "::error::CMake >= 4.3 is required by the vcpkg port scripts (microsoft/vcpkg#53260)"
+            exit 1
+          fi
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -346,13 +358,27 @@ jobs:
           sudo apt-get install -y \
             autoconf autoconf-archive automake libtool \
             build-essential git make \
-            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            pkg-config ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
             libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
             libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
             libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
+          # NOTE: cmake is intentionally not installed from apt: Debian ships
+          # cmake 3.31.x, which would overwrite the newer CMake of this image,
+          # and the vcpkg port scripts need >= 4.3
+          # (string(JSON ... STRING_ENCODE), microsoft/vcpkg#53260).
+
+      - name: ✅ Verify CMake version
+        run: |
+          cmake --version
+          ver="$(cmake --version | head -1 | sed 's/cmake version //' | cut -d. -f1,2)"
+          major="${ver%.*}"; minor="${ver#*.}"
+          if [ "$major" -lt 4 ] || { [ "$major" -eq 4 ] && [ "$minor" -lt 3 ]; }; then
+            echo "::error::CMake >= 4.3 is required by the vcpkg port scripts (microsoft/vcpkg#53260)"
+            exit 1
+          fi
 
       - name: 🐍 Install Python3 dev headers (for Python bindings)
         if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}
