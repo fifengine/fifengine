@@ -278,6 +278,18 @@ namespace FIFE {
 		Cursor();
 	};
 
+	class ScreenMode {
+	public:
+		ScreenMode();
+		ScreenMode(uint32_t width, uint32_t height, float refreshRate, uint32_t format, uint32_t depth);
+
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
+		float getRefreshRate() const;
+		uint32_t getFormat() const;
+		uint32_t getDepth() const;
+	};
+
 	class DeviceCaps {
 	public:
 		DeviceCaps();
@@ -297,6 +309,7 @@ namespace FIFE {
 		int32_t getDesktopWidth(uint8_t display = 0) const;
 		int32_t getDesktopHeight(uint8_t display = 0) const;
 		Rect getDisplayBounds(uint8_t display = 0) const;
+		std::vector<ScreenMode> getSupportedScreenModes(uint8_t display = 0) const;
 	};
 
 	class AtlasBlock {
@@ -351,3 +364,5 @@ namespace FIFE {
 		uint8_t getAlpha() const;
 	};
 }
+
+%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;

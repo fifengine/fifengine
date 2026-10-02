@@ -29,6 +29,15 @@ namespace FIFE
 
     DeviceCaps::~DeviceCaps() = default;
 
+    ScreenMode::ScreenMode() : m_width(0), m_height(0), m_refreshRate(0.0f), m_format(0), m_depth(0)
+    {
+    }
+
+    ScreenMode::ScreenMode(uint32_t width, uint32_t height, float refreshRate, uint32_t format, uint32_t depth) :
+        m_width(width), m_height(height), m_refreshRate(refreshRate), m_format(format), m_depth(depth)
+    {
+    }
+
     void DeviceCaps::reset()
     {
         m_renderDriverName  = "";
@@ -175,6 +184,47 @@ namespace FIFE
         }
         Rect rec(srec.x, srec.y, srec.w, srec.h);
         return rec;
+    }
+
+    std::vector<ScreenMode> DeviceCaps::getSupportedScreenModes(uint8_t display) const
+    {
+        std::vector<ScreenMode> modes;
+        SDL_DisplayID const displayId = getDisplayId(display);
+
+        int modeCount              = 0;
+        SDL_DisplayMode** sdlModes = SDL_GetFullscreenDisplayModes(displayId, &modeCount);
+        if (sdlModes == nullptr || modeCount <= 0) {
+            if (sdlModes != nullptr) {
+                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
+                SDL_free(sdlModes);
+            }
+            // A display without any reported mode is not an error, the caller
+            // simply gets an empty list to fall back on.
+            return modes;
+        }
+
+        modes.reserve(static_cast<size_t>(modeCount));
+        for (int i = 0; i < modeCount; ++i) {
+            SDL_DisplayMode const * sdlMode = sdlModes[i];
+            if (sdlMode == nullptr) {
+                continue;
+            }
+            uint32_t depth                         = 0;
+            SDL_PixelFormatDetails const * details = SDL_GetPixelFormatDetails(sdlMode->format);
+            if (details != nullptr) {
+                depth = details->bits_per_pixel;
+            }
+            modes.emplace_back(
+                static_cast<uint32_t>(sdlMode->w),
+                static_cast<uint32_t>(sdlMode->h),
+                sdlMode->refresh_rate,
+                static_cast<uint32_t>(sdlMode->format),
+                depth);
+        }
+
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
+        SDL_free(sdlModes);
+        return modes;
     }
 
 } // namespace FIFE

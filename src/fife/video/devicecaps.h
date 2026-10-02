@@ -19,6 +19,67 @@
 namespace FIFE
 {
 
+    /** Describes a single video mode a display can be switched to.
+     */
+    class FIFE_API ScreenMode
+    {
+        public:
+            /** Default constructor, creates an empty mode.
+             */
+            ScreenMode();
+
+            /** Constructor.
+             * @param width width in pixels
+             * @param height height in pixels
+             * @param refreshRate refresh rate in Hz
+             * @param format the SDL pixel format of the mode
+             * @param depth color depth in bits per pixel
+             */
+            ScreenMode(uint32_t width, uint32_t height, float refreshRate, uint32_t format, uint32_t depth);
+
+            /** Returns the width in pixels.
+             */
+            uint32_t getWidth() const
+            {
+                return m_width;
+            }
+
+            /** Returns the height in pixels.
+             */
+            uint32_t getHeight() const
+            {
+                return m_height;
+            }
+
+            /** Returns the refresh rate in Hz.
+             */
+            float getRefreshRate() const
+            {
+                return m_refreshRate;
+            }
+
+            /** Returns the SDL pixel format of the mode.
+             */
+            uint32_t getFormat() const
+            {
+                return m_format;
+            }
+
+            /** Returns the color depth in bits per pixel.
+             */
+            uint32_t getDepth() const
+            {
+                return m_depth;
+            }
+
+        private:
+            uint32_t m_width;
+            uint32_t m_height;
+            float m_refreshRate;
+            uint32_t m_format;
+            uint32_t m_depth;
+    }; // ScreenMode
+
     class FIFE_API DeviceCaps
     {
         public:
@@ -105,6 +166,12 @@ namespace FIFE
             /** Returns the bounding points for the given display index.
              */
             Rect getDisplayBounds(uint8_t display = 0) const;
+
+            /** Returns the video modes the given display supports.
+             * Requires that SDL video was initialized, otherwise the
+             * result is empty.
+             */
+            std::vector<ScreenMode> getSupportedScreenModes(uint8_t display = 0) const;
 
         private:
             std::string m_videoDriverName;

@@ -9,7 +9,7 @@ readonly REPO_ROOT
 readonly UH_DIR="$SCRIPT_DIR/unknown-horizons"
 readonly VENV_DIR="$REPO_ROOT/.venv-uh"
 readonly BUILD_DIR="$REPO_ROOT/out/build/clang22-x64-linux-dbg-cov"
-readonly ENGINE_PYTHON_DIR="$REPO_ROOT/src/python"
+readonly ENGINE_PYTHON_DIR="$BUILD_DIR"
 readonly PYTHON_RUNTIME_DEPS=(pyyaml pillow polib distro "greenlet>=3.0")
 # ── Utilities ────────────────────────────────────────────────────────────────
 log_info()  { echo "→ $*"; }
