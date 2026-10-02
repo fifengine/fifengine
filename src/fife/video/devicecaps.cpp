@@ -11,6 +11,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL3/SDL.h>
