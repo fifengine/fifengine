@@ -116,6 +116,9 @@ namespace FIFE
             void drawTriangle(
                 Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
                 override;
+            void fillTriangle(
+                Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+                override;
             void drawRectangle(
                 Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
             void fillRectangle(

@@ -431,6 +431,29 @@ namespace FIFE
             static_cast<float>(p1.y));
     }
 
+    void RenderBackendSDL::fillTriangle(
+        Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    {
+        SDL_FColor color;
+        color.r = static_cast<float>(r) / 255.0f;
+        color.g = static_cast<float>(g) / 255.0f;
+        color.b = static_cast<float>(b) / 255.0f;
+        color.a = static_cast<float>(a) / 255.0f;
+
+        Point const points[3] = {p1, p2, p3};
+        SDL_Vertex vertices[3];
+        for (int i = 0; i < 3; ++i) {
+            vertices[i].position.x  = static_cast<float>(points[i].x);
+            vertices[i].position.y  = static_cast<float>(points[i].y);
+            vertices[i].color       = color;
+            vertices[i].tex_coord.x = 0.0f;
+            vertices[i].tex_coord.y = 0.0f;
+        }
+
+        SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+        SDL_RenderGeometry(m_renderer, nullptr, vertices, 3, nullptr, 0);
+    }
+
     void RenderBackendSDL::drawRectangle(
         Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {

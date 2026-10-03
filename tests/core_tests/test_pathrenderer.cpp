@@ -139,6 +139,16 @@ namespace
                 uint8_t a) override
             {
             }
+            void fillTriangle(
+                FIFE::Point const & p1,
+                FIFE::Point const & p2,
+                FIFE::Point const & p3,
+                uint8_t r,
+                uint8_t g,
+                uint8_t b,
+                uint8_t a) override
+            {
+            }
             void drawRectangle(
                 FIFE::Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) override
             {
