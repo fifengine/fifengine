@@ -14,6 +14,7 @@ endif()
 
 set(
   FIFE_CORE_TEST_SOURCES
+  test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp
   test_gui.cpp
@@ -23,6 +24,7 @@ set(
   test_logger.cpp
   test_rect.cpp
   test_sharedptr.cpp
+  test_text_layout.cpp
   test_utf.cpp
   test_vfs.cpp
   test_zip.cpp

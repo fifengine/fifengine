@@ -267,30 +267,41 @@ def resolve_test_progs(build_dir):
 
 
 def resolve_test_modules(directory):
-    """Resolve test modules from a directory.
+    """Resolve test modules from a directory tree.
+
+    Walks subdirectories so test packages such as
+    ``tests/extension_tests/pychan/widgets`` are picked up as well.
 
     Returns
     -------
     list[str]
-        List of python module filenames (without path) representing tests.
+        List of python module names (dotted, without ``.py``) representing tests.
     """
-    pythonfilenames = [p for p in os.listdir(directory) if len(p) > 3 and p[-3:] == ".py"]
-    modname = directory.replace(os.path.sep, ".") + "."
+    root = directory.replace(os.path.sep, ".")
     modules = []
     skipped_filenames = ("test_all.py",)
-    for p in pythonfilenames:
-        skip = False
-        if p == "conftest.py":
-            skip = True
-        for s in skipped_filenames:
-            if p.find(s) != -1:
+
+    for dirpath, dirnames, filenames in os.walk(directory):
+        dirnames[:] = sorted(d for d in dirnames if d != "__pycache__")
+        prefix = os.path.relpath(dirpath, directory).replace(os.path.sep, ".")
+        modname = f"{root}." if prefix == "." else f"{root}.{prefix}."
+
+        for p in sorted(filenames):
+            if not p.endswith(".py"):
+                continue
+            skip = False
+            if p == "conftest.py":
                 skip = True
-        if p.endswith("_utils.py"):
-            skip = True
-        if p[0] == "_":
-            skip = True
-        if not skip:
-            modules.append(modname + p[:-3])
+            for s in skipped_filenames:
+                if p.find(s) != -1:
+                    skip = True
+            if p.endswith("_utils.py"):
+                skip = True
+            if p[0] == "_":
+                skip = True
+            if not skip:
+                modules.append(modname + p[:-3])
+
     return modules
 
 

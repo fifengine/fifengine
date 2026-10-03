@@ -10,6 +10,7 @@
 
 // FIFE includes
 #include "fixture.h"
+#include "util/structures/point.h"
 #include "video/fonts/fontface.h"
 #include "video/fonts/fonttypes.h"
 #include "video/fonts/textlayout.h"
@@ -17,6 +18,7 @@
 using FIFE::AssetHandle;
 using FIFE::FontFace;
 using FIFE::GlyphRun;
+using FIFE::Point;
 using FIFE::TextLayout;
 
 // Mock FontFace for testing
