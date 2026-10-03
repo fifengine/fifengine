@@ -4,7 +4,10 @@
 %module fife
 %{
 #include "view/renderers/floatingtextrenderer.h"
+#include "view/renderers/speechstyle.h"
 %}
+
+%include "view/renderers/speechstyle.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -14,17 +17,18 @@ namespace FIFE {
 	public:
 		virtual ~FloatingTextRenderer();
 		void setFont(IFont* font);
-		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
-		void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
-		void resetBackground();
-		void resetBorder();
+
+		void setSpeechStyle(Instance* instance, const SpeechStyle& style);
+		void clearSpeechStyle(Instance* instance);
+		void clearAllStyles();
+		void setDefaultSpeechStyle(const SpeechStyle& style);
+		const SpeechStyle& getDefaultSpeechStyle() const;
+		const SpeechStyle& getEffectiveStyle(Instance* instance) const;
 
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
 		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position, IFont* font);
 	};
-
 
 }

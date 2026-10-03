@@ -640,6 +640,8 @@ set(
   src/fife/view/renderers/lightrenderer.h
   src/fife/view/renderers/offrenderer.h
   src/fife/view/renderers/quadtreerenderer.h
+  src/fife/view/renderers/speechbubblegeometry.h
+  src/fife/view/renderers/speechstyle.h
   src/fife/view/renderers/targetrenderer.h
   src/fife/gui/guimanager.h
 )

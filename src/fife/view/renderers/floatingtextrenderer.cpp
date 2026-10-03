@@ -5,7 +5,9 @@
 #include "floatingtextrenderer.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
+#include <format>
 #include <limits>
 #include <memory>
 #include <string>
@@ -23,6 +25,7 @@
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "view/camera.h"
+#include "view/renderers/speechbubblegeometry.h"
 #include "view/visual.h"
 
 namespace FIFE
@@ -41,6 +44,22 @@ namespace FIFE
             assert(std::cmp_less_equal(value, std::numeric_limits<uint16_t>::max()));
             return static_cast<uint16_t>(value);
         }
+
+        // Restores the font colour it was constructed with when leaving scope.
+        struct FontColorGuard
+        {
+                IFont* font;
+                SDL_Color previous;
+
+                explicit FontColorGuard(IFont* f) : font(f), previous(f->getColor())
+                {
+                }
+
+                ~FontColorGuard()
+                {
+                    font->setColor(previous.r, previous.g, previous.b, previous.a);
+                }
+        };
     } // namespace
 
     namespace
@@ -53,28 +72,16 @@ namespace FIFE
     } // namespace
 
     FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position) :
-        RendererBase(renderbackend, position),
-        m_font(nullptr),
-        m_font_color(false),
-        m_color{.r = 255, .g = 255, .b = 255, .a = 255},
-        m_background(false),
-        m_backborder(false),
-        m_backcolor{.r = 0, .g = 0, .b = 0, .a = 255},
-        m_backbordercolor{.r = 255, .g = 255, .b = 255, .a = 255}
+        RendererBase(renderbackend, position), m_font(nullptr)
     {
         setEnabled(false);
     }
 
     FloatingTextRenderer::FloatingTextRenderer(FloatingTextRenderer const & old) :
-        RendererBase(old),
-        m_font(old.m_font),
-        m_font_color(old.m_font_color),
-        m_color(old.m_color),
-        m_background(old.m_background),
-        m_backborder(old.m_backborder),
-        m_backcolor(old.m_backcolor),
-        m_backbordercolor(old.m_backbordercolor)
+        RendererBase(old), m_font(old.m_font), m_defaultStyle(old.m_defaultStyle)
     {
+        // Per-instance styles are deliberately not copied: the clone never
+        // registers as a delete listener on those instances.
         setEnabled(false);
     }
 
@@ -83,7 +90,10 @@ namespace FIFE
         return std::make_unique<FloatingTextRenderer>(*this);
     }
 
-    FloatingTextRenderer::~FloatingTextRenderer() = default;
+    FloatingTextRenderer::~FloatingTextRenderer()
+    {
+        clearAllStyles();
+    }
 
     void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
@@ -94,122 +104,360 @@ namespace FIFE
             return;
         }
 
-        auto instance_it          = instances.begin();
-        uint32_t const lm         = m_renderbackend->getLightingModel();
-        SDL_Color const old_color = m_font->getColor();
-        if (m_font_color) {
-            m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
-        }
+        auto instance_it  = instances.begin();
+        uint32_t const lm = m_renderbackend->getLightingModel();
+
         for (; instance_it != instances.end(); ++instance_it) {
             Instance const * instance   = (*instance_it)->instance;
             std::string const * saytext = instance->getSayText();
-            if (saytext != nullptr) {
-                Rect const & ir = (*instance_it)->dimensions;
-                Image* img      = nullptr;
-                if (saytext->find('\n') != std::string::npos) {
-                    img = m_font->getAsImageMultiline(*saytext);
-                } else {
-                    img = m_font->getAsImage(*saytext);
-                }
-                int32_t const imageWidth  = toScreenSize(img->getWidth());
-                int32_t const imageHeight = toScreenSize(img->getHeight());
-                Rect r;
-                r.x = (ir.x + (ir.w / 2)) - (imageWidth / 2); // the center of the text rect is always aligned to the
-                                                              // instance's rect center.
-                r.y = ir.y - imageHeight;                     // make the text rect floating higher than the instance.
-                r.w = imageWidth;
-                r.h = imageHeight;
-                // Without this check it can happen that changeRenderInfos() call produces an out_of_range error
-                // because the image rendering can be skipped, if it's not on the screen.
-                // The result is that it tried to modify more objects as exist.
-                if (r.right() < 0 || std::cmp_greater(r.x, m_renderbackend->getWidth()) || r.bottom() < 0 ||
-                    std::cmp_greater(r.y, m_renderbackend->getHeight())) {
-                    continue;
-                }
-                if (m_background || m_backborder) {
-                    int32_t const overdraw = 5;
+            if (saytext == nullptr) {
+                continue;
+            }
 
-                    Point const p = Point(r.x - overdraw, r.y - overdraw);
+            SpeechStyle const & style = getEffectiveStyle(instance);
+            IFont* useFont            = style.fontOverride != nullptr ? style.fontOverride : m_font;
 
-                    if (m_background) {
-                        m_renderbackend->fillRectangle(
-                            p,
-                            toRectExtent(r.w + (2 * overdraw)),
-                            toRectExtent(r.h + (2 * overdraw)),
-                            m_backcolor.r,
-                            m_backcolor.g,
-                            m_backcolor.b,
-                            m_backcolor.a);
-                    }
+            // Guard first, so it restores the colour the font had on entry.
+            FontColorGuard const guard(useFont);
+            if (style.hasTextColorOverride) {
+                useFont->setColor(
+                    style.textColorOverride.getR(),
+                    style.textColorOverride.getG(),
+                    style.textColorOverride.getB(),
+                    style.textColorOverride.getAlpha());
+            }
 
-                    if (m_backborder) {
-                        m_renderbackend->drawRectangle(
-                            p,
-                            toRectExtent(r.w + (2 * overdraw)),
-                            toRectExtent(r.h + (2 * overdraw)),
-                            m_backbordercolor.r,
-                            m_backbordercolor.g,
-                            m_backbordercolor.b,
-                            m_backbordercolor.a);
-                    }
+            std::string displayText = *saytext;
+            bool hasLineBreaks      = displayText.find('\n') != std::string::npos;
+            if (style.maxTextWidth > 0) {
+                displayText   = useFont->splitTextToWidth(*saytext, style.maxTextWidth);
+                hasLineBreaks = true;
+            }
+
+            Image* img = hasLineBreaks ? useFont->getAsImageMultiline(displayText) : useFont->getAsImage(displayText);
+
+            int32_t const imageWidth  = toScreenSize(img->getWidth());
+            int32_t const imageHeight = toScreenSize(img->getHeight());
+            Rect const & ir           = (*instance_it)->dimensions;
+
+            bool const hasBubble = resolveBubbleType(style) != BubbleType::NONE;
+
+            int32_t const pad      = std::max(0, style.bubblePadding);
+            int32_t const contentW = std::max(imageWidth, style.maxTextWidth);
+            Rect textRect;
+            textRect.w = imageWidth;
+            textRect.h = imageHeight;
+
+            Rect bub;
+            if (hasBubble) {
+                bub.w = contentW + 2 * pad;
+                bub.h = imageHeight + 2 * pad;
+                bub.x = (ir.x + (ir.w / 2)) - (bub.w / 2);
+                bub.y = ir.y - imageHeight - pad;
+
+                textRect.x = bub.x + pad;
+                textRect.y = bub.y + pad;
+                if (style.textAlign == TextAlign::CENTER) {
+                    textRect.x += (contentW - imageWidth) / 2;
+                } else if (style.textAlign == TextAlign::RIGHT) {
+                    textRect.x += contentW - imageWidth;
                 }
-                img->render(r);
-                if (lm > 0) {
-                    uint16_t elements = 1;
-                    if (m_background) {
-                        ++elements;
-                    }
-                    if (m_backborder) {
-                        ++elements;
-                    }
-                    m_renderbackend->changeRenderInfos(
-                        RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+            } else {
+                // the center of the text rect is always aligned to the instance's rect center.
+                textRect.x = (ir.x + (ir.w / 2)) - (imageWidth / 2);
+                textRect.y = ir.y - imageHeight; // make the text rect floating higher than the instance.
+            }
+
+            // Without this check it can happen that changeRenderInfos() call produces an out_of_range error
+            // because the image rendering can be skipped, if it's not on the screen.
+            // The result is that it tried to modify more objects as exist.
+            Rect const cullRect = hasBubble ? bub : textRect;
+            if (cullRect.right() < 0 || std::cmp_greater(cullRect.x, m_renderbackend->getWidth()) ||
+                cullRect.bottom() < 0 || std::cmp_greater(cullRect.y, m_renderbackend->getHeight())) {
+                continue;
+            }
+
+            uint16_t elements = 1;
+            Point const instanceAnchor(ir.x + ir.w / 2, ir.y);
+
+            if (hasBubble) {
+                elements += static_cast<uint16_t>(drawBuiltInBubble(m_renderbackend, bub, instanceAnchor, style));
+            } else if (style.hasBackgroundOverride || style.hasBorderOverride) {
+                Point const p(textRect.x - pad, textRect.y - pad);
+                uint16_t const w = toRectExtent(textRect.w + 2 * pad);
+                uint16_t const h = toRectExtent(textRect.h + 2 * pad);
+
+                if (style.hasBackgroundOverride) {
+                    Color const & c = style.backgroundColorOverride;
+                    m_renderbackend->fillRectangle(p, w, h, c.getR(), c.getG(), c.getB(), c.getAlpha());
+                    ++elements;
+                }
+                if (style.hasBorderOverride) {
+                    Color const & c = style.borderColorOverride;
+                    m_renderbackend->drawRectangle(p, w, h, c.getR(), c.getG(), c.getB(), c.getAlpha());
+                    ++elements;
+                }
+            }
+
+            img->render(textRect);
+            if (lm > 0) {
+                m_renderbackend->changeRenderInfos(
+                    RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+            }
+        }
+    }
+
+    BubbleType FloatingTextRenderer::resolveBubbleType(SpeechStyle const & style)
+    {
+        if (style.bubbleType == BubbleType::NONE || style.bubbleType == BubbleType::CLASSIC) {
+            return style.bubbleType;
+        }
+        // ROUND/THOUGHT/SHOUT/WHISPER are only drawn by fcn::SpeechBubble so far.
+        if (m_warnedBubbleTypes.insert(static_cast<uint8_t>(style.bubbleType)).second) {
+            FL_WARN(
+                _log(),
+                std::format(
+                    "SpeechStyle bubble type {} is not drawn by FloatingTextRenderer, using CLASSIC",
+                    static_cast<int>(style.bubbleType)));
+        }
+        return BubbleType::CLASSIC;
+    }
+
+    TailDirection FloatingTextRenderer::resolveTailDirection(
+        SpeechStyle const & style, Point const & anchor, Rect const & bubble)
+    {
+        TailDirection const inferred = detail::inferTailDirection(anchor, bubble);
+        if (style.tailDir == TailDirection::AUTO || style.tailDir == inferred) {
+            return inferred;
+        }
+        // The bubble is always drawn above the speaker, so only the downward
+        // tail has a base edge facing the anchor. Any other direction would put
+        // the triangle inside or across the body instead of protruding from it.
+        if (m_warnedTailDirections.insert(static_cast<uint8_t>(style.tailDir)).second) {
+            FL_WARN(
+                _log(),
+                std::format(
+                    "SpeechStyle tail direction {} cannot be drawn above the speaker, using {}",
+                    static_cast<int>(style.tailDir),
+                    static_cast<int>(inferred)));
+        }
+        return inferred;
+    }
+
+    int32_t FloatingTextRenderer::drawBuiltInBubble(
+        RenderBackend* rb, Rect const & bubbleRect, Point const & instanceAnchor, SpeechStyle const & style)
+    {
+        int32_t primitives = 0;
+
+        // Nothing is drawn unless a colour was asked for: an implicit white fill
+        // would swallow the default light text colour.
+        bool const fillBody = style.hasBackgroundOverride;
+        bool const drawEdge = style.hasBorderOverride;
+        if (!fillBody && !drawEdge) {
+            return 0;
+        }
+
+        Color bg           = style.backgroundColorOverride;
+        Color const border = style.borderColorOverride;
+
+        int32_t const x  = bubbleRect.x;
+        int32_t const y  = bubbleRect.y;
+        int32_t const bw = bubbleRect.w;
+        int32_t const bh = bubbleRect.h;
+        int32_t const cr = detail::clampCornerRadius(bubbleRect, style.cornerRadius);
+
+        // Angles grow clockwise on screen: 0 is right, 90 down, 180 left, 270 up.
+        struct Corner
+        {
+                Point center;
+                int32_t start;
+                int32_t end;
+        };
+        Corner const corners[4] = {
+            {Point(x + cr, y + cr), 180, 270},
+            {Point(x + bw - cr, y + cr), 270, 360},
+            {Point(x + bw - cr, y + bh - cr), 0, 90},
+            {Point(x + cr, y + bh - cr), 90, 180},
+        };
+
+        // 90 degree segments rather than full circles: together with the three
+        // rectangles below they tile the shape exactly, so a translucent fill
+        // never blends twice and leaves darker corners.
+        auto const fillCorners = [&]() {
+            for (Corner const & corner : corners) {
+                rb->drawFillCircleSegment(
+                    corner.center,
+                    static_cast<uint32_t>(cr),
+                    corner.start,
+                    corner.end,
+                    bg.getR(),
+                    bg.getG(),
+                    bg.getB(),
+                    bg.getAlpha());
+                ++primitives;
+            }
+        };
+
+        auto const fillBodyRects = [&]() {
+            rb->fillRectangle(
+                Point(x + cr, y),
+                toRectExtent(bw - 2 * cr),
+                toRectExtent(bh),
+                bg.getR(),
+                bg.getG(),
+                bg.getB(),
+                bg.getAlpha());
+            rb->fillRectangle(
+                Point(x, y + cr),
+                toRectExtent(cr),
+                toRectExtent(bh - 2 * cr),
+                bg.getR(),
+                bg.getG(),
+                bg.getB(),
+                bg.getAlpha());
+            rb->fillRectangle(
+                Point(x + bw - cr, y + cr),
+                toRectExtent(cr),
+                toRectExtent(bh - 2 * cr),
+                bg.getR(),
+                bg.getG(),
+                bg.getB(),
+                bg.getAlpha());
+            primitives += 3;
+        };
+
+        if (cr > 0 && fillBody) {
+            fillCorners();
+            fillBodyRects();
+        } else if (fillBody) {
+            rb->fillRectangle(
+                Point(x, y), toRectExtent(bw), toRectExtent(bh), bg.getR(), bg.getG(), bg.getB(), bg.getAlpha());
+            ++primitives;
+        }
+
+        if (drawEdge && border.getAlpha() > 0) {
+            // Straight edges between the corner arcs.
+            rb->drawLine(
+                Point(x + cr, y),
+                Point(x + bw - cr, y),
+                border.getR(),
+                border.getG(),
+                border.getB(),
+                border.getAlpha());
+            rb->drawLine(
+                Point(x + cr, y + bh),
+                Point(x + bw - cr, y + bh),
+                border.getR(),
+                border.getG(),
+                border.getB(),
+                border.getAlpha());
+            rb->drawLine(
+                Point(x, y + cr),
+                Point(x, y + bh - cr),
+                border.getR(),
+                border.getG(),
+                border.getB(),
+                border.getAlpha());
+            rb->drawLine(
+                Point(x + bw, y + cr),
+                Point(x + bw, y + bh - cr),
+                border.getR(),
+                border.getG(),
+                border.getB(),
+                border.getAlpha());
+            primitives += 4;
+
+            if (cr > 0) {
+                for (Corner const & corner : corners) {
+                    rb->drawCircleSegment(
+                        corner.center,
+                        static_cast<uint32_t>(cr),
+                        corner.start,
+                        corner.end,
+                        border.getR(),
+                        border.getG(),
+                        border.getB(),
+                        border.getAlpha());
+                    ++primitives;
                 }
             }
         }
-        if (m_font_color) {
-            m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.a);
+
+        TailDirection const dir = resolveTailDirection(style, instanceAnchor, bubbleRect);
+        Point tip;
+        if (dir == TailDirection::UP || dir == TailDirection::DOWN) {
+            tip = Point(instanceAnchor.x + style.tailOffset, instanceAnchor.y);
+        } else {
+            tip = Point(instanceAnchor.x, instanceAnchor.y + style.tailOffset);
+        }
+
+        auto const tail = detail::computeTailVertices(bubbleRect, tip, dir, style.tailSize);
+        if (tail[0] != tail[1] && tail[1] != tail[2]) {
+            if (fillBody) {
+                rb->fillTriangle(tail[0], tail[1], tail[2], bg.getR(), bg.getG(), bg.getB(), bg.getAlpha());
+                ++primitives;
+            }
+
+            if (drawEdge && border.getAlpha() > 0) {
+                rb->drawTriangle(
+                    tail[0], tail[1], tail[2], border.getR(), border.getG(), border.getB(), border.getAlpha());
+                ++primitives;
+            }
+        }
+
+        return primitives;
+    }
+
+    void FloatingTextRenderer::setSpeechStyle(Instance* instance, SpeechStyle const & style)
+    {
+        if (instance == nullptr) {
+            return;
+        }
+        m_speechStyles[instance] = style;
+        if (m_styledInstances.insert(instance).second) {
+            instance->addDeleteListener(this);
         }
     }
 
-    void FloatingTextRenderer::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void FloatingTextRenderer::clearSpeechStyle(Instance* instance)
     {
-        m_color.r = r;
-        m_color.g = g;
-        m_color.b = b;
-        m_color.a = a;
-
-        m_font_color = true;
+        if (m_speechStyles.erase(instance) == 0) {
+            return;
+        }
+        if (m_styledInstances.erase(instance) == 1) {
+            instance->removeDeleteListener(this);
+        }
     }
 
-    void FloatingTextRenderer::setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba)
+    void FloatingTextRenderer::clearAllStyles()
     {
-        m_backcolor.r = br;
-        m_backcolor.g = bg;
-        m_backcolor.b = bb;
-        m_backcolor.a = ba;
-
-        m_background = true;
+        for (Instance* instance : m_styledInstances) {
+            instance->removeDeleteListener(this);
+        }
+        m_styledInstances.clear();
+        m_speechStyles.clear();
     }
 
-    void FloatingTextRenderer::setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba)
+    void FloatingTextRenderer::setDefaultSpeechStyle(SpeechStyle const & style)
     {
-        m_backbordercolor.r = bbr;
-        m_backbordercolor.g = bbg;
-        m_backbordercolor.b = bbb;
-        m_backbordercolor.a = bba;
-
-        m_backborder = true;
+        m_defaultStyle = style;
     }
 
-    void FloatingTextRenderer::resetBackground()
+    SpeechStyle const & FloatingTextRenderer::getDefaultSpeechStyle() const
     {
-        m_background = false;
+        return m_defaultStyle;
     }
 
-    void FloatingTextRenderer::resetBorder()
+    SpeechStyle const & FloatingTextRenderer::getEffectiveStyle(Instance const * instance) const
     {
-        m_backborder = false;
+        auto const it = m_speechStyles.find(const_cast<Instance*>(instance));
+        return it != m_speechStyles.end() ? it->second : m_defaultStyle;
+    }
+
+    void FloatingTextRenderer::onInstanceDeleted(Instance* instance)
+    {
+        m_speechStyles.erase(instance);
+        m_styledInstances.erase(instance);
     }
 
     FloatingTextRenderer* FloatingTextRenderer::getInstance(IRendererContainer* cnt)

@@ -1,19 +1,41 @@
 <?xml version="1.0"?>
 <Container base_color="0,0,0" border_size="0" opaque="0" position="0,0" name="questcontainer" size="1024,768">
-  <VBox name="credits" position="312,200" opaque="1" base_color="188,0,0">
-    <HBox>
-      <Spacer/>
-      <Label name="questname" border_size="0" text="Quest"/>
-      <Spacer/>
-    </HBox>
-    <HBox>
-      <ScrollArea min_size="400,400" max_size="400,400" size="400,400" vertical_scrollbar="1">
-        <Label min_size="400,400" max_size="400,400" size="400,400" wrap_text="1" name="questtext"/>
-      </ScrollArea>
-    </HBox>
-    <HBox>
-      <Button name="accept" text="Accept"/>
-      <Button name="decline" text="Decline"/>
-    </HBox>
-  </VBox>
+  <SpeechBubble
+    name="questbubble"
+    position="312,200"
+    size="440,300"
+    base_color="188,0,0"
+    border_size="2"
+    border_color="255,220,180"
+    corner_radius="16"
+    tail_width="26"
+    tail_height="20"
+    tail_direction="BottomLeft"
+    tail_profile="rounded"
+    bubble_style="round"
+    tail_offset="0.25"
+    opaque="1"
+  >
+    <VBox name="questbox" opaque="0">
+      <HBox opaque="0">
+        <Spacer/>
+        <Label name="questname" border_size="0" base_color="0,0,0,0" text="Quest"/>
+        <Spacer/>
+      </HBox>
+      <HBox opaque="0">
+        <Label
+          name="questtext"
+          min_size="400,180"
+          max_size="400,180"
+          size="400,180"
+          wrap_text="1"
+          base_color="0,0,0,0"
+        />
+      </HBox>
+      <HBox opaque="0">
+        <Button name="accept" text="Accept"/>
+        <Button name="decline" text="Decline"/>
+      </HBox>
+    </VBox>
+  </SpeechBubble>
 </Container>

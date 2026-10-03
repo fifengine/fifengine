@@ -330,6 +330,23 @@ class GameController:
         mapname = self._settings.get("RPG", "TownMapFile", "town")
         self.loadMap(mapname)
 
+    def _defaultSpeechStyle(self):
+        """
+        Build the default speech bubble style used for NPC barks.
+
+        Returns
+        -------
+        fife.SpeechStyle
+            The configured style.
+        """
+        style = fife.SpeechStyle.classic()
+        style.hasBackgroundOverride = True
+        style.backgroundColorOverride = fife.Color(255, 100, 100, 165)
+        style.hasBorderOverride = True
+        style.borderColorOverride = fife.Color(255, 50, 50)
+        style.maxTextWidth = 260
+        return style
+
     def loadMap(self, mapname):
         """Create the scene for the map and attach the listener."""
         if self._listener:
@@ -356,8 +373,7 @@ class GameController:
             "FreeSans", self._settings.get("FIFE", "DefaultFontSize", 16)
         )
         self._floatingtextrenderer.setFont(font)
-        self._floatingtextrenderer.setBackground(255, 100, 100, 165)
-        self._floatingtextrenderer.setBorder(255, 50, 50)
+        self._floatingtextrenderer.setDefaultSpeechStyle(self._defaultSpeechStyle())
         self._floatingtextrenderer.setEnabled(True)
 
         if self._listener:
@@ -398,6 +414,8 @@ class GameController:
 
         if self._scene:
             self._scene.updateScene()
+
+        self._guicontroller.update()
 
     def _getGUIController(self):
         return self._guicontroller

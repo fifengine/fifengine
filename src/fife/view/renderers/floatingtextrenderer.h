@@ -9,19 +9,25 @@
 
 // Standard C++ library includes
 #include <memory>
+#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 // 3rd party library includes
 
 // FIFE includes
+#include "model/structures/instance.h"
+#include "util/structures/rect.h"
 #include "view/rendererbase.h"
+#include "view/renderers/speechstyle.h"
 
 namespace FIFE
 {
     class RenderBackend;
     class IFont;
 
-    class FIFE_API FloatingTextRenderer : public RendererBase
+    class FIFE_API FloatingTextRenderer : public RendererBase, public InstanceDeleteListener
     {
         public:
             /** Constructor.
@@ -70,29 +76,6 @@ namespace FIFE
                 m_font = font;
             }
 
-            /** Changes default font color
-             * Only useful for .ttf fonts
-             */
-            void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-
-            /** Set default background quad
-             * r,g,b,a values for background
-             */
-            void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
-
-            /** Set default border
-             * r,g,b,a values for border
-             */
-            void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
-
-            /** Disable the default background
-             */
-            void resetBackground();
-
-            /** Disable the default border
-             */
-            void resetBorder();
-
             /** Gets instance for interface access.
              */
             static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
@@ -104,14 +87,70 @@ namespace FIFE
                 return RendererBase::m_renderbackend;
             }
 
+            /**
+             * Sets the speech style for a single instance.
+             *  Registers as delete listener on the instance while a style is held.
+             *  @param instance instance to style, must outlive the style registration
+             *  @param style style to apply, copied
+             */
+            void setSpeechStyle(Instance* instance, SpeechStyle const & style);
+
+            /**
+             * Drops the per-instance style, falling back to the default style.
+             */
+            void clearSpeechStyle(Instance* instance);
+
+            /**
+             * Drops all per-instance styles and unregisters all delete listeners.
+             */
+            void clearAllStyles();
+
+            /**
+             * Sets the style used for instances without a per-instance style.
+             */
+            void setDefaultSpeechStyle(SpeechStyle const & style);
+
+            /**
+             * Returns the style used for instances without a per-instance style.
+             */
+            SpeechStyle const & getDefaultSpeechStyle() const;
+
+            /**
+             * Returns the effective style: per-instance if set, otherwise the default.
+             */
+            SpeechStyle const & getEffectiveStyle(Instance const * instance) const;
+
+            /**
+             * Drops the style of a destroyed instance.
+             */
+            void onInstanceDeleted(Instance* instance) override;
+
         private:
+            /**
+             * Maps a requested bubble type onto one this renderer can draw.
+             */
+            BubbleType resolveBubbleType(SpeechStyle const & style);
+
+            /**
+             * Maps a requested tail direction onto one this renderer can draw.
+             */
+            TailDirection resolveTailDirection(SpeechStyle const & style, Point const & anchor, Rect const & bubble);
+
+            /**
+             * Draws the bubble body, border and tail. Returns the queued primitive count.
+             */
+            int32_t drawBuiltInBubble(
+                RenderBackend* rb,
+                Rect const & bubbleRect,
+                Point const & instanceAnchor,
+                SpeechStyle const & style);
+
             IFont* m_font;
-            bool m_font_color;
-            SDL_Color m_color;
-            bool m_background;
-            bool m_backborder;
-            SDL_Color m_backcolor;
-            SDL_Color m_backbordercolor;
+            std::unordered_map<Instance*, SpeechStyle> m_speechStyles;
+            std::unordered_set<Instance*> m_styledInstances;
+            std::set<uint8_t> m_warnedBubbleTypes;
+            std::set<uint8_t> m_warnedTailDirections;
+            SpeechStyle m_defaultStyle;
     };
 
 } // namespace FIFE
