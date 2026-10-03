@@ -34,3 +34,10 @@ demos/**/saves/*.xml
 
 # UH (git clone of unknown-horizons)
 /demos/unknown-horizons
+
+fife.log
+settings.xml
+
+src/python/fife/_fife_swig.so
+src/python/fife/_fifechan_swig.so
+src/python/fife/fife.py
