@@ -1927,8 +1927,42 @@ namespace FIFE
     void RenderBackendOpenGL::fillTriangle(
         Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        // The OpenGL backend already emits a filled GL_TRIANGLES primitive for drawTriangle.
-        drawTriangle(p1, p2, p3, r, g, b, a);
+        // GL_CULL_FACE is on with GL_CCW front faces, so the winding has to match
+        // the other filled primitives or the triangle is culled. Callers should
+        // not have to care, so normalise it here.
+        Point v0            = p1;
+        Point v1            = p2;
+        Point v2            = p3;
+        int64_t const cross = static_cast<int64_t>(v1.x - v0.x) * static_cast<int64_t>(v2.y - v0.y) -
+                              static_cast<int64_t>(v1.y - v0.y) * static_cast<int64_t>(v2.x - v0.x);
+        if (cross > 0) {
+            std::swap(v1, v2);
+        }
+
+        renderDataP rd{};
+        rd.color.at(0) = r;
+        rd.color.at(1) = g;
+        rd.color.at(2) = b;
+        rd.color.at(3) = a;
+
+        rd.vertex.at(0) = static_cast<float>(v0.x);
+        rd.vertex.at(1) = static_cast<float>(v0.y);
+        m_renderPrimitiveDatas.push_back(rd);
+
+        rd.vertex.at(0) = static_cast<float>(v1.x);
+        rd.vertex.at(1) = static_cast<float>(v1.y);
+        m_renderPrimitiveDatas.push_back(rd);
+
+        rd.vertex.at(0) = static_cast<float>(v2.x);
+        rd.vertex.at(1) = static_cast<float>(v2.y);
+        m_renderPrimitiveDatas.push_back(rd);
+
+        uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        std::array<uint32_t, 3> indices{index, index + 1, index + 2};
+        m_pIndices.insert(m_pIndices.end(), indices.begin(), indices.end());
+
+        RenderObject const ro(GL_TRIANGLES, 3);
+        m_renderObjects.push_back(ro);
     }
 
     void RenderBackendOpenGL::drawRectangle(

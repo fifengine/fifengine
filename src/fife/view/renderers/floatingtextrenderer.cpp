@@ -150,10 +150,13 @@ namespace FIFE
 
             Rect bub;
             if (hasBubble) {
-                bub.w = contentW + 2 * pad;
-                bub.h = imageHeight + 2 * pad;
-                bub.x = (ir.x + (ir.w / 2)) - (bub.w / 2);
-                bub.y = ir.y - imageHeight - pad;
+                // Leave a gap below the bubble for the tail to span, otherwise its
+                // tip would sit above its base and the triangle would be inverted.
+                int32_t const tailGap = std::max(0, style.tailSize);
+                bub.w                 = contentW + 2 * pad;
+                bub.h                 = imageHeight + 2 * pad;
+                bub.x                 = (ir.x + (ir.w / 2)) - (bub.w / 2);
+                bub.y                 = ir.y - imageHeight - pad - tailGap;
 
                 textRect.x = bub.x + pad;
                 textRect.y = bub.y + pad;
@@ -399,9 +402,12 @@ namespace FIFE
             }
 
             if (drawEdge && border.getAlpha() > 0) {
-                rb->drawTriangle(
-                    tail[0], tail[1], tail[2], border.getR(), border.getG(), border.getB(), border.getAlpha());
-                ++primitives;
+                // drawTriangle fills on the OpenGL backend and only outlines on
+                // the SDL one, so the edges are stroked individually instead.
+                rb->drawLine(tail[0], tail[1], border.getR(), border.getG(), border.getB(), border.getAlpha());
+                rb->drawLine(tail[1], tail[2], border.getR(), border.getG(), border.getB(), border.getAlpha());
+                rb->drawLine(tail[2], tail[0], border.getR(), border.getG(), border.getB(), border.getAlpha());
+                primitives += 3;
             }
         }
 
