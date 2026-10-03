@@ -102,13 +102,23 @@ namespace FIFE
     void Logger::log(LogManager::LogLevel level, std::string const & msg)
     {
 #ifdef LOG_ENABLED
-        if (m_logger != nullptr) {
-            auto spd_level = static_cast<spdlog::level::level_enum>(level);
-            m_logger->log(spd_level, msg);
-            if (level == LogManager::LEVEL_PANIC) {
-                m_logger->flush();
-                abort();
-            }
+        if (m_logger == nullptr) {
+            return;
+        }
+
+        // Enforce the severity threshold. LEVEL_PANIC is the highest FIFE
+        // level, so it always survives the filter.
+        if (level < LogManager::instance().getLevelFilter()) {
+            return;
+        }
+
+        m_logger->log(toSpdlogLevel(level), msg);
+
+        // Log first, then flush, so the fatal message actually reaches the
+        // sink before the process dies.
+        if (level == LogManager::LEVEL_PANIC) {
+            m_logger->flush();
+            std::abort();
         }
 #else
         (void)level;
@@ -135,12 +145,12 @@ namespace FIFE
 
     void LogManager::setLevelFilter(LogLevel level)
     {
-        m_level = level;
+        m_level.store(level, std::memory_order_relaxed);
     }
 
-    LogManager::LogLevel LogManager::getLevelFilter()
+    LogManager::LogLevel LogManager::getLevelFilter() const
     {
-        return m_level;
+        return m_level.load(std::memory_order_relaxed);
     }
 
     void LogManager::addVisibleModule(logmodule_t module)

@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <mutex>
@@ -118,7 +119,7 @@ namespace FIFE
              * @return Active LogLevel threshold.
              * @see setLevelFilter
              */
-            LogLevel getLevelFilter();
+            LogLevel getLevelFilter() const;
 
             /**
              *  Makes a module (and its ancestors) visible.
@@ -221,7 +222,15 @@ namespace FIFE
             std::mutex m_config_mutex;
             LogConfig m_config;
 
-            LogLevel m_level;
+            /**
+             *  Minimum severity that will be emitted.
+             *
+             * Atomic because it is read on every log call (via Logger::log)
+             * while setLevelFilter may run from another thread. Relaxed
+             * ordering is sufficient: the value is a standalone threshold,
+             * not synchronisation for any other datum.
+             */
+            std::atomic<LogLevel> m_level;
             bool m_modules[LM_MODULE_MAX];
 
 #ifdef LOG_ENABLED
@@ -230,6 +239,43 @@ namespace FIFE
             std::shared_ptr<spdlog::sinks::dist_sink_mt> m_dist_sink;
 #endif
     };
+
+#ifdef LOG_ENABLED
+    /**
+     *  Maps a FIFE severity onto the matching spdlog severity.
+     * @param level  FIFE log level.
+     * @return Corresponding spdlog level.
+     *
+     * The two enums do not share a layout, so this mapping must be explicit.
+     * spdlog's level_enum is trace, debug, info, warn, err, critical, off and
+     * FIFE's LogLevel is debug, log, warn, error, panic — a plain
+     * static_cast lands one slot too low for every level (FIFE LEVEL_WARN
+     * becomes spdlog info, LEVEL_ERROR becomes spdlog warn, and so on).
+     *
+     * Unrecognised values map to spdlog trace, the lowest severity, so that
+     * an out-of-range level is never promoted to something more important
+     * than the caller asked for.
+     *
+     * @internal
+     */
+    constexpr spdlog::level::level_enum toSpdlogLevel(LogManager::LogLevel level)
+    {
+        switch (level) {
+        case LogManager::LEVEL_DEBUG:
+            return spdlog::level::debug;
+        case LogManager::LEVEL_LOG:
+            return spdlog::level::info;
+        case LogManager::LEVEL_WARN:
+            return spdlog::level::warn;
+        case LogManager::LEVEL_ERROR:
+            return spdlog::level::err;
+        case LogManager::LEVEL_PANIC:
+            return spdlog::level::critical;
+        default:
+            return spdlog::level::trace;
+        }
+    }
+#endif
 
     /**
      *  Per-module logger handle.
@@ -270,10 +316,15 @@ namespace FIFE
              * @param level  Severity level.
              * @param msg    The message string (or std::format result).
              *
+             * Messages below the active level filter
+             * (see LogManager::setLevelFilter) are silently discarded; the
+             * remaining ones are emitted at the severity that
+             * toSpdlogLevel() maps @p level to.
+             *
              * When LOG_ENABLED is not defined this function is a no-op
              * and the compiler may elide the call entirely.
-             * If @p level is LEVEL_PANIC the process calls std::abort()
-             * after flushing the log.
+             * If @p level is LEVEL_PANIC the message is logged and flushed,
+             * then the process calls std::abort().
              */
             void log(LogManager::LogLevel level, std::string const & msg);
 

@@ -31,7 +31,18 @@ namespace FIFE
 #ifdef LOG_ENABLED
             spdlog::level::level_enum default_level = spdlog::level::info;
 #else
-            int default_level = 2;
+            /**
+             * FIFE severity, as a raw int because LogManager::LogLevel is not
+             * visible here (logger.h includes this header, so referring to it
+             * would be circular).
+             *
+             * 1 == LogManager::LEVEL_LOG, i.e. "info and above".
+             *
+             * Unused in this configuration: the only reader of default_level
+             * is LogManager::rebuildSinks(), which is compiled out when
+             * LOG_ENABLED is undefined.
+             */
+            int default_level = 1;
 #endif
     };
 

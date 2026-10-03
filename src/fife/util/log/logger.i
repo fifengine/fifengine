@@ -23,7 +23,7 @@ namespace FIFE {
 		~LogManager();
 
 		void setLevelFilter(LogLevel level);
-		LogLevel getLevelFilter();
+		LogLevel getLevelFilter() const;
 
 		void addVisibleModule(logmodule_t module);
 		void removeVisibleModule(logmodule_t module);
