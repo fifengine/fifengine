@@ -4,6 +4,9 @@
 %module fifechan
 %{
 #include <fifechan.hpp>
+#include <fifechan/widgets/speechbubble.hpp>
+// SWIG cannot wrap nested structs; hoist TailProfile to namespace scope.
+namespace fcn { typedef SpeechBubble::TailProfile TailProfile; }
 %}
 
 namespace fcn {
@@ -257,6 +260,78 @@ namespace fcn {
 	};
 
 %rename(clear) ::fcn::Container::removeAllChildren;
+
+	%feature("notabstract") SpeechBubble;
+	struct TailProfile {
+		float tipWidthRatio;
+		float curvature;
+		float hook;
+		float taperExponent;
+		float jaggedness;
+		int32_t teeth;
+		float prongDepth;
+		int32_t segments;
+
+		static TailProfile sharp();
+		static TailProfile rounded();
+		static TailProfile curved();
+		static TailProfile wide();
+		static TailProfile jagged();
+		static TailProfile pronged();
+	};
+
+	class SpeechBubble: public Container {
+	public:
+		enum class TailDirection : uint8_t {
+			None = 0,
+			Up,
+			Down,
+			Left,
+			Right,
+			BottomLeft,
+			BottomRight,
+			TopLeft,
+			TopRight,
+			Auto
+		};
+
+		enum class BubbleStyle : uint8_t {
+			Classic = 0,
+			Round,
+			Thought,
+			Shout,
+			Whisper
+		};
+
+		SpeechBubble();
+		virtual ~SpeechBubble();
+
+		void setCornerRadius(uint32_t radius);
+		uint32_t getCornerRadius() const;
+
+		void setTailWidth(uint32_t width);
+		uint32_t getTailWidth() const;
+
+		void setTailHeight(uint32_t height);
+		uint32_t getTailHeight() const;
+
+		void setBubbleStyle(BubbleStyle style);
+		BubbleStyle getBubbleStyle() const;
+
+		void setTailDirection(TailDirection direction);
+		TailDirection getTailDirection() const;
+
+		void setTailProfile(const TailProfile& profile);
+		const TailProfile& getTailProfile() const;
+
+		void setTailColor(const Color& color);
+		Color getTailColor() const;
+
+		void setTailOffset(float offset);
+		float getTailOffset() const;
+
+		virtual void adjustSize();
+	};
 
 	%feature("notabstract") Button;
 	class Button: public Widget {

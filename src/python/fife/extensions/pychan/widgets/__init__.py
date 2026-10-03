@@ -33,6 +33,7 @@ from .resizablewindow import ResizableWindow
 from .scrollarea import ScrollArea
 from .slider import Slider
 from .spacer import Spacer
+from .speechbubble import SpeechBubble
 from .tabbedarea import Tab, TabbedArea
 from .textbox import TextBox
 from .textfield import TextField
@@ -56,6 +57,7 @@ WIDGETS = {
     "ResizableWindow": ResizableWindow,
     "DockArea": DockArea,
     "Panel": Panel,
+    "SpeechBubble": SpeechBubble,
     # Simple Widgets
     "Spacer": Spacer,
     "Icon": Icon,

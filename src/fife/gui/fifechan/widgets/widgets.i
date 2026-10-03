@@ -4,6 +4,7 @@
 %module fife
 %{
 #include <fifechan.hpp>
+#include <fifechan/widgets/speechbubble.hpp>
 #include "gui/fifechan/widgets/animationicon.h"
 #include "gui/fifechan/widgets/clicklabel.h"
 #include "gui/fifechan/widgets/percentagebar.h"
