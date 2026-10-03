@@ -456,7 +456,10 @@ namespace FIFE
     void Engine::destroy()
     {
         FL_LOG(_log(), "Destructing engine");
-        // unique_ptr members automatically cleaned up
+
+        // Fonts must be released before TTF_Quit, otherwise the FreeType faces
+        // they own are destroyed against an already shut down library.
+        m_fontManager.reset();
 
         TTF_Quit();
         SDL_Quit();
