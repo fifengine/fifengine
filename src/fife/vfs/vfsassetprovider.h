@@ -11,7 +11,7 @@
 namespace FIFE
 {
 
-    class VfsAssetProvider : public AssetProvider
+    class FIFE_API VfsAssetProvider : public AssetProvider
     {
         public:
             explicit VfsAssetProvider(VFS* vfs);

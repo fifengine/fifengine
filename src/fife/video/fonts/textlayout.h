@@ -24,7 +24,7 @@ namespace FIFE
             int startY = 0;
     };
 
-    struct TextLayout
+    struct FIFE_API TextLayout
     {
             std::vector<GlyphRun> runs;
             int width  = 0;

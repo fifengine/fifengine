@@ -12,7 +12,7 @@
 namespace FIFE
 {
 
-    class FilesystemAssetProvider : public AssetProvider
+    class FIFE_API FilesystemAssetProvider : public AssetProvider
     {
         public:
             explicit FilesystemAssetProvider(std::vector<std::string> searchPaths);
