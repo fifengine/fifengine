@@ -140,10 +140,7 @@ namespace FIFE
              * Draws the bubble body, border and tail. Returns the queued primitive count.
              */
             int32_t drawBuiltInBubble(
-                RenderBackend* rb,
-                Rect const & bubbleRect,
-                Point const & instanceAnchor,
-                SpeechStyle const & style);
+                RenderBackend* rb, Rect const & bubbleRect, Point const & instanceAnchor, SpeechStyle const & style);
 
             IFont* m_font;
             std::unordered_map<Instance*, SpeechStyle> m_speechStyles;

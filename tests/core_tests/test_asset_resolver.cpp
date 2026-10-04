@@ -5,6 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 // Standard C++ library includes
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,6 +24,8 @@ using FIFE::AssetResolver;
 using FIFE::FilesystemAssetProvider;
 using FIFE::VFS;
 using FIFE::VfsAssetProvider;
+
+namespace fs = std::filesystem;
 
 class MockProvider : public AssetProvider
 {
@@ -179,7 +182,7 @@ TEST_CASE("FilesystemAssetProvider canResolve with absolute path", "[asset][file
     FilesystemAssetProvider provider({});
 
     AssetRequest req;
-    req.source = "/workspaces/fifengine_bugfixc/tests/data/FreeMono.ttf";
+    req.source = fs::absolute("tests/data/FreeMono.ttf").string();
     CHECK(provider.canResolve(req));
 }
 
