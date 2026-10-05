@@ -56,7 +56,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         fife.ConsoleExecuter.__init__(self)
         self._console.setConsoleExecuter(self)
 
-        keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.F10, fife.Key.PRINT_SCREEN])
+        keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.F10, fife.Key.PRINTSCREEN])
         keyfilter.__disown__()
 
         self._eventmanager.setKeyFilter(keyfilter)
@@ -64,8 +64,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         self.quit = False
 
         # Init Pychan
-        pychan.loadFonts("data/fonts/freefont.xml")
-        pychan.loadFonts("data/fonts/samanata.xml")
+        # Font families come from config/fonts.xml, which the engine loads
+        # automatically from the VFS root at startup.
         pychan.manager.setDefaultFont("FreeSans")
         pychan.setupModalExecution(
             self._application.mainLoop, self._application.breakFromMainLoop
@@ -86,7 +86,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
         elif keyval == fife.Key.F10:
             get_manager().getConsole().toggleShowHide()
             event.consume()
-        elif keyval == fife.Key.PRINT_SCREEN:
+        elif keyval == fife.Key.PRINTSCREEN:
             self._engine.getRenderBackend().captureScreen(
                 time.strftime("%Y%m%d_%H%M%S", time.localtime()) + ".png"
             )
