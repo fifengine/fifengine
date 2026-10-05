@@ -2,33 +2,46 @@
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 """Widget module for PyChan - contains the Panel class."""
 
-import weakref
+from fife import fifechan
+from fife.extensions.pychan.attrs import BoolAttr, IntAttr, UnicodeAttr
+from fife.extensions.pychan.exceptions import ParserError
 
-from fife import fife, fifechan
-from fife.extensions.pychan.attrs import BoolAttr
+from .containers import Container
 
-from .common import get_manager
-from .dockarea import DockArea
-from .resizablewindow import ResizableWindow
+#: Maps the visibility_state attribute value onto the fifechan VisibilityState
+#: enum. These are the lowercase spellings used in GUI XML files.
+VISIBILITY_STATES = {
+    "visible": "VisibilityState_Visible",
+    "hidden": "VisibilityState_Hidden",
+    "collapsed": "VisibilityState_Collapsed",
+}
 
 
-class Panel(ResizableWindow):
-    """The Panel class can be docked or undocked from Dock Areas.
+class Panel(Container):
+    """A panel with a title bar and an optional close button.
 
-    If the Panel is added to a DockArea (e.g. by XML loading), it will be
-    automatically docked. By default, undock will add the Panel to the parent
-    of the DockArea, which can also be the top widget.
+    This wraps the panel widget provided by FifeGUI. For a panel that can be
+    docked into a DockArea, see DockPanel.
 
     Attributes
     ----------
-        - dockable: If true, the Panel can be docked/undocked to DockAreas.
+    - title: Text shown in the panel's title bar.
+    - closable: If true, the title bar shows a close button.
+    - collapsed_width: Width in pixels used while the panel is collapsed.
+    - visibility_state: One of visible/hidden/collapsed.
     """
 
-    ATTRIBUTES = ResizableWindow.ATTRIBUTES + [
-        BoolAttr("dockable"),
+    ATTRIBUTES = Container.ATTRIBUTES + [
+        UnicodeAttr("title"),
+        BoolAttr("closable"),
+        IntAttr("collapsed_width"),
+        UnicodeAttr("visibility_state"),
     ]
 
-    DEFAULT_DOCKABLE = True
+    DEFAULT_TITLE = ""
+    DEFAULT_CLOSABLE = True
+    DEFAULT_COLLAPSED_WIDTH = 10
+    DEFAULT_VISIBILITY_STATE = "visible"
 
     def __init__(
         self,
@@ -59,22 +72,21 @@ class Panel(ResizableWindow):
         comment=None,
         background_image=None,
         opaque=None,
-        _real_widget=None,
+        layout=None,
+        spacing=None,
+        uniform_size=None,
         title=None,
-        titlebar_height=None,
-        movable=None,
-        resizable=None,
-        top_resizable=None,
-        right_resizable=None,
-        bottom_resizable=None,
-        left_resizable=None,
-        shove=None,
-        cursors=None,
-        dockable=None,
+        closable=None,
+        collapsed_width=None,
+        visibility_state=None,
+        _real_widget=None,
     ):
+        self.real_widget = _real_widget or fifechan.Panel()
 
-        if _real_widget is None:
-            _real_widget = fifechan.Panel()
+        self._title = self.DEFAULT_TITLE
+        self._closable = self.DEFAULT_CLOSABLE
+        self._collapsed_width = self.DEFAULT_COLLAPSED_WIDTH
+        self._visibility_state = self.DEFAULT_VISIBILITY_STATE
 
         super().__init__(
             parent=parent,
@@ -104,34 +116,22 @@ class Panel(ResizableWindow):
             comment=comment,
             background_image=background_image,
             opaque=opaque,
-            _real_widget=_real_widget,
-            title=title,
-            titlebar_height=titlebar_height,
-            movable=movable,
-            resizable=resizable,
-            top_resizable=top_resizable,
-            right_resizable=right_resizable,
-            bottom_resizable=bottom_resizable,
-            left_resizable=left_resizable,
-            shove=shove,
-            cursors=cursors,
+            layout=layout,
+            spacing=spacing,
+            uniform_size=uniform_size,
+            _real_widget=self.real_widget,
         )
 
-        if dockable is not None:
-            self.dockable = dockable
-        else:
-            self.dockable = self.DEFAULT_DOCKABLE
-
-        self._foundDockArea = None
-
-        self._barPressedLeft = False
-        self._barPressedRight = False
-        self._barReleasedLeft = False
-        self._barReleasedRight = False
-
-        self.capture(self.mousePressed, "mousePressed", "Panel")
-        self.capture(self.mouseReleased, "mouseReleased", "Panel")
-        self.capture(self.mouseDragged, "mouseDragged", "Panel")
+        self.title = self.DEFAULT_TITLE if title is None else title
+        self.closable = self.DEFAULT_CLOSABLE if closable is None else closable
+        self.collapsed_width = (
+            self.DEFAULT_COLLAPSED_WIDTH if collapsed_width is None else collapsed_width
+        )
+        self.visibility_state = (
+            self.DEFAULT_VISIBILITY_STATE
+            if visibility_state is None
+            else visibility_state
+        )
 
     def clone(self, prefix):
         """Create a clone of this Panel with a name prefix.
@@ -141,7 +141,7 @@ class Panel(ResizableWindow):
         Panel
             New Panel instance cloned from this one.
         """
-        panelClone = Panel(
+        panel_clone = Panel(
             None,
             self._createNameWithPrefix(prefix),
             self.size,
@@ -169,214 +169,88 @@ class Panel(ResizableWindow):
             self.comment,
             self.background_image,
             self.opaque,
-            None,
-            self.title,
-            self.titlebar_height,
-            self.movable,
-            self.resizable,
-            self.top_resizable,
-            self.right_resizable,
-            self.bottom_resizable,
-            self.left_resizable,
-            self.shove,
-            self.cursors,
-            self.dockable,
+            self.layout,
+            self.spacing,
+            self.uniform_size,
+            self._title,
+            self._closable,
+            self._collapsed_width,
+            self._visibility_state,
         )
+        return panel_clone
 
-        panelClone.addChildren(self._cloneChildren(prefix))
-        return panelClone
-
-    def _getDocked(self):
-        return self.real_widget.isDocked()
-
-    def _setDocked(self, docked):
-        self.real_widget.setDocked(docked)
-
-    docked = property(_getDocked, _setDocked)
-
-    def _getDockable(self):
-        return self.real_widget.isDockable()
-
-    def _setDockable(self, dockable):
-        self.real_widget.setDockable(dockable)
-
-    dockable = property(_getDockable, _setDockable)
-
-    def getDockArea(self):
-        """Return the DockArea this panel intersects with or its parent when docked.
+    def _getTitle(self):
+        """
+        Return the title bar text.
 
         Returns
         -------
-        DockArea | None
-            The found DockArea instance or None if none found.
+        str
+            The current value.
         """
-        if not self.docked:
-            dockAreas = []
-            # all top widgets are used for the search
-            if not self.parent:
-                topWidgets = get_manager().allTopHierachyWidgets
-                for t in topWidgets:
-                    dockAreas.extend(t.findChildren(__class__=DockArea))
-            else:
-                # only all childs are used for the search
-                dockAreas = self.parent.findChildren(__class__=DockArea)
-            # reverse order so inner/deeper Areas are preferred
-            dockAreas.reverse()
-            # try to find an intersecting and active DockArea
-            dim = fife.Rect(0, 0, self.width, self.height)
-            dim.x, dim.y = self.getAbsolutePos()
-            for d in dockAreas:
-                if d.real_widget.isActiveDockArea():
-                    ddim = fife.Rect(0, 0, d.width, d.height)
-                    ddim.x, ddim.y = d.getAbsolutePos()
-                    if dim.intersects(ddim):
-                        return d
-            return None
-        else:
-            return self.parent
+        return self._title
 
-    def afterDock(self):
+    def _setTitle(self, title):
+        self._title = str(title)
+        self.real_widget.setTitle(self._title)
+
+    title = property(_getTitle, _setTitle)
+
+    def _getClosable(self):
         """
-        Handle post-dock operations.
+        Return whether the close button is shown.
 
-        Override this to keep a record of where the widget was last docked.
+        Returns
+        -------
+        bool
+            The current value.
         """
-        pass
+        return self._closable
 
-    def afterUndock(self):
+    def _setClosable(self, closable):
+        self._closable = bool(closable)
+        self.real_widget.setClosable(self._closable)
+
+    closable = property(_getClosable, _setClosable)
+
+    def _getCollapsedWidth(self):
         """
-        Handle post-undock operations.
+        Return the width used while the panel is collapsed.
 
-        Override this in your Panel instance to restore a particular default
-        position (otherwise the panel would re-appear in the center).
+        Returns
+        -------
+        int
+            The current value.
         """
-        pass
+        return self._collapsed_width
 
-    def dockTo(self, widget):
-        """Dock the Panel to the given widget.
+    def _setCollapsedWidth(self, width):
+        self._collapsed_width = int(width)
+        self.real_widget.setCollapsedWidth(self._collapsed_width)
 
-        Parameters
-        ----------
-        widget : Widget
-            The widget to dock this panel to.
+    collapsed_width = property(_getCollapsedWidth, _setCollapsedWidth)
+
+    def _getVisibilityState(self):
         """
-        if not self.docked and widget is not self.parent and self.dockable:
-            widget.real_widget.setHighlighted(False)
-            # map coordinates to new parent and remove it from old parent
-            if self.parent:
-                self.x = (self.x // (self.parent.width // 100)) * (widget.width // 100)
-                self.y = (self.y // (self.parent.height // 100)) * (widget.height // 100)
-                self.parent.removeChild(self)
-            else:
-                self.x = (self.x // (get_manager().hook.screen_width // 100)) * (
-                    widget.width // 100
-                )
-                self.y = (self.y // (get_manager().hook.screen_height // 100)) * (
-                    widget.height // 100
-                )
-                get_manager().removeTopWidget(self)
-            # dock it to new parent
-            widget.addChild(self)
-            self.docked = True
-            self.afterDock()
+        Return the visibility state name.
 
-    def undockTo(self, widget):
-        """Undock the Panel to the given widget or to the main GUI if None.
-
-        Parameters
-        ----------
-        widget : Widget | None
-            Destination widget to undock to, or `None` to undock to main GUI.
+        Returns
+        -------
+        str
+            The current value.
         """
-        if self.docked and widget is not self.parent and self.dockable:
-            self.parent.removeChild(self)
-            # undock to main gui
-            if widget is None:
-                get_manager().addTopWidget(self)
-            else:
-                widget.addChild(self)
-            self.docked = False
-            self.afterUndock()
+        return self._visibility_state
 
-    def mousePressed(self, event):
-        """Handle mouse press events relevant to panel dragging/docking.
+    def _setVisibilityState(self, state):
+        key = str(state).lower()
+        try:
+            enum_name = VISIBILITY_STATES[key]
+        except KeyError:
+            raise ParserError(
+                f"Invalid visibility_state '{state}'. "
+                f"Must be one of {sorted(VISIBILITY_STATES)}."
+            ) from None
+        self._visibility_state = key
+        self.real_widget.setVisibilityState(getattr(fifechan, enum_name)())
 
-        Parameters
-        ----------
-        event : Event
-            Mouse event object with `getButton()` and `getY()`.
-        """
-        h = (
-            self.real_widget.getBorderSize()
-            + self.real_widget.getPaddingTop()
-            + self.real_widget.getTitleBarHeight()
-        )
-        self._barPressedLeft = (
-            event.getButton() == 1
-            and event.getY() <= h
-            and event.getY() > self.real_widget.getResizableBorderDistance()
-        )
-        self._barPressedRight = (
-            event.getButton() == 2
-            and event.getY() <= h
-            and event.getY() > self.real_widget.getResizableBorderDistance()
-        )
-        self._barReleasedLeft = False
-        self._barReleasedRight = False
-
-    def mouseReleased(self, event):
-        """Handle mouse release events and perform dock/undock actions.
-
-        Parameters
-        ----------
-        event : Event
-            Mouse event object with `getButton()` and `getY()`.
-        """
-        h = (
-            self.real_widget.getBorderSize()
-            + self.real_widget.getPaddingTop()
-            + self.real_widget.getTitleBarHeight()
-        )
-        self._barReleasedLeft = (
-            event.getButton() == 1
-            and event.getY() <= h
-            and event.getY() > self.real_widget.getResizableBorderDistance()
-        )
-        self._barReleasedRight = (
-            event.getButton() == 2
-            and event.getY() <= h
-            and event.getY() > self.real_widget.getResizableBorderDistance()
-        )
-        releasedLeft = self._barPressedLeft and self._barReleasedLeft
-        releasedRight = self._barPressedRight and self._barReleasedRight
-        self._barPressedLeft = False
-        self._barPressedRight = False
-        if releasedLeft and self._foundDockArea and not self.docked:
-            self.dockTo(self._foundDockArea())
-        elif releasedRight and self.docked:
-            # by default it undocks to the parent of the DockArea
-            if self.parent.parent:
-                newParent = self.parent.parent
-                self.undockTo(newParent)
-            else:
-                self.undockTo(None)
-
-    def mouseDragged(self, event):
-        """Handle mouse drag events to highlight potential DockAreas.
-
-        Parameters
-        ----------
-        event : Event
-            Mouse event object.
-        """
-        # disable highlighting
-        if self._foundDockArea is not None:
-            self._foundDockArea().real_widget.setHighlighted(False)
-            self._foundDockArea = None
-
-        if not self.docked and self._barPressedLeft:
-            dock = self.getDockArea()
-            # enable highlighting for dock area
-            if dock is not None and dock.real_widget.isActiveDockArea():
-                self._foundDockArea = weakref.ref(dock)
-                self._foundDockArea().real_widget.setHighlighted(True)
+    visibility_state = property(_getVisibilityState, _setVisibilityState)

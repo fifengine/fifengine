@@ -4,9 +4,8 @@
 %module fifechan
 %{
 #include <fifechan.hpp>
+#include <fifechan/widgets/panel.hpp>
 #include <fifechan/widgets/speechbubble.hpp>
-// SWIG cannot wrap nested structs; hoist TailProfile to namespace scope.
-namespace fcn { typedef SpeechBubble::TailProfile TailProfile; }
 %}
 
 namespace fcn {
@@ -261,6 +260,29 @@ namespace fcn {
 
 %rename(clear) ::fcn::Container::removeAllChildren;
 
+	enum class VisibilityState : uint8_t {
+		Visible = 0,
+		Hidden,
+		Collapsed
+	};
+
+	%feature("notabstract") Panel;
+	class Panel: public Container {
+	public:
+		Panel();
+		virtual ~Panel();
+		void setVisibilityState(VisibilityState state);
+		VisibilityState getVisibilityState() const;
+		void setCollapsedWidth(int width);
+		int getCollapsedWidth() const;
+		void setVisible(bool visible);
+		virtual void adjustSize();
+		void setTitle(const std::string& title);
+		const std::string& getTitle() const;
+		void setClosable(bool closable);
+		bool isClosable() const;
+	};
+
 	%feature("notabstract") SpeechBubble;
 	struct TailProfile {
 		float tipWidthRatio;
@@ -322,7 +344,7 @@ namespace fcn {
 		TailDirection getTailDirection() const;
 
 		void setTailProfile(const TailProfile& profile);
-		const TailProfile& getTailProfile() const;
+		TailProfile getTailProfile() const;
 
 		void setTailColor(const Color& color);
 		Color getTailColor() const;

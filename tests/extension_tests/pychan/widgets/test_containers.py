@@ -56,6 +56,13 @@ class TestPanel:
         assert Panel is not None
 
 
+class TestDockPanel:
+    def test_class_exists(self):
+        from fife.extensions.pychan.widgets.dockpanel import DockPanel
+
+        assert DockPanel is not None
+
+
 class TestScrollArea:
     def test_class_exists(self):
         from fife.extensions.pychan.widgets.scrollarea import ScrollArea

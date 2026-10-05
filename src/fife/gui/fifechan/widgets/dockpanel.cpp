@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Corresponding header include
-#include "panel.h"
+#include "dockpanel.h"
 
 // Standard C++ library includes
 #include <cassert>
@@ -17,27 +17,27 @@
 
 namespace fcn
 {
-    Panel::Panel() : m_dockable(true), m_docked(false), m_state()
+    DockPanel::DockPanel() : m_dockable(true), m_docked(false), m_state()
     {
     }
 
-    Panel::Panel(bool dockable) : m_dockable(dockable), m_docked(false), m_state()
+    DockPanel::DockPanel(bool dockable) : m_dockable(dockable), m_docked(false), m_state()
     {
     }
 
-    Panel::~Panel() = default;
+    DockPanel::~DockPanel() = default;
 
-    void Panel::setDockable(bool dockable)
+    void DockPanel::setDockable(bool dockable)
     {
         m_dockable = dockable;
     }
 
-    bool Panel::isDockable() const
+    bool DockPanel::isDockable() const
     {
         return m_dockable;
     }
 
-    void Panel::setDocked(bool docked)
+    void DockPanel::setDocked(bool docked)
     {
         if (isDockable()) {
             if (docked && !isDocked()) {
@@ -68,12 +68,12 @@ namespace fcn
         }
     }
 
-    bool Panel::isDocked() const
+    bool DockPanel::isDocked() const
     {
         return m_docked;
     }
 
-    DockArea* Panel::getDockedArea()
+    DockArea* DockPanel::getDockedArea()
     {
         DockArea* dockedArea = nullptr;
         if (isDocked()) {
@@ -82,7 +82,7 @@ namespace fcn
         return dockedArea;
     }
 
-    DockArea* Panel::findDockArea()
+    DockArea* DockPanel::findDockArea()
     {
         DockArea* dockArea = nullptr;
         if (!isDocked()) {
@@ -127,12 +127,12 @@ namespace fcn
         return dockArea;
     }
 
-    void Panel::expandContent(bool recursiv)
+    void DockPanel::expandContent(bool recursiv)
     {
         ResizableWindow::resizeToContent(recursiv);
     }
 
-    void Panel::mousePressed(MouseEvent& mouseEvent)
+    void DockPanel::mousePressed(MouseEvent& mouseEvent)
     {
         if (!m_docked) {
             ResizableWindow::mousePressed(mouseEvent);
@@ -145,7 +145,7 @@ namespace fcn
         }
     }
 
-    void Panel::mouseReleased(MouseEvent& mouseEvent)
+    void DockPanel::mouseReleased(MouseEvent& mouseEvent)
     {
         if (mouseEvent.getButton() == MouseEvent::Button::Left) {
             // move it inside the dock area
@@ -161,7 +161,7 @@ namespace fcn
         ResizableWindow::mouseReleased(mouseEvent);
     }
 
-    void Panel::mouseDragged(MouseEvent& mouseEvent)
+    void DockPanel::mouseDragged(MouseEvent& mouseEvent)
     {
         if (m_docked) {
             if (isMovable() && mMoved) {

@@ -431,7 +431,7 @@ set(
   src/fife/gui/fifechan/widgets/animationicon.cpp
   src/fife/gui/fifechan/widgets/clicklabel.cpp
   src/fife/gui/fifechan/widgets/dockarea.cpp
-  src/fife/gui/fifechan/widgets/panel.cpp
+  src/fife/gui/fifechan/widgets/dockpanel.cpp
   src/fife/gui/fifechan/widgets/percentagebar.cpp
   src/fife/gui/fifechan/widgets/resizablewindow.cpp
 )
@@ -658,7 +658,7 @@ set(
   src/fife/gui/fifechan/widgets/animationicon.h
   src/fife/gui/fifechan/widgets/clicklabel.h
   src/fife/gui/fifechan/widgets/dockarea.h
-  src/fife/gui/fifechan/widgets/panel.h
+  src/fife/gui/fifechan/widgets/dockpanel.h
   src/fife/gui/fifechan/widgets/percentagebar.h
   src/fife/gui/fifechan/widgets/resizablewindow.h
 )

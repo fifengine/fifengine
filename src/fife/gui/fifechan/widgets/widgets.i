@@ -10,7 +10,7 @@
 #include "gui/fifechan/widgets/percentagebar.h"
 #include "gui/fifechan/widgets/resizablewindow.h"
 #include "gui/fifechan/widgets/dockarea.h"
-#include "gui/fifechan/widgets/panel.h"
+#include "gui/fifechan/widgets/dockpanel.h"
 %}
 
 namespace fcn {
@@ -142,12 +142,12 @@ namespace fcn {
 		const Color& getHighlightColor() const;
 	};
 
-	%feature("notabstract") Panel;
-	class Panel : public ResizableWindow {
+	%feature("notabstract") DockPanel;
+	class DockPanel : public ResizableWindow {
 	public:
-		Panel();
-		Panel(bool dockable);
-		virtual ~Panel();
+		DockPanel();
+		DockPanel(bool dockable);
+		virtual ~DockPanel();
 		
 		void setDockable(bool dockable);
 		bool isDockable() const;

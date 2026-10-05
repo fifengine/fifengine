@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#ifndef FIFE_GUI_WIDGETS_PANEL_H
-#define FIFE_GUI_WIDGETS_PANEL_H
+#ifndef FIFE_GUI_WIDGETS_DOCKPANEL_H
+#define FIFE_GUI_WIDGETS_DOCKPANEL_H
 
 // Platform specific includes
 #include "platform.h"
@@ -17,16 +17,16 @@
 namespace fcn
 {
     class DockArea;
-    class FIFE_API Panel : public ResizableWindow
+    class FIFE_API DockPanel : public ResizableWindow
     {
         public:
-            Panel();
-            explicit Panel(bool dockable);
+            DockPanel();
+            explicit DockPanel(bool dockable);
 
-            ~Panel() override;
+            ~DockPanel() override;
 
-            Panel(Panel const &)            = delete;
-            Panel& operator=(Panel const &) = delete;
+            DockPanel(DockPanel const &)            = delete;
+            DockPanel& operator=(DockPanel const &) = delete;
 
             /** Sets if the widget is dockable.
              * @param dockable True if the widget should be dockable, otherwise false.
