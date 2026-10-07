@@ -2,7 +2,9 @@
 #                                 Fifengine
 #------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.25...4.2)
+# Upper bound tracks the CMake version vcpkg's build scripts need: they use
+# string(JSON ... STRING_ENCODE), which requires CMake 4.4.
+cmake_minimum_required(VERSION 3.25...4.4)
 
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
@@ -13,6 +15,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # USE_VCPKG defaults to true, so that SetupVcpkg is included.
 set(USE_VCPKG TRUE CACHE BOOL "Use vcpkg for dependencies")
+
+# ENABLE_MOVIE is declared here rather than in the Options section because the
+# vcpkg toolchain has already run by then, and the optional FFmpeg dependency is
+# selected through the manifest.
+option(ENABLE_MOVIE "Enable movie playback support" OFF)
+if(ENABLE_MOVIE AND NOT DEFINED VCPKG_MANIFEST_FEATURES)
+  set(VCPKG_MANIFEST_FEATURES movie CACHE STRING "vcpkg manifest features")
+endif()
 
 # This configures VCPKG to install the dependencies defined in vcpkg.json
 # automatically during the configure step of CMake (vcpkg install).
@@ -147,6 +157,80 @@ endif()
 
 if(ENABLE_OPENGL)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL)
+endif()
+
+if(ENABLE_FIFEGUI)
+  target_compile_definitions(fife_options INTERFACE HAVE_FIFEGUI)
+endif()
+
+#------------------------------------------------------------------------------
+# Movie Support
+#------------------------------------------------------------------------------
+
+if(ENABLE_MOVIE)
+  # FFmpeg is LGPL-2.1+. Linking it statically would oblige us to ship its object files
+  # (LGPL 6a), so require a dynamic triplet so users can substitute their own build.
+  # Triplets are per-build, not per-port, so -dynamic makes every dependency shared.
+  # There is deliberately no preset: pass the triplet on the command line instead, e.g.
+  #   cmake --preset clang22-x64-linux-dbg-cov -D VCPKG_TARGET_TRIPLET=x64-linux-dynamic
+  option(FIFE_MOVIE_ALLOW_STATIC_LINKAGE
+    "Accept the LGPL 6a obligation of shipping FFmpeg object files" OFF)
+
+  if(USE_VCPKG AND NOT FIFE_MOVIE_ALLOW_STATIC_LINKAGE)
+    # VCPKG_ROOT is usually not a CMake variable, so derive it from the toolchain.
+    set(FIFE_MOVIE_VCPKG_ROOT "${VCPKG_ROOT}")
+    if(NOT FIFE_MOVIE_VCPKG_ROOT AND DEFINED ENV{VCPKG_ROOT})
+      set(FIFE_MOVIE_VCPKG_ROOT "$ENV{VCPKG_ROOT}")
+    endif()
+    if(NOT FIFE_MOVIE_VCPKG_ROOT AND CMAKE_TOOLCHAIN_FILE)
+      foreach(FIFE_MOVIE_LEVEL buildsystems scripts)
+        get_filename_component(FIFE_MOVIE_VCPKG_ROOT "${CMAKE_TOOLCHAIN_FILE}" DIRECTORY)
+        get_filename_component(FIFE_MOVIE_VCPKG_ROOT "${FIFE_MOVIE_VCPKG_ROOT}" DIRECTORY)
+      endforeach()
+    endif()
+
+    set(FIFE_MOVIE_TRIPLET_FILE "")
+    foreach(FIFE_MOVIE_TRIPLET_DIR "${FIFE_MOVIE_VCPKG_ROOT}/triplets" "${FIFE_MOVIE_VCPKG_ROOT}/triplets/community")
+      if(EXISTS "${FIFE_MOVIE_TRIPLET_DIR}/${VCPKG_TARGET_TRIPLET}.cmake")
+        set(FIFE_MOVIE_TRIPLET_FILE "${FIFE_MOVIE_TRIPLET_DIR}/${VCPKG_TARGET_TRIPLET}.cmake")
+        break()
+      endif()
+    endforeach()
+
+    # VCPKG_LIBRARY_LINKAGE is internal to vcpkg, so read it from the triplet. Fail closed.
+    set(FIFE_MOVIE_LINKAGE "")
+    if(FIFE_MOVIE_TRIPLET_FILE)
+      file(READ "${FIFE_MOVIE_TRIPLET_FILE}" FIFE_MOVIE_TRIPLET_BODY)
+      if(FIFE_MOVIE_TRIPLET_BODY MATCHES "VCPKG_LIBRARY_LINKAGE[ \t]+([A-Za-z]+)")
+        set(FIFE_MOVIE_LINKAGE "${CMAKE_MATCH_1}")
+      endif()
+    endif()
+
+    if(NOT FIFE_MOVIE_LINKAGE STREQUAL "dynamic")
+      if(FIFE_MOVIE_TRIPLET_FILE)
+        set(FIFE_MOVIE_LINKAGE_REASON
+          "VCPKG_TARGET_TRIPLET='${VCPKG_TARGET_TRIPLET}' resolves to linkage '${FIFE_MOVIE_LINKAGE}'")
+      else()
+        set(FIFE_MOVIE_LINKAGE_REASON
+          "the linkage of VCPKG_TARGET_TRIPLET='${VCPKG_TARGET_TRIPLET}' could not be determined "
+          "(no triplet file under '${FIFE_MOVIE_VCPKG_ROOT}/triplets')")
+      endif()
+      message(FATAL_ERROR
+        "ENABLE_MOVIE=ON requires a dynamic vcpkg triplet, but "
+        "${FIFE_MOVIE_LINKAGE_REASON}.\n"
+        "FFmpeg must be shipped as a shared object so that users can replace it.\n"
+        "Reconfigure, for example:\n"
+        "  cmake --preset clang22-x64-linux-dbg-cov -D VCPKG_TARGET_TRIPLET=x64-linux-dynamic\n"
+        "  cmake --preset <macos preset>                 -D VCPKG_TARGET_TRIPLET=x64-osx-dynamic\n"
+        "Windows requires no change, x64-windows is already dynamic.\n"
+        "To link FFmpeg statically anyway, you must ship its object files and "
+        "relinking instructions, and record that in the release checklist. "
+        "Acknowledge this with:\n"
+        "  -D FIFE_MOVIE_ALLOW_STATIC_LINKAGE=ON")
+    endif()
+  endif()
+
+  target_compile_definitions(fife_options INTERFACE HAVE_MOVIE)
 endif()
 
 #------------------------------------------------------------------------------
@@ -431,7 +515,7 @@ set(
   src/fife/gui/fifechan/widgets/animationicon.cpp
   src/fife/gui/fifechan/widgets/clicklabel.cpp
   src/fife/gui/fifechan/widgets/dockarea.cpp
-  src/fife/gui/fifechan/widgets/panel.cpp
+  src/fife/gui/fifechan/widgets/dockpanel.cpp
   src/fife/gui/fifechan/widgets/percentagebar.cpp
   src/fife/gui/fifechan/widgets/resizablewindow.cpp
 )
@@ -658,10 +742,31 @@ set(
   src/fife/gui/fifechan/widgets/animationicon.h
   src/fife/gui/fifechan/widgets/clicklabel.h
   src/fife/gui/fifechan/widgets/dockarea.h
-  src/fife/gui/fifechan/widgets/panel.h
+  src/fife/gui/fifechan/widgets/dockpanel.h
   src/fife/gui/fifechan/widgets/percentagebar.h
   src/fife/gui/fifechan/widgets/resizablewindow.h
 )
+
+# Movie sources are conditional: they include ffmpeg headers.
+if(ENABLE_MOVIE AND ENABLE_FIFEGUI)
+  list(APPEND FIFE_FIFEGUI_SOURCES src/fife/gui/fifechan/widgets/videowidget.cpp)
+  list(APPEND FIFE_FIFEGUI_HEADERS src/fife/gui/fifechan/widgets/videowidget.h)
+endif()
+
+if(ENABLE_MOVIE)
+  list(APPEND FIFE_SOURCES
+    src/fife/video/movie/movieaudiodecoder.cpp
+    src/fife/video/movie/moviedecoder.cpp
+    src/fife/video/movie/movieplayer.cpp
+    src/fife/video/movie/moviesource.cpp
+  )
+  list(APPEND FIFE_CORE_HEADERS
+    src/fife/video/movie/movieaudiodecoder.h
+    src/fife/video/movie/moviedecoder.h
+    src/fife/video/movie/movieplayer.h
+    src/fife/video/movie/moviesource.h
+  )
+endif()
 
 #------------------------------------------------------------------------------
 # Source Groups for Header Files
@@ -750,6 +855,7 @@ set(
   src/fife/vfs/vfs.i
   src/fife/video/fonts/fonts.i
   src/fife/video/video.i
+  src/fife/video/movie/movie.i
   src/fife/video/window/windowsettings.i
   src/fife/video/window/window.i
   src/fife/view/camera.i
@@ -828,6 +934,10 @@ find_package(tinyxml2 CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
+
+if(ENABLE_MOVIE)
+  find_package(FFMPEG REQUIRED)
+endif()
 
 if(WIN32)
   find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
@@ -1162,6 +1272,11 @@ if(BUILD_PYTHON_BINDINGS)
     -w314
   )
 
+  if(ENABLE_MOVIE)
+    # The SWIG parser needs this to evaluate the %-ifdef guards in the .i files.
+    list(APPEND CMAKE_SWIG_FLAGS "-DHAVE_MOVIE")
+  endif()
+
   if(ENABLE_FIFEGUI)
     list(APPEND FIFE_SOURCES ${FIFE_FIFEGUI_SOURCES})
   endif()
@@ -1178,6 +1293,9 @@ if(BUILD_PYTHON_BINDINGS)
     )
   endif()
 
+  # swig_add_library only depends on the generated .i, so editing a %include'd .i
+  # would not re-run SWIG and the wrapper would silently go stale.
+  set(SWIG_MODULE_fife_swig_EXTRA_DEPS ${FIFE_SWIG} ${FIFE_FIFEGUI_SWIG} ${FIFE_FIFEGUI_SWIG_LIB})
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i")
 
   target_include_directories(fife_swig PRIVATE
@@ -1218,6 +1336,8 @@ if(BUILD_PYTHON_BINDINGS)
       )
     endif()
 
+    # See the note on the fife_swig rule above.
+    set(SWIG_MODULE_fifechan_swig_EXTRA_DEPS ${FIFE_FIFEGUI_SWIG_LIB})
     swig_add_library(fifechan_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
 
     target_include_directories(fifechan_swig PRIVATE
@@ -1443,6 +1563,14 @@ if(BUILD_LIBRARY)
 
   if(ENABLE_FIFEGUI AND TARGET fifechan::fifechan_sdl3)
     target_link_libraries(fife PUBLIC fifechan::fifechan_sdl3)
+  endif()
+
+  if(ENABLE_MOVIE)
+    # FFmpeg ships no CMake config package, so use the FindFFMPEG variables.
+    # On fife_options so fife, fife_lib and all_tests all inherit it. SYSTEM
+    # because the ffmpeg headers are not clean under our warning flags.
+    target_include_directories(fife_options SYSTEM INTERFACE ${FFMPEG_INCLUDE_DIRS})
+    target_link_libraries(fife_options INTERFACE ${FFMPEG_LIBRARIES})
   endif()
 
   target_include_directories(fife

@@ -37,6 +37,11 @@
 #include "video/cursor.h"
 #include "video/fonts/fontmanager.h"
 #include "video/imagemanager.h"
+#ifdef HAVE_MOVIE
+    #include "audio/soundclip.h"
+    #include "audio/soundemitter.h"
+    #include "video/movie/movieplayer.h"
+#endif
 #include "video/renderbackend.h"
 #include "video/window/window.h"
 #ifdef HAVE_OPENGL
@@ -502,12 +507,40 @@ namespace FIFE
         m_soundmanager->update();
 
         m_targetrenderer->render();
-        if (m_model->getActiveCameraCount() == 0) {
-            m_renderbackend->clearBackBuffer();
-            m_offrenderer->render();
+#ifdef HAVE_MOVIE
+        if (m_movieplayer != nullptr && m_movieplayer->isLoaded()) {
+            if (m_moviestart == 0) {
+                // TimeManager::now64() only becomes meaningful after its first
+                // update(), which runs above, so the origin is captured here rather
+                // than in playMovie() where the clock may still be zero.
+                m_moviestart = m_timemanager->now64();
+            }
+            // Follow the audio when it is playing, so picture and sound stay locked.
+            double movieTime = static_cast<double>(m_timemanager->now64() - m_moviestart) / 1000.0;
+            if (m_movieemitter != nullptr) {
+                if (m_movieemitter->isActive()) {
+                    movieTime = static_cast<double>(m_movieemitter->getCursor(SD_TIME_POS));
+                } else if (m_movieemitter->isFinished()) {
+                    // Audio ran out; let the picture finish its last frame.
+                    movieTime = m_movieplayer->getDuration();
+                }
+            }
+            m_movieplayer->update(movieTime);
+            renderMovie();
+            if (m_movieplayer->isFinished()) {
+                stopMovie();
+            }
         } else {
-            m_model->update();
+#endif
+            if (m_model->getActiveCameraCount() == 0) {
+                m_renderbackend->clearBackBuffer();
+                m_offrenderer->render();
+            } else {
+                m_model->update();
+            }
+#ifdef HAVE_MOVIE
         }
+#endif
 
         if (m_guimanager != nullptr) {
             m_guimanager->turn();
@@ -516,6 +549,107 @@ namespace FIFE
         m_cursor->draw();
         m_renderbackend->endFrame();
     }
+
+#ifdef HAVE_MOVIE
+    void Engine::playMovie(std::string const & path, bool looping)
+    {
+        if (m_movieplayer == nullptr) {
+            m_movieplayer = std::make_unique<MoviePlayer>();
+        }
+        stopMovieSound();
+
+        m_movieplayer->load(path);
+        m_movieplayer->setLooping(looping);
+        m_moviestart = 0;
+
+        startMovieSound();
+    }
+
+    bool Engine::isMoviePlaying() const
+    {
+        return m_movieplayer != nullptr && m_movieplayer->isLoaded() && !m_movieplayer->isFinished();
+    }
+
+    double Engine::getMovieTime() const
+    {
+        if (m_movieplayer == nullptr || !m_movieplayer->isLoaded()) {
+            return -1.0;
+        }
+        return m_movieplayer->getFrameTimestamp();
+    }
+
+    void Engine::stopMovie()
+    {
+        if (m_movieplayer != nullptr) {
+            m_movieplayer->unload();
+        }
+        stopMovieSound();
+    }
+
+    void Engine::startMovieSound()
+    {
+        if (m_movieplayer == nullptr || !m_movieplayer->hasAudio() || m_soundmanager == nullptr) {
+            return;
+        }
+
+        SoundClipPtr clip = m_movieplayer->getSoundClip();
+        if (!clip) {
+            return;
+        }
+
+        m_movieemitter = m_soundmanager->createEmitter();
+        if (m_movieemitter == nullptr) {
+            return;
+        }
+        // Own group so a global stopAll does not silently cut the movie short.
+        m_movieemitter->setGroup("movie");
+        m_movieemitter->setSoundClip(clip);
+        m_movieemitter->setLooping(false);
+        m_movieemitter->play();
+    }
+
+    void Engine::stopMovieSound()
+    {
+        if (m_movieemitter == nullptr || m_soundmanager == nullptr) {
+            return;
+        }
+        uint32_t const id = m_movieemitter->getId();
+        m_movieemitter->stop();
+        m_soundmanager->removeFromGroup(m_movieemitter);
+        m_soundmanager->releaseEmitter(id);
+        m_movieemitter = nullptr;
+    }
+
+    void Engine::renderMovie()
+    {
+        ImagePtr const frame = m_movieplayer->getFrameImage();
+        if (!frame) {
+            return;
+        }
+
+        m_renderbackend->clearBackBuffer();
+
+        uint32_t const width  = m_renderbackend->getWidth();
+        uint32_t const height = m_renderbackend->getHeight();
+        uint32_t const fw     = m_movieplayer->getWidth();
+        uint32_t const fh     = m_movieplayer->getHeight();
+        if (fw == 0U || fh == 0U) {
+            return;
+        }
+
+        // Letterbox so the aspect ratio is kept.
+        double const scale = std::min(
+            static_cast<double>(width) / static_cast<double>(fw),
+            static_cast<double>(height) / static_cast<double>(fh));
+        int32_t const dw = static_cast<int32_t>(static_cast<double>(fw) * scale);
+        int32_t const dh = static_cast<int32_t>(static_cast<double>(fh) * scale);
+        int32_t const dx = (static_cast<int32_t>(width) - dw) / 2;
+        int32_t const dy = (static_cast<int32_t>(height) - dh) / 2;
+
+        frame->render(Rect(dx, dy, dw, dh));
+        m_renderbackend->renderVertexArrays();
+    }
+#endif
 
     void Engine::finalizePumping()
     {

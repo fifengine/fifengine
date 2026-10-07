@@ -67,6 +67,18 @@ namespace FIFE
 
             GLuint getTexId() const;
             GLfloat const * getTexCoords() const;
+
+            /** Replaces the texture contents in place, creating it if needed.
+             *
+             * The pixel data is tightly packed RGBA, matching the GL_RGBA /
+             * GL_UNSIGNED_BYTE uploads used elsewhere. Cheaper than setSurface,
+             * which destroys and recreates the texture.
+             *
+             * @param rgba tightly packed RGBA pixels
+             * @param width width of the new contents, in pixels
+             * @param height height of the new contents, in pixels
+             */
+            void updateTexture(uint8_t const * rgba, uint32_t width, uint32_t height) override;
             bool isCompressed() const
             {
                 return m_compressed;

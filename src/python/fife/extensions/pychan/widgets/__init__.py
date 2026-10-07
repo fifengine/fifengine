@@ -15,6 +15,7 @@ from .checkbox import CheckBox
 from .containers import ABox, CBox, Container, HBox, VBox, Window
 from .curvegraph import CurveGraph
 from .dockarea import DockArea
+from .dockpanel import DockPanel
 from .dropdown import DropDown
 from .flowcontainer import FlowContainer
 from .icon import Icon
@@ -56,6 +57,7 @@ WIDGETS = {
     "Tab": Tab,
     "ResizableWindow": ResizableWindow,
     "DockArea": DockArea,
+    "DockPanel": DockPanel,
     "Panel": Panel,
     "SpeechBubble": SpeechBubble,
     # Simple Widgets

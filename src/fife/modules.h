@@ -48,6 +48,7 @@ enum logmodule_t : signed char
     LM_EXCEPTION,
     LM_SCRIPT,
     LM_CURSOR,
+    LM_MOVIE,
     LM_MODULE_MAX // sentinel
 };
 

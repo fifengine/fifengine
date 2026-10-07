@@ -31,6 +31,12 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 A [detailed feature list for FIFE](https://fifengine.github.io/fifengine-docs/user-manual/en/#_features) is documented in the user manual.
 
+Optional features, all off by default:
+
+| Feature | Flag | Notes |
+| --- | --- | --- |
+| Movie playback | `ENABLE_MOVIE=ON` | FFmpeg-based. Fullscreen via `Engine::playMovie()` and as a FifeGUI `VideoWidget`. Patent-free codecs only (AV1, VP9, VP8, Theora; Opus, Vorbis, FLAC, MP3, PCM). See [docs/movie-support.md](docs/movie-support.md). |
+
 ## 2) Releases
 
 #### Latest Release
@@ -54,6 +60,14 @@ The source code (*.cpp, *.h & *.py) is licensed under [LGPL v2.1 or newer](http:
 Content was taken from a lot a lot of different 3rd party sources.
 Therefore each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
+
+### Optional: FFmpeg
+
+Builds with `ENABLE_MOVIE=ON` link against [FFmpeg](https://ffmpeg.org/), which is
+licensed under LGPL v2.1 or newer, like FIFE itself. FFmpeg is used unmodified, as a
+shared library, so that you can replace it with your own build if you wish (LGPL §6).
+It is not built with `--enable-gpl` or `--enable-nonfree`, and no external codec
+libraries are linked, so the codec support is limited to patent-free formats.
 
 ## 4) How to Build
 

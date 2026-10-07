@@ -146,6 +146,22 @@ namespace FIFE
             uint32_t getHeight() const;
             Rect getArea() const;
 
+            /** Replaces the pixel contents in place, where the backend supports it.
+             *
+             * Cheaper than setSurface, which recreates the GPU resource. Used for
+             * per-frame updates such as movie playback.
+             *
+             * @param rgba tightly packed RGBA pixels
+             * @param width width of the new contents, in pixels
+             * @param height height of the new contents, in pixels
+             */
+            virtual void updateTexture(uint8_t const * rgba, uint32_t width, uint32_t height)
+            {
+                (void)rgba;
+                (void)width;
+                (void)height;
+            }
+
             void setXShift(int32_t xshift)
             {
                 m_xshift = xshift;

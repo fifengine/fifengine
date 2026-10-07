@@ -44,6 +44,16 @@ namespace FIFE
             SDL_Texture* getTexture();
             void setTexture(SDL_Texture* texture);
 
+            /** Replaces the texture contents in place, creating it if needed.
+             *
+             * The pixel data is tightly packed RGBA.
+             *
+             * @param rgba tightly packed RGBA pixels
+             * @param width width of the new contents, in pixels
+             * @param height height of the new contents, in pixels
+             */
+            void updateTexture(uint8_t const * rgba, uint32_t width, uint32_t height) override;
+
         private:
             void resetSdlimage();
             void validateShared();

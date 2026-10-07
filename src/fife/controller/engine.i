@@ -147,6 +147,17 @@ namespace FIFE {
 		void init();
 		void destroy();
 
+#ifdef HAVE_MOVIE
+		/** Takes over the screen with a movie, played fullscreen. */
+		void playMovie(const std::string& path, bool looping = false);
+		/** True while a movie is playing. */
+		bool isMoviePlaying() const;
+		/** Presentation time of the current movie frame, in seconds. */
+		double getMovieTime() const;
+		/** Stops the movie and resumes normal rendering. */
+		void stopMovie();
+#endif
+
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();

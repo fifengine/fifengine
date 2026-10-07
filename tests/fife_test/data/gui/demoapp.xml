@@ -4,7 +4,7 @@
 		<ScrollArea>
 			<ListBox name="demoList"/>
 		</ScrollArea>
-		<VBox margins="0,0" hexpand="2">
+		<VBox margins="0,0" hexpand="1">
 			<Label text=" Select one example from the listbox."/>
 			<Label text=" You can also execute this script with an Gui XML file as argument."/>
 			<HBox margins="0,0">

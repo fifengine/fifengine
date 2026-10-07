@@ -513,6 +513,9 @@ def _build_test_subprocess_env(
         env.setdefault("FIFE_TEST_HEADLESS", "1")
         env.setdefault("SDL_VIDEODRIVER", "dummy")
         env.setdefault("SDL_AUDIODRIVER", "dummy")
+        # OpenAL is separate from SDL's audio: without this it fails to open a
+        # device on a machine with no sound card, leaving no current context.
+        env.setdefault("ALSOFT_DRIVERS", "null")
     return env
 
 

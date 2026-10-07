@@ -40,6 +40,10 @@ set(
   test_speechbubble.cpp
 )
 
+if(ENABLE_MOVIE)
+  list(APPEND FIFE_CORE_TEST_SOURCES test_movie.cpp)
+endif()
+
 message(STATUS "All tests are linked into a single executable `all_tests`.")
 
 add_executable(all_tests ${FIFE_CORE_TEST_SOURCES})

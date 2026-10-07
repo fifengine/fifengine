@@ -82,7 +82,8 @@ static constexpr auto moduleInfos = std::to_array<ModuleInfo>(
      {.module = LM_XML, .parent = LM_CORE, .displayName = "XML", .spdlogName = "XML"},
      {.module = LM_EXCEPTION, .parent = LM_CORE, .displayName = "Exception", .spdlogName = "Exception"},
      {.module = LM_SCRIPT, .parent = LM_CORE, .displayName = "Script", .spdlogName = "Script"},
-     {.module = LM_CURSOR, .parent = LM_CORE, .displayName = "Cursor", .spdlogName = "Cursor"}});
+     {.module = LM_CURSOR, .parent = LM_CORE, .displayName = "Cursor", .spdlogName = "Cursor"},
+     {.module = LM_MOVIE, .parent = LM_VIDEO, .displayName = "Movie", .spdlogName = "Video.Movie"}});
 // end
 
 namespace FIFE

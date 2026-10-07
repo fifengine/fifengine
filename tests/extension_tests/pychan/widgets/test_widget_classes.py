@@ -108,6 +108,11 @@ class TestPychanWidgetsClasses:
 
         assert Panel is not None
 
+    def test_dockpanel_class(self):
+        from fife.extensions.pychan.widgets.dockpanel import DockPanel
+
+        assert DockPanel is not None
+
     def test_tab_class(self):
         from fife.extensions.pychan.widgets.tabbedarea import Tab
 
