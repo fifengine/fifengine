@@ -122,8 +122,14 @@ jobs:
         id: cache-deps
         uses: actions/cache@v6 # https://github.com/actions/cache
         with:
+          # Keep the CMake build trees out of the cache: a restored
+          # CMakeCache.txt pins absolute paths (ninja, compiler, toolchain file)
+          # that only exist on the runner that created it, and the next configure
+          # then fails. Steps 2.1/2.2 recreate them on demand.
           path: |
             ${{ env.DEPS_DIR }}
+            !${{ env.DEPS_DIR }}\build
+            !${{ env.DEPS_DIR }}\extracted\src\*-build
           key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
@@ -189,8 +195,14 @@ jobs:
         if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v6 # https://github.com/actions/cache
         with:
+          # Keep the CMake build trees out of the cache: a restored
+          # CMakeCache.txt pins absolute paths (ninja, compiler, toolchain file)
+          # that only exist on the runner that created it, and the next configure
+          # then fails. Steps 2.1/2.2 recreate them on demand.
           path: |
             ${{ env.DEPS_DIR }}
+            !${{ env.DEPS_DIR }}\build
+            !${{ env.DEPS_DIR }}\extracted\src\*-build
           key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
 
       # TODO do we need threaded version of Python? "3.xxt"?
@@ -399,8 +411,14 @@ jobs:
         id: cache-deps-linux-wheels
         uses: actions/cache@v6 # https://github.com/actions/cache
         with:
+          # Keep the CMake build trees out of the cache: a restored
+          # CMakeCache.txt pins absolute paths (ninja, compiler, toolchain file)
+          # that only exist on the runner that created it, and the next configure
+          # then fails. Steps 2.1/2.2 recreate them on demand.
           path: |
             ${{ env.DEPS_DIR }}
+            !${{ env.DEPS_DIR }}/build
+            !${{ env.DEPS_DIR }}/extracted/src/*-build
           key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
@@ -446,8 +464,14 @@ jobs:
         if: ${{ always() && !cancelled() && steps.cache-deps-linux-wheels.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v6
         with:
+          # Keep the CMake build trees out of the cache: a restored
+          # CMakeCache.txt pins absolute paths (ninja, compiler, toolchain file)
+          # that only exist on the runner that created it, and the next configure
+          # then fails. Steps 2.1/2.2 recreate them on demand.
           path: |
             ${{ env.DEPS_DIR }}
+            !${{ env.DEPS_DIR }}/build
+            !${{ env.DEPS_DIR }}/extracted/src/*-build
           key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
 
       - name: 🎯 Setup Build Directory Cache
