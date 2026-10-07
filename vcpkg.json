@@ -48,5 +48,22 @@
     "tinyxml2",
     "utfcpp",
     "zlib"
-  ]
+  ],
+  "features": {
+    "movie": {
+      "description": "FFmpeg demux/decode for movie playback",
+      "dependencies": [
+        {
+          "name": "ffmpeg",
+          "default-features": false,
+          "features": [
+            "avcodec",
+            "avformat",
+            "swscale",
+            "swresample"
+          ]
+        }
+      ]
+    }
+  }
 }

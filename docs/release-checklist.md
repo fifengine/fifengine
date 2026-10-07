@@ -27,6 +27,11 @@ We'll refine the checklist over time, so that it becomes more complete.
   - [ ] Link the new header (add a new reference at the end of the changelog).
   - [ ] Fix the link to Unreleased (update the old version number with the new version number).
 - [ ] git commit + git push — add changes until everything is updated and ready.
+- [ ] If the release includes `ENABLE_MOVIE=ON` builds, verify the FFmpeg licensing requirements in `docs/movie-support.md` §4 before publishing:
+    - FFmpeg is shipped as a **shared** library, so users can replace it (LGPL §6). If any artifact links it statically, that artifact is non-compliant.
+    - The README names FFmpeg, its licence and where to obtain it.
+    - The FFmpeg build has no `--enable-gpl` / `--enable-nonfree`, and links no external codec libraries.
+    - A static-link override (`FIFE_MOVIE_ALLOW_STATIC_LINKAGE=ON`) was **not** used; if it was, the object files and relinking instructions must ship with the artifact.
 
 ### Pick Release Commit
 

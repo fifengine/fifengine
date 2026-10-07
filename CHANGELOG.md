@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- added movie support via ffmpeg
+  - `ENABLE_MOVIE=ON` (default off, needs a dynamic vcpkg triplet for LGPL 6), patent-free codecs only
+  - `Engine::playMovie/stopMovie/isMoviePlaying/getMovieTime` and `fcn::VideoWidget`
 - implemented issue #510: new font architecture with FontManager, FontFace, FontInstance, FontFamily, and TrueTypeFontFace/ImageFontFace classes
   - `FontManager` owns face caching, instance caching (with `FontFaceCache`), manifest loading via `FontDefinitionLoader`, and VFS/filesystem asset resolution
   - `FontFace` base with `TrueTypeFontFace` (TTF from file or memory) and `ImageFontFace` (glyph sheet) implementations

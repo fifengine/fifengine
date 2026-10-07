@@ -11,6 +11,9 @@
 #include "gui/fifechan/widgets/resizablewindow.h"
 #include "gui/fifechan/widgets/dockarea.h"
 #include "gui/fifechan/widgets/dockpanel.h"
+#ifdef HAVE_MOVIE
+#include "gui/fifechan/widgets/videowidget.h"
+#endif
 %}
 
 namespace fcn {
@@ -39,6 +42,33 @@ namespace fcn {
 		void pause();
 		void stop();
 	};
+
+#ifdef HAVE_MOVIE
+	%feature("notabstract") VideoWidget;
+	// getMoviePlayer() is intentionally not wrapped: it returns a non-owning
+	// MoviePlayer* into an object the widget owns, so a Python handle could
+	// outlive it. hasAudio() covers the question Python actually needs to ask.
+	class VideoWidget: public Icon {
+	public:
+		VideoWidget();
+		VideoWidget(const std::string& path);
+		virtual ~VideoWidget();
+		void setMovie(const std::string& path);
+		void clearMovie();
+		void setLooping(bool looping);
+		bool isLooping() const;
+		void play();
+		bool isPlaying() const;
+		void pause();
+		void stop();
+		bool isFinished() const;
+		bool hasAudio() const;
+		double getDuration() const;
+		// Widget::logic() is not part of the fifechan interface, so it has to be
+		// declared here for Python to be able to advance the movie at all.
+		virtual void logic();
+	};
+#endif
 
 	%feature("notabstract") ClickLabel;
 	%rename(Label) ClickLabel;

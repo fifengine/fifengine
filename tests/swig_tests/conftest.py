@@ -92,3 +92,19 @@ def engine(request):
 def engine_minimized(request):
     e = _create_engine(minimized=True, test_name=request.node.name)
     return e
+
+
+@pytest.fixture(scope="module")
+def shared_engine():
+    """One engine for every test in a module.
+
+    Yields:
+        A single Engine, destroyed again when the module finishes.
+
+    Only a single Engine can be alive at a time - constructing a second one
+    aborts the interpreter - so a module that needs an engine in more than one
+    test must use this instead of `engine`.
+    """
+    e = _create_engine(minimized=True, test_name="shared")
+    yield e
+    e.destroy()

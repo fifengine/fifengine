@@ -861,6 +861,44 @@ namespace FIFE
         }
     }
 
+    void GLImage::updateTexture(uint8_t const * rgba, uint32_t width, uint32_t height)
+    {
+        if (rgba == nullptr || width == 0U || height == 0U) {
+            return;
+        }
+
+        // Existing textures are non-power-of-two sized, so sub-image the same
+        // region rather than replacing storage and invalidating the batch.
+        if (m_texId != 0U && width == getWidth() && height == getHeight()) {
+            dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+            glTexSubImage2D(
+                GL_TEXTURE_2D,
+                0,
+                0,
+                0,
+                static_cast<GLsizei>(width),
+                static_cast<GLsizei>(height),
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                rgba);
+            return;
+        }
+
+        // First frame, or the size changed: rebuild the backing surface and texture.
+        SDL_Surface* surface =
+            SDL_CreateSurface(static_cast<int>(width), static_cast<int>(height), SDL_PIXELFORMAT_RGBA32);
+        if (surface == nullptr) {
+            return;
+        }
+        uint8_t const * src = rgba;
+        uint8_t* dst        = static_cast<uint8_t*>(surface->pixels);
+        size_t const row    = static_cast<size_t>(width) * 4U;
+        for (uint32_t y = 0; y < height; ++y) {
+            std::memcpy(dst + y * static_cast<size_t>(surface->pitch), src + y * row, row);
+        }
+        setSurface(surface);
+    }
+
     void GLImage::load()
     {
         if (m_shared) {

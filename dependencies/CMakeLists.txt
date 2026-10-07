@@ -2,7 +2,8 @@
 #                           Fifengine Dependencies
 #------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.25...4.2)
+# Upper bound tracks the root project: vcpkg's build scripts need CMake 4.4.
+cmake_minimum_required(VERSION 3.25...4.4)
 
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../CMake")

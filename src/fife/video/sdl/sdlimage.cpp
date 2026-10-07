@@ -256,4 +256,40 @@ namespace FIFE
         }
         m_texture = texture;
     }
+
+    void SDLImage::updateTexture(uint8_t const * rgba, uint32_t width, uint32_t height)
+    {
+        if (rgba == nullptr || width == 0U || height == 0U) {
+            return;
+        }
+
+        RenderBackendSDL* backend = dynamic_cast<RenderBackendSDL*>(RenderBackend::instance());
+        if (backend == nullptr) {
+            throw SDLException("Render backend is not SDL.");
+        }
+        SDL_Renderer* renderer = backend->getRenderer();
+
+        if (m_texture != nullptr && width == getWidth() && height == getHeight()) {
+            SDL_UpdateTexture(m_texture, nullptr, rgba, static_cast<int>(width) * 4);
+            return;
+        }
+
+        if (m_texture != nullptr) {
+            SDL_DestroyTexture(m_texture);
+            m_texture = nullptr;
+        }
+
+        // STREAMING so the texture can be refreshed repeatedly.
+        m_texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_RGBA8888,
+            SDL_TEXTUREACCESS_STREAMING,
+            static_cast<int>(width),
+            static_cast<int>(height));
+        if (m_texture == nullptr) {
+            return;
+        }
+        SDL_UpdateTexture(m_texture, nullptr, rgba, static_cast<int>(width) * 4);
+        SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
+    }
 } // namespace FIFE

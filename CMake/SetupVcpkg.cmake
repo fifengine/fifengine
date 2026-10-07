@@ -110,7 +110,7 @@ if(NOT DEFINED VCPKG_MANIFEST_FILE)
 endif()
 
 # Define an additional source group for IDEs with vcpkg relevant files.
-source_group("vcpkg" FILES "${CMAKE_SOURCE_DIR}/cmake/SetupVcpkg.cmake" "${CMAKE_SOURCE_DIR}/vcpkg.json")
+source_group("vcpkg" FILES "${CMAKE_CURRENT_LIST_FILE}" "${VCPKG_MANIFEST_FILE}")
 
 #
 # Check to make sure the VCPKG_TARGET_TRIPLET matches BUILD_SHARED_LIBS
@@ -146,9 +146,27 @@ endif()
 #    If the old timestamp is not defined, we assume it's the first run and enable manifest install.
 # 3. Update timestamp for the next run
 
-file(TIMESTAMP "${CMAKE_CURRENT_LIST_DIR}/vcpkg.json" vcpkg_json_timestamp)
+# This used to point at ${CMAKE_CURRENT_LIST_DIR}/vcpkg.json (<source>/CMake/vcpkg.json),
+# which does not exist. file(TIMESTAMP) returned "", which always compared equal to the
+# cached value, so manifest install was permanently OFF and deps were never auto-installed.
+if(EXISTS "${VCPKG_MANIFEST_FILE}")
+  file(TIMESTAMP "${VCPKG_MANIFEST_FILE}" vcpkg_json_timestamp)
+else()
+  message(WARNING
+    "[VCPKG] The manifest '${VCPKG_MANIFEST_FILE}' does not exist. Dependencies "
+    "cannot be installed automatically; set VCPKG_MANIFEST_FILE or USE_VCPKG=OFF."
+  )
+  set(vcpkg_json_timestamp "")
+endif()
 
-if(VCPKG_JSON_TIMESTAMP_OLD STREQUAL vcpkg_json_timestamp)
+# The timestamp alone is not enough: a manifest install for one triplet removes the
+# other triplets' directories from VCPKG_INSTALLED_DIR. Configuring a second build
+# with a different triplet would then find an unchanged vcpkg.json, skip the install,
+# and fail in find_package() for packages that are no longer on disk.
+if(VCPKG_JSON_TIMESTAMP_OLD STREQUAL vcpkg_json_timestamp
+   AND NOT IS_DIRECTORY "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+    set(VCPKG_MANIFEST_INSTALL ON CACHE STRING "" FORCE)
+elseif(VCPKG_JSON_TIMESTAMP_OLD STREQUAL vcpkg_json_timestamp)
     set(VCPKG_MANIFEST_INSTALL OFF CACHE STRING "" FORCE)
 else()
     set(VCPKG_MANIFEST_INSTALL ON CACHE STRING "" FORCE)

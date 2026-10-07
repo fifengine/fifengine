@@ -48,6 +48,10 @@ namespace FIFE
     class FontManager;
     class OffRenderer;
     class TargetRenderer;
+#ifdef HAVE_MOVIE
+    class MoviePlayer;
+    class SoundEmitter;
+#endif
 
     class FIFE_API IEngineChangeListener
     {
@@ -157,6 +161,32 @@ namespace FIFE
                 return m_guimanager.get();
             }
 
+#ifdef HAVE_MOVIE
+            /** Takes over the screen with a movie, played fullscreen.
+             *
+             * While a movie is playing the world is not rendered. It is drawn
+             * after the world and before the GUI, so a GUI can stay on top.
+             *
+             * @param path VFS path of the movie file
+             * @param looping restart when the movie ends
+             * @throws CannotOpenFile if the file cannot be read
+             * @throws InvalidFormat if it is not a movie this engine understands
+             */
+            void playMovie(std::string const & path, bool looping = false);
+
+            /** True while a movie is playing. */
+            bool isMoviePlaying() const;
+
+            /** Presentation time of the current movie frame, in seconds.
+             *
+             * Negative when no movie is loaded.
+             */
+            double getMovieTime() const;
+
+            /** Stops the movie and resumes normal rendering. */
+            void stopMovie();
+#endif
+
             /** Provides access point to the ImageManager
              */
             ImageManager* getImageManager() const
@@ -261,6 +291,11 @@ namespace FIFE
             void removeChangeListener(IEngineChangeListener const * listener);
 
         private:
+#ifdef HAVE_MOVIE
+            void renderMovie();
+            void startMovieSound();
+            void stopMovieSound();
+#endif
             std::unique_ptr<RenderBackend> m_renderbackend;
             std::unique_ptr<Window> m_window;
             std::unique_ptr<IGUIManager> m_guimanager;
@@ -286,6 +321,11 @@ namespace FIFE
 
             std::unique_ptr<OffRenderer> m_offrenderer;
             std::unique_ptr<TargetRenderer> m_targetrenderer;
+#ifdef HAVE_MOVIE
+            std::unique_ptr<MoviePlayer> m_movieplayer;
+            SoundEmitter* m_movieemitter{nullptr};
+            double m_moviestart{0.0};
+#endif
             std::vector<std::unique_ptr<RendererBase>> m_renderers;
 
             std::vector<IEngineChangeListener*> m_changelisteners;
