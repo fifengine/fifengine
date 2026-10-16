@@ -29,6 +29,9 @@ namespace FIFE
         if (m_active) {
             return;
         }
+        if (!TimeManager::exists()) {
+            return;
+        }
         setLastUpdateTime64(TimeManager::instance()->now64());
         TimeManager::instance()->registerEvent(this);
         m_active = true;
@@ -39,8 +42,10 @@ namespace FIFE
         if (!m_active) {
             return;
         }
-        TimeManager::instance()->unregisterEvent(this);
         m_active = false;
+        if (TimeManager::exists()) {
+            TimeManager::instance()->unregisterEvent(this);
+        }
     }
 
     void Timer::setInterval(int32_t msec)

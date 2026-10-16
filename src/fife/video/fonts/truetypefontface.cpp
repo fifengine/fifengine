@@ -57,7 +57,12 @@ namespace FIFE
     TrueTypeFontFace::~TrueTypeFontFace()
     {
         if (m_font != nullptr) {
-            TTF_CloseFont(m_font);
+            // TTF_Quit() tears down FreeType without closing open fonts; closing them
+            // afterwards calls FT_Done_Face() on released internals and crashes.
+            // Faces can outlive Engine::destroy() via FifeChanManager's shared_ptrs.
+            if (TTF_WasInit() > 0) {
+                TTF_CloseFont(m_font);
+            }
         }
     }
 

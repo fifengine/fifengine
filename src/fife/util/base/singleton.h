@@ -75,6 +75,18 @@ namespace FIFE
                 return m_instance;
             }
 
+            /**
+             * Check whether the singleton is still alive.
+             *
+             * Safe to call after the owning object has been destroyed, unlike
+             * instance() which asserts on a null pointer. Use this during late
+             * teardown, when members may outlive the singleton they depend on.
+             */
+            static bool exists()
+            {
+                return m_instance != nullptr;
+            }
+
             DynamicSingleton()
             {
                 assert(!m_instance);
