@@ -2,9 +2,10 @@
 #                                 Fifengine
 #------------------------------------------------------------------------------
 
-# Upper bound tracks the CMake version vcpkg's build scripts need: they use
-# string(JSON ... STRING_ENCODE), which requires CMake 4.4.
-cmake_minimum_required(VERSION 3.25...4.4)
+# CMake 4.3 is required by the vcpkg port scripts
+# (string(JSON ... STRING_ENCODE), microsoft/vcpkg#53260). vcpkg uses its own
+# CMake, so this floor is the only early, clear failure point.
+cmake_minimum_required(VERSION 4.3)
 
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")

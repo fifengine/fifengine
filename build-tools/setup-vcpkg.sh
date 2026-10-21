@@ -6,6 +6,45 @@ set -euo pipefail
 START_DIR="$(pwd)"
 
 # ------------------------------------------------------------------
+# Ensure a CMake new enough for the vcpkg port scripts.
+#
+# vcpkg uses its own CMake from PATH; its port scripts need
+# string(JSON ... STRING_ENCODE) (CMake 4.3, microsoft/vcpkg#53260).
+# Prefer a newer CMake if installed, else fail clearly.
+# Keep in sync with the gate in .github/workflows/build-on-linux.yml.
+# ------------------------------------------------------------------
+
+cmake_major_minor() {
+	"$1" --version | head -1 | sed 's/cmake version //' | cut -d. -f1,2
+}
+
+is_cmake_ok() {
+	local ver major minor
+	ver="$(cmake_major_minor "$1")"
+	major="${ver%.*}"; minor="${ver#*.}"
+	[ "$major" -gt 4 ] || { [ "$major" -eq 4 ] && [ "$minor" -ge 3 ]; }
+}
+
+if ! is_cmake_ok "$(command -v cmake)"; then
+	for candidate in /opt/cmake/bin/cmake /usr/local/bin/cmake; do
+		if [ -x "$candidate" ] && is_cmake_ok "$candidate"; then
+			candidate_dir="$(dirname "$candidate")"
+			export PATH="$candidate_dir:$PATH"
+			break
+		fi
+	done
+fi
+
+if ! is_cmake_ok "$(command -v cmake)"; then
+	echo "Error: CMake >= 4.3 is required by the vcpkg port scripts" >&2
+	echo "       (microsoft/vcpkg#53260). Found: $(cmake --version | head -1)" >&2
+	echo "       Install a newer CMake and put it on PATH." >&2
+	exit 1
+fi
+
+echo "Using $(cmake --version | head -1)"
+
+# ------------------------------------------------------------------
 # Install additional components
 # ------------------------------------------------------------------
 

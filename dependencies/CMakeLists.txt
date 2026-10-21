@@ -2,8 +2,10 @@
 #                           Fifengine Dependencies
 #------------------------------------------------------------------------------
 
-# Upper bound tracks the root project: vcpkg's build scripts need CMake 4.4.
-cmake_minimum_required(VERSION 3.25...4.4)
+# CMake 4.3 is required by the vcpkg port scripts
+# (string(JSON ... STRING_ENCODE), microsoft/vcpkg#53260). Keep in sync with
+# the gate in .github/workflows/build-on-linux.yml.
+cmake_minimum_required(VERSION 4.3)
 
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../CMake")
