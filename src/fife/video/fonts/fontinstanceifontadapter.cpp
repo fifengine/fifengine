@@ -162,7 +162,13 @@ namespace FIFE
             return nullptr;
         }
 
-        if (text.empty()) {
+        std::string clean = text;
+        auto nul          = clean.find('\0');
+        if (nul != std::string::npos) {
+            clean.resize(nul);
+        }
+
+        if (clean.empty()) {
             SDL_Surface* surface = SDL_CreateSurface(1, getHeight(), SDL_PIXELFORMAT_RGBA8888);
             SDL_FillSurfaceRect(surface, nullptr, 0x00000000);
             return surface;
@@ -172,12 +178,12 @@ namespace FIFE
 
         SDL_Surface* renderedText = nullptr;
         if (m_antiAlias) {
-            renderedText = TTF_RenderText_Blended(font, text.c_str(), text.length(), m_color);
+            renderedText = TTF_RenderText_Blended(font, clean.c_str(), clean.length(), m_color);
         } else {
-            renderedText = TTF_RenderText_Solid(font, text.c_str(), text.length(), m_color);
+            renderedText = TTF_RenderText_Solid(font, clean.c_str(), clean.length(), m_color);
         }
         if (renderedText == nullptr && !m_antiAlias) {
-            renderedText = TTF_RenderText_Blended(font, text.c_str(), text.length(), m_color);
+            renderedText = TTF_RenderText_Blended(font, clean.c_str(), clean.length(), m_color);
         }
         if (renderedText == nullptr) {
             throw SDLException(std::string("TTF_RenderText_ failed: ") + SDL_GetError());
@@ -496,18 +502,26 @@ namespace FIFE
                 firstLine = false;
             }
 
+            bool hardBreak = false;
             while (getWidth(line) < render_width && pos != text.end()) {
                 uint32_t const codepoint = utf8::next(pos, text.end());
                 if (codepoint == whitespace && !line.empty()) {
                     break_pos.emplace_back(line.length(), pos);
                 }
-                if (codepoint != '\n') {
-                    utf8::append(codepoint, back_inserter(line));
-                } else {
-                    output.append(line);
-                    line = "";
+                if (codepoint == '\n') {
+                    hardBreak = true;
                     break;
                 }
+                utf8::append(codepoint, back_inserter(line));
+            }
+
+            // A source newline ends the line unconditionally. Pending soft-breaks
+            // must be discarded: applying them to the emptied line would pad it
+            // with NULs and rewind pos, duplicating the line tail.
+            if (hardBreak) {
+                output.append(line);
+                line.clear();
+                continue;
             }
 
             if (pos == text.end()) {

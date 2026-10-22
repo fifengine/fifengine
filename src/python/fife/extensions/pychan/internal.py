@@ -272,7 +272,14 @@ class Manager:
             The font instance from the FifechanManager.
         """
         if font == "default":
-            return self.hook.guimanager.getDefaultFont()
+            default_font = self.hook.guimanager.getDefaultFont()
+            if default_font is not None:
+                return default_font
+            # No GUI default font configured: resolve the "default" family.
+            try:
+                return self.hook.guimanager.createFont("default", 0)
+            except Exception:
+                return None
         return self.hook.guimanager.createFont(font, 0)
 
     def setDefaultFont(self, font, size=12):

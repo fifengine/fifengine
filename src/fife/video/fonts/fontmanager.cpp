@@ -91,6 +91,17 @@ namespace FIFE
         return *it->second;
     }
 
+    std::optional<std::string> FontManager::getFirstFamilyId() const
+    {
+        std::optional<std::string> first;
+        for (auto const & entry : m_families) {
+            if (!first || entry.first < *first) {
+                first = entry.first;
+            }
+        }
+        return first;
+    }
+
     FontHandle FontManager::getFontHandle(FontInstanceKey const & key)
     {
         assert("Resolver must be valid" && m_resolver != nullptr);

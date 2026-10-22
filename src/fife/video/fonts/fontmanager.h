@@ -37,6 +37,9 @@ namespace FIFE
             bool hasFamily(std::string const & id) const;
             FontFamily& getFamily(std::string const & id);
 
+            /** Returns the lexicographically first registered family id, if any. */
+            std::optional<std::string> getFirstFamilyId() const;
+
             FontHandle getFontHandle(FontInstanceKey const & key);
             std::shared_ptr<FontInstance> getFontInstance(FontHandle handle);
             std::optional<FontDefinition> getFontDefinition(FontHandle handle) const;

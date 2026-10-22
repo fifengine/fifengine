@@ -88,6 +88,8 @@ namespace FIFE {
 		uint16_t getScreenHeight() const;
 		void setDefaultFontPath(const std::string& defaultfontpath);
 		const std::string& getDefaultFontPath() const;
+		void setDefaultFontId(const std::string& id);
+		const std::string& getDefaultFontId() const;
 		void setDefaultFontSize(uint16_t defaultfontsize);
 		uint16_t getDefaultFontSize() const;
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);

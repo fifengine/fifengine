@@ -48,6 +48,7 @@ namespace FIFE
     class FontManager;
     class OffRenderer;
     class TargetRenderer;
+    class FifechanManager;
 #ifdef HAVE_MOVIE
     class MoviePlayer;
     class SoundEmitter;
@@ -296,6 +297,12 @@ namespace FIFE
             void startMovieSound();
             void stopMovieSound();
 #endif
+            /** Configures the FontManager fallback family from EngineSettings. */
+            void updateFontFallback();
+
+            /** Applies the configured default font to the GUI manager, if possible. */
+            void applyDefaultFont(FifechanManager* fifechan);
+
             std::unique_ptr<RenderBackend> m_renderbackend;
             std::unique_ptr<Window> m_window;
             std::unique_ptr<IGUIManager> m_guimanager;

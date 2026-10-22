@@ -126,14 +126,58 @@ namespace FIFE
     {
         if (auto* fifechan = dynamic_cast<FifechanManager*>(guimanager.get())) {
             fifechan->setFontManager(m_fontManager.get());
+            applyDefaultFont(fifechan);
         }
         m_guimanager = std::move(guimanager);
+    }
+
+    void Engine::updateFontFallback()
+    {
+        if (!m_fontManager) {
+            return;
+        }
+
+        std::string fallback = m_settings.getDefaultFontId();
+        if (fallback.empty() || !m_fontManager->hasFamily(fallback)) {
+            // Fall back to any registered family so font lookups never fail hard.
+            fallback = m_fontManager->getFirstFamilyId().value_or("");
+        }
+        if (!fallback.empty()) {
+            m_fontManager->setFallbackFont(fallback);
+        }
+    }
+
+    void Engine::applyDefaultFont(FifechanManager* fifechan)
+    {
+        if ((fifechan == nullptr) || !m_fontManager) {
+            return;
+        }
+
+        std::string family = m_settings.getDefaultFontId();
+        if (family.empty() || !m_fontManager->hasFamily(family)) {
+            family = m_fontManager->getFirstFamilyId().value_or("");
+        }
+        if (family.empty()) {
+            FL_LOG(_log(), "No font families registered; GUI default font not set");
+            return;
+        }
+
+        try {
+            fifechan->setDefaultFont(family, m_settings.getDefaultFontSize());
+            FL_LOG(_log(), std::format("GUI default font set to '{}'", family));
+        } catch (std::exception const & e) {
+            FL_WARN(_log(), std::format("Failed to set GUI default font '{}': {}", family, e.what()));
+        }
     }
 
     void Engine::loadFontManifestFromString(std::string const & xml)
     {
         if (m_fontManager) {
             m_fontManager->loadManifestFromString(xml);
+            updateFontFallback();
+            if (auto* fifechan = dynamic_cast<FifechanManager*>(m_guimanager.get())) {
+                applyDefaultFont(fifechan);
+            }
         }
     }
 
@@ -219,6 +263,15 @@ namespace FIFE
             }
         } catch (std::exception const & e) {
             FL_WARN(_log(), std::format("Failed to load font manifest: {}", e.what()));
+        }
+
+        updateFontFallback();
+
+        // If a GUI manager was installed before init(), wire it up now that the
+        // FontManager exists.
+        if (auto* fifechan = dynamic_cast<FifechanManager*>(m_guimanager.get())) {
+            fifechan->setFontManager(m_fontManager.get());
+            applyDefaultFont(fifechan);
         }
 
         FL_LOG(_log(), "Engine pre-init done");

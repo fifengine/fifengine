@@ -8,6 +8,7 @@
 #include <cassert>
 #include <format>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -236,22 +237,21 @@ namespace FIFE
 
     fcn::Font* FifechanManager::createFont(std::string const & path, uint32_t size)
     {
-        std::string fontpath   = path;
-        int32_t const fontsize = static_cast<int32_t>(size);
+        std::string fontpath = path;
+        int32_t fontsize     = static_cast<int32_t>(size);
 
         if (fontpath.empty()) {
             fontpath = m_fontpath;
+            // createFont() without arguments resolves the default font, so it
+            // also picks up the size configured via setDefaultFont().
+            if (fontsize <= 0) {
+                fontsize = m_fontsize;
+            }
         }
 
-        // FL_WARN(
-        // _log(),
-        // std::format(
-        // "createFont: path='{}' fontpath='{}' size={} fontsize={} m_fontManager={}",
-        // path,
-        // fontpath,
-        // size,
-        // fontsize,
-        // static_cast<void*>(m_fontManager)));
+        if (m_fontManager == nullptr) {
+            throw std::runtime_error("FifechanManager: no FontManager attached");
+        }
 
         FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
         auto instance           = m_fontManager->getFontInstance(handle);
