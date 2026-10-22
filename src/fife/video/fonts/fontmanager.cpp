@@ -93,13 +93,13 @@ namespace FIFE
 
     std::optional<std::string> FontManager::getFirstFamilyId() const
     {
-        std::optional<std::string> first;
-        for (auto const & entry : m_families) {
-            if (!first || entry.first < *first) {
-                first = entry.first;
-            }
+        if (m_families.empty()) {
+            return std::nullopt;
         }
-        return first;
+        auto const it = std::min_element(m_families.begin(), m_families.end(), [](auto const & lhs, auto const & rhs) {
+            return lhs.first < rhs.first;
+        });
+        return it->first;
     }
 
     FontHandle FontManager::getFontHandle(FontInstanceKey const & key)
