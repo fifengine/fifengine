@@ -166,7 +166,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
 
@@ -226,7 +226,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
 
       - name: 🛠️ 3.1 Configure fifengine
         run: |
@@ -457,7 +457,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps--container-${{ matrix.config.preset }}-${{ matrix.config.cache-suffix || '' }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps--container-${{ matrix.config.preset }}-${{ matrix.config.cache-suffix || '' }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
           restore-keys: |
             cache-deps--container-${{ matrix.config.preset }}-${{ matrix.config.cache-suffix || '' }}-${{ github.ref }}
 
@@ -526,7 +526,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps--container-${{ matrix.config.preset }}-${{ matrix.config.cache-suffix || '' }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps--container-${{ matrix.config.preset }}-${{ matrix.config.cache-suffix || '' }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
 
       - name: 🛠️ 3.1 Configure fifengine
         run: |

@@ -130,7 +130,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}\build
             !${{ env.DEPS_DIR }}\extracted\src\*-build
-          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
 
@@ -203,7 +203,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}\build
             !${{ env.DEPS_DIR }}\extracted\src\*-build
-          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
 
       # TODO do we need threaded version of Python? "3.xxt"?
       # For the available "python-version"s of this action see:
@@ -419,7 +419,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
           restore-keys: |
             cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}
 
@@ -472,7 +472,7 @@ jobs:
             ${{ env.DEPS_DIR }}
             !${{ env.DEPS_DIR }}/build
             !${{ env.DEPS_DIR }}/extracted/src/*-build
-          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          key: cache-deps-linux-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'CMake/get-fifechan.cmake', 'CMake/get-swig.cmake') }}
 
       - name: 🎯 Setup Build Directory Cache
         id: cache-build-dir-linux-wheels

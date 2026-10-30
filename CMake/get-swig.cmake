@@ -33,6 +33,11 @@ if(WIN32)
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://downloads.sourceforge.net/project/swig/swigwin/swigwin-${SWIG_VERSION}/swigwin-${SWIG_VERSION}.zip
     URL_HASH MD5=${SWIG_FILE_HASH}
+    # Preserve the archive timestamps. The build relies on the shipped
+    # generated files (e.g. CParse/parser.c) being newer than their sources
+    # (CParse/parser.y); letting CMake touch every file during extraction can
+    # invert that order and force a bison regeneration.
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     INSTALL_DIR ${_SWIG_INSTALL_DIR}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -59,6 +64,10 @@ else()
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL http://prdownloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
+    # Keep the release tarball's timestamps. SWIG ships pre-generated parser
+    # files; if extraction stamps parser.y newer than parser.c, make invokes
+    # bison, which is not part of the CI image.
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig
     ${CMAKE_COMMAND} -E env
