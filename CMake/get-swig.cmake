@@ -10,7 +10,8 @@
 
 include(ExternalProject)
 
-set(SWIG_VERSION "4.4.1")
+set(SWIG_VERSION "4.5.1")
+set(SWIG_FILE_HASH "5392a623386399e1eb5e51fec9edbabb")
 
 if(NOT DEFINED FIFE_DEPENDENCIES_ROOT)
   message(FATAL_ERROR "FIFE_DEPENDENCIES_ROOT must be defined before including get-swig.cmake")
@@ -31,7 +32,7 @@ if(WIN32)
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://downloads.sourceforge.net/project/swig/swigwin/swigwin-${SWIG_VERSION}/swigwin-${SWIG_VERSION}.zip
-    URL_HASH MD5=9402fd1f2a961cf2fe4afb7ff80dfa6f
+    URL_HASH MD5=${SWIG_FILE_HASH}
     INSTALL_DIR ${_SWIG_INSTALL_DIR}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
