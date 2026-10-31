@@ -79,6 +79,7 @@ function(fife_embed_windows_dpi_manifest target)
     # manifest into it so the DPI settings end up in the executable.
     file(TO_NATIVE_PATH "${FIFE_WINDOWS_DPI_MANIFEST}" manifest_native)
     target_link_options(${target} PRIVATE
+      "/MANIFEST:EMBED"
       "/MANIFESTINPUT:${manifest_native}")
   else()
     # MinGW/Clang do not embed a manifest. Windows reads the external
