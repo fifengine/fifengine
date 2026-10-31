@@ -24,7 +24,11 @@ FONT_FAMILY = "ScalingTest"
 
 @pytest.fixture(scope="module")
 def gui(shared_engine):
-    """Engine with one attached Fifechan manager and a loadable font."""
+    """Engine with one attached Fifechan manager and a loadable font.
+
+    Yields:
+        The shared engine and the attached manager.
+    """
     engine = shared_engine
     engine.loadFontManifestFromString(FONT_MANIFEST)
     engine.getSettings().setDefaultFontId(FONT_FAMILY)

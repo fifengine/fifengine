@@ -18,6 +18,8 @@ Unknown Horizons uses (``horizons/view.py`` sizes its camera viewport from
 ``engine_settings.getScreenWidth()``).
 """
 
+import contextlib
+
 import pytest
 
 from fife import fife
@@ -28,13 +30,15 @@ _FULLSCREEN = fife.WindowMode_Fullscreen
 
 @pytest.fixture(scope="module")
 def engine(shared_engine):
-    """One engine for the whole module (only one Engine may be alive)."""
+    """One engine for the whole module (only one Engine may be alive).
+
+    Yields:
+        The shared engine with event pumping enabled.
+    """
     shared_engine.initializePumping()
     yield shared_engine
-    try:
+    with contextlib.suppress(Exception):
         shared_engine.finalizePumping()
-    except Exception:  # pragma: no cover - teardown should not mask failures
-        pass
 
 
 def _pump(engine, count=2):
@@ -42,12 +46,14 @@ def _pump(engine, count=2):
         engine.pump()
 
 
-
 def _copy_settings(settings):
     """Return an independent WindowSettings copy.
 
     ``Window.getSettings()`` returns a reference to the live settings, so
     mutating the returned proxy would modify the window itself.
+
+    Returns:
+        A detached ``WindowSettings`` with the same field values.
     """
     copy = fife.WindowSettings()
     for field in (
@@ -106,7 +112,9 @@ def test_toggle_fullscreen_updates_engine_settings(engine):
     _pump(engine)
 
     assert window.getFullscreenMode() == _FULLSCREEN
-    assert settings.isFullScreen() is True, "EngineSettings did not follow the fullscreen toggle"
+    assert (
+        settings.isFullScreen() is True
+    ), "EngineSettings did not follow the fullscreen toggle"
 
     engine.toggleFullscreen()
     _pump(engine)
@@ -146,7 +154,9 @@ def test_repeated_toggles_keep_backend_attached(engine):
     for _ in range(10):
         engine.toggleFullscreen()
         _pump(engine)
-        assert backend.isWindowAttached(), "render backend lost the window during a toggle"
+        assert (
+            backend.isWindowAttached()
+        ), "render backend lost the window during a toggle"
         assert settings.isFullScreen() is (window.getFullscreenMode() == _FULLSCREEN)
         assert settings.getScreenWidth() == window.getWidthInPoints()
         assert settings.getScreenHeight() == window.getHeightInPoints()
@@ -191,7 +201,9 @@ def test_change_window_mode_keeps_render_backend_attached(engine):
     the backend relies on.
     """
     backend = engine.getRenderBackend()
-    assert hasattr(backend, "isWindowAttached"), "RenderBackend.isWindowAttached() diagnostic is missing"
+    assert hasattr(
+        backend, "isWindowAttached"
+    ), "RenderBackend.isWindowAttached() diagnostic is missing"
     assert backend.isWindowAttached() is True
 
     window = engine.getWindow()
@@ -203,16 +215,22 @@ def test_change_window_mode_keeps_render_backend_attached(engine):
 
     engine.toggleFullscreen()
     _pump(engine)
-    assert backend.isWindowAttached() is True, "backend lost the window while entering fullscreen"
+    assert (
+        backend.isWindowAttached() is True
+    ), "backend lost the window while entering fullscreen"
 
     engine.toggleFullscreen()
     _pump(engine)
-    assert backend.isWindowAttached() is True, "backend lost the window while leaving fullscreen"
+    assert (
+        backend.isWindowAttached() is True
+    ), "backend lost the window while leaving fullscreen"
 
     # Sizes are applied to the live window, never by replacing it.
     engine.changeWindowMode(settings)
     _pump(engine)
-    assert backend.isWindowAttached() is True, "changeWindowMode() replaced the window under the backend"
+    assert (
+        backend.isWindowAttached() is True
+    ), "changeWindowMode() replaced the window under the backend"
 
     # Rendering after the changes must still work (no dead SDL renderer).
     assert engine.getRenderBackend().getWidth() > 0
@@ -237,7 +255,10 @@ def test_change_window_mode_applies_size_to_live_window(engine):
 
     try:
         assert _window_size(window) == (720, 480)
-        assert (engine.getSettings().getScreenWidth(), engine.getSettings().getScreenHeight()) == (720, 480)
+        assert (
+            engine.getSettings().getScreenWidth(),
+            engine.getSettings().getScreenHeight(),
+        ) == (720, 480)
         assert backend.isWindowAttached() is True
     finally:
         # Restore a sane geometry for the remaining tests in this module.

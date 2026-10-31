@@ -9,6 +9,8 @@ interface (``engine.h``) but must also be declared in the SWIG director
 interface (``engine.i``), otherwise Python overrides are silently ignored.
 """
 
+import contextlib
+
 import pytest
 
 from fife import fife
@@ -36,10 +38,8 @@ class _RecordingListener(fife.IEngineChangeListener):
 def engine(shared_engine):
     shared_engine.initializePumping()
     yield shared_engine
-    try:
+    with contextlib.suppress(Exception):
         shared_engine.finalizePumping()
-    except Exception:  # pragma: no cover - teardown should not mask failures
-        pass
 
 
 def test_resize_notifies_listener(engine):
