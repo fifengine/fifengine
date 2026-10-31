@@ -106,13 +106,13 @@ namespace FIFE
             // On Linux with touchpads, scrolling may generate SDL_EVENT_FINGER_MOTION
             // instead of SDL_EVENT_MOUSE_WHEEL. Convert finger motion to wheel event.
             if (evt.type == SDL_EVENT_FINGER_MOTION) {
-                SDL_Event wheelEvt = evt;
-                wheelEvt.type = SDL_EVENT_MOUSE_WHEEL;
-                wheelEvt.wheel.x = static_cast<float>(evt.tfinger.dx);
-                wheelEvt.wheel.y = static_cast<float>(evt.tfinger.dy);
+                SDL_Event wheelEvt     = evt;
+                wheelEvt.type          = SDL_EVENT_MOUSE_WHEEL;
+                wheelEvt.wheel.x       = static_cast<float>(evt.tfinger.dx);
+                wheelEvt.wheel.y       = static_cast<float>(evt.tfinger.dy);
                 wheelEvt.wheel.mouse_x = static_cast<float>(static_cast<int32_t>(evt.tfinger.x));
                 wheelEvt.wheel.mouse_y = static_cast<float>(static_cast<int32_t>(evt.tfinger.y));
-                evt = wheelEvt;
+                evt                    = wheelEvt;
             }
             m_input->pushInput(evt);
             return overWidget;

@@ -32,8 +32,8 @@ namespace FIFE
 
     struct WindowSettings
     {
-            int width         = 1280;
-            int height        = 720;
+            int width  = 1280;
+            int height = 720;
             /** 0-based display index, not an SDL_DisplayID. */
             int display       = 0;
             int x             = -1;
