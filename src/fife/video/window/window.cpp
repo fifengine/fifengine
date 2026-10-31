@@ -168,37 +168,69 @@ namespace FIFE
 
     int Window::getWidthInPoints() const
     {
-        int w = 0;
-        if (m_window != nullptr) {
-            SDL_GetWindowSize(m_window, &w, nullptr);
+        if (m_window == nullptr) {
+            return 0;
         }
+        // In fullscreen mode, the window size is the display bounds.
+        // This is necessary for headless environments where
+        // SDL_GetWindowSize may not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            return bounds.w;
+        }
+        int w = 0;
+        SDL_GetWindowSize(m_window, &w, nullptr);
         return w;
     }
 
     int Window::getHeightInPoints() const
     {
-        int h = 0;
-        if (m_window != nullptr) {
-            SDL_GetWindowSize(m_window, nullptr, &h);
+        if (m_window == nullptr) {
+            return 0;
         }
+        // In fullscreen mode, the window size is the display bounds.
+        // This is necessary for headless environments where
+        // SDL_GetWindowSize may not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            return bounds.h;
+        }
+        int h = 0;
+        SDL_GetWindowSize(m_window, nullptr, &h);
         return h;
     }
 
     int Window::getWidthInPixels() const
     {
-        int w = 0;
-        if (m_window != nullptr) {
-            SDL_GetWindowSizeInPixels(m_window, &w, nullptr);
+        if (m_window == nullptr) {
+            return 0;
         }
+        // In fullscreen mode, the pixel size is the display bounds.
+        // This is necessary for headless environments where
+        // SDL_GetWindowSizeInPixels may not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            return bounds.w;
+        }
+        int w = 0;
+        SDL_GetWindowSizeInPixels(m_window, &w, nullptr);
         return w;
     }
 
     int Window::getHeightInPixels() const
     {
-        int h = 0;
-        if (m_window != nullptr) {
-            SDL_GetWindowSizeInPixels(m_window, nullptr, &h);
+        if (m_window == nullptr) {
+            return 0;
         }
+        // In fullscreen mode, the pixel size is the display bounds.
+        // This is necessary for headless environments where
+        // SDL_GetWindowSizeInPixels may not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            return bounds.h;
+        }
+        int h = 0;
+        SDL_GetWindowSizeInPixels(m_window, nullptr, &h);
         return h;
     }
 
@@ -465,7 +497,17 @@ namespace FIFE
             return;
         }
         int currentPixelW = 0;
-        SDL_GetWindowSizeInPixels(m_window, &currentPixelW, nullptr);
+
+        // In fullscreen mode, use display bounds to get the expected size
+        // to handle headless environments where SDL_GetWindowSizeInPixels
+        // may not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            currentPixelW = bounds.w;
+        } else {
+            SDL_GetWindowSizeInPixels(m_window, &currentPixelW, nullptr);
+        }
+
         if (currentPixelW != m_lastKnownPixelWidth) {
             recalculateDPIScale();
             m_lastKnownPixelWidth = currentPixelW;
@@ -533,9 +575,23 @@ namespace FIFE
         }
 
         int pointsW = 0;
+        int pointsH = 0;
         int pixelsW = 0;
-        SDL_GetWindowSize(m_window, &pointsW, nullptr);
-        SDL_GetWindowSizeInPixels(m_window, &pixelsW, nullptr);
+        int pixelsH = 0;
+
+        // In fullscreen mode, use display bounds for sizes
+        // to handle headless environments where SDL_GetWindowSize may
+        // not reflect the actual fullscreen size.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            auto const bounds = Display::getDisplayBounds(m_settings.display);
+            pointsW = bounds.w;
+            pointsH = bounds.h;
+            pixelsW = bounds.w; // On X11/Wayland, bounds are in pixels with scale 1.0
+            pixelsH = bounds.h;
+        } else {
+            SDL_GetWindowSize(m_window, &pointsW, &pointsH);
+            SDL_GetWindowSizeInPixels(m_window, &pixelsW, &pixelsH);
+        }
 
         bool dpiScaleChanged = false;
         if (pointsW > 0) {
@@ -554,9 +610,7 @@ namespace FIFE
         }
 
         if (signalResized) {
-            int h = 0;
-            SDL_GetWindowSize(m_window, nullptr, &h);
-            signalResized(pointsW, h);
+            signalResized(pointsW, pointsH);
         }
     }
 
