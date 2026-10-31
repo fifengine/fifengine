@@ -131,7 +131,6 @@ def main():
             for v in event_values:
                 cmd.setTimeStamp64(v)
                 _ = cmd.getTimeStamp64()
-                _ = cmd.getTimeStamp()
 
         # Serialization impact: JSON and pickle for same boundary-heavy dataset.
         payload = {"timestamps": event_values}

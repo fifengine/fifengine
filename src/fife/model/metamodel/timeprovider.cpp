@@ -45,11 +45,6 @@ namespace FIFE
         return m_multiplier;
     }
 
-    uint32_t TimeProvider::getGameTime() const
-    {
-        return SDLTimeCompat::toUint32Ticks(getGameTime64());
-    }
-
     uint64_t TimeProvider::getGameTime64() const
     {
         return static_cast<uint64_t>(getPreciseGameTime());

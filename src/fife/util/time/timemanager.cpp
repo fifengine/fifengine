@@ -87,19 +87,9 @@ namespace FIFE
         }
     }
 
-    uint32_t TimeManager::getTime() const
-    {
-        return SDLTimeCompat::toUint32Ticks(m_current_time);
-    }
-
     uint64_t TimeManager::now64() const
     {
         return m_current_time;
-    }
-
-    uint32_t TimeManager::getTimeDelta() const
-    {
-        return SDLTimeCompat::toUint32Ticks(m_time_delta);
     }
 
     uint64_t TimeManager::getTimeDelta64() const

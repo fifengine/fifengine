@@ -69,25 +69,11 @@ namespace FIFE
             void unregisterEvent(TimeEvent* event);
 
             /**
-             * Get the time.
-             *
-             * @return The time in milliseconds.
-             */
-            [[deprecated("Use now64() instead.")]] uint32_t getTime() const;
-
-            /**
              * Get the time in 64-bit SDL ticks.
              *
              * @return The time in milliseconds.
              */
             uint64_t now64() const;
-
-            /**
-             * Get the time since the last frame.
-             *
-             * @return Time since last frame in milliseconds.
-             */
-            [[deprecated("Use getTimeDelta64() instead.")]] uint32_t getTimeDelta() const;
 
             /**
              * Get the time since the last frame in 64-bit SDL ticks.

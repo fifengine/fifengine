@@ -102,7 +102,7 @@ class OverlayTest(test.Test):
         self._animationmanager = self._engine.getAnimationManager()
         self._timemanager = self._engine.getTimeManager()
 
-        self._time = self._timemanager.getTime()
+        self._time = self._timemanager.now64()
         self._armor = "clothes"
         self._head = "head1"
 
@@ -151,7 +151,7 @@ class OverlayTest(test.Test):
         return open("data/help/OverlayTest.txt").read()
 
     def pump(self):
-        time = self._timemanager.getTime()
+        time = self._timemanager.now64()
         if (time - self._time) >= 1000:
             self._time = time
             self.rotateInstances()

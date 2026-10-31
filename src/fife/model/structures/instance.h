@@ -365,11 +365,6 @@ namespace FIFE
              */
             float getTotalTimeMultiplier();
 
-            /** Gets the scaled runtime in milliseconds
-             * @return runtime
-             */
-            [[deprecated("Use getRuntime64() instead.")]] uint32_t getRuntime();
-
             /** Gets the runtime as 64-bit milliseconds.
              */
             uint64_t getRuntime64();

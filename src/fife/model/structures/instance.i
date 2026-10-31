@@ -19,7 +19,6 @@ namespace FIFE {
 	class Action;
 	class Object;
 	class Instance;
-	%feature("deprecated", "Use getRuntime64() instead.") Instance::getRuntime;
 	class Route;
 	class OverlayColors;
 	class AnimationPtr;
@@ -110,7 +109,6 @@ namespace FIFE {
 		void say(const std::string& text, uint32_t duration=0);
 		void setTimeMultiplier(float multip);
 		float getTimeMultiplier();
-		uint32_t getRuntime();
 		uint64_t getRuntime64();
 		void refresh();
 		InstanceChangeInfo getChangeInfo();

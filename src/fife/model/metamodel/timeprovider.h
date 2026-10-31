@@ -45,10 +45,6 @@ namespace FIFE
              */
             float getTotalMultiplier() const;
 
-            /** Returns current game ticks, already scaled.
-             */
-            [[deprecated("Use getGameTime64() instead.")]] uint32_t getGameTime() const;
-
             /** Returns current game ticks as 64-bit value.
              */
             uint64_t getGameTime64() const;

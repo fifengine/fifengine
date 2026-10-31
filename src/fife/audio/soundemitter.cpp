@@ -583,11 +583,6 @@ namespace FIFE
         return 0;
     }
 
-    uint32_t SoundEmitter::getPlayTimestamp() const
-    {
-        return SDLTimeCompat::toUint32Ticks(getPlayTimestamp64());
-    }
-
     uint64_t SoundEmitter::getPlayTimestamp64() const
     {
         return m_internData.playTimestamp;

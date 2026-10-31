@@ -234,10 +234,6 @@ namespace FIFE
              */
             uint64_t getDuration();
 
-            /** Returns timestamp of the last play start in milliseconds
-             */
-            [[deprecated("Use getPlayTimestamp64() instead.")]] uint32_t getPlayTimestamp() const;
-
             /** Returns timestamp of the last play start in milliseconds as 64-bit value.
              */
             uint64_t getPlayTimestamp64() const;

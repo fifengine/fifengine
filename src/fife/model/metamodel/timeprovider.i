@@ -7,7 +7,6 @@
 %}
 
 namespace FIFE {
-	%feature("deprecated", "Use getGameTime64() instead.") TimeProvider::getGameTime;
 
 	class TimeProvider {
 	public:
@@ -17,7 +16,6 @@ namespace FIFE {
 		void setMultiplier(float multiplier);
 		float getMultiplier() const;
 		float getTotalMultiplier() const;
-		uint32_t getGameTime() const;
 		uint64_t getGameTime64() const;
 	};
 }

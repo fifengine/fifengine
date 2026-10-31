@@ -1192,11 +1192,6 @@ namespace FIFE
         return 1.0;
     }
 
-    uint32_t Instance::getRuntime()
-    {
-        return SDLTimeCompat::toUint32Ticks(getRuntime64());
-    }
-
     uint64_t Instance::getRuntime64()
     {
         if (m_activity != nullptr) {

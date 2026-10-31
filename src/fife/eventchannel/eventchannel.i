@@ -41,8 +41,6 @@
 %include "eventchannel/command/commandids.h"
 
 namespace FIFE {
-	%feature("deprecated", "Use getTimeStamp64() instead.") Event::getTimeStamp;
-
 	%feature("director") IEventSource;
 	class IEventSource {
 	public:
@@ -55,7 +53,6 @@ namespace FIFE {
 		virtual void consume();
 		virtual bool isConsumed() const;
 		virtual IEventSource* getSource();
-		virtual int32_t getTimeStamp() const;
 		virtual uint64_t getTimeStamp64() const;
 		virtual void setTimeStamp64(uint64_t timestamp);
 		virtual std::string getDebugString() const;
@@ -89,7 +86,7 @@ namespace FIFE {
 		void setCode(int32_t code);
 
 		virtual void setSource(IEventSource* source);
-		virtual void setTimeStamp(int32_t timestamp);
+		virtual void setTimeStamp64(uint64_t timestamp);
 	};
 
 	%feature("director") ICommandListener;

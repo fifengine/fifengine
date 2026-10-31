@@ -24,7 +24,6 @@
 // FIFE includes
 //
 #include "eventchannel/source/ieventsource.h"
-#include "util/time/sdltimecompat.h"
 #include "util/time/timemanager.h"
 
 namespace FIFE
@@ -73,25 +72,11 @@ namespace FIFE
                 m_eventSource = source;
             }
 
-            /** Gets the timestamp of the event
-             */
-            [[deprecated("Use getTimeStamp64() instead.")]] virtual int32_t getTimeStamp() const
-            {
-                return SDLTimeCompat::toInt32Ticks(m_timestamp64);
-            }
-
             /** Gets the timestamp of the event as 64-bit SDL ticks.
              */
             virtual Uint64 getTimeStamp64() const
             {
                 return m_timestamp64;
-            }
-
-            /** Sets the timestamp of the event
-             */
-            [[deprecated("Use setTimeStamp64() instead.")]] virtual void setTimeStamp(int32_t timestamp)
-            {
-                m_timestamp64 = SDLTimeCompat::fromLegacy32Ticks(timestamp);
             }
 
             /** Sets the timestamp of the event as 64-bit SDL ticks.
@@ -116,8 +101,7 @@ namespace FIFE
                 std::stringstream ss;
                 ss << "consumed = " << m_isConsumed << ", ";
                 ss << "src = " << m_eventSource << ", ";
-                ss << "timestamp = " << SDLTimeCompat::toInt32Ticks(m_timestamp64);
-                ss << ", timestamp64 = " << getTimeStamp64();
+                ss << "timestamp64 = " << getTimeStamp64();
                 return ss.str();
             }
 
