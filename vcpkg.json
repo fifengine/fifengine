@@ -65,5 +65,11 @@
         }
       ]
     }
-  }
+  },
+  "overrides": [
+    {
+      "name": "openal-soft",
+      "version": "1.24.3"
+    }
+  ]
 }
