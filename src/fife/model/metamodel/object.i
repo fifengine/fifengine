@@ -8,4 +8,10 @@
 
 %include "util/base/utilbase.i"
 %include "model/metamodel/ivisual.i"
+
+// Ignore move assignment operators for nested property classes (SWIG doesn't support them well)
+%ignore Object::BasicObjectProperty::operator=;
+%ignore Object::MovableObjectProperty::operator=;
+%ignore Object::MultiObjectProperty::operator=;
+
 %include "model/metamodel/object.h"
