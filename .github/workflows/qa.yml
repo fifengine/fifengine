@@ -107,17 +107,21 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v7
 
+      - name: 🔽 Setup UV
+        uses: astral-sh/setup-uv@v10.3.3 # https://github.com/astral-sh/setup-uv
+
       - name: 🔽 Install cppcheck
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cppcheck
+          uv tool install --from cppcheck==1.5.1 cppcheck
 
       - name: 🛠️ Run cppcheck
         run: |
+          export PATH="$(uv tool dir --bin):$PATH"
           echo "Cppcheck version: $(cppcheck --version)"
           cppcheck \
             --enable=warning,style,performance,portability \
             --std=c++20 \
+            --check-level=exhaustive \
             --quiet \
             --inline-suppr \
             --error-exitcode=1 \
@@ -144,7 +148,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: 🔽 Setup UV and Python
-        uses: astral-sh/setup-uv@v10.3.2 # https://github.com/astral-sh/setup-uv
+        uses: astral-sh/setup-uv@v10.3.3 # https://github.com/astral-sh/setup-uv
         with:
           version: "latest"
           python-version: ${{ matrix.python-version }}
