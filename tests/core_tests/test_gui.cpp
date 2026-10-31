@@ -108,6 +108,64 @@ TEST_CASE("GuiImageLoader renders beach_e1.png via OpenGL", "[gui][opengl]")
     test_gui_image(renderbackend, graphics);
 }
 
+// ---------------------------------------------------------------------------
+// An application may call Window::create() directly. SDL destroys the old
+// window (and its renderer/GL context); the backend must reattach instead of
+// keeping pointers to the destroyed window.
+// ---------------------------------------------------------------------------
+
+TEST_CASE("RenderBackendSDL_ReattachesAfterWindowRecreation", "[renderbackend][sdl]")
+{
+    environment const env;
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
+
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+    renderbackend.init("");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
+    REQUIRE(renderbackend.isWindowAttached());
+    REQUIRE(renderbackend.getRenderer() != nullptr);
+
+    window.create(WindowSettings{.width = 640, .height = 480, .opengl = false, .windowMode = WindowMode::Windowed});
+    renderbackend.createMainScreen("FIFE", "");
+
+    CHECK(renderbackend.isWindowAttached());
+    REQUIRE(renderbackend.getRenderer() != nullptr);
+    CHECK(renderbackend.getRenderer() == SDL_GetRenderer(window.getSDLWindow()));
+    renderbackend.clearBackBuffer();
+}
+
+TEST_CASE("RenderBackendOpenGL_ReattachesAfterWindowRecreation", "[renderbackend][opengl]")
+{
+    environment const env;
+    Window window;
+    try {
+        window.create(WindowSettings{.width = 800, .height = 600, .opengl = true, .windowMode = WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL not available in this environment");
+    }
+
+    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+    try {
+        renderbackend.init("");
+        renderbackend.setWindowObject(&window);
+        renderbackend.createMainScreen("FIFE", "");
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL context not available in this environment");
+    }
+    REQUIRE(renderbackend.isWindowAttached());
+
+    try {
+        window.create(WindowSettings{.width = 640, .height = 480, .opengl = true, .windowMode = WindowMode::Windowed});
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL window recreation not available in this environment");
+    }
+
+    CHECK_NOTHROW(renderbackend.createMainScreen("FIFE", ""));
+    CHECK(renderbackend.isWindowAttached());
+}
+
 // Regression test: createImage must convert surfaces to the backend's internal
 // format (RGBA8888 for SDL, RGBA32 for OpenGL). SDL_ttf returns BGRA8888 surfaces;
 // if no conversion happens, the byte order mismatch corrupts the alpha channel on

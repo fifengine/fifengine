@@ -35,8 +35,18 @@ namespace FIFE
     {
         public:
             static int getDisplayCount();
+            /** Map a 0-based display index to the SDL_DisplayID used by
+             *  SDL_WINDOWPOS_CENTERED_DISPLAY and the display APIs.
+             *  @return 0 if the index is out of range (SDL uses 0 for errors).
+             */
+            static SDL_DisplayID getDisplayID(int index);
             static std::string getDisplayName(int index);
+            /** Full display bounds in SDL screen coordinates (pixels on
+             *  Windows, points on macOS). */
             static SDL_Rect getDisplayBounds(int index);
+            /** Desktop work area for the display, excluding taskbars/docks.
+             *  Use this for windowed placement; use getDisplayBounds() for
+             *  fullscreen. Same coordinate space as getDisplayBounds(). */
             static SDL_Rect getUsableBounds(int index);
             static float getDisplayContentScale(int index);
             static int getDisplayWidth(int index);

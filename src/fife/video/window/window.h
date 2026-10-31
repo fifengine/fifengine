@@ -48,6 +48,13 @@ namespace FIFE
 
             /** @return The ratio of pixels to points (DPI scale factor). 1.0 = no scaling. */
             float getDPIScaleFactor() const;
+            /** @return The operating system's UI/content scale for the window's
+             *          display. 1.0 = 100%; 1.5 = 150%. On platforms where
+             *          window coordinates are already points this usually
+             *          equals getDPIScaleFactor(); on Windows it carries the
+             *          OS DPI percentage while the pixel/point ratio stays 1.0.
+             *  @see calculateGUIScale() in video/window/guiscale.h */
+            float getDisplayScale() const;
             /** @return Logical window width in points (unscaled UI coordinates). */
             int getWidthInPoints() const;
             /** @return Logical window height in points (unscaled UI coordinates). */
@@ -67,10 +74,14 @@ namespace FIFE
             /** @return Current scaling mode. */
             ScalingMode getScalingMode() const;
 
-            /** Set window size in points. */
+            /** Set window size in points. Also stored so it can be restored when leaving fullscreen. */
             void setSize(int width, int height);
             /** Set window position in screen coordinates. */
             void setPosition(int x, int y);
+            /** Allow or forbid the user to resize the window. */
+            void setResizable(bool resizable);
+            /** @return Whether the user may resize the window. */
+            bool isResizable() const;
             /** Minimize the window. */
             void minimize();
             /** Maximize the window. */
@@ -110,6 +121,8 @@ namespace FIFE
             void onMoved(std::function<void(int, int)> callback);
             /** Convenience: connect to the DPI scale changed signal. */
             void onDPIScaleChanged(std::function<void(float)> callback);
+            /** Convenience: connect to the display scale changed signal. */
+            void onDisplayScaleChanged(std::function<void(float)> callback);
             /** Convenience: connect to the shown signal. */
             void onShown(std::function<void()> callback);
             /** Convenience: connect to the hidden signal. */
@@ -120,20 +133,32 @@ namespace FIFE
             std::function<void(int, int)> signalResized;
             std::function<void(int, int)> signalMoved;
             std::function<void(float)> signalDPIScaleChanged;
+            std::function<void(float)> signalDisplayScaleChanged;
             std::function<void()> signalShown;
             std::function<void()> signalHidden;
             std::function<void()> signalClosed;
+            /** Invoked just before destroy() calls SDL_DestroyWindow().
+             *  Renderer-backed textures are valid at this point; use it to
+             *  release/invalidate them before SDL frees the renderer/context. */
+            std::function<void()> signalWindowDestroyed;
 
         private:
             SDL_WindowFlags toSDLFlags() const;
             void recalculateDPIScale();
+            /** Refresh the cached display scale and fire the signal if it changed.
+             *  @return True when the value changed. */
+            bool updateDisplayScale();
 
             WindowSettings m_settings;
             SDL_Window* m_window;
             Display m_display;
             float m_dpiScaleFactor;
+            float m_displayScale;
             bool m_windowShown;
             int m_lastKnownPixelWidth;
+            int m_windowedX              = -1;
+            int m_windowedY              = -1;
+            bool m_windowedPositionValid = false;
     };
 
 } // namespace FIFE

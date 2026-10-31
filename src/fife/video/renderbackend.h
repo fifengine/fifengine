@@ -258,6 +258,12 @@ namespace FIFE
             /** Sets the Window object */
             void setWindowObject(Window* window);
 
+            /** @return true when the backend still targets the SDL window owned by the
+             *  Window object. Returns false if the window was replaced underneath the
+             *  backend (e.g. by a Window::create() call that did not re-attach it).
+             */
+            bool isWindowAttached() const;
+
             uint32_t getBaseWidth() const
             {
                 return m_baseWidth;
@@ -646,6 +652,13 @@ namespace FIFE
              *  @see pushClipArea
              */
             virtual void setClipArea(Rect const & cliparea, bool clear) = 0;
+
+            /** @return the SDL window currently owned by the attached Window
+             *  object, or the raw m_window when no Window object is attached.
+             *  Always use this instead of m_window: the Window object may have
+             *  replaced its SDL window (Window::create()).
+             */
+            SDL_Window* getAttachedWindow() const;
 
             SDL_Window* m_window;
             SDL_Surface* m_screen;

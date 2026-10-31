@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <list>
 #include <memory>
 #include <span>
@@ -23,6 +24,7 @@
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
+#include "video/window/guiscale.h"
 #include <utf8cpp/utf8.h>
 
 namespace FIFE
@@ -42,7 +44,7 @@ namespace FIFE
     } // namespace
 
     FontInstanceIFontAdapter::FontInstanceIFontAdapter(std::shared_ptr<FontInstance> instance) :
-        m_instance(std::move(instance))
+        m_instance(std::move(instance)), m_baseSize(m_instance->getSize())
     {
         assert("FontInstance must not be null" && m_instance);
     }
@@ -153,6 +155,43 @@ namespace FIFE
     void FontInstanceIFontAdapter::invalidate()
     {
         m_pool.invalidateCachedText();
+    }
+
+    void FontInstanceIFontAdapter::setRescaleCallback(RescaleCallback callback)
+    {
+        m_rescaleCallback = std::move(callback);
+    }
+
+    float FontInstanceIFontAdapter::getGUIScale() const
+    {
+        return m_guiScale;
+    }
+
+    void FontInstanceIFontAdapter::setGUIScale(float scale)
+    {
+        if (!(scale > 0.0F)) {
+            scale = 1.0F;
+        }
+        scale                   = std::clamp(scale, GUI_SCALE_MIN, GUI_SCALE_MAX);
+        constexpr float epsilon = 0.0001F;
+        if (std::fabs(scale - m_guiScale) < epsilon) {
+            return;
+        }
+        if (!m_rescaleCallback) {
+            // Bitmap/image fonts cannot be re-rasterized at another size;
+            // leave the instance untouched. FifechanManager warns about this
+            // when the scale is applied.
+            return;
+        }
+
+        int const scaledSize = std::max(1, static_cast<int>(std::lround(static_cast<float>(m_baseSize) * scale)));
+        auto instance        = m_rescaleCallback(scaledSize);
+        if (!instance) {
+            return;
+        }
+        m_instance = std::move(instance);
+        m_guiScale = scale;
+        invalidate();
     }
 
     SDL_Surface* FontInstanceIFontAdapter::renderTrueType(std::string const & text) const

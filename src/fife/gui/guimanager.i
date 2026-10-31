@@ -13,5 +13,7 @@ namespace FIFE {
 		virtual ~IGUIManager();
 		virtual void turn() = 0;
 		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+		virtual void setDPIScale(float scale);
+		virtual float getDPIScale() const;
 	};
 }

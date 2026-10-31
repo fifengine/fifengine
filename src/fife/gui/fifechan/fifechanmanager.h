@@ -94,6 +94,19 @@ namespace FIFE
              */
             void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
+            /** Applies the GUI scale to the default font and every live font
+             *  adapter. TrueType fonts are re-rasterized at the new size;
+             *  bitmap fonts keep their native size.
+             *
+             *  This is the extra scale on top of the window pixel/point ratio
+             *  (see calculateGUIScale()), not the ratio itself.
+             *
+             *  @param scale GUI scale factor (1.0 = 100%).
+             */
+            void setDPIScale(float scale) override;
+            /** @return The GUI scale last passed to setDPIScale(). */
+            float getDPIScale() const override;
+
             /** Adds a new widget.
              *
              * @param widget A pointer to the widget to add.
@@ -243,6 +256,8 @@ namespace FIFE
             // default font settings
             std::string m_fontpath;
             int32_t m_fontsize;
+            // Extra GUI scale applied on top of the pixel/point ratio
+            float m_dpiScale = 1.0F;
 
             // font manager for new font system
             FontManager* m_fontManager = nullptr;

@@ -61,8 +61,17 @@ namespace FIFE
 
     RenderBackendSDL::~RenderBackendSDL()
     {
-        SDL_DestroyRenderer(m_renderer);
-        if (m_windowObject == nullptr) {
+        // SDL recommends destroying the renderer before its window, but its
+        // implementation explicitly supports the reverse order:
+        // SDL_DestroyWindow() marks attached renderers as destroyed without
+        // freeing them, and SDL_DestroyRenderer() then only frees the pointer
+        // (SDL_render.c: "This lets apps destroy the window and renderer in
+        // either order"). Safe during engine/backend teardown.
+        if (m_renderer != nullptr) {
+            SDL_DestroyRenderer(m_renderer);
+            m_renderer = nullptr;
+        }
+        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO)) {
             SDL_DestroyWindow(m_window);
         }
         deinit();
@@ -92,6 +101,30 @@ namespace FIFE
 
     void RenderBackendSDL::createMainScreen(std::string const & title, std::string const & icon)
     {
+        SDL_Window* const window = getAttachedWindow();
+        if (window == nullptr) {
+            throw SDLException("RenderBackendSDL::createMainScreen - no SDL window available");
+        }
+
+        if (window != m_window) {
+            // The application replaced the SDL window (Window::create()).
+            // SDL_DestroyWindow() already destroyed the attached renderer:
+            // it marks it as destroyed but keeps the allocation so that
+            // either destruction order is safe, so free it here and build a
+            // fresh renderer and surface for the new window.
+            FL_LOG(_log(), "SDL window changed; reattaching render backend");
+            if (m_renderer != nullptr) {
+                SDL_DestroyRenderer(m_renderer);
+                m_renderer = nullptr;
+            }
+            m_window = window;
+            if (m_screen != nullptr) {
+                SDL_DestroySurface(m_screen);
+                m_screen = nullptr;
+                m_target = nullptr;
+            }
+        }
+
         if (m_window != nullptr) {
             if (!icon.empty()) {
                 SDL_Surface* img = IMG_Load(icon.c_str());
@@ -103,20 +136,30 @@ namespace FIFE
             SDL_SetWindowTitle(m_window, title.c_str());
         }
 
+        // Adopt a renderer that is already attached to the window (for
+        // example after SDL recreated it), and detect a stale cached pointer.
+        SDL_Renderer* const attached = SDL_GetRenderer(m_window);
+        if (attached != nullptr && attached != m_renderer) {
+            if (m_renderer != nullptr) {
+                FL_WARN(_log(), "cached SDL renderer is not attached to the window; adopting the window renderer");
+            }
+            m_renderer = attached;
+        } else if (attached == nullptr && m_renderer != nullptr) {
+            FL_WARN(_log(), "SDL window has no renderer although the backend has one; recreating");
+            m_renderer = nullptr;
+        }
+
         // If we don't have a renderer yet, create a minimal one
         if (m_renderer == nullptr) {
-            SDL_Window* window = (m_windowObject != nullptr) ? m_windowObject->getSDLWindow() : m_window;
-            if (window != nullptr) {
-                m_renderer = SDL_CreateRenderer(window, nullptr);
-                if (m_renderer == nullptr) {
-                    throw SDLException(SDL_GetError());
-                }
-                if (!m_vSync) {
-                    SDL_SetRenderVSync(m_renderer, 0);
-                }
-                SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-                clearBackBuffer();
+            m_renderer = SDL_CreateRenderer(m_window, nullptr);
+            if (m_renderer == nullptr) {
+                throw SDLException(SDL_GetError());
             }
+            if (!m_vSync) {
+                SDL_SetRenderVSync(m_renderer, 0);
+            }
+            SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+            clearBackBuffer();
         }
 
         // Create a dummy surface if we don't have one yet

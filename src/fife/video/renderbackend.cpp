@@ -462,6 +462,22 @@ namespace FIFE
         }
     }
 
+    SDL_Window* RenderBackend::getAttachedWindow() const
+    {
+        if (m_windowObject != nullptr) {
+            return m_windowObject->getSDLWindow();
+        }
+        return m_window;
+    }
+
+    bool RenderBackend::isWindowAttached() const
+    {
+        if (m_windowObject == nullptr) {
+            return m_window != nullptr;
+        }
+        return m_window != nullptr && m_window == m_windowObject->getSDLWindow();
+    }
+
     void RenderBackend::setScalingMode(ScalingMode mode)
     {
         m_scalingMode = mode;

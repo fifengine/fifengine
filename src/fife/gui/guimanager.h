@@ -41,6 +41,25 @@ namespace FIFE
              * @param height The new height.
              */
             virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+
+            /** Applies the GUI scale factor used for fonts and metrics.
+             *
+             *  This is not the window pixel/point ratio: it is the extra scale
+             *  needed on top of what the renderer already applies (see
+             *  calculateGUIScale()). The default implementation ignores the
+             *  value so existing GUI managers keep working.
+             *
+             *  @param scale GUI scale factor (1.0 = 100%).
+             */
+            virtual void setDPIScale([[maybe_unused]] float scale)
+            {
+            }
+
+            /** @return The GUI scale factor last passed to setDPIScale(). */
+            virtual float getDPIScale() const
+            {
+                return 1.0F;
+            }
     };
 } // namespace FIFE
 

@@ -19,6 +19,7 @@
 
 namespace FIFE
 {
+    class Engine;
     class NotSupported;
 
     /**
@@ -183,6 +184,27 @@ namespace FIFE
             uint8_t getWindowScalingMode() const
             {
                 return m_windowScalingMode;
+            }
+
+            /**
+             * Enables or disables GUI font/metric scaling for the display's
+             * content scale. Enabled by default. Applications that implement
+             * their own HUD scaling can turn this off to avoid double scaling.
+             *
+             * This does not affect the window pixel/point ratio used by the
+             * renderer.
+             */
+            void setGUIScalingEnabled(bool enabled)
+            {
+                m_guiScalingEnabled = enabled;
+            }
+
+            /**
+             * Returns whether GUI scaling for display content scale is enabled.
+             */
+            bool isGUIScalingEnabled() const
+            {
+                return m_guiScalingEnabled;
             }
 
             /**
@@ -359,12 +381,21 @@ namespace FIFE
             float getGLAlphaTestValue() const;
 
             /**
-             * Sets screen width (pixels)
+             * Sets the requested screen width in points.
+             *
+             * Engine::init() uses this as the window size request, clamped to
+             * the target display. After init, getScreenWidth() reports the
+             * effective window width; getRequestedScreenWidth() keeps the value
+             * that was asked for.
              */
             void setScreenWidth(uint16_t screenwidth);
 
             /**
-             * Gets screen width (pixels)
+             * Gets the effective screen (window) width in points.
+             *
+             * After Engine::init() this is kept in sync with the live window
+             * and matches Window::getWidthInPoints(). It is the value legacy
+             * applications should use for viewport sizing.
              */
             uint16_t getScreenWidth() const
             {
@@ -372,16 +403,44 @@ namespace FIFE
             }
 
             /**
-             * Sets screen height (pixels)
+             * Gets the width that was requested before Engine::init() (or the
+             * last value passed to setScreenWidth()).
+             *
+             * Unlike getScreenWidth(), this value is never overwritten with the
+             * actual window size, so settings dialogs can show what the
+             * application asked for even when the display clamps it.
+             */
+            uint16_t getRequestedScreenWidth() const
+            {
+                return m_requestedScreenWidth;
+            }
+
+            /**
+             * Sets the requested screen height in points.
+             *
+             * @see setScreenWidth
              */
             void setScreenHeight(uint16_t screenheight);
 
             /**
-             * Gets screen height (pixels)
+             * Gets the effective screen (window) height in points.
+             *
+             * @see getScreenWidth
              */
             uint16_t getScreenHeight() const
             {
                 return m_screenheight;
+            }
+
+            /**
+             * Gets the height that was requested before Engine::init() (or the
+             * last value passed to setScreenHeight()).
+             *
+             * @see getRequestedScreenWidth
+             */
+            uint16_t getRequestedScreenHeight() const
+            {
+                return m_requestedScreenHeight;
             }
 
             /**
@@ -629,6 +688,20 @@ namespace FIFE
             bool isJoystickSupport() const;
 
         private:
+            friend class Engine;
+
+            /** Publishes the effective window size without touching the
+             *  application's request. Called from Engine::syncSettingsWithWindow().
+             */
+            void setEffectiveScreenWidth(uint16_t screenwidth)
+            {
+                m_screenwidth = screenwidth;
+            }
+            void setEffectiveScreenHeight(uint16_t screenheight)
+            {
+                m_screenheight = screenheight;
+            }
+
             uint8_t m_bitsperpixel;
             bool m_fullscreen;
             uint16_t m_refreshRate;
@@ -638,6 +711,7 @@ namespace FIFE
             bool m_vSync;
             bool m_windowResizable;
             uint8_t m_windowScalingMode;
+            bool m_guiScalingEnabled;
             std::string m_renderDriver;
             float m_initialvolume;
             std::string m_renderbackend;
@@ -652,6 +726,8 @@ namespace FIFE
             float m_alphaTestValue;
             uint16_t m_screenwidth;
             uint16_t m_screenheight;
+            uint16_t m_requestedScreenWidth;
+            uint16_t m_requestedScreenHeight;
             std::string m_windowtitle;
             std::string m_windowicon;
 

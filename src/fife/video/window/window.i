@@ -14,12 +14,14 @@ namespace FIFE {
 %ignore Window::signalResized;
 %ignore Window::signalMoved;
 %ignore Window::signalDPIScaleChanged;
+%ignore Window::signalDisplayScaleChanged;
 %ignore Window::signalShown;
 %ignore Window::signalHidden;
 %ignore Window::signalClosed;
 %ignore Window::onResized;
 %ignore Window::onMoved;
 %ignore Window::onDPIScaleChanged;
+%ignore Window::onDisplayScaleChanged;
 %ignore Window::onShown;
 %ignore Window::onHidden;
 %ignore Window::onClosed;
@@ -33,7 +35,11 @@ public:
     void destroy();
 
     float getDPIScaleFactor() const;
+    %feature("docstring") getDisplayScale "Operating-system UI/content scale for the window display (1.0 = 100%, 1.5 = 150%). On Windows this carries the DPI percentage while getDPIScaleFactor() is the pixel/point ratio.";
+    float getDisplayScale() const;
+    %feature("docstring") getWidthInPoints "Window width in logical points (DPI-independent). Preferred over EngineSettings.getScreenWidth() for viewport sizing.";
     int getWidthInPoints() const;
+    %feature("docstring") getHeightInPoints "Window height in logical points (DPI-independent). Preferred over EngineSettings.getScreenHeight() for viewport sizing.";
     int getHeightInPoints() const;
     int getWidthInPixels() const;
     int getHeightInPixels() const;
@@ -46,6 +52,8 @@ public:
 
     void setSize(int width, int height);
     void setPosition(int x, int y);
+    void setResizable(bool resizable);
+    bool isResizable() const;
     void minimize();
     void maximize();
     void restore();

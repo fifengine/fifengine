@@ -80,6 +80,7 @@ class ApplicationBase:
         self._lastWindowW = 0
         self._lastWindowH = 0
         self._lastDPIScale = 1.0
+        self._lastDisplayScale = 1.0
 
         """
 		we are giving users a valid screen resolution option that is supported
@@ -310,6 +311,10 @@ class ApplicationBase:
             if dpi != self._lastDPIScale:
                 self._lastDPIScale = dpi
                 self._onDPIScaleChanged(dpi)
+            display_scale = win.getDisplayScale()
+            if display_scale != self._lastDisplayScale:
+                self._lastDisplayScale = display_scale
+                self._onDisplayScaleChanged(display_scale)
 
     def _onWindowResized(self, width, height):
         """Handle window resize events.
@@ -320,7 +325,16 @@ class ApplicationBase:
     def _onDPIScaleChanged(self, scale):
         """Handle DPI scale change events.
 
-        Override in subclasses for custom DPI change handling.
+        This is the pixel/point ratio. Override in subclasses for custom DPI
+        change handling.
+        """
+
+    def _onDisplayScaleChanged(self, scale):
+        """Handle OS UI/content scale change events.
+
+        This is the display scale (1.0 = 100%, 1.5 = 150%), not the
+        pixel/point ratio. Override in subclasses to resize HUD/widget
+        layouts.
         """
 
     def quit(self):

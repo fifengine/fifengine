@@ -9,21 +9,18 @@
 namespace FIFE
 {
 
-    namespace
+    SDL_DisplayID Display::getDisplayID(int index)
     {
-        SDL_DisplayID getDisplayId(int index)
-        {
-            int count               = 0;
-            SDL_DisplayID* displays = SDL_GetDisplays(&count);
-            if (displays == nullptr || count <= 0 || index >= count) {
-                SDL_free(displays);
-                return 0;
-            }
-            SDL_DisplayID id = displays[index];
+        int count               = 0;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
+        if (displays == nullptr || count <= 0 || index < 0 || index >= count) {
             SDL_free(displays);
-            return id;
+            return 0;
         }
-    } // namespace
+        SDL_DisplayID id = displays[index];
+        SDL_free(displays);
+        return id;
+    }
 
     int Display::getDisplayCount()
     {
@@ -35,7 +32,7 @@ namespace FIFE
 
     std::string Display::getDisplayName(int index)
     {
-        SDL_DisplayID id = getDisplayId(index);
+        SDL_DisplayID id = getDisplayID(index);
         if (id == 0) {
             return {};
         }
@@ -46,7 +43,7 @@ namespace FIFE
     SDL_Rect Display::getDisplayBounds(int index)
     {
         SDL_Rect rect    = {};
-        SDL_DisplayID id = getDisplayId(index);
+        SDL_DisplayID id = getDisplayID(index);
         if (id != 0) {
             SDL_GetDisplayBounds(id, &rect);
         }
@@ -56,7 +53,7 @@ namespace FIFE
     SDL_Rect Display::getUsableBounds(int index)
     {
         SDL_Rect rect    = {};
-        SDL_DisplayID id = getDisplayId(index);
+        SDL_DisplayID id = getDisplayID(index);
         if (id != 0) {
             SDL_GetDisplayUsableBounds(id, &rect);
         }
@@ -75,7 +72,7 @@ namespace FIFE
 
     float Display::getDisplayContentScale(int index)
     {
-        SDL_DisplayID id = getDisplayId(index);
+        SDL_DisplayID id = getDisplayID(index);
         if (id == 0) {
             return 1.0F;
         }
@@ -85,7 +82,7 @@ namespace FIFE
     SDL_DisplayMode Display::getDesktopMode(int index)
     {
         SDL_DisplayMode mode = {};
-        SDL_DisplayID id     = getDisplayId(index);
+        SDL_DisplayID id     = getDisplayID(index);
         if (id != 0) {
             SDL_DisplayMode const * dm = SDL_GetDesktopDisplayMode(id);
             if (dm != nullptr) {
@@ -98,7 +95,7 @@ namespace FIFE
     std::vector<SDL_DisplayMode> Display::getSupportedModes(int index)
     {
         std::vector<SDL_DisplayMode> modes;
-        SDL_DisplayID id = getDisplayId(index);
+        SDL_DisplayID id = getDisplayID(index);
         if (id == 0) {
             return modes;
         }
@@ -120,7 +117,7 @@ namespace FIFE
     SDL_DisplayMode Display::getClosestMode(int index, int width, int height, int refreshRate)
     {
         SDL_DisplayMode mode = {};
-        SDL_DisplayID id     = getDisplayId(index);
+        SDL_DisplayID id     = getDisplayID(index);
         if (id == 0) {
             return mode;
         }

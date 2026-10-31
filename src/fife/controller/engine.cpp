@@ -37,6 +37,7 @@
 #include "video/cursor.h"
 #include "video/fonts/fontmanager.h"
 #include "video/imagemanager.h"
+#include "video/window/guiscale.h"
 #ifdef HAVE_MOVIE
     #include "audio/soundclip.h"
     #include "audio/soundemitter.h"
@@ -44,6 +45,7 @@
 #endif
 #include "video/renderbackend.h"
 #include "video/window/window.h"
+#include "video/window/windowsize.h"
 #ifdef HAVE_OPENGL
     #include "video/opengl/fife_opengl.h"
     #include "video/opengl/renderbackendopengl.h"
@@ -129,6 +131,9 @@ namespace FIFE
             applyDefaultFont(fifechan);
         }
         m_guimanager = std::move(guimanager);
+        // GUI managers such as pychan are installed after Engine.init(), so
+        // the initial scale has to be applied here as well.
+        applyGUIScale();
     }
 
     void Engine::updateFontFallback()
@@ -170,6 +175,23 @@ namespace FIFE
         }
     }
 
+    void Engine::applyGUIScale()
+    {
+        if (!m_guimanager) {
+            return;
+        }
+
+        float displayScale = 1.0F;
+        float dpiScale     = 1.0F;
+        if (m_window) {
+            displayScale = m_window->getDisplayScale();
+            dpiScale     = m_window->getDPIScaleFactor();
+        }
+
+        float const guiScale = calculateGUIScale(displayScale, dpiScale, m_settings.isGUIScalingEnabled());
+        m_guimanager->setDPIScale(guiScale);
+    }
+
     void Engine::loadFontManifestFromString(std::string const & xml)
     {
         if (m_fontManager) {
@@ -186,10 +208,16 @@ namespace FIFE
         if (m_window == nullptr) {
             return;
         }
-        WindowSettings settings = m_window->getSettings();
-        settings.windowMode =
-            (settings.windowMode == WindowMode::Windowed) ? WindowMode::Fullscreen : WindowMode::Windowed;
-        changeWindowMode(settings);
+        // Switch the existing window instead of re-creating it: destroying the
+        // SDL window also destroys the renderer (SDL3) and the GL context the
+        // render backend holds.
+        WindowMode const nextMode =
+            (m_window->getFullscreenMode() == WindowMode::Fullscreen) ? WindowMode::Windowed : WindowMode::Fullscreen;
+        m_window->setFullscreenMode(nextMode);
+        syncSettingsWithWindow();
+        for (auto* listener : m_changelisteners) {
+            listener->onWindowModeChanged(m_window->getSettings());
+        }
     }
 
     void Engine::toggleVSync()
@@ -201,19 +229,91 @@ namespace FIFE
         m_window->setVSync(!current);
     }
 
+    bool Engine::windowSettingsRequireRestart(WindowSettings const & settings) const
+    {
+        if (m_window == nullptr) {
+            // Before init the settings are applied when the window is created.
+            return false;
+        }
+        return FIFE::windowSettingsRequireRestart(m_window->getSettings(), settings);
+    }
+
     void Engine::changeWindowMode(WindowSettings const & settings)
     {
         if (m_window == nullptr) {
             return;
         }
-        m_window->create(settings);
+
+        // Apply the settings to the live window. Re-creating the SDL window here
+        // would invalidate the render backend (SDL_DestroyWindow also destroys
+        // the attached renderer, and the GL context belongs to the old window).
+        if (windowSettingsRequireRestart(settings)) {
+            WindowSettings const current = m_window->getSettings();
+            FL_WARN(
+                _log(),
+                std::format(
+                    "changeWindowMode(): a different monitor or renderer cannot be applied to the live "
+                    "window (display {} -> {}, OpenGL {} -> {}); a restart is required. Keeping the current "
+                    "display/renderer and applying the remaining settings.",
+                    current.display,
+                    settings.display,
+                    current.opengl,
+                    settings.opengl));
+        }
+
+        // Switch the mode first: leaving fullscreen restores the remembered
+        // windowed geometry, which requested size/position must then override.
+        m_window->setResizable(settings.resizable);
+        m_window->setScalingMode(settings.scalingMode);
+        m_window->setVSync(settings.vsync);
+        m_window->setWindowTitle(settings.title);
+        m_window->setWindowIcon(settings.icon);
+        m_window->setFullscreenMode(settings.windowMode);
+
+        if (settings.windowMode != WindowMode::Fullscreen) {
+            m_window->setSize(settings.width, settings.height);
+            if (settings.x != -1 && settings.y != -1) {
+                m_window->setPosition(settings.x, settings.y);
+            }
+        }
+
+        m_settings.setVSync(settings.vsync);
+        m_settings.setWindowResizable(settings.resizable);
+        m_settings.setWindowScalingMode(static_cast<uint8_t>(settings.scalingMode));
+        syncSettingsWithWindow();
+
         if (m_guimanager != nullptr) {
             m_guimanager->resizeTopContainer(
-                0U, 0U, static_cast<uint32_t>(settings.width), static_cast<uint32_t>(settings.height));
+                0U,
+                0U,
+                static_cast<uint32_t>(m_window->getWidthInPoints()),
+                static_cast<uint32_t>(m_window->getHeightInPoints()));
         }
         for (auto* listener : m_changelisteners) {
-            listener->onWindowModeChanged(settings);
+            listener->onWindowModeChanged(m_window->getSettings());
         }
+    }
+
+    void Engine::syncSettingsWithWindow()
+    {
+        if (m_window == nullptr) {
+            return;
+        }
+        int const width  = m_window->getWidthInPoints();
+        int const height = m_window->getHeightInPoints();
+        if (width > 0 && height > 0) {
+            m_settings.setEffectiveScreenWidth(static_cast<uint16_t>(std::clamp(width, 1, 65535)));
+            m_settings.setEffectiveScreenHeight(static_cast<uint16_t>(std::clamp(height, 1, 65535)));
+        }
+        m_settings.setFullScreen(m_window->getFullscreenMode() == WindowMode::Fullscreen);
+
+        // Publish the remaining fields of the window that actually exists:
+        // init() may have fallen back to display 0, and the remembered
+        // windowed position changes when leaving fullscreen.
+        WindowSettings const & windowSettings = m_window->getSettings();
+        m_settings.setDisplay(static_cast<uint8_t>(std::clamp(windowSettings.display, 0, 255)));
+        m_settings.setWindowPositionX(windowSettings.x);
+        m_settings.setWindowPositionY(windowSettings.y);
     }
 
     void Engine::init()
@@ -336,6 +436,17 @@ namespace FIFE
             }
             m_devcaps.setVideoDriverName(driver);
         }
+#ifdef FIFE_OS_WINDOWS
+        // DPI awareness is process-wide. SDL3 defaults to PerMonitorV2 when
+        // the video subsystem initializes, which covers hosts without a
+        // DPI-aware manifest (for example the stock python.exe). State the
+        // intent explicitly, but let the application override it and let a
+        // host .exe manifest win.
+        if (SDL_GetHint("SDL_WINDOWS_DPI_AWARENESS") == nullptr) {
+            SDL_SetHint("SDL_WINDOWS_DPI_AWARENESS", "permonitorv2");
+        }
+#endif
+
         // init backend with selected video driver or default
         m_renderbackend->init(driver);
 
@@ -377,21 +488,34 @@ namespace FIFE
         uint16_t selectedWidth         = requestedWidth;
         uint16_t selectedHeight        = requestedHeight;
 
-        Rect const displayBounds = m_devcaps.getDisplayBounds(selectedDisplay);
-        int32_t const maxWidth   = std::max<int32_t>(1, displayBounds.w);
-        int32_t const maxHeight  = std::max<int32_t>(1, displayBounds.h);
-        selectedWidth            = static_cast<uint16_t>(std::clamp<int32_t>(selectedWidth, 1, maxWidth));
-        selectedHeight           = static_cast<uint16_t>(std::clamp<int32_t>(selectedHeight, 1, maxHeight));
+        Rect displayBounds = m_devcaps.getDisplayBounds(selectedDisplay);
+        if (!m_settings.isFullScreen()) {
+            // A windowed window lives inside the desktop work area. Use the
+            // usable bounds so it is not clamped underneath a taskbar or dock.
+            // Fullscreen keeps the full display bounds.
+            SDL_Rect const usableBounds = Display::getUsableBounds(selectedDisplay);
+            if (usableBounds.w > 0 && usableBounds.h > 0) {
+                displayBounds.w = usableBounds.w;
+                displayBounds.h = usableBounds.h;
+            }
+        }
+
+        // SDL_GetDisplayBounds()/SDL_GetDisplayUsableBounds() and window sizes
+        // share the same coordinate space on every platform (pixels on
+        // Windows, points on macOS), so no DPI/content-scale conversion is
+        // needed here. See unknown-horizons#2923.
+        WindowSize const clamped =
+            clampWindowSizeToDesktop(requestedWidth, requestedHeight, displayBounds.w, displayBounds.h);
+        selectedWidth  = static_cast<uint16_t>(std::clamp(clamped.width, 1, 65535));
+        selectedHeight = static_cast<uint16_t>(std::clamp(clamped.height, 1, 65535));
         if (selectedWidth != requestedWidth || selectedHeight != requestedHeight) {
 
             FL_WARN(
                 _log(),
                 std::format(
-                    "Requested resolution {}x{} exceeds selected display bounds {}x{}. Clamping to {}x{}.",
+                    "Requested resolution {}x{} does not fit the selected display; clamping to {}x{}.",
                     requestedWidth,
                     requestedHeight,
-                    displayBounds.w,
-                    displayBounds.h,
                     selectedWidth,
                     selectedHeight));
         }
@@ -420,9 +544,22 @@ namespace FIFE
         winSettings.windowMode  = m_settings.isFullScreen() ? WindowMode::Fullscreen : WindowMode::Windowed;
         winSettings.scalingMode = static_cast<ScalingMode>(m_settings.getWindowScalingMode());
 
-        m_window = std::make_unique<Window>();
+        m_window                        = std::make_unique<Window>();
+        m_window->signalWindowDestroyed = [this]() {
+            if (m_imagemanager) {
+                m_imagemanager->invalidateAll();
+            }
+        };
         m_window->create(winSettings);
+        // SDL may have resized the window (minimum size, display constraints,
+        // DPI scaling). Publish the real values through EngineSettings so
+        // applications do not keep using the requested ones.
+        syncSettingsWithWindow();
         m_window->signalResized = [this](int w, int h) {
+            if (w > 0 && h > 0) {
+                m_settings.setEffectiveScreenWidth(static_cast<uint16_t>(std::clamp(w, 1, 65535)));
+                m_settings.setEffectiveScreenHeight(static_cast<uint16_t>(std::clamp(h, 1, 65535)));
+            }
             if (m_imagemanager) {
                 m_imagemanager->invalidateAll();
             }
@@ -440,6 +577,7 @@ namespace FIFE
             if (m_fontManager) {
                 m_fontManager->setDPIScaleForAll(scale);
             }
+            applyGUIScale();
             if (m_guimanager) {
                 int const w = m_window->getWidthInPoints();
                 int const h = m_window->getHeightInPoints();
@@ -449,12 +587,51 @@ namespace FIFE
                 listener->onDPIScaleChanged(scale);
             }
         };
+        m_window->signalDisplayScaleChanged = [this](float scale) {
+            // The pixel/point ratio can stay at 1.0 while the OS content scale
+            // changes (Windows monitors at different DPI percentages). Recompute
+            // the GUI scale and let applications adjust their own layouts.
+            applyGUIScale();
+            if (m_guimanager) {
+                int const w = m_window->getWidthInPoints();
+                int const h = m_window->getHeightInPoints();
+                m_guimanager->resizeTopContainer(0U, 0U, static_cast<uint32_t>(w), static_cast<uint32_t>(h));
+            }
+            for (auto* listener : m_changelisteners) {
+                listener->onDisplayScaleChanged(scale);
+            }
+        };
         m_renderbackend->setWindowObject(m_window.get());
 
         FL_LOG(_log(), "Creating main screen");
         m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
         FL_LOG(_log(), "Main screen created");
         m_window->show();
+        // Showing a window can apply a pending fullscreen state; publish the
+        // final size/state so startup settings match the window.
+        syncSettingsWithWindow();
+
+        // At this point the final display scale is known (the window may have
+        // moved to another monitor while entering fullscreen).
+        applyGUIScale();
+
+        // One line with the values needed in DPI/fullscreen bug reports. The
+        // display scale is the OS content scale (1.5 = 150% on Windows); the
+        // pixel/point ratio is what the renderer/fonts already apply.
+        float const guiScale = calculateGUIScale(
+            m_window->getDisplayScale(), m_window->getDPIScaleFactor(), m_settings.isGUIScalingEnabled());
+        FL_LOG(
+            _log(),
+            std::format(
+                "Window geometry: {}x{} points ({}x{} pixels), display scale {:.2f}, pixel/point ratio {:.2f}, "
+                "GUI scale {:.2f}",
+                m_window->getWidthInPoints(),
+                m_window->getHeightInPoints(),
+                m_window->getWidthInPixels(),
+                m_window->getHeightInPixels(),
+                m_window->getDisplayScale(),
+                m_window->getDPIScaleFactor(),
+                guiScale));
 
         if (SDL_Window* win = m_window->getSDLWindow()) {
             SDL_StartTextInput(win);
@@ -514,6 +691,19 @@ namespace FIFE
     void Engine::destroy()
     {
         FL_LOG(_log(), "Destructing engine");
+
+        // Members (including the image manager) are torn down after this
+        // function; do not run the window-destroyed hook against them.
+        if (m_window != nullptr) {
+            m_window->signalWindowDestroyed = nullptr;
+        }
+
+        // Font adapters keep a callback into the FontManager. Detach it before
+        // the manager is released so a late scale change (for example from a
+        // window signal during SDL_Quit) cannot dereference it.
+        if (auto* fifechan = dynamic_cast<FifechanManager*>(m_guimanager.get())) {
+            fifechan->setFontManager(nullptr);
+        }
 
         // Fonts must be released before TTF_Quit, otherwise the FreeType faces
         // they own are destroyed against an already shut down library.

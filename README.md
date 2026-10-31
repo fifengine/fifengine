@@ -265,6 +265,14 @@ Win32 users tend to suffer from problems with the OpenAL drivers. If you don't
 hear sound while running a FIFE client, run `oalinst.exe` that ships with the
 Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
+### Windows high-DPI / fullscreen
+
+DPI awareness is controlled by the host executable's manifest, not by FIFE.
+Python games started with `python.exe` are covered by SDL3's PerMonitorV2
+default; frozen games and custom launchers must embed the manifest in their
+`.exe`. See [docs/windows-hidpi.md](docs/windows-hidpi.md) and
+[docs/window-sizing.md](docs/window-sizing.md).
+
 ## 10) Feedback
 
 We appreciate every kind of feedback concerning the release, the project in

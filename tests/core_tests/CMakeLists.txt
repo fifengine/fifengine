@@ -49,6 +49,11 @@ message(STATUS "All tests are linked into a single executable `all_tests`.")
 
 add_executable(all_tests ${FIFE_CORE_TEST_SOURCES})
 
+# Windows: make the test executable PerMonitorV2 DPI-aware. This only applies
+# to the host .exe; the FIFE library is a DLL and cannot set process DPI
+# awareness. No-op on other platforms.
+fife_embed_windows_dpi_manifest(all_tests)
+
 # Include directories for FIFE headers
 target_include_directories(all_tests
   PRIVATE

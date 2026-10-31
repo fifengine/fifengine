@@ -6,6 +6,7 @@
 
 #include <fifechan/font.hpp>
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -57,6 +58,28 @@ namespace FIFE
             int getHeight() const override;
             void invalidate() override;
 
+            /** Supplies a FontInstance for a scaled point size. Used by
+             *  FifechanManager to rescale TrueType fonts in place when the GUI
+             *  scale changes. Bitmap/image fonts have no callback and keep
+             *  their native size.
+             */
+            using RescaleCallback = std::function<std::shared_ptr<FontInstance>(int size)>;
+            void setRescaleCallback(RescaleCallback callback);
+            /** @return True when the font can be re-rasterized at another size. */
+            bool canRescale() const
+            {
+                return m_rescaleCallback != nullptr;
+            }
+
+            /** Rescales the underlying font instance relative to the size it
+             *  was created with. Calling it repeatedly is idempotent; the base
+             *  size is not compounded.
+             *  @param scale GUI scale factor (1.0 = original size).
+             */
+            void setGUIScale(float scale);
+            /** @return The GUI scale currently applied to this adapter. */
+            float getGUIScale() const;
+
             // fcn::Font
             int getWidth(std::string_view text) const override;
             int getStringIndexAt(std::string_view text, int x) const override;
@@ -71,7 +94,10 @@ namespace FIFE
             SDL_Surface* renderImage(std::string const & text) const;
 
             std::shared_ptr<FontInstance> m_instance;
+            int m_baseSize;
             mutable TextRenderPool m_pool;
+            RescaleCallback m_rescaleCallback;
+            float m_guiScale = 1.0F;
             SDL_Color m_color{255, 255, 255, 255};
             int32_t m_rowSpacing   = 0;
             int32_t m_glyphSpacing = 0;

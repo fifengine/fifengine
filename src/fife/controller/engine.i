@@ -56,6 +56,9 @@ namespace FIFE {
 		bool isWindowResizable() const;
 		void setWindowScalingMode(uint8_t mode);
 		uint8_t getWindowScalingMode() const;
+		%feature("docstring") setGUIScalingEnabled "Enable/disable GUI font and metric scaling for the display content scale (enabled by default). Turn off if the application scales its own HUD.";
+		void setGUIScalingEnabled(bool enabled);
+		bool isGUIScalingEnabled() const;
 		void setSDLDriver(const std::string& driver);
 		const std::string& getSDLDriver() const;
 		void setInitialVolume(float volume);
@@ -83,9 +86,15 @@ namespace FIFE {
 		void setGLAlphaTestValue(float alpha);
 		float getGLAlphaTestValue() const;
 		void setScreenWidth(uint16_t screenwidth);
+		%feature("docstring") getScreenWidth "Effective window width in points, kept in sync with the live Window after Engine.init(). Prefer Window.getWidthInPoints() for viewport sizing.";
 		uint16_t getScreenWidth() const;
+		%feature("docstring") getRequestedScreenWidth "Width requested via setScreenWidth(), before display clamping. Unlike getScreenWidth(), this is not overwritten by Engine.init().";
+		uint16_t getRequestedScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);
+		%feature("docstring") getScreenHeight "Effective window height in points, kept in sync with the live Window after Engine.init(). Prefer Window.getHeightInPoints() for viewport sizing.";
 		uint16_t getScreenHeight() const;
+		%feature("docstring") getRequestedScreenHeight "Height requested via setScreenHeight(), before display clamping. Unlike getScreenHeight(), this is not overwritten by Engine.init().";
+		uint16_t getRequestedScreenHeight() const;
 		void setDefaultFontPath(const std::string& defaultfontpath);
 		const std::string& getDefaultFontPath() const;
 		void setDefaultFontId(const std::string& id);
@@ -131,6 +140,8 @@ namespace FIFE {
 		virtual ~IEngineChangeListener() {}
 		virtual void onWindowModeChanged(const WindowSettings& newmode) = 0;
 		virtual void onDPIScaleChanged(float scale) {}
+		virtual void onDisplayScaleChanged(float scale) {}
+		virtual void onWindowResized(int width, int height) {}
 	};
 
 	class Engine {
@@ -175,9 +186,11 @@ namespace FIFE {
 		OffRenderer* getOffRenderer();
 		TargetRenderer* getTargetRenderer();
 		FontManager* getFontManager();
+		%feature("docstring") getWindow "Returns the live Window. Use Window.getWidthInPoints()/getHeightInPoints() for viewport sizes; EngineSettings.getScreenWidth()/getScreenHeight() are kept in sync but are the legacy API.";
 		Window* getWindow();
 		void toggleFullscreen();
 		void toggleVSync();
+		bool windowSettingsRequireRestart(const WindowSettings& settings) const;
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);

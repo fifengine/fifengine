@@ -155,7 +155,11 @@ namespace FIFE
         m_context(nullptr),
         m_integerScale(0)
     {
+        resetStateCache();
+    }
 
+    void RenderBackendOpenGL::resetStateCache()
+    {
         m_state.tex_enabled.at(0)   = false;
         m_state.tex_enabled.at(1)   = false;
         m_state.tex_enabled.at(2)   = false;
@@ -193,19 +197,22 @@ namespace FIFE
         m_state.scissor_test    = true;
         m_state.depth_enabled   = true;
         m_state.color_enabled   = true;
+        m_integerScale          = 0;
     }
 
     RenderBackendOpenGL::~RenderBackendOpenGL()
     {
         if (m_context != nullptr) {
-            glDeleteTextures(1, &m_maskOverlay);
-            if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
-                glDeleteFramebuffers(1, &m_fbo_id);
+            if (SDL_WasInit(SDL_INIT_VIDEO)) {
+                glDeleteTextures(1, &m_maskOverlay);
+                if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
+                    glDeleteFramebuffers(1, &m_fbo_id);
+                }
+                SDL_GL_DestroyContext(m_context);
             }
-            SDL_GL_DestroyContext(m_context);
             m_context = nullptr;
         }
-        if (m_windowObject == nullptr) {
+        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO)) {
             SDL_DestroyWindow(m_window);
             deinit();
         }
@@ -251,8 +258,28 @@ namespace FIFE
 
     void RenderBackendOpenGL::createMainScreen(std::string const & title, std::string const & icon)
     {
-        if (m_window == nullptr) {
+        SDL_Window* const window = getAttachedWindow();
+        if (window == nullptr) {
             throw SDLException("RenderBackendOpenGL::createMainScreen - no SDL window available");
+        }
+
+        if (window != m_window) {
+            // The application replaced the SDL window (Window::create()).
+            // The old context belongs to the destroyed window: drop every
+            // GL object name from it and create a fresh context below.
+            FL_LOG(_log, "OpenGL window changed; recreating the GL context");
+            if (m_context != nullptr) {
+                SDL_GL_DestroyContext(m_context);
+                m_context = nullptr;
+            }
+            m_maskOverlay = 0;
+            m_fbo_id      = 0;
+            m_window      = window;
+            if (m_screen != nullptr) {
+                SDL_DestroySurface(m_screen);
+                m_screen = nullptr;
+                m_target = nullptr;
+            }
         }
 
         if (!icon.empty()) {
@@ -288,6 +315,9 @@ namespace FIFE
                         "RenderBackendOpenGLError initializing GLEW!{}",
                         reinterpret_cast<char const *>(glewGetErrorString(glewError))));
             }
+            // A new context starts from GL defaults; forget the cached state
+            // of the previous context so the next draw calls re-apply it.
+            resetStateCache();
         }
 
         int w = 0;
@@ -296,6 +326,9 @@ namespace FIFE
         w = std::max(1, w);
         h = std::max(1, h);
 
+        if (m_screen != nullptr) {
+            SDL_DestroySurface(m_screen);
+        }
         m_screen = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGBA8888);
         m_target = m_screen;
         if (m_screen == nullptr) {

@@ -29,7 +29,11 @@ namespace FIFE {
 		virtual ~FifechanManager();
 		
 		void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
-		
+
+		%feature("docstring") setDPIScale "Apply the extra GUI scale for the display content scale. TrueType fonts are re-rasterized; bitmap fonts keep their native size. Use EngineSettings.setGUIScalingEnabled(False) to disable automatic scaling.";
+		void setDPIScale(float scale);
+		float getDPIScale() const;
+
 		Console* getConsole() const;
 		void setConsoleEnabled(bool console);
 		bool isConsoleEnabled() const;

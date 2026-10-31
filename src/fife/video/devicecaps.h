@@ -164,6 +164,11 @@ namespace FIFE
             int32_t getDesktopHeight(uint8_t display = 0) const;
 
             /** Returns the bounding points for the given display index.
+             *
+             *  The rectangle uses SDL's screen coordinate space: pixels on
+             *  Windows and points on macOS, the same space as window sizes and
+             *  positions. Use Display::getUsableBounds() when positioning a
+             *  windowed window so it does not overlap a taskbar or dock.
              */
             Rect getDisplayBounds(uint8_t display = 0) const;
 

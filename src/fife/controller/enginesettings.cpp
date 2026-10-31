@@ -41,6 +41,7 @@ namespace FIFE
         m_vSync(false),
         m_windowResizable(true),
         m_windowScalingMode(0),
+        m_guiScalingEnabled(true),
 
         m_initialvolume(MAXIMUM_VOLUME / 2.0F),
         m_renderbackend("SDL"),
@@ -55,6 +56,8 @@ namespace FIFE
         m_alphaTestValue(0.3F),
         m_screenwidth(800),
         m_screenheight(600),
+        m_requestedScreenWidth(800),
+        m_requestedScreenHeight(600),
         m_windowtitle("FIFE"),
 
         m_defaultfontid("SystemDefault"),
@@ -234,12 +237,14 @@ namespace FIFE
 
     void EngineSettings::setScreenWidth(uint16_t screenwidth)
     {
-        m_screenwidth = screenwidth;
+        m_screenwidth          = screenwidth;
+        m_requestedScreenWidth = screenwidth;
     }
 
     void EngineSettings::setScreenHeight(uint16_t screenheight)
     {
-        m_screenheight = screenheight;
+        m_screenheight          = screenheight;
+        m_requestedScreenHeight = screenheight;
     }
 
     void EngineSettings::setDefaultFontId(std::string const & id)

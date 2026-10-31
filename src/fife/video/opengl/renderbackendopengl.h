@@ -186,6 +186,9 @@ namespace FIFE
         protected:
             void setClipArea(Rect const & cliparea, bool clear) override;
 
+            /** Restores the cached GL state to the defaults of a fresh context. */
+            void resetStateCache();
+
             void enableLighting();
             void disableLighting();
             void enableStencilTest();

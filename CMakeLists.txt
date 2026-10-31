@@ -82,6 +82,9 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+# Project local include (needs GNUInstallDirs for CMAKE_INSTALL_DATADIR)
+include(FifeDpiManifest)
+
 #------------------------------------------------------------------------------
 # Options
 #------------------------------------------------------------------------------
@@ -706,6 +709,7 @@ set(
   src/fife/video/sdl/sdlblendingfunctions.h
   src/fife/video/sdl/sdlimage.h
   src/fife/video/window/display.h
+  src/fife/video/window/guiscale.h
   src/fife/video/window/window.h
   src/fife/video/window/windowsettings.h
   src/fife/view/camera.h
@@ -1692,19 +1696,19 @@ endif()
 #-------------------------------------------------------------------
 
 if(WIN32)
-  # Windows: DPI-aware manifest (for applications linking against FIFE)
-  # Without this, Windows treats the app as DPI-unaware and bitmap-scales
-  # the window, making getDPIScaleFactor() always return 1.0.
-  # Application developers should embed this manifest in their .exe.
-  configure_file(
-    "${CMAKE_SOURCE_DIR}/CMake/platform/windows_dpi_manifest.manifest.in"
-    "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
-    @ONLY
-  )
-  install(
-    FILES "${PROJECT_BINARY_DIR}/platform/windows_dpi_manifest.manifest"
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/fife/platform"
-  )
+  # Windows: DPI-aware manifest.
+  #
+  # DPI awareness is process-wide and is declared by the host .exe manifest.
+  # A DLL (libfifengine.dll) or a Python extension (_fife_swig.pyd) cannot
+  # declare it. Executables built in this tree attach the manifest with
+  # fife_embed_windows_dpi_manifest(); the same file is installed here for
+  # applications that build their own launcher.
+  #
+  # Python games normally run in python.exe. SDL3 opts the process into
+  # PerMonitorV2 when the video subsystem initializes, so a stock python.exe
+  # does not need this manifest. Frozen/packaged games and custom launchers do:
+  # their .exe carries the manifest. See docs/windows-hidpi.md.
+  fife_install_windows_dpi_manifest()
 endif()
 
 if(APPLE)

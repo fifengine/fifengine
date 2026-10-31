@@ -425,6 +425,7 @@ namespace FIFE
             case SDL_EVENT_MOUSE_BUTTON_UP:
             case SDL_EVENT_MOUSE_MOTION:
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_FINGER_MOTION:
                 processMouseEvent(event);
                 break;
 
@@ -703,6 +704,21 @@ namespace FIFE
             } else if (sdlevt.wheel.x < 0) {
                 mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
             }
+        } else if (sdlevt.type == SDL_EVENT_FINGER_MOTION) {
+            // Convert touchpad scroll gesture (finger motion) to mouse wheel event.
+            // On some Linux systems, touchpad scrolling generates SDL_EVENT_FINGER_MOTION
+            // instead of SDL_EVENT_MOUSE_WHEEL. The dx/dy are normalized (-1 to 1).
+            // Convert to wheel events based on which direction the finger moved.
+            if (sdlevt.tfinger.dx > 0) {
+                mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
+            } else if (sdlevt.tfinger.dx < 0) {
+                mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
+            } else if (sdlevt.tfinger.dy > 0) {
+                mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
+            } else if (sdlevt.tfinger.dy < 0) {
+                mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
+            }
+            // If both dx and dy are zero, the type remains MOVED (no scroll)
         }
 
         if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {

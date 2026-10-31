@@ -5,7 +5,9 @@
 #include "fifechanmanager.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <format>
 #include <memory>
 #include <stdexcept>
@@ -40,7 +42,9 @@
 #include "vfs/filesystem.h"
 #include "video/fonts/fontinstanceifontadapter.h"
 #include "video/fonts/fontmanager.h"
+#include "video/fonts/truetypefontface.h"
 #include "video/renderbackend.h"
+#include "video/window/guiscale.h"
 
 namespace FIFE
 {
@@ -98,6 +102,21 @@ namespace FIFE
 
         switch (evt.type) {
         case SDL_EVENT_MOUSE_WHEEL:
+        case SDL_EVENT_FINGER_MOTION: {
+            // On Linux with touchpads, scrolling may generate SDL_EVENT_FINGER_MOTION
+            // instead of SDL_EVENT_MOUSE_WHEEL. Convert finger motion to wheel event.
+            if (evt.type == SDL_EVENT_FINGER_MOTION) {
+                SDL_Event wheelEvt = evt;
+                wheelEvt.type = SDL_EVENT_MOUSE_WHEEL;
+                wheelEvt.wheel.x = static_cast<float>(evt.tfinger.dx);
+                wheelEvt.wheel.y = static_cast<float>(evt.tfinger.dy);
+                wheelEvt.wheel.mouse_x = static_cast<float>(static_cast<int32_t>(evt.tfinger.x));
+                wheelEvt.wheel.mouse_y = static_cast<float>(static_cast<int32_t>(evt.tfinger.y));
+                evt = wheelEvt;
+            }
+            m_input->pushInput(evt);
+            return overWidget;
+        }
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             m_had_widget = overWidget;
             [[fallthrough]];
@@ -255,17 +274,95 @@ namespace FIFE
 
         FontHandle const handle = m_fontManager->getFontHandle(fontpath, fontsize);
         auto instance           = m_fontManager->getFontInstance(handle);
-        auto adapter            = std::make_unique<FontInstanceIFontAdapter>(std::move(instance));
-        if (auto definition = m_fontManager->getFontDefinition(handle)) {
+        // Check the actual face instead of the manifest entry: a font resolved
+        // without a definition must not be treated as scalable by default.
+        bool const scalable = std::dynamic_pointer_cast<TrueTypeFontFace>(instance->getFace()) != nullptr;
+        auto adapter        = std::make_unique<FontInstanceIFontAdapter>(std::move(instance));
+
+        auto definition = m_fontManager->getFontDefinition(handle);
+        if (definition) {
             adapter->setAntiAlias(definition->antialias);
             adapter->setGlyphSpacing(definition->glyphSpacing);
             adapter->setRowSpacing(definition->rowSpacing);
             adapter->setDynamicColoring(definition->recoloring);
             adapter->setColor(definition->color.r, definition->color.g, definition->color.b, definition->color.a);
         }
+
+        // Bitmap/image fonts only exist at their native pixel size; trying to
+        // re-create them at a scaled size would throw. TrueType fonts can be
+        // re-rasterized on demand, so they follow runtime scale changes.
+        if (scalable) {
+            // Capture this, not FontManager: the adapter is owned by this
+            // manager and must not keep using a FontManager that Engine has
+            // already released during teardown.
+            adapter->setRescaleCallback([this, fontpath](int scaledSize) -> std::shared_ptr<FontInstance> {
+                if (m_fontManager == nullptr) {
+                    return nullptr;
+                }
+                return m_fontManager->getFontInstance(m_fontManager->getFontHandle(fontpath, scaledSize));
+            });
+        }
+
         auto* ptr = adapter.get();
         m_fonts.push_back(std::move(adapter));
+
+        if (m_dpiScale != 1.0F) {
+            if (scalable) {
+                ptr->setGUIScale(m_dpiScale);
+            } else {
+                FL_WARN(
+                    _log(),
+                    std::format(
+                        "GUI DPI scaling is not supported for bitmap font '{}'; keeping its native size", fontpath));
+            }
+        }
         return ptr;
+    }
+
+    void FifechanManager::setDPIScale(float scale)
+    {
+        if (!(scale > 0.0F)) {
+            scale = 1.0F;
+        }
+        // Keep direct API calls within the same safe range as the engine path.
+        scale                   = std::clamp(scale, GUI_SCALE_MIN, GUI_SCALE_MAX);
+        constexpr float epsilon = 0.0001F;
+        if (std::fabs(scale - m_dpiScale) < epsilon) {
+            return;
+        }
+        m_dpiScale = scale;
+
+        bool warnedBitmap = false;
+        for (auto& font : m_fonts) {
+            auto* adapter = dynamic_cast<FontInstanceIFontAdapter*>(font.get());
+            if (adapter == nullptr) {
+                continue;
+            }
+            if (!adapter->canRescale()) {
+                if (!warnedBitmap) {
+                    FL_WARN(_log(), "GUI DPI scaling skipped for bitmap fonts; they keep their native size");
+                    warnedBitmap = true;
+                }
+                continue;
+            }
+            try {
+                adapter->setGUIScale(m_dpiScale);
+            } catch (std::exception const & e) {
+                // Scaling happens from Engine::pump() signals; a missing or
+                // unreadable face must not abort the frame. Keep the old size.
+                FL_WARN(_log(), std::format("Failed to rescale GUI font to {:.2f}: {}", m_dpiScale, e.what()));
+            }
+        }
+
+        if (m_console != nullptr) {
+            m_console->reLayout();
+        }
+        FL_LOG(_log(), std::format("GUI DPI scale set to {:.2f}", m_dpiScale));
+    }
+
+    float FifechanManager::getDPIScale() const
+    {
+        return m_dpiScale;
     }
 
     void FifechanManager::releaseFont(fcn::Font const * font)

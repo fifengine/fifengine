@@ -62,7 +62,15 @@ namespace FIFE
             /** Screen mode has been changed
              */
             virtual void onWindowModeChanged(WindowSettings const & newmode) = 0;
+            /** The pixel/point ratio of the drawable changed (for example
+             *  moving between a Retina and a non-Retina display). */
             virtual void onDPIScaleChanged(float scale)
+            {
+            }
+            /** The operating-system UI/content scale changed (for example
+             *  moving between Windows monitors at 100% and 150%). This is not
+             *  the pixel/point ratio; use it to resize HUD/widget layouts. */
+            virtual void onDisplayScaleChanged(float scale)
             {
             }
             virtual void onWindowResized(int width, int height)
@@ -99,12 +107,20 @@ namespace FIFE
 
             /** Changes the screen mode.
              * This should be called instead of the renderer's changeWindowMode() function.
-             * It takes care of any objects that need to be re-created after switching
-             * screen modes.
+             * It applies the settings to the existing window where possible; display
+             * (monitor) and OpenGL changes require a restart and are ignored.
              *
              * @param settings The window settings to use.
              */
             void changeWindowMode(WindowSettings const & settings);
+
+            /** @return true if applying @p settings requires a restart.
+             *
+             * Size, position, mode, title, icon, VSync, resizable and scaling
+             * mode are applied live. A different monitor or renderer (OpenGL)
+             * cannot be applied to the existing window.
+             */
+            bool windowSettingsRequireRestart(WindowSettings const & settings) const;
 
             /** Initializes the engine
              */
@@ -216,7 +232,12 @@ namespace FIFE
                 return m_renderbackend.get();
             }
 
-            /** Provides access point to the Window
+            /** Provides access point to the Window.
+             *
+             *  The Window is the source of truth for the live size and mode.
+             *  Prefer Window::getWidthInPoints()/getHeightInPoints() over
+             *  EngineSettings::getScreenWidth()/getScreenHeight() when sizing
+             *  viewports.
              */
             Window* getWindow() const
             {
@@ -303,6 +324,9 @@ namespace FIFE
             /** Applies the configured default font to the GUI manager, if possible. */
             void applyDefaultFont(FifechanManager* fifechan);
 
+            /** Pushes the current display/DPI-derived GUI scale to the GUI manager. */
+            void applyGUIScale();
+
             std::unique_ptr<RenderBackend> m_renderbackend;
             std::unique_ptr<Window> m_window;
             std::unique_ptr<IGUIManager> m_guimanager;
@@ -336,6 +360,15 @@ namespace FIFE
             std::vector<std::unique_ptr<RendererBase>> m_renderers;
 
             std::vector<IEngineChangeListener*> m_changelisteners;
+
+            /** Copy the actual window size and mode into EngineSettings.
+             *
+             * Applications historically size their viewports from
+             * EngineSettings::getScreenWidth()/getScreenHeight(). Those values
+             * must describe the window that exists, not the requested values
+             * (DPI scaling, clamping and fullscreen all change the result).
+             */
+            void syncSettingsWithWindow();
 
 #ifdef USE_COCOA
             id m_autoreleasePool;
