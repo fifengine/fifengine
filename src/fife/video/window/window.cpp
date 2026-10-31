@@ -503,7 +503,7 @@ namespace FIFE
         // may not reflect the actual fullscreen size.
         if (m_settings.windowMode == WindowMode::Fullscreen) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
-            currentPixelW = bounds.w;
+            currentPixelW     = bounds.w;
         } else {
             SDL_GetWindowSizeInPixels(m_window, &currentPixelW, nullptr);
         }
@@ -577,20 +577,18 @@ namespace FIFE
         int pointsW = 0;
         int pointsH = 0;
         int pixelsW = 0;
-        int pixelsH = 0;
 
         // In fullscreen mode, use display bounds for sizes
         // to handle headless environments where SDL_GetWindowSize may
         // not reflect the actual fullscreen size.
         if (m_settings.windowMode == WindowMode::Fullscreen) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
-            pointsW = bounds.w;
-            pointsH = bounds.h;
-            pixelsW = bounds.w; // On X11/Wayland, bounds are in pixels with scale 1.0
-            pixelsH = bounds.h;
+            pointsW           = bounds.w;
+            pointsH           = bounds.h;
+            pixelsW           = bounds.w; // On X11/Wayland, bounds are in pixels with scale 1.0
         } else {
             SDL_GetWindowSize(m_window, &pointsW, &pointsH);
-            SDL_GetWindowSizeInPixels(m_window, &pixelsW, &pixelsH);
+            SDL_GetWindowSizeInPixels(m_window, &pixelsW, nullptr);
         }
 
         bool dpiScaleChanged = false;

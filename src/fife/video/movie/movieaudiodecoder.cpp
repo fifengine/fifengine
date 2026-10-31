@@ -213,8 +213,8 @@ namespace FIFE
                     int const samples =
                         swr_convert(resampler, outPtr, capacity, decoded->extended_data, decoded->nb_samples);
                     if (samples > 0 && outPtr[0] != nullptr) {
-                        size_t const bytes = static_cast<size_t>(samples) * static_cast<size_t>(OUT_CHANNELS) *
-                                             static_cast<size_t>(OUT_BYTES_PER_SAMPLE);
+                        size_t const bytes  = static_cast<size_t>(samples) * static_cast<size_t>(OUT_CHANNELS) *
+                                              static_cast<size_t>(OUT_BYTES_PER_SAMPLE);
                         size_t const offset = buffer.size();
                         buffer.resize(offset + bytes);
                         std::memcpy(buffer.data() + offset, outPtr[0], bytes);
