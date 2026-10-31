@@ -94,7 +94,7 @@ namespace FIFE
             SDL_Surface* renderImage(std::string const & text) const;
 
             std::shared_ptr<FontInstance> m_instance;
-            int m_baseSize;
+            int m_baseSize = 0;
             mutable TextRenderPool m_pool;
             RescaleCallback m_rescaleCallback;
             float m_guiScale = 1.0F;

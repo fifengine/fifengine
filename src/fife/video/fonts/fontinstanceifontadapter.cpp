@@ -8,7 +8,6 @@
 #include <fifechan.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 #include <list>
 #include <memory>
@@ -44,9 +43,12 @@ namespace FIFE
     } // namespace
 
     FontInstanceIFontAdapter::FontInstanceIFontAdapter(std::shared_ptr<FontInstance> instance) :
-        m_instance(std::move(instance)), m_baseSize(m_instance->getSize())
+        m_instance(std::move(instance))
     {
-        assert("FontInstance must not be null" && m_instance);
+        if (!m_instance) {
+            throw NotSet("FontInstanceIFontAdapter requires a non-null FontInstance");
+        }
+        m_baseSize = m_instance->getSize();
     }
 
     FontInstanceIFontAdapter::~FontInstanceIFontAdapter() = default;
