@@ -69,7 +69,7 @@ apt-get install -y libx11-dev libxft-dev libxext-dev
 
 # Packages required to build for Glew
 
-apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libsm-dev libice-dev
 
 # Packages required to build SWIG bindings
 

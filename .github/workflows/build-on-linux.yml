@@ -117,7 +117,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils libsm-dev libice-dev
           # NOTE: cmake is intentionally not installed from apt: Debian ships
           # cmake 3.31.x, but the vcpkg port scripts need >= 4.3
           # (string(JSON ... STRING_ENCODE), microsoft/vcpkg#53260).
@@ -393,7 +393,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev libxft-dev \
-            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils
+            libglu1-mesa-dev xvfb libgl1-mesa-dri mesa-utils libsm-dev libice-dev
           # NOTE: cmake is intentionally not installed from apt: Debian ships
           # cmake 3.31.x, which would overwrite the newer CMake of this image,
           # and the vcpkg port scripts need >= 4.3
