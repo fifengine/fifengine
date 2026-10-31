@@ -134,12 +134,14 @@ namespace FIFE
             /** Returns pixel x coordinate, scaled by the given DPI factor. */
             int32_t getXInPixels(float dpiScale) const
             {
-                return static_cast<int32_t>(getX() * dpiScale);
+                // Multiply in double to avoid the implicit int32 -> float
+                // conversion (and its precision loss) before scaling.
+                return static_cast<int32_t>(static_cast<double>(getX()) * dpiScale);
             }
             /** Returns pixel y coordinate, scaled by the given DPI factor. */
             int32_t getYInPixels(float dpiScale) const
             {
-                return static_cast<int32_t>(getY() * dpiScale);
+                return static_cast<int32_t>(static_cast<double>(getY()) * dpiScale);
             }
 
             std::string const & getName() const override
