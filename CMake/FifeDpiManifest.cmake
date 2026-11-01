@@ -75,12 +75,9 @@ function(fife_embed_windows_dpi_manifest target)
   _fife_configure_windows_dpi_manifest()
 
   if(MSVC)
-    # link.exe already embeds a generated manifest by default. Merge the FIFE
-    # manifest into it so the DPI settings end up in the executable.
-    file(TO_NATIVE_PATH "${FIFE_WINDOWS_DPI_MANIFEST}" manifest_native)
-    target_link_options(${target} PRIVATE
-      "/MANIFEST:EMBED"
-      "/MANIFESTINPUT:${manifest_native}")
+    # Let CMake's linker wrapper merge this manifest, including for
+    # incremental links.
+    target_sources(${target} PRIVATE "${FIFE_WINDOWS_DPI_MANIFEST}")
   else()
     # MinGW/Clang do not embed a manifest. Windows reads the external
     # <exe>.manifest file next to the executable at process start.
