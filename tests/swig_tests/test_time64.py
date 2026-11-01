@@ -12,11 +12,6 @@ import pytest
 from fife import fife
 
 
-def _to_signed32(value):
-    wrapped = value & 0xFFFFFFFF
-    return wrapped if wrapped < 0x80000000 else wrapped - 0x100000000
-
-
 def test_event_timestamp64_roundtrip_large_value(engine_minimized):
     del engine_minimized
 
