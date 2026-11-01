@@ -88,7 +88,13 @@ namespace FIFE
         m_fcn_topcontainer->setFocusable(false);
     }
 
-    FifechanManager::~FifechanManager() = default;
+    FifechanManager::~FifechanManager()
+    {
+        // Widget::mGlobalFont is a static raw pointer; clear it before m_fonts
+        // destroys the font it points to.
+        fcn::Widget::resetGlobalFont();
+        m_defaultfont = nullptr;
+    }
 
     bool FifechanManager::onSdlEvent(SDL_Event& evt)
     {

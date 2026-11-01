@@ -328,8 +328,19 @@ namespace FIFE
     {
         if (m_window != nullptr) {
             SDL_SetWindowSize(m_window, width, height);
-            m_settings.width  = width;
-            m_settings.height = height;
+
+            // The backend may apply the resize asynchronously (X11/Wayland).
+            // Block until the new size is in effect so callers and listeners
+            // do not observe the previous size right after the request.
+            SDL_SyncWindow(m_window);
+
+            int actualWidth  = width;
+            int actualHeight = height;
+            SDL_GetWindowSize(m_window, &actualWidth, &actualHeight);
+            if (actualWidth > 0 && actualHeight > 0) {
+                m_settings.width  = actualWidth;
+                m_settings.height = actualHeight;
+            }
             recalculateDPIScale();
         }
     }
