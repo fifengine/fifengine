@@ -5,6 +5,10 @@
 
 %module(directors="1") fifechan
 
+%{
+#include "gui/fifechan/base/gui_image.h"
+%}
+
 /**
  * Workaround for SWIG 4.x regression that produces false warnings like:
  * "swig/python detected a memory leak of type 'fcn::Color *', no destructor found."
@@ -26,6 +30,8 @@
 
 /* IMPORTS_FCHAN */
 @CMAKE_SWIG_IMPORTS_FCHAN@
+
+%exception;
 
 /* Signed. */
 typedef signed char		        int8_t;
