@@ -25,7 +25,10 @@ if [[ -n "$CLANG_FORMAT" ]]; then
     exit 1
   fi
 else
-  if ! CLANG_FORMAT=$(check_version "clang-format-20") \
+  if ! CLANG_FORMAT=$(check_version "clang-format-22") \
+    && ! CLANG_FORMAT=$(check_version "clang-format-21") \
+    && ! CLANG_FORMAT=$(check_version "clang-format-20") \
+    && ! CLANG_FORMAT=$(check_version "clang-format-19") \
     && ! CLANG_FORMAT=$(check_version "clang-format-18") \
     && ! CLANG_FORMAT=$(check_version "clang-format-17") \
     && ! CLANG_FORMAT=$(check_version "clang-format"); then
