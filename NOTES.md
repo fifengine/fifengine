@@ -14,10 +14,6 @@
      - [ ] testing, see https://packaging.python.org/en/latest/guides/using-testpypi/
      - [ ] production
 
-- [ ] reintroduce `m_lateReverbDelay` field to `audio/effects/soundeffect.h`|cpp:
-  - this was flagged as unused, probably half-baked feature
-  - [ ] Implement the actual reverb delay logic in the audio processing
-  - [ ] Add getter/setter methods for the reverb delay field
 
 ## Unknown Horizons
 

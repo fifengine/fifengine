@@ -91,6 +91,7 @@ namespace FIFE
         m_reflectionsGain(0.05F),
         m_reflectionsDelay(0.007F),
         m_lateReverbGain(1.26F),
+        m_lateReverbDelay(0.011F),
         m_airAbsorptionGainHf(0.994F),
         m_roomRolloffFactor(0.0F),
         m_decayHfLimit(true)
@@ -219,15 +220,15 @@ namespace FIFE
 
     void Reverb::setLateReverbDelay(float value)
     {
-        value              = std::min(value, 0.1F);
-        value              = std::max(value, 0.0F);
-        m_reflectionsDelay = value;
-        alEffectf(m_effect, AL_REVERB_LATE_REVERB_DELAY, m_reflectionsDelay);
+        value             = std::min(value, 0.1F);
+        value             = std::max(value, 0.0F);
+        m_lateReverbDelay = value;
+        alEffectf(m_effect, AL_REVERB_LATE_REVERB_DELAY, m_lateReverbDelay);
     }
 
     float Reverb::getLateReverbDelay() const
     {
-        return m_reflectionsDelay;
+        return m_lateReverbDelay;
     }
 
     void Reverb::setAirAbsorptionGainHf(float value)
@@ -1025,6 +1026,7 @@ namespace FIFE
         m_reflectionsDelay(0.007F),
         m_reflectionsPan(AudioSpaceCoordinate(0.0, 0.0, 0.0)),
         m_lateReverbGain(1.26F),
+        m_lateReverbDelay(0.011F),
         m_lateReverbPan(AudioSpaceCoordinate(0.0, 0.0, 0.0)),
         m_echoTime(0.25F),
         m_echoDepth(0.0F),
@@ -1207,15 +1209,15 @@ namespace FIFE
 
     void EaxReverb::setLateReverbDelay(float value)
     {
-        value              = std::min(value, 0.1F);
-        value              = std::max(value, 0.0F);
-        m_reflectionsDelay = value;
-        alEffectf(m_effect, AL_EAXREVERB_LATE_REVERB_DELAY, m_reflectionsDelay);
+        value             = std::min(value, 0.1F);
+        value             = std::max(value, 0.0F);
+        m_lateReverbDelay = value;
+        alEffectf(m_effect, AL_EAXREVERB_LATE_REVERB_DELAY, m_lateReverbDelay);
     }
 
     float EaxReverb::getLateReverbDelay() const
     {
-        return m_reflectionsDelay;
+        return m_lateReverbDelay;
     }
 
     void EaxReverb::setLateReverbPan(AudioSpaceCoordinate const & coordinate)
