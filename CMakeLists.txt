@@ -1177,10 +1177,6 @@ if(ENABLE_FIFEGUI)
   if(BUILD_PYTHON_BINDINGS)
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
 
-    # The fifechan module includes fife headers (e.g. gui/guimanager.i) so it must
-    # import the fife SWIG module to share type information (IGUIManager, etc.).
-    set(CMAKE_SWIG_IMPORTS_FCHAN "%import(module=\"fife\") ${PROJECT_BINARY_DIR}/fife.i\n")
-
     # Files in FIFE_FIFEGUI_SWIG_LIB go into CMAKE_SWIG_INCLUSIONS_FCHAN (fifechan module)
     foreach(filename ${FIFE_FIFEGUI_SWIG_LIB})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
@@ -1348,9 +1344,6 @@ if(BUILD_PYTHON_BINDINGS)
     # See the note on the fife_swig rule above.
     set(SWIG_MODULE_fifechan_swig_EXTRA_DEPS ${FIFE_FIFEGUI_SWIG_LIB})
     swig_add_library(fifechan_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
-
-    # The fifechan module imports the fife module, so it must be built after fife_swig.
-    add_dependencies(fifechan_swig fife_swig)
 
     target_include_directories(fifechan_swig PRIVATE
       ${PROJECT_BINARY_DIR}
