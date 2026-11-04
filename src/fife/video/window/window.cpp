@@ -101,17 +101,17 @@ namespace FIFE
             // the requested resolution. This avoids spanning multiple monitors
             // on X11 with combined virtual screens.
             SDL_DisplayMode targetMode = {};
-            targetMode.w = m_settings.width;
-            targetMode.h = m_settings.height;
-            targetMode.refresh_rate = 0.0f; // Let SDL pick the best refresh rate
+            targetMode.w               = m_settings.width;
+            targetMode.h               = m_settings.height;
+            targetMode.refresh_rate    = 0.0f; // Let SDL pick the best refresh rate
 
             // Try to find a matching mode
-            auto modes = Display::getSupportedModes(m_settings.display);
-            for (auto const& mode : modes) {
-                if (mode.w == m_settings.width && mode.h == m_settings.height) {
-                    targetMode = mode;
-                    break;
-                }
+            auto const modes = Display::getSupportedModes(m_settings.display);
+            auto const mode  = std::find_if(modes.begin(), modes.end(), [this](SDL_DisplayMode const & candidate) {
+                return candidate.w == m_settings.width && candidate.h == m_settings.height;
+            });
+            if (mode != modes.end()) {
+                targetMode = *mode;
             }
 
             if (targetMode.w > 0 && targetMode.h > 0) {
@@ -332,16 +332,16 @@ namespace FIFE
             // Exclusive fullscreen: use a specific display mode that matches
             // the requested resolution.
             SDL_DisplayMode targetMode = {};
-            targetMode.w = m_settings.width;
-            targetMode.h = m_settings.height;
-            targetMode.refresh_rate = 0.0f;
+            targetMode.w               = m_settings.width;
+            targetMode.h               = m_settings.height;
+            targetMode.refresh_rate    = 0.0f;
 
-            auto modes = Display::getSupportedModes(m_settings.display);
-            for (auto const& m : modes) {
-                if (m.w == m_settings.width && m.h == m_settings.height) {
-                    targetMode = m;
-                    break;
-                }
+            auto const modes = Display::getSupportedModes(m_settings.display);
+            auto const mode  = std::find_if(modes.begin(), modes.end(), [this](SDL_DisplayMode const & candidate) {
+                return candidate.w == m_settings.width && candidate.h == m_settings.height;
+            });
+            if (mode != modes.end()) {
+                targetMode = *mode;
             }
 
             if (targetMode.w > 0 && targetMode.h > 0) {

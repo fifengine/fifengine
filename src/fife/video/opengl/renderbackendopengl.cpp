@@ -229,12 +229,12 @@ namespace FIFE
 #if defined(FIFE_OS_LINUX)
         // Enable XRandR monitor enumeration on X11.
         // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
-        const char* video_driver = SDL_GetCurrentVideoDriver();
+        char const * video_driver = SDL_GetCurrentVideoDriver();
         if (video_driver == nullptr || SDL_strcmp(video_driver, "x11") == 0) {
             SDL_SetHint(SDL_HINT_VIDEO_X11_XRANDR, "1");
         }
 #endif
-        
+
         Uint32 const flags = SDL_INIT_VIDEO;
         if (!SDL_InitSubSystem(flags)) {
             throw SDLException(SDL_GetError());
