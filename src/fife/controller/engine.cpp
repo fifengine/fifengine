@@ -212,7 +212,7 @@ namespace FIFE
         // SDL window also destroys the renderer (SDL3) and the GL context the
         // render backend holds.
         WindowMode const nextMode =
-            (m_window->getFullscreenMode() == WindowMode::Fullscreen) ? WindowMode::Windowed : WindowMode::Fullscreen;
+            isFullscreenMode(m_window->getFullscreenMode()) ? WindowMode::Windowed : WindowMode::Fullscreen;
         m_window->setFullscreenMode(nextMode);
         syncSettingsWithWindow();
         for (auto* listener : m_changelisteners) {
@@ -270,7 +270,7 @@ namespace FIFE
         m_window->setWindowIcon(settings.icon);
         m_window->setFullscreenMode(settings.windowMode);
 
-        if (settings.windowMode != WindowMode::Fullscreen) {
+        if (!isFullscreenMode(settings.windowMode)) {
             m_window->setSize(settings.width, settings.height);
             if (settings.x != -1 && settings.y != -1) {
                 m_window->setPosition(settings.x, settings.y);
@@ -305,7 +305,7 @@ namespace FIFE
             m_settings.setEffectiveScreenWidth(static_cast<uint16_t>(std::clamp(width, 1, 65535)));
             m_settings.setEffectiveScreenHeight(static_cast<uint16_t>(std::clamp(height, 1, 65535)));
         }
-        m_settings.setFullScreen(m_window->getFullscreenMode() == WindowMode::Fullscreen);
+        m_settings.setFullScreen(isFullscreenMode(m_window->getFullscreenMode()));
 
         // Publish the remaining fields of the window that actually exists:
         // init() may have fallen back to display 0, and the remembered
@@ -530,6 +530,10 @@ namespace FIFE
                 selectedWidth,
                 selectedHeight));
 
+        // EngineSettings only carries a fullscreen flag, so startup uses the
+        // legacy desktop-fullscreen mode. Borderless and exclusive fullscreen
+        // are selected through WindowSettings/changeWindowMode once the window
+        // exists.
         WindowSettings winSettings;
         winSettings.width       = selectedWidth;
         winSettings.height      = selectedHeight;

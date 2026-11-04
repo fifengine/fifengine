@@ -15,13 +15,21 @@ namespace FIFE
      *  - Windowed: decorated window at the requested size.
      *  - Fullscreen: desktop fullscreen (no display-mode switch).
      *  - Borderless: undecorated window at the requested size (not fullscreen).
+     *  - ExclusiveFullscreen: exclusive fullscreen with a specific display mode.
      */
     enum class WindowMode
     {
-        Windowed   = 0,
-        Fullscreen = 1,
-        Borderless = 2
+        Windowed            = 0,
+        Fullscreen          = 1,
+        Borderless          = 2,
+        ExclusiveFullscreen = 3
     };
+
+    /** @return true for modes that cover the whole display. */
+    inline bool isFullscreenMode(WindowMode mode)
+    {
+        return mode == WindowMode::Fullscreen || mode == WindowMode::ExclusiveFullscreen;
+    }
 
     enum class ScalingMode
     {

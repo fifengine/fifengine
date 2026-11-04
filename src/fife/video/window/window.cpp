@@ -49,6 +49,10 @@ namespace FIFE
         if (displayCount > 0) {
             m_settings.display = std::clamp(m_settings.display, 0, displayCount - 1);
         } else {
+            // SDL guarantees at least one display after SDL_Init(SDL_INIT_VIDEO),
+            // but stay defensive: keep a valid index and let the placement code
+            // below fall back to the primary display if no SDL_DisplayID can be
+            // resolved.
             m_settings.display = 0;
         }
         m_settings.width  = std::max(1, m_settings.width);
@@ -75,18 +79,56 @@ namespace FIFE
         // including negative ones (a monitor left of/above the primary), are
         // explicit.
         SDL_DisplayID const displayID = Display::getDisplayID(m_settings.display);
-        int posX                      = m_settings.x;
-        int posY                      = m_settings.y;
-        if (displayID != 0) {
-            if (posX == -1) {
-                posX = SDL_WINDOWPOS_CENTERED_DISPLAY(displayID);
-            }
-            if (posY == -1) {
-                posY = SDL_WINDOWPOS_CENTERED_DISPLAY(displayID);
-            }
+        // A zero ID means the display index could not be resolved (for example
+        // when no displays are reported). Use SDL's primary-display sentinel
+        // instead of passing an invalid ID through.
+        int const centeredPosition = displayID != 0 ? static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(displayID)) :
+                                                      static_cast<int>(SDL_WINDOWPOS_CENTERED);
+        int posX                   = m_settings.x;
+        int posY                   = m_settings.y;
+        if (posX == -1) {
+            posX = centeredPosition;
+        }
+        if (posY == -1) {
+            posY = centeredPosition;
         }
         if (posX != -1 && posY != -1) {
             SDL_SetWindowPosition(m_window, posX, posY);
+        }
+
+        if (m_settings.windowMode == WindowMode::ExclusiveFullscreen) {
+            // Exclusive fullscreen: use a specific display mode that matches
+            // the requested resolution. This avoids spanning multiple monitors
+            // on X11 with combined virtual screens.
+            SDL_DisplayMode targetMode = {};
+            targetMode.w = m_settings.width;
+            targetMode.h = m_settings.height;
+            targetMode.refresh_rate = 0.0f; // Let SDL pick the best refresh rate
+
+            // Try to find a matching mode
+            auto modes = Display::getSupportedModes(m_settings.display);
+            for (auto const& mode : modes) {
+                if (mode.w == m_settings.width && mode.h == m_settings.height) {
+                    targetMode = mode;
+                    break;
+                }
+            }
+
+            if (targetMode.w > 0 && targetMode.h > 0) {
+                if (SDL_SetWindowFullscreenMode(m_window, &targetMode)) {
+                    SDL_SetWindowBordered(m_window, false);
+                    if (!SDL_SetWindowFullscreen(m_window, true)) {
+                        m_settings.windowMode = WindowMode::Windowed;
+                        SDL_SetWindowBordered(m_window, true);
+                    }
+                } else {
+                    // Fallback to desktop fullscreen
+                    m_settings.windowMode = WindowMode::Fullscreen;
+                }
+            } else {
+                // No matching mode, fallback to desktop fullscreen
+                m_settings.windowMode = WindowMode::Fullscreen;
+            }
         }
 
         if (m_settings.windowMode == WindowMode::Fullscreen) {
@@ -120,13 +162,26 @@ namespace FIFE
         // window that actually exists so callers do not keep using the
         // requested values. While fullscreen, keep the requested (windowed)
         // size so leaving fullscreen can restore it.
-        if (m_settings.windowMode != WindowMode::Fullscreen) {
+        if (!isFullscreenMode(m_settings.windowMode)) {
             int actualWidth  = 0;
             int actualHeight = 0;
+            int actualX      = 0;
+            int actualY      = 0;
+
             SDL_GetWindowSize(m_window, &actualWidth, &actualHeight);
             if (actualWidth > 0 && actualHeight > 0) {
                 m_settings.width  = actualWidth;
                 m_settings.height = actualHeight;
+            }
+
+            // Capture the actual resolved position,
+            // especially if -1 (centered) was requested
+            if (SDL_GetWindowPosition(m_window, &actualX, &actualY)) {
+                m_settings.x            = actualX;
+                m_settings.y            = actualY;
+                m_windowedX             = actualX;
+                m_windowedY             = actualY;
+                m_windowedPositionValid = true;
             }
         }
 
@@ -174,7 +229,7 @@ namespace FIFE
         // In fullscreen mode, the window size is the display bounds.
         // This is necessary for headless environments where
         // SDL_GetWindowSize may not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             return bounds.w;
         }
@@ -191,7 +246,7 @@ namespace FIFE
         // In fullscreen mode, the window size is the display bounds.
         // This is necessary for headless environments where
         // SDL_GetWindowSize may not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             return bounds.h;
         }
@@ -208,7 +263,7 @@ namespace FIFE
         // In fullscreen mode, the pixel size is the display bounds.
         // This is necessary for headless environments where
         // SDL_GetWindowSizeInPixels may not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             return bounds.w;
         }
@@ -225,7 +280,7 @@ namespace FIFE
         // In fullscreen mode, the pixel size is the display bounds.
         // This is necessary for headless environments where
         // SDL_GetWindowSizeInPixels may not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             return bounds.h;
         }
@@ -245,7 +300,7 @@ namespace FIFE
         }
 
         WindowMode const previousMode = m_settings.windowMode;
-        bool const wasFullscreen      = (previousMode == WindowMode::Fullscreen);
+        bool const wasFullscreen      = isFullscreenMode(previousMode);
 
         if (!wasFullscreen) {
             // Remember the windowed geometry (including after a user resize)
@@ -273,7 +328,41 @@ namespace FIFE
 
         m_settings.windowMode = mode;
 
-        if (mode == WindowMode::Fullscreen) {
+        if (mode == WindowMode::ExclusiveFullscreen) {
+            // Exclusive fullscreen: use a specific display mode that matches
+            // the requested resolution.
+            SDL_DisplayMode targetMode = {};
+            targetMode.w = m_settings.width;
+            targetMode.h = m_settings.height;
+            targetMode.refresh_rate = 0.0f;
+
+            auto modes = Display::getSupportedModes(m_settings.display);
+            for (auto const& m : modes) {
+                if (m.w == m_settings.width && m.h == m_settings.height) {
+                    targetMode = m;
+                    break;
+                }
+            }
+
+            if (targetMode.w > 0 && targetMode.h > 0) {
+                if (SDL_SetWindowFullscreenMode(m_window, &targetMode)) {
+                    SDL_SetWindowBordered(m_window, false);
+
+                    // Fallback to windowed, if we failed to enter fullscreen
+                    if (!SDL_SetWindowFullscreen(m_window, true)) {
+                        m_settings.windowMode = WindowMode::Windowed;
+                        SDL_SetWindowBordered(m_window, true);
+                    }
+                } else {
+                    // Fallback to desktop fullscreen
+                    m_settings.windowMode = WindowMode::Fullscreen;
+                }
+            } else {
+                m_settings.windowMode = WindowMode::Fullscreen;
+            }
+        }
+
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
             // Desktop fullscreen: a null fullscreen mode tells SDL3 not to
             // switch the display mode (no resolution change, no flicker).
             SDL_SetWindowFullscreenMode(m_window, nullptr);
@@ -512,7 +601,7 @@ namespace FIFE
         // In fullscreen mode, use display bounds to get the expected size
         // to handle headless environments where SDL_GetWindowSizeInPixels
         // may not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             currentPixelW     = bounds.w;
         } else {
@@ -561,9 +650,10 @@ namespace FIFE
             break;
         case WindowMode::Windowed:
         case WindowMode::Fullscreen:
+        case WindowMode::ExclusiveFullscreen:
         default:
-            // Fullscreen is entered after creation so the window can be
-            // positioned on the configured display first (see create()).
+            // Fullscreen/ExclusiveFullscreen is entered after creation so the
+            // window can be positioned on the configured display first (see create()).
             break;
         }
 
@@ -592,7 +682,7 @@ namespace FIFE
         // In fullscreen mode, use display bounds for sizes
         // to handle headless environments where SDL_GetWindowSize may
         // not reflect the actual fullscreen size.
-        if (m_settings.windowMode == WindowMode::Fullscreen) {
+        if (isFullscreenMode(m_settings.windowMode)) {
             auto const bounds = Display::getDisplayBounds(m_settings.display);
             pointsW           = bounds.w;
             pointsH           = bounds.h;

@@ -56,7 +56,8 @@ namespace FIFE
             std::string const driver(SDL_GetVideoDriver(i));
             m_availableVideoDrivers.push_back(driver);
         }
-        m_videoDriverName = std::string(SDL_GetCurrentVideoDriver());
+        char const * currentVideoDriver = SDL_GetCurrentVideoDriver();
+        m_videoDriverName = currentVideoDriver != nullptr ? std::string(currentVideoDriver) : std::string();
 
         // render driver section (opengl, direct3d, software, ...)
         m_availableRenderDrivers.clear();
@@ -139,7 +140,8 @@ namespace FIFE
 
     std::string DeviceCaps::getDisplayName(uint8_t display) const
     {
-        return {SDL_GetDisplayName(getDisplayId(display))};
+        char const * name = SDL_GetDisplayName(getDisplayId(display));
+        return name != nullptr ? std::string(name) : std::string();
     }
 
     uint32_t DeviceCaps::getDesktopFormat(uint8_t display) const
