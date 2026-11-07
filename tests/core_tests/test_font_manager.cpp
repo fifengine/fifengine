@@ -133,11 +133,11 @@ namespace
     class TestAssetProvider : public AssetProvider
     {
         public:
-            bool canResolve(AssetRequest const & request) const override
+            bool canResolve([[maybe_unused]] AssetRequest const & request) const override
             {
                 return true;
             }
-            AssetHandle resolve(AssetRequest const & request) const override
+            AssetHandle resolve([[maybe_unused]] AssetRequest const & request) const override
             {
                 static uint64_t nextId = 100;
                 return AssetHandle{nextId++};

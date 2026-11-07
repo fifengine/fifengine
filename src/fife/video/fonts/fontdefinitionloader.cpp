@@ -18,17 +18,16 @@
 #include "util/log/logger.h"
 #include "util/xml/xmlhelper.h"
 
-namespace
-{
-    FIFE::Logger& getFontDefLog()
-    {
-        static FIFE::Logger log(LM_VIDEO);
-        return log;
-    }
-} // namespace
-
 namespace FIFE
 {
+    namespace
+    {
+        [[maybe_unused]] Logger& _log()
+        {
+            static Logger log(LM_VIDEO);
+            return log;
+        }
+    } // namespace
 
     std::vector<FontDefinition> FontDefinitionLoader::loadFromXml(std::string const & xmlContent)
     {
@@ -48,7 +47,7 @@ namespace FIFE
 
         char const * version = XML::Attribute(root, "version");
         if (version == nullptr) {
-            // FL_WARN(getFontDefLog(), "<fonts> element is missing 'version' attribute");
+            // FL_WARN(_log(), "<fonts> element is missing 'version' attribute");
         }
 
         std::vector<FontDefinition> result;

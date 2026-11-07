@@ -39,7 +39,7 @@ namespace FIFE
             return log;
         }
 
-        bool shouldLogGuiLikeSurface(SDL_Surface const * surface)
+        [[maybe_unused]] bool shouldLogGuiLikeSurface(SDL_Surface const * surface)
         {
             if (surface == nullptr) {
                 return false;
@@ -47,12 +47,12 @@ namespace FIFE
             return surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80;
         }
 
-        bool shouldLogTargetRect(Rect const & rect)
+        [[maybe_unused]] bool shouldLogTargetRect(Rect const & rect)
         {
             return (rect.w == 33 && rect.h == 16) || (rect.w == 39 && rect.h == 16);
         }
 
-        std::string summarizeSurfaceSamples(SDL_Surface* surface)
+        [[maybe_unused]] std::string summarizeSurfaceSamples(SDL_Surface* surface)
         {
             if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
                 return "samples=unavailable";
@@ -81,7 +81,7 @@ namespace FIFE
                 sampleAt(surface->w / 2, surface->h / 2));
         }
 
-        std::string summarizeSurfaceAlphaCoverage(SDL_Surface* surface)
+        [[maybe_unused]] std::string summarizeSurfaceAlphaCoverage(SDL_Surface* surface)
         {
             if (surface == nullptr || surface->pixels == nullptr || surface->w <= 0 || surface->h <= 0) {
                 return "alpha=unavailable";
