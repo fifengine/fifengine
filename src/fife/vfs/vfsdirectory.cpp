@@ -22,12 +22,9 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_VFS);
             return log;

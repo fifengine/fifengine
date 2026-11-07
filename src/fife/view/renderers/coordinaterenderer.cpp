@@ -37,9 +37,6 @@ namespace FIFE
         }
     } // namespace
 
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
     namespace
     {
         [[maybe_unused]] Logger& _log()

@@ -27,13 +27,13 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_VIDEO);
             return log;
         }
 
-        Logger& _guiLog()
+        [[maybe_unused]] Logger& _guiLog()
         {
             static Logger log(LM_GUI);
             return log;

@@ -29,9 +29,6 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
     namespace
     {
         Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
@@ -96,7 +93,7 @@ namespace FIFE
             return static_cast<uint16_t>(value);
         }
 
-        int32_t toDisplayWindowPos(uint8_t displayIndex, bool centered)
+        [[maybe_unused]] int32_t toDisplayWindowPos(uint8_t displayIndex, bool centered)
         {
             return centered ? static_cast<int32_t>(SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex)) :
                               static_cast<int32_t>(SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex));

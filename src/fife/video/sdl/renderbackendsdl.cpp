@@ -28,12 +28,9 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_VIDEO);
             return log;
@@ -48,10 +45,40 @@ namespace FIFE
             return static_cast<int32_t>(value);
         }
 
-        int32_t toDisplayWindowPos(uint8_t displayIndex, bool centered)
+        [[maybe_unused]] int32_t toDisplayWindowPos(uint8_t displayIndex, bool centered)
         {
             return centered ? static_cast<int32_t>(SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex)) :
                               static_cast<int32_t>(SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex));
+        }
+
+        /**
+         * Read the renderer's current target.
+         *
+         * The returned surface uses the renderer's native pixel format and
+         * pixel dimensions. Returns nullptr and logs the SDL error on failure.
+         */
+        SDL_Surface* readRenderTarget(SDL_Renderer* renderer)
+        {
+            if (renderer == nullptr) {
+                return nullptr;
+            }
+            SDL_Surface* surface = SDL_RenderReadPixels(renderer, nullptr);
+            if (surface == nullptr) {
+                FL_WARN(_log(), std::format("captureScreen: SDL_RenderReadPixels failed: {}", SDL_GetError()));
+            }
+            return surface;
+        }
+
+        /** Save a screenshot as an opaque RGB PNG. */
+        void saveRgbScreenshot(std::string const & filename, SDL_Surface* source)
+        {
+            SDL_Surface* rgb = SDL_ConvertSurface(source, SDL_PIXELFORMAT_RGB24);
+            if (rgb == nullptr) {
+                FL_WARN(_log(), std::format("captureScreen: SDL_ConvertSurface failed: {}", SDL_GetError()));
+                return;
+            }
+            Image::saveAsPng(filename, *rgb);
+            SDL_DestroySurface(rgb);
         }
     } // namespace
 
@@ -741,117 +768,112 @@ namespace FIFE
 
     void RenderBackendSDL::captureScreen(std::string const & filename)
     {
-        if (m_screen != nullptr) {
-            uint32_t const swidth       = getWidth();
-            uint32_t const sheight      = getHeight();
-            int32_t const surfaceWidth  = toInt32Dimension(swidth);
-            int32_t const surfaceHeight = toInt32Dimension(sheight);
-
-            SDL_Surface* surface = SDL_CreateSurface(surfaceWidth, surfaceHeight, SDL_PIXELFORMAT_RGB24);
-
-            if (surface == nullptr) {
-                return;
-            }
-
-            SDL_BlitSurface(m_screen, nullptr, surface, nullptr);
-
-            Image::saveAsPng(filename, *surface);
-            SDL_DestroySurface(surface);
+        SDL_Surface* captured = readRenderTarget(m_renderer);
+        if (captured == nullptr) {
+            return;
         }
+        saveRgbScreenshot(filename, captured);
+        SDL_DestroySurface(captured);
     }
 
     void RenderBackendSDL::captureScreen(std::string const & filename, uint32_t width, uint32_t height)
     {
-        if (m_screen != nullptr) {
-            uint32_t const swidth  = getWidth();
-            uint32_t const sheight = getHeight();
-            bool const same_size   = (width == swidth && height == sheight);
-
-            if (width < 1 || height < 1) {
-                return;
-            }
-
-            if (same_size) {
-                captureScreen(filename);
-                return;
-            }
-            // create source surface
-            SDL_Surface* src =
-                SDL_CreateSurface(toInt32Dimension(swidth), toInt32Dimension(sheight), SDL_PIXELFORMAT_RGBA8888);
-
-            if (src == nullptr) {
-                return;
-            }
-            // copy screen suface to source surface
-            SDL_BlitSurface(m_screen, nullptr, src, nullptr);
-            // create destination surface
-            SDL_Surface* dst =
-                SDL_CreateSurface(toInt32Dimension(width), toInt32Dimension(height), SDL_PIXELFORMAT_RGBA8888);
-
-            auto* src_pointer          = static_cast<uint32_t*>(src->pixels);
-            uint32_t* src_help_pointer = src_pointer;
-            auto* dst_pointer          = static_cast<uint32_t*>(dst->pixels);
-
-            int32_t x    = 0;
-            int32_t y    = 0;
-            auto sx      = static_cast<int32_t>(0xffff * src->w / dst->w);
-            auto sy      = static_cast<int32_t>(0xffff * src->h / dst->h);
-            int32_t sx_c = 0;
-            int32_t sy_c = 0;
-
-            // Allocates memory and calculates row wide&height
-            std::vector<int32_t> sx_a(static_cast<size_t>(dst->w) + 1);
-            for (x = 0; x <= dst->w; x++) {
-                sx_a.at(static_cast<size_t>(x)) = sx_c;
-                sx_c &= 0xffff;
-                sx_c += sx;
-            }
-
-            std::vector<int32_t> sy_a(static_cast<size_t>(dst->h) + 1);
-            for (y = 0; y <= dst->h; y++) {
-                sy_a.at(static_cast<size_t>(y)) = sy_c;
-                sy_c &= 0xffff;
-                sy_c += sy;
-            }
-
-            // Transfers the image data
-
-            if (SDL_MUSTLOCK(src)) {
-                SDL_LockSurface(src);
-            }
-
-            if (SDL_MUSTLOCK(dst)) {
-                SDL_LockSurface(dst);
-            }
-
-            for (y = 0; y < dst->h; y++) {
-                src_pointer = src_help_pointer;
-                for (x = 0; x < dst->w; x++) {
-                    *dst_pointer = *src_pointer;
-                    src_pointer += // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-                        (sx_a.at(static_cast<size_t>(x) + 1U) >> 16);
-                    ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-                }
-                size_t const syIdx        = static_cast<size_t>(y) + 1U;
-                auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
-                size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
-                src_help_pointer          = reinterpret_cast<uint32_t*>(
-                    srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-            }
-
-            if (SDL_MUSTLOCK(dst)) {
-                SDL_UnlockSurface(dst);
-            }
-            if (SDL_MUSTLOCK(src)) {
-                SDL_UnlockSurface(src);
-            }
-
-            Image::saveAsPng(filename, *dst);
-
-            // Free memory
-            SDL_DestroySurface(src);
-            SDL_DestroySurface(dst);
+        if (width < 1 || height < 1) {
+            return;
         }
+
+        SDL_Surface* captured = readRenderTarget(m_renderer);
+        if (captured == nullptr) {
+            return;
+        }
+
+        // No scaling needed: save the captured target as-is.
+        if (width == static_cast<uint32_t>(captured->w) && height == static_cast<uint32_t>(captured->h)) {
+            saveRgbScreenshot(filename, captured);
+            SDL_DestroySurface(captured);
+            return;
+        }
+
+        // The scalar downscale below assumes 32-bit RGBA pixels, while the
+        // render target may use a different native format.
+        SDL_Surface* src = SDL_ConvertSurface(captured, SDL_PIXELFORMAT_RGBA8888);
+        SDL_DestroySurface(captured);
+        if (src == nullptr) {
+            FL_WARN(_log(), std::format("captureScreen: SDL_ConvertSurface failed: {}", SDL_GetError()));
+            return;
+        }
+
+        SDL_Surface* dst =
+            SDL_CreateSurface(toInt32Dimension(width), toInt32Dimension(height), SDL_PIXELFORMAT_RGBA8888);
+        if (dst == nullptr) {
+            FL_WARN(_log(), std::format("captureScreen: SDL_CreateSurface failed: {}", SDL_GetError()));
+            SDL_DestroySurface(src);
+            return;
+        }
+
+        auto* src_pointer          = static_cast<uint32_t*>(src->pixels);
+        uint32_t* src_help_pointer = src_pointer;
+        auto* dst_pointer          = static_cast<uint32_t*>(dst->pixels);
+
+        int32_t x    = 0;
+        int32_t y    = 0;
+        auto sx      = static_cast<int32_t>(0xffff * src->w / dst->w);
+        auto sy      = static_cast<int32_t>(0xffff * src->h / dst->h);
+        int32_t sx_c = 0;
+        int32_t sy_c = 0;
+
+        // Allocates memory and calculates row wide&height
+        std::vector<int32_t> sx_a(static_cast<size_t>(dst->w) + 1);
+        for (x = 0; x <= dst->w; x++) {
+            sx_a.at(static_cast<size_t>(x)) = sx_c;
+            sx_c &= 0xffff;
+            sx_c += sx;
+        }
+
+        std::vector<int32_t> sy_a(static_cast<size_t>(dst->h) + 1);
+        for (y = 0; y <= dst->h; y++) {
+            sy_a.at(static_cast<size_t>(y)) = sy_c;
+            sy_c &= 0xffff;
+            sy_c += sy;
+        }
+
+        // Transfers the image data
+
+        if (SDL_MUSTLOCK(src)) {
+            SDL_LockSurface(src);
+        }
+
+        if (SDL_MUSTLOCK(dst)) {
+            SDL_LockSurface(dst);
+        }
+
+        for (y = 0; y < dst->h; y++) {
+            src_pointer = src_help_pointer;
+            for (x = 0; x < dst->w; x++) {
+                *dst_pointer = *src_pointer;
+                src_pointer += // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                    (sx_a.at(static_cast<size_t>(x) + 1U) >> 16);
+                ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+            }
+            size_t const syIdx        = static_cast<size_t>(y) + 1U;
+            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
+            src_help_pointer          = reinterpret_cast<uint32_t*>(
+                srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        }
+
+        if (SDL_MUSTLOCK(dst)) {
+            SDL_UnlockSurface(dst);
+        }
+        if (SDL_MUSTLOCK(src)) {
+            SDL_UnlockSurface(src);
+        }
+
+        Image::saveAsPng(filename, *dst);
+
+        // Free memory
+        SDL_DestroySurface(src);
+        SDL_DestroySurface(dst);
     }
 
     void RenderBackendSDL::setClipArea(Rect const & cliparea, bool clear)

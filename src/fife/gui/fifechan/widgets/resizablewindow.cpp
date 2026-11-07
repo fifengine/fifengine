@@ -22,7 +22,6 @@ namespace fcn
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
-        m_cursors(),
         m_resizable(true),
         m_resizableTop(true),
         m_resizableRight(true),
@@ -33,7 +32,8 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false)
+        m_shove(false),
+        m_cursors()
     {
 
         addKeyListener(this);
@@ -45,7 +45,6 @@ namespace fcn
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
-        m_cursors(),
         m_resizable(resizable),
         m_resizableTop(true),
         m_resizableRight(true),
@@ -56,7 +55,8 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false)
+        m_shove(false),
+        m_cursors()
     {
 
         addKeyListener(this);
@@ -68,7 +68,6 @@ namespace fcn
 
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
-        m_cursors(),
         m_resizable(resizable),
         m_resizableTop(true),
         m_resizableRight(true),
@@ -79,7 +78,8 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false)
+        m_shove(false),
+        m_cursors()
     {
 
         setCaption(caption);

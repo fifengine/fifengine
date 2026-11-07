@@ -24,7 +24,8 @@ namespace FIFE
     namespace
     {
         uint64_t const UNDEFINED_TIME_DELTA = 999999;
-        Logger& _log()
+
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_UTIL);
             return log;

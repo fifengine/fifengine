@@ -47,7 +47,7 @@ namespace FIFE
 
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_PATHFINDER);
             return log;

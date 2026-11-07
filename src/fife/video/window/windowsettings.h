@@ -43,11 +43,11 @@ namespace FIFE
             int width  = 1280;
             int height = 720;
             /** 0-based display index, not an SDL_DisplayID. */
-            int display       = 0;
-            int x             = -1;
-            int y             = -1;
-            std::string title = "FIFE Application";
-            std::string icon;
+            int display             = 0;
+            int x                   = -1;
+            int y                   = -1;
+            std::string title       = "FIFE Application";
+            std::string icon        = "";
             bool resizable          = true;
             bool vsync              = true;
             bool opengl             = true;

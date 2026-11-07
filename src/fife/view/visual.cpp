@@ -20,9 +20,6 @@
 
 namespace FIFE
 {
-    /** Logger to use for this source file.
-     *  @relates Logger
-     */
     namespace
     {
         Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)

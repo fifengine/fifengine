@@ -64,16 +64,16 @@ namespace FIFE
             virtual void onWindowModeChanged(WindowSettings const & newmode) = 0;
             /** The pixel/point ratio of the drawable changed (for example
              *  moving between a Retina and a non-Retina display). */
-            virtual void onDPIScaleChanged(float scale)
+            virtual void onDPIScaleChanged([[maybe_unused]] float scale)
             {
             }
             /** The operating-system UI/content scale changed (for example
              *  moving between Windows monitors at 100% and 150%). This is not
              *  the pixel/point ratio; use it to resize HUD/widget layouts. */
-            virtual void onDisplayScaleChanged(float scale)
+            virtual void onDisplayScaleChanged([[maybe_unused]] float scale)
             {
             }
-            virtual void onWindowResized(int width, int height)
+            virtual void onWindowResized([[maybe_unused]] int width, [[maybe_unused]] int height)
             {
             }
     };

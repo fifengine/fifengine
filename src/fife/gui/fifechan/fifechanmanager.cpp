@@ -50,7 +50,7 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log()
+        [[maybe_unused]] Logger& _log()
         {
             static Logger log(LM_GUI);
             return log;
@@ -67,13 +67,13 @@ namespace FIFE
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
+        m_fonts(),
+        m_widgets(),
         m_had_mouse(false),
         m_had_widget(false),
         m_lastMotionX(0),
         m_lastMotionY(0),
-        m_fonts(),
         m_fontsize(0),
-        m_widgets(),
         m_logic_executed(false),
         m_enabled_console(true)
     {
