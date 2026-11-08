@@ -198,6 +198,17 @@ namespace FIFE
             clearBackBuffer();
         }
 
+        // SDL renderers default to linear texture filtering.
+        // That ignores the engine's texture filtering setting and,
+        // for atlas sub-images, blends opaque texels with the transparent
+        // corners of the tile.
+        // At non-integer zoom levels this shows up as a dark alpha-coverage fringe
+        // along every tile edge (a grey seam between map tiles).
+        // This mirrors the OpenGL backend and honors the configured filtering for new textures.
+        SDL_SetDefaultTextureScaleMode(
+            m_renderer,
+            getTextureFiltering() == TEXTURE_FILTER_NONE ? SDL_SCALEMODE_NEAREST : SDL_SCALEMODE_LINEAR);
+
         // Create a dummy surface if we don't have one yet
         if (m_screen == nullptr && m_window != nullptr) {
             int w = 0;
