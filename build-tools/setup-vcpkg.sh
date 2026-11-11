@@ -56,8 +56,12 @@ apt-get install -y autoconf autoconf-archive automake libtool
 # Packages required to build SDL3
 # See https://wiki.libsdl.org/SDL3/README-linux#build-dependencies
 
+# Note: cmake is required and the devcontainer ships v4 in /opt/cmake/bin,
+# which is on PATH. It's removed from the install list here to avoid installing
+# an older version from apt. Trixie ships only v3+, which is too old for vcpkg.
+
 apt-get install -y build-essential git make \
-  pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+  pkg-config ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
   libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
   libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
   libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
@@ -65,7 +69,13 @@ apt-get install -y build-essential git make \
   libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev \
   libglu1-mesa-dev
 
+# Packages required for SDL3 with X11 support
+
 apt-get install -y libx11-dev libxft-dev libxext-dev
+
+# Packages required for SDL3 with Wayland support
+
+apt-get install -y libwayland-dev libxkbcommon-dev libegl1-mesa-dev
 
 # Packages required to build for Glew
 
