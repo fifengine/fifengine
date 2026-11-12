@@ -14,16 +14,14 @@
      - [ ] testing, see https://packaging.python.org/en/latest/guides/using-testpypi/
      - [ ] production
 
-
 ## Unknown Horizons
 
 - Open Issues with "fife" label:
   - https://github.com/unknown-horizons/unknown-horizons/issues?q=is%3Aissue%20state%3Aopen%20label%3Afife
 - Focus on:
-  - SDL3 migration
-  - transparency and alpha blending issues
-  - HDPI + window + scaling + fullscreen + multi-monitor support
-  - Swig "builtin"
+  - [ ] HDPI + window + scaling + fullscreen + multi-monitor support
+  - [ ] get fifengine from PyPI and use it in Unknown Horizons
+  - [ ] research Swig "builtin"
 
 ## Clang Tidy
 
@@ -38,3 +36,5 @@
   - https://github.com/fifengine/fifengine/actions/runs/26370673220/job/77622203639#step:23:8009
 - 03.06.2026: L2737
   - https://github.com/fifengine/fifengine/actions/runs/26895164211/job/79331958884#step:23:2738
+- 12.11.2026: L1057
+  - https://github.com/fifengine/fifengine/actions/runs/43225946799/job/131209032789#step:26:1057

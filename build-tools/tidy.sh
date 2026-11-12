@@ -24,7 +24,7 @@
 #
 # Notes
 # - This script discovers a compatible clang-tidy binary in this order:
-#   CLANG_TIDY env var, then clang-tidy-20/19/18/17 fallbacks.
+#   CLANG_TIDY env var, then clang-tidy-22/20/19/18/17 fallbacks.
 # - Exit code is propagated from clang-tidy.
 # -----------------------------------------------------------------------------
 
@@ -69,6 +69,7 @@ CLANG_TIDY=${CLANG_TIDY:-clang-tidy}
 
 # Pick first compatible clang-tidy.
 if ! CLANG_TIDY=$(check_tidy_version "$CLANG_TIDY") \
+  && ! CLANG_TIDY=$(check_tidy_version "clang-tidy-22") \
   && ! CLANG_TIDY=$(check_tidy_version "clang-tidy-20") \
   && ! CLANG_TIDY=$(check_tidy_version "clang-tidy-19") \
   && ! CLANG_TIDY=$(check_tidy_version "clang-tidy-18") \
