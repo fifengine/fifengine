@@ -354,7 +354,7 @@ namespace FIFE
         if (m_transition) {
             CellCache* cache = m_transition->m_layer->getCellCache();
             if (cache != nullptr) {
-                Cell* cell = cache->getCell(m_transition->m_mc);
+                auto* cell = cache->getCell(m_transition->m_mc);
                 if (cell != nullptr) {
                     m_neighbors.push_back(cell);
                 }

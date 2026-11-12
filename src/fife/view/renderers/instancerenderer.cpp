@@ -342,7 +342,6 @@ namespace FIFE
         auto it = transparentInstances.begin();
         for (; it != transparentInstances.end(); ++it) {
             RenderItem& vc      = *(it->second);
-            Instance* instance  = vc.instance;
             float const vertexZ = it->first;
 
             std::array<uint8_t, 4> coloringColor{};
@@ -350,7 +349,7 @@ namespace FIFE
             bool recoloring     = false;
             if (any_effects) {
                 // coloring
-                auto coloring_it    = m_instance_colorings.find(instance);
+                auto coloring_it    = m_instance_colorings.find(vc.instance);
                 bool const coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
                     coloringColor.at(0) = coloring_it->second.r;
@@ -360,7 +359,7 @@ namespace FIFE
                     recoloring          = true;
                 }
                 // outline
-                auto outline_it    = m_instance_outlines.find(instance);
+                auto outline_it    = m_instance_outlines.find(vc.instance);
                 bool const outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {

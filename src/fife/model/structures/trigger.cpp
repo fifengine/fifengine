@@ -336,7 +336,7 @@ namespace FIFE
             ModelCoordinate coord = (*it)->getLayerCoordinates();
             coord.x += mc.x;
             coord.y += mc.y;
-            Cell* c = cache->getCell(coord);
+            auto* c = cache->getCell(coord);
             if (c != nullptr) {
                 newCells.push_back(c);
             }

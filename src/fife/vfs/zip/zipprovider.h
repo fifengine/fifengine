@@ -15,12 +15,8 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "vfs/vfssource.h"
 #include "vfs/vfssourceprovider.h"
-
-namespace FIFE
-{
-    class VFSSource;
-}
 
 namespace FIFE
 {

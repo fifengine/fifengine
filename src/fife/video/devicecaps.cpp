@@ -30,7 +30,7 @@ namespace FIFE
 
     DeviceCaps::~DeviceCaps() = default;
 
-    ScreenMode::ScreenMode() : m_width(0), m_height(0), m_refreshRate(0.0f), m_format(0), m_depth(0)
+    ScreenMode::ScreenMode() : m_width(0), m_height(0), m_refreshRate(0.0F), m_format(0), m_depth(0)
     {
     }
 
@@ -199,7 +199,7 @@ namespace FIFE
         if (sdlModes == nullptr || modeCount <= 0) {
             if (sdlModes != nullptr) {
                 // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
-                SDL_free(sdlModes);
+                SDL_free(static_cast<void*>(sdlModes));
             }
             // A display without any reported mode is not an error, the caller
             // simply gets an empty list to fall back on.
@@ -226,7 +226,7 @@ namespace FIFE
         }
 
         // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
-        SDL_free(sdlModes);
+        SDL_free(static_cast<void*>(sdlModes));
         return modes;
     }
 

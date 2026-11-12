@@ -894,7 +894,7 @@ namespace FIFE
         uint8_t* dst        = static_cast<uint8_t*>(surface->pixels);
         size_t const row    = static_cast<size_t>(width) * 4U;
         for (uint32_t y = 0; y < height; ++y) {
-            std::memcpy(dst + y * static_cast<size_t>(surface->pitch), src + y * row, row);
+            std::memcpy(dst + (y * static_cast<size_t>(surface->pitch)), src + (y * row), row);
         }
         setSurface(surface);
     }

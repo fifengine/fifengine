@@ -440,13 +440,13 @@ namespace FIFE
             // fill renderlist
             for (int const i : index_list) {
                 Entry const * entry = m_entries.at(static_cast<size_t>(i)).get();
-                RenderItem* item    = m_renderItems.at(static_cast<size_t>(entry->instanceIndex)).get();
+                auto const & item   = m_renderItems.at(static_cast<size_t>(entry->instanceIndex));
                 if (!item->image || !entry->visible) {
                     continue;
                 }
 
                 if (item->dimensions.intersects(screenViewport)) {
-                    renderlist.push_back(item);
+                    renderlist.push_back(item.get());
                 }
             }
 

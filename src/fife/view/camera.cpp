@@ -585,7 +585,7 @@ namespace FIFE
         auto instance_it                   = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
-            Instance* i           = (*instance_it)->instance;
+            auto* i               = (*instance_it)->instance;
             RenderItem const & vc = **instance_it;
             if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
                 if (vc.image->isSharedImage()) {
@@ -645,7 +645,7 @@ namespace FIFE
         auto instance_it                   = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
-            Instance* i = (*instance_it)->instance;
+            auto* i = (*instance_it)->instance;
             ;
             RenderItem const & vc = **instance_it;
             if ((vc.dimensions.intersects(screen_rect))) {
@@ -709,7 +709,7 @@ found_non_transparent_pixel:;
     void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates)
     {
         instances.clear();
-        Layer* layer = loc.getLayer();
+        auto* layer = loc.getLayer();
         if (layer == nullptr) {
             return;
         }

@@ -76,7 +76,7 @@ namespace FIFE
                 std::vector<ModelCoordinate> absVec =
                     grid->toMultiCoordinates(currentLoc.getLayerCoordinates(), single);
                 if (!absVec.empty()) {
-                    Cell* absCell = currentLoc.getLayer()->getCellCache()->getCell(absVec.front());
+                    auto* absCell = currentLoc.getLayer()->getCellCache()->getCell(absVec.front());
                     if (absCell != nullptr) {
                         m_absoluteCache->insert(absCell);
                     }

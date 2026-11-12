@@ -58,7 +58,7 @@ namespace FIFE
         m_settings.width  = std::max(1, m_settings.width);
         m_settings.height = std::max(1, m_settings.height);
 
-        SDL_WindowFlags flags = toSDLFlags();
+        SDL_WindowFlags const flags = toSDLFlags();
 
         m_window = SDL_CreateWindow(m_settings.title.c_str(), m_settings.width, m_settings.height, flags);
 
@@ -103,11 +103,11 @@ namespace FIFE
             SDL_DisplayMode targetMode = {};
             targetMode.w               = m_settings.width;
             targetMode.h               = m_settings.height;
-            targetMode.refresh_rate    = 0.0f; // Let SDL pick the best refresh rate
+            targetMode.refresh_rate    = 0.0F; // Let SDL pick the best refresh rate
 
             // Try to find a matching mode
             auto const modes = Display::getSupportedModes(m_settings.display);
-            auto const mode  = std::find_if(modes.begin(), modes.end(), [this](SDL_DisplayMode const & candidate) {
+            auto const mode  = std::ranges::find_if(modes, [this](SDL_DisplayMode const & candidate) {
                 return candidate.w == m_settings.width && candidate.h == m_settings.height;
             });
             if (mode != modes.end()) {
@@ -194,7 +194,7 @@ namespace FIFE
             // Engine::destroy() calls SDL_Quit() while member objects still
             // own their SDL handles; SDL_VideoQuit has already freed the
             // window at that point. Do not touch it after the subsystem died.
-            if (SDL_WasInit(SDL_INIT_VIDEO)) {
+            if (SDL_WasInit(SDL_INIT_VIDEO) != 0) {
                 // Renderers and GL contexts die with the window; give
                 // listeners a chance to release textures while they are valid.
                 if (signalWindowDestroyed) {
@@ -334,10 +334,10 @@ namespace FIFE
             SDL_DisplayMode targetMode = {};
             targetMode.w               = m_settings.width;
             targetMode.h               = m_settings.height;
-            targetMode.refresh_rate    = 0.0f;
+            targetMode.refresh_rate    = 0.0F;
 
             auto const modes = Display::getSupportedModes(m_settings.display);
-            auto const mode  = std::find_if(modes.begin(), modes.end(), [this](SDL_DisplayMode const & candidate) {
+            auto const mode  = std::ranges::find_if(modes, [this](SDL_DisplayMode const & candidate) {
                 return candidate.w == m_settings.width && candidate.h == m_settings.height;
             });
             if (mode != modes.end()) {
@@ -583,8 +583,8 @@ namespace FIFE
         if (m_window == nullptr) {
             return 0;
         }
-        SDL_DisplayID displayID      = SDL_GetDisplayForWindow(m_window);
-        SDL_DisplayMode const * mode = SDL_GetCurrentDisplayMode(displayID);
+        SDL_DisplayID const displayID = SDL_GetDisplayForWindow(m_window);
+        SDL_DisplayMode const * mode  = SDL_GetCurrentDisplayMode(displayID);
         if (mode != nullptr) {
             return static_cast<int>(mode->refresh_rate);
         }

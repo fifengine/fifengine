@@ -143,7 +143,7 @@ namespace FIFE
                 RenderBackend* rb, Rect const & bubbleRect, Point const & instanceAnchor, SpeechStyle const & style);
 
             IFont* m_font;
-            std::unordered_map<Instance*, SpeechStyle> m_speechStyles;
+            std::unordered_map<Instance const *, SpeechStyle> m_speechStyles;
             std::unordered_set<Instance*> m_styledInstances;
             std::set<uint8_t> m_warnedBubbleTypes;
             std::set<uint8_t> m_warnedTailDirections;

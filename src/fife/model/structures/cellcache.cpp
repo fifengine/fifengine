@@ -944,7 +944,7 @@ namespace FIFE
         std::vector<Cell*> cells;
         std::vector<ModelCoordinate> const coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
         for (auto const & coord : coords) {
-            Cell* c = getCell(coord);
+            auto* c = getCell(coord);
             if (c != nullptr) {
                 if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
                     return cells;
@@ -967,7 +967,7 @@ namespace FIFE
         for (; current.y < target.y; ++current.y) {
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
-                Cell* c = getCell(current);
+                auto* c = getCell(current);
                 if (c != nullptr) {
                     cells.push_back(c);
                 }
@@ -986,7 +986,7 @@ namespace FIFE
         for (; current.y < target.y; ++current.y) {
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
-                Cell* c = getCell(current);
+                auto* c = getCell(current);
                 if ((c != nullptr) && c->getCellType() != CTYPE_NO_BLOCKER) {
                     cells.push_back(c);
                 }
@@ -1006,7 +1006,7 @@ namespace FIFE
         for (; current.y < center.y; current.y++) {
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
-                Cell* c = getCell(current);
+                auto* c = getCell(current);
                 if (c != nullptr) {
                     uint16_t const dx       = static_cast<uint16_t>(center.x - current.x);
                     uint16_t const dy       = static_cast<uint16_t>(center.y - current.y);
@@ -1040,7 +1040,7 @@ namespace FIFE
         current.x = center.x;
         current.y = center.y - radius;
         for (; current.y <= target.y; current.y++) {
-            Cell* c = getCell(current);
+            auto* c = getCell(current);
             if (c != nullptr) {
                 cells.push_back(c);
             }
@@ -1049,7 +1049,7 @@ namespace FIFE
         current.y = center.y;
         current.x = center.x - radius;
         for (; current.x <= target.x; current.x++) {
-            Cell* c = getCell(current);
+            auto* c = getCell(current);
             if (c != nullptr) {
                 cells.push_back(c);
             }

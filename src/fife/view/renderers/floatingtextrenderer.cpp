@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <format>
 #include <limits>
@@ -59,6 +60,11 @@ namespace FIFE
                 {
                     font->setColor(previous.r, previous.g, previous.b, previous.a);
                 }
+
+                FontColorGuard(FontColorGuard const &)            = delete;
+                FontColorGuard& operator=(FontColorGuard const &) = delete;
+                FontColorGuard(FontColorGuard&&)                  = delete;
+                FontColorGuard& operator=(FontColorGuard&&)       = delete;
         };
     } // namespace
 
@@ -153,8 +159,8 @@ namespace FIFE
                 // Leave a gap below the bubble for the tail to span, otherwise its
                 // tip would sit above its base and the triangle would be inverted.
                 int32_t const tailGap = std::max(0, style.tailSize);
-                bub.w                 = contentW + 2 * pad;
-                bub.h                 = imageHeight + 2 * pad;
+                bub.w                 = contentW + (2 * pad);
+                bub.h                 = imageHeight + (2 * pad);
                 bub.x                 = (ir.x + (ir.w / 2)) - (bub.w / 2);
                 bub.y                 = ir.y - imageHeight - pad - tailGap;
 
@@ -181,14 +187,14 @@ namespace FIFE
             }
 
             uint16_t elements = 1;
-            Point const instanceAnchor(ir.x + ir.w / 2, ir.y);
+            Point const instanceAnchor(ir.x + (ir.w / 2), ir.y);
 
             if (hasBubble) {
                 elements += static_cast<uint16_t>(drawBuiltInBubble(m_renderbackend, bub, instanceAnchor, style));
             } else if (style.hasBackgroundOverride || style.hasBorderOverride) {
                 Point const p(textRect.x - pad, textRect.y - pad);
-                uint16_t const w = toRectExtent(textRect.w + 2 * pad);
-                uint16_t const h = toRectExtent(textRect.h + 2 * pad);
+                uint16_t const w = toRectExtent(textRect.w + (2 * pad));
+                uint16_t const h = toRectExtent(textRect.h + (2 * pad));
 
                 if (style.hasBackgroundOverride) {
                     Color const & c = style.backgroundColorOverride;
@@ -276,11 +282,11 @@ namespace FIFE
                 int32_t start;
                 int32_t end;
         };
-        Corner const corners[4] = {
-            {Point(x + cr, y + cr), 180, 270},
-            {Point(x + bw - cr, y + cr), 270, 360},
-            {Point(x + bw - cr, y + bh - cr), 0, 90},
-            {Point(x + cr, y + bh - cr), 90, 180},
+        std::array<Corner, 4> const corners = {
+            Corner{.center = Point(x + cr, y + cr), .start = 180, .end = 270},
+            Corner{.center = Point(x + bw - cr, y + cr), .start = 270, .end = 360},
+            Corner{.center = Point(x + bw - cr, y + bh - cr), .start = 0, .end = 90},
+            Corner{.center = Point(x + cr, y + bh - cr), .start = 90, .end = 180},
         };
 
         // 90 degree segments rather than full circles: together with the three
@@ -304,7 +310,7 @@ namespace FIFE
         auto const fillBodyRects = [&]() {
             rb->fillRectangle(
                 Point(x + cr, y),
-                toRectExtent(bw - 2 * cr),
+                toRectExtent(bw - (2 * cr)),
                 toRectExtent(bh),
                 bg.getR(),
                 bg.getG(),
@@ -313,7 +319,7 @@ namespace FIFE
             rb->fillRectangle(
                 Point(x, y + cr),
                 toRectExtent(cr),
-                toRectExtent(bh - 2 * cr),
+                toRectExtent(bh - (2 * cr)),
                 bg.getR(),
                 bg.getG(),
                 bg.getB(),
@@ -321,7 +327,7 @@ namespace FIFE
             rb->fillRectangle(
                 Point(x + bw - cr, y + cr),
                 toRectExtent(cr),
-                toRectExtent(bh - 2 * cr),
+                toRectExtent(bh - (2 * cr)),
                 bg.getR(),
                 bg.getG(),
                 bg.getB(),
@@ -456,7 +462,7 @@ namespace FIFE
 
     SpeechStyle const & FloatingTextRenderer::getEffectiveStyle(Instance const * instance) const
     {
-        auto const it = m_speechStyles.find(const_cast<Instance*>(instance));
+        auto const it = m_speechStyles.find(instance);
         return it != m_speechStyles.end() ? it->second : m_defaultStyle;
     }
 

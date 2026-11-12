@@ -28,7 +28,7 @@ class MockFontFace : public FontFace
         MockFontFace() : FontFace(AssetHandle{1})
         {
         }
-        bool supports(uint32_t) const override
+        bool supports([[maybe_unused]] uint32_t codepoint) const override
         {
             return true;
         }

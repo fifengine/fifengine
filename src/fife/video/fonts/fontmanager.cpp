@@ -96,7 +96,7 @@ namespace FIFE
         if (m_families.empty()) {
             return std::nullopt;
         }
-        auto const it = std::min_element(m_families.begin(), m_families.end(), [](auto const & lhs, auto const & rhs) {
+        auto const it = std::ranges::min_element(m_families, [](auto const & lhs, auto const & rhs) {
             return lhs.first < rhs.first;
         });
         return it->first;

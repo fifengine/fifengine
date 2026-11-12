@@ -200,7 +200,7 @@ namespace FIFE
     RenderBackendOpenGL::~RenderBackendOpenGL()
     {
         if (m_context != nullptr) {
-            if (SDL_WasInit(SDL_INIT_VIDEO)) {
+            if (SDL_WasInit(SDL_INIT_VIDEO) != 0) {
                 glDeleteTextures(1, &m_maskOverlay);
                 if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
                     glDeleteFramebuffers(1, &m_fbo_id);
@@ -209,7 +209,7 @@ namespace FIFE
             }
             m_context = nullptr;
         }
-        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO)) {
+        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO) != 0) {
             SDL_DestroyWindow(m_window);
             deinit();
         }
@@ -223,7 +223,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::init(std::string const & driver)
     {
-#if defined(FIFE_OS_LINUX)
+#ifdef FIFE_OS_LINUX
         // Enable XRandR monitor enumeration on X11.
         // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
         char const * video_driver = SDL_GetCurrentVideoDriver();
@@ -319,7 +319,7 @@ namespace FIFE
                     _log,
                     std::format(
                         "RenderBackendOpenGLError initializing GLEW!{}",
-                        reinterpret_cast<char const *>(glewGetErrorString(glewError))));
+                        static_cast<char const *>(static_cast<void const *>(glewGetErrorString(glewError)))));
             }
             // A new context starts from GL defaults; forget the cached state
             // of the previous context so the next draw calls re-apply it.
@@ -1969,11 +1969,11 @@ namespace FIFE
         // GL_CULL_FACE is on with GL_CCW front faces, so the winding has to match
         // the other filled primitives or the triangle is culled. Callers should
         // not have to care, so normalise it here.
-        Point v0            = p1;
+        Point const & v0    = p1;
         Point v1            = p2;
         Point v2            = p3;
-        int64_t const cross = static_cast<int64_t>(v1.x - v0.x) * static_cast<int64_t>(v2.y - v0.y) -
-                              static_cast<int64_t>(v1.y - v0.y) * static_cast<int64_t>(v2.x - v0.x);
+        int64_t const cross = (static_cast<int64_t>(v1.x - v0.x) * static_cast<int64_t>(v2.y - v0.y)) -
+                              (static_cast<int64_t>(v1.y - v0.y) * static_cast<int64_t>(v2.x - v0.x));
         if (cross > 0) {
             std::swap(v1, v2);
         }
@@ -2982,9 +2982,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
+            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
         }
 
         if (SDL_MUSTLOCK(dst)) {

@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -35,7 +37,7 @@ TEST_CASE("WindowSettings_DefaultValues")
     CHECK(s.x == -1);
     CHECK(s.y == -1);
     CHECK(s.title == "FIFE Application");
-    CHECK(s.icon == "");
+    CHECK(s.icon.empty());
     CHECK(s.resizable == true);
     CHECK(s.vsync == true);
     CHECK(s.opengl == true);
@@ -307,6 +309,40 @@ namespace
             throw std::runtime_error(std::string("SDL_Init failed: ") + SDL_GetError());
         }
     }
+
+    // Whether a Wayland compositor is managing this session. XWayland reports
+    // the "x11" driver, but WAYLAND_DISPLAY still points at the compositor.
+    bool hasWaylandCompositor()
+    {
+        char const * const waylandDisplay = std::getenv("WAYLAND_DISPLAY");
+        if (waylandDisplay != nullptr && *waylandDisplay != '\0') {
+            return true;
+        }
+        char const * const sessionType = std::getenv("XDG_SESSION_TYPE");
+        return sessionType != nullptr && std::string_view{sessionType} == "wayland";
+    }
+
+    bool supportsExplicitWindowPositioning()
+    {
+        char const * const driver = SDL_GetCurrentVideoDriver();
+        if (driver == nullptr) {
+            return false;
+        }
+        std::string_view const name{driver};
+
+        // Wayland compositors don't allow client-side positioning
+        if (name == "wayland") {
+            return false;
+        }
+
+        // X11 running under Wayland (XWayland) has the same limitation
+        if (name == "x11" && hasWaylandCompositor()) {
+            return false;
+        }
+
+        // Everything else (x11, windows, cocoa, dummy, offscreen) supports it
+        return true;
+    }
 } // namespace
 
 TEST_CASE("Window_DisplayScaleIsPositiveAndResetsOnDestroy")
@@ -377,6 +413,9 @@ TEST_CASE("WindowCreate_FullscreenUsesDesktopModeOnTargetDisplay")
 TEST_CASE("WindowCreate_NegativePositionIsExplicit")
 {
     ensureVideoInitialized();
+    if (!supportsExplicitWindowPositioning()) {
+        SKIP("Wayland compositor controls window placement; exact positions are not supported");
+    }
     FIFE::Window window;
     WindowSettings settings;
     settings.width      = 800;
@@ -420,11 +459,16 @@ TEST_CASE("WindowMode_BorderlessRoundTripKeepsGeometry")
     CHECK(window.getFullscreenMode() == WindowMode::Borderless);
     CHECK(window.getWidthInPoints() == 1280);
     CHECK(window.getHeightInPoints() == 720);
-    int beforeX = 0;
-    int beforeY = 0;
-    REQUIRE(SDL_GetWindowPosition(window.getSDLWindow(), &beforeX, &beforeY));
-    CHECK(beforeX == -500);
-    CHECK(beforeY == -300);
+    // Exact placement is only meaningful on windowing systems that honour
+    // client requests; see supportsExplicitWindowPositioning().
+    bool const assertExactPosition = supportsExplicitWindowPositioning();
+    int beforeX                    = 0;
+    int beforeY                    = 0;
+    if (assertExactPosition) {
+        REQUIRE(SDL_GetWindowPosition(window.getSDLWindow(), &beforeX, &beforeY));
+        CHECK(beforeX == -500);
+        CHECK(beforeY == -300);
+    }
 
     window.setFullscreenMode(WindowMode::Fullscreen);
     CHECK(window.getFullscreenMode() == WindowMode::Fullscreen);
@@ -436,11 +480,13 @@ TEST_CASE("WindowMode_BorderlessRoundTripKeepsGeometry")
     CHECK(window.getFullscreenMode() == WindowMode::Borderless);
     CHECK(window.getWidthInPoints() == 1280);
     CHECK(window.getHeightInPoints() == 720);
-    int afterX = 0;
-    int afterY = 0;
-    REQUIRE(SDL_GetWindowPosition(window.getSDLWindow(), &afterX, &afterY));
-    CHECK(afterX == beforeX);
-    CHECK(afterY == beforeY);
+    if (assertExactPosition) {
+        int afterX = 0;
+        int afterY = 0;
+        REQUIRE(SDL_GetWindowPosition(window.getSDLWindow(), &afterX, &afterY));
+        CHECK(afterX == beforeX);
+        CHECK(afterY == beforeY);
+    }
     window.destroy();
 }
 

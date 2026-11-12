@@ -33,11 +33,11 @@ class MockProvider : public AssetProvider
         explicit MockProvider(int prio, bool can, AssetHandle handle) : m_prio(prio), m_can(can), m_handle(handle)
         {
         }
-        bool canResolve(AssetRequest const &) const override
+        bool canResolve([[maybe_unused]] AssetRequest const & request) const override
         {
             return m_can;
         }
-        AssetHandle resolve(AssetRequest const &) const override
+        AssetHandle resolve([[maybe_unused]] AssetRequest const & request) const override
         {
             return m_handle;
         }
@@ -127,7 +127,9 @@ TEST_CASE("Empty AssetResolver returns invalid handle", "[asset][resolver]")
 TEST_CASE("AssetHandle IDs are unique across calls", "[asset][resolver]")
 {
     std::vector<uint64_t> ids;
-    AssetRequest req1, req2, req3;
+    AssetRequest req1;
+    AssetRequest req2;
+    AssetRequest req3;
     req1.source = "unique1.txt";
     req2.source = "unique2.txt";
     req3.source = "unique3.txt";

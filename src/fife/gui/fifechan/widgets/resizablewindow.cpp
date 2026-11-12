@@ -32,8 +32,7 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false),
-        m_cursors()
+        m_shove(false)
     {
 
         addKeyListener(this);
@@ -55,8 +54,7 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false),
-        m_cursors()
+        m_shove(false)
     {
 
         addKeyListener(this);
@@ -78,8 +76,7 @@ namespace fcn
         m_resizeRight(false),
         m_resizeBottom(false),
         m_resizeLeft(false),
-        m_shove(false),
-        m_cursors()
+        m_shove(false)
     {
 
         setCaption(caption);

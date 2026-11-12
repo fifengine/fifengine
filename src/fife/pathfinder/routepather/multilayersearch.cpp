@@ -526,7 +526,7 @@ namespace FIFE
             int32_t const end = startZone;
 
             std::list<Zone*> betweenZones;
-            Zone* tempZone = distanceZoneMap.find(current)->second;
+            auto* tempZone = distanceZoneMap.find(current)->second;
             betweenZones.push_back(tempZone);
             while (current != end) {
                 std::size_t const currentIndex = toIndex(current);
@@ -552,7 +552,7 @@ namespace FIFE
                     continue;
                 }
 
-                Cell* transCell = nullptr;
+                Cell* transCell = nullptr; // NOLINT(misc-const-correctness): null sentinel is reassigned below
                 double nextCost = 0.0;
                 Location newLoc = lastLoc;
                 for (auto& tempCell : tempCells) {

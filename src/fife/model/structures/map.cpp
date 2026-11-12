@@ -181,7 +181,7 @@ namespace FIFE
             if ((*it)->update()) {
                 m_changedLayers.push_back(it->get());
             }
-            CellCache* cache = (*it)->getCellCache();
+            auto* cache = (*it)->getCellCache();
             if (cache != nullptr) {
                 cellCaches.push_back(cache);
             }

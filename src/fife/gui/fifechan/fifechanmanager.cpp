@@ -67,8 +67,6 @@ namespace FIFE
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
-        m_fonts(),
-        m_widgets(),
         m_had_mouse(false),
         m_had_widget(false),
         m_lastMotionX(0),
@@ -114,8 +112,8 @@ namespace FIFE
             if (evt.type == SDL_EVENT_FINGER_MOTION) {
                 SDL_Event wheelEvt     = evt;
                 wheelEvt.type          = SDL_EVENT_MOUSE_WHEEL;
-                wheelEvt.wheel.x       = static_cast<float>(evt.tfinger.dx);
-                wheelEvt.wheel.y       = static_cast<float>(evt.tfinger.dy);
+                wheelEvt.wheel.x       = evt.tfinger.dx;
+                wheelEvt.wheel.y       = evt.tfinger.dy;
                 wheelEvt.wheel.mouse_x = static_cast<float>(static_cast<int32_t>(evt.tfinger.x));
                 wheelEvt.wheel.mouse_y = static_cast<float>(static_cast<int32_t>(evt.tfinger.y));
                 evt                    = wheelEvt;

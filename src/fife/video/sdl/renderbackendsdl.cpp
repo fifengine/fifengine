@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <format>
 #include <limits>
@@ -98,7 +99,7 @@ namespace FIFE
             SDL_DestroyRenderer(m_renderer);
             m_renderer = nullptr;
         }
-        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO)) {
+        if (m_windowObject == nullptr && SDL_WasInit(SDL_INIT_VIDEO) != 0) {
             SDL_DestroyWindow(m_window);
         }
         deinit();
@@ -112,7 +113,7 @@ namespace FIFE
 
     void RenderBackendSDL::init(std::string const & driver)
     {
-#if defined(FIFE_OS_LINUX)
+#ifdef FIFE_OS_LINUX
         // Enable XRandR monitor enumeration on X11.
         // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
         char const * video_driver = SDL_GetCurrentVideoDriver();
@@ -206,8 +207,7 @@ namespace FIFE
         // along every tile edge (a grey seam between map tiles).
         // This mirrors the OpenGL backend and honors the configured filtering for new textures.
         SDL_SetDefaultTextureScaleMode(
-            m_renderer,
-            getTextureFiltering() == TEXTURE_FILTER_NONE ? SDL_SCALEMODE_NEAREST : SDL_SCALEMODE_LINEAR);
+            m_renderer, getTextureFiltering() == TEXTURE_FILTER_NONE ? SDL_SCALEMODE_NEAREST : SDL_SCALEMODE_LINEAR);
 
         // Create a dummy surface if we don't have one yet
         if (m_screen == nullptr && m_window != nullptr) {
@@ -525,23 +525,23 @@ namespace FIFE
         Point const & p1, Point const & p2, Point const & p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_FColor color;
-        color.r = static_cast<float>(r) / 255.0f;
-        color.g = static_cast<float>(g) / 255.0f;
-        color.b = static_cast<float>(b) / 255.0f;
-        color.a = static_cast<float>(a) / 255.0f;
+        color.r = static_cast<float>(r) / 255.0F;
+        color.g = static_cast<float>(g) / 255.0F;
+        color.b = static_cast<float>(b) / 255.0F;
+        color.a = static_cast<float>(a) / 255.0F;
 
-        Point const points[3] = {p1, p2, p3};
-        SDL_Vertex vertices[3];
-        for (int i = 0; i < 3; ++i) {
-            vertices[i].position.x  = static_cast<float>(points[i].x);
-            vertices[i].position.y  = static_cast<float>(points[i].y);
-            vertices[i].color       = color;
-            vertices[i].tex_coord.x = 0.0f;
-            vertices[i].tex_coord.y = 0.0f;
+        std::array<Point, 3> const points = {p1, p2, p3};
+        std::array<SDL_Vertex, 3> vertices{};
+        for (std::size_t i = 0; i < points.size(); ++i) {
+            vertices.at(i).position.x  = static_cast<float>(points.at(i).x);
+            vertices.at(i).position.y  = static_cast<float>(points.at(i).y);
+            vertices.at(i).color       = color;
+            vertices.at(i).tex_coord.x = 0.0F;
+            vertices.at(i).tex_coord.y = 0.0F;
         }
 
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        SDL_RenderGeometry(m_renderer, nullptr, vertices, 3, nullptr, 0);
+        SDL_RenderGeometry(m_renderer, nullptr, vertices.data(), 3, nullptr, 0);
     }
 
     void RenderBackendSDL::drawRectangle(
@@ -799,7 +799,7 @@ namespace FIFE
         }
 
         // No scaling needed: save the captured target as-is.
-        if (width == static_cast<uint32_t>(captured->w) && height == static_cast<uint32_t>(captured->h)) {
+        if (std::cmp_equal(width, captured->w) && std::cmp_equal(height, captured->h)) {
             saveRgbScreenshot(filename, captured);
             SDL_DestroySurface(captured);
             return;
@@ -867,10 +867,10 @@ namespace FIFE
                 ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             }
             size_t const syIdx        = static_cast<size_t>(y) + 1U;
-            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
             size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = reinterpret_cast<uint32_t*>(
-                srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+            src_help_pointer          = static_cast<uint32_t*>(
+                static_cast<void*>(srcBytes + srcRowOffset)); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         }
 
         if (SDL_MUSTLOCK(dst)) {
