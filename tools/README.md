@@ -14,3 +14,7 @@ Current
 
 Visually test map tilting and rotation values.  This is useful for determining
 the camera settings you should use when creating a new map.
+
+### speechbubble_review.py
+
+Visually test the speech bubble rendering by writing PNGs for visual review.
