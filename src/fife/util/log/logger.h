@@ -282,12 +282,23 @@ namespace FIFE
      *  Per-module logger handle.
      *
      * Each .cpp file typically declares a file-static Logger at namespace
-     * scope using the lambda-init pattern:
+     * scope using the function-local static pattern:
      *
      * @code
-     * static Logger& _log = []() -> Logger& {
-     *     static Logger log(LM_AUDIO);
-     *     return log;
+     * Logger& _log()
+     * {
+     *   static Logger log(LM_AUDIO);
+     *   return log;
+     * }
+     * @endcode
+     *
+     * A lambda init is also valid, but the function-local static is preferred for clarity.
+     * This is eager initialization.
+     *
+     * @code
+     * Logger& _log = []() -> Logger& {
+     *   static Logger log(LM_VIEW);
+     *   return log;
      * }();
      * @endcode
      *

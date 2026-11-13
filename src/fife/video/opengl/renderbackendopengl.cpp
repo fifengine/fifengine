@@ -31,15 +31,17 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        [[maybe_unused]] Logger& _log()
+        {
             static Logger log(LM_VIDEO);
             return log;
-        }();
+        }
 
-        Logger& _guiLog = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        [[maybe_unused]] Logger& _guiLog()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -273,7 +275,7 @@ namespace FIFE
             // The application replaced the SDL window (Window::create()).
             // The old context belongs to the destroyed window: drop every
             // GL object name from it and create a fresh context below.
-            FL_LOG(_log, "OpenGL window changed; recreating the GL context");
+            FL_LOG(_log(), "OpenGL window changed; recreating the GL context");
             if (m_context != nullptr) {
                 SDL_GL_DestroyContext(m_context);
                 m_context = nullptr;
@@ -316,7 +318,7 @@ namespace FIFE
             GLenum const glewError = glewInit();
             if (glewError != GLEW_OK) {
                 FL_LOG(
-                    _log,
+                    _log(),
                     std::format(
                         "RenderBackendOpenGLError initializing GLEW!{}",
                         static_cast<char const *>(static_cast<void const *>(glewGetErrorString(glewError)))));
@@ -368,7 +370,7 @@ namespace FIFE
 
         if (!recreate) {
             glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-            glClearDepth(1.0F);
+            glClearDepth(1.0);
             glClearStencil(0);
         }
 
@@ -414,7 +416,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "RB::createImage: surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
                     surface->w,
@@ -455,7 +457,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "RB::createImage(name): name='{}' surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
                     name,
@@ -475,7 +477,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "  RB::createImage(name) conv={}x{} pitch={} fmt={:#x}",
                     conv->w,
@@ -1064,7 +1066,7 @@ namespace FIFE
             GLboolean const scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
 
             FL_LOG(
-                _guiLog,
+                _guiLog(),
                 std::format(
                     "renderWithoutZ flush: tex={} quad=({:.1f},{:.1f})-({:.1f},{:.1f}) size=({:.1f}x{:.1f}) "
                     "elemCount={} colorEnabled={} scissorEnabled={} scissor=({},{} {}x{}) blend=({}, {})",

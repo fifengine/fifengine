@@ -22,10 +22,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        Logger& _log()
+        {
             static Logger log(LM_VIEW);
             return log;
-        }();
+        }
     } // namespace
 
     OverlayColors::OverlayColors(ImagePtr const & image) : m_image(image)
