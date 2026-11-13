@@ -156,7 +156,7 @@ namespace FIFE
 
             /** Gets model speed. @see setTimeMultiplier.
              */
-            double getTimeMultiplier() const
+            float getTimeMultiplier() const
             {
                 return m_timeprovider.getMultiplier();
             }

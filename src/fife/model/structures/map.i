@@ -55,7 +55,7 @@ namespace FIFE {
 			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
 
 			void setTimeMultiplier(float multip);
-			double getTimeMultiplier() const;
+			float getTimeMultiplier() const;
 
 			void addChangeListener(MapChangeListener* listener);
 			void removeChangeListener(MapChangeListener* listener);

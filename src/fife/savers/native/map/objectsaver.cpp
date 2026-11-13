@@ -154,43 +154,43 @@ namespace FIFE
                 soundElement->SetAttribute("group", audio->getGroupName().c_str());
             }
 
-            if (!Mathd::Equal(audio->getGain(), 0.0F)) {
+            if (!Mathf::Equal(audio->getGain(), 0.0F)) {
                 soundElement->SetAttribute("volume", audio->getGain());
             }
 
-            if (!Mathd::Equal(audio->getMaxGain(), 0.0F)) {
+            if (!Mathf::Equal(audio->getMaxGain(), 0.0F)) {
                 soundElement->SetAttribute("max_volume", audio->getMaxGain());
             }
 
-            if (!Mathd::Equal(audio->getMinGain(), 0.0F)) {
+            if (!Mathf::Equal(audio->getMinGain(), 0.0F)) {
                 soundElement->SetAttribute("min_volume", audio->getMinGain());
             }
 
-            if (!Mathd::Equal(audio->getReferenceDistance(), 0.0F)) {
+            if (!Mathf::Equal(audio->getReferenceDistance(), 0.0F)) {
                 soundElement->SetAttribute("ref_distance", audio->getReferenceDistance());
             }
 
-            if (!Mathd::Equal(audio->getMaxDistance(), 0.0F)) {
+            if (!Mathf::Equal(audio->getMaxDistance(), 0.0F)) {
                 soundElement->SetAttribute("max_distance", audio->getMaxDistance());
             }
 
-            if (!Mathd::Equal(audio->getRolloff(), 0.0F)) {
+            if (!Mathf::Equal(audio->getRolloff(), 0.0F)) {
                 soundElement->SetAttribute("rolloff", audio->getRolloff());
             }
 
-            if (!Mathd::Equal(audio->getPitch(), 0.0F)) {
+            if (!Mathf::Equal(audio->getPitch(), 0.0F)) {
                 soundElement->SetAttribute("pitch", audio->getPitch());
             }
 
-            if (!Mathd::Equal(audio->getConeInnerAngle(), 360.0F)) {
+            if (!Mathf::Equal(audio->getConeInnerAngle(), 360.0F)) {
                 soundElement->SetAttribute("cone_inner_angle", audio->getConeInnerAngle());
             }
 
-            if (!Mathd::Equal(audio->getConeOuterAngle(), 360.0F)) {
+            if (!Mathf::Equal(audio->getConeOuterAngle(), 360.0F)) {
                 soundElement->SetAttribute("cone_outer_angle", audio->getConeOuterAngle());
             }
 
-            if (!Mathd::Equal(audio->getConeOuterGain(), 0.0F)) {
+            if (!Mathf::Equal(audio->getConeOuterGain(), 0.0F)) {
                 soundElement->SetAttribute("cone_outer_gain", audio->getConeOuterGain());
             }
 

@@ -306,7 +306,7 @@ namespace FIFE
     void SoundManager::setDopplerFactor(float factor) const
     {
         if (isActive()) {
-            if (factor >= 0.0) {
+            if (factor >= 0.0F) {
                 alDopplerFactor(factor);
             }
         }
