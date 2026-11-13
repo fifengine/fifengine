@@ -36,11 +36,6 @@ namespace FIFE
             static Logger log(LM_GUI);
             return log;
         }
-
-        bool shouldLogShowHideBand(int32_t x, int32_t y, [[maybe_unused]] int32_t width, int32_t height)
-        {
-            return x == 216 && height == 16 && (y == 354 || y == 370);
-        }
     } // namespace
 
     OpenGLGuiGraphics::OpenGLGuiGraphics() :
@@ -71,28 +66,6 @@ namespace FIFE
         fcn::ClipRectangle const & clip = mClipStack.top();
         int32_t const renderX           = dstX + clip.xOffset;
         int32_t const renderY           = dstY + clip.yOffset;
-
-        if (shouldLogShowHideBand(renderX, renderY, width, height)) {
-            FL_LOG(
-                _log(),
-                std::format(
-                    "OpenGLGuiGraphics::drawImage global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, offY={}) "
-                    "color=({}, {}, {}, {})",
-                    renderX,
-                    renderY,
-                    width,
-                    height,
-                    clip.x,
-                    clip.y,
-                    clip.width,
-                    clip.height,
-                    clip.xOffset,
-                    clip.yOffset,
-                    mColor.r,
-                    mColor.g,
-                    mColor.b,
-                    mColor.a));
-        }
 
         fifeimg->render(Rect(renderX, renderY, width, height));
     }
@@ -205,28 +178,6 @@ namespace FIFE
         fcn::ClipRectangle const & top = mClipStack.top();
         int32_t const renderX          = rectangle.x + top.xOffset;
         int32_t const renderY          = rectangle.y + top.yOffset;
-
-        /*if (shouldLogShowHideBand(renderX, renderY, rectangle.width, rectangle.height)) {
-            FL_LOG(
-                _log(),
-                std::format(
-                    "OpenGLGuiGraphics::fillRectangle global=({},{} {}x{}) clip=(x={}, y={}, w={}, h={}, offX={}, "
-                    "offY={}) color=({}, {}, {}, {})",
-                    renderX,
-                    renderY,
-                    rectangle.width,
-                    rectangle.height,
-                    top.x,
-                    top.y,
-                    top.width,
-                    top.height,
-                    top.xOffset,
-                    top.yOffset,
-                    mColor.r,
-                    mColor.g,
-                    mColor.b,
-                    mColor.a));
-        }*/
 
         m_renderbackend->fillRectangle(
             Point(renderX, renderY),
