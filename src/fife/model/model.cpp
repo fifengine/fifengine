@@ -25,7 +25,6 @@
 #include "structures/map.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-#include "util/structures/purge.h"
 #include "video/renderbackend.h"
 #include "view/rendererbase.h"
 

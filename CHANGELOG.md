@@ -107,6 +107,7 @@ All notable changes to this project will be documented in this file.
 
 ## Removed
 
+- removed the unused `purge()`/`purge_map()` raw-pointer container helpers (`util/structures/purge.h`); owning containers use `std::unique_ptr` instead
 - implemented issue #510: font system:
   - removed legacy `FontBase`, `TrueTypeFont`, `SubImageFont`, `ImageFontBase`, `FontPathResolver` classes and their Python bindings
   - removed `fonts.py` Python font loader and `fontfileparser.py`

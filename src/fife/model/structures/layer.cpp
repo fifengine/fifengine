@@ -26,7 +26,6 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "trigger.h"
 #include "util/log/logger.h"
-#include "util/structures/purge.h"
 
 namespace FIFE
 {

@@ -27,7 +27,6 @@
 #include "map.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "util/log/logger.h"
-#include "util/structures/purge.h"
 
 namespace FIFE
 {

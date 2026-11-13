@@ -23,7 +23,6 @@
 #include "layer.h"
 #include "triggercontroller.h"
 #include "util/base/exception.h"
-#include "util/structures/purge.h"
 #include "util/structures/rect.h"
 #include "video/renderbackend.h"
 #include "view/camera.h"

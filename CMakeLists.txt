@@ -652,7 +652,6 @@ set(
   src/fife/util/resource/resourcemanager.h
   src/fife/util/structures/point.h
   src/fife/util/structures/priorityqueue.h
-  src/fife/util/structures/purge.h
   src/fife/util/structures/quadtree.h
   src/fife/util/structures/rect.h
   src/fife/util/time/timeevent.h
