@@ -39,6 +39,9 @@ namespace FIFE
             {
             }
 
+            Event(Event const&) = default;
+            Event& operator=(Event const&) = default;
+
             /** Destructor.
              */
             virtual ~Event() = default;
