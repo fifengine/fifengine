@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -54,8 +55,8 @@ namespace FIFE
             if (format == nullptr) {
                 return;
             }
-            char message[1024];
-            int const written = vsnprintf(message, sizeof(message), format, args);
+            std::array<char, 1024> message{};
+            int const written = vsnprintf(message.data(), message.size(), format, args);
             if (written < 0) {
                 return;
             }

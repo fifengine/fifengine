@@ -146,7 +146,7 @@ namespace FIFE
 
     GLImage::GLImage(IResourceLoader* loader) :
         Image(loader),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -159,7 +159,7 @@ namespace FIFE
 
     GLImage::GLImage(std::string const & name, IResourceLoader* loader) :
         Image(name, loader),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -172,7 +172,7 @@ namespace FIFE
 
     GLImage::GLImage(SDL_Surface* surface) :
         Image(surface),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -185,7 +185,7 @@ namespace FIFE
 
     GLImage::GLImage(std::string const & name, SDL_Surface* surface) :
         Image(name, surface),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -198,7 +198,7 @@ namespace FIFE
 
     GLImage::GLImage(uint8_t const * data, uint32_t width, uint32_t height) :
         Image(data, width, height),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -213,7 +213,7 @@ namespace FIFE
 
     GLImage::GLImage(std::string const & name, uint8_t const * data, uint32_t width, uint32_t height) :
         Image(name, data, width, height),
-        m_tex_coords{0, 0, 0, 0},
+        m_tex_coords{},
         m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
@@ -262,7 +262,7 @@ namespace FIFE
             m_compressed = false;
         }
 
-        m_tex_coords[0] = m_tex_coords[1] = m_tex_coords[2] = m_tex_coords[3] = 0.0F;
+        m_tex_coords.fill(0.0F);
     }
 
     void GLImage::render(Rect const & rect, uint8_t alpha, uint8_t const * rgb)
@@ -330,7 +330,7 @@ namespace FIFE
                     m_surface != nullptr ? static_cast<unsigned>(m_surface->format) : 0U));
         }*/
 
-        rb->addImageToArray(m_texId, rect, &m_tex_coords[0], alpha, rgb);
+        rb->addImageToArray(m_texId, rect, m_tex_coords.data(), alpha, rgb);
     }
 
     void GLImage::render(Rect const & rect, ImagePtr const & overlay, uint8_t alpha, uint8_t const * rgb)
@@ -358,7 +358,7 @@ namespace FIFE
         img->forceLoadInternal();
 
         dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArray(
-            rect, m_texId, &m_tex_coords[0], img->getTexId(), img->getTexCoords(), alpha, rgb);
+            rect, m_texId, m_tex_coords.data(), img->getTexId(), img->getTexCoords(), alpha, rgb);
         // rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
     }
 
@@ -382,7 +382,8 @@ namespace FIFE
         } else if (m_shared) {
             validateShared();
         }
-        dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(m_texId, rect, vertexZ, &m_tex_coords[0], alpha, rgb);
+        dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(
+            m_texId, rect, vertexZ, m_tex_coords.data(), alpha, rgb);
         // rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
     }
 
@@ -413,7 +414,7 @@ namespace FIFE
         img->forceLoadInternal();
 
         dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(
-            rect, vertexZ, m_texId, &m_tex_coords[0], img->getTexId(), img->getTexCoords(), alpha, rgb);
+            rect, vertexZ, m_texId, m_tex_coords.data(), img->getTexId(), img->getTexCoords(), alpha, rgb);
         // rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
     }
 
@@ -944,6 +945,6 @@ namespace FIFE
 
     GLfloat const * GLImage::getTexCoords() const
     {
-        return &m_tex_coords[0];
+        return m_tex_coords.data();
     }
 } // namespace FIFE

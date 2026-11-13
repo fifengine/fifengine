@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <array>
 #include <string>
 #include <vector>
 
@@ -95,7 +96,7 @@ namespace FIFE
             ImagePtr m_atlas_img;
 
             // texture coords to use
-            GLfloat m_tex_coords[4];
+            std::array<GLfloat, 4> m_tex_coords;
 
             //     [0]    [2]    ->(x)
             // [1]  +------+

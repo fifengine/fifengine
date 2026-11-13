@@ -8,6 +8,7 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <array>
 #include <atomic>
 #include <cstdint>
 #include <memory>
@@ -231,10 +232,10 @@ namespace FIFE
              * not synchronisation for any other datum.
              */
             std::atomic<LogLevel> m_level;
-            bool m_modules[LM_MODULE_MAX];
+            std::array<bool, LM_MODULE_MAX> m_modules;
 
 #ifdef LOG_ENABLED
-            spdlog::logger* m_loggers[LM_MODULE_MAX];
+            std::array<spdlog::logger*, LM_MODULE_MAX> m_loggers;
             std::shared_ptr<spdlog::logger> m_root_logger;
             std::shared_ptr<spdlog::sinks::dist_sink_mt> m_dist_sink;
 #endif

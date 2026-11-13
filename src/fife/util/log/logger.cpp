@@ -178,9 +178,7 @@ namespace FIFE
 
     void LogManager::clearVisibleModules()
     {
-        for (auto& m : m_modules) {
-            m = false;
-        }
+        m_modules.fill(false);
     }
 
     void LogManager::setLogToPrompt(bool logtoprompt)
@@ -239,7 +237,7 @@ namespace FIFE
 #ifdef LOG_ENABLED
     spdlog::logger* LogManager::getSpdlogLogger(logmodule_t module)
     {
-        auto ind = static_cast<int32_t>(module);
+        auto ind = static_cast<size_t>(module);
         if (!isValidModule(module)) {
             return nullptr;
         }

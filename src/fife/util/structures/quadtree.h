@@ -8,7 +8,9 @@
 #include "platform.h"
 
 // Standard C++ library includes
+#include <array>
 #include <cassert>
+#include <memory>
 
 // 3rd party library includes
 
@@ -26,7 +28,7 @@ namespace FIFE
     {
         protected:
             QuadNode* m_parent;
-            QuadNode* m_nodes[4];
+            std::array<std::unique_ptr<QuadNode>, 4> m_nodes;
             int32_t m_x;
             int32_t m_y;
             int32_t m_size;
@@ -40,18 +42,11 @@ namespace FIFE
              *  @param size The width and height of this QuadNode.
              */
             QuadNode(QuadNode* parent, int32_t x, int32_t y, int32_t size) :
-                m_parent(parent), m_x(x), m_y(y), m_size(size), m_data()
+                m_parent(parent), m_nodes{}, m_x(x), m_y(y), m_size(size), m_data()
             {
-                m_nodes[0] = m_nodes[1] = m_nodes[2] = m_nodes[3] = 0L;
             }
 
-            ~QuadNode()
-            {
-                delete m_nodes[0];
-                delete m_nodes[1];
-                delete m_nodes[2];
-                delete m_nodes[3];
-            }
+            ~QuadNode() = default;
 
             /** Find a container node for a given rectangle.
              *  This guarantees to return a Node with the following
@@ -85,17 +80,10 @@ namespace FIFE
                 if (!visitor.visit(this, d)) {
                     return;
                 }
-                if (m_nodes[0]) {
-                    m_nodes[0]->apply_visitor(visitor, d + 1);
-                }
-                if (m_nodes[1]) {
-                    m_nodes[1]->apply_visitor(visitor, d + 1);
-                }
-                if (m_nodes[2]) {
-                    m_nodes[2]->apply_visitor(visitor, d + 1);
-                }
-                if (m_nodes[3]) {
-                    m_nodes[3]->apply_visitor(visitor, d + 1);
+                for (auto& node : m_nodes) {
+                    if (node) {
+                        node->apply_visitor(visitor, d + 1);
+                    }
                 }
             }
 
@@ -298,24 +286,26 @@ namespace FIFE
         case -1:
             return this;
         case 0:
-            if (m_nodes[0] == 0) {
-                m_nodes[0] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y, m_size / 2);
+            if (!m_nodes[0]) {
+                m_nodes[0] = std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x, m_y, m_size / 2);
             }
             return m_nodes[0]->find_container(x, y, w, h);
         case 1:
-            if (m_nodes[1] == 0) {
-                m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y, m_size / 2);
+            if (!m_nodes[1]) {
+                m_nodes[1] =
+                    std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x + (m_size / 2), m_y, m_size / 2);
             }
             return m_nodes[1]->find_container(x, y, w, h);
         case 2:
-            if (m_nodes[2] == 0) {
-                m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + (m_size / 2), m_size / 2);
+            if (!m_nodes[2]) {
+                m_nodes[2] =
+                    std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x, m_y + (m_size / 2), m_size / 2);
             }
             return m_nodes[2]->find_container(x, y, w, h);
         case 3:
-            if (m_nodes[3] == 0) {
-                m_nodes[3] =
-                    new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
+            if (!m_nodes[3]) {
+                m_nodes[3] = std::make_unique<QuadNode<DataType, MinimumSize>>(
+                    this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
             }
             return m_nodes[3]->find_container(x, y, w, h);
         default:
@@ -340,32 +330,32 @@ namespace FIFE
 
         if (x >= m_x) {
             if (y >= m_y) { // we are node 0
-                m_parent             = new QuadNode(0L, m_x, m_y, m_size * 2);
-                m_parent->m_nodes[0] = this;
+                m_parent = new QuadNode(0L, m_x, m_y, m_size * 2);
+                m_parent->m_nodes[0].reset(this);
                 return m_parent;
             }
             if (y + w < m_y + m_size) { // we are node 2
-                m_parent             = new QuadNode(0L, m_x, m_y - m_size, m_size * 2);
-                m_parent->m_nodes[2] = this;
+                m_parent = new QuadNode(0L, m_x, m_y - m_size, m_size * 2);
+                m_parent->m_nodes[2].reset(this);
                 return m_parent;
             }
         }
         if (x + h < m_x + m_size) {
             if (y >= m_y) { // we are node 1
-                m_parent             = new QuadNode(0L, m_x - m_size, m_y, m_size * 2);
-                m_parent->m_nodes[1] = this;
+                m_parent = new QuadNode(0L, m_x - m_size, m_y, m_size * 2);
+                m_parent->m_nodes[1].reset(this);
                 return m_parent;
             }
             if (y + w < m_y + m_size) { // we are node 3
-                m_parent             = new QuadNode(0L, m_x - m_size, m_y - m_size, m_size * 2);
-                m_parent->m_nodes[3] = this;
+                m_parent = new QuadNode(0L, m_x - m_size, m_y - m_size, m_size * 2);
+                m_parent->m_nodes[3].reset(this);
                 return m_parent;
             }
         }
 
         // It does not matter....
-        m_parent             = new QuadNode(0L, m_x, m_y, m_size * 2);
-        m_parent->m_nodes[0] = this;
+        m_parent = new QuadNode(0L, m_x, m_y, m_size * 2);
+        m_parent->m_nodes[0].reset(this);
         return m_parent;
     }
 
@@ -376,17 +366,18 @@ namespace FIFE
             return;
         }
 
-        if (m_nodes[0] == 0) {
-            m_nodes[0] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y, m_size / 2);
+        if (!m_nodes[0]) {
+            m_nodes[0] = std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x, m_y, m_size / 2);
         }
-        if (m_nodes[1] == 0) {
-            m_nodes[1] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y, m_size / 2);
+        if (!m_nodes[1]) {
+            m_nodes[1] = std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x + (m_size / 2), m_y, m_size / 2);
         }
-        if (m_nodes[2] == 0) {
-            m_nodes[2] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y + (m_size / 2), m_size / 2);
+        if (!m_nodes[2]) {
+            m_nodes[2] = std::make_unique<QuadNode<DataType, MinimumSize>>(this, m_x, m_y + (m_size / 2), m_size / 2);
         }
-        if (m_nodes[3] == 0) {
-            m_nodes[3] = new QuadNode<DataType, MinimumSize>(this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
+        if (!m_nodes[3]) {
+            m_nodes[3] = std::make_unique<QuadNode<DataType, MinimumSize>>(
+                this, m_x + (m_size / 2), m_y + (m_size / 2), m_size / 2);
         }
     }
 
