@@ -61,11 +61,11 @@ namespace FIFE
                 return;
             }
             if (level <= AV_LOG_ERROR) {
-                FL_ERR(_log(), message);
+                FL_ERR(_log(), message.data());
             } else if (level <= AV_LOG_WARNING) {
-                FL_WARN(_log(), message);
+                FL_WARN(_log(), message.data());
             } else {
-                FL_DBG(_log(), message);
+                FL_DBG(_log(), message.data());
             }
         }
 
