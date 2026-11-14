@@ -784,13 +784,15 @@ namespace FIFE
             // if (!m_needSorting) {
             float const det = static_cast<float>(m_zMin - m_zMax);
             if (fabsf(det) > FLT_EPSILON) {
-                static float const globalrange = 200.0;
-                static float const stackdelta  = (FLT_EPSILON * 100.0);
+                static float const globalrange = 200.0F;
+                static float const stackdelta  = (FLT_EPSILON * 100.0F);
                 int32_t const numlayers        = static_cast<int32_t>(m_layer->getLayerCount());
                 float const lmin               = m_layer->getZOffset();
                 float const lmax               = lmin + (globalrange / static_cast<float>(numlayers));
                 float const a                  = (lmin - lmax) / det;
-                float const b                  = static_cast<float>(((lmax * m_zMin) - (lmin * m_zMax)) / det);
+                float const b                  = static_cast<float>(
+                    ((static_cast<double>(lmax) * m_zMin) - (static_cast<double>(lmin) * m_zMax)) /
+                    static_cast<double>(det));
 
                 auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {

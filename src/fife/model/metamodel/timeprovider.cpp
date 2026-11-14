@@ -23,12 +23,12 @@ namespace FIFE
 
     void TimeProvider::setMultiplier(float multiplier)
     {
-        if (multiplier < 0.0) {
+        if (multiplier < 0.0F) {
             throw NotSupported("Negative time multiplier are not supported");
         }
         m_time_static = getPreciseGameTime();
         m_time_scaled = (m_master != nullptr) ? m_master->getPreciseGameTime() :
-                                                static_cast<float>(TimeManager::instance()->now64());
+                                                static_cast<double>(TimeManager::instance()->now64());
         m_multiplier  = multiplier;
     }
 
@@ -52,10 +52,10 @@ namespace FIFE
 
     double TimeProvider::getPreciseGameTime() const
     {
-        return m_time_static +
-               (m_multiplier * (((m_master != nullptr) ? m_master->getPreciseGameTime() :
-                                                         static_cast<float>(TimeManager::instance()->now64())) -
-                                m_time_scaled));
+        return m_time_static + (static_cast<double>(m_multiplier) *
+                                (((m_master != nullptr) ? m_master->getPreciseGameTime() :
+                                                          static_cast<double>(TimeManager::instance()->now64())) -
+                                 m_time_scaled));
     }
 
     uint32_t scaleTime(float multiplier, uint32_t ticks)

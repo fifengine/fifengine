@@ -64,10 +64,10 @@ namespace FIFE
             return static_cast<uint8_t>(value);
         }
 
-        uint8_t toUint8Channel(double value)
+        uint8_t toUint8Channel(float value)
         {
-            assert(value >= 0.0);
-            assert(value <= static_cast<double>(std::numeric_limits<uint8_t>::max()));
+            assert(value >= 0.0F);
+            assert(value <= static_cast<float>(std::numeric_limits<uint8_t>::max()));
             return static_cast<uint8_t>(value);
         }
 

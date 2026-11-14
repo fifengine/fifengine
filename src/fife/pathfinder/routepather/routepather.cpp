@@ -530,7 +530,7 @@ namespace FIFE
         assert(
             "route must have an active solved path" &&
             (route->getRouteStatus() == ROUTE_SOLVED || route->getRouteStatus() == ROUTE_CREATED));
-        static_assert(MAX_COST_INCREASE_RATIO >= 1.0F, "cost ratio threshold must be >= 1.0");
+        static_assert(MAX_COST_INCREASE_RATIO >= 1.0, "cost ratio threshold must be >= 1.0");
 
         // Solve new route from current position to original destination
         auto newRoute = std::unique_ptr<Route>(createRoute(currentPos, route->getEndNode(), true, route->getCostId()));
