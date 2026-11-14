@@ -336,12 +336,12 @@ namespace FIFE
             targetMode.h               = m_settings.height;
             targetMode.refresh_rate    = 0.0F;
 
-            auto const modes = Display::getSupportedModes(m_settings.display);
-            auto const mode  = std::ranges::find_if(modes, [this](SDL_DisplayMode const & candidate) {
+            auto const modes        = Display::getSupportedModes(m_settings.display);
+            auto const matchingMode = std::ranges::find_if(modes, [this](SDL_DisplayMode const & candidate) {
                 return candidate.w == m_settings.width && candidate.h == m_settings.height;
             });
-            if (mode != modes.end()) {
-                targetMode = *mode;
+            if (matchingMode != modes.end()) {
+                targetMode = *matchingMode;
             }
 
             if (targetMode.w > 0 && targetMode.h > 0) {
