@@ -225,24 +225,27 @@ namespace FIFE
 
     void RenderBackendOpenGL::init(std::string const & driver)
     {
-#ifdef FIFE_OS_LINUX
-        // Enable XRandR monitor enumeration on X11.
-        // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
-        char const * video_driver = SDL_GetCurrentVideoDriver();
-        if (video_driver == nullptr || SDL_strcmp(video_driver, "x11") == 0) {
-            SDL_SetHint(SDL_HINT_VIDEO_X11_XRANDR, "1");
-        }
-#endif
+        // 1. Set hints BEFORE initialization
 
-        Uint32 const flags = SDL_INIT_VIDEO;
-        if (!SDL_InitSubSystem(flags)) {
-            throw SDLException(SDL_GetError());
-        }
         if (!driver.empty()) {
             SDL_SetHint(SDL_HINT_VIDEO_DRIVER, driver.c_str());
         }
 
-        // setup OpenGL
+#ifdef FIFE_OS_LINUX
+        // Enable XRandR monitor enumeration on X11.
+        // This hint is ignored by non-X11 drivers (e.g. wayland, dummy).
+        // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
+        // If the user explicitly requested "x11" via the 'driver' argument,
+        // or if "x11" is the default on their system, this will take effect.
+        SDL_SetHint(SDL_HINT_VIDEO_X11_XRANDR, "1");
+#endif
+
+        // 2. Initialize the subsystem
+        if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+            throw SDLException(SDL_GetError());
+        }
+
+        // 3. Setup OpenGL
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
