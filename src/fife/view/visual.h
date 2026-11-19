@@ -35,7 +35,7 @@ namespace FIFE
             explicit OverlayColors(ImagePtr const & image);
             explicit OverlayColors(AnimationPtr const & animation);
 
-            OverlayColors(OverlayColors const & other) = default;
+            OverlayColors(OverlayColors const & other)            = default;
             OverlayColors& operator=(OverlayColors const & other) = default;
 
             /** Destructor

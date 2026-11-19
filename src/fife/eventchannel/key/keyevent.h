@@ -38,8 +38,8 @@ namespace FIFE
             {
             }
 
-            KeyEvent(KeyEvent const&) = default;
-            KeyEvent& operator=(KeyEvent const&) = default;
+            KeyEvent(KeyEvent const &)            = default;
+            KeyEvent& operator=(KeyEvent const &) = default;
 
             /** Destructor.
              */

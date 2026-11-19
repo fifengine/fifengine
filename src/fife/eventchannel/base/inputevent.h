@@ -34,8 +34,8 @@ namespace FIFE
             {
             }
 
-            InputEvent(InputEvent const&) = default;
-            InputEvent& operator=(InputEvent const&) = default;
+            InputEvent(InputEvent const &)            = default;
+            InputEvent& operator=(InputEvent const &) = default;
 
             /** Destructor.
              */
