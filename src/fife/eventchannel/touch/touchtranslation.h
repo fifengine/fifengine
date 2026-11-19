@@ -40,7 +40,7 @@ namespace FIFE
          * window, so the input is clamped first. Truncating a normalized float
          * to int (the old Fifechan bug) would always produce 0 or 1.
          */
-        PointI normalizedToWindowPoints(float normalizedX, float normalizedY, int32_t width, int32_t height);
+        FIFE_API PointI normalizedToWindowPoints(float normalizedX, float normalizedY, int32_t width, int32_t height);
 
         enum class ScrollAxis : uint8_t
         {
@@ -62,22 +62,22 @@ namespace FIFE
          * A vertical pan always wins ties. Horizontal pans only win when they
          * clearly exceed the vertical component and cross the dead zone.
          */
-        ScrollStep classifyScroll(float deltaX, float deltaY, float deadZone = DEFAULT_SCROLL_DEAD_ZONE);
+        FIFE_API ScrollStep classifyScroll(float deltaX, float deltaY, float deadZone = DEFAULT_SCROLL_DEAD_ZONE);
 
         /** Maps a scroll step to the legacy coarse MouseEvent type. */
-        MouseEvent::MouseEventType wheelTypeFor(ScrollStep const & step);
+        FIFE_API MouseEvent::MouseEventType wheelTypeFor(ScrollStep const & step);
 
         /** True for the four SDL mouse event types understood by
          *  EventManager::fillMouseEvent().
          */
-        bool isMouseEventType(uint32_t sdlEventType);
+        FIFE_API bool isMouseEventType(uint32_t sdlEventType);
 
         /** True when a mouse event was synthesized by SDL from touch input.
          *
          * Under policy B this should normally never be true while FIFE owns
          * touch translation; it is used as a defensive duplicate-event guard.
          */
-        bool isTouchSynthesizedMouse(SDL_Event const & event);
+        FIFE_API bool isTouchSynthesizedMouse(SDL_Event const & event);
 
     } // namespace TouchTranslation
 } // namespace FIFE
