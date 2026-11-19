@@ -14,6 +14,7 @@ endif()
 
 set(
   FIFE_CORE_TEST_SOURCES
+  test_atlas.cpp
   test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp

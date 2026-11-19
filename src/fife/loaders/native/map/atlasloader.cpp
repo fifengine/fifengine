@@ -57,7 +57,7 @@ namespace FIFE
 
     ImagePtr Atlas::getImage(uint32_t index)
     {
-        if (index > getImageCount()) {
+        if (index >= getImageCount()) {
             return {};
         }
 
@@ -158,6 +158,8 @@ namespace FIFE
             // TODO - should we abort here
             //        or rethrow the exception
             //        or just keep going
+            // jakoch: we can not use std::optional, because of SWIG.
+            // "log the error, return empty/null" seems to be convention.
 
             return atlas;
         }
@@ -205,6 +207,8 @@ namespace FIFE
             // TODO - should we abort here
             //        or rethrow the exception
             //        or just keep going
+            // jakoch: we can not use std::optional, because of SWIG.
+            // "log the error, return empty/null" seems to be convention.
 
             return atlasVector;
         }
