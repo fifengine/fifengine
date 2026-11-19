@@ -59,6 +59,28 @@ The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
 It is a simple side scrolling shooter with main menu, one level and an end boss.
 Try your luck and see if you can defeat the boss!
 
+### Unknown Horizons
+
+Unknown Horizons is an open-source game built on FIFE. It is used here
+as an integration target for windowing, HiDPI, and input changes.
+
+Run it against the local FIFE build with:
+
+```sh
+demos/run_uh.sh
+```
+
+The script clones `unknown-horizons` into `demos/unknown-horizons`, creates a
+separate `.venv-uh`, and uses the existing
+`out/build/clang22-x64-linux-dbg-cov` build. Build the engine first with:
+
+```sh
+cmake --preset clang22-x64-linux-dbg-cov \
+  -DENABLE_FIFEGUI=ON -DBUILD_PYTHON_BINDINGS=ON -DBUILD_LIBRARY=ON
+cmake --build out/build/clang22-x64-linux-dbg-cov \
+  --target fife fife_swig fifechan_swig
+```
+
 ### Configuring the Editor and Demos
 
 The engine utilizes special settings files for configuring FIFE. This file is called `settings.xml` and resides in the `~/.fife directory` (in `<User>\Application Data\fife` for Windows users). The Shooter Demo and the PyChan demo are exceptions. They both store their `settings.xml` file in their root directories.
