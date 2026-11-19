@@ -58,9 +58,18 @@ namespace FIFE
 
             /** Constructor.
              */
-            MouseEvent() : m_eventType(UNKNOWN_EVENT), m_buttonType(UNKNOWN_BUTTON), m_x(-1), m_y(-1)
+            MouseEvent() :
+                m_eventType(UNKNOWN_EVENT),
+                m_buttonType(UNKNOWN_BUTTON),
+                m_x(-1),
+                m_y(-1),
+                m_wheelDeltaX(0.0F),
+                m_wheelDeltaY(0.0F)
             {
             }
+
+            MouseEvent(MouseEvent const &)            = default;
+            MouseEvent& operator=(MouseEvent const &) = default;
 
             /** Destructor.
              */
@@ -131,17 +140,46 @@ namespace FIFE
                 return getY();
             }
 
+            /** Signed smooth-scroll amount on the horizontal axis.
+             *
+             * For real wheel events this mirrors SDL's `wheel.x`; for touch
+             * gestures it carries the normalized pan delta. The sign matches
+             * the wheel direction: positive is right.
+             */
+            float getWheelDeltaX() const
+            {
+                return m_wheelDeltaX;
+            }
+            void setWheelDeltaX(float delta)
+            {
+                m_wheelDeltaX = delta;
+            }
+
+            /** Signed smooth-scroll amount on the vertical axis.
+             *
+             * Positive is up (away from the user), matching SDL's wheel
+             * convention. Touch gestures are normalized to the same sign.
+             */
+            float getWheelDeltaY() const
+            {
+                return m_wheelDeltaY;
+            }
+            void setWheelDeltaY(float delta)
+            {
+                m_wheelDeltaY = delta;
+            }
+
             /** Returns pixel x coordinate, scaled by the given DPI factor. */
             int32_t getXInPixels(float dpiScale) const
             {
                 // Multiply in double to avoid the implicit int32 -> float
                 // conversion (and its precision loss) before scaling.
-                return static_cast<int32_t>(static_cast<double>(getX()) * dpiScale);
+                return static_cast<int32_t>(static_cast<double>(getX()) * static_cast<double>(dpiScale));
             }
             /** Returns pixel y coordinate, scaled by the given DPI factor. */
             int32_t getYInPixels(float dpiScale) const
             {
-                return static_cast<int32_t>(static_cast<double>(getY()) * dpiScale);
+                return static_cast<int32_t>(static_cast<double>(getY()) * static_cast<double>(dpiScale));
             }
 
             std::string const & getName() const override
@@ -156,7 +194,9 @@ namespace FIFE
                 ss << "event = " << mouseEventType2str(m_eventType) << ", ";
                 ss << "button = " << mouseButtonType2str(m_buttonType) << ", ";
                 ss << "x = " << m_x << ", ";
-                ss << "y = " << m_y;
+                ss << "y = " << m_y << ", ";
+                ss << "wheelDeltaX = " << m_wheelDeltaX << ", ";
+                ss << "wheelDeltaY = " << m_wheelDeltaY;
                 return ss.str();
             }
 
@@ -246,6 +286,8 @@ namespace FIFE
             MouseButtonType m_buttonType;
             int32_t m_x;
             int32_t m_y;
+            float m_wheelDeltaX;
+            float m_wheelDeltaY;
     };
 
 } // namespace FIFE

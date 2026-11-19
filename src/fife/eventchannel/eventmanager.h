@@ -37,6 +37,11 @@
 #include "eventchannel/text/itextlistener.h"
 #include "eventchannel/text/text.h"
 #include "eventchannel/text/textevent.h"
+#include "eventchannel/touch/itouchcontroller.h"
+#include "eventchannel/touch/itouchlistener.h"
+#include "eventchannel/touch/touchevent.h"
+#include "eventchannel/touch/touchtracker.h"
+#include "eventchannel/touch/touchtranslation.h"
 #include "util/base/fife_stdint.h"
 
 namespace FIFE
@@ -59,6 +64,7 @@ namespace FIFE
         public IKeyController,
         public ITextController,
         public IMouseController,
+        public ITouchController,
         public ISdlEventController,
         public IDropController,
         public IEventSource
@@ -90,6 +96,10 @@ namespace FIFE
             void addMouseListenerFront(IMouseListener* listener) override;
             void removeMouseListener(IMouseListener* listener) override;
 
+            void addTouchListener(ITouchListener* listener) override;
+            void addTouchListenerFront(ITouchListener* listener) override;
+            void removeTouchListener(ITouchListener* listener) override;
+
             void addSdlEventListener(ISdlEventListener* listener) override;
             void addSdlEventListenerFront(ISdlEventListener* listener) override;
             void removeSdlEventListener(ISdlEventListener* listener) override;
@@ -109,6 +119,14 @@ namespace FIFE
              * It passes appropriate events to their listeners
              */
             void processEvents();
+
+            /** Applies the SDL input hints FIFE relies on.
+             *
+             * Must be called before the video subsystem is initialized (for
+             * example from Engine::init()). Disables SDL's touch-to-mouse
+             * synthesis so FIFE owns touch translation (policy B).
+             */
+            static void applyInputHints();
 
             void setKeyFilter(IKeyFilter* keyFilter);
 
@@ -192,6 +210,7 @@ namespace FIFE
             void processTextEvent(SDL_Event event);
             void processMouseEvent(SDL_Event event);
             void processDropEvent(SDL_Event event);
+            void processTouchEvent(SDL_Event const & event);
             bool combineEvents(SDL_Event& event1, SDL_Event const & event2);
 
             // Events dispatchers - only dispatchSdlevent may reject the event.
@@ -199,6 +218,7 @@ namespace FIFE
             void dispatchKeyEvent(KeyEvent& evt);
             void dispatchTextEvent(TextEvent& evt);
             void dispatchMouseEvent(MouseEvent& evt);
+            void dispatchTouchEvent(TouchEvent& evt);
             void dispatchDropEvent(DropEvent& evt);
 
             // Translate events
@@ -207,11 +227,24 @@ namespace FIFE
             void fillTextEvent(SDL_Event const & sdlevt, TextEvent& txtevt);
             void fillMouseEvent(SDL_Event const & sdlevt, MouseEvent& mouseevt);
 
+            // Touch helpers
+            void dispatchTouchMouseButton(bool down, int32_t x, int32_t y);
+            void dispatchTouchMouseMotion(int32_t x, int32_t y, float relX, float relY, bool dragging);
+            void dispatchTouchScroll(float deltaX, float deltaY, int32_t x, int32_t y);
+            void emitFingerTouchEvent(
+                TouchEvent::TouchEventType type,
+                SDL_TouchFingerEvent const & finger,
+                TouchTranslation::PointI const & point);
+            void emitPinchTouchEvent(TouchEvent::TouchEventType type, float scale);
+            void cancelTouchGesture();
+            void resetTouchState();
+
             // Listeners
             std::deque<ICommandListener*> m_commandListeners;
             std::deque<IKeyListener*> m_keyListeners;
             std::deque<ITextListener*> m_textListeners;
             std::deque<IMouseListener*> m_mouseListeners;
+            std::deque<ITouchListener*> m_touchListeners;
             std::deque<ISdlEventListener*> m_sdleventListeners;
             std::deque<IDropListener*> m_dropListeners;
 
@@ -231,6 +264,13 @@ namespace FIFE
             int32_t m_oldY;
             uint64_t m_lastTicks;
             float m_oldVelocity;
+
+            // Touch translation state (policy B: FIFE owns touch→mouse).
+            TouchTracker m_touchTracker;
+            PinchTracker m_pinchTracker;
+            bool m_touchPointerDown;
+            int32_t m_touchLastX;
+            int32_t m_touchLastY;
 
             std::unique_ptr<JoystickManager> m_joystickManager;
     };

@@ -447,6 +447,10 @@ namespace FIFE
         }
 #endif
 
+        // FIFE translates touch input itself
+        // SDL hints must be set before the video subsystem initializes
+        EventManager::applyInputHints();
+
         // init backend with selected video driver or default
         m_renderbackend->init(driver);
 

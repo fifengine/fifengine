@@ -17,6 +17,7 @@ set(
   test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp
+  test_event_touch.cpp
   test_gui.cpp
   test_imagepool.cpp
   test_images.cpp

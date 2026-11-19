@@ -24,6 +24,8 @@
 #include "eventchannel/source/ieventsource.h"
 #include "eventchannel/mouse/mouseevent.h"
 #include "eventchannel/mouse/imouselistener.h"
+#include "eventchannel/touch/touchevent.h"
+#include "eventchannel/touch/itouchlistener.h"
 #include "eventchannel/sdl/isdleventlistener.h"
 #include "eventchannel/eventmanager.h"
 %}
@@ -200,6 +202,10 @@ Example::
         int32_t getXInPixels(float dpiScale) const;
         %feature("docstring") getYInPixels "Pixel y coordinate, scaled by the given DPI factor.";
         int32_t getYInPixels(float dpiScale) const;
+        %feature("docstring") getWheelDeltaX "Signed smooth-scroll amount on the horizontal axis.\n\nFor real wheel events this mirrors SDL's wheel.x; positive is right. For touch gestures it carries the normalized pan delta.";
+        float getWheelDeltaX() const;
+        %feature("docstring") getWheelDeltaY "Signed smooth-scroll amount on the vertical axis.\n\nPositive is up (away from the user), matching SDL's wheel convention.";
+        float getWheelDeltaY() const;
         virtual MouseEventType getType() const;
 		virtual MouseButtonType getButton() const;
 		virtual ~MouseEvent();
@@ -208,22 +214,74 @@ Example::
 	};
 
 	%feature("director") IMouseListener;
+	%feature("docstring") IMouseListener "Mouse event listener.\n\nAll callbacks have default no-op implementations, so a subclass only\nneeds to override the events it cares about. This keeps a Python\nlistener that omits e.g. mouseWheelMovedLeft from aborting the process\nwhen a horizontal wheel event arrives.";
 	class IMouseListener {
 	public:
-		virtual void mouseEntered(MouseEvent& evt) = 0;
-		virtual void mouseExited(MouseEvent& evt) = 0;
-		virtual void mousePressed(MouseEvent& evt) = 0;
-		virtual void mouseReleased(MouseEvent& evt) = 0;
-		virtual void mouseClicked(MouseEvent& evt) = 0;
-		virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
-		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
-		virtual void mouseWheelMovedRight(MouseEvent& evt) = 0;
-		virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
-		virtual void mouseMoved(MouseEvent& evt) = 0;
-		virtual void mouseDragged(MouseEvent& evt) = 0;
+		// Keep these non-pure, matching imouselistener.h. If they are declared
+		// pure here, SWIG's director upcall raises DirectorPureVirtualException
+		// when a Python subclass inherits the unimplemented wrapper.
+		virtual void mouseEntered(MouseEvent& evt);
+		virtual void mouseExited(MouseEvent& evt);
+		virtual void mousePressed(MouseEvent& evt);
+		virtual void mouseReleased(MouseEvent& evt);
+		virtual void mouseClicked(MouseEvent& evt);
+		virtual void mouseWheelMovedUp(MouseEvent& evt);
+		virtual void mouseWheelMovedDown(MouseEvent& evt);
+		virtual void mouseWheelMovedRight(MouseEvent& evt);
+		virtual void mouseWheelMovedLeft(MouseEvent& evt);
+		virtual void mouseMoved(MouseEvent& evt);
+		virtual void mouseDragged(MouseEvent& evt);
 		virtual bool isGlobalListener() const;
 		virtual void setGlobalListener(bool global);
 		virtual ~IMouseListener();
+	};
+
+	class TouchEvent: public InputEvent {
+	public:
+		enum TouchEventType {
+			UNKNOWN = -1,
+			DOWN = 0,
+			UP,
+			MOTION,
+			CANCELED,
+			PINCH_BEGIN,
+			PINCH_UPDATE,
+			PINCH_END
+		};
+
+		virtual TouchEventType getType() const;
+		virtual uint64_t getTouchId() const;
+		virtual uint64_t getFingerId() const;
+		virtual int32_t getX() const;
+		virtual int32_t getY() const;
+		virtual float getNormalizedX() const;
+		virtual float getNormalizedY() const;
+		virtual float getDeltaX() const;
+		virtual float getDeltaY() const;
+		virtual float getPressure() const;
+		virtual float getScale() const;
+		virtual int32_t getFingerCount() const;
+		virtual bool isTrackpad() const;
+		virtual bool isPinch() const;
+		virtual ~TouchEvent();
+	private:
+		TouchEvent();
+	};
+
+	%feature("director") ITouchListener;
+	%feature("docstring") ITouchListener "Raw touch and pinch event listener.\n\nAll callbacks have default no-op implementations, so a subclass only\nneeds to override the gestures it cares about. Mouse listeners still\nreceive synthesized mouse events for compatibility.";
+	class ITouchListener {
+	public:
+		virtual void touchDown(TouchEvent& evt);
+		virtual void touchUp(TouchEvent& evt);
+		virtual void touchMotion(TouchEvent& evt);
+		virtual void touchCanceled(TouchEvent& evt);
+		virtual void pinchBegin(TouchEvent& evt);
+		virtual void pinchUpdate(TouchEvent& evt);
+		virtual void pinchEnd(TouchEvent& evt);
+		virtual bool isGlobalListener() const;
+		virtual void setGlobalListener(bool global);
+		virtual ~ITouchListener();
 	};
 
 	%feature("director") IKeyFilter;
@@ -367,6 +425,9 @@ Example::
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
+		void addTouchListener(ITouchListener* listener);
+		void addTouchListenerFront(ITouchListener* listener);
+		void removeTouchListener(ITouchListener* listener);
 		void addDropListener(IDropListener* listener);
 		void addDropListenerFront(IDropListener* listener);
 		void removeDropListener(IDropListener* listener);
