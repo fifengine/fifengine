@@ -78,27 +78,11 @@ namespace FIFE
             Matrix adjoint() const
             {
                 Matrix ret;
-
-                ret[0] = cofactorm0();
-                ret[1] = -cofactorm4();
-                ret[2] = cofactorm8();
-                ret[3] = -cofactorm12();
-
-                ret[4] = -cofactorm1();
-                ret[5] = cofactorm5();
-                ret[6] = -cofactorm9();
-                ret[7] = cofactorm13();
-
-                ret[8]  = cofactorm2();
-                ret[9]  = -cofactorm6();
-                ret[10] = cofactorm10();
-                ret[11] = -cofactorm14();
-
-                ret[12] = -cofactorm3();
-                ret[13] = cofactorm7();
-                ret[14] = -cofactorm11();
-                ret[15] = cofactorm15();
-
+                for (int32_t r = 0; r < 4; ++r) {
+                    for (int32_t c = 0; c < 4; ++c) {
+                        ret[4 * c + r] = cofactor(c, r);
+                    }
+                }
                 return ret;
             }
 
@@ -386,76 +370,33 @@ namespace FIFE
             }
 
         private:
-            // TODO cleanup
-            static constexpr T cofactorMaker(T f1, T mj1, T mi1, T f2, T mj2, T mi2, T f3, T mj3, T mi3)
+            /** Generic cofactor of this matrix at (row, col): the minor
+             *  obtained by deleting `row` and `col` from the 4x4 matrix,
+             *  multiplied by (-1)^(row+col).
+             */
+            T cofactor(int32_t row, int32_t col) const
             {
-                return ((f1) * (((mj1) * (mi1)) - ((mj2) * (mi3)))) + ((f2) * (((mj2) * (mi2)) - ((mj3) * (mi1)))) +
-                       ((f3) * (((mj3) * (mi3)) - ((mj1) * (mi2))));
-            }
+                T sub[3][3];
+                int32_t si = 0;
+                for (int32_t r = 0; r < 4; ++r) {
+                    if (r == row) {
+                        continue;
+                    }
+                    int32_t sj = 0;
+                    for (int32_t c = 0; c < 4; ++c) {
+                        if (c == col) {
+                            continue;
+                        }
+                        sub[si][sj++] = (*this)[4 * c + r];
+                    }
+                    ++si;
+                }
 
-            T cofactorm0() const
-            {
-                return cofactorMaker(m5, m10, m15, m6, m11, m13, m7, m9, m14);
-            }
-            T cofactorm1() const
-            {
-                return cofactorMaker(m6, m11, m12, m7, m8, m14, m4, m10, m15);
-            }
-            T cofactorm2() const
-            {
-                return cofactorMaker(m7, m8, m13, m4, m9, m15, m5, m11, m12);
-            }
-            T cofactorm3() const
-            {
-                return cofactorMaker(m4, m9, m14, m5, m10, m12, m6, m8, m13);
-            }
-            T cofactorm4() const
-            {
-                return cofactorMaker(m9, m14, m3, m10, m15, m1, m11, m13, m2);
-            }
-            T cofactorm5() const
-            {
-                return cofactorMaker(m10, m15, m0, m11, m12, m2, m8, m14, m3);
-            }
-            T cofactorm6() const
-            {
-                return cofactorMaker(m11, m12, m1, m8, m13, m3, m9, m15, m0);
-            }
-            T cofactorm7() const
-            {
-                return cofactorMaker(m8, m13, m2, m9, m14, m0, m10, m12, m1);
-            }
-            T cofactorm8() const
-            {
-                return cofactorMaker(m13, m2, m7, m14, m3, m5, m15, m1, m6);
-            }
-            T cofactorm9() const
-            {
-                return cofactorMaker(m14, m13, m4, m15, m0, m6, m12, m2, m7);
-            }
-            T cofactorm10() const
-            {
-                return cofactorMaker(m15, m0, m5, m12, m1, m7, m13, m3, m4);
-            }
-            T cofactorm11() const
-            {
-                return cofactorMaker(m12, m1, m6, m13, m2, m4, m14, m0, m5);
-            }
-            T cofactorm12() const
-            {
-                return cofactorMaker(m1, m6, m11, m2, m7, m9, m3, m5, m10);
-            }
-            T cofactorm13() const
-            {
-                return cofactorMaker(m2, m7, m8, m3, m4, m10, m10, m6, m11);
-            }
-            T cofactorm14() const
-            {
-                return cofactorMaker(m3, m4, m9, m0, m5, m11, m1, m7, m8);
-            }
-            T cofactorm15() const
-            {
-                return cofactorMaker(m0, m5, m10, m1, m6, m8, m2, m4, m9);
+                T const minor = sub[0][0] * (sub[1][1] * sub[2][2] - sub[1][2] * sub[2][1]) -
+                                sub[0][1] * (sub[1][0] * sub[2][2] - sub[1][2] * sub[2][0]) +
+                                sub[0][2] * (sub[1][0] * sub[2][1] - sub[1][1] * sub[2][0]);
+
+                return ((row + col) % 2 == 0) ? minor : -minor;
             }
 
         public:

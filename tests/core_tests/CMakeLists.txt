@@ -17,12 +17,14 @@ set(
   test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp
+  test_enginesettings.cpp
   test_event_touch.cpp
   test_gui.cpp
   test_imagepool.cpp
   test_images.cpp
   test_key.cpp
   test_logger.cpp
+  test_matrix.cpp
   test_rect.cpp
   test_sharedptr.cpp
   test_text_layout.cpp

@@ -296,7 +296,31 @@ namespace FIFE
 
     void EngineSettings::setVideoDriver(std::string const & driver)
     {
-        // TODO: validate the video driver
+        // Validate against the video drivers SDL provides.
+        // SDL matches names case-insensitively (SDL_VideoInit uses SDL_strncasecmp)
+        // and also supports comma-separated fallback lists.
+        // We validate the single name form and store the canonical SDL name.
+        if (!driver.empty()) {
+            std::string canonical;
+            for (int i = 0, count = SDL_GetNumVideoDrivers(); i != count; ++i) {
+                if (SDL_strcasecmp(SDL_GetVideoDriver(i), driver.c_str()) == 0) {
+                    canonical = SDL_GetVideoDriver(i);
+                    break;
+                }
+            }
+            if (canonical.empty()) {
+                FL_WARN(
+                    _log(),
+                    std::format(
+                        "EngineSettings::setVideoDriver() - {} is not a valid video driver. "
+                        "Reverting to the default driver (SDL chooses).",
+                        driver));
+                m_videodriver = "";
+                return;
+            }
+            m_videodriver = canonical;
+            return;
+        }
         m_videodriver = driver;
     }
 

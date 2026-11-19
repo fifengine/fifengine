@@ -594,6 +594,8 @@ namespace FIFE
             /**
              * Sets the video driver. Values depends on platform.
              * If none is set, SDL chooses it.
+             * Values are validated against the video drivers SDL provides;
+             * unknown values revert to the default (SDL chooses).
              *
              * @see DeviceCaps::getAvailableVideoDrivers()
              */
