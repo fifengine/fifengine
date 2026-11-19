@@ -226,22 +226,26 @@ def test_mouse_wheel_deltas_reach_python_listener(engine_minimized):
             self.events = []
 
         def mouseWheelMovedRight(self, evt):
-            self.events.append((
-                "right",
-                evt.getWheelDeltaX(),
-                evt.getWheelDeltaY(),
-                evt.getX(),
-                evt.getY(),
-            ))
+            self.events.append(
+                (
+                    "right",
+                    evt.getWheelDeltaX(),
+                    evt.getWheelDeltaY(),
+                    evt.getX(),
+                    evt.getY(),
+                )
+            )
 
         def mouseWheelMovedUp(self, evt):
-            self.events.append((
-                "up",
-                evt.getWheelDeltaX(),
-                evt.getWheelDeltaY(),
-                evt.getX(),
-                evt.getY(),
-            ))
+            self.events.append(
+                (
+                    "up",
+                    evt.getWheelDeltaX(),
+                    evt.getWheelDeltaY(),
+                    evt.getX(),
+                    evt.getY(),
+                )
+            )
 
     eventmanager = engine_minimized.getEventManager()
     listener = WheelListener()
@@ -314,14 +318,16 @@ def test_touch_and_pinch_events_reach_python_listener(engine_minimized):
             self.events = []
 
         def touchDown(self, evt):
-            self.events.append((
-                "down",
-                evt.getTouchId(),
-                evt.getFingerId(),
-                evt.getNormalizedX(),
-                evt.getNormalizedY(),
-                evt.getFingerCount(),
-            ))
+            self.events.append(
+                (
+                    "down",
+                    evt.getTouchId(),
+                    evt.getFingerId(),
+                    evt.getNormalizedX(),
+                    evt.getNormalizedY(),
+                    evt.getFingerCount(),
+                )
+            )
 
         def touchMotion(self, evt):
             self.events.append(("motion", evt.getDeltaX(), evt.getDeltaY()))
