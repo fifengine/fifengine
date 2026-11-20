@@ -262,8 +262,8 @@ namespace FIFE
         }
 
         // Assure the maximum number of rows
-        if (m_output->getNumberOfRows() > m_maxOutputRows) {
-            unsigned const rows     = m_output->getNumberOfRows();
+        unsigned const rows = static_cast<unsigned>(m_output->getNumberOfRows());
+        if (rows > m_maxOutputRows) {
             unsigned const firstRow = rows - m_maxOutputRows;
             std::vector<std::string> rows_text;
             for (unsigned i = firstRow; i < rows; ++i) {
