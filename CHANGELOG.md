@@ -106,6 +106,9 @@ All notable changes to this project will be documented in this file.
 - updated devcontainer to cpp-devbox:trixie-with-vulkansdk-1.0.18
 - CI (Linux)
   - added building with GCC16
+- `TextRenderPool`: replaced the linear scan in `getRenderedText` with a `std::map` LRU index over a `std::list`
+  - the composite key consists of text + color (incl. alpha) + antialias + glyph/row spacing
+  - duplicate adds now replace the existing entry; inserts keeps map/list in sync
 
 ## Removed
 

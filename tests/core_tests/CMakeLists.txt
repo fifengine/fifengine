@@ -41,6 +41,7 @@ set(
   test_font_definition_loader.cpp
   test_font_manager.cpp
   test_text_wrap.cpp
+  test_textrenderpool.cpp
   test_window.cpp
   test_speechbubble.cpp
 )

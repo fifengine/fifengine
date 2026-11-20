@@ -28,15 +28,25 @@ namespace
                 ;
             }
 
-            void invalidate() override {}
+            void invalidate() override
+            {
+            }
 
-            void render(FIFE::Rect const &, uint8_t, uint8_t const *) override {}
+            void render(FIFE::Rect const &, uint8_t, uint8_t const *) override
+            {
+            }
 
-            void setSurface(SDL_Surface*) override {}
+            void setSurface(SDL_Surface*) override
+            {
+            }
 
-            void useSharedImage(FIFE::ImagePtr const &, FIFE::Rect const &) override {}
+            void useSharedImage(FIFE::ImagePtr const &, FIFE::Rect const &) override
+            {
+            }
 
-            void forceLoadInternal() override {}
+            void forceLoadInternal() override
+            {
+            }
     };
 } // namespace
 
