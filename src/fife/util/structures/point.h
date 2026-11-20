@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
+#include <limits>
 #include <vector>
 
 // 3rd party library includes
@@ -113,19 +114,16 @@ namespace FIFE
              */
             T length() const
             {
-                double sq = 0.0;
-                sq        = x * x + y * y;
-                return static_cast<T>(Mathd::Sqrt(sq));
+                return Math<T>::Sqrt(x * x + y * y);
             }
 
             /** Normalizes the point
              */
             void normalize()
             {
-                T invLength = static_cast<T>(1.0 / length());
+                T invLength = length() > 0 ? 1 / length() : std::numeric_limits<T>::infinity();
 
-                // TODO: get rid of this static cast
-                if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
+                if (invLength > Math<T>::zeroTolerance()) {
                     x = x * invLength;
                     y = y * invLength;
                 } else {
@@ -138,10 +136,9 @@ namespace FIFE
              */
             void rotate(T angle)
             {
-                // TODO: get rid of this static cast
-                T theta    = (angle * static_cast<T>(Mathd::pi())) / 180;
-                T costheta = static_cast<T>(Mathd::Cos(theta));
-                T sintheta = static_cast<T>(Mathd::Sin(theta));
+                T theta    = (angle * Math<T>::pi()) / 180;
+                T costheta = Math<T>::Cos(theta);
+                T sintheta = Math<T>::Sin(theta);
 
                 T nx = x;
                 T ny = y;
@@ -154,10 +151,9 @@ namespace FIFE
              */
             void rotate(PointType2D<T> const & origin, T angle)
             {
-                // TODO: get rid of this static cast
-                T theta    = (angle * static_cast<T>(Mathd::pi())) / 180;
-                T costheta = static_cast<T>(Mathd::Cos(theta));
-                T sintheta = static_cast<T>(Mathd::Sin(theta));
+                T theta    = (angle * Math<T>::pi()) / 180;
+                T costheta = Math<T>::Cos(theta);
+                T sintheta = Math<T>::Sin(theta);
 
                 T nx = x - origin.x;
                 T ny = y - origin.y;
@@ -310,19 +306,16 @@ namespace FIFE
              */
             T length() const
             {
-                double sq = 0.0;
-                sq        = x * x + y * y + z * z;
-                return static_cast<T>(Mathd::Sqrt(sq));
+                return Math<T>::Sqrt(x * x + y * y + z * z);
             }
 
             /** Normalizes the point
              */
             void normalize()
             {
-                T invLength = static_cast<T>(1.0 / length());
+                T invLength = length() > 0 ? 1 / length() : std::numeric_limits<T>::infinity();
 
-                // TODO: get rid of this static cast
-                if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
+                if (invLength > Math<T>::zeroTolerance()) {
                     x = x * invLength;
                     y = y * invLength;
                     z = z * invLength;

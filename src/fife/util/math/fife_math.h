@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <numbers>
 
@@ -227,6 +228,27 @@ namespace FIFE
             static float_type invLog10()
             {
                 return DBL_INV_LOG_10;
+            }
+    };
+
+    /**
+     * Specialization of float traits for int32_t.
+     */
+    template <>
+    struct float_traits<int32_t>
+    {
+            using float_type = int32_t; //< Typedef mirror of the other specializations.
+
+            /** Pi as int32_t. */
+            static int32_t pi()
+            {
+                return static_cast<int32_t>(std::numbers::pi_v<double>);
+            }
+
+            /** Zero tolerance as int32_t. */
+            static int32_t zeroTolerance()
+            {
+                return 0;
             }
     };
 
