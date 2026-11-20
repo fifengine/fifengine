@@ -21,8 +21,8 @@ namespace FIFE
 {
     class VFS;
 
-    /** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
-     * @see MFFalloutDAT2
+    /** A subclass of RawDataMemSource, that fills itself with a FALLOUT2 .DAT file entry
+     * @see DAT2
      */
     class FIFE_API RawDataDAT2 : public RawDataMemSource
     {
@@ -41,7 +41,7 @@ namespace FIFE
             /** Constructor
              * @param vfs The vfs to open with.
              * @param datfile The .DAT archive - e.g. master.DAT
-             * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
+             * @param info The .DAT file entry, as retrieved by DAT2
              */
             RawDataDAT2(VFS* vfs, std::string const & datfile, s_info const & info);
 

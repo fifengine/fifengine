@@ -64,8 +64,7 @@ namespace FIFE
      *  filename that doesn't exist, does trigger completely loading
      *  the file entries.
      *
-     * @see MFFalloutDAT1
-     * @todo @b maybe merge common DAT1/DAT2 code in a common base class
+     * @see DAT1
      */
     class FIFE_API DAT2 : public VFSSource
     {
@@ -83,7 +82,7 @@ namespace FIFE
 
             /** Get Information needed to unpack and extract data
              *
-             * @see MFFalloutDAT1::getInfo
+             * @see DAT1::getInfo
              */
             RawDataDAT2::s_info const & getInfo(std::string const & name) const;
 
