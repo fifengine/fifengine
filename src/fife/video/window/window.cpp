@@ -96,6 +96,15 @@ namespace FIFE
             SDL_SetWindowPosition(m_window, posX, posY);
         }
 
+        // Resize before entering fullscreen: some drivers ignore
+        // SDL_SetWindowSize once the window is already fullscreen.
+        if (m_settings.windowMode == WindowMode::Fullscreen) {
+            SDL_Rect const bounds = Display::getDisplayBounds(m_settings.display);
+            if (bounds.w > 0 && bounds.h > 0) {
+                SDL_SetWindowSize(m_window, bounds.w, bounds.h);
+            }
+        }
+
         if (m_settings.windowMode == WindowMode::ExclusiveFullscreen) {
             // Exclusive fullscreen: use a specific display mode that matches
             // the requested resolution. This avoids spanning multiple monitors
@@ -156,6 +165,10 @@ namespace FIFE
         // the new state is applied so the size we read below (and publish
         // through EngineSettings) is the real one.
         SDL_SyncWindow(m_window);
+        // SDL does not always resize the window to the display when entering
+        // fullscreen. Window::getWidthInPoints() reports display bounds, so
+        // make the SDL window match to keep viewport sizing consistent.
+        syncFullscreenWindowSize();
 
         // SDL may adjust the requested size (minimum size, window manager
         // constraints, fullscreen). Keep WindowSettings in sync with the
@@ -395,6 +408,7 @@ namespace FIFE
         }
 
         SDL_SyncWindow(m_window);
+        syncFullscreenWindowSize();
         recalculateDPIScale();
     }
 
@@ -658,6 +672,24 @@ namespace FIFE
         }
 
         return flags;
+    }
+
+    void Window::syncFullscreenWindowSize()
+    {
+        if (m_window == nullptr || !isFullscreenMode(m_settings.windowMode)) {
+            return;
+        }
+        SDL_Rect const bounds = Display::getDisplayBounds(m_settings.display);
+        if (bounds.w <= 0 || bounds.h <= 0) {
+            return;
+        }
+        int width  = 0;
+        int height = 0;
+        if (SDL_GetWindowSize(m_window, &width, &height) && width == bounds.w && height == bounds.h) {
+            return;
+        }
+        SDL_SetWindowSize(m_window, bounds.w, bounds.h);
+        SDL_SyncWindow(m_window);
     }
 
     void Window::recalculateDPIScale()

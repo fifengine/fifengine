@@ -404,6 +404,21 @@ TEST_CASE("WindowCreate_FullscreenUsesDesktopModeOnTargetDisplay")
     auto const bounds = FIFE::Display::getDisplayBounds(0);
     CHECK(window.getWidthInPoints() == bounds.w);
     CHECK(window.getHeightInPoints() == bounds.h);
+    // The SDL window itself must cover the display. Otherwise the render
+    // backend (which reads SDL_GetWindowSize) and the camera (which reads
+    // Window::getWidthInPoints) disagree, and the scene is drawn into a
+    // smaller viewport than the reported screen size.
+    int sdlWidth  = 0;
+    int sdlHeight = 0;
+    REQUIRE(SDL_GetWindowSize(window.getSDLWindow(), &sdlWidth, &sdlHeight));
+    // X11 reports multiple monitors as one combined virtual screen that SDL
+    // fullscreen cannot span; Wayland reports per-display bounds, where both
+    // size sources must agree.
+    char const * const driver = SDL_GetCurrentVideoDriver();
+    if (driver != nullptr && std::string_view{driver} == "wayland") {
+        CHECK(sdlWidth == bounds.w);
+        CHECK(sdlHeight == bounds.h);
+    }
     // The requested windowed size is kept for leaving fullscreen.
     CHECK(window.getSettings().width == 800);
     CHECK(window.getSettings().height == 600);
