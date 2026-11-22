@@ -19,7 +19,7 @@ import os
 from pathlib import Path
 
 import pytest
-from fife.extensions import pychan
+from fife.extensions import fife_timer, pychan
 from fife.extensions.pychan.internal import Manager
 from fife.extensions.pychan.widgets.containers import VBox
 from fife.extensions.pychan.widgets.label import Label
@@ -147,15 +147,19 @@ def pychan_manager(engine):
     Yields:
         The initialized global pychan ``Manager``.
     """
-    if not FONT_PATH.is_file():
-        pytest.skip(f"{FONT_PATH} not found; cannot run Widget.execute tests")
-    engine.loadFontManifestFromString(_font_manifest())
-    pychan.init(engine)
-    manager = pychan.manager
-    yield manager
-    # Leave the global state as found for other test modules.
-    Manager.manager = None
-    pychan.manager = None
+    original_timer_manager = fife_timer._manager
+    try:
+        if not FONT_PATH.is_file():
+            pytest.skip(f"{FONT_PATH} not found; cannot run Widget.execute tests")
+        engine.loadFontManifestFromString(_font_manifest())
+        pychan.init(engine)
+        manager = pychan.manager
+        yield manager
+    finally:
+        # Leave the global state as found for other test modules.
+        fife_timer._manager = original_timer_manager
+        Manager.manager = None
+        pychan.manager = None
 
 
 @pytest.fixture
