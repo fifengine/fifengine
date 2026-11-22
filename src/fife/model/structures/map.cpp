@@ -126,6 +126,17 @@ namespace FIFE
                 ++i;
             }
         }
+        // Unregister interact layers from their walkable layer while the
+        // layer list is still intact. Doing this from ~Layer during
+        // m_layers.clear() re-enters the map while it is being destroyed.
+        for (auto& l : m_layers) {
+            if (l->isInteract()) {
+                Layer* walkable = getLayer(l->getWalkableId());
+                if (walkable != nullptr) {
+                    walkable->removeInteractLayer(l.get());
+                }
+            }
+        }
         m_layers.clear();
     }
 

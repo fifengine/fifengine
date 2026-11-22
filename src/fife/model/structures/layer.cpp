@@ -59,13 +59,6 @@ namespace FIFE
     {
         // if this is a walkable layer
         destroyCellCache();
-        // if this is a interact layer
-        if (m_interact) {
-            Layer* temp = m_map->getLayer(m_walkableId);
-            if (temp != nullptr) {
-                temp->removeInteractLayer(this);
-            }
-        }
         for (auto& inst : m_instances) {
             std::unique_ptr<Instance> const deleter(inst);
         }
