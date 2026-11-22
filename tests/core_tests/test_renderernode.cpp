@@ -37,12 +37,12 @@ namespace
             std::unique_ptr<Layer> layer3;
             std::unique_ptr<Object> obj;
 
-            RendererNodeFixture()
+            RendererNodeFixture() :
+                layer1(std::make_unique<Layer>("rn_layer1", nullptr, &grid)),
+                layer2(std::make_unique<Layer>("rn_layer2", nullptr, &grid)),
+                layer3(std::make_unique<Layer>("rn_layer3", nullptr, &grid)),
+                obj(std::make_unique<Object>("rn_obj", "test"))
             {
-                layer1 = std::make_unique<Layer>("rn_layer1", nullptr, &grid);
-                layer2 = std::make_unique<Layer>("rn_layer2", nullptr, &grid);
-                layer3 = std::make_unique<Layer>("rn_layer3", nullptr, &grid);
-                obj    = std::make_unique<Object>("rn_obj", "test");
             }
     };
 } // namespace

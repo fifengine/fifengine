@@ -35,7 +35,11 @@ DEFAULT_FONT_ID = "SystemDefault"
 
 
 def _font_manifest():
-    """Build a font manifest registering one family backed by a real font file."""
+    """Build a font manifest registering one family backed by a real font file.
+
+    Returns:
+        An XML font manifest string registering ``DEFAULT_FONT_ID``.
+    """
     return f"""<?xml version="1.0"?>
 <fonts version="1">
   <family id="{DEFAULT_FONT_ID}">
@@ -45,7 +49,11 @@ def _font_manifest():
 
 
 def _make_dialog(child_names=("okButton",)):
-    """Create a real root widget with real children of the given names."""
+    """Create a real root widget with real children of the given names.
+
+    Returns:
+        A ``VBox`` root widget with one labeled child per given name.
+    """
     dialog = VBox(name="dialog")
     for name in child_names:
         dialog.addChild(Label(name=name, parent=dialog))
@@ -55,9 +63,11 @@ def _make_dialog(child_names=("okButton",)):
 def _captured_callbacks(dialog):
     """The real callbacks `Widget.execute` captured on the dialog's children.
 
-    Returns a dict keyed by child name. These are the `_quitThisDialog`
-    closures stored by the real `Widget.capture` calls under the
-    "__execute__" group.
+    These are the `_quitThisDialog` closures stored by the real
+    `Widget.capture` calls under the "__execute__" group.
+
+    Returns:
+        A dict of the captured callbacks, keyed by child name.
     """
     callbacks = {}
     for widget in dialog.findChildren():
@@ -84,6 +94,9 @@ def _install_main_loop(dialog, trigger_name=None, focused_child=None):
     ``state`` records values observed while the dialog is running. Note that
     ``Widget.is_focusable`` is derived from visibility in fifechan, so focus
     assertions read ``state`` during the run rather than after it.
+
+    Returns:
+        The mutable ``state`` dict recording values observed during the run.
     """
     state = {
         "break_value": None,
@@ -113,7 +126,11 @@ def _install_main_loop(dialog, trigger_name=None, focused_child=None):
 
 @pytest.fixture(scope="module")
 def engine():
-    """A real FIFE engine, running headless (dummy SDL drivers)."""
+    """A real FIFE engine, running headless (dummy SDL drivers).
+
+    Yields:
+        An initialized ``fife.Engine``, destroyed when the module finishes.
+    """
     os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
     os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
     os.environ.setdefault("ALSOFT_DRIVERS", "null")
@@ -125,7 +142,11 @@ def engine():
 
 @pytest.fixture(scope="module")
 def pychan_manager(engine):
-    """A real pychan manager on the engine, with a default font family registered."""
+    """A real pychan manager on the engine, with a default font family registered.
+
+    Yields:
+        The initialized global pychan ``Manager``.
+    """
     if not FONT_PATH.is_file():
         pytest.skip(f"{FONT_PATH} not found; cannot run Widget.execute tests")
     engine.loadFontManifestFromString(_font_manifest())
@@ -139,7 +160,11 @@ def pychan_manager(engine):
 
 @pytest.fixture
 def dialog(pychan_manager):
-    """A real root widget with a real child, named 'okButton'."""
+    """A real root widget with a real child, named 'okButton'.
+
+    Returns:
+        A fresh ``VBox`` root widget for a single test.
+    """
     return _make_dialog()
 
 
@@ -259,7 +284,7 @@ class TestExecuteEdgeCases:
     def test_empty_bind_returns_main_loop_result_and_stays_visible(
         self, pychan_manager, dialog
     ):
-        state = _install_main_loop(dialog)
+        _install_main_loop(dialog)
         result = dialog.execute({})
         # main_loop returns the unset break value: no event was dispatched.
         assert result is None
