@@ -25,10 +25,15 @@
 namespace FIFE
 {
 
-    /** Minimal matrix class to assist in view 3d calculations
+    /**
+     * Minimal matrix class to assist in view 3d calculations
+     *
+     * Note: Header-only template: do not apply FIFE_API.
+     * On Windows it expands to __declspec(dllexport/dllimport) and this
+     * makes MSVC expect every used specialization in the DLL.
      */
     template <typename T>
-    class FIFE_API Matrix
+    class Matrix
     {
         public:
             Matrix() :
