@@ -124,6 +124,6 @@ class Label(BasicTextWidget):
         self.real_widget.setTextWrapping(wrapping)
 
     def _getTextWrapping(self):
-        self.real_widget.isTextWrapping()
+        return self.real_widget.isTextWrapping()
 
     wrap_text = property(_getTextWrapping, _setTextWrapping)
