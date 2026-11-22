@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- added SDL3 touch input: finger/trackpad translation, `TouchEvent`/`ITouchListener` API, pinch events, wheel deltas, and native Fifechan touch support
+  - `IMouseListener` callbacks now have non-pure no-op defaults, fixing director crashes in Python listeners that omit a wheel callback
 - added movie support via ffmpeg
   - `ENABLE_MOVIE=ON` (default off, needs a dynamic vcpkg triplet for LGPL 6), patent-free codecs only
   - `Engine::playMovie/stopMovie/isMoviePlaying/getMovieTime` and `fcn::VideoWidget`

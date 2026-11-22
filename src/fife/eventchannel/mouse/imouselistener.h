@@ -32,71 +32,104 @@ namespace FIFE
              * Called when the mouse has entered into the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseEntered(MouseEvent& evt) = 0;
+            virtual void mouseEntered(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse has exited the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseExited(MouseEvent& evt) = 0;
+            virtual void mouseExited(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when a mouse button has been pressed on the event source area.
              * NOTE: A mouse press is NOT equal to a mouse click.
              * @param evt describes the event.
              */
-            virtual void mousePressed(MouseEvent& evt) = 0;
+            virtual void mousePressed(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when a mouse button has been released on the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseReleased(MouseEvent& evt) = 0;
+            virtual void mouseReleased(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when a mouse button is pressed and released (clicked) on
              * the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseClicked(MouseEvent& evt) = 0;
+            virtual void mouseClicked(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse wheel has moved up on the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
+            virtual void mouseWheelMovedUp(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse wheel has moved down on the event source area.
              * @param evt MouseEvent that describes the event.
              */
-            virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
+            virtual void mouseWheelMovedDown(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse wheel has moved right on the event source area.
              * @param evt describes the event.
              */
-            virtual void mouseWheelMovedRight(MouseEvent& evt) = 0;
+            virtual void mouseWheelMovedRight(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse wheel has moved left on the event source area.
              * @param evt MouseEvent that describes the event.
              */
-            virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
+            virtual void mouseWheelMovedLeft(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse has moved in the event source area and no mouse button
              * has been pressed
              * @param evt describes the event.
              */
-            virtual void mouseMoved(MouseEvent& evt) = 0;
+            virtual void mouseMoved(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /**
              * Called when the mouse has moved and the mouse has previously been
              * pressed on the event source.
              * @param evt describes the event.
              */
-            virtual void mouseDragged(MouseEvent& evt) = 0;
+            virtual void mouseDragged(MouseEvent& evt)
+            {
+                static_cast<void>(evt);
+            }
 
             /** Indicates if this is a global listener
              * Global listener can also receive events that are consumed by widgets / gui.
@@ -118,7 +151,12 @@ namespace FIFE
 
             ~IMouseListener() override = default;
 
-        protected:
+            /** A listener with all callbacks at their no-op defaults.
+             *
+             * Public so SWIG can construct the proxy/director object. The
+             * callbacks are non-pure, so a subclass only needs to override the
+             * events it cares about.
+             */
             IMouseListener() : m_global(false)
             {
             }

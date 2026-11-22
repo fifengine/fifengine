@@ -31,15 +31,17 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        [[maybe_unused]] Logger& _log()
+        {
             static Logger log(LM_VIDEO);
             return log;
-        }();
+        }
 
-        Logger& _guiLog = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        [[maybe_unused]] Logger& _guiLog()
+        {
             static Logger log(LM_GUI);
             return log;
-        }();
+        }
     } // namespace
 
     namespace
@@ -223,24 +225,27 @@ namespace FIFE
 
     void RenderBackendOpenGL::init(std::string const & driver)
     {
-#ifdef FIFE_OS_LINUX
-        // Enable XRandR monitor enumeration on X11.
-        // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
-        char const * video_driver = SDL_GetCurrentVideoDriver();
-        if (video_driver == nullptr || SDL_strcmp(video_driver, "x11") == 0) {
-            SDL_SetHint(SDL_HINT_VIDEO_X11_XRANDR, "1");
-        }
-#endif
+        // 1. Set hints BEFORE initialization
 
-        Uint32 const flags = SDL_INIT_VIDEO;
-        if (!SDL_InitSubSystem(flags)) {
-            throw SDLException(SDL_GetError());
-        }
         if (!driver.empty()) {
             SDL_SetHint(SDL_HINT_VIDEO_DRIVER, driver.c_str());
         }
 
-        // setup OpenGL
+#ifdef FIFE_OS_LINUX
+        // Enable XRandR monitor enumeration on X11.
+        // This hint is ignored by non-X11 drivers (e.g. wayland, dummy).
+        // Must be set before SDL_InitSubSystem(SDL_INIT_VIDEO).
+        // If the user explicitly requested "x11" via the 'driver' argument,
+        // or if "x11" is the default on their system, this will take effect.
+        SDL_SetHint(SDL_HINT_VIDEO_X11_XRANDR, "1");
+#endif
+
+        // 2. Initialize the subsystem
+        if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+            throw SDLException(SDL_GetError());
+        }
+
+        // 3. Setup OpenGL
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -273,7 +278,7 @@ namespace FIFE
             // The application replaced the SDL window (Window::create()).
             // The old context belongs to the destroyed window: drop every
             // GL object name from it and create a fresh context below.
-            FL_LOG(_log, "OpenGL window changed; recreating the GL context");
+            FL_LOG(_log(), "OpenGL window changed; recreating the GL context");
             if (m_context != nullptr) {
                 SDL_GL_DestroyContext(m_context);
                 m_context = nullptr;
@@ -316,7 +321,7 @@ namespace FIFE
             GLenum const glewError = glewInit();
             if (glewError != GLEW_OK) {
                 FL_LOG(
-                    _log,
+                    _log(),
                     std::format(
                         "RenderBackendOpenGLError initializing GLEW!{}",
                         static_cast<char const *>(static_cast<void const *>(glewGetErrorString(glewError)))));
@@ -368,7 +373,7 @@ namespace FIFE
 
         if (!recreate) {
             glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-            glClearDepth(1.0F);
+            glClearDepth(1.0);
             glClearStencil(0);
         }
 
@@ -414,7 +419,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "RB::createImage: surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
                     surface->w,
@@ -455,7 +460,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "RB::createImage(name): name='{}' surface={}x{} pitch={} fmt={:#x} rgba_fmt={:#x} match={}",
                     name,
@@ -475,7 +480,7 @@ namespace FIFE
 
         /*if (surface->w >= 20 && surface->w <= 500 && surface->h >= 8 && surface->h <= 80) {
             FL_WARN(
-                _log,
+                _log(),
                 std::format(
                     "  RB::createImage(name) conv={}x{} pitch={} fmt={:#x}",
                     conv->w,
@@ -1064,7 +1069,7 @@ namespace FIFE
             GLboolean const scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
 
             FL_LOG(
-                _guiLog,
+                _guiLog(),
                 std::format(
                     "renderWithoutZ flush: tex={} quad=({:.1f},{:.1f})-({:.1f},{:.1f}) size=({:.1f}x{:.1f}) "
                     "elemCount={} colorEnabled={} scissorEnabled={} scissor=({},{} {}x{}) blend=({}, {})",

@@ -49,7 +49,7 @@ namespace FIFE {
 		CellGrid* getCellGrid(const std::string& gridtype);
 
 		void setTimeMultiplier(float multip);
-		double getTimeMultiplier() const;
+		float getTimeMultiplier() const;
 
 	};
 }

@@ -45,7 +45,7 @@ namespace FIFE
     static double const DBL_INVERSE_PI     = 1.0 / DBL_PI;
     static double const DBL_INVERSE_TWO_PI = 1.0 / DBL_TWO_PI;
     static double const DBL_DEG_TO_RAD     = DBL_PI / 180.0;
-    static double const DBL_RAD_TO_DEG     = 180.0F / DBL_PI;
+    static double const DBL_RAD_TO_DEG     = 180.0 / DBL_PI;
     static double const DBL_LOG_2          = std::numbers::ln2;
     static double const DBL_LOG_10         = std::numbers::ln10;
     static double const DBL_INV_LOG_2      = 1.0 / std::numbers::ln2;

@@ -251,11 +251,12 @@ namespace FIFE
         static_cast<void>(renderbackend);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
-            uint32_t const duration      = toAnimationTimestamp(m_animation->getDuration());
-            uint64_t const elapsed       = TimeManager::instance()->now64() - m_start_time;
-            uint64_t const scaledElapsed = static_cast<uint64_t>(static_cast<double>(elapsed) * m_time_scale);
-            uint64_t const animtime      = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(duration);
-            ImagePtr const img           = m_animation->getFrameByTimestamp64(animtime);
+            uint32_t const duration = toAnimationTimestamp(m_animation->getDuration());
+            uint64_t const elapsed  = TimeManager::instance()->now64() - m_start_time;
+            uint64_t const scaledElapsed =
+                static_cast<uint64_t>(static_cast<double>(elapsed) * static_cast<double>(m_time_scale));
+            uint64_t const animtime = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(duration);
+            ImagePtr const img      = m_animation->getFrameByTimestamp64(animtime);
             Rect r;
             Rect const viewport = cam->getViewPort();
             int32_t width       = 0;

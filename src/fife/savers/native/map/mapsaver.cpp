@@ -511,7 +511,7 @@ namespace FIFE
                     if (type == "simple") {
                         auto* simpleInfo = dynamic_cast<LightRendererSimpleLightInfo*>(info);
                         if (simpleInfo != nullptr) {
-                            if (simpleInfo->getRadius() > 0.0) {
+                            if (simpleInfo->getRadius() > 0.0F) {
                                 lightElement->SetAttribute("radius", simpleInfo->getRadius());
                             }
                             std::vector<uint8_t> color = simpleInfo->getColor();
@@ -525,10 +525,10 @@ namespace FIFE
                             if (simpleInfo->getSubdivisions() != 32) {
                                 lightElement->SetAttribute("subdivisions", simpleInfo->getSubdivisions());
                             }
-                            if (simpleInfo->getXStretch() > 1.001 || simpleInfo->getXStretch() < 0.999) {
+                            if (simpleInfo->getXStretch() > 1.001F || simpleInfo->getXStretch() < 0.999F) {
                                 lightElement->SetAttribute("xstretch", simpleInfo->getXStretch());
                             }
-                            if (simpleInfo->getYStretch() > 1.001 || simpleInfo->getYStretch() < 0.999) {
+                            if (simpleInfo->getYStretch() > 1.001F || simpleInfo->getYStretch() < 0.999F) {
                                 lightElement->SetAttribute("ystretch", simpleInfo->getYStretch());
                             }
                         }

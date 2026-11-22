@@ -179,6 +179,8 @@ namespace FIFE
                     Image* curimg;
                     InstanceRenderer* renderer;
                     explicit OutlineInfo(InstanceRenderer* r);
+                    OutlineInfo(OutlineInfo const &)            = default;
+                    OutlineInfo& operator=(OutlineInfo const &) = default;
                     ~OutlineInfo();
             };
             // contains per-instance information for overlay drawing
@@ -194,6 +196,8 @@ namespace FIFE
                     Image* curimg;
                     InstanceRenderer* renderer;
                     explicit ColoringInfo(InstanceRenderer* r);
+                    ColoringInfo(ColoringInfo const &)            = default;
+                    ColoringInfo& operator=(ColoringInfo const &) = default;
                     ~ColoringInfo();
             };
             class FIFE_API AreaInfo
@@ -207,6 +211,8 @@ namespace FIFE
                     bool front;
                     double z;
                     AreaInfo();
+                    AreaInfo(AreaInfo const &)            = default;
+                    AreaInfo& operator=(AreaInfo const &) = default;
                     ~AreaInfo();
             };
             using InstanceToOutlines_t = std::map<Instance*, OutlineInfo>;

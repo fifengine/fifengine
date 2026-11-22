@@ -391,6 +391,8 @@ set(
   src/fife/eventchannel/eventmanager.cpp
   src/fife/eventchannel/joystick/joystick.cpp
   src/fife/eventchannel/joystick/joystickmanager.cpp
+  src/fife/eventchannel/touch/touchtracker.cpp
+  src/fife/eventchannel/touch/touchtranslation.cpp
   src/fife/loaders/native/audio/ogg_loader.cpp
   src/fife/loaders/native/audio/sounddecoder_ogg.cpp
   src/fife/loaders/native/input/controllermappingloader.cpp
@@ -590,6 +592,11 @@ set(
   src/fife/eventchannel/text/itextlistener.h
   src/fife/eventchannel/text/text.h
   src/fife/eventchannel/text/textevent.h
+  src/fife/eventchannel/touch/itouchcontroller.h
+  src/fife/eventchannel/touch/itouchlistener.h
+  src/fife/eventchannel/touch/touchevent.h
+  src/fife/eventchannel/touch/touchtracker.h
+  src/fife/eventchannel/touch/touchtranslation.h
   src/fife/loaders/native/audio/ogg_loader.h
   src/fife/loaders/native/audio/sounddecoder_ogg.h
   src/fife/loaders/native/input/controllermappingloader.h

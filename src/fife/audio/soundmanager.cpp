@@ -253,7 +253,8 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 3> vec{};
             alGetListenerfv(AL_POSITION, vec.data());
-            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
+            return AudioSpaceCoordinate(
+                static_cast<double>(vec.at(0)), static_cast<double>(vec.at(1)), static_cast<double>(vec.at(2)));
         }
         return AudioSpaceCoordinate();
     }
@@ -277,7 +278,8 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 6> vec{};
             alGetListenerfv(AL_ORIENTATION, vec.data());
-            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
+            return AudioSpaceCoordinate(
+                static_cast<double>(vec.at(0)), static_cast<double>(vec.at(1)), static_cast<double>(vec.at(2)));
         }
         return AudioSpaceCoordinate();
     }
@@ -298,7 +300,8 @@ namespace FIFE
         if (isActive()) {
             std::array<ALfloat, 3> vec{};
             alGetListenerfv(AL_VELOCITY, vec.data());
-            return AudioSpaceCoordinate(vec.at(0), vec.at(1), vec.at(2));
+            return AudioSpaceCoordinate(
+                static_cast<double>(vec.at(0)), static_cast<double>(vec.at(1)), static_cast<double>(vec.at(2)));
         }
         return AudioSpaceCoordinate();
     }
@@ -306,7 +309,7 @@ namespace FIFE
     void SoundManager::setDopplerFactor(float factor) const
     {
         if (isActive()) {
-            if (factor >= 0.0) {
+            if (factor >= 0.0F) {
                 alDopplerFactor(factor);
             }
         }

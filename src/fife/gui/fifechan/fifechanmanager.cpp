@@ -91,6 +91,13 @@ namespace FIFE
         // Widget::mGlobalFont is a static raw pointer; clear it before m_fonts
         // destroys the font it points to.
         fcn::Widget::resetGlobalFont();
+
+        // The image loader is also a static raw pointer and must not outlive
+        // this manager. Leave it alone if somebody else installed another one.
+        if (fcn::Image::getImageLoader() == m_imgloader.get()) {
+            fcn::Image::resetImageLoader();
+        }
+
         m_defaultfont = nullptr;
     }
 
@@ -101,26 +108,45 @@ namespace FIFE
             return false;
         }
 
-        bool const overWidget = // NOLINT(cppcoreguidelines-init-variables)
-            m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
+        // Resolve the pointer position from the event itself. m_lastMotionX/Y
+        // are only a fallback for events that carry no coordinates (keys,
+        // text input). Relying on them alone made the "is there a widget
+        // under the pointer?" answer wrong for the first event after a
+        // pointer move, which is exactly the case for taps and wheel input.
+        int32_t pointerX = m_lastMotionX;
+        int32_t pointerY = m_lastMotionY;
+
+        switch (evt.type) {
+        case SDL_EVENT_MOUSE_MOTION:
+            pointerX = static_cast<int32_t>(evt.motion.x);
+            pointerY = static_cast<int32_t>(evt.motion.y);
+            break;
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
+            pointerX = static_cast<int32_t>(evt.button.x);
+            pointerY = static_cast<int32_t>(evt.button.y);
+            break;
+        case SDL_EVENT_MOUSE_WHEEL:
+            pointerX = static_cast<int32_t>(evt.wheel.mouse_x);
+            pointerY = static_cast<int32_t>(evt.wheel.mouse_y);
+            break;
+        default:
+            break;
+        }
+
+        m_lastMotionX = pointerX;
+        m_lastMotionY = pointerY;
+
+        bool const overWidget = m_fcn_topcontainer->getWidgetAt(pointerX, pointerY) != nullptr;
 
         switch (evt.type) {
         case SDL_EVENT_MOUSE_WHEEL:
-        case SDL_EVENT_FINGER_MOTION: {
-            // On Linux with touchpads, scrolling may generate SDL_EVENT_FINGER_MOTION
-            // instead of SDL_EVENT_MOUSE_WHEEL. Convert finger motion to wheel event.
-            if (evt.type == SDL_EVENT_FINGER_MOTION) {
-                SDL_Event wheelEvt     = evt;
-                wheelEvt.type          = SDL_EVENT_MOUSE_WHEEL;
-                wheelEvt.wheel.x       = evt.tfinger.dx;
-                wheelEvt.wheel.y       = evt.tfinger.dy;
-                wheelEvt.wheel.mouse_x = static_cast<float>(static_cast<int32_t>(evt.tfinger.x));
-                wheelEvt.wheel.mouse_y = static_cast<float>(static_cast<int32_t>(evt.tfinger.y));
-                evt                    = wheelEvt;
-            }
+            // Touch and trackpad gestures reach Fifechan as synthetic mouse
+            // events from the event manager. FIFE does not forward raw
+            // FINGER_* events here, so Fifechan's native touch path stays
+            // dormant and this compatibility path is the single translator.
             m_input->pushInput(evt);
             return overWidget;
-        }
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             m_had_widget = overWidget;
             [[fallthrough]];
@@ -146,8 +172,6 @@ namespace FIFE
             return false;
 
         case SDL_EVENT_MOUSE_MOTION:
-            m_lastMotionX = static_cast<int32_t>(evt.motion.x);
-            m_lastMotionY = static_cast<int32_t>(evt.motion.y);
             if (m_fcn_topcontainer->getWidgetAt(static_cast<int>(evt.motion.x), static_cast<int>(evt.motion.y)) !=
                 nullptr) {
                 m_had_mouse = true;

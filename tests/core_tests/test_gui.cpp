@@ -19,6 +19,7 @@
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
+#include "gui/fifechan/fifechanmanager.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
@@ -26,6 +27,7 @@
 #include "video/sdl/renderbackendsdl.h"
 #include "video/window/window.h"
 
+using FIFE::FifechanManager;
 using FIFE::GuiImageLoader;
 using FIFE::ImageManager;
 using FIFE::ImagePtr;
@@ -247,4 +249,99 @@ TEST_CASE("createImage converts BGRA8888 to RGBA32 in OpenGL backend", "[gui][op
     renderbackend.setWindowObject(&window);
     renderbackend.createMainScreen("FIFE", "");
     test_create_image_converts_format(renderbackend, SDL_PIXELFORMAT_RGBA32);
+}
+
+TEST_CASE("FifechanManager ignores raw finger events", "[gui][sdl][fifechan]")
+{
+    environment const env;
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
+
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+    renderbackend.init("");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
+
+    auto manager = std::make_unique<FifechanManager>();
+    manager->init("SDL", 800, 600);
+
+    auto label = std::make_unique<fcn::Label>("target");
+    label->setDimension(fcn::Rectangle(100, 100, 60, 30));
+    manager->add(label.get());
+
+    SDL_WindowID const windowId = SDL_GetWindowID(window.getSDLWindow());
+
+    // Coordinate that maps to the widget under SDL's normalized touch space.
+    SDL_Event finger{};
+    finger.type             = SDL_EVENT_FINGER_DOWN;
+    finger.tfinger.touchID  = 1;
+    finger.tfinger.fingerID = 0;
+    finger.tfinger.x        = 120.0F / 800.0F;
+    finger.tfinger.y        = 110.0F / 600.0F;
+    finger.tfinger.windowID = windowId;
+
+    // FIFE translates touch in EventManager and never forwards raw fingers.
+    // Feeding them here as well would process every gesture twice, so the
+    // event must not be consumed even when it is over a widget.
+    CHECK_FALSE(manager->onSdlEvent(finger));
+
+    finger.type = SDL_EVENT_FINGER_UP;
+    CHECK_FALSE(manager->onSdlEvent(finger));
+}
+
+TEST_CASE("Fifechan SDL3 backend provides native touch input", "[gui][fifechan]")
+{
+    STATIC_REQUIRE(fcn::sdl3::Input::hasNativeTouchInput());
+}
+
+TEST_CASE("FifechanManager hit-tests widgets at the event position", "[gui][sdl][fifechan]")
+{
+    environment const env;
+    Window window;
+    window.create(WindowSettings{.width = 800, .height = 600, .opengl = false, .windowMode = WindowMode::Windowed});
+
+    RenderBackendSDL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+    renderbackend.init("");
+    renderbackend.setWindowObject(&window);
+    renderbackend.createMainScreen("FIFE", "");
+
+    auto manager = std::make_unique<FifechanManager>();
+    manager->init("SDL", 800, 600);
+
+    auto label = std::make_unique<fcn::Label>("target");
+    label->setDimension(fcn::Rectangle(100, 100, 60, 30));
+    manager->add(label.get());
+
+    SDL_WindowID const windowId = SDL_GetWindowID(window.getSDLWindow());
+
+    SDL_Event button{};
+    button.type            = SDL_EVENT_MOUSE_BUTTON_DOWN;
+    button.button.button   = SDL_BUTTON_LEFT;
+    button.button.down     = true;
+    button.button.x        = 120.0F;
+    button.button.y        = 110.0F;
+    button.button.windowID = windowId;
+
+    // No motion event precedes this button press. Hit-testing must use the
+    // button event's own coordinates instead of the stale (0, 0) position.
+    CHECK(manager->onSdlEvent(button));
+
+    SDL_Event outside = button;
+    outside.button.x  = 10.0F;
+    outside.button.y  = 10.0F;
+    CHECK_FALSE(manager->onSdlEvent(outside));
+
+    SDL_Event wheel{};
+    wheel.type            = SDL_EVENT_MOUSE_WHEEL;
+    wheel.wheel.x         = 1.0F;
+    wheel.wheel.y         = 0.0F;
+    wheel.wheel.mouse_x   = 120.0F;
+    wheel.wheel.mouse_y   = 110.0F;
+    wheel.wheel.direction = SDL_MOUSEWHEEL_NORMAL;
+    wheel.wheel.windowID  = windowId;
+    CHECK(manager->onSdlEvent(wheel));
+
+    wheel.wheel.mouse_x = 10.0F;
+    wheel.wheel.mouse_y = 10.0F;
+    CHECK_FALSE(manager->onSdlEvent(wheel));
 }

@@ -27,8 +27,6 @@
 
 namespace FIFE
 {
-    // Use `FIFE_API` from platform.h on declarations; don't define local FIFE_API_IMPL here.
-
     namespace
     {
         [[maybe_unused]] Logger& _log()

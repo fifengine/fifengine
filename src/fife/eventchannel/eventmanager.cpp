@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
 #include <deque>
 #include <format>
 #include <iostream>
@@ -21,11 +22,13 @@
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/mouse/mouseevent.h"
+#include "eventchannel/touch/touchtranslation.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
 #include "util/time/timemanager.h"
 #include "video/renderbackend.h"
+#include "video/window/window.h"
 
 namespace FIFE
 {
@@ -35,6 +38,23 @@ namespace FIFE
         {
             static Logger log(LM_EVTCHANNEL);
             return log;
+        }
+
+        Window* touchWindow()
+        {
+            if (!RenderBackend::exists()) {
+                return nullptr;
+            }
+            return RenderBackend::instance()->getWindowObject();
+        }
+
+        uint32_t touchWindowId()
+        {
+            Window* const window = touchWindow();
+            if ((window == nullptr) || (window->getSDLWindow() == nullptr)) {
+                return 0;
+            }
+            return SDL_GetWindowID(window->getSDLWindow());
         }
     } // namespace
 
@@ -50,11 +70,29 @@ namespace FIFE
         m_oldX(0),
         m_oldY(0),
         m_lastTicks(0),
-        m_oldVelocity(0.0)
+        m_oldVelocity(0.0),
+        m_touchPointerDown(false),
+        m_touchLastX(0),
+        m_touchLastY(0)
     {
     }
 
     EventManager::~EventManager() = default;
+
+    void EventManager::applyInputHints()
+    {
+        // Policy B: FIFE owns touch translation. SDL's synthetic mouse events
+        // would double-fire and, on diagonal touchpad pans, could turn a
+        // vertical gesture into a horizontal wheel callback.
+        SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
+
+        // Never let a real mouse generate synthetic touch feedback either.
+        SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
+
+        // Desktop trackpads must keep emitting normal pointer/wheel events;
+        // only their FINGER_* stream is translated when the OS provides one.
+        SDL_SetHint(SDL_HINT_TRACKPAD_IS_TOUCH_ONLY, "0");
+    }
 
     namespace
     {
@@ -151,6 +189,21 @@ namespace FIFE
     void EventManager::removeMouseListener(IMouseListener* listener)
     {
         removeListener<IMouseListener*>(m_mouseListeners, listener);
+    }
+
+    void EventManager::addTouchListener(ITouchListener* listener)
+    {
+        addListener<ITouchListener*>(m_touchListeners, listener);
+    }
+
+    void EventManager::addTouchListenerFront(ITouchListener* listener)
+    {
+        addListenerFront<ITouchListener*>(m_touchListeners, listener);
+    }
+
+    void EventManager::removeTouchListener(ITouchListener* listener)
+    {
+        removeListener<ITouchListener*>(m_touchListeners, listener);
     }
 
     void EventManager::addSdlEventListener(ISdlEventListener* listener)
@@ -324,6 +377,47 @@ namespace FIFE
         }
     }
 
+    void EventManager::dispatchTouchEvent(TouchEvent& evt)
+    {
+        std::deque<ITouchListener*> listeners = m_touchListeners;
+        auto i                                = listeners.begin();
+        for (; i != listeners.end(); ++i) {
+            if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) {
+                continue;
+            }
+            switch (evt.getType()) {
+            case TouchEvent::UNKNOWN:
+                break;
+            case TouchEvent::DOWN:
+                (*i)->touchDown(evt);
+                break;
+            case TouchEvent::UP:
+                (*i)->touchUp(evt);
+                break;
+            case TouchEvent::MOTION:
+                (*i)->touchMotion(evt);
+                break;
+            case TouchEvent::CANCELED:
+                (*i)->touchCanceled(evt);
+                break;
+            case TouchEvent::PINCH_BEGIN:
+                (*i)->pinchBegin(evt);
+                break;
+            case TouchEvent::PINCH_UPDATE:
+                (*i)->pinchUpdate(evt);
+                break;
+            case TouchEvent::PINCH_END:
+                (*i)->pinchEnd(evt);
+                break;
+            default:
+                break;
+            }
+            if (evt.isConsumed()) {
+                break;
+            }
+        }
+    }
+
     bool EventManager::dispatchSdlEvent(SDL_Event& evt)
     {
         bool ret                                 = false;
@@ -425,8 +519,17 @@ namespace FIFE
             case SDL_EVENT_MOUSE_BUTTON_UP:
             case SDL_EVENT_MOUSE_MOTION:
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            case SDL_EVENT_FINGER_MOTION:
                 processMouseEvent(event);
+                break;
+
+            case SDL_EVENT_FINGER_DOWN:
+            case SDL_EVENT_FINGER_UP:
+            case SDL_EVENT_FINGER_MOTION:
+            case SDL_EVENT_FINGER_CANCELED:
+            case SDL_EVENT_PINCH_BEGIN:
+            case SDL_EVENT_PINCH_UPDATE:
+            case SDL_EVENT_PINCH_END:
+                processTouchEvent(event);
                 break;
 
             case SDL_EVENT_DROP_FILE:
@@ -461,6 +564,9 @@ namespace FIFE
                 break;
             }
             default:
+                // Surface dropped/unhandled events so future input regressions
+                // (for example a new PINCH_* event) are visible.
+                FL_DBG(_log(), std::format("Unhandled SDL event type: {}", static_cast<int32_t>(event.type)));
                 break;
             }
             if (has_next_event) {
@@ -471,6 +577,13 @@ namespace FIFE
 
     void EventManager::processWindowEvent(SDL_Event event)
     {
+        // A lost/hidden window can swallow FINGER_UP/CANCELED; release any
+        // synthetic pointer instead of leaving a button stuck down.
+        if ((event.type == SDL_EVENT_WINDOW_FOCUS_LOST) || (event.type == SDL_EVENT_WINDOW_HIDDEN) ||
+            (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)) {
+            cancelTouchGesture();
+        }
+
         if (dispatchSdlEvent(event)) {
             return;
         }
@@ -560,6 +673,21 @@ namespace FIFE
 
     void EventManager::processMouseEvent(SDL_Event event)
     {
+        // Defense in depth: if another library re-enables SDL's touch→mouse
+        // synthesis, drop the synthetic duplicate instead of processing it
+        // twice (FIFE already translated the finger event).
+        if (TouchTranslation::isTouchSynthesizedMouse(event)) {
+            FL_DBG(_log(), "Ignoring SDL mouse event synthesized from touch input");
+            return;
+        }
+
+        if (!TouchTranslation::isMouseEventType(event.type)) {
+            FL_DBG(
+                _log(),
+                std::format("processMouseEvent got non-mouse event type: {}", static_cast<int32_t>(event.type)));
+            return;
+        }
+
         if (event.type == SDL_EVENT_MOUSE_MOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
             int32_t tmp_x = static_cast<int32_t>(event.motion.x);
             int32_t tmp_y = static_cast<int32_t>(event.motion.y);
@@ -639,6 +767,284 @@ namespace FIFE
         dispatchMouseEvent(mouseevt);
     }
 
+    void EventManager::processTouchEvent(SDL_Event const & event)
+    {
+        // Pinch events carry their own union member and are not finger events.
+        switch (event.type) {
+        case SDL_EVENT_PINCH_BEGIN:
+            m_pinchTracker.begin();
+            emitPinchTouchEvent(TouchEvent::PINCH_BEGIN, m_pinchTracker.scale());
+            return;
+        case SDL_EVENT_PINCH_UPDATE:
+            if (m_pinchTracker.update(event.pinch.scale)) {
+                emitPinchTouchEvent(TouchEvent::PINCH_UPDATE, m_pinchTracker.scale());
+            }
+            return;
+        case SDL_EVENT_PINCH_END:
+            emitPinchTouchEvent(TouchEvent::PINCH_END, m_pinchTracker.scale());
+            m_pinchTracker.end();
+            return;
+        default:
+            break;
+        }
+
+        SDL_TouchFingerEvent const & tf = event.tfinger;
+
+        // SDL can synthesize touches from the mouse when
+        // SDL_HINT_MOUSE_TOUCH_EVENTS=1. That is a feedback path, not new input.
+        if (tf.touchID == SDL_MOUSE_TOUCHID) {
+            return;
+        }
+
+        Window* const window = touchWindow();
+        if (window == nullptr) {
+            return;
+        }
+
+        TouchTranslation::PointI const point = TouchTranslation::normalizedToWindowPoints(
+            tf.x, tf.y, window->getWidthInPoints(), window->getHeightInPoints());
+
+        switch (event.type) {
+        case SDL_EVENT_FINGER_DOWN: {
+            m_touchTracker.setDeviceType(tf.touchID, SDL_GetTouchDeviceType(tf.touchID));
+            m_touchTracker.begin(tf.touchID, tf.fingerID, tf.x, tf.y, tf.pressure);
+            emitFingerTouchEvent(TouchEvent::DOWN, tf, point);
+
+            // Trackpads already deliver pointer motion/wheel through SDL.
+            if (m_touchTracker.isTrackpad(tf.touchID)) {
+                break;
+            }
+
+            std::size_t const count = m_touchTracker.fingerCount();
+            if (count == 1) {
+                m_touchPointerDown = true;
+                m_touchLastX       = point.x;
+                m_touchLastY       = point.y;
+                dispatchTouchMouseButton(true, point.x, point.y);
+            } else if (m_touchPointerDown) {
+                // A second finger turns a one-finger drag into a pan. Finish
+                // the synthetic drag at its last position so no button sticks.
+                m_touchPointerDown = false;
+                dispatchTouchMouseButton(false, m_touchLastX, m_touchLastY);
+            }
+            break;
+        }
+
+        case SDL_EVENT_FINGER_MOTION: {
+            m_touchTracker.setDeviceType(tf.touchID, SDL_GetTouchDeviceType(tf.touchID));
+
+            // A missed DOWN must not make the finger invisible forever.
+            if (!m_touchTracker.update(tf.touchID, tf.fingerID, tf.x, tf.y, tf.pressure)) {
+                m_touchTracker.begin(tf.touchID, tf.fingerID, tf.x, tf.y, tf.pressure);
+            }
+
+            std::size_t const count = m_touchTracker.fingerCount(tf.touchID);
+            m_touchLastX            = point.x;
+            m_touchLastY            = point.y;
+            emitFingerTouchEvent(TouchEvent::MOTION, tf, point);
+
+            if (m_touchTracker.isTrackpad(tf.touchID)) {
+                // Some Linux touchpads deliver scrolling as finger motion
+                // instead of SDL_EVENT_MOUSE_WHEEL.
+                dispatchTouchScroll(tf.dx, tf.dy, point.x, point.y);
+            } else if (count == 1) {
+                dispatchTouchMouseMotion(
+                    point.x,
+                    point.y,
+                    tf.dx * static_cast<float>(window->getWidthInPoints()),
+                    tf.dy * static_cast<float>(window->getHeightInPoints()),
+                    m_touchPointerDown);
+            } else if (count >= 2) {
+                dispatchTouchScroll(tf.dx, tf.dy, point.x, point.y);
+            }
+            break;
+        }
+
+        case SDL_EVENT_FINGER_UP: {
+            bool const trackpad = m_touchTracker.isTrackpad(tf.touchID);
+            m_touchTracker.end(tf.touchID, tf.fingerID);
+            emitFingerTouchEvent(TouchEvent::UP, tf, point);
+
+            if (!trackpad && (m_touchTracker.fingerCount() == 0)) {
+                m_touchLastX = point.x;
+                m_touchLastY = point.y;
+                if (m_touchPointerDown) {
+                    m_touchPointerDown = false;
+                    dispatchTouchMouseButton(false, point.x, point.y);
+                }
+            }
+            break;
+        }
+
+        case SDL_EVENT_FINGER_CANCELED: {
+            m_touchTracker.end(tf.touchID, tf.fingerID);
+            emitFingerTouchEvent(TouchEvent::CANCELED, tf, point);
+            // CANCELED releases the synthetic pointer but must not emit a click.
+            cancelTouchGesture();
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+
+    void EventManager::emitFingerTouchEvent(
+        TouchEvent::TouchEventType type, SDL_TouchFingerEvent const & finger, TouchTranslation::PointI const & point)
+    {
+        TouchEvent evt;
+        evt.setSource(this);
+        evt.setType(type);
+        evt.setTouchId(static_cast<uint64_t>(finger.touchID));
+        evt.setFingerId(static_cast<uint64_t>(finger.fingerID));
+        evt.setX(point.x);
+        evt.setY(point.y);
+        evt.setNormalizedX(finger.x);
+        evt.setNormalizedY(finger.y);
+        evt.setDeltaX(finger.dx);
+        evt.setDeltaY(finger.dy);
+        evt.setPressure(finger.pressure);
+        evt.setFingerCount(static_cast<int32_t>(m_touchTracker.fingerCount(finger.touchID)));
+        evt.setTrackpad(m_touchTracker.isTrackpad(finger.touchID));
+        fillModifiers(evt);
+        dispatchTouchEvent(evt);
+    }
+
+    void EventManager::emitPinchTouchEvent(TouchEvent::TouchEventType type, float scale)
+    {
+        TouchEvent evt;
+        evt.setSource(this);
+        evt.setType(type);
+        evt.setScale(scale);
+        evt.setFingerCount(static_cast<int32_t>(m_touchTracker.fingerCount()));
+
+        float normalizedX = 0.0F;
+        float normalizedY = 0.0F;
+        if (m_touchTracker.midpoint(normalizedX, normalizedY)) {
+            evt.setNormalizedX(normalizedX);
+            evt.setNormalizedY(normalizedY);
+
+            Window* const window = touchWindow();
+            if (window != nullptr) {
+                TouchTranslation::PointI const point = TouchTranslation::normalizedToWindowPoints(
+                    normalizedX, normalizedY, window->getWidthInPoints(), window->getHeightInPoints());
+                evt.setX(point.x);
+                evt.setY(point.y);
+            }
+        }
+
+        fillModifiers(evt);
+        dispatchTouchEvent(evt);
+    }
+
+    void EventManager::dispatchTouchMouseButton(bool down, int32_t x, int32_t y)
+    {
+        MouseEvent mouseevt;
+        mouseevt.setSource(this);
+        mouseevt.setType(down ? MouseEvent::PRESSED : MouseEvent::RELEASED);
+        mouseevt.setButton(MouseEvent::LEFT);
+        mouseevt.setX(x);
+        mouseevt.setY(y);
+        fillModifiers(mouseevt);
+
+        SDL_Event synthetic{};
+        synthetic.type            = down ? SDL_EVENT_MOUSE_BUTTON_DOWN : SDL_EVENT_MOUSE_BUTTON_UP;
+        synthetic.button.windowID = touchWindowId();
+        synthetic.button.which    = SDL_TOUCH_MOUSEID;
+        synthetic.button.button   = SDL_BUTTON_LEFT;
+        synthetic.button.down     = down;
+        synthetic.button.clicks   = 1;
+        synthetic.button.x        = static_cast<float>(x);
+        synthetic.button.y        = static_cast<float>(y);
+
+        if (dispatchSdlEvent(synthetic)) {
+            mouseevt.consumedByWidgets();
+        }
+        dispatchMouseEvent(mouseevt);
+    }
+
+    void EventManager::dispatchTouchMouseMotion(int32_t x, int32_t y, float relX, float relY, bool dragging)
+    {
+        MouseEvent mouseevt;
+        mouseevt.setSource(this);
+        mouseevt.setType(dragging ? MouseEvent::DRAGGED : MouseEvent::MOVED);
+        mouseevt.setButton(dragging ? MouseEvent::LEFT : MouseEvent::EMPTY);
+        mouseevt.setX(x);
+        mouseevt.setY(y);
+        fillModifiers(mouseevt);
+
+        SDL_Event synthetic{};
+        synthetic.type            = SDL_EVENT_MOUSE_MOTION;
+        synthetic.motion.windowID = touchWindowId();
+        synthetic.motion.which    = SDL_TOUCH_MOUSEID;
+        synthetic.motion.state    = dragging ? SDL_BUTTON_LMASK : 0;
+        synthetic.motion.x        = static_cast<float>(x);
+        synthetic.motion.y        = static_cast<float>(y);
+        synthetic.motion.xrel     = relX;
+        synthetic.motion.yrel     = relY;
+
+        if (dispatchSdlEvent(synthetic)) {
+            mouseevt.consumedByWidgets();
+        }
+        dispatchMouseEvent(mouseevt);
+    }
+
+    void EventManager::dispatchTouchScroll(float deltaX, float deltaY, int32_t x, int32_t y)
+    {
+        TouchTranslation::ScrollStep const step = TouchTranslation::classifyScroll(deltaX, deltaY);
+        MouseEvent::MouseEventType const type   = TouchTranslation::wheelTypeFor(step);
+        if (type == MouseEvent::UNKNOWN_EVENT) {
+            return;
+        }
+
+        MouseEvent mouseevt;
+        mouseevt.setSource(this);
+        mouseevt.setType(type);
+        mouseevt.setButton(MouseEvent::EMPTY);
+        mouseevt.setX(x);
+        mouseevt.setY(y);
+        // Expose SDL's wheel convention: positive X is right, positive Y is up.
+        mouseevt.setWheelDeltaX(step.deltaX);
+        mouseevt.setWheelDeltaY(-step.deltaY);
+        fillModifiers(mouseevt);
+
+        SDL_Event synthetic{};
+        synthetic.type            = SDL_EVENT_MOUSE_WHEEL;
+        synthetic.wheel.windowID  = touchWindowId();
+        synthetic.wheel.which     = SDL_TOUCH_MOUSEID;
+        synthetic.wheel.x         = (step.axis == TouchTranslation::ScrollAxis::HORIZONTAL) ? step.deltaX : 0.0F;
+        synthetic.wheel.y         = (step.axis == TouchTranslation::ScrollAxis::VERTICAL) ? -step.deltaY : 0.0F;
+        synthetic.wheel.direction = SDL_MOUSEWHEEL_NORMAL;
+        synthetic.wheel.mouse_x   = static_cast<float>(x);
+        synthetic.wheel.mouse_y   = static_cast<float>(y);
+
+        if (dispatchSdlEvent(synthetic)) {
+            mouseevt.consumedByWidgets();
+        }
+        dispatchMouseEvent(mouseevt);
+    }
+
+    void EventManager::cancelTouchGesture()
+    {
+        if (m_touchPointerDown) {
+            m_touchPointerDown = false;
+            dispatchTouchMouseButton(false, m_touchLastX, m_touchLastY);
+        }
+        resetTouchState();
+    }
+
+    void EventManager::resetTouchState()
+    {
+        if (m_pinchTracker.isActive()) {
+            emitPinchTouchEvent(TouchEvent::PINCH_END, m_pinchTracker.scale());
+        }
+        m_pinchTracker.end();
+        m_touchTracker.clear();
+        m_touchPointerDown = false;
+        m_touchLastX       = 0;
+        m_touchLastY       = 0;
+    }
+
     void EventManager::processDropEvent(SDL_Event event)
     {
         // only dispatched as DropEvent
@@ -660,8 +1066,38 @@ namespace FIFE
             return;
         }
 
-        mouseevt.setX(static_cast<int32_t>(sdlevt.button.x));
-        mouseevt.setY(static_cast<int32_t>(sdlevt.button.y));
+        // Never read a union member that does not belong to the event type.
+        // This is the guard that keeps a stray finger event out of the mouse
+        // path (and out of sdlevt.button.*).
+        if (!TouchTranslation::isMouseEventType(sdlevt.type)) {
+            FL_DBG(
+                _log(),
+                std::format("fillMouseEvent ignored non-mouse event type: {}", static_cast<int32_t>(sdlevt.type)));
+            return;
+        }
+
+        float pointerX = 0.0F;
+        float pointerY = 0.0F;
+        switch (sdlevt.type) {
+        case SDL_EVENT_MOUSE_MOTION:
+            pointerX = sdlevt.motion.x;
+            pointerY = sdlevt.motion.y;
+            break;
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
+            pointerX = sdlevt.button.x;
+            pointerY = sdlevt.button.y;
+            break;
+        case SDL_EVENT_MOUSE_WHEEL:
+            pointerX = sdlevt.wheel.mouse_x;
+            pointerY = sdlevt.wheel.mouse_y;
+            break;
+        default:
+            return;
+        }
+
+        mouseevt.setX(static_cast<int32_t>(pointerX));
+        mouseevt.setY(static_cast<int32_t>(pointerY));
 
         mouseevt.setButton(MouseEvent::EMPTY);
         mouseevt.setType(MouseEvent::MOVED);
@@ -693,32 +1129,27 @@ namespace FIFE
                 mouseevt.setType(MouseEvent::PRESSED);
             }
         }
+
         if (sdlevt.type == SDL_EVENT_MOUSE_WHEEL) {
-            if (sdlevt.wheel.y > 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-            } else if (sdlevt.wheel.y < 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
+            float wheelX = sdlevt.wheel.x;
+            float wheelY = sdlevt.wheel.y;
+            if (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
+                wheelX = -wheelX;
+                wheelY = -wheelY;
             }
-            if (sdlevt.wheel.x > 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
-            } else if (sdlevt.wheel.x < 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
+
+            mouseevt.setWheelDeltaX(wheelX);
+            mouseevt.setWheelDeltaY(wheelY);
+
+            // Dominant-axis arbitration: horizontal must not overwrite a
+            // vertical wheel event. Ties stay vertical.
+            float const absX = std::abs(wheelX);
+            float const absY = std::abs(wheelY);
+            if ((absY != 0.0F) && (absY >= absX)) {
+                mouseevt.setType((wheelY > 0.0F) ? MouseEvent::WHEEL_MOVED_UP : MouseEvent::WHEEL_MOVED_DOWN);
+            } else if (absX != 0.0F) {
+                mouseevt.setType((wheelX > 0.0F) ? MouseEvent::WHEEL_MOVED_RIGHT : MouseEvent::WHEEL_MOVED_LEFT);
             }
-        } else if (sdlevt.type == SDL_EVENT_FINGER_MOTION) {
-            // Convert touchpad scroll gesture (finger motion) to mouse wheel event.
-            // On some Linux systems, touchpad scrolling generates SDL_EVENT_FINGER_MOTION
-            // instead of SDL_EVENT_MOUSE_WHEEL. The dx/dy are normalized (-1 to 1).
-            // Convert to wheel events based on which direction the finger moved.
-            if (sdlevt.tfinger.dx > 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
-            } else if (sdlevt.tfinger.dx < 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
-            } else if (sdlevt.tfinger.dy > 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-            } else if (sdlevt.tfinger.dy < 0) {
-                mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
-            }
-            // If both dx and dy are zero, the type remains MOVED (no scroll)
         }
 
         if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {

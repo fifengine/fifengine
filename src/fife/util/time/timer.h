@@ -26,7 +26,7 @@ namespace FIFE
      *
      *  @code
      *  m_timer.setInterval(1000);
-     *  m_timer.setCallback(std::bind(&Class::update, this) );
+     *  m_timer.setCallback([this] { update(); });
      *  m_timer.start();
      *  @endcode
      *

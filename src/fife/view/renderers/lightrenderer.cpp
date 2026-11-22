@@ -123,10 +123,11 @@ namespace FIFE
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
-            uint64_t const elapsed       = TimeManager::instance()->now64() - m_start_time;
-            uint64_t const scaledElapsed = static_cast<uint64_t>(static_cast<double>(elapsed) * m_time_scale);
-            uint64_t const animtime      = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(m_animation->getDuration());
-            ImagePtr const img           = m_animation->getFrameByTimestamp64(animtime);
+            uint64_t const elapsed = TimeManager::instance()->now64() - m_start_time;
+            uint64_t const scaledElapsed =
+                static_cast<uint64_t>(static_cast<double>(elapsed) * static_cast<double>(m_time_scale));
+            uint64_t const animtime = scaledElapsed % SDLTimeCompat::fromLegacy32Ticks(m_animation->getDuration());
+            ImagePtr const img      = m_animation->getFrameByTimestamp64(animtime);
             Rect r;
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
@@ -225,8 +226,8 @@ namespace FIFE
                 m_intensity,
                 m_radius,
                 m_subdivisions,
-                static_cast<float>(m_xstretch * zoom),
-                static_cast<float>(m_ystretch * zoom),
+                static_cast<float>(static_cast<double>(m_xstretch) * zoom),
+                static_cast<float>(static_cast<double>(m_ystretch) * zoom),
                 m_red,
                 m_green,
                 m_blue);

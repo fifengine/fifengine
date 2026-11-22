@@ -15,19 +15,19 @@ static PyObject* _wrap_Display_getUsableBounds(int index) {
 }
 static PyObject* _wrap_Display_getDesktopMode(int index) {
     SDL_DisplayMode m = FIFE::Display::getDesktopMode(index);
-    return Py_BuildValue("(iiid)", m.format, m.w, m.h, m.refresh_rate);
+    return Py_BuildValue("(iiid)", m.format, m.w, m.h, static_cast<double>(m.refresh_rate));
 }
 static PyObject* _wrap_Display_getSupportedModes(int index) {
     auto modes = FIFE::Display::getSupportedModes(index);
     PyObject* list = PyList_New(modes.size());
     for (size_t i = 0; i < modes.size(); ++i) {
-        PyList_SetItem(list, i, Py_BuildValue("(iiid)", modes[i].format, modes[i].w, modes[i].h, modes[i].refresh_rate));
+        PyList_SetItem(list, i, Py_BuildValue("(iiid)", modes[i].format, modes[i].w, modes[i].h, static_cast<double>(modes[i].refresh_rate)));
     }
     return list;
 }
 static PyObject* _wrap_Display_getClosestMode(int index, int width, int height, int refreshRate) {
     SDL_DisplayMode m = FIFE::Display::getClosestMode(index, width, height, refreshRate);
-    return Py_BuildValue("(iiid)", m.format, m.w, m.h, m.refresh_rate);
+    return Py_BuildValue("(iiid)", m.format, m.w, m.h, static_cast<double>(m.refresh_rate));
 }
 %}
 

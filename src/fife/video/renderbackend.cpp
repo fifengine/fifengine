@@ -280,10 +280,10 @@ namespace FIFE
 
     Point RenderBackend::getBezierPoint(std::vector<Point> const & points, int32_t elements, float t)
     {
-        if (t < 0.0) {
+        if (t < 0.0F) {
             return points.at(0);
         }
-        if (t >= static_cast<double>(elements)) {
+        if (t >= static_cast<float>(elements)) {
             return points.back();
         }
 

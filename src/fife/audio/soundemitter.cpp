@@ -248,7 +248,7 @@ namespace FIFE
 
     void SoundEmitter::setPitch(float pitch)
     {
-        if (pitch > 0.0) {
+        if (pitch > 0.0F) {
             if (isActive()) {
                 alSourcef(m_source, AL_PITCH, pitch);
             }

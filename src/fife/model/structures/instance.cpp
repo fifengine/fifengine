@@ -40,10 +40,11 @@ namespace FIFE
 {
     namespace
     {
-        Logger& _log = []() -> Logger& { // NOLINT(bugprone-throwing-static-initialization)
+        Logger& _log()
+        {
             static Logger log(LM_INSTANCE);
             return log;
-        }();
+        }
     } // namespace
 
     class ActionInfo
@@ -548,7 +549,7 @@ namespace FIFE
         m_activity->m_actionInfo->m_target = std::make_unique<Location>(target);
         m_activity->m_actionInfo->m_speed  = speed;
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
                 actionName,
@@ -589,7 +590,7 @@ namespace FIFE
         m_activity->m_actionInfo->m_leader = leader;
         leader->addDeleteListener(this);
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
                 actionName,
@@ -615,7 +616,7 @@ namespace FIFE
             route->setObject(m_object);
         }
         FL_DBG(
-            _log,
+            _log(),
             std::format(
                 "starting action {} fromx={}, y={} to x={}, y={} with speed {}",
                 actionName,
@@ -947,7 +948,7 @@ namespace FIFE
 
     void Instance::finalizeAction()
     {
-        FL_DBG(_log, "finalizing action");
+        FL_DBG(_log(), "finalizing action");
         assert(m_activity);
         assert(m_activity->m_actionInfo);
 
@@ -985,7 +986,7 @@ namespace FIFE
 
     void Instance::cancelAction()
     {
-        FL_DBG(_log, "cancel action");
+        FL_DBG(_log(), "cancel action");
         assert(m_activity);
         assert(m_activity->m_actionInfo);
 
