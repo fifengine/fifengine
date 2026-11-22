@@ -83,7 +83,7 @@ namespace FIFE
         Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             Rect r;
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
@@ -122,7 +122,7 @@ namespace FIFE
         Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             uint64_t const elapsed = TimeManager::instance()->now64() - m_start_time;
             uint64_t const scaledElapsed =
                 static_cast<uint64_t>(static_cast<double>(elapsed) * static_cast<double>(m_time_scale));
@@ -163,7 +163,7 @@ namespace FIFE
         Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             Rect r;
             Rect const viewport = cam->getViewPort();
             auto width          = static_cast<uint32_t>(round(m_width * cam->getZoom()));
@@ -217,7 +217,7 @@ namespace FIFE
         Camera* cam, Layer* layer, [[maybe_unused]] RenderList& instances, RenderBackend* renderbackend)
     {
         Point const p = m_anchor.getCalculatedPoint(cam, layer, true);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             double const zoom = cam->getZoom();
 
             auto const lm = renderbackend->getLightingModel();

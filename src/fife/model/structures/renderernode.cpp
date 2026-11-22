@@ -307,7 +307,7 @@ namespace FIFE
         m_listener = std::make_unique<NodeInstanceDeleteListener>(this);
     }
 
-    Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, bool const zoomed)
+    Point RendererNode::getCalculatedPoint(Camera* cam, [[maybe_unused]] Layer* layer, bool const zoomed)
     {
         ScreenPoint p;
         if (m_instance != nullptr) {
@@ -325,19 +325,38 @@ namespace FIFE
                 m_layer = m_location.getLayer();
             }
             p = cam->toScreenCoordinates(m_location.getMapCoordinates());
-        } else if (m_layer == nullptr) {
-            // FIXME
-            // FL_WARN(
-            // _log(),
-            // "RendererNode::getCalculatedPoint(Camera, Layer) - "
-            // "No layer attached. So we use the first active layer of the renderer.");
-            setAttached(layer);
         }
+        // A pure-point node (no instance, no valid relative location and no
+        // attached layer) has nothing to resolve here: `p` stays at its
+        // default value of (0, 0, 0). Whether such a node is drawn, and on
+        // which layers, is decided by RendererNode::isDrawnOn() (added in
+        // stage 1).
         if (zoomed) {
             return Point(
                 static_cast<int>(round(m_point.x * cam->getZoom())) + p.x,
                 static_cast<int>(round(m_point.y * cam->getZoom())) + p.y);
         }
         return Point(m_point.x + p.x, m_point.y + p.y);
+    }
+
+    bool RendererNode::isDrawnOn(Layer const * layer) const
+    {
+        // Attached (instance/location) nodes draw on the cached layer only,
+        // same as the previous renderer guards checked it.
+        if (m_layer != nullptr) {
+            return m_layer == layer;
+        }
+        // Instance nodes draw on the layer of their instance.
+        if (m_instance != nullptr) {
+            Layer const * const l = m_instance->getLocationRef().getLayer();
+            return l != nullptr && l == layer;
+        }
+        // Location nodes draw on the layer of the location.
+        if (m_location.isValid()) {
+            Layer const * const l = m_location.getLayer();
+            return l != nullptr && l == layer;
+        }
+        // Pure-point nodes: drawn on every layer the renderer is active on.
+        return true;
     }
 } // namespace FIFE
