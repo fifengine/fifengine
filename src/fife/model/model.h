@@ -165,6 +165,10 @@ namespace FIFE
             // Map observer, currently only used to delete CellGrids from deleted layers
             std::unique_ptr<ModelMapObserver> m_mapObserver;
 
+            // Declared before m_maps so reverse member destruction tears down
+            // maps (and their in-flight actions) before model-owned pathers.
+            std::vector<std::unique_ptr<IPather>> m_pathers;
+
             std::list<std::unique_ptr<Map>> m_maps;
 
             using objectmap_t = std::map<std::string, std::unique_ptr<Object>>;
@@ -180,7 +184,6 @@ namespace FIFE
             // Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
             namespace_t const * selectNamespace(std::string const & name_space) const;
 
-            std::vector<std::unique_ptr<IPather>> m_pathers;
             std::vector<std::unique_ptr<CellGrid>> m_createdGrids;
             std::vector<std::unique_ptr<CellGrid>> m_adoptedGrids;
 

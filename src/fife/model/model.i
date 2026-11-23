@@ -66,7 +66,9 @@ namespace FIFE {
     return new FIFE::Model(rb, std::move(unique_ptrs));
   }
 
-  void adoptPather(FIFE::IPather* pather) {
+  // Named differently from the ignored C++ overload so SWIG does not apply
+  // %ignore to the extension method as well.
+  void adoptPatherOwned(FIFE::IPather* pather) {
     $self->adoptPather(std::unique_ptr<FIFE::IPather>(pather));
   }
 
@@ -74,3 +76,14 @@ namespace FIFE {
     $self->adoptCellGrid(std::unique_ptr<FIFE::CellGrid>(grid));
   }
 }
+
+%pythoncode %{
+def Model_adoptPather(self, pather):
+    """Transfer ownership of a pather to this model.
+
+    Set ``pather.thisown = False`` before calling this to avoid a second
+    deletion by the Python proxy.
+    """
+    return self.adoptPatherOwned(pather)
+Model.adoptPather = Model_adoptPather
+%}

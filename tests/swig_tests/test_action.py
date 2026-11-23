@@ -93,5 +93,3 @@ def test_walk_around(engine):
 
     engine.finalizePumping()
     map_obj.removeCamera("foo")
-
-    engine.thisown = False

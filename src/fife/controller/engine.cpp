@@ -35,6 +35,8 @@
 #include "vfs/zip/zipprovider.h"
 #include "video/animationmanager.h"
 #include "video/cursor.h"
+#include "video/dummy/renderbackendnull.h"
+#include "video/dummy/renderbackendsurface.h"
 #include "video/fonts/fontmanager.h"
 #include "video/imagemanager.h"
 #include "video/window/guiscale.h"
@@ -390,7 +392,19 @@ namespace FIFE
 
         FL_LOG(_log(), "Creating render backend");
         std::string const rbackend(m_settings.getRenderBackend());
-        if (rbackend == "SDL") {
+        bool const headless = (rbackend == "DUMMY_NULL") || (rbackend == "DUMMY_SURFACE");
+        m_headless          = headless;
+        if (headless) {
+            uint32_t const width  = static_cast<uint32_t>(m_settings.getScreenWidth());
+            uint32_t const height = static_cast<uint32_t>(m_settings.getScreenHeight());
+            if (rbackend == "DUMMY_NULL") {
+                m_renderbackend = std::make_unique<RenderBackendNull>(m_settings.getColorKey(), width, height);
+                FL_LOG(_log(), "Null render backend created");
+            } else {
+                m_renderbackend = std::make_unique<RenderBackendSurface>(m_settings.getColorKey(), width, height);
+                FL_LOG(_log(), "Surface render backend created");
+            }
+        } else if (rbackend == "SDL") {
             m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
             FL_LOG(_log(), "SDL Render backend created");
         } else {
@@ -475,6 +489,25 @@ namespace FIFE
         FL_LOG(_log(), "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
 
+        if (headless) {
+            // Dummy backends never touch SDL video or create a Window. Events
+            // are still needed so applications can pump the engine normally.
+            if (!m_eventsInitialized) {
+                if (!SDL_InitSubSystem(SDL_INIT_EVENTS)) {
+                    throw NotSupported(std::format("Could not initialize SDL events subsystem: {}", SDL_GetError()));
+                }
+                m_eventsInitialized = true;
+                FL_LOG(_log(), "SDL events subsystem initialized for headless backend");
+            }
+
+            FL_LOG(_log(), "Creating main screen");
+            m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
+            FL_LOG(_log(), "Main screen created");
+            applyGUIScale();
+        } else {
+            // Keep the existing display/window code untouched.
+            // clang-format off
+            {
         uint8_t const displayCount = m_devcaps.getDisplayCount();
         if (displayCount == 0) {
             throw NotSupported("Could not find any display!");
@@ -553,7 +586,7 @@ namespace FIFE
         winSettings.icon        = m_settings.getWindowIcon();
         winSettings.resizable   = m_settings.isWindowResizable();
         winSettings.vsync       = m_settings.isVSync();
-        winSettings.opengl      = (dynamic_cast<RenderBackendOpenGL*>(m_renderbackend.get()) != nullptr);
+        winSettings.opengl      = (dynamic_cast<RenderBackendOpenGL*>(std::to_address(m_renderbackend)) != nullptr);
         winSettings.windowMode  = m_settings.isFullScreen() ? WindowMode::Fullscreen : WindowMode::Windowed;
         winSettings.scalingMode = static_cast<ScalingMode>(m_settings.getWindowScalingMode());
 
@@ -649,6 +682,9 @@ namespace FIFE
         if (SDL_Window* win = m_window->getSDLWindow()) {
             SDL_StartTextInput(win);
         }
+            }
+        }
+        // clang-format on
 
 #ifdef HAVE_OPENGL
         if (m_settings.getLightingModel() != 0) {
@@ -686,11 +722,13 @@ namespace FIFE
 
         m_cursor = std::make_unique<Cursor>(m_renderbackend.get());
         m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
-        m_window->onClosed([this]() {
-            if (m_cursor != nullptr) {
-                m_cursor->invalidate();
-            }
-        });
+        if (m_window) {
+            m_window->onClosed([this]() {
+                if (m_cursor != nullptr) {
+                    m_cursor->invalidate();
+                }
+            });
+        }
         FL_LOG(_log(), "Engine initialized");
     }
 
@@ -703,6 +741,10 @@ namespace FIFE
 
     void Engine::destroy()
     {
+        if (m_destroyed) {
+            return;
+        }
+
         FL_LOG(_log(), "Destructing engine");
 
         // Members (including the image manager) are torn down after this
@@ -718,12 +760,63 @@ namespace FIFE
             fifechan->setFontManager(nullptr);
         }
 
+#ifdef HAVE_MOVIE
+        // Stop playback while the sound manager is still alive.
+        if (m_movieplayer != nullptr) {
+            m_movieplayer->unload();
+        }
+        m_movieplayer.reset();
+        m_movieemitter = nullptr;
+#endif
+
+        // Release owners before the services they borrow from. Models hold
+        // raw pointers to renderers, and renderers/gui/cursor hold raw pointers
+        // to the render backend, so they must go first.
+        m_model.reset();
+        m_cursor.reset();
+        m_guimanager.reset();
+
+        m_offrenderer.reset();
+        m_targetrenderer.reset();
+        m_renderers.clear();
+
+        // These managers derive from DynamicSingleton. Releasing them here (and
+        // not only in ~Engine) is what makes destroy()/init() cycles and two
+        // Engine lifetimes in one process safe.
+        m_animationmanager.reset();
+        m_imagemanager.reset();
+        m_soundclipmanager.reset();
+        m_soundmanager.reset();
+        m_eventmanager.reset();
+
         // Fonts must be released before TTF_Quit, otherwise the FreeType faces
-        // they own are destroyed against an already shut down library.
+        // they own are destroyed against an already shut down library. The
+        // FontManager's resolver borrows the VFS, so release it before m_vfs.
         m_fontManager.reset();
 
+        m_window.reset();
+        m_renderbackend.reset();
+
+        m_vfs.reset();
+        m_timemanager.reset();
+
+        // SDL subsystem initialization is ref-counted; balance only the
+        // SDL_InitSubSystem() call made for a headless Engine::init().
+        if (m_eventsInitialized) {
+            SDL_QuitSubSystem(SDL_INIT_EVENTS);
+            m_eventsInitialized = false;
+        }
+
         TTF_Quit();
-        SDL_Quit();
+        // A headless Engine owns no SDL video subsystem; SDL_Quit() would shut
+        // down SDL for the rest of the process (other engines, tests, hosts).
+        if (!m_headless) {
+            SDL_Quit();
+        }
+        // Clear the flag after the teardown decision above: a stale value must
+        // not affect a later init/destroy cycle, but this destroy still has to
+        // honour whether SDL was actually owned here.
+        m_headless = false;
 
 #ifdef USE_COCOA
         objc_msgSend(m_autoreleasePool, sel_registerName("release"));

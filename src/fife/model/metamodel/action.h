@@ -9,6 +9,7 @@
 
 // Standard C++ library includes
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,16 @@ namespace FIFE
             /** Destructor
              */
             ~Action() override;
+
+            /** Returns a weak token that expires when this action is destroyed.
+             *
+             * Instances hold a non-owning action pointer. They use this token
+             * to avoid dereferencing an action whose owner was released first.
+             */
+            std::weak_ptr<void> lifetimeToken() const
+            {
+                return m_lifetimeToken;
+            }
 
             /** Get the name for this action.
              */
@@ -97,6 +108,8 @@ namespace FIFE
             IVisual* m_visual;
             // audio for action
             ActionAudio* m_audio;
+            // expires when this action is destroyed
+            std::shared_ptr<void> m_lifetimeToken = std::make_shared<int>(0);
     };
 
 } // namespace FIFE
