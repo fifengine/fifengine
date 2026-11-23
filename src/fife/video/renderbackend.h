@@ -201,6 +201,19 @@ namespace FIFE
             virtual std::unique_ptr<Image> createImage(SDL_Surface* surface)                           = 0;
             virtual std::unique_ptr<Image> createImage(std::string const & name, SDL_Surface* surface) = 0;
 
+            /** Blit an image onto the current render target.
+             *
+             * Backends that render images override this so that images can be
+             * drawn without knowing the concrete backend type. The default
+             * implementation does nothing.
+             *
+             * @param image The image to draw.
+             * @param rect Destination rectangle on the render target.
+             * @param alpha Global alpha multiplier (255 = opaque).
+             * @param rgb Optional RGBA color modulation, or nullptr.
+             */
+            virtual void drawImageToTarget(Image const & image, Rect const & rect, uint8_t alpha, uint8_t const * rgb);
+
             /** Render the Vertex Arrays, only for primitives (points, lines,...)
              */
             virtual void renderVertexArrays() = 0;
@@ -237,8 +250,8 @@ namespace FIFE
                 return m_window;
             }
 
-            uint32_t getWidth() const;
-            uint32_t getHeight() const;
+            virtual uint32_t getWidth() const;
+            virtual uint32_t getHeight() const;
             uint32_t getScreenWidth() const
             {
                 return getWidth();
@@ -247,7 +260,7 @@ namespace FIFE
             {
                 return getHeight();
             }
-            Rect const & getArea() const;
+            virtual Rect const & getArea() const;
 
             /** Returns the Window object */
             Window* getWindowObject() const
