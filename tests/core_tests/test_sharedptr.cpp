@@ -162,6 +162,7 @@ TEST_CASE("SharedPtr::unique reports single vs shared ownership", "[core][shared
     SharedPtr<Data> const shptr(new Data());
     CHECK(shptr.unique());
 
+    // Creating this copy is the point of the test: it must make unique() return false.
     SharedPtr<Data> const copy(shptr); // NOLINT(performance-unnecessary-copy-initialization)
 
     CHECK(!shptr.unique());
@@ -220,6 +221,7 @@ TEST_CASE("SharedPtr::reset with new data isolates copies", "[core][sharedptr]")
     SharedPtr<Data> const copy(shptr);
 
     CHECK((copy.useCount()) == (2));
+    // SharedPtr::reset accepts a raw pointer and adopts it; that is the API under test.
     shptr.reset(new Data(6, 8)); // NOLINT(cppcoreguidelines-owning-memory)
     CHECK((copy.useCount()) == (1));
 

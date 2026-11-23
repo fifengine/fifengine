@@ -18,11 +18,15 @@ namespace FIFE
 {
     namespace
     {
+        // The string is built in a function-local static inside the lambda, so no exception
+        // escapes during static initialization; the check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         std::string& INVALID_LAYER_SET = []() -> std::string& {
             static std::string s = "Cannot set layer coordinates, given layer is not initialized properly";
             return s;
         }();
+        // The string is built in a function-local static inside the lambda, so no exception
+        // escapes during static initialization; the check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         std::string& INVALID_LAYER_GET = []() -> std::string& {
             static std::string s = "Cannot get layer coordinates, layer is not initialized properly";

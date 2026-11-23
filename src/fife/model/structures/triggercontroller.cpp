@@ -33,6 +33,8 @@ namespace FIFE
 
         void trigger_deleter(Trigger* trigger)
         {
+            // Custom deleter required by unique_ptr<Trigger, void(*)(Trigger*)>; ownership
+            // is handed to this function explicitly, so the raw delete is intentional.
             delete trigger; // NOLINT(cppcoreguidelines-owning-memory)
         }
     } // namespace

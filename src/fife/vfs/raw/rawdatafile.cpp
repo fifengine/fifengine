@@ -45,7 +45,7 @@ namespace FIFE
     void RawDataFile::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
     {
         m_stream.seekg(start);
-        m_stream.read(static_cast<char*>(static_cast<void*>(buffer)), length);
+        m_stream.read(reinterpret_cast<char*>(buffer), length);
     }
 
 } // namespace FIFE

@@ -866,15 +866,19 @@ namespace FIFE
             src_pointer = src_help_pointer;
             for (x = 0; x < dst->w; x++) {
                 *dst_pointer = *src_pointer;
+                // Source stepping uses a precomputed fixed-point table; the
+                // column bounds keep the raw pointer inside the source surface.
                 src_pointer += // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                     (sx_a.at(static_cast<size_t>(x) + 1U) >> 16);
+                // One destination pixel is written per output column.
                 ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             }
             size_t const syIdx        = static_cast<size_t>(y) + 1U;
-            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
             size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = static_cast<uint32_t*>(
-                static_cast<void*>(srcBytes + srcRowOffset)); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+            // Row advance is a byte offset into the locked surface pixel buffer.
+            src_help_pointer = reinterpret_cast<uint32_t*>(
+                srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         }
 
         if (SDL_MUSTLOCK(dst)) {

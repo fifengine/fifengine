@@ -53,6 +53,7 @@ namespace FIFE
 
     std::unique_ptr<RawData> VFSDirectory::open(std::string const & file) const
     {
+        // RawData's constructor takes the raw source pointer and assumes ownership of it.
         return std::make_unique<RawData>(new RawDataFile(m_root + file)); // NOLINT(cppcoreguidelines-owning-memory)
     }
 

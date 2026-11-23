@@ -5,6 +5,7 @@
 #include "movieplayer.h"
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cstdint>
 #include <format>
 #include <memory>
@@ -57,6 +58,8 @@ namespace FIFE
                     return;
                 }
                 FL_LOG(_log(), std::format("installing movie audio decoder for {}", m_path));
+                // The SoundClip adopts the raw pointer into its own handle immediately,
+                // so releasing the local handle here is an intentional ownership transfer.
                 // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
                 clip->adobtDecoder(m_decoder.release());
             }
@@ -243,9 +246,7 @@ namespace FIFE
         }
 
         double target = currentTime - m_startTime;
-        if (target < 0.0) {
-            target = 0.0;
-        }
+        target        = std::max(target, 0.0);
 
         if (m_duration > 0.0 && target >= m_duration) {
             if (!m_looping) {

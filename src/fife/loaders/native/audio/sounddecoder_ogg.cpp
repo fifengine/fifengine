@@ -81,11 +81,12 @@ namespace FIFE
             return 0;
         }
 
-        // Required by ov_callbacks::tell_func ABI from libvorbis.
-        long tell(void* datasource) // NOLINT(runtime/int)
+        // libvorbis declares ov_callbacks::tell_func as `long (*)(void*)`, so long is
+        // required by the ABI; NOLINT keeps the lints from demanding a fixed-width type.
+        long tell(void* datasource) // NOLINT(runtime/int, google-runtime-int)
         {
             auto* rdp = static_cast<RawData*>(datasource);
-            return static_cast<long>((*rdp).getCurrentIndex()); // NOLINT(runtime/int)
+            return static_cast<long>((*rdp).getCurrentIndex()); // NOLINT(runtime/int, google-runtime-int)
         }
     } // namespace
 
@@ -137,6 +138,7 @@ namespace FIFE
 
         // release buffer and allocate new memory
         releaseBuffer();
+        // The decode length is only known at run time, so std::array cannot be used here.
         m_data = std::make_unique<char[]>(length); // NOLINT(cppcoreguidelines-avoid-c-arrays, modernize-avoid-c-arrays)
 
         // decode the stream

@@ -60,6 +60,7 @@ namespace FIFE
             uint32_t const dataOffset      = getLocalFileDataOffset(entryData.offset);
 
             m_zipfile->setIndex(dataOffset);
+            // The buffer size comes from the archive entry, so std::array is not an option.
             auto data = std::make_unique<uint8_t[]>(entryData.size_real); // NOLINT(cppcoreguidelines-avoid-c-arrays,
                                                                           // modernize-avoid-c-arrays)
             if (entryData.comp == 8) {
@@ -102,6 +103,7 @@ namespace FIFE
                 return nullptr;
             }
 
+            // ZipFileSource accepts the raw buffer pointer and takes ownership of it.
             return std::make_unique<RawData>(
                 new ZipFileSource(data.release(), entryData.size_real)); // NOLINT(cppcoreguidelines-owning-memory)
         }

@@ -94,6 +94,12 @@ namespace FIFE
                 av_channel_layout_uninit(&outLayout);
             }
 
+            // Owns libav handles; copying or moving would double-free them.
+            Impl(Impl const &)            = delete;
+            Impl& operator=(Impl const &) = delete;
+            Impl(Impl&&)                  = delete;
+            Impl& operator=(Impl&&)       = delete;
+
             void open(std::shared_ptr<MovieSource> const & src, std::string const & p)
             {
                 source = src;

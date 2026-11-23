@@ -742,9 +742,11 @@ namespace FIFE
                 event.motion.y = static_cast<float>(tmp_y);
 
                 // don't trigger an event handler when warping
-                m_warp = true;
-                SDL_WarpMouseInWindow(
-                    RenderBackend::instance()->getWindow(), static_cast<float>(tmp_x), static_cast<float>(tmp_y));
+                m_warp                   = true;
+                SDL_Window* const window = RenderBackend::exists() ? RenderBackend::instance()->getWindow() : nullptr;
+                if (window != nullptr) {
+                    SDL_WarpMouseInWindow(window, static_cast<float>(tmp_x), static_cast<float>(tmp_y));
+                }
                 m_warp = false;
             }
         }
@@ -843,9 +845,10 @@ namespace FIFE
             m_touchLastY            = point.y;
             emitFingerTouchEvent(TouchEvent::MOTION, tf, point);
 
-            if (m_touchTracker.isTrackpad(tf.touchID)) {
+            if (m_touchTracker.isTrackpad(tf.touchID) || (count >= 2)) {
                 // Some Linux touchpads deliver scrolling as finger motion
-                // instead of SDL_EVENT_MOUSE_WHEEL.
+                // instead of SDL_EVENT_MOUSE_WHEEL. Multi-finger motion is
+                // also always interpreted as scrolling.
                 dispatchTouchScroll(tf.dx, tf.dy, point.x, point.y);
             } else if (count == 1) {
                 dispatchTouchMouseMotion(
@@ -854,8 +857,6 @@ namespace FIFE
                     tf.dx * static_cast<float>(window->getWidthInPoints()),
                     tf.dy * static_cast<float>(window->getHeightInPoints()),
                     m_touchPointerDown);
-            } else if (count >= 2) {
-                dispatchTouchScroll(tf.dx, tf.dy, point.x, point.y);
             }
             break;
         }
@@ -1094,6 +1095,23 @@ namespace FIFE
             break;
         default:
             return;
+        }
+
+        // Any backend with no FIFE Window attached (for example the headless
+        // dummy backend) has no window to derive the virtual screen size from.
+        // Fall back to the backend's configured dimensions so synthetic events
+        // are normalized to the same coordinate space the widgets live in.
+        // The windowed path is deliberately left untouched.
+        if (RenderBackend::exists()) {
+            RenderBackend* const backend = RenderBackend::instance();
+            if (backend->getWindowObject() == nullptr) {
+                uint32_t const width  = backend->getWidth();
+                uint32_t const height = backend->getHeight();
+                if ((width > 0U) && (height > 0U)) {
+                    pointerX = std::clamp(pointerX, 0.0F, static_cast<float>(width - 1U));
+                    pointerY = std::clamp(pointerY, 0.0F, static_cast<float>(height - 1U));
+                }
+            }
         }
 
         mouseevt.setX(static_cast<int32_t>(pointerX));

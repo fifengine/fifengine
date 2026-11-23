@@ -324,7 +324,7 @@ namespace FIFE
                     _log(),
                     std::format(
                         "RenderBackendOpenGLError initializing GLEW!{}",
-                        static_cast<char const *>(static_cast<void const *>(glewGetErrorString(glewError)))));
+                        reinterpret_cast<char const *>(glewGetErrorString(glewError))));
             }
             // A new context starts from GL defaults; forget the cached state
             // of the previous context so the next draw calls re-apply it.
@@ -1044,6 +1044,8 @@ namespace FIFE
                 return;
             }
 
+            // The index buffer is the vector's backing store and the index was
+            // already range-checked, so direct indexing is intentional here.
             uint32_t const firstVertex =
                 indexBuffer[currentIndexValue]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             if ((firstVertex + 3) >= m_renderTextureDatas.size()) {
@@ -1191,6 +1193,8 @@ namespace FIFE
                 if (*currentElements > 0) {
                     logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
                     // render
+                    // glDrawElements takes a raw offset pointer into the index buffer;
+                    // this pointer arithmetic is required by the OpenGL API.
                     glDrawElements(
                         mode,
                         toGLsizei(*currentElements),
@@ -1404,6 +1408,8 @@ namespace FIFE
         }
         // render
         logQueuedTextureQuad(texture_id, *currentIndex, *currentElements);
+        // glDrawElements takes a raw offset pointer into the index buffer;
+        // this pointer arithmetic is required by the OpenGL API.
         glDrawElements(
             mode,
             toGLsizei(*currentElements),
@@ -1824,15 +1830,15 @@ namespace FIFE
     {
         float const xDiff = static_cast<float>(p2.x - p1.x);
         float const yDiff = static_cast<float>(p2.y - p1.y);
-        float const halfW = static_cast<float>(width) / 2.0F; // NOLINT(cppcoreguidelines-init-variables)
+        float const halfW = static_cast<float>(width) / 2.0F;
         float angle       = (Mathf::ATan2(yDiff, xDiff) * (180.0F / Mathf::pi())) + 90.0F;
         if (angle < 0.0F) {
             angle += 360.0F;
         } else if (angle > 360.0F) {
             angle -= 360.0F;
         }
-        angle *= Mathf::pi() / 180.0F;                   // NOLINT(cppcoreguidelines-init-variables)
-        float const cornerX = halfW * Mathf::Cos(angle); // NOLINT(cppcoreguidelines-init-variables)
+        angle *= Mathf::pi() / 180.0F;
+        float const cornerX = halfW * Mathf::Cos(angle);
         float const cornerY = halfW * Mathf::Sin(angle);
 
         renderDataP rd{};
@@ -2140,10 +2146,9 @@ namespace FIFE
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        float const radiusF  = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
-        float const step =
-            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
-        float angle = 0.0F;
+        float const radiusF  = static_cast<float>(radius);
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
+        float angle          = 0.0F;
 
         renderDataP rd{};
         rd.color.at(0) = r;
@@ -2168,9 +2173,8 @@ namespace FIFE
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = static_cast<int32_t>(roundf(Mathf::pi() / (5.0F / (2.0F * static_cast<float>(radius)))));
         subdivisions         = std::max(subdivisions, 12);
-        float const radiusF  = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
-        float const step =
-            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
+        float const radiusF  = static_cast<float>(radius);
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         float angle          = Mathf::twoPi();
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
@@ -2201,7 +2205,7 @@ namespace FIFE
     void RenderBackendOpenGL::drawCircleSegment(
         Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float const radiusF = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
+        float const radiusF = static_cast<float>(radius);
         float const step    = Mathf::twoPi() / 360.0F;
         int32_t elements    = 0;
         int32_t s           = (sangle + 360) % 360;
@@ -2233,8 +2237,8 @@ namespace FIFE
     void RenderBackendOpenGL::drawFillCircleSegment(
         Point const & p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float const radiusF = static_cast<float>(radius); // NOLINT(cppcoreguidelines-init-variables)
-        float const step    = Mathf::twoPi() / 360.0F;    // NOLINT(cppcoreguidelines-init-variables)
+        float const radiusF = static_cast<float>(radius);
+        float const step    = Mathf::twoPi() / 360.0F;
         int32_t s           = (sangle + 360) % 360;
         int32_t e           = (eangle + 360) % 360;
         if (e == 0) {
@@ -2283,8 +2287,7 @@ namespace FIFE
         uint8_t green,
         uint8_t blue)
     {
-        float const step =
-            Mathf::twoPi() / static_cast<float>(subdivisions); // NOLINT(cppcoreguidelines-init-variables)
+        float const step     = Mathf::twoPi() / static_cast<float>(subdivisions);
         uint32_t elements    = 0;
         uint32_t const index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
         uint32_t lastIndex   = index;
@@ -2322,6 +2325,8 @@ namespace FIFE
     void RenderBackendOpenGL::addImageToArray(
         uint32_t id, Rect const & rect, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
+        // Texture coordinates and colors arrive as fixed-size C arrays from the
+        // renderer interface; indexing them directly is the established contract.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         RenderObject ro(GL_TRIANGLES, 6, id);
 
@@ -2467,6 +2472,8 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
+        // The st1/st2 and rgba arguments are fixed-size C arrays supplied by callers;
+        // wrapping each access in a span would add noise without improving safety.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (rgba != nullptr) {
             renderData2TC rd{};
@@ -2543,6 +2550,8 @@ namespace FIFE
     void RenderBackendOpenGL::addImageToArrayZ(
         uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
+        // The st and rgba arguments are fixed-size C arrays from the renderer
+        // interface; direct indexing preserves that calling contract.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         // texture quad without alpha and coloring
         if (alpha == 255 && (rgba == nullptr)) {
@@ -2695,6 +2704,8 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
+        // Texture coordinate and color inputs are fixed-size C arrays; indexing them
+        // directly matches the established renderer interface.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (rgba != nullptr) {
             renderData2TCZ rd{};
@@ -2859,6 +2870,8 @@ namespace FIFE
 
     void RenderBackendOpenGL::captureScreen(std::string const & filename)
     {
+        // Pixel rows are walked as raw byte ranges from glReadPixels and the SDL
+        // surface; the offsets are computed from dimensions already validated here.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         uint32_t const swidth  = getWidth();
         uint32_t const sheight = getHeight();
@@ -2894,6 +2907,8 @@ namespace FIFE
 
     void RenderBackendOpenGL::captureScreen(std::string const & filename, uint32_t width, uint32_t height)
     {
+        // Row-wise copying uses raw pointers into the source and destination pixel
+        // buffers; the loop bounds are derived from the validated surface dimensions.
         // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         uint32_t const swidth  = getWidth();
         uint32_t const sheight = getHeight();
@@ -2987,9 +3002,9 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = static_cast<uint8_t*>(static_cast<void*>(src_help_pointer));
+            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = static_cast<uint32_t*>(static_cast<void*>(srcBytes + srcRowOffset));
+            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
         }
 
         if (SDL_MUSTLOCK(dst)) {
@@ -3156,7 +3171,7 @@ namespace FIFE
         std::vector<GuiVertex> const & vertices,
         std::vector<int> const & indices,
         DoublePoint const & translation,
-        ImagePtr texture) // NOLINT(performance-unnecessary-value-param)
+        ImagePtr texture)
     {
 
         glPushMatrix();

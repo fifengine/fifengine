@@ -79,7 +79,7 @@ namespace FIFE
         });
     }
 
-    Model::~Model()
+    Model::~Model() // NOLINT(modernize-use-equals-default): unregisters the map observer before maps tear down
     {
         // first remove the map observer, we delete all grids anyway
         for (auto& m_map : m_maps) {

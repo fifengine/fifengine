@@ -358,11 +358,11 @@ namespace FIFE
 
     bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, [[maybe_unused]] int32_t d)
     {
-        if (!m_viewport.intersects(Rect(node->x(), node->y(), node->size(), node->size()))) {
-            return false;
+        bool const visible = m_viewport.intersects(Rect(node->x(), node->y(), node->size(), node->size()));
+        if (visible) {
+            m_indices->insert(m_indices->end(), node->data().begin(), node->data().end());
         }
-        m_indices->insert(m_indices->end(), node->data().begin(), node->data().end());
-        return true;
+        return visible;
     }
 
     void LayerCache::collect(Rect const & viewport, std::vector<int32_t>& index_list)

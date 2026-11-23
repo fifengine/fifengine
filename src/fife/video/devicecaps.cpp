@@ -10,6 +10,7 @@
 #include <cassert>
 #include <iostream>
 #include <limits>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -103,7 +104,6 @@ namespace FIFE
     {
         int displayCount        = 0;
         SDL_DisplayID* displays = SDL_GetDisplays(&displayCount);
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(displays);
         assert(displayCount >= 0);
         assert(std::cmp_less_equal(displayCount, std::numeric_limits<uint8_t>::max()));
@@ -116,14 +116,12 @@ namespace FIFE
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
         if (displays == nullptr || count <= 0 || display >= static_cast<uint8_t>(count)) {
             if (displays != nullptr) {
-                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
                 SDL_free(static_cast<void*>(displays));
             }
             throw NotSupported("Could not find a matching display!");
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        SDL_DisplayID const displayId = displays[display];
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
+        std::span<SDL_DisplayID> const displaysView(displays, static_cast<size_t>(count));
+        SDL_DisplayID const displayId = displaysView[display];
         SDL_free(displays);
         return displayId;
     }
@@ -198,7 +196,6 @@ namespace FIFE
         SDL_DisplayMode** sdlModes = SDL_GetFullscreenDisplayModes(displayId, &modeCount);
         if (sdlModes == nullptr || modeCount <= 0) {
             if (sdlModes != nullptr) {
-                // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
                 SDL_free(static_cast<void*>(sdlModes));
             }
             // A display without any reported mode is not an error, the caller
@@ -207,8 +204,9 @@ namespace FIFE
         }
 
         modes.reserve(static_cast<size_t>(modeCount));
+        std::span<SDL_DisplayMode*> const sdlModeView(sdlModes, static_cast<size_t>(modeCount));
         for (int i = 0; i < modeCount; ++i) {
-            SDL_DisplayMode const * sdlMode = sdlModes[i];
+            SDL_DisplayMode const * sdlMode = sdlModeView[static_cast<size_t>(i)];
             if (sdlMode == nullptr) {
                 continue;
             }
@@ -225,7 +223,6 @@ namespace FIFE
                 depth);
         }
 
-        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
         SDL_free(static_cast<void*>(sdlModes));
         return modes;
     }

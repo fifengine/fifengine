@@ -64,7 +64,7 @@ namespace FIFE
              *  their native size.
              */
             using RescaleCallback = std::function<std::shared_ptr<FontInstance>(int size)>;
-            void setRescaleCallback(RescaleCallback callback);
+            void setRescaleCallback(RescaleCallback const & callback);
             /** @return True when the font can be re-rasterized at another size. */
             bool canRescale() const
             {

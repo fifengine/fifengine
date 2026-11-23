@@ -77,7 +77,7 @@ namespace FIFE
         }
 
         switch (alignment) {
-        case fcn::Graphics::Alignment::Left:
+        case fcn::Graphics::Alignment::Left: // NOLINT(bugprone-branch-clone): branches differ by text x-offset
             mFont->drawString(this, text, x, y);
             break;
         case fcn::Graphics::Alignment::Center:

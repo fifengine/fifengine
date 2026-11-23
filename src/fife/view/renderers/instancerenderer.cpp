@@ -564,7 +564,7 @@ namespace FIFE
 
         // animation overlay without color overlay
         if ((animationOverlay != nullptr) && (animationColorOverlay == nullptr)) {
-            if (withZ) {
+            if (withZ) { // NOLINT(bugprone-branch-clone): renderZ and render are different calls
                 for (auto& it : *animationOverlay) {
                     it->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? cc.data() : nullptr);
                 }

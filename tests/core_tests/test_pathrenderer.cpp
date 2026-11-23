@@ -373,8 +373,10 @@ TEST_CASE("PathRenderer add/remove/clear paths", "[pathrenderer]")
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
+    // Fabricates an opaque, never-dereferenced Instance* key for the renderer's identity map.
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     FIFE::Instance* const i1 = reinterpret_cast<FIFE::Instance*>(dummy_inst_storage.data());
+    // Fabricates an opaque, never-dereferenced Instance* key for the renderer's identity map.
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     FIFE::Instance* const i2 = reinterpret_cast<FIFE::Instance*>(&dummy_inst_storage.at(1));
 
@@ -405,6 +407,7 @@ TEST_CASE("PathRenderer setPathStyle for non-existent instance no-ops", "[pathre
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
+    // Fabricates an opaque, never-dereferenced Instance* key for the renderer's identity map.
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     FIFE::Instance* const dummy = reinterpret_cast<FIFE::Instance*>(&dummy_inst_storage.at(2));
     FIFE::PathStyleConfig const cfg;
@@ -416,6 +419,7 @@ TEST_CASE("PathRenderer removePath for non-existent instance no-ops", "[pathrend
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
+    // Fabricates an opaque, never-dereferenced Instance* key for the renderer's identity map.
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     FIFE::Instance* const dummy = reinterpret_cast<FIFE::Instance*>(&dummy_inst_storage.at(3));
     pr.removePath(dummy);
@@ -461,6 +465,7 @@ TEST_CASE("PathRenderer clone propagates configs", "[pathrenderer]")
     MockRenderBackend rb;
     FIFE::PathRenderer pr(&rb);
 
+    // Fabricates an opaque, never-dereferenced Instance* key for the renderer's identity map.
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     FIFE::Instance* const inst = reinterpret_cast<FIFE::Instance*>(&dummy_inst_storage.at(4));
     FIFE::PathStyleConfig cfg;
