@@ -14,15 +14,20 @@ endif()
 
 set(
   FIFE_CORE_TEST_SOURCES
+  test_atlas.cpp
   test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp
+  test_enginesettings.cpp
   test_event_touch.cpp
+  test_fife_math.cpp
   test_gui.cpp
   test_imagepool.cpp
   test_images.cpp
   test_key.cpp
   test_logger.cpp
+  test_matrix.cpp
+  test_point.cpp
   test_rect.cpp
   test_sharedptr.cpp
   test_text_layout.cpp
@@ -32,12 +37,14 @@ set(
   test_multicell_blocking.cpp
   test_multicell_pathfinding.cpp
   test_pathrenderer.cpp
+  test_renderernode.cpp
   test_font_types.cpp
   test_font_face.cpp
   test_font_instance.cpp
   test_font_definition_loader.cpp
   test_font_manager.cpp
   test_text_wrap.cpp
+  test_textrenderpool.cpp
   test_window.cpp
   test_speechbubble.cpp
 )

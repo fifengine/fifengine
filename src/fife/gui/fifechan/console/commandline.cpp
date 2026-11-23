@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
+#include <string>
 
 // 3rd party library includes
 
@@ -58,8 +59,10 @@ namespace FIFE
         fcn::Key const key      = keyEvent.getKey();
         int32_t const keyType   = key.getValue();
         bool const editInBounds = (keyType == fcn::Key::LEFT && getCaretPosition() > 0) ||
-                                  (keyType == fcn::Key::RIGHT && getCaretPosition() < getText().size()) ||
-                                  (keyType == fcn::Key::KEY_DELETE && getCaretPosition() < getText().size()) ||
+                                  (keyType == fcn::Key::RIGHT &&
+                                   static_cast<std::string::size_type>(getCaretPosition()) < getText().size()) ||
+                                  (keyType == fcn::Key::KEY_DELETE &&
+                                   static_cast<std::string::size_type>(getCaretPosition()) < getText().size()) ||
                                   (keyType == fcn::Key::BACKSPACE && getCaretPosition() > 0) || key.isCharacter() ||
                                   static_cast<uint32_t>(key.getValue()) > 255;
 
@@ -95,7 +98,7 @@ namespace FIFE
             setCaretPosition(0);
         } else if (keyType == fcn::Key::END) {
             assert(getText().size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
-            setCaretPosition(static_cast<unsigned int>(getText().size()));
+            setCaretPosition(static_cast<int>(getText().size()));
         }
         stopBlinking();
         fixScroll();

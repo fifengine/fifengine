@@ -78,7 +78,7 @@ namespace FIFE
         static_cast<void>(instances);
         Point const p1 = m_edge1.getCalculatedPoint(cam, layer);
         Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
-        if (m_edge1.getLayer() == layer) {
+        if (m_edge1.isDrawnOn(layer)) {
             renderbackend->drawLine(p1, p2, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
@@ -99,7 +99,7 @@ namespace FIFE
     {
         static_cast<void>(instances);
         Point const p = m_anchor.getCalculatedPoint(cam, layer);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
@@ -128,7 +128,7 @@ namespace FIFE
         Point const p1 = m_edge1.getCalculatedPoint(cam, layer);
         Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
         Point const p3 = m_edge3.getCalculatedPoint(cam, layer);
-        if (m_edge1.getLayer() == layer) {
+        if (m_edge1.isDrawnOn(layer)) {
             renderbackend->drawTriangle(p1, p2, p3, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
@@ -166,7 +166,7 @@ namespace FIFE
         Point const p2 = m_edge2.getCalculatedPoint(cam, layer);
         Point const p3 = m_edge3.getCalculatedPoint(cam, layer);
         Point const p4 = m_edge4.getCalculatedPoint(cam, layer);
-        if (m_edge1.getLayer() == layer) {
+        if (m_edge1.isDrawnOn(layer)) {
             renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
@@ -187,7 +187,7 @@ namespace FIFE
     {
         static_cast<void>(instances);
         Point const p = m_center.getCalculatedPoint(cam, layer);
-        if (m_center.getLayer() == layer) {
+        if (m_center.isDrawnOn(layer)) {
             renderbackend->drawVertex(p, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
@@ -209,7 +209,7 @@ namespace FIFE
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             Rect r;
             Rect const viewport = cam->getViewPort();
             int32_t width       = 0;
@@ -250,7 +250,7 @@ namespace FIFE
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             uint32_t const duration = toAnimationTimestamp(m_animation->getDuration());
             uint64_t const elapsed  = TimeManager::instance()->now64() - m_start_time;
             uint64_t const scaledElapsed =
@@ -290,7 +290,7 @@ namespace FIFE
     {
         static_cast<void>(instances);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             Image* img = m_font->getAsImageMultiline(m_text);
             Rect r;
             Rect const viewport = cam->getViewPort();
@@ -335,7 +335,7 @@ namespace FIFE
         static_cast<void>(instances);
         static_cast<void>(renderbackend);
         Point const p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
-        if (m_anchor.getLayer() == layer) {
+        if (m_anchor.isDrawnOn(layer)) {
             Rect r;
             Rect const viewport = cam->getViewPort();
             int32_t width       = 0;

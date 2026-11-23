@@ -5,6 +5,8 @@
 #include "zipprovider.h"
 
 // Standard C++ library includes
+#include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <memory>
 #include <string>
@@ -14,6 +16,8 @@
 
 // FIFE includes
 #include "util/base/exception.h"
+#include "vfs/filesystem.h"
+#include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "zipsource.h"
 
@@ -23,21 +27,46 @@ namespace FIFE
 
     bool ZipProvider::isReadable(std::string const & file) const
     {
-        // File name must have a .zip extension:
-        // TODO: Case sensitive?
-        if (file.find(".zip") == std::string::npos) {
+        // The file name should have a ".zip" extension, ignoring case:
+        std::string extension = GetExtension(file);
+        std::ranges::transform(extension, extension.begin(), [](unsigned char ch) {
+            return static_cast<char>(std::tolower(ch));
+        });
+        if (extension != ".zip") {
             return false;
         }
 
-        // File should exist:
+        // File should exist
         if (!getVFS()->exists(file)) {
             return false;
         }
 
-        // File should start with the bytes "PK":
-        // TODO: ...
+        // File should pass basic ZIP signature check
+        //
+        // Common ZIP files start with the local file header signature
+        // "PK\x03\x04" (0x04034b50).
+        //
+        // An empty ZIP archive consists only of the end-of-central-directory
+        // record, starting with "PK\x05\x06" (0x06054b50).
+        //
+        // This is only a heuristic: valid self-extracting ZIP archives or
+        // archives with prepended data may start with other bytes.
+        //
+        // A structural validation is performed by ZipSource::readIndex().
+        std::unique_ptr<RawData> data;
+        try {
+            data = getVFS()->open(file);
+        } catch (Exception const &) {
+            return false;
+        }
 
-        return true;
+        if (!data || data->getDataLength() < 4) {
+            return false;
+        }
+
+        uint32_t const magic = data->read32Little();
+
+        return magic == 0x04034b50 || magic == 0x06054b50;
     }
 
     FIFE::VFSSource* ZipProvider::createSource(std::string const & file)

@@ -295,11 +295,6 @@ class Widget:
 
         @param focus: name of child widget which should have focus. Defaults to main widget.
 
-        Note: This feature is not tested well, and the API will probably
-        change. Otherwise have fun::
-          # Okay this a very condensed example :-)
-          return pychan.loadXML("contents/gui/dialog.xml").execute({ 'okButton' : True, 'closeButton' : False })
-
         Returns
         -------
         object

@@ -53,5 +53,6 @@ namespace FIFE {
 		const Point& getPointRef();
 
 		Point getCalculatedPoint(Camera* cam, Layer* layer, const bool zoomed);
+		bool isDrawnOn(Layer const* layer) const;
 	};
 }

@@ -149,12 +149,12 @@ namespace fcn
             } else {
                 FIFE::Image const * image = mGuiFont->getAsImageMultiline(mCaption);
 
-                w = static_cast<int32_t>(
-                    image->getWidth() + (2 * getBorderSize()) + getPaddingLeft() + getPaddingRight());
+                w = static_cast<int32_t>(image->getWidth()) + (2 * getBorderSize()) + getPaddingLeft() +
+                    getPaddingRight();
             }
             std::string const & text  = isTextWrapping() ? mWrappedText : mCaption;
             FIFE::Image const * image = mGuiFont->getAsImageMultiline(text);
-            h = static_cast<int32_t>((2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + image->getHeight());
+            h = (2 * getBorderSize()) + getPaddingTop() + getPaddingBottom() + static_cast<int32_t>(image->getHeight());
             setSize(w, h);
         }
     }

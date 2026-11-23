@@ -425,6 +425,11 @@ namespace FIFE
             m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
         }
 
+        // Populate the driver list before validating the setting:
+        // fillDeviceCaps() uses SDL3's static driver tables and is safe to
+        // call before SDL_Init.
+        m_devcaps.fillDeviceCaps();
+
         std::string driver = m_settings.getVideoDriver();
         if (!driver.empty()) {
             std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();

@@ -83,6 +83,12 @@ namespace FIFE
             void removeInstance(Instance const * instance, bool listener = true);
 
             Point getCalculatedPoint(Camera* cam, Layer* layer, bool zoomed = false);
+            /** Tells if this node is drawn on the given layer.
+             *
+             * Pure-point nodes (no instance, no valid relative location, no
+             * layer) are drawn on every layer the renderer is active on.
+             */
+            bool isDrawnOn(Layer const * layer) const;
 
         private:
             void checkDeleteListener();

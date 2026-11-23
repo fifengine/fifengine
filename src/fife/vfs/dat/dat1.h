@@ -72,11 +72,11 @@ namespace FIFE
             /** Get the needed information to unpack and extract a file from the
              * DAT file.
              * Retrieves the Information needed to extract a specific file, this
-             * is passed as argument to a mffalloutrawdatadat1 RawMemSource,
-             * which itself fills its memory content with the unpacked file.
+             * is passed as argument to a RawDataDAT1, which itself fills its
+             * memory content with the unpacked file.
              *
              *  @throw NotFound
-             *  @see MFFalloutRawDataDAT1, RawMemSource
+             *  @see RawDataDAT1, RawDataMemSource
              */
             RawDataDAT1::s_info const & getInfo(std::string const & name) const;
 
