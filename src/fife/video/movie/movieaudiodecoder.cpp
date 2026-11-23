@@ -95,6 +95,7 @@ namespace FIFE
             }
 
             // Owns libav handles; copying or moving would double-free them.
+            Impl()                        = default;
             Impl(Impl const &)            = delete;
             Impl& operator=(Impl const &) = delete;
             Impl(Impl&&)                  = delete;

@@ -92,6 +92,7 @@ namespace FIFE
             }
 
             // Owns libav handles; copying or moving would double-free them.
+            MovieDecoder_Impl()                                     = default;
             MovieDecoder_Impl(MovieDecoder_Impl const &)            = delete;
             MovieDecoder_Impl& operator=(MovieDecoder_Impl const &) = delete;
             MovieDecoder_Impl(MovieDecoder_Impl&&)                  = delete;
