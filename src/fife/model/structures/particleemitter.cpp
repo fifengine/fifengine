@@ -339,6 +339,11 @@ namespace FIFE
         m_frames = std::move(frames);
     }
 
+    void ParticleEmitter::addFrame(ImagePtr frame)
+    {
+        m_frames.push_back(std::move(frame));
+    }
+
     ImagePtr const & ParticleEmitter::getFrame(uint32_t frame) const
     {
         static ImagePtr const empty;

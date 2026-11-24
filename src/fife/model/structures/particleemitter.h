@@ -72,6 +72,7 @@ namespace FIFE
             void handleInstanceDeleted(Instance* instance);
 
             void setFrames(std::vector<ImagePtr> frames);
+            void addFrame(ImagePtr frame);
             size_t getFrameCount() const
             {
                 return m_frames.size();

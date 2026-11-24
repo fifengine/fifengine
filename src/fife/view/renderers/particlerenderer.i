@@ -70,6 +70,7 @@ namespace FIFE {
 		bool isDrawnOn(const Layer* layer) const;
 		bool isEmissionEnabled() const;
 		Instance* getAttachedInstance() const;
+		void addFrame(const ImagePtr& frame);
 		size_t getFrameCount() const;
 	};
 
