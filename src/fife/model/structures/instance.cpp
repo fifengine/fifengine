@@ -50,10 +50,8 @@ namespace FIFE
     class ActionInfo
     {
         public:
-            ActionInfo(IPather* pather, [[maybe_unused]] Location const & curloc) :
-
-                m_pather(pather)
-
+            ActionInfo(IPather* pather, std::weak_ptr<void> patherLifetime, [[maybe_unused]] Location const & curloc) :
+                m_pather(pather), m_patherLifetime(std::move(patherLifetime))
             {
             }
 
@@ -61,7 +59,10 @@ namespace FIFE
             {
                 if ((m_route != nullptr) && m_delete_route) {
                     int32_t const sessionId = m_route->getSessionId();
-                    if (sessionId != -1) {
+                    // The pather is not owned by the action. Its proxy may have
+                    // been released before this action was finalized; only
+                    // cancel the session while the pather is still alive.
+                    if ((sessionId != -1) && !m_patherLifetime.expired()) {
                         m_pather->cancelSession(sessionId);
                     }
                     delete m_route;
@@ -74,6 +75,8 @@ namespace FIFE
 
             // Current action, owned by object
             Action* m_action{nullptr};
+            // expires when the non-owning action is destroyed
+            std::weak_ptr<void> m_actionLifetime;
             // target location for ongoing movement
             std::unique_ptr<Location> m_target;
             // current movement speed
@@ -87,8 +90,10 @@ namespace FIFE
             uint64_t m_action_offset_time{0};
             // ticks since last call
             uint64_t m_prev_call_time{0};
-            // pather
+            // pather (non-owning)
             IPather* m_pather;
+            // expires when the non-owning pather is destroyed
+            std::weak_ptr<void> m_patherLifetime;
             // leader for follow activity
             Instance* m_leader{nullptr};
             // pointer to route that contain path and additional information
@@ -500,9 +505,14 @@ namespace FIFE
         if (m_activity->m_actionInfo != nullptr) {
             cancelAction();
         }
-        m_activity->m_actionInfo           = std::make_unique<ActionInfo>(m_object->getPather(), m_location);
-        m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
-        if (m_activity->m_actionInfo->m_action == nullptr) {
+        IPather* pather          = m_object->getPather();
+        m_activity->m_actionInfo = std::make_unique<ActionInfo>(
+            pather, (pather != nullptr) ? pather->lifetimeToken() : std::weak_ptr<void>{}, m_location);
+        Action* action                     = m_object->getAction(actionName);
+        m_activity->m_actionInfo->m_action = action;
+        m_activity->m_actionInfo->m_actionLifetime =
+            (action != nullptr) ? action->lifetimeToken() : std::weak_ptr<void>{};
+        if (action == nullptr) {
             m_activity->m_actionInfo = nullptr;
             throw NotFound(std::string("action ") + actionName + " not found");
         }
@@ -957,13 +967,14 @@ namespace FIFE
         }
 
         Action* action           = m_activity->m_actionInfo->m_action;
+        bool const actionAlive   = !m_activity->m_actionInfo->m_actionLifetime.expired();
         m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the finalized action
         m_activity->m_action = nullptr;
 
-        // stop audio
-        if ((action->getAudio() != nullptr) && (m_activity->m_soundSource != nullptr)) {
+        // stop audio, but only while the non-owning action is still alive
+        if (actionAlive && (action->getAudio() != nullptr) && (m_activity->m_soundSource != nullptr)) {
             m_activity->m_soundSource->setActionAudio(nullptr);
         }
 
@@ -976,7 +987,7 @@ namespace FIFE
         auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if (*i != nullptr) {
-                (*i)->onInstanceActionFinished(this, action);
+                (*i)->onInstanceActionFinished(this, actionAlive ? action : nullptr);
             }
             ++i;
         }
@@ -995,6 +1006,7 @@ namespace FIFE
         }
 
         Action* action           = m_activity->m_actionInfo->m_action;
+        bool const actionAlive   = !m_activity->m_actionInfo->m_actionLifetime.expired();
         m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the canceled action
@@ -1009,7 +1021,7 @@ namespace FIFE
         auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if (*i != nullptr) {
-                (*i)->onInstanceActionCancelled(this, action);
+                (*i)->onInstanceActionCancelled(this, actionAlive ? action : nullptr);
             }
             ++i;
         }
@@ -1019,7 +1031,8 @@ namespace FIFE
 
     Action* Instance::getCurrentAction() const
     {
-        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr)) {
+        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr) &&
+            !m_activity->m_actionInfo->m_actionLifetime.expired()) {
             return m_activity->m_actionInfo->m_action;
         }
         return nullptr;

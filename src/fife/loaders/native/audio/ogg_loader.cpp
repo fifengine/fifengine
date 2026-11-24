@@ -36,6 +36,7 @@ namespace FIFE
         std::string const filename = res->getName();
 
         auto rdptr = vfs->open(filename);
+        // adobtDecoder takes a raw SoundDecoder* and assumes ownership of it.
         dynamic_cast<SoundClip*>(res)->adobtDecoder(
             new SoundDecoderOgg(rdptr.release())); // NOLINT(cppcoreguidelines-owning-memory)
     }

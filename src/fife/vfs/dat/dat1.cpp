@@ -85,6 +85,7 @@ namespace FIFE
     std::unique_ptr<RawData> DAT1::open(std::string const & file) const
     {
         RawDataDAT1::s_info const & info = getInfo(file);
+        // RawData's constructor takes the raw source pointer and assumes ownership of it.
         return std::make_unique<RawData>(
             new RawDataDAT1(getVFS(), m_datpath, info)); // NOLINT(cppcoreguidelines-owning-memory)
     }

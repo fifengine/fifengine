@@ -62,7 +62,6 @@ namespace FIFE
             std::string m_what;
     };
 
-// NOLINTNEXTLINE(bugprone-macro-parentheses,cppcoreguidelines-avoid-do-while)
 #define FIFE_EXCEPTION_DECL(_name, _description)                      \
     class FIFE_API _name : public Exception                           \
     {                                                                 \

@@ -145,6 +145,12 @@ namespace FIFE
         private:
             SDL_WindowFlags toSDLFlags() const;
             void recalculateDPIScale();
+            /** Make the SDL window cover the target display in fullscreen mode.
+             *  Window::getWidthInPoints() reports display bounds, so the SDL
+             *  window must have the same size or the render backend (which
+             *  uses SDL_GetWindowSize) and the camera (which uses
+             *  getWidthInPoints) disagree about the viewport. */
+            void syncFullscreenWindowSize();
             /** Refresh the cached display scale and fire the signal if it changed.
              *  @return True when the value changed. */
             bool updateDisplayScale();

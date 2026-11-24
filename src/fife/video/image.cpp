@@ -73,10 +73,10 @@ namespace FIFE
             size_t const y_base = static_cast<size_t>(y) * static_cast<size_t>(pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
-                uint8_t const r      = *(src_span.data() + (idx + 0)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const g      = *(src_span.data() + (idx + 1)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const b      = *(src_span.data() + (idx + 2)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const a      = *(src_span.data() + (idx + 3)); // NOLINT(cppcoreguidelines-init-variables)
+                uint8_t const r      = *(src_span.data() + (idx + 0));
+                uint8_t const g      = *(src_span.data() + (idx + 1));
+                uint8_t const b      = *(src_span.data() + (idx + 2));
+                uint8_t const a      = *(src_span.data() + (idx + 3));
                 uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
                     std::memcpy(dst_span.data() + (y_base + (static_cast<size_t>(x) * 4U)), &pixel, sizeof(pixel));
@@ -119,10 +119,10 @@ namespace FIFE
             size_t const y_base = static_cast<size_t>(y) * static_cast<size_t>(pitch);
             for (uint32_t x = 0; x < width; ++x) {
                 size_t const idx     = (((static_cast<size_t>(y) * static_cast<size_t>(width)) + x) * 4U);
-                uint8_t const r      = *(src_span.data() + (idx + 0)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const g      = *(src_span.data() + (idx + 1)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const b      = *(src_span.data() + (idx + 2)); // NOLINT(cppcoreguidelines-init-variables)
-                uint8_t const a      = *(src_span.data() + (idx + 3)); // NOLINT(cppcoreguidelines-init-variables)
+                uint8_t const r      = *(src_span.data() + (idx + 0));
+                uint8_t const g      = *(src_span.data() + (idx + 1));
+                uint8_t const b      = *(src_span.data() + (idx + 2));
+                uint8_t const a      = *(src_span.data() + (idx + 3));
                 uint32_t const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
                 if (bpp == 4) {
                     std::memcpy(dst_span.data() + (y_base + (static_cast<size_t>(x) * 4U)), &pixel, sizeof(pixel));
@@ -329,8 +329,8 @@ namespace FIFE
             return;
         }
         if (m_surface == nullptr) {
-            uint32_t const srcWidth  = srcimg->getWidth();  // NOLINT(cppcoreguidelines-init-variables)
-            uint32_t const srcHeight = srcimg->getHeight(); // NOLINT(cppcoreguidelines-init-variables)
+            uint32_t const srcWidth  = srcimg->getWidth();
+            uint32_t const srcHeight = srcimg->getHeight();
             assert(srcWidth <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
             assert(srcHeight <= static_cast<uint32_t>(std::numeric_limits<int>::max()));
             m_surface =
@@ -391,9 +391,8 @@ namespace FIFE
         std::span<Uint8> const pixels_span(
             static_cast<Uint8*>(surface->pixels),
             static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
-        Uint8* p = pixels_span.data() + ( // NOLINT(cppcoreguidelines-init-variables)
-                                            (static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
-                                            (static_cast<size_t>(x) * static_cast<size_t>(bpp)));
+        Uint8* p = pixels_span.data() + ((static_cast<size_t>(y) * static_cast<size_t>(surface->pitch)) +
+                                         (static_cast<size_t>(x) * static_cast<size_t>(bpp)));
 
         Uint32 const pixel = SDL_MapRGBA(details, SDL_GetSurfacePalette(surface), r, g, b, a);
         switch (bpp) {

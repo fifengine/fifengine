@@ -10,6 +10,7 @@
 // Standard C++ library includes
 #include <cstdint>
 #include <list>
+#include <memory>
 #include <string>
 
 // 3rd party library includes
@@ -34,7 +35,22 @@ namespace FIFE
     class FIFE_API IPather
     {
         public:
+            IPather() : m_lifetimeToken(std::make_shared<int>(0))
+            {
+            }
+
             virtual ~IPather() = default;
+
+            /** Returns a weak token that expires when this pather is destroyed.
+             *
+             * Actions keep a non-owning pather pointer. They use this token to
+             * avoid dereferencing a pather that was released before the action
+             * was finalized.
+             */
+            std::weak_ptr<void> lifetimeToken() const
+            {
+                return m_lifetimeToken;
+            }
 
             /** Creates a route between the start and end location that needs be solved.
              *
@@ -105,6 +121,9 @@ namespace FIFE
             /** Gets the name of this pather
              */
             virtual std::string getName() const = 0;
+
+        private:
+            std::shared_ptr<void> m_lifetimeToken;
     };
 } // namespace FIFE
 

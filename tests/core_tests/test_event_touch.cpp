@@ -506,6 +506,11 @@ namespace
                 backend.reset();
                 window.destroy();
             }
+
+            TouchInputEnvironment(TouchInputEnvironment const &)            = delete;
+            TouchInputEnvironment& operator=(TouchInputEnvironment const &) = delete;
+            TouchInputEnvironment(TouchInputEnvironment&&)                  = delete;
+            TouchInputEnvironment& operator=(TouchInputEnvironment&&)       = delete;
     };
 
     struct RecordedMouseEvent

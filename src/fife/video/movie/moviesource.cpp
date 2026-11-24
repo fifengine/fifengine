@@ -50,7 +50,7 @@ namespace FIFE
          * level settings and floods the output when probing a file that turns
          * out not to be a movie.
          */
-        void logBridge(void*, int level, char const * format, va_list args)
+        void logBridge([[maybe_unused]] void* opaque, int level, char const * format, va_list args)
         {
             if (format == nullptr) {
                 return;

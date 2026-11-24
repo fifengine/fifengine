@@ -324,6 +324,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2 -Wall -Wextra -Wunused")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion -Wsign-conversion")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wold-style-cast -Wdeprecated -Wdeprecated-declarations")
   endif()
 endif()
 
@@ -470,6 +471,10 @@ set(
   src/fife/video/image.cpp
   src/fife/video/imagemanager.cpp
   src/fife/video/renderbackend.cpp
+  src/fife/video/dummy/renderbackenddummy.cpp
+  src/fife/video/dummy/dummyimage.cpp
+  src/fife/video/dummy/renderbackendnull.cpp
+  src/fife/video/dummy/renderbackendsurface.cpp
   src/fife/video/fonts/textrenderpool.cpp
   src/fife/video/fonts/assetresolver.cpp
   src/fife/video/fonts/fontface.cpp
@@ -516,6 +521,7 @@ set(
   src/fife/gui/fifechan/base/gui_imageloader.cpp
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
+  src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.cpp
   src/fife/gui/fifechan/console/commandline.cpp
   src/fife/gui/fifechan/console/console.cpp
   src/fife/gui/fifechan/widgets/animationicon.cpp
@@ -695,6 +701,10 @@ set(
   src/fife/video/image.h
   src/fife/video/imagemanager.h
   src/fife/video/renderbackend.h
+  src/fife/video/dummy/renderbackenddummy.h
+  src/fife/video/dummy/dummyimage.h
+  src/fife/video/dummy/renderbackendnull.h
+  src/fife/video/dummy/renderbackendsurface.h
   src/fife/video/fonts/textrenderpool.h
   src/fife/video/fonts/assetresolver.h
   src/fife/video/fonts/fontdefinitionloader.h
@@ -748,6 +758,7 @@ set(
   src/fife/gui/fifechan/base/gui_imageloader.h
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.h
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.h
+  src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.h
   src/fife/gui/fifechan/console/commandline.h
   src/fife/gui/fifechan/console/console.h
   src/fife/gui/fifechan/widgets/animationicon.h

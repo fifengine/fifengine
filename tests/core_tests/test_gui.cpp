@@ -190,6 +190,7 @@ namespace
             for (int x = 0; x < src->w; ++x) {
                 size_t const i =
                     (static_cast<size_t>(y) * static_cast<size_t>(src->pitch / 4)) + static_cast<size_t>(x);
+                // SDL surfaces expose a raw pixel buffer indexed via pitch; bounds come from the surface.
                 // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                 pixels[i] = SDL_MapRGBA(fmt, nullptr, 68, 42, 2, 255);
             }
@@ -213,6 +214,7 @@ namespace
         uint8_t g                              = 0;
         uint8_t b                              = 0;
         uint8_t a                              = 0;
+        // The SDL surface pixel buffer is raw memory; element zero is the first converted pixel.
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         SDL_GetRGBA(out_pixels[0], out_fmt, nullptr, &r, &g, &b, &a);
         CHECK(r == 68);

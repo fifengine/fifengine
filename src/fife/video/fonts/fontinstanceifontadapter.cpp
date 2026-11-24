@@ -159,9 +159,9 @@ namespace FIFE
         m_pool.invalidateCachedText();
     }
 
-    void FontInstanceIFontAdapter::setRescaleCallback(RescaleCallback callback)
+    void FontInstanceIFontAdapter::setRescaleCallback(RescaleCallback const & callback)
     {
-        m_rescaleCallback = std::move(callback);
+        m_rescaleCallback = callback;
     }
 
     float FontInstanceIFontAdapter::getGUIScale() const
@@ -240,7 +240,6 @@ namespace FIFE
                 renderedText->h,
                 renderedText->pitch));*/
 
-        // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (SDL_ISPIXELFORMAT_ALPHA(SDL_GetPixelFormatDetails(renderedText->format)->format)) {
             if (SDL_LockSurface(renderedText)) {
                 // int fixedCount                     = 0;

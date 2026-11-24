@@ -162,6 +162,8 @@ namespace FIFE
         std::vector<std::string> tmp;
         tmp.emplace_back("SDL");
         tmp.emplace_back("OpenGL");
+        tmp.emplace_back("DUMMY_NULL");
+        tmp.emplace_back("DUMMY_SURFACE");
         return tmp;
     }
 

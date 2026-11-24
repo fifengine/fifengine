@@ -107,6 +107,15 @@ namespace FIFE
         return r;
     }
 
+    void RenderBackend::drawImageToTarget(
+        [[maybe_unused]] Image const & image,
+        [[maybe_unused]] Rect const & rect,
+        [[maybe_unused]] uint8_t alpha,
+        [[maybe_unused]] uint8_t const * rgb)
+    {
+        // Headless backends have no image output by default.
+    }
+
     void RenderBackend::pushClipArea(Rect const & cliparea, bool clear)
     {
         ClipInfo ci;

@@ -38,6 +38,8 @@ namespace FIFE
         {
             void const * ptr = alGetProcAddress(name);
             static_assert(sizeof(T) == sizeof(void*));
+            // OpenAL hands back procedure addresses as void* although they are function pointers;
+            // bit_cast preserves the representation where reinterpret_cast would be non-portable.
             return std::bit_cast<T>(ptr); // NOLINT(bugprone-bitwise-pointer-cast)
         }
 

@@ -45,6 +45,8 @@ namespace FIFE
         // deleter for Action used by unique_ptr<Action, void(*)(Action*)>
         void action_deleter(Action* a)
         {
+            // This is the custom deleter for unique_ptr<Action, void(*)(Action*)>; the raw
+            // delete is the intended ownership release for that pre-existing API.
             delete a; // NOLINT(cppcoreguidelines-owning-memory)
         }
     } // namespace

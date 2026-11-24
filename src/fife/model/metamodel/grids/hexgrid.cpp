@@ -31,22 +31,30 @@ namespace FIFE
 
         double const HEX_WIDTH   = 1;
         double const HEX_TO_EDGE = HEX_WIDTH / 2;
+        // The actual initialization already lives in a function-local static inside the lambda,
+        // so nothing can throw before main(); this check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_TO_CORNER = []() -> double const & {
             static double const val = 0.5 / Mathd::Cos(Mathd::pi() / 6);
             return val;
         }();
+        // The actual initialization already lives in a function-local static inside the lambda,
+        // so nothing can throw before main(); this check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_EDGE_HALF = []() -> double const & {
             static double const val = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
             return val;
         }();
+        // The actual initialization already lives in a function-local static inside the lambda,
+        // so nothing can throw before main(); this check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & VERTICAL_MULTIP = []() -> double const & {
             static double const val = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
             return val;
         }();
         double const VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
+        // The actual initialization already lives in a function-local static inside the lambda,
+        // so nothing can throw before main(); this check cannot see through the lambda.
         // NOLINTNEXTLINE(bugprone-throwing-static-initialization)
         double const & HEX_EDGE_GRADIENT = []() -> double const & {
             static double const val = 1 / Mathd::Sqrt(3);

@@ -64,8 +64,10 @@ namespace FIFE
                 int32_t const clampedY = std::clamp(y, 0, surface->h - 1);
                 auto const * pixels    = static_cast<uint32_t const *>(surface->pixels);
                 int32_t const pitchPx  = surface->pitch / 4;
-                uint32_t const pixel =
-                    pixels[(clampedY * pitchPx) + clampedX]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                std::span<uint32_t const> const pixelsView(
+                    pixels, static_cast<size_t>(pitchPx) * static_cast<size_t>(surface->h));
+                uint32_t const pixel = pixelsView
+                    [(static_cast<size_t>(clampedY) * static_cast<size_t>(pitchPx)) + static_cast<size_t>(clampedX)];
                 uint8_t r = 0;
                 uint8_t g = 0;
                 uint8_t b = 0;
@@ -90,6 +92,8 @@ namespace FIFE
             SDL_PixelFormatDetails const * fmt = SDL_GetPixelFormatDetails(surface->format);
             auto const * pixels                = static_cast<uint32_t const *>(surface->pixels);
             int32_t const pitchPx              = surface->pitch / 4;
+            std::span<uint32_t const> const pixelsView(
+                pixels, static_cast<size_t>(pitchPx) * static_cast<size_t>(surface->h));
 
             int32_t nonZeroAlpha = 0;
             int32_t fullAlpha    = 0;
@@ -105,13 +109,13 @@ namespace FIFE
                     uint8_t b = 0;
                     uint8_t a = 0;
                     SDL_GetRGBA(
-                        pixels[(y * pitchPx) + x],
+                        pixelsView[(static_cast<size_t>(y) * static_cast<size_t>(pitchPx)) + static_cast<size_t>(x)],
                         fmt,
                         SDL_GetSurfacePalette(surface),
                         &r,
                         &g,
                         &b,
-                        &a); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                        &a);
 
                     if (a == 0) {
                         continue;
@@ -299,7 +303,7 @@ namespace FIFE
                     rect.h,
                     alpha,
                     rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) :
-                                     std::string("null"), // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                                     std::string("null"),
                     m_tex_coords[0],
                     m_tex_coords[1],
                     m_tex_coords[2],
@@ -320,7 +324,7 @@ namespace FIFE
                     rect.h,
                     alpha,
                     rgb != nullptr ? std::format("{},{},{},{}", rgb[0], rgb[1], rgb[2], rgb[3]) :
-                                     std::string("null"), // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                                     std::string("null"),
                     m_tex_coords[0],
                     m_tex_coords[1],
                     m_tex_coords[2],
@@ -572,10 +576,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t r = *(data_span.data() + (pos + 0)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t g = *(data_span.data() + (pos + 1)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t b = *(data_span.data() + (pos + 2)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t a = *(data_span.data() + (pos + 3)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t r = data_span[pos + 0];
+                    uint8_t g = data_span[pos + 1];
+                    uint8_t b = data_span[pos + 2];
+                    uint8_t a = data_span[pos + 3];
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -703,10 +707,10 @@ namespace FIFE
                     // SDL surfaces can have padded row pitch; repack to a tightly packed buffer.
                     std::vector<uint8_t> packed(static_cast<size_t>(tightPitch) * static_cast<size_t>(height));
                     for (uint32_t y = 0; y < height; ++y) {
-                        uint8_t const * srcRow = // NOLINT(cppcoreguidelines-init-variables)
-                            data_span.data() + (static_cast<size_t>(y) * static_cast<size_t>(pitch));
+                        std::span<uint8_t> const srcRow = data_span.subspan(
+                            static_cast<size_t>(y) * static_cast<size_t>(pitch), static_cast<size_t>(tightPitch));
                         uint8_t* dstRow = &packed.at(static_cast<size_t>(y) * static_cast<size_t>(tightPitch));
-                        std::memcpy(dstRow, srcRow, static_cast<size_t>(tightPitch));
+                        std::memcpy(dstRow, srcRow.data(), static_cast<size_t>(tightPitch));
                     }
 
                     glTexImage2D(
@@ -731,10 +735,10 @@ namespace FIFE
                     size_t const pos =
                         (static_cast<size_t>(y) * static_cast<size_t>(pitch)) + (static_cast<size_t>(x) * 4U);
 
-                    uint8_t a = *(data_span.data() + (pos + 3)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t b = *(data_span.data() + (pos + 2)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t g = *(data_span.data() + (pos + 1)); // NOLINT(cppcoreguidelines-init-variables)
-                    uint8_t r = *(data_span.data() + (pos + 0)); // NOLINT(cppcoreguidelines-init-variables)
+                    uint8_t a = data_span[pos + 3];
+                    uint8_t b = data_span[pos + 2];
+                    uint8_t g = data_span[pos + 1];
+                    uint8_t r = data_span[pos + 0];
 
                     if (RenderBackend::instance()->isColorKeyEnabled()) {
                         // only set alpha to zero if colorkey feature is enabled
@@ -891,11 +895,16 @@ namespace FIFE
         if (surface == nullptr) {
             return;
         }
-        uint8_t const * src = rgba;
-        uint8_t* dst        = static_cast<uint8_t*>(surface->pixels);
-        size_t const row    = static_cast<size_t>(width) * 4U;
+        std::span<uint8_t const> const srcSpan(rgba, static_cast<size_t>(height) * static_cast<size_t>(width) * 4U);
+        std::span<uint8_t> const dstSpan(
+            static_cast<uint8_t*>(surface->pixels),
+            static_cast<size_t>(surface->h) * static_cast<size_t>(surface->pitch));
+        size_t const row = static_cast<size_t>(width) * 4U;
         for (uint32_t y = 0; y < height; ++y) {
-            std::memcpy(dst + (y * static_cast<size_t>(surface->pitch)), src + (y * row), row);
+            std::memcpy(
+                dstSpan.subspan(static_cast<size_t>(y) * static_cast<size_t>(surface->pitch), row).data(),
+                srcSpan.subspan(static_cast<size_t>(y) * row, row).data(),
+                row);
         }
         setSurface(surface);
     }

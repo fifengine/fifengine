@@ -436,11 +436,14 @@ namespace FIFE
         // set the z transformation to unity
         int32_t const N = 4;
         for (int32_t i = 0; i != N; ++i) {
+            // Fixed 4x4 matrix; indices are derived from N and provably in range.
             // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
             m_vscreen_2_screen[(2 * N) + i] = 0;
+            // Fixed 4x4 matrix; indices are derived from N and provably in range.
             // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
             m_vscreen_2_screen[(i * N) + 2] = 0;
         }
+        // Fixed 4x4 matrix; the z-row/column index is a constant and in range.
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
         m_vscreen_2_screen[(2 * N) + 2] = 1;
         m_screen_2_vscreen              = m_vscreen_2_screen.inverse();

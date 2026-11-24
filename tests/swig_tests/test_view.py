@@ -81,5 +81,3 @@ def test_camera(engine):
         engine.pump()
 
     engine.finalizePumping()
-
-    engine.thisown = False

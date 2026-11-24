@@ -18,6 +18,7 @@ set(
   test_asset_resolver.cpp
   test_dat1.cpp
   test_dat2.cpp
+  test_renderbackend_dummy.cpp
   test_enginesettings.cpp
   test_event_touch.cpp
   test_fife_math.cpp
@@ -142,8 +143,16 @@ if(EXISTS "${LOGO_SRC_DIR}/FIFE_small_c3.png" AND NOT EXISTS "${LOGO_DST_DIR}/FI
   file(COPY "${LOGO_SRC_DIR}/FIFE_small_c3.png" DESTINATION "${LOGO_DST_DIR}")
 endif()
 
+# All C++ tests live in one all_tests binary; these entries select subsets of it via Catch2 tags.
+# all_tests_dummy runs only tests tagged [dummy], i.e. the headless tests that construct RenderBackendNull/Surface directly.
+# It is a tag filter, not a backend switch: SDL/OpenGL tests keep their real backends and are not in this subset.
+# CI uses it for the normal Linux jobs so they need no display server, window, or GL context; the GL job still runs all_tests under Xvfb.
+# The dummy label also allows running the same subset locally with ctest -L dummy.
 add_test(NAME all_tests COMMAND all_tests)
 set_tests_properties(all_tests PROPERTIES LABELS core WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(NAME all_tests_dummy COMMAND all_tests "[dummy]")
+set_tests_properties(all_tests_dummy PROPERTIES LABELS dummy WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 set_target_properties(all_tests PROPERTIES
   CXX_STANDARD 20

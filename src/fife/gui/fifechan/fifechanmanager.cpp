@@ -34,6 +34,7 @@
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/mouse/mouseevent.h"
+#include "gui/fifechan/base/dummy/dummy_gui_graphics.h"
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
 #include "gui/fifechan/console/console.h"
@@ -208,10 +209,12 @@ namespace FIFE
 
     void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
-        if (m_backend == "SDL") { // NOLINT(bugprone-branch-clone)
+        if (m_backend == "SDL") {
             dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
-        } else {
+        } else if (m_backend == "OpenGL") {
             dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+        } else {
+            dynamic_cast<DummyGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         }
         m_fcn_topcontainer->setDimension(
             fcn::Rectangle(
@@ -260,13 +263,17 @@ namespace FIFE
             m_gui_graphics = std::make_unique<SdlGuiGraphics>();
         } else if (backend == "OpenGL") {
             m_gui_graphics = std::make_unique<OpenGLGuiGraphics>();
+        } else if (backend == "DUMMY_NULL" || backend == "DUMMY_SURFACE") {
+            m_gui_graphics = std::make_unique<DummyGuiGraphics>();
         } else {
             // should never get here
             assert(0);
         }
 #else
-        if (backend == "SDL") {
+        if (backend == "SDL") { // NOLINT(bugprone-branch-clone): branches construct different graphics backends
             m_gui_graphics = std::make_unique<SdlGuiGraphics>();
+        } else if (backend == "DUMMY_NULL" || backend == "DUMMY_SURFACE") {
+            m_gui_graphics = std::make_unique<DummyGuiGraphics>();
         } else {
             // should never get here
             assert(0);

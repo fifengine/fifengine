@@ -75,10 +75,8 @@ namespace FIFE
 
     void Console::reLayout()
     {
-        int32_t const w = // NOLINT(cppcoreguidelines-init-variables)
-            RenderBackend::instance()->getScreenWidth() * 4 / 5;
-        int32_t const h = // NOLINT(cppcoreguidelines-init-variables)
-            RenderBackend::instance()->getScreenHeight() * 4 / 5;
+        int32_t const w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
+        int32_t const h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
         int32_t const b        = 0;
         int32_t const input_h  = getFont()->getHeight();
         int32_t const bbar_h   = input_h;
@@ -148,8 +146,7 @@ namespace FIFE
     void Console::updateCaption()
     {
         std::string caption = "FIFE Console - FPS: ";
-        double const fps    = // NOLINT(cppcoreguidelines-init-variables)
-            1e3 / TimeManager::instance()->getAverageFrameTime();
+        double const fps    = 1e3 / TimeManager::instance()->getAverageFrameTime();
         caption += std::to_string(fps);
         m_status->setCaption(caption);
     }
@@ -255,7 +252,7 @@ namespace FIFE
         assert(m_output);
 
         // Add the text in rows
-        std::istringstream iss(s);
+        std::istringstream iss(s); // NOLINT(bugprone-unused-local-non-trivial-variable): used by std::getline below
         std::string line;
         while (std::getline(iss, line)) {
             m_output->addRow(line);

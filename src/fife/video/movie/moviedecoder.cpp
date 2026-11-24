@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <format>
@@ -89,6 +90,13 @@ namespace FIFE
                     avformat_close_input(&format);
                 }
             }
+
+            // Owns libav handles; copying or moving would double-free them.
+            MovieDecoder_Impl()                                     = default;
+            MovieDecoder_Impl(MovieDecoder_Impl const &)            = delete;
+            MovieDecoder_Impl& operator=(MovieDecoder_Impl const &) = delete;
+            MovieDecoder_Impl(MovieDecoder_Impl&&)                  = delete;
+            MovieDecoder_Impl& operator=(MovieDecoder_Impl&&)       = delete;
 
             std::shared_ptr<MovieSource> getSource() const
             {
@@ -208,10 +216,7 @@ namespace FIFE
                         if (avcodec_send_packet(codec, nullptr) < 0) {
                             return false;
                         }
-                    } else if (packet->stream_index != videoStream) {
-                        av_packet_unref(packet);
-                        continue;
-                    } else if (avcodec_send_packet(codec, packet) < 0) {
+                    } else if ((packet->stream_index != videoStream) || (avcodec_send_packet(codec, packet) < 0)) {
                         av_packet_unref(packet);
                         continue;
                     } else {
@@ -239,7 +244,7 @@ namespace FIFE
                         return false;
                     }
                 } else {
-                    int64_t const target = static_cast<int64_t>(seconds / timeBase + 0.5);
+                    int64_t const target = static_cast<int64_t>(std::llround(seconds / timeBase));
                     if (av_seek_frame(format, videoStream, target, AVSEEK_FLAG_BACKWARD) < 0) {
                         return false;
                     }

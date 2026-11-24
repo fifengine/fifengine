@@ -343,8 +343,10 @@ namespace FIFE
 
             std::unique_ptr<Cursor> m_cursor;
             bool m_destroyed;
-            bool m_lastF11State   = false;
-            bool m_lastCtrlVState = false;
+            bool m_headless          = false;
+            bool m_eventsInitialized = false;
+            bool m_lastF11State      = false;
+            bool m_lastCtrlVState    = false;
 
             EngineSettings m_settings;
             std::unique_ptr<FontManager> m_fontManager;
