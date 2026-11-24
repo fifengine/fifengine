@@ -8,11 +8,32 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <utility>
+
+// FIFE includes
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
 
 namespace FIFE
 {
     namespace
     {
+        class EmitterDeleteListener : public InstanceDeleteListener
+        {
+            public:
+                explicit EmitterDeleteListener(ParticleEmitter* owner) : m_owner(owner)
+                {
+                }
+
+                void onInstanceDeleted(Instance* instance) override
+                {
+                    m_owner->handleInstanceDeleted(instance);
+                }
+
+            private:
+                ParticleEmitter* m_owner;
+        };
+
         float uniform(std::mt19937 & rng, float a, float b)
         {
             std::uniform_real_distribution<float> dist(std::min(a, b), std::max(a, b));
@@ -23,6 +44,11 @@ namespace FIFE
     ParticleEmitter::ParticleEmitter(ParticleConfig const & config) : m_config(config), m_rng(1U)
     {
         rebuildPool();
+    }
+
+    ParticleEmitter::~ParticleEmitter()
+    {
+        detach();
     }
 
     uint32_t ParticleEmitter::effectiveCapacity() const
@@ -102,6 +128,12 @@ namespace FIFE
             }
         }
 
+        if (!m_config.localSpace) {
+            ExactModelCoordinate const node = getNodeWorldPosition();
+            p.x += static_cast<float>(node.x);
+            p.y += static_cast<float>(node.y);
+        }
+
         refreshVisuals(p);
         ++m_alive;
         ++m_emitted;
@@ -131,7 +163,7 @@ namespace FIFE
             return;
         }
 
-        bool const mayEmit = m_config.looping || !m_burstFired;
+        bool const mayEmit = m_emission_enabled && (m_config.looping || !m_burstFired);
 
         if (m_config.emissionRate > 0.0F && mayEmit) {
             m_emissionAccumulator += m_config.emissionRate * dt;
@@ -187,6 +219,132 @@ namespace FIFE
     ExactModelCoordinate ParticleEmitter::getParticleWorldPosition(size_t slot) const
     {
         ParticleSnapshot const & p = m_particles.at(slot);
+        if (m_config.localSpace) {
+            ExactModelCoordinate const node = getNodeWorldPosition();
+            return ExactModelCoordinate(node.x + static_cast<double>(p.x), node.y + static_cast<double>(p.y), 0.0);
+        }
         return ExactModelCoordinate(static_cast<double>(p.x), static_cast<double>(p.y), 0.0);
+    }
+
+    void ParticleEmitter::detach()
+    {
+        if (m_attached_instance != nullptr && m_delete_listener != nullptr) {
+            m_attached_instance->removeDeleteListener(m_delete_listener.get());
+        }
+        m_delete_listener.reset();
+        m_attached_instance = nullptr;
+        m_node.setAttached(Point(0, 0));
+        m_drawn_layer       = nullptr;
+        m_has_last_world    = false;
+        m_emission_enabled  = true;
+    }
+
+    void ParticleEmitter::attachToInstance(Instance* instance, Point const & offset)
+    {
+        detach();
+        if (instance == nullptr) {
+            return;
+        }
+        m_node.setAttached(instance, offset);
+        m_attached_instance = instance;
+        m_drawn_layer       = instance->getLocationRef().getLayer();
+        m_delete_listener   = std::make_unique<EmitterDeleteListener>(this);
+        instance->addDeleteListener(m_delete_listener.get());
+        m_emission_enabled = true;
+    }
+
+    void ParticleEmitter::attachToLayer(Layer* layer, Point const & offset)
+    {
+        detach();
+        if (layer == nullptr) {
+            return;
+        }
+        m_node.setAttached(layer);
+        m_node.setRelative(offset);
+        m_drawn_layer      = layer;
+        m_emission_enabled = true;
+    }
+
+    void ParticleEmitter::attachToPoint(Point const & point)
+    {
+        detach();
+        m_node.setAttached(point);
+        m_emission_enabled = true;
+    }
+
+    bool ParticleEmitter::isDrawnOn(Layer const * layer) const
+    {
+        return m_drawn_layer == nullptr || m_drawn_layer == layer;
+    }
+
+    ExactModelCoordinate ParticleEmitter::getNodeWorldPosition() const
+    {
+        if (m_has_last_world) {
+            return m_last_world;
+        }
+
+        ExactModelCoordinate result{0.0, 0.0, 0.0};
+        if (m_attached_instance != nullptr) {
+            result = m_attached_instance->getLocationRef().getMapCoordinates();
+        } else {
+            Location const attached = m_node.getAttachedLocation();
+            if (attached.isValid()) {
+                result = attached.getMapCoordinates();
+            } else {
+                Point const point = m_node.getPoint();
+                return ExactModelCoordinate(static_cast<double>(point.x), static_cast<double>(point.y), 0.0);
+            }
+        }
+
+        Location const relative = m_node.getOffsetLocation();
+        if (relative.isValid()) {
+            ExactModelCoordinate const offset = relative.getMapCoordinates();
+            result.x += offset.x;
+            result.y += offset.y;
+        }
+        Point const relativePoint = m_node.getOffsetPoint();
+        result.x += static_cast<double>(relativePoint.x);
+        result.y += static_cast<double>(relativePoint.y);
+        return result;
+    }
+
+    void ParticleEmitter::handleInstanceDeleted(Instance* instance)
+    {
+        if (instance != m_attached_instance) {
+            return;
+        }
+        m_last_world = instance->getLocationRef().getMapCoordinates();
+        Location const relative = m_node.getOffsetLocation();
+        if (relative.isValid()) {
+            ExactModelCoordinate const offset = relative.getMapCoordinates();
+            m_last_world.x += offset.x;
+            m_last_world.y += offset.y;
+        }
+        Point const relativePoint = m_node.getOffsetPoint();
+        m_last_world.x += static_cast<double>(relativePoint.x);
+        m_last_world.y += static_cast<double>(relativePoint.y);
+
+        m_has_last_world    = true;
+        m_emission_enabled  = false;
+        m_attached_instance = nullptr;
+        // Do not touch the RendererNode here: its own delete listener clears
+        // the instance reference with listener=false, and mutating the
+        // instance's listener list from inside Instance::~Instance would
+        // invalidate the vector being iterated. Keep our listener object
+        // alive until detach(), for the same reason.
+    }
+
+    void ParticleEmitter::setFrames(std::vector<ImagePtr> frames)
+    {
+        m_frames = std::move(frames);
+    }
+
+    ImagePtr const & ParticleEmitter::getFrame(uint32_t frame) const
+    {
+        static ImagePtr const empty;
+        if (m_frames.empty()) {
+            return empty;
+        }
+        return m_frames[static_cast<size_t>(frame) % m_frames.size()];
     }
 } // namespace FIFE
