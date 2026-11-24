@@ -41,6 +41,7 @@ set(
   test_particle_attachment.cpp
   test_particle_emitter.cpp
   test_particle_manager.cpp
+  test_particle_renderer.cpp
   test_renderernode.cpp
   test_font_types.cpp
   test_font_face.cpp

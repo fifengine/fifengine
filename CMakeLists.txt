@@ -514,6 +514,7 @@ set(
   src/fife/view/renderers/instancerenderer.cpp
   src/fife/view/renderers/lightrenderer.cpp
   src/fife/view/renderers/offrenderer.cpp
+  src/fife/view/renderers/particlerenderer.cpp
   src/fife/view/renderers/quadtreerenderer.cpp
   src/fife/view/renderers/targetrenderer.cpp
 )
@@ -751,6 +752,7 @@ set(
   src/fife/view/renderers/instancerenderer.h
   src/fife/view/renderers/lightrenderer.h
   src/fife/view/renderers/offrenderer.h
+  src/fife/view/renderers/particlerenderer.h
   src/fife/view/renderers/quadtreerenderer.h
   src/fife/view/renderers/speechbubblegeometry.h
   src/fife/view/renderers/speechstyle.h
