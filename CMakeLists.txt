@@ -421,6 +421,7 @@ set(
   src/fife/model/structures/location.cpp
   src/fife/model/structures/map.cpp
   src/fife/model/structures/particleemitter.cpp
+  src/fife/model/structures/particlemanager.cpp
   src/fife/model/structures/renderernode.cpp
   src/fife/model/structures/trigger.cpp
   src/fife/model/structures/triggercontroller.cpp
@@ -639,6 +640,7 @@ set(
   src/fife/model/structures/map.h
   src/fife/model/structures/particleconfig.h
   src/fife/model/structures/particleemitter.h
+  src/fife/model/structures/particlemanager.h
   src/fife/model/structures/renderernode.h
   src/fife/model/structures/trigger.h
   src/fife/model/structures/triggercontroller.h
