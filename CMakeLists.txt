@@ -7,6 +7,8 @@
 # CMake, so this floor is the only early, clear failure point.
 cmake_minimum_required(VERSION 4.3)
 
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
@@ -1336,6 +1338,7 @@ if(BUILD_PYTHON_BINDINGS)
 
   set_target_properties(fife_swig PROPERTIES
     SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/fife;${PROJECT_SOURCE_DIR}"
+    COMPILE_WARNING_AS_ERROR OFF
   )
 
   target_link_libraries(
@@ -1381,6 +1384,7 @@ if(BUILD_PYTHON_BINDINGS)
 
     set_target_properties(fifechan_swig PROPERTIES
       SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/fife;${CMAKE_SOURCE_DIR}"
+      COMPILE_WARNING_AS_ERROR OFF
     )
 
     target_link_libraries(fifechan_swig

@@ -50,7 +50,7 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::setLightingModel(uint32_t lighting)
+    void RenderBackendDummy::setLightingModel(uint32_t)
     {
     }
 
@@ -79,33 +79,33 @@ namespace FIFE
     {
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(IResourceLoader*)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const & name, IResourceLoader* loader)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, IResourceLoader*)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(uint8_t const * data, uint32_t width, uint32_t height)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(uint8_t const *, uint32_t, uint32_t)
     {
         return nullptr;
     }
 
     std::unique_ptr<Image> RenderBackendDummy::createImage(
-        std::string const & name, uint8_t const * data, uint32_t width, uint32_t height)
+        std::string const &, uint8_t const *, uint32_t, uint32_t)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(SDL_Surface*)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const & name, SDL_Surface* surface)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, SDL_Surface*)
     {
         return nullptr;
     }
@@ -123,7 +123,7 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::captureScreen(std::string const & filename)
+    void RenderBackendDummy::captureScreen(std::string const &)
     {
         // A headless backend may have no screen surface at all; there is nothing to capture.
         if (m_screen == nullptr) {
@@ -131,7 +131,7 @@ namespace FIFE
         }
     }
 
-    void RenderBackendDummy::captureScreen(std::string const & filename, uint32_t width, uint32_t height)
+    void RenderBackendDummy::captureScreen(std::string const &, uint32_t, uint32_t)
     {
         if (m_screen == nullptr) {
             return;
@@ -227,14 +227,14 @@ namespace FIFE
     }
 
     void RenderBackendDummy::renderGuiGeometry(
-        std::vector<GuiVertex> const & vertices,
-        std::vector<int> const & indices,
-        DoublePoint const & translation,
-        ImagePtr texture)
+        std::vector<GuiVertex> const &,
+        std::vector<int> const &,
+        DoublePoint const &,
+        ImagePtr)
     {
     }
 
-    void RenderBackendDummy::setClipArea(Rect const & cliparea, bool clear)
+    void RenderBackendDummy::setClipArea(Rect const &, bool)
     {
     }
 
