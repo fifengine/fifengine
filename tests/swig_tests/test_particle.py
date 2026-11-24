@@ -14,6 +14,9 @@ def test_particle_api_and_renderer_lookup(shared_engine):
     cam = map_obj.addCamera("particle_py_cam", fife.Rect(0, 0, rb.getWidth(), rb.getHeight()))
     cam.setLocation(fife.Location(layer))
 
+    assert fife.ParticleShape_Point != fife.ParticleShape_Box
+    assert fife.ParticleShape_Circle != fife.ParticleShape_Box
+
     renderer = fife.ParticleRenderer.getInstance(cam)
     assert renderer is not None
     renderer.setEnabled(True)

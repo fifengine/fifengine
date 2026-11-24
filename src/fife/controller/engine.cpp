@@ -775,6 +775,11 @@ namespace FIFE
         m_movieemitter = nullptr;
 #endif
 
+        // Emitters own ImagePtr frames whose backend textures must be released
+        // while the render backend and window still exist. TimeManager is also
+        // still alive here, so the particle TimeEvent can unregister safely.
+        m_particlemanager.reset();
+
         // Release owners before the services they borrow from. Models hold
         // raw pointers to renderers, and renderers/gui/cursor hold raw pointers
         // to the render backend, so they must go first.
@@ -804,8 +809,6 @@ namespace FIFE
         m_renderbackend.reset();
 
         m_vfs.reset();
-        // Unregister the particle TimeEvent while TimeManager still exists.
-        m_particlemanager.reset();
         m_timemanager.reset();
 
         // SDL subsystem initialization is ref-counted; balance only the

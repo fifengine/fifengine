@@ -55,9 +55,10 @@ namespace FIFE
     {
         uint32_t cap = m_config.maxParticles;
         if (cap == 0U) {
-            double const derived = std::ceil(static_cast<double>(m_config.emissionRate) *
-                                             static_cast<double>(m_config.lifetimeMax)) +
-                                   static_cast<double>(m_config.burstCount);
+            double derived = std::ceil(static_cast<double>(m_config.emissionRate) *
+                                       static_cast<double>(m_config.lifetimeMax)) +
+                             static_cast<double>(m_config.burstCount);
+            derived = std::clamp(derived, 0.0, 2048.0);
             cap = static_cast<uint32_t>(derived);
         }
         return std::min(cap, 2048U);
@@ -274,6 +275,9 @@ namespace FIFE
 
     bool ParticleEmitter::isDrawnOn(Layer const * layer) const
     {
+        // Unattached (screen-space) emitters follow RendererNode's convention
+        // and are drawn on every active layer. In a multi-layer scene this
+        // means one render pass per layer; attach to a layer to restrict it.
         return m_drawn_layer == nullptr || m_drawn_layer == layer;
     }
 

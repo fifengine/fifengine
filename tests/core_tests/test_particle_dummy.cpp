@@ -6,7 +6,9 @@
 #include "model/model.h"
 #include "model/structures/map.h"
 #include "model/structures/particlemanager.h"
+#include "video/dummy/dummyimage.h"
 #include "view/camera.h"
+#include "view/renderitem.h"
 #include "view/renderers/particlerenderer.h"
 
 TEST_CASE("particle path is a safe no-op on dummy backends", "[dummy][particle]")
@@ -29,6 +31,13 @@ TEST_CASE("particle path is a safe no-op on dummy backends", "[dummy][particle]"
         auto* emitter = engine.getParticleManager()->createEmitter(FIFE::ParticleConfig{});
         emitter->attachToPoint(FIFE::Point(10, 10));
         emitter->update(0.25F);
+        auto frame = FIFE::ImagePtr(new FIFE::DummyImage("pd_frame"));
+        emitter->setFrames({frame});
+
+        // Engine::pump() only ticks TimeManager; draw explicitly so the
+        // headless Image::render() path is actually exercised.
+        FIFE::RenderList list;
+        CHECK_NOTHROW(renderer->render(cam, layer, list));
         CHECK_NOTHROW(engine.pump());
         CHECK(engine.getRenderBackend() != nullptr);
         CHECK(engine.getWindow() == nullptr);

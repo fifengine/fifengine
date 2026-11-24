@@ -20,6 +20,7 @@ class ParticleTest(test.Test):
         self._application = application
         self._running = False
         self._map = None
+        self._manager = None
         self._emitters = []
 
     def _make_frames(self, emitter, atlas):
@@ -61,6 +62,7 @@ class ParticleTest(test.Test):
 
         atlas = engine.getImageManager().load("objects/actors/player/skel/stand.png")
         manager = fife.ParticleManager.getInstance()
+        self._manager = manager
 
         # Rain: fast, downward, short-lived.
         self._make_emitter(
@@ -75,7 +77,7 @@ class ParticleTest(test.Test):
             gravity=400.0,
             startSize=2.0,
             endSize=2.0,
-            shape=fife.ParticleShape.BOX,
+            shape=fife.ParticleShape_Box,
             shapeWidth=300.0,
             shapeHeight=10.0,
         )
@@ -119,7 +121,11 @@ class ParticleTest(test.Test):
         self._running = False
 
     def destroy(self):
+        if self._manager is not None:
+            for emitter in self._emitters:
+                self._manager.removeEmitter(emitter)
         self._emitters.clear()
+        self._manager = None
         self._map = None
 
     def isRunning(self):

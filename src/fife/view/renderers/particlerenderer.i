@@ -63,6 +63,8 @@ namespace FIFE {
 		uint32_t getMaxParticles() const;
 		void setMaxParticles(uint32_t maxParticles);
 		ParticleSnapshot getParticle(size_t slot) const;
+		ExactModelCoordinate getParticleWorldPosition(size_t slot) const;
+		ExactModelCoordinate getNodeWorldPosition() const;
 		void attachToInstance(Instance* instance, const Point& offset);
 		void attachToLayer(Layer* layer, const Point& offset);
 		void attachToPoint(const Point& point);
@@ -72,6 +74,7 @@ namespace FIFE {
 		Instance* getAttachedInstance() const;
 		void addFrame(const ImagePtr& frame);
 		size_t getFrameCount() const;
+		ImagePtr getFrame(uint32_t frame) const;
 	};
 
 	class ParticleManager {

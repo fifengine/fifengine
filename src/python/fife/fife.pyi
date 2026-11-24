@@ -27,10 +27,9 @@ class TimeEvent(_Dynamic):
     def getPeriod(self) -> int: ...
     def setLastUpdateTime(self, time: int) -> None: ...
 
-class ParticleShape(_Dynamic):
-    POINT: int
-    BOX: int
-    CIRCLE: int
+ParticleShape_Point: int
+ParticleShape_Box: int
+ParticleShape_Circle: int
 
 class ParticleConfig(_Dynamic): ...
 class ParticleSnapshot(_Dynamic): ...
