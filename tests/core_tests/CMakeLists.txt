@@ -38,6 +38,7 @@ set(
   test_multicell_blocking.cpp
   test_multicell_pathfinding.cpp
   test_pathrenderer.cpp
+  test_particle_emitter.cpp
   test_renderernode.cpp
   test_font_types.cpp
   test_font_face.cpp
