@@ -97,7 +97,7 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnLocation(std::string const & triggerName, Location const & loc)
     {
         assert(loc.getLayer());
-        auto* cellCache = loc.getLayer()->getCellCache();
+        [[maybe_unused]] auto* cellCache = loc.getLayer()->getCellCache();
         assert(cellCache);
 
         Trigger* trigger = createTrigger(triggerName);

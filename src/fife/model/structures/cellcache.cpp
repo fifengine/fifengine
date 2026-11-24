@@ -73,7 +73,7 @@ namespace FIFE
 
                         // propagate blocking change to sub-instances before updating cells
                         if (blochange) {
-                            auto const & multiInstances = instance->getMultiInstances();
+                            [[maybe_unused]] auto const & multiInstances = instance->getMultiInstances();
                             assert(!multiInstances.empty());
                             instance->propagateBlockingToSubInstances();
                             // update cell blocking info for all occupied cells
