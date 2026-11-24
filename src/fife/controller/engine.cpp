@@ -57,6 +57,7 @@
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/model.h"
+#include "model/structures/particlemanager.h"
 #include "pathfinder/routepather/routepather.h"
 #include "version.hpp"
 #include "video/image.h"
@@ -71,6 +72,7 @@
 #include "view/renderers/instancerenderer.h"
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
+#include "view/renderers/particlerenderer.h"
 #include "view/renderers/pathrenderer.h"
 #include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/targetrenderer.h"
@@ -326,6 +328,9 @@ namespace FIFE
         FL_LOG(_log(), "================== Engine initialize start =================");
         m_timemanager = std::make_unique<TimeManager>();
         FL_LOG(_log(), "Time manager created");
+
+        m_particlemanager = std::make_unique<ParticleManager>();
+        FL_LOG(_log(), "Particle manager created");
 
         FL_LOG(_log(), "Creating VFS");
         m_vfs = std::make_unique<VFS>();
@@ -699,6 +704,7 @@ namespace FIFE
         FL_LOG(_log(), "Creating renderers");
         m_offrenderer    = std::make_unique<OffRenderer>(m_renderbackend.get());
         m_targetrenderer = std::make_unique<TargetRenderer>(m_renderbackend.get());
+        m_renderers.push_back(std::make_unique<ParticleRenderer>(m_renderbackend.get(), 15));
         m_renderers.push_back(std::make_unique<InstanceRenderer>(m_renderbackend.get(), 10));
         m_renderers.push_back(std::make_unique<GridRenderer>(m_renderbackend.get(), 20));
         m_renderers.push_back(std::make_unique<CellSelectionRenderer>(m_renderbackend.get(), 30));
@@ -798,6 +804,8 @@ namespace FIFE
         m_renderbackend.reset();
 
         m_vfs.reset();
+        // Unregister the particle TimeEvent while TimeManager still exists.
+        m_particlemanager.reset();
         m_timemanager.reset();
 
         // SDL subsystem initialization is ref-counted; balance only the

@@ -39,6 +39,7 @@ set(
   test_multicell_pathfinding.cpp
   test_pathrenderer.cpp
   test_particle_attachment.cpp
+  test_particle_dummy.cpp
   test_particle_emitter.cpp
   test_particle_manager.cpp
   test_particle_renderer.cpp

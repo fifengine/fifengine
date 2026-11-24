@@ -902,6 +902,7 @@ set(
   src/fife/view/renderers/instancerenderer.i
   src/fife/view/renderers/lightrenderer.i
   src/fife/view/renderers/offrenderer.i
+  src/fife/view/renderers/particlerenderer.i
   src/fife/view/renderers/targetrenderer.i
   src/fife/view/visual.i
 )

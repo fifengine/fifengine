@@ -16,6 +16,7 @@ namespace FIFE {
 	class SoundManager;
 	class EventManager;
 	class TimeManager;
+	class ParticleManager;
 	class IGUIManager;
 	class RenderBackend;
 	class Model;
@@ -174,6 +175,7 @@ namespace FIFE {
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
+		ParticleManager* getParticleManager();
 		IGUIManager* getGuiManager();
 		ImageManager* getImageManager();
 		AnimationManager* getAnimationManager();
