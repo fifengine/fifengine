@@ -75,7 +75,7 @@ Tests (new, each added to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLis
 - Consumes: `FIFE::ExactModelCoordinate` (`model/metamodel/modelcoords.h`), `FIFE::ImagePtr` / `Rect` (`video/image.h`, `util/structures/rect.h`), Catch2 `Approx` (`catch2/catch_approx.hpp`).
 - Produces: `enum class ParticleShape { Point, Box, Circle };` and `struct ParticleConfig` with fields `float emissionRate`, `uint32_t burstCount`, `float burstInterval`, `ParticleShape shape`, `float shapeWidth`, `float shapeHeight`, `float lifetimeMin`, `float lifetimeMax`, `float speedMin`, `float speedMax`, `float gravity`, `float drag`, `float startSize`, `float endSize`, `uint8_t startColor[4]`, `uint8_t endColor[4]`, `uint32_t frameCount`, `float frameDuration`, `bool localSpace`, `uint32_t maxParticles` (`0` = default formula), `bool looping`. `struct ParticleSnapshot { bool alive; float x, y, vx, vy, age, lifetime, size; uint8_t rgba[4]; uint32_t frame; };`. `class ParticleEmitter` with `explicit ParticleEmitter(ParticleConfig const& config)`, `virtual ~ParticleEmitter()`, `void setSeed(uint32_t seed)`, `virtual void update(float dt)`, `size_t getAliveCount() const`, `size_t getEmittedCount() const`, `uint32_t getCapacity() const`, `uint32_t getMaxParticles() const` (returns the effective cap), `void setMaxParticles(uint32_t maxParticles)` (updates config and resizes the pool, applying the 2048 clamp on the CPU path), `ParticleSnapshot getParticle(size_t slot) const`, `ExactModelCoordinate getParticleWorldPosition(size_t slot) const`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 // tests/core_tests/test_particle_emitter.cpp
@@ -185,25 +185,25 @@ TEST_CASE("one-shot emitter fires only its first burst", "[particle]")
 }
 ```
 
-- [ ] **Step 2: Add the test file to the build**
+- [x] **Step 2: Add the test file to the build**
 
 Add `test_particle_emitter.cpp` to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLists.txt`.
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: compile failure — `model/structures/particleemitter.h` not found.
 
-- [ ] **Step 4: Implement the model PODs and `ParticleEmitter` in the exact files above**
+- [x] **Step 4: Implement the model PODs and `ParticleEmitter` in the exact files above**
 
 Use `std::vector<Particle>` of `getCapacity()` entries plus `std::vector<size_t> m_free` as a free-index stack; `getParticle(slot)` returns the stored snapshot (including `alive == false` for free slots). Integration order per step: `v *= max(0, 1 - drag*dt)`, `v.y += gravity*dt`, `pos += v*dt`, `age += dt`, then recycle when `age >= lifetime`; emit before integration, and fire a burst when a separate burst accumulator reaches `burstInterval`. Interpolate colour/size by `age / lifetime` with `std::lround` for bytes. Step `dt` directly (no accumulation here — that is Task 2). Enforce `maxParticles == 0 ? min(ceil(rate * maxLifetime) + burstCount, 2048) : min(maxParticles, 2048)`; count only successful allocations in `getEmittedCount()`. `getMaxParticles()` returns the effective cap and `setMaxParticles()` updates the config, re-applies the clamp and rebuilds the pool plus free-index stack. Frame index is `frameCount == 0 ? 0 : (uint32_t)(age / frameDuration) % frameCount`; when `looping == false`, only the first burst fires and continuous emission stops. `getParticleWorldPosition(slot)` returns `ExactModelCoordinate(p.x, p.y, 0)` for now (Task 3 replaces the body with node-aware placement). In Task 1, `ParticleEmitter` has no renderer code, GL/SDL types or `ImagePtr` members.
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: all six `[particle]` tests PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/fife/model/structures/particleconfig.h \
@@ -225,7 +225,7 @@ git commit -m "feat(particle): add seeded emitter pool and simulation"
 - Consumes: `ParticleEmitter(ParticleConfig const&)`, `virtual void update(float dt)`, `ParticleEmitter::getEmittedCount() const` (Task 1); `TimeEvent(int32_t period)`, `updateEvent(uint32_t time)`, `setLastUpdateTime64(uint64_t)`, `getLastUpdateTime64()`, `registerEvent`, `unregisterEvent` (`util/time/timeevent.h`, `timemanager.h`); `TestFixture` (`tests/core_tests/fixture.h`).
 - Produces: `class ParticleManager : public TimeEvent, public DynamicSingleton<ParticleManager>` with `ParticleManager()`, `~ParticleManager() override`, `static ParticleManager* getInstance()`, `ParticleEmitter* createEmitter(ParticleConfig const& config)`, `ParticleEmitter* adoptEmitter(std::unique_ptr<ParticleEmitter> emitter)`, `void removeEmitter(ParticleEmitter* emitter)`, `size_t getEmitterCount() const`, `std::vector<ParticleEmitter*> const& getEmitters() const`, `void resetClock()`, `void setSeed(uint32_t seed)`, `void updateEvent(uint32_t time) override`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 // tests/core_tests/test_particle_manager.cpp
@@ -298,25 +298,25 @@ TEST_CASE("emitters can be removed during a tick", "[particle]")
 }
 ```
 
-- [ ] **Step 2: Add the test file to the build**
+- [x] **Step 2: Add the test file to the build**
 
 Add `test_particle_manager.cpp` to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLists.txt`.
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: compile failure — `model/structures/particlemanager.h` not found.
 
-- [ ] **Step 4: Implement `ParticleManager` in the exact files above**
+- [x] **Step 4: Implement `ParticleManager` in the exact files above**
 
 Constructor: `TimeEvent(0)`, `TimeManager::instance()->registerEvent(this)`, then `resetClock()` (this explicit reset is the pin for the gap input). Destructor: `TimeManager::exists()` guard then `unregisterEvent(this)`. `resetClock()` sets `setLastUpdateTime64(TimeManager::instance()->now64())`. `updateEvent(uint32_t time)` clamps `time` to 50 ms, adds `min(time,50) / 1000.0` to `m_accumulator`, and calls `update(1.0F/120.0F)` on every emitter while `m_accumulator >= 1.0/120`. Maintain `m_emitters` (owning) and `m_emitters_view` (raw pointers); `removeEmitter()` appends the pointer to `m_pending_removal` and erases it only at the end of `updateEvent()`, so `createEmitter()`/`adoptEmitter()` during a tick cannot invalidate iteration. `setSeed()` forwards to every emitter. `getInstance()` returns `instance()`.
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: all nine `[particle]` tests PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/fife/model/structures/particlemanager.h src/fife/model/structures/particlemanager.cpp \
@@ -336,7 +336,7 @@ git commit -m "feat(particle): add manager with fixed-step TimeEvent tick"
 - Consumes: `ParticleEmitter::update(float)`, `getParticleWorldPosition(size_t)`, `getCapacity()`, `getEmittedCount()` (Task 1); `RendererNode` (`model/structures/renderernode.h`), `InstanceDeleteListener`, `Layer::deleteInstance(Instance*)`, `Instance::setLocation(Location const&)`, `Image::useSharedImage(ImagePtr const&, Rect const&)` (`video/image.h:190`).
 - Produces: additional `ParticleEmitter` methods `void attachToInstance(Instance* instance, Point const& offset = Point(0,0))`, `void attachToLayer(Layer* layer, Point const& offset = Point(0,0))`, `void attachToPoint(Point const& point)`, `void detach()`, `bool isDrawnOn(Layer const* layer) const`, `bool isEmissionEnabled() const`, `Instance* getAttachedInstance() const`, `ExactModelCoordinate getNodeWorldPosition() const`, `void setFrames(std::vector<ImagePtr> frames)`, `size_t getFrameCount() const`, `ImagePtr const& getFrame(uint32_t frame) const`; `getParticleWorldPosition(slot)` now returns the position the renderer must transform.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 // tests/core_tests/test_particle_attachment.cpp
@@ -439,25 +439,25 @@ TEST_CASE("emitter exposes atlas sub-images with modulo frame lookup", "[particl
 }
 ```
 
-- [ ] **Step 2: Add the test file to the build**
+- [x] **Step 2: Add the test file to the build**
 
 Add `test_particle_attachment.cpp` to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLists.txt`.
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: compile failure — `attachToInstance`, `setFrames` are not members of `ParticleEmitter`.
 
-- [ ] **Step 4: Implement placement and frames in `particleemitter.h/.cpp`**
+- [x] **Step 4: Implement placement and frames in `particleemitter.h/.cpp`**
 
 Own a `RendererNode m_node{Point(0,0)}` and a separate `InstanceDeleteListener` registered on the attached instance; on `onInstanceDeleted`, capture `getNodeWorldPosition()` into `m_last_world`, set `m_emission_enabled = false`, and clear the node attachment with `m_node.setAttached(Point(0,0))`. Store `m_drawn_layer` at attach time: `attachToInstance` uses `instance->getLocationRef().getLayer()`, `attachToLayer` uses that layer (`m_node.setAttached(layer)` plus `setRelative(Point)` for the offset), `attachToPoint` leaves it null; `isDrawnOn(layer)` returns `m_drawn_layer == nullptr || m_drawn_layer == layer`, so it never falls through after deletion. `getNodeWorldPosition()` returns the instance's `getLocationRef().getMapCoordinates()` plus a valid offset location, else a valid attached location's map coordinates, else `ExactModelCoordinate(m_node.getPoint().x, m_node.getPoint().y, 0)`; after deletion it returns `m_last_world`. `getParticleWorldPosition(slot)` returns the stored world coordinate for a world-space particle and the stored offset plus `getNodeWorldPosition()` when `localSpace` is true. `detach()` clears the node, layer and re-enables emission; `attachTo*` re-enables it. `setFrames()` stores `ImagePtr`s; `getFrame(i)` returns `m_frames.empty() ? ImagePtr() : m_frames[i % m_frames.size()]`; keep the atlas `ImagePtr` as an owner member. Shape offsets for `Box`/`Circle` are drawn from the seeded RNG at emission time.
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: all twelve `[particle]` tests PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/fife/model/structures/particleemitter.h src/fife/model/structures/particleemitter.cpp \
@@ -478,7 +478,7 @@ git commit -m "feat(particle): add RendererNode placement and deletion policy"
 - Consumes: `RendererBase(RenderBackend*, int32_t)`, pure virtual `render(Camera*, Layer*, RenderList&)`, `getName()`, `clone()`, `setEnabled`, `activateAllLayers` (`view/rendererbase.h`); `ParticleManager::exists()/instance()/getEmitters()` (Task 2); `ParticleEmitter::isDrawnOn`, `getCapacity`, `getParticle`, `getParticleWorldPosition`, `getFrame` (Tasks 1, 3); `Camera::toScreenCoordinates(ExactModelCoordinate const&) -> ScreenPoint` (`view/camera.h:264`); `Image::render(Rect const&, uint8_t alpha = 255, uint8_t const* rgb = nullptr)` (`video/image.h:68`).
 - Produces: `class ParticleRenderer : public RendererBase` with `ParticleRenderer(RenderBackend* renderbackend, int32_t position)`, copy constructor, deleted copy assignment, `std::unique_ptr<RendererBase> clone() override`, `void render(Camera* cam, Layer* layer, RenderList& instances) override`, `std::string getName() override` returning `"ParticleRenderer"`, `void reset() override`, `static ParticleRenderer* getInstance(IRendererContainer* cnt)` (dynamic_cast of `cnt->getRenderer("ParticleRenderer")`).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 // tests/core_tests/test_particle_renderer.cpp
@@ -559,25 +559,25 @@ TEST_CASE("renderer draws each live particle through Image::render only on its l
 }
 ```
 
-- [ ] **Step 2: Add the test file to the build**
+- [x] **Step 2: Add the test file to the build**
 
 Add `test_particle_renderer.cpp` to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLists.txt`.
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: compile failure — `view/renderers/particlerenderer.h` not found.
 
-- [ ] **Step 4: Implement `ParticleRenderer` in the exact files above**
+- [x] **Step 4: Implement `ParticleRenderer` in the exact files above**
 
 `render()` returns early if `!ParticleManager::exists()`; marks `instances` unused. For each emitter with `isDrawnOn(layer)`, iterate slots `0..getCapacity()`, skip `!alive`, convert `getParticleWorldPosition(slot)` with `cam->toScreenCoordinates()`, build `Rect(sp.x - w/2, sp.y - h/2, w, h)` with `w = h = std::lround(p.size)` (minimum 1), take `getFrame(p.frame)` and call `frame->render(rect, p.rgba[3], p.rgba)` (the fourth byte is the colour-mod alpha; the API calls the pointer `rgb` but all backends read four bytes). `reset()` is a deliberate no-op: there are no per-camera caches in v1, and model state must survive it. `getInstance()` follows `instancerenderer.i` conventions.
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[particle]"`
 Expected: all thirteen `[particle]` tests PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/fife/view/renderers/particlerenderer.h src/fife/view/renderers/particlerenderer.cpp \
@@ -598,7 +598,7 @@ git commit -m "feat(particle): add ParticleRenderer draw path"
 - Consumes: `Engine::init()/destroy()/pump()`, `Model::createMap`, `Map::createLayer`, `Map::addCamera`, `TimeManager` created at `engine.cpp:327`; `ParticleManager` (Task 2), `ParticleRenderer` and `ParticleRenderer::getInstance` (Task 4).
 - Produces: `Engine::getParticleManager()` returning `ParticleManager*`; registered CTest target `all_tests_dummy` covers the new `[dummy]` test; `PARTICLERENDERER` CMake target registration; `fife.ParticleRenderer`, `fife.ParticleManager`, `fife.ParticleEmitter`, `fife.ParticleConfig`, `fife.ParticleShape` Python names (Task 6 depends on them).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 // tests/core_tests/test_particle_dummy.cpp
@@ -636,25 +636,25 @@ TEST_CASE("particle path is a safe no-op on dummy backends", "[dummy][particle]"
 }
 ```
 
-- [ ] **Step 2: Add the test file to the build**
+- [x] **Step 2: Add the test file to the build**
 
 Add `test_particle_dummy.cpp` to `FIFE_CORE_TEST_SOURCES` in `tests/core_tests/CMakeLists.txt` (already registered by `add_test(NAME all_tests_dummy ...)` at `:154`).
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && <BUILD_DIR>/tests/core_tests/all_tests "[dummy][particle]"`
 Expected: compile/link failure — `getParticleManager()` and `ParticleRenderer::getInstance` unresolved.
 
-- [ ] **Step 4: Wire engine, CMake and SWIG**
+- [x] **Step 4: Wire engine, CMake and SWIG**
 
 In `engine.h`, forward-declare `class ParticleManager;`, add `std::unique_ptr<ParticleManager> m_particlemanager;` beside `m_timemanager` (`:335`) and `ParticleManager* getParticleManager() const { return m_particlemanager.get(); }`. In `engine.cpp`, include the manager and renderer headers near `:59`/`:71`; after `m_timemanager` creation at `:327-328` add `m_particlemanager = std::make_unique<ParticleManager>();` (its constructor registers the `TimeEvent`); after the `InstanceRenderer` prototype at `:702` add `m_renderers.push_back(std::make_unique<ParticleRenderer>(m_renderbackend.get(), 15));` — disabled by default like the other renderers, so callers enable it explicitly; before `m_timemanager.reset()` at `:801` add `m_particlemanager.reset()` so unregistration happens while `TimeManager` still exists. Register the three new source files and three new headers in the `CMakeLists.txt` lists named in Files. In `engine.i:176` add `ParticleManager* getParticleManager();`. Create `particlerenderer.i` following `instancerenderer.i`: `%{ #include ... %}` for renderer/manager/emitter/config headers, manual SWIG declarations of `ParticleShape`, `ParticleConfig` (all fields from Task 1), `ParticleEmitter` (public methods from Tasks 1 and 3), `ParticleManager` (public methods from Task 2 plus `static ParticleManager* getInstance()`), and `ParticleRenderer` with `static ParticleRenderer* getInstance(IRendererContainer* cnt)`; add it to `FIFE_SWIG` at `:887`. Do not declare `Image::render()` in SWIG.
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cmake --build <BUILD_DIR> --target all_tests && ctest --test-dir <BUILD_DIR> -R all_tests_dummy --output-on-failure`
 Expected: `all_tests_dummy` PASSES, including the new `[dummy][particle]` case on both backends.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/fife/controller/engine.h src/fife/controller/engine.cpp src/fife/controller/engine.i \
@@ -675,7 +675,7 @@ git commit -m "feat(particle): wire engine, CMake, SWIG and dummy safety"
 - Consumes: `fife.Engine.getParticleManager()`, `fife.ParticleManager.getInstance()`, `createEmitter(cfg)`, `fife.ParticleEmitter.setSeed/getEmittedCount/getAliveCount/attachToPoint`, `fife.ParticleRenderer.getInstance(cam)` (Task 5); `shared_engine` fixture (`tests/swig_tests/conftest.py:97-110`, single engine per module — do not use `engine` here).
 - Produces: no new C++ API; Python smoke assertions that the C++/SWIG surface is usable.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 # tests/swig_tests/test_particle.py
@@ -722,21 +722,21 @@ def test_particle_api_and_renderer_lookup(shared_engine):
     engine.finalizePumping()
 ```
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `python -m pytest tests/swig_tests/test_particle.py -v`
 Expected: FAIL with `AttributeError: module 'fife.fife' has no attribute 'ParticleRenderer'` (or `ParticleManager`).
 
-- [ ] **Step 3: Add typing stubs in `src/python/fife/fife.pyi`**
+- [x] **Step 3: Add typing stubs in `src/python/fife/fife.pyi`**
 
 Add minimal `_Dynamic` subclasses `ParticleConfig`, `ParticleEmitter`, `ParticleManager`, `ParticleRenderer` and `class ParticleShape(_Dynamic): POINT: int; BOX: int; CIRCLE: int`, plus `Engine.getParticleManager` is inherited dynamically — no generated stub work.
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `python -m pytest tests/swig_tests/test_particle.py -v`
 Expected: 1 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/python/fife/fife.pyi tests/swig_tests/test_particle.py
@@ -756,21 +756,21 @@ git commit -m "test(particle): add Python API smoke coverage"
 - Consumes: `fife.ParticleManager`, `fife.ParticleEmitter`, `fife.ParticleConfig`, `fife.ParticleRenderer` (Task 6); `test.Test` base class and `TestManager` auto-discovery (`tests/fife_test/scripts/test.py:17-40` — any enabled `tests/*.py` exporting a same-named `Test` subclass is loaded).
 - Produces: an interactive smoke/rain/sparks demo selectable in `run.py`; no pixel snapshots (per spec — output legitimately differs per backend).
 
-- [ ] **Step 1: Verify the example file does not exist yet**
+- [x] **Step 1: Verify the example file does not exist yet**
 
 Run: `python -m py_compile tests/fife_test/tests/ParticleTest.py`
 Expected: FAIL with `error: can't open file ... ParticleTest.py`.
 
-- [ ] **Step 2: Implement the example in `tests/fife_test/tests/ParticleTest.py`**
+- [x] **Step 2: Implement the example in `tests/fife_test/tests/ParticleTest.py`**
 
 Define `class ParticleTest(test.Test)` with `getName()` returning `"ParticleTest"`; in `instantiate()`/`reset()` (following `BenchmarkTest.py`) create a map/layer/camera, get `ParticleManager.getInstance()`, create three emitters from `ParticleConfig` presets (rain, smoke, sparks — use shapes, burstCount/burstInterval, gravity/drag, colour/size interpolation and a two-frame atlas made with `Image::useSharedImage`), enable `ParticleRenderer` and call `activateAllLayers(map)`. Use `engine.pump()` in `pump()` — never tick emitters from Python. Register the test with `<Setting name="ParticleTest" type="bool">True</Setting>` in both settings files and document one-line run instructions (`cd tests/fife_test && python run.py`) plus the documented budgets/caveats in the README: roughly 1k–3k particles on SDL, 5k+ on OpenGL, and no promise of identical appearance across backends.
 
-- [ ] **Step 3: Run the smoke check**
+- [x] **Step 3: Run the smoke check**
 
 Run: `python -m py_compile tests/fife_test/tests/ParticleTest.py`
 Expected: exits 0 with no output; manual inspection via `run.py` confirms visible particles under the configured backend.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add tests/fife_test/tests/ParticleTest.py tests/fife_test/settings.xml \
