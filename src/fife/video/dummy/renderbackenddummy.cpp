@@ -50,7 +50,7 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::setLightingModel(uint32_t)
+    void RenderBackendDummy::setLightingModel([[maybe_unused]] uint32_t lighting)
     {
     }
 
@@ -79,7 +79,7 @@ namespace FIFE
     {
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(IResourceLoader*)
+    std::unique_ptr<Image> RenderBackendDummy::createImage([[maybe_unused]] IResourceLoader* loader)
     {
         return nullptr;
     }
@@ -94,13 +94,12 @@ namespace FIFE
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(
-        std::string const &, uint8_t const *, uint32_t, uint32_t)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, uint8_t const *, uint32_t, uint32_t)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(SDL_Surface*)
+    std::unique_ptr<Image> RenderBackendDummy::createImage([[maybe_unused]] SDL_Surface* surface)
     {
         return nullptr;
     }
@@ -227,10 +226,7 @@ namespace FIFE
     }
 
     void RenderBackendDummy::renderGuiGeometry(
-        std::vector<GuiVertex> const &,
-        std::vector<int> const &,
-        DoublePoint const &,
-        ImagePtr)
+        std::vector<GuiVertex> const &, std::vector<int> const &, DoublePoint const &, ImagePtr)
     {
     }
 

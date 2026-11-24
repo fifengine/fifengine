@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
 #include "model/structures/particleemitter.h"
+#include <catch2/catch_approx.hpp>      // NOLINT(build/include_alpha): clang-format groups Catch2 with project headers
+#include <catch2/catch_test_macros.hpp> // NOLINT(build/include_alpha): clang-format groups Catch2 with project headers
 
 TEST_CASE("seeded emitters reproduce counts and positions", "[particle]")
 {
@@ -11,11 +11,14 @@ TEST_CASE("seeded emitters reproduce counts and positions", "[particle]")
     cfg.emissionRate = 4.0F;
     cfg.lifetimeMin = cfg.lifetimeMax = 1.0F;
     cfg.speedMin = cfg.speedMax = 1.0F;
-    cfg.maxParticles = 8;
+    cfg.maxParticles            = 8;
     FIFE::ParticleEmitter a(cfg), b(cfg);
     a.setSeed(1234);
     b.setSeed(1234);
-    for (int i = 0; i < 12; ++i) { a.update(0.25F); b.update(0.25F); }
+    for (int i = 0; i < 12; ++i) {
+        a.update(0.25F);
+        b.update(0.25F);
+    }
     CHECK(a.getEmittedCount() == 12);
     CHECK(a.getAliveCount() == 3);
     for (size_t s = 0; s < a.getCapacity(); ++s) {
@@ -41,9 +44,13 @@ TEST_CASE("seeded emitters reproduce counts and positions", "[particle]")
 TEST_CASE("capacity uses the ceil formula and the 2048 clamp", "[particle]")
 {
     FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 4.0F; cfg.lifetimeMax = 1.0F; cfg.burstCount = 2;
+    cfg.emissionRate = 4.0F;
+    cfg.lifetimeMax  = 1.0F;
+    cfg.burstCount   = 2;
     CHECK(FIFE::ParticleEmitter(cfg).getCapacity() == 6);
-    cfg.emissionRate = 2000.0F; cfg.lifetimeMax = 2.0F; cfg.burstCount = 100;
+    cfg.emissionRate = 2000.0F;
+    cfg.lifetimeMax  = 2.0F;
+    cfg.burstCount   = 100;
     CHECK(FIFE::ParticleEmitter(cfg).getCapacity() == 2048);
 }
 
@@ -64,8 +71,11 @@ TEST_CASE("maxParticles can be changed after construction", "[particle]")
 TEST_CASE("pool overflow drops emissions without recycling live particles", "[particle]")
 {
     FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 0.0F; cfg.burstCount = 5; cfg.burstInterval = 0.25F;
-    cfg.maxParticles = 2; cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
+    cfg.emissionRate  = 0.0F;
+    cfg.burstCount    = 5;
+    cfg.burstInterval = 0.25F;
+    cfg.maxParticles  = 2;
+    cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
     FIFE::ParticleEmitter e(cfg);
     e.update(0.25F);
     CHECK(e.getEmittedCount() == 2);
@@ -78,14 +88,22 @@ TEST_CASE("pool overflow drops emissions without recycling live particles", "[pa
 TEST_CASE("emitter integrates gravity, colour, size and atlas frames", "[particle]")
 {
     FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 4.0F; cfg.lifetimeMin = cfg.lifetimeMax = 1.0F; cfg.maxParticles = 4;
-    cfg.speedMin = cfg.speedMax = 1.0F; cfg.gravity = -2.0F;
-    cfg.startSize = 4.0F; cfg.endSize = 8.0F;
-    cfg.startColor[0] = cfg.startColor[1] = cfg.startColor[2] = 0; cfg.startColor[3] = 255;
-    cfg.endColor[0] = cfg.endColor[1] = cfg.endColor[2] = 255; cfg.endColor[3] = 0;
-    cfg.frameCount = 2; cfg.frameDuration = 0.5F;
+    cfg.emissionRate = 4.0F;
+    cfg.lifetimeMin = cfg.lifetimeMax = 1.0F;
+    cfg.maxParticles                  = 4;
+    cfg.speedMin = cfg.speedMax = 1.0F;
+    cfg.gravity                 = -2.0F;
+    cfg.startSize               = 4.0F;
+    cfg.endSize                 = 8.0F;
+    cfg.startColor[0] = cfg.startColor[1] = cfg.startColor[2] = 0;
+    cfg.startColor[3]                                         = 255;
+    cfg.endColor[0] = cfg.endColor[1] = cfg.endColor[2] = 255;
+    cfg.endColor[3]                                     = 0;
+    cfg.frameCount                                      = 2;
+    cfg.frameDuration                                   = 0.5F;
     FIFE::ParticleEmitter e(cfg);
-    e.update(0.25F); e.update(0.25F);
+    e.update(0.25F);
+    e.update(0.25F);
     auto const p = e.getParticle(0);
     CHECK(p.size == Catch::Approx(6.0));
     CHECK(p.rgba[0] == 128);
@@ -98,8 +116,11 @@ TEST_CASE("emitter integrates gravity, colour, size and atlas frames", "[particl
 TEST_CASE("drag damps velocity without reversing it", "[particle]")
 {
     FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 4.0F; cfg.lifetimeMin = cfg.lifetimeMax = 10.0F; cfg.maxParticles = 4;
-    cfg.speedMin = cfg.speedMax = 1.0F; cfg.drag = 2.0F;
+    cfg.emissionRate = 4.0F;
+    cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
+    cfg.maxParticles                  = 4;
+    cfg.speedMin = cfg.speedMax = 1.0F;
+    cfg.drag                    = 2.0F;
     FIFE::ParticleEmitter e(cfg);
     e.update(0.25F);
     CHECK(e.getParticle(0).vx == Catch::Approx(0.5));
@@ -109,8 +130,12 @@ TEST_CASE("drag damps velocity without reversing it", "[particle]")
 TEST_CASE("one-shot emitter fires only its first burst", "[particle]")
 {
     FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 0.0F; cfg.burstCount = 2; cfg.burstInterval = 0.25F;
-    cfg.maxParticles = 8; cfg.lifetimeMin = cfg.lifetimeMax = 10.0F; cfg.looping = false;
+    cfg.emissionRate  = 0.0F;
+    cfg.burstCount    = 2;
+    cfg.burstInterval = 0.25F;
+    cfg.maxParticles  = 8;
+    cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
+    cfg.looping                       = false;
     FIFE::ParticleEmitter e(cfg);
     e.update(0.25F);
     CHECK(e.getEmittedCount() == 2);

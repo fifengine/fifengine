@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
+
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
@@ -12,16 +11,20 @@
 #include "model/structures/layer.h"
 #include "model/structures/particleemitter.h"
 #include "video/dummy/dummyimage.h"
+#include <catch2/catch_approx.hpp>      // NOLINT(build/include_alpha): clang-format groups Catch2 with project headers
+#include <catch2/catch_test_macros.hpp> // NOLINT(build/include_alpha): clang-format groups Catch2 with project headers
 
 namespace
 {
-FIFE::ParticleConfig placementConfig(bool local)
-{
-    FIFE::ParticleConfig cfg;
-    cfg.emissionRate = 4.0F; cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
-    cfg.maxParticles = 4; cfg.localSpace = local;
-    return cfg;
-}
+    FIFE::ParticleConfig placementConfig(bool local)
+    {
+        FIFE::ParticleConfig cfg;
+        cfg.emissionRate = 4.0F;
+        cfg.lifetimeMin = cfg.lifetimeMax = 10.0F;
+        cfg.maxParticles                  = 4;
+        cfg.localSpace                    = local;
+        return cfg;
+    }
 } // namespace
 
 TEST_CASE("world-space particles stay put; localSpace particles follow the node", "[particle]")

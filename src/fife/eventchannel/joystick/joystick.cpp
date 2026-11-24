@@ -99,7 +99,7 @@ namespace FIFE
 
             std::array<char, 33> tmp{};
             SDL_GUID const guid = SDL_GetJoystickGUID(m_joystickHandle);
-            SDL_GUIDToString(guid, tmp.data(), tmp.size());
+            SDL_GUIDToString(guid, tmp.data(), static_cast<int>(tmp.size()));
             m_guidStr = std::string(tmp.data());
 
             openController();

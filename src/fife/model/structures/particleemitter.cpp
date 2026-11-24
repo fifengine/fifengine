@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <numbers>
 #include <utility>
 
@@ -34,7 +35,7 @@ namespace FIFE
                 ParticleEmitter* m_owner;
         };
 
-        float uniform(std::mt19937 & rng, float a, float b)
+        float uniform(std::mt19937& rng, float a, float b)
         {
             std::uniform_real_distribution<float> dist(std::min(a, b), std::max(a, b));
             return dist(rng);
@@ -55,11 +56,11 @@ namespace FIFE
     {
         uint32_t cap = m_config.maxParticles;
         if (cap == 0U) {
-            double derived = std::ceil(static_cast<double>(m_config.emissionRate) *
-                                       static_cast<double>(m_config.lifetimeMax)) +
-                             static_cast<double>(m_config.burstCount);
+            double derived =
+                std::ceil(static_cast<double>(m_config.emissionRate) * static_cast<double>(m_config.lifetimeMax)) +
+                static_cast<double>(m_config.burstCount);
             derived = std::clamp(derived, 0.0, 2048.0);
-            cap = static_cast<uint32_t>(derived);
+            cap     = static_cast<uint32_t>(derived);
         }
         return std::min(cap, 2048U);
     }
@@ -73,11 +74,11 @@ namespace FIFE
         for (size_t i = m_capacity; i > 0U; --i) {
             m_free.push_back(i - 1U);
         }
-        m_alive                = 0;
-        m_emitted              = 0;
-        m_emissionAccumulator  = 0.0F;
-        m_burstAccumulator     = 0.0F;
-        m_burstFired           = false;
+        m_alive               = 0;
+        m_emitted             = 0;
+        m_emissionAccumulator = 0.0F;
+        m_burstAccumulator    = 0.0F;
+        m_burstFired          = false;
     }
 
     void ParticleEmitter::setSeed(uint32_t seed)
@@ -104,29 +105,29 @@ namespace FIFE
 
         size_t const slot = m_free.back();
         m_free.pop_back();
-        ParticleSnapshot & p = m_particles[slot];
-        p                    = ParticleSnapshot{};
-        p.alive              = true;
-        p.lifetime           = std::max(0.001F, uniform(m_rng, m_config.lifetimeMin, m_config.lifetimeMax));
-        float const speed    = uniform(m_rng, m_config.speedMin, m_config.speedMax);
-        p.vx                 = speed;
-        p.vy                 = 0.0F;
+        ParticleSnapshot& p = m_particles[slot];
+        p                   = ParticleSnapshot{};
+        p.alive             = true;
+        p.lifetime          = std::max(0.001F, uniform(m_rng, m_config.lifetimeMin, m_config.lifetimeMax));
+        float const speed   = uniform(m_rng, m_config.speedMin, m_config.speedMax);
+        p.vx                = speed;
+        p.vy                = 0.0F;
 
         switch (m_config.shape) {
-            case ParticleShape::Point:
-                break;
-            case ParticleShape::Box:
-                p.x = uniform(m_rng, -m_config.shapeWidth / 2.0F, m_config.shapeWidth / 2.0F);
-                p.y = uniform(m_rng, -m_config.shapeHeight / 2.0F, m_config.shapeHeight / 2.0F);
-                break;
-            case ParticleShape::Circle: {
-                float const angle  = uniform(m_rng, 0.0F, 2.0F * std::numbers::pi_v<float>);
-                float const radius = std::sqrt(uniform(m_rng, 0.0F, 1.0F)) *
-                                     std::min(m_config.shapeWidth, m_config.shapeHeight) / 2.0F;
-                p.x = std::cos(angle) * radius;
-                p.y = std::sin(angle) * radius;
-                break;
-            }
+        case ParticleShape::Point:
+            break;
+        case ParticleShape::Box:
+            p.x = uniform(m_rng, -m_config.shapeWidth / 2.0F, m_config.shapeWidth / 2.0F);
+            p.y = uniform(m_rng, -m_config.shapeHeight / 2.0F, m_config.shapeHeight / 2.0F);
+            break;
+        case ParticleShape::Circle: {
+            float const angle = uniform(m_rng, 0.0F, 2.0F * std::numbers::pi_v<float>);
+            float const radius =
+                std::sqrt(uniform(m_rng, 0.0F, 1.0F)) * std::min(m_config.shapeWidth, m_config.shapeHeight) / 2.0F;
+            p.x = std::cos(angle) * radius;
+            p.y = std::sin(angle) * radius;
+            break;
+        }
         }
 
         if (!m_config.localSpace) {
@@ -141,21 +142,20 @@ namespace FIFE
         return true;
     }
 
-    void ParticleEmitter::refreshVisuals(ParticleSnapshot & particle) const
+    void ParticleEmitter::refreshVisuals(ParticleSnapshot& particle) const
     {
-        float t = particle.lifetime > 0.0F ? particle.age / particle.lifetime : 0.0F;
-        t                  = std::clamp(t, 0.0F, 1.0F);
-        particle.size      = m_config.startSize + (m_config.endSize - m_config.startSize) * t;
+        float t       = particle.lifetime > 0.0F ? particle.age / particle.lifetime : 0.0F;
+        t             = std::clamp(t, 0.0F, 1.0F);
+        particle.size = m_config.startSize + (m_config.endSize - m_config.startSize) * t;
         for (size_t i = 0U; i < 4U; ++i) {
-            float const channel = static_cast<float>(m_config.startColor[i]) +
-                                  (static_cast<float>(m_config.endColor[i]) -
-                                   static_cast<float>(m_config.startColor[i])) *
-                                      t;
+            float const channel =
+                static_cast<float>(m_config.startColor[i]) +
+                (static_cast<float>(m_config.endColor[i]) - static_cast<float>(m_config.startColor[i])) * t;
             particle.rgba[i] = static_cast<uint8_t>(std::lround(channel));
         }
-        particle.frame = (m_config.frameCount != 0U && m_config.frameDuration > 0.0F)
-                             ? static_cast<uint32_t>(particle.age / m_config.frameDuration) % m_config.frameCount
-                             : 0U;
+        particle.frame = (m_config.frameCount != 0U && m_config.frameDuration > 0.0F) ?
+                             static_cast<uint32_t>(particle.age / m_config.frameDuration) % m_config.frameCount :
+                             0U;
     }
 
     void ParticleEmitter::update(float dt)
@@ -192,7 +192,7 @@ namespace FIFE
 
         float const damping = std::max(0.0F, 1.0F - m_config.drag * dt);
         for (size_t slot = 0U; slot < m_particles.size(); ++slot) {
-            ParticleSnapshot & p = m_particles[slot];
+            ParticleSnapshot& p = m_particles[slot];
             if (!p.alive) {
                 continue;
             }
@@ -235,9 +235,9 @@ namespace FIFE
         m_delete_listener.reset();
         m_attached_instance = nullptr;
         m_node.setAttached(Point(0, 0));
-        m_drawn_layer       = nullptr;
-        m_has_last_world    = false;
-        m_emission_enabled  = true;
+        m_drawn_layer      = nullptr;
+        m_has_last_world   = false;
+        m_emission_enabled = true;
     }
 
     void ParticleEmitter::attachToInstance(Instance* instance, Point const & offset)
@@ -317,7 +317,7 @@ namespace FIFE
         if (instance != m_attached_instance) {
             return;
         }
-        m_last_world = instance->getLocationRef().getMapCoordinates();
+        m_last_world            = instance->getLocationRef().getMapCoordinates();
         Location const relative = m_node.getOffsetLocation();
         if (relative.isValid()) {
             ExactModelCoordinate const offset = relative.getMapCoordinates();

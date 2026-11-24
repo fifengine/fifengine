@@ -4,22 +4,21 @@
 #ifndef FIFE_PARTICLERENDERER_H
 #define FIFE_PARTICLERENDERER_H
 
-#include "platform.h"
-
-#include "view/rendererbase.h"
-
 #include <memory>
 #include <string>
 
+#include "platform.h"
+#include "view/rendererbase.h"
+
 namespace FIFE
 {
-    class ParticleRenderer : public RendererBase
+    class FIFE_API ParticleRenderer : public RendererBase
     {
         public:
             ParticleRenderer(RenderBackend* renderbackend, int32_t position);
             ParticleRenderer(ParticleRenderer const & old);
-            ParticleRenderer & operator=(ParticleRenderer const &) = delete;
-            ~ParticleRenderer() override                           = default;
+            ParticleRenderer& operator=(ParticleRenderer const &) = delete;
+            ~ParticleRenderer() override                          = default;
 
             std::unique_ptr<RendererBase> clone() override;
             void render(Camera* cam, Layer* layer, RenderList& instances) override;

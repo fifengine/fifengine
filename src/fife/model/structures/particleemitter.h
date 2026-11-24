@@ -4,32 +4,31 @@
 #ifndef FIFE_PARTICLEEMITTER_H
 #define FIFE_PARTICLEEMITTER_H
 
-#include "platform.h"
-
-#include "model/metamodel/modelcoords.h"
-#include "model/structures/particleconfig.h"
-#include "model/structures/renderernode.h"
-#include "video/image.h"
-
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <random>
 #include <vector>
 
+#include "model/metamodel/modelcoords.h"
+#include "model/structures/particleconfig.h"
+#include "model/structures/renderernode.h"
+#include "platform.h"
+#include "video/image.h"
+
 namespace FIFE
 {
     class Instance;
     class Layer;
 
-    class ParticleEmitter
+    class FIFE_API ParticleEmitter
     {
         public:
             explicit ParticleEmitter(ParticleConfig const & config);
             virtual ~ParticleEmitter();
 
             ParticleEmitter(ParticleEmitter const &)            = delete;
-            ParticleEmitter & operator=(ParticleEmitter const &) = delete;
+            ParticleEmitter& operator=(ParticleEmitter const &) = delete;
 
             void setSeed(uint32_t seed);
             virtual void update(float dt);
@@ -83,7 +82,7 @@ namespace FIFE
             uint32_t effectiveCapacity() const;
             void rebuildPool();
             bool spawn();
-            void refreshVisuals(ParticleSnapshot & particle) const;
+            void refreshVisuals(ParticleSnapshot& particle) const;
 
             ParticleConfig m_config;
             uint32_t m_capacity{0};

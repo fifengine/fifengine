@@ -4,27 +4,26 @@
 #ifndef FIFE_PARTICLEMANAGER_H
 #define FIFE_PARTICLEMANAGER_H
 
-#include "platform.h"
-
-#include "model/structures/particleemitter.h"
-#include "util/base/singleton.h"
-#include "util/time/timeevent.h"
-
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "model/structures/particleemitter.h"
+#include "platform.h"
+#include "util/base/singleton.h"
+#include "util/time/timeevent.h"
+
 namespace FIFE
 {
-    class ParticleManager : public TimeEvent, public DynamicSingleton<ParticleManager>
+    class FIFE_API ParticleManager : public TimeEvent, public DynamicSingleton<ParticleManager>
     {
         public:
             ParticleManager();
             ~ParticleManager() override;
 
             ParticleManager(ParticleManager const &)            = delete;
-            ParticleManager & operator=(ParticleManager const &) = delete;
+            ParticleManager& operator=(ParticleManager const &) = delete;
 
             static ParticleManager* getInstance();
 

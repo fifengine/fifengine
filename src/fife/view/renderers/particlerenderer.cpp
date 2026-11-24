@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 // FIFE includes
 #include "model/structures/particlemanager.h"
@@ -53,7 +54,7 @@ namespace FIFE
                     continue;
                 }
                 ExactModelCoordinate const world = emitter->getParticleWorldPosition(slot);
-                ScreenPoint const screen           = cam->toScreenCoordinates(world);
+                ScreenPoint const screen         = cam->toScreenCoordinates(world);
                 int32_t const size = std::max<int32_t>(1, static_cast<int32_t>(std::lround(particle.size)));
                 Rect const rect(screen.x - size / 2, screen.y - size / 2, size, size);
                 frame->render(rect, particle.rgba[3], particle.rgba);

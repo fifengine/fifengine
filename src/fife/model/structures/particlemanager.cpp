@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <utility>
+#include <vector>
 
 // FIFE includes
 #include "util/time/timemanager.h"
@@ -40,7 +41,10 @@ namespace FIFE
     {
         ParticleEmitter* const ptr = emitter.get();
         m_emitters.push_back(std::move(emitter));
+        // ptr stays valid: ownership was just moved into the member container m_emitters.
+        // cppcheck-suppress danglingLifetime
         m_emitters_view.push_back(ptr);
+        // cppcheck-suppress returnDanglingLifetime
         return ptr;
     }
 
