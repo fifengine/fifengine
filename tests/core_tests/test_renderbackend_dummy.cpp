@@ -11,6 +11,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <memory>
@@ -36,6 +37,11 @@
 
 namespace
 {
+    std::string temporaryCapturePath(char const * filename)
+    {
+        return (std::filesystem::temp_directory_path() / filename).string();
+    }
+
     std::vector<char> readBinaryFile(std::string const & filename)
     {
         std::ifstream stream(filename, std::ios::binary);
@@ -104,7 +110,7 @@ TEST_CASE("Null backend creates images and never needs a surface", "[dummy]")
     CHECK(img->getWidth() == 4);
     CHECK(img->getHeight() == 4);
     CHECK_NOTHROW(img->render(FIFE::Rect(0, 0, 4, 4)));
-    CHECK_NOTHROW(backend.captureScreen("/tmp/fife-null-capture.png"));
+    CHECK_NOTHROW(backend.captureScreen(temporaryCapturePath("fife-null-capture.png")));
 }
 
 TEST_CASE("Surface backend produces deterministic pixels", "[dummy]")
@@ -127,7 +133,7 @@ TEST_CASE("Surface backend produces deterministic pixels", "[dummy]")
     std::copy(static_cast<uint8_t*>(surf->pixels), static_cast<uint8_t*>(surf->pixels) + second.size(), second.begin());
 
     CHECK(first == second);
-    CHECK_NOTHROW(backend.captureScreen("/tmp/fife-surface-capture.png"));
+    CHECK_NOTHROW(backend.captureScreen(temporaryCapturePath("fife-surface-capture.png")));
 }
 
 TEST_CASE("Surface backend attachRenderTarget preserves pixels of standard images", "[dummy]")
@@ -283,7 +289,7 @@ TEST_CASE("DummyGuiGraphics draws widgets through the Surface backend", "[dummy]
     gui.setTop(top.get());
 
     CHECK_NOTHROW(gui.draw());
-    CHECK_NOTHROW(backend.captureScreen("/tmp/fife-dummy-gui.png"));
+    CHECK_NOTHROW(backend.captureScreen(temporaryCapturePath("fife-dummy-gui.png")));
 }
 
 TEST_CASE("Surface backend PNG snapshot matches the checked-in golden image", "[dummy]")
@@ -303,8 +309,8 @@ TEST_CASE("Surface backend PNG snapshot matches the checked-in golden image", "[
     backend.putPixel(60, 40, 10, 120, 90, 255);
     backend.endFrame();
 
-    std::string const capture  = "/tmp/fife-dummy-snapshot-capture.png";
-    std::string const repeated = "/tmp/fife-dummy-snapshot-repeat.png";
+    std::string const capture  = temporaryCapturePath("fife-dummy-snapshot-capture.png");
+    std::string const repeated = temporaryCapturePath("fife-dummy-snapshot-repeat.png");
     std::string const golden   = "tests/data/dummy_surface_golden.png";
 
     backend.captureScreen(capture);

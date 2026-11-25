@@ -37,6 +37,7 @@ namespace FIFE
     class VFSSourceFactory;
     class EventManager;
     class TimeManager;
+    class ParticleManager;
     class Model;
     class LogManager;
     class Cursor;
@@ -164,6 +165,13 @@ namespace FIFE
             TimeManager* getTimeManager() const
             {
                 return m_timemanager.get();
+            }
+
+            /** Provides access point to the ParticleManager
+             */
+            ParticleManager* getParticleManager() const
+            {
+                return m_particlemanager.get();
             }
 
             /** Sets the GUI Manager to use.  Engine takes
@@ -333,6 +341,7 @@ namespace FIFE
             std::unique_ptr<EventManager> m_eventmanager;
             std::unique_ptr<SoundManager> m_soundmanager;
             std::unique_ptr<TimeManager> m_timemanager;
+            std::unique_ptr<ParticleManager> m_particlemanager;
             std::unique_ptr<ImageManager> m_imagemanager;
             std::unique_ptr<AnimationManager> m_animationmanager;
             std::unique_ptr<SoundClipManager> m_soundclipmanager;

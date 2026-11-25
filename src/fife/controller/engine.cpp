@@ -57,6 +57,7 @@
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/model.h"
+#include "model/structures/particlemanager.h"
 #include "pathfinder/routepather/routepather.h"
 #include "version.hpp"
 #include "video/image.h"
@@ -71,6 +72,7 @@
 #include "view/renderers/instancerenderer.h"
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
+#include "view/renderers/particlerenderer.h"
 #include "view/renderers/pathrenderer.h"
 #include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/targetrenderer.h"
@@ -326,6 +328,9 @@ namespace FIFE
         FL_LOG(_log(), "================== Engine initialize start =================");
         m_timemanager = std::make_unique<TimeManager>();
         FL_LOG(_log(), "Time manager created");
+
+        m_particlemanager = std::make_unique<ParticleManager>();
+        FL_LOG(_log(), "Particle manager created");
 
         FL_LOG(_log(), "Creating VFS");
         m_vfs = std::make_unique<VFS>();
@@ -699,6 +704,7 @@ namespace FIFE
         FL_LOG(_log(), "Creating renderers");
         m_offrenderer    = std::make_unique<OffRenderer>(m_renderbackend.get());
         m_targetrenderer = std::make_unique<TargetRenderer>(m_renderbackend.get());
+        m_renderers.push_back(std::make_unique<ParticleRenderer>(m_renderbackend.get(), 15));
         m_renderers.push_back(std::make_unique<InstanceRenderer>(m_renderbackend.get(), 10));
         m_renderers.push_back(std::make_unique<GridRenderer>(m_renderbackend.get(), 20));
         m_renderers.push_back(std::make_unique<CellSelectionRenderer>(m_renderbackend.get(), 30));
@@ -768,6 +774,11 @@ namespace FIFE
         m_movieplayer.reset();
         m_movieemitter = nullptr;
 #endif
+
+        // Emitters own ImagePtr frames whose backend textures must be released
+        // while the render backend and window still exist. TimeManager is also
+        // still alive here, so the particle TimeEvent can unregister safely.
+        m_particlemanager.reset();
 
         // Release owners before the services they borrow from. Models hold
         // raw pointers to renderers, and renderers/gui/cursor hold raw pointers

@@ -300,6 +300,23 @@ TEST_CASE("CalculateGUIScale_ClampsInvalidAndExtremeValues")
 
 namespace
 {
+    std::string getEnvironmentVariable(char const * name)
+    {
+#ifdef _MSC_VER
+        char* value   = nullptr;
+        size_t length = 0;
+        if (_dupenv_s(&value, &length, name) != 0) {
+            return {};
+        }
+        std::string result = value != nullptr ? value : "";
+        std::free(value);
+        return result;
+#else
+        char const * value = std::getenv(name);
+        return value != nullptr ? value : "";
+#endif
+    }
+
     void ensureVideoInitialized()
     {
         if (SDL_GetCurrentVideoDriver() == nullptr) {
@@ -314,12 +331,12 @@ namespace
     // the "x11" driver, but WAYLAND_DISPLAY still points at the compositor.
     bool hasWaylandCompositor()
     {
-        char const * const waylandDisplay = std::getenv("WAYLAND_DISPLAY");
-        if (waylandDisplay != nullptr && *waylandDisplay != '\0') {
+        std::string const waylandDisplay = getEnvironmentVariable("WAYLAND_DISPLAY");
+        if (!waylandDisplay.empty()) {
             return true;
         }
-        char const * const sessionType = std::getenv("XDG_SESSION_TYPE");
-        return sessionType != nullptr && std::string_view{sessionType} == "wayland";
+        std::string const sessionType = getEnvironmentVariable("XDG_SESSION_TYPE");
+        return sessionType == "wayland";
     }
 
     bool supportsExplicitWindowPositioning()

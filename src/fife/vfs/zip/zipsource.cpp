@@ -131,7 +131,7 @@ namespace FIFE
 
         uint32_t const eocdOffset = fileSize - 22 - commentLength;
         m_zipfile->setIndex(eocdOffset);
-        uint32_t const signature = m_zipfile->read32Little();
+        [[maybe_unused]] uint32_t const signature = m_zipfile->read32Little();
         assert("End of Central Directory signature not found" && signature == 0x06054b50);
 
         m_zipfile->read16Little();                      // disk number
@@ -144,7 +144,7 @@ namespace FIFE
 
     void ZipSource::readCentralDirectoryEntry()
     {
-        uint32_t const signature = m_zipfile->read32Little();
+        [[maybe_unused]] uint32_t const signature = m_zipfile->read32Little();
         assert("Invalid central directory entry signature" && signature == 0x02014b50);
 
         m_zipfile->read16Little(); // version made by

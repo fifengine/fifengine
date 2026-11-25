@@ -7,6 +7,8 @@
 # CMake, so this floor is the only early, clear failure point.
 cmake_minimum_required(VERSION 4.3)
 
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+
 # include additional CMake scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
@@ -418,6 +420,8 @@ set(
   src/fife/model/structures/layer.cpp
   src/fife/model/structures/location.cpp
   src/fife/model/structures/map.cpp
+  src/fife/model/structures/particleemitter.cpp
+  src/fife/model/structures/particlemanager.cpp
   src/fife/model/structures/renderernode.cpp
   src/fife/model/structures/trigger.cpp
   src/fife/model/structures/triggercontroller.cpp
@@ -510,6 +514,7 @@ set(
   src/fife/view/renderers/instancerenderer.cpp
   src/fife/view/renderers/lightrenderer.cpp
   src/fife/view/renderers/offrenderer.cpp
+  src/fife/view/renderers/particlerenderer.cpp
   src/fife/view/renderers/quadtreerenderer.cpp
   src/fife/view/renderers/targetrenderer.cpp
 )
@@ -634,6 +639,9 @@ set(
   src/fife/model/structures/layer.h
   src/fife/model/structures/location.h
   src/fife/model/structures/map.h
+  src/fife/model/structures/particleconfig.h
+  src/fife/model/structures/particleemitter.h
+  src/fife/model/structures/particlemanager.h
   src/fife/model/structures/renderernode.h
   src/fife/model/structures/trigger.h
   src/fife/model/structures/triggercontroller.h
@@ -744,6 +752,7 @@ set(
   src/fife/view/renderers/instancerenderer.h
   src/fife/view/renderers/lightrenderer.h
   src/fife/view/renderers/offrenderer.h
+  src/fife/view/renderers/particlerenderer.h
   src/fife/view/renderers/quadtreerenderer.h
   src/fife/view/renderers/speechbubblegeometry.h
   src/fife/view/renderers/speechstyle.h
@@ -893,6 +902,7 @@ set(
   src/fife/view/renderers/instancerenderer.i
   src/fife/view/renderers/lightrenderer.i
   src/fife/view/renderers/offrenderer.i
+  src/fife/view/renderers/particlerenderer.i
   src/fife/view/renderers/targetrenderer.i
   src/fife/view/visual.i
 )
@@ -1336,6 +1346,7 @@ if(BUILD_PYTHON_BINDINGS)
 
   set_target_properties(fife_swig PROPERTIES
     SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${PROJECT_SOURCE_DIR}/src/fife;${PROJECT_SOURCE_DIR}"
+    COMPILE_WARNING_AS_ERROR OFF
   )
 
   target_link_libraries(
@@ -1381,6 +1392,7 @@ if(BUILD_PYTHON_BINDINGS)
 
     set_target_properties(fifechan_swig PROPERTIES
       SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/fife;${CMAKE_SOURCE_DIR}"
+      COMPILE_WARNING_AS_ERROR OFF
     )
 
     target_link_libraries(fifechan_swig
