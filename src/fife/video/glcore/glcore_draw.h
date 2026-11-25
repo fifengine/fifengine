@@ -32,6 +32,8 @@ namespace FIFE
         /** Forget cached GL object names after a context is recreated. */
         FIFE_API void reset();
 
+        FIFE_API int lastGlError();
+
         FIFE_API void clear();
         FIFE_API void setScissor(int32_t x, int32_t y, int32_t w, int32_t h);
         FIFE_API void setViewport(int32_t x, int32_t y, int32_t w, int32_t h);

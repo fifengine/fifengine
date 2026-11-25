@@ -43,6 +43,11 @@ namespace FIFE
 
             void setLayer(Layer* layer);
 
+            bool isSortingNeeded() const
+            {
+                return m_needSorting;
+            }
+
             void update(Camera::Transform transform, RenderList& renderlist);
 
             void addInstance(Instance* instance);

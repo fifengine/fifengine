@@ -168,6 +168,12 @@ namespace FIFE
 #ifdef HAVE_OPENGL_ES2
         tmp.emplace_back("GLES2");
 #endif
+#ifdef HAVE_OPENGL_43
+        tmp.emplace_back("OpenGL_43");
+#endif
+#ifdef HAVE_OPENGLES_31
+        tmp.emplace_back("GLES_31");
+#endif
         tmp.emplace_back("DUMMY_NULL");
         tmp.emplace_back("DUMMY_SURFACE");
         return tmp;

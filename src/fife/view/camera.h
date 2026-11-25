@@ -240,6 +240,8 @@ namespace FIFE
              */
             Rect const & getViewPort() const;
 
+            Rect computeRenderTargetRect() const;
+
             /** Gets the viewport for camera in map coordinates
              * @return camera viewport
              */

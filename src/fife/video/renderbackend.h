@@ -130,6 +130,12 @@ namespace FIFE
              */
             virtual std::string const & getName() const = 0;
 
+            /** Optional GPU particle bridge; null on backends without compute. */
+            virtual class IParticleRenderBackend* getParticleRenderBackend()
+            {
+                return nullptr;
+            }
+
             /** Human-readable description of the active renderer/driver, for
              * startup logging. Defaults to "n/a" for backends that have no
              * additional information to report.

@@ -96,8 +96,33 @@ option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
 option(ENABLE_OPENGL_CORE     "Enable OpenGL 3.3 core backend"               ON)
 option(ENABLE_OPENGL_ES2      "Enable OpenGL ES 2.0 backend"                OFF)
+option(ENABLE_OPENGL_43       "Enable the GL 4.3 core profile"                OFF)
+option(ENABLE_OPENGLES_31     "Enable the OpenGL ES 3.1 profile"              OFF)
 
 option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
+
+if(ENABLE_OPENGL_CORE AND ENABLE_OPENGL_ES2)
+  message(FATAL_ERROR "ENABLE_OPENGL_CORE and ENABLE_OPENGL_ES2 are mutually exclusive")
+endif()
+if((ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2) AND NOT ENABLE_OPENGL)
+  message(FATAL_ERROR "The GLCore backends require ENABLE_OPENGL=ON")
+endif()
+if(ENABLE_OPENGL_43 AND ENABLE_OPENGLES_31)
+  message(FATAL_ERROR "ENABLE_OPENGL_43 and ENABLE_OPENGLES_31 are mutually exclusive")
+endif()
+if((ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31) AND NOT ENABLE_OPENGL)
+  message(FATAL_ERROR "The Tier B profiles require ENABLE_OPENGL=ON")
+endif()
+if((ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31) AND NOT (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+  message(FATAL_ERROR "The Tier B profiles require a Tier A backend option (ENABLE_OPENGL_CORE or ENABLE_OPENGL_ES2)")
+endif()
+# One glad loader per build: the desktop and ES families cannot be mixed.
+if(ENABLE_OPENGL_43 AND ENABLE_OPENGL_ES2)
+  message(FATAL_ERROR "ENABLE_OPENGL_43 (desktop family) cannot be combined with ENABLE_OPENGL_ES2 (ES family)")
+endif()
+if(ENABLE_OPENGLES_31 AND ENABLE_OPENGL_CORE)
+  message(FATAL_ERROR "ENABLE_OPENGLES_31 (ES family) cannot be combined with ENABLE_OPENGL_CORE (desktop family)")
+endif()
 option(ENABLE_LOGGING         "Enable Logging"                               ON)
 
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
@@ -182,6 +207,12 @@ endif()
 
 if(ENABLE_OPENGL_ES2)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_ES2)
+endif()
+if(ENABLE_OPENGL_43)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_43)
+endif()
+if(ENABLE_OPENGLES_31)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGLES_31)
 endif()
 
 if(ENABLE_FIFEGUI)
@@ -410,6 +441,7 @@ set(
   src/fife/audio/effects/soundfilter.cpp
   src/fife/controller/engine.cpp
   src/fife/controller/enginesettings.cpp
+  src/fife/video/iparticlerenderbackend.cpp
   src/fife/video/glcore/glcore_names.cpp
   src/fife/eventchannel/eventmanager.cpp
   src/fife/eventchannel/joystick/joystick.cpp
@@ -570,6 +602,8 @@ source_group("fife.gui.fifegui"    FILES ${FIFE_FIFEGUI_SOURCES})
 set_source_files_properties(
   src/fife/video/glcore/glad/core/glad.cpp
   src/fife/video/glcore/glad/es2/glad.cpp
+  src/fife/video/glcore/glad/core43/glad.cpp
+  src/fife/video/glcore/glad/es31/glad.cpp
   PROPERTIES
     COMPILE_WARNING_AS_ERROR OFF
     COMPILE_OPTIONS "$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-old-style-cast>"
@@ -578,7 +612,7 @@ set_source_files_properties(
 # Shader-based GLCore backend (optional, mutually exclusive profiles).
 set(FIFE_GLCORE_SOURCES)
 set(FIFE_GLCORE_HEADERS)
-if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2 OR ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31)
   list(APPEND FIFE_GLCORE_SOURCES
     src/fife/video/glcore/glcontext.cpp
     src/fife/video/glcore/glad/glcore_loader.cpp
@@ -590,10 +624,12 @@ if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
     src/fife/video/glcore/renderbackendgl.cpp
     src/fife/video/glcore/glcoreimage.cpp
     src/fife/video/glcore/glcore_draw.cpp
+    src/fife/video/glcore/particle_render_backend.cpp
   )
   list(APPEND FIFE_GLCORE_HEADERS
     src/fife/video/glcore/glcontext.h
     src/fife/video/glcore/glad/glcore_loader.h
+    src/fife/video/glcore/glad/glcore_glad.h
     src/fife/video/glcore/shader.h
     src/fife/video/glcore/shaderloader.h
     src/fife/video/glcore/buffer.h
@@ -603,12 +639,19 @@ if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
     src/fife/video/glcore/glcoreimage.h
     src/fife/video/glcore/glcore_bridge.h
     src/fife/video/glcore/glcore_draw.h
+    src/fife/video/glcore/particle_render_backend.h
   )
-  if(ENABLE_OPENGL_CORE)
+  if(ENABLE_OPENGL_CORE AND NOT ENABLE_OPENGL_43)
     list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/core/glad.cpp)
   endif()
-  if(ENABLE_OPENGL_ES2)
+  if(ENABLE_OPENGL_ES2 AND NOT ENABLE_OPENGLES_31)
     list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/es2/glad.cpp)
+  endif()
+  if(ENABLE_OPENGL_43)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/core43/glad.cpp)
+  endif()
+  if(ENABLE_OPENGLES_31)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/es31/glad.cpp)
   endif()
   source_group("fife.video.glcore" FILES ${FIFE_GLCORE_SOURCES} ${FIFE_GLCORE_HEADERS})
 endif()
@@ -1611,7 +1654,7 @@ if(BUILD_LIBRARY)
   )
 
   # The generated glad headers have their own export mechanism: GLAD uses GLAPI.
-  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2 OR ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31))
     target_compile_definitions(fife_lib PRIVATE GLAD_GLAPI_EXPORT GLAD_GLAPI_EXPORT_BUILD)
   endif()
 
@@ -1629,7 +1672,7 @@ if(BUILD_LIBRARY)
   # Provide a namespace alias for the library (fife::fife)
   add_library(fife::fife ALIAS fife)
 
-  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2 OR ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31))
     target_compile_definitions(fife PUBLIC GLAD_GLAPI_EXPORT)
   endif()
 

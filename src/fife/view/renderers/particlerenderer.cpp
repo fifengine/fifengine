@@ -12,6 +12,7 @@
 // FIFE includes
 #include "model/structures/particlemanager.h"
 #include "video/image.h"
+#include "video/iparticlerenderbackend.h"
 #include "view/camera.h"
 
 namespace FIFE
@@ -39,9 +40,24 @@ namespace FIFE
             return;
         }
 
-        ParticleManager* const manager = ParticleManager::instance();
+        ParticleManager* const manager       = ParticleManager::instance();
+        IParticleRenderBackend* const bridge = activeParticleRenderBackend();
+        FIFE::Rect const viewport            = cam->getViewPort();
+        float const w                        = static_cast<float>(std::max(1, viewport.w));
+        float const h                        = static_cast<float>(std::max(1, viewport.h));
+        float const viewProjection[16]       = {
+            2.0F / w, 0.0F, 0.0F, 0.0F, 0.0F, -2.0F / h, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F};
         for (ParticleEmitter* emitter : manager->getEmitters()) {
             if (emitter == nullptr || !emitter->isDrawnOn(layer)) {
+                continue;
+            }
+            if (bridge != nullptr && emitter->isComputeEnabled()) {
+                bridge->dispatch(
+                    emitter->getId(), emitter->getAliveEstimate(), 1.0F / 120.0F, manager->getSimulationStep());
+                if (emitter->getFrame(0)) {
+                    bridge->draw(
+                        emitter->getId(), emitter->getAliveEstimate(), *emitter->getFrame(0), viewProjection, viewport);
+                }
                 continue;
             }
             for (size_t slot = 0U; slot < emitter->getCapacity(); ++slot) {

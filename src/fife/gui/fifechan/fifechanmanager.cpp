@@ -214,7 +214,8 @@ namespace FIFE
             dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else if (m_backend == "OpenGL") {
             dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
-        } else if (m_backend == "OpenGL_CORE" || m_backend == "GLES2") {
+        } else if (
+            m_backend == "OpenGL_CORE" || m_backend == "GLES2" || m_backend == "OpenGL_43" || m_backend == "GLES_31") {
             dynamic_cast<GLCoreGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else {
             dynamic_cast<DummyGuiGraphics*>(m_gui_graphics.get())->updateTarget();
@@ -266,7 +267,7 @@ namespace FIFE
             m_gui_graphics = std::make_unique<SdlGuiGraphics>();
         } else if (backend == "OpenGL") {
             m_gui_graphics = std::make_unique<OpenGLGuiGraphics>();
-        } else if (backend == "OpenGL_CORE" || backend == "GLES2") {
+        } else if (backend == "OpenGL_CORE" || backend == "GLES2" || backend == "OpenGL_43" || backend == "GLES_31") {
             m_gui_graphics = std::make_unique<GLCoreGuiGraphics>();
         } else if (backend == "DUMMY_NULL" || backend == "DUMMY_SURFACE") {
             m_gui_graphics = std::make_unique<DummyGuiGraphics>();

@@ -75,6 +75,11 @@ namespace FIFE {
 		void addFrame(const ImagePtr& frame);
 		size_t getFrameCount() const;
 		ImagePtr getFrame(uint32_t frame) const;
+		void setComputeEnabled(bool enabled);
+		bool isComputeEnabled() const;
+		uint32_t getId() const;
+		uint32_t getSpawnedCount() const;
+		uint32_t getAliveEstimate() const;
 	};
 
 	class ParticleManager {

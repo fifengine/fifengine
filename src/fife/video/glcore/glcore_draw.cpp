@@ -4,16 +4,11 @@
 // glad-only translation unit: no renderbackend.h / GLEW header here.
 #include "glcore_draw.h"
 
-#ifdef HAVE_OPENGL_CORE
-    #include "video/glcore/glad/core/glad.h"
-#else
-    #include "video/glcore/glad/es2/glad.h"
-#endif
-
 #include <string>
 #include <vector>
 
 #include "video/glcore/buffer.h"
+#include "video/glcore/glad/glcore_glad.h"
 #include "video/glcore/vertexarray.h"
 
 namespace FIFE
@@ -88,6 +83,11 @@ namespace FIFE
             primitiveVbo = 0;
             imageVbo     = 0;
             imageIbo     = 0;
+        }
+
+        int lastGlError()
+        {
+            return static_cast<int>(glGetError());
         }
 
         void clear()

@@ -64,6 +64,25 @@ jobs:
             triplet: x64-linux,
             artifact-name: libfife-gcc14-x64-linux
           }
+        - {
+            job_name: "Linux | Clang22 | GLCore 4.3",
+            os: ubuntu-24.04,
+            preset: clang22-x64-linux-dbg-cov,
+            triplet: x64-linux,
+            artifact-name: libfife-clang22-glcore-43,
+            gl-tests: "true",
+            extra-cmake-args: "-DENABLE_OPENGL_CORE=ON -DENABLE_OPENGL_ES2=OFF -DENABLE_OPENGL_43=ON -DENABLE_OPENGLES_31=OFF"
+          }
+        - {
+            job_name: "Linux | Clang22 | GLCore ES3.1",
+            os: ubuntu-24.04,
+            preset: clang22-x64-linux-dbg-cov,
+            triplet: x64-linux,
+            artifact-name: libfife-clang22-glcore-es31,
+            # ES 3.1 context availability varies by runner; context-dependent
+            # cases SKIP while dialect/header checks still run.
+            extra-cmake-args: "-DENABLE_OPENGL_CORE=OFF -DENABLE_OPENGL_ES2=ON -DENABLE_OPENGL_43=OFF -DENABLE_OPENGLES_31=ON"
+          }
 
     env:
       # VCPKG Settings

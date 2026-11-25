@@ -3,14 +3,9 @@
 
 #include "glcoreimage.h"
 
-#ifdef HAVE_OPENGL_CORE
-    #include "video/glcore/glad/core/glad.h"
-#else
-    #include "video/glcore/glad/es2/glad.h"
-#endif
-
 #include <string>
 
+#include "video/glcore/glad/glcore_glad.h"
 #include "video/glcore/glcore_bridge.h"
 
 namespace FIFE

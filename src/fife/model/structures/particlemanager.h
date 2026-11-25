@@ -41,6 +41,11 @@ namespace FIFE
                 return m_emitters_view;
             }
 
+            uint64_t getSimulationStep() const
+            {
+                return m_simulationStep;
+            }
+
             void resetClock();
             void setSeed(uint32_t seed);
             void updateEvent(uint32_t time) override;
@@ -52,6 +57,7 @@ namespace FIFE
             std::vector<ParticleEmitter*> m_emitters_view;
             std::vector<ParticleEmitter*> m_pending_removal;
             double m_accumulator{0.0};
+            uint64_t m_simulationStep{0};
     };
 } // namespace FIFE
 

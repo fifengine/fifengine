@@ -20,6 +20,7 @@ namespace FIFE
 {
     class Instance;
     class Layer;
+    class IParticleRenderBackend;
 
     class FIFE_API ParticleEmitter
     {
@@ -50,6 +51,39 @@ namespace FIFE
 
             uint32_t getMaxParticles() const;
             void setMaxParticles(uint32_t maxParticles);
+
+            // Optional GPU path (Tier B). CPU emission/recycling stays authoritative.
+            void setComputeEnabled(bool enabled);
+            bool isComputeEnabled() const
+            {
+                return m_computeEnabled;
+            }
+            uint32_t getId() const
+            {
+                return m_id;
+            }
+            void setGpuBridge(class IParticleRenderBackend* bridge)
+            {
+                m_gpuBridge = bridge;
+            }
+
+            // Test-facing introspection / config mutators (no SSBO reallocation).
+            uint32_t getSpawnedCount() const
+            {
+                return static_cast<uint32_t>(m_emitted);
+            }
+            std::vector<uint32_t> const & getDeathSchedule() const
+            {
+                return m_deathSchedule;
+            }
+            uint32_t getAliveEstimate() const
+            {
+                return static_cast<uint32_t>(m_alive);
+            }
+            DoublePoint getCentroid() const;
+            void setRate(float rate);
+            void setColor(uint8_t const * rgba);
+            void setLifetime(float lifetime);
 
             ParticleSnapshot getParticle(size_t slot) const;
             ExactModelCoordinate getParticleWorldPosition(size_t slot) const;
@@ -104,6 +138,10 @@ namespace FIFE
             bool m_has_last_world{false};
             bool m_emission_enabled{true};
             std::vector<ImagePtr> m_frames;
+            std::vector<uint32_t> m_deathSchedule;
+            bool m_computeEnabled{false};
+            uint32_t m_id{0};
+            class IParticleRenderBackend* m_gpuBridge{nullptr};
     };
 } // namespace FIFE
 

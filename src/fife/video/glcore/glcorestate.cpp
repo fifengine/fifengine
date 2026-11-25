@@ -3,11 +3,7 @@
 
 #include "glcorestate.h"
 
-#ifdef HAVE_OPENGL_CORE
-    #include "video/glcore/glad/core/glad.h"
-#else
-    #include "video/glcore/glad/es2/glad.h"
-#endif
+#include "video/glcore/glad/glcore_glad.h"
 
 namespace FIFE
 {

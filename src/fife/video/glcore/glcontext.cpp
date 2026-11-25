@@ -15,6 +15,40 @@
 
 namespace FIFE
 {
+    GLAttributeValues glAttributesFor(GLContextConfig const & config)
+    {
+        bool const isCore = config.profile == GLProfile::Core33 || config.profile == GLProfile::Core43;
+        GLAttributeValues values;
+        switch (config.profile) {
+        case GLProfile::Core33:
+            values.major = 3;
+            values.minor = 3;
+            break;
+        case GLProfile::ES2:
+            values.major = 2;
+            values.minor = 0;
+            break;
+        case GLProfile::Core43:
+            values.major = 4;
+            values.minor = 3;
+            break;
+        case GLProfile::ES31:
+            values.major = 3;
+            values.minor = 1;
+            break;
+        }
+        values.profileMask = isCore ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_ES;
+        return values;
+    }
+
+    GLCapabilities capabilitiesFor(GLProfile profile)
+    {
+        GLCapabilities caps;
+        caps.computeShaders       = (profile == GLProfile::Core43 || profile == GLProfile::ES31);
+        caps.shaderStorageBuffers = caps.computeShaders;
+        return caps;
+    }
+
     GLContextConfig makeCore33Config()
     {
         GLContextConfig config;
@@ -37,6 +71,28 @@ namespace FIFE
         return config;
     }
 
+    GLContextConfig makeCore43Config()
+    {
+        GLContextConfig config;
+        config.profile     = GLProfile::Core43;
+        config.major       = 4;
+        config.minor       = 3;
+        config.stencilBits = 8;
+        config.depthBits   = 24;
+        return config;
+    }
+
+    GLContextConfig makeES31Config()
+    {
+        GLContextConfig config;
+        config.profile     = GLProfile::ES31;
+        config.major       = 3;
+        config.minor       = 1;
+        config.stencilBits = 8;
+        config.depthBits   = 24;
+        return config;
+    }
+
     GLContext::GLContext(GLContextConfig const & config) : m_config(config)
     {
     }
@@ -48,11 +104,10 @@ namespace FIFE
 
     void GLContext::applyAttributes() const
     {
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_config.major);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_config.minor);
-        SDL_GL_SetAttribute(
-            SDL_GL_CONTEXT_PROFILE_MASK,
-            m_config.profile == GLProfile::Core33 ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_ES);
+        GLAttributeValues const attrs = glAttributesFor(m_config);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, attrs.major);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, attrs.minor);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, static_cast<int>(attrs.profileMask));
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, m_config.stencilBits);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, m_config.depthBits);
