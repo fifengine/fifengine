@@ -565,12 +565,14 @@ set(
 source_group("fife"                FILES ${FIFE_SOURCES})
 source_group("fife.gui.fifegui"    FILES ${FIFE_FIFEGUI_SOURCES})
 
-# Generated glad sources are third-party code: keep warnings but do not let
-# their old-style casts fail the build.
+# Generated glad sources are third-party code.
+# Keep warnings, but do not let them fail the build.
 set_source_files_properties(
   src/fife/video/glcore/glad/core/glad.cpp
   src/fife/video/glcore/glad/es2/glad.cpp
-  PROPERTIES COMPILE_WARNING_AS_ERROR OFF COMPILE_OPTIONS "-Wno-old-style-cast"
+  PROPERTIES
+    COMPILE_WARNING_AS_ERROR OFF
+    COMPILE_OPTIONS "$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-old-style-cast>"
 )
 
 # Shader-based GLCore backend (optional, mutually exclusive profiles).
