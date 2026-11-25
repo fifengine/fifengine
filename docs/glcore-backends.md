@@ -5,6 +5,11 @@
 - `ENABLE_OPENGL_CORE` — build the `"OpenGL_CORE"` backend (GL 3.3 core profile).
 - `ENABLE_OPENGL_ES2` — build the `"GLES2"` backend (OpenGL ES 2.0).
 
+- OpenGL Core (3.3): Works natively on Wayland with LIBGL_ALWAYS_SOFTWARE=true +
+GALLIUM_DRIVER=llvmpipe (Mesa's software renderer supports core profile on Wayland).
+- OpenGL ES 2.0: Requires Xvfb (X11 virtual framebuffer) because
+the EGL/GLES2 implementation in Mesa needs X11 to create an ES2 context.
+
 The two options are mutually exclusive and both require `ENABLE_OPENGL=ON`.
 They default to OFF; when neither is set, the shader backend is not compiled
 and the legacy SDL/OpenGL backends behave exactly as before.
@@ -38,7 +43,7 @@ The four historical string-branch sites use named predicates from
 `glcore_names.h` so the dummy-backend asymmetry is preserved exactly. See the
 Tier A design doc for the truth table.
 
-## Implemented Tier A features
+## Implemented features
 
 - `changeRenderInfos()` maps data type, blend, depth, stencil and overlay mode
   onto the state cache and per-batch shader uniforms.
@@ -55,6 +60,23 @@ Tier A design doc for the truth table.
   buffers and FBOs.
 - `GLCoreImage` implements single-texture, overlay and Z rendering plus
   `updateTexture()`.
+
+## Test Commands
+
+### OpenGL Core (Wayland native):
+
+export LIBGL_ALWAYS_SOFTWARE=true
+export GALLIUM_DRIVER=llvmpipe
+export FIFE_GL_REQUIRE_CONTEXT=1
+./out/build/clang22-x64-linux-dbg-cov/tests/core_tests/all_tests
+
+### OpenGL ES 2.0 (requires Xvfb):
+
+export LIBGL_ALWAYS_SOFTWARE=true
+export GALLIUM_DRIVER=llvmpipe
+export EGL_PLATFORM=x11
+export FIFE_GL_REQUIRE_CONTEXT=1
+xvfb-run -a -s "-screen 0 1280x800x24" ./out/build/clang22-x64-linux-dbg-cov/tests/core_tests/all_tests
 
 ## Limitations / follow-ups
 

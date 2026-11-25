@@ -64,25 +64,6 @@ jobs:
             triplet: x64-linux,
             artifact-name: libfife-gcc14-x64-linux
           }
-        - {
-            job_name: "Linux | Clang22 | GLCore ES2",
-            os: ubuntu-24.04,
-            preset: clang22-x64-linux-dbg-cov,
-            triplet: x64-linux,
-            artifact-name: libfife-clang22-glcore-es2,
-            # ES2 context availability varies by runner; context-dependent
-            # Catch2 cases SKIP while preamble checks still run.
-            extra-cmake-args: "-DENABLE_OPENGL_CORE=OFF -DENABLE_OPENGL_ES2=ON"
-          }
-        - {
-            job_name: "Linux | Clang22 | GLCore 3.3",
-            os: ubuntu-24.04,
-            preset: clang22-x64-linux-dbg-cov,
-            triplet: x64-linux,
-            artifact-name: libfife-clang22-glcore-core,
-            gl-tests: "true",
-            extra-cmake-args: "-DENABLE_OPENGL_CORE=ON -DENABLE_OPENGL_ES2=OFF"
-          }
 
     env:
       # VCPKG Settings
@@ -259,8 +240,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_MANIFEST_MODE=OFF \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
-            ${{ matrix.config.extra-cmake-args || '' }}
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🙏 3.2 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
@@ -270,16 +250,6 @@ jobs:
           cmake --install ${{ env.BUILD_DIR }} \
                 --prefix ${{ env.INSTALL_DIR }} \
                 --verbose
-
-      - name: 🧪 3.4 GLCore software-GL regression (Xvfb + llvmpipe)
-        if: ${{ contains(matrix.config.extra-cmake-args || '', 'ENABLE_OPENGL_CORE') || contains(matrix.config.extra-cmake-args || '', 'ENABLE_OPENGL_ES2') }}
-        run: |
-          export LIBGL_ALWAYS_SOFTWARE=true
-          export GALLIUM_DRIVER=llvmpipe
-          export EGL_PLATFORM=x11
-          export FIFE_GL_REQUIRE_CONTEXT=1
-          xvfb-run -a -s "-screen 0 1280x800x24" \
-            ${{ env.BUILD_DIR }}/tests/core_tests/all_tests
 
       - name: 🔇 Setup Test Audio
         run: |
@@ -353,6 +323,24 @@ jobs:
               preset: "clang22-x64-linux-dbg-cov",
               triplet: x64-linux,
               artifact-name: "libfife-clang22-x64-cov"
+            }
+          - {
+              job_name: "Linux | Clang22 | OpenGL ES2",
+              image_version: "trixie-with-vulkansdk-latest",
+              preset: clang22-x64-linux-dbg-cov,
+              triplet: x64-linux,
+              artifact-name: libfife-clang22-opengl-es2,
+              gl-tests: "true",
+              extra-cmake-args: "-DENABLE_OPENGL_CORE=OFF -DENABLE_OPENGL_ES2=ON"
+            }
+          - {
+              job_name: "Linux | Clang22 | OpenGL 3.3",
+              image_version: "trixie-with-vulkansdk-latest",
+              preset: clang22-x64-linux-dbg-cov,
+              triplet: x64-linux,
+              artifact-name: libfife-clang22-opengl-core,
+              gl-tests: "true",
+              extra-cmake-args: "-DENABLE_OPENGL_CORE=ON -DENABLE_OPENGL_ES2=OFF"
             }
           # Optional ENABLE_MOVIE coverage. It needs a dynamic triplet, because FFmpeg
           # has to stay a shared object for LGPL 6, and its own build/install dirs,
@@ -567,7 +555,8 @@ jobs:
             -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}" \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
+            ${{ matrix.config.extra-cmake-args || '' }}
 
       - name: 🙏 3.2 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
@@ -577,6 +566,16 @@ jobs:
           cmake --install ${{ env.BUILD_DIR }} \
                 --prefix ${{ env.INSTALL_DIR }} \
                 --verbose
+
+      - name: 🧪 3.4 OpenGL software rendering tests (Xvfb + llvmpipe)
+        if: ${{ (contains(matrix.config.extra-cmake-args || '', 'ENABLE_OPENGL_CORE') || contains(matrix.config.extra-cmake-args || '', 'ENABLE_OPENGL_ES2')) && matrix.config.gl-tests != 'true' }}
+        run: |
+          export LIBGL_ALWAYS_SOFTWARE=true
+          export GALLIUM_DRIVER=llvmpipe
+          export EGL_PLATFORM=x11
+          export FIFE_GL_REQUIRE_CONTEXT=1
+          xvfb-run -a -s "-screen 0 1280x800x24" \
+            ${{ env.BUILD_DIR }}/tests/core_tests/all_tests
 
       - name: ⚙️ Prepare Coverage Environment
         if: ${{ matrix.config.preset == 'clang22-x64-linux-dbg-cov' }}

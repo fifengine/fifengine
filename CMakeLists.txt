@@ -94,21 +94,23 @@ include(FifeDpiManifest)
 option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
-option(ENABLE_OPENGL_CORE     "Enable the GL 3.3 core backend"                OFF)
-option(ENABLE_OPENGL_ES2      "Enable the OpenGL ES 2.0 backend"              OFF)
-option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
+option(ENABLE_OPENGL_CORE     "Enable OpenGL 3.3 core backend"               ON)
+option(ENABLE_OPENGL_ES2      "Enable OpenGL ES 2.0 backend"                OFF)
 
-if(ENABLE_OPENGL_CORE AND ENABLE_OPENGL_ES2)
-  message(FATAL_ERROR "ENABLE_OPENGL_CORE and ENABLE_OPENGL_ES2 are mutually exclusive")
-endif()
-if((ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2) AND NOT ENABLE_OPENGL)
-  message(FATAL_ERROR "The GLCore backends require ENABLE_OPENGL=ON")
-endif()
+option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
 option(ENABLE_LOGGING         "Enable Logging"                               ON)
 
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
 option(BUILD_TESTS            "Build C++ tests"                              ON)
+
+if(ENABLE_OPENGL_CORE AND ENABLE_OPENGL_ES2)
+  message(FATAL_ERROR "ENABLE_OPENGL_CORE and ENABLE_OPENGL_ES2 are mutually exclusive")
+endif()
+
+if((ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2) AND NOT ENABLE_OPENGL)
+  message(FATAL_ERROR "The backends OPENGL_CORE and OPENGL_ES2 require ENABLE_OPENGL=ON")
+endif()
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
 # It is not a build option, because it must be set before project().
@@ -177,6 +179,7 @@ endif()
 if(ENABLE_OPENGL_CORE)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_CORE)
 endif()
+
 if(ENABLE_OPENGL_ES2)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_ES2)
 endif()
