@@ -4,6 +4,8 @@
 // Corresponding header include
 #include "instancerenderer.h"
 
+#include "video/glcore/glcore_names.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <array>
@@ -134,12 +136,12 @@ namespace FIFE
         RendererBase(renderbackend, position), m_area_layer(false), m_interval(60 * 1000), m_timer_enabled(false)
     {
         setEnabled(true);
-        if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
+        if (isGlDepthBackend(m_renderbackend->getName()) && m_renderbackend->isDepthBufferEnabled()) {
             m_need_sorting       = false;
             m_need_bind_coloring = false;
         } else {
             m_need_sorting       = true;
-            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
+            m_need_bind_coloring = bindsColorLikeSDL(m_renderbackend->getName());
         }
         // init timer
         m_timer.setInterval(toInt32Dimension(m_interval));
@@ -154,12 +156,12 @@ namespace FIFE
         RendererBase(old), m_area_layer(false), m_interval(old.m_interval), m_timer_enabled(false)
     {
         setEnabled(true);
-        if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
+        if (isGlDepthBackend(m_renderbackend->getName()) && m_renderbackend->isDepthBufferEnabled()) {
             m_need_sorting       = false;
             m_need_bind_coloring = false;
         } else {
             m_need_sorting       = true;
-            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
+            m_need_bind_coloring = bindsColorLikeSDL(m_renderbackend->getName());
         }
         // init timer
         m_timer.setInterval(toInt32Dimension(m_interval));

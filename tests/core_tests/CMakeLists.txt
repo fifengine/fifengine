@@ -20,6 +20,7 @@ set(
   test_dat2.cpp
   test_renderbackend_dummy.cpp
   test_enginesettings.cpp
+  test_engine_log.cpp
   test_event_touch.cpp
   test_fife_math.cpp
   test_gui.cpp
@@ -54,6 +55,24 @@ set(
   test_window.cpp
   test_speechbubble.cpp
 )
+
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
+  list(APPEND FIFE_CORE_TEST_SOURCES
+    test_glcore_buffers.cpp
+    test_glcore_context.cpp
+    test_glcore_es2.cpp
+    test_glcore_es2_render.cpp
+    test_glcore_features.cpp
+    test_glcore_gui.cpp
+    test_glcore_hooks.cpp
+    test_glcore_image.cpp
+    test_glcore_primitives.cpp
+    test_glcore_selection.cpp
+    test_glcore_shaders.cpp
+    test_glcore_state.cpp
+    test_glcore_validation.cpp
+  )
+endif()
 
 if(ENABLE_MOVIE)
   list(APPEND FIFE_CORE_TEST_SOURCES test_movie.cpp)

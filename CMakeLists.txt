@@ -94,7 +94,16 @@ include(FifeDpiManifest)
 option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
+option(ENABLE_OPENGL_CORE     "Enable the GL 3.3 core backend"                OFF)
+option(ENABLE_OPENGL_ES2      "Enable the OpenGL ES 2.0 backend"              OFF)
 option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
+
+if(ENABLE_OPENGL_CORE AND ENABLE_OPENGL_ES2)
+  message(FATAL_ERROR "ENABLE_OPENGL_CORE and ENABLE_OPENGL_ES2 are mutually exclusive")
+endif()
+if((ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2) AND NOT ENABLE_OPENGL)
+  message(FATAL_ERROR "The GLCore backends require ENABLE_OPENGL=ON")
+endif()
 option(ENABLE_LOGGING         "Enable Logging"                               ON)
 
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
@@ -163,6 +172,13 @@ endif()
 
 if(ENABLE_OPENGL)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL)
+endif()
+
+if(ENABLE_OPENGL_CORE)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_CORE)
+endif()
+if(ENABLE_OPENGL_ES2)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_ES2)
 endif()
 
 if(ENABLE_FIFEGUI)
@@ -391,6 +407,7 @@ set(
   src/fife/audio/effects/soundfilter.cpp
   src/fife/controller/engine.cpp
   src/fife/controller/enginesettings.cpp
+  src/fife/video/glcore/glcore_names.cpp
   src/fife/eventchannel/eventmanager.cpp
   src/fife/eventchannel/joystick/joystick.cpp
   src/fife/eventchannel/joystick/joystickmanager.cpp
@@ -527,6 +544,7 @@ set(
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
   src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.cpp
+  src/fife/gui/fifechan/base/glcore/glcore_gui_graphics.cpp
   src/fife/gui/fifechan/console/commandline.cpp
   src/fife/gui/fifechan/console/console.cpp
   src/fife/gui/fifechan/widgets/animationicon.cpp
@@ -543,6 +561,52 @@ set(
 
 source_group("fife"                FILES ${FIFE_SOURCES})
 source_group("fife.gui.fifegui"    FILES ${FIFE_FIFEGUI_SOURCES})
+
+# Generated glad sources are third-party code: keep warnings but do not let
+# their old-style casts fail the build.
+set_source_files_properties(
+  src/fife/video/glcore/glad/core/glad.cpp
+  src/fife/video/glcore/glad/es2/glad.cpp
+  PROPERTIES COMPILE_WARNING_AS_ERROR OFF COMPILE_OPTIONS "-Wno-old-style-cast"
+)
+
+# Shader-based GLCore backend (optional, mutually exclusive profiles).
+set(FIFE_GLCORE_SOURCES)
+set(FIFE_GLCORE_HEADERS)
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
+  list(APPEND FIFE_GLCORE_SOURCES
+    src/fife/video/glcore/glcontext.cpp
+    src/fife/video/glcore/glad/glcore_loader.cpp
+    src/fife/video/glcore/shader.cpp
+    src/fife/video/glcore/shaderloader.cpp
+    src/fife/video/glcore/buffer.cpp
+    src/fife/video/glcore/vertexarray.cpp
+    src/fife/video/glcore/glcorestate.cpp
+    src/fife/video/glcore/renderbackendgl.cpp
+    src/fife/video/glcore/glcoreimage.cpp
+    src/fife/video/glcore/glcore_draw.cpp
+  )
+  list(APPEND FIFE_GLCORE_HEADERS
+    src/fife/video/glcore/glcontext.h
+    src/fife/video/glcore/glad/glcore_loader.h
+    src/fife/video/glcore/shader.h
+    src/fife/video/glcore/shaderloader.h
+    src/fife/video/glcore/buffer.h
+    src/fife/video/glcore/vertexarray.h
+    src/fife/video/glcore/glcorestate.h
+    src/fife/video/glcore/renderbackendgl.h
+    src/fife/video/glcore/glcoreimage.h
+    src/fife/video/glcore/glcore_bridge.h
+    src/fife/video/glcore/glcore_draw.h
+  )
+  if(ENABLE_OPENGL_CORE)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/core/glad.cpp)
+  endif()
+  if(ENABLE_OPENGL_ES2)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/es2/glad.cpp)
+  endif()
+  source_group("fife.video.glcore" FILES ${FIFE_GLCORE_SOURCES} ${FIFE_GLCORE_HEADERS})
+endif()
 
 #------------------------------------------------------------------------------
 # Header Files
@@ -571,6 +635,7 @@ set(
   src/fife/audio/effects/soundfilter.h
   src/fife/controller/engine.h
   src/fife/controller/enginesettings.h
+  src/fife/video/glcore/glcore_names.h
   src/fife/eventchannel/eventmanager.h
   src/fife/eventchannel/base/event.h
   src/fife/eventchannel/base/ilistener.h
@@ -768,6 +833,7 @@ set(
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.h
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.h
   src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.h
+  src/fife/gui/fifechan/base/glcore/glcore_gui_graphics.h
   src/fife/gui/fifechan/console/commandline.h
   src/fife/gui/fifechan/console/console.h
   src/fife/gui/fifechan/widgets/animationicon.h
@@ -1487,6 +1553,8 @@ if(BUILD_LIBRARY)
     PRIVATE
       ${FIFE_SOURCES}
       ${FIFE_FIFEGUI_SOURCES}
+      ${FIFE_GLCORE_SOURCES}
+      ${FIFE_GLCORE_HEADERS}
   )
 
   target_include_directories(fife_lib

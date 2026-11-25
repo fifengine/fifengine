@@ -130,6 +130,15 @@ namespace FIFE
              */
             virtual std::string const & getName() const = 0;
 
+            /** Human-readable description of the active renderer/driver, for
+             * startup logging. Defaults to "n/a" for backends that have no
+             * additional information to report.
+             */
+            virtual std::string getRenderDescription() const
+            {
+                return "n/a";
+            }
+
             /** Called when a new frame starts.
              */
             virtual void startFrame();
@@ -222,6 +231,29 @@ namespace FIFE
              */
             virtual void addImageToArray(
                 uint32_t id, Rect const & rec, float const * st, uint8_t alpha, uint8_t const * rgba) = 0;
+
+            /** Non-pure batching hooks. Defaults fall back to the single-texture
+             * path; backends with native Z/overlay support override them.
+             */
+            virtual void addImageToArray(
+                Rect const & rect,
+                uint32_t id1,
+                float const * st1,
+                uint32_t id2,
+                float const * st2,
+                uint8_t alpha,
+                uint8_t const * rgba);
+            virtual void addImageToArrayZ(
+                uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba);
+            virtual void addImageToArrayZ(
+                Rect const & rect,
+                float vertexZ,
+                uint32_t id1,
+                float const * st1,
+                uint32_t id2,
+                float const * st2,
+                uint8_t alpha,
+                uint8_t const * rgba);
 
             /** Dirty helper function to change the render infos
              */

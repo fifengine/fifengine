@@ -4,6 +4,8 @@
 // Corresponding header include
 #include "layercache.h"
 
+#include "video/glcore/glcore_names.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -193,7 +195,8 @@ namespace FIFE
         m_camera(camera),
         m_layer(nullptr),
         m_needSorting(
-            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled())),
+            !(isGlDepthBackend(RenderBackend::instance()->getName()) &&
+              RenderBackend::instance()->isDepthBufferEnabled())),
         m_zMin(0.0),
         m_zMax(0.0),
         m_zoom(camera->getZoom()),

@@ -223,6 +223,20 @@ namespace FIFE
         return backend_name;
     }
 
+    std::string RenderBackendOpenGL::getRenderDescription() const
+    {
+        auto const str = [](GLenum name) -> std::string {
+            GLubyte const * value = glGetString(name);
+            return value != nullptr ? reinterpret_cast<char const *>(value) : "unknown";
+        };
+        return std::format(
+            "OpenGL vendor={} renderer={} version={} GLSL={}",
+            str(GL_VENDOR),
+            str(GL_RENDERER),
+            str(GL_VERSION),
+            str(GL_SHADING_LANGUAGE_VERSION));
+    }
+
     void RenderBackendOpenGL::init(std::string const & driver)
     {
         // 1. Set hints BEFORE initialization

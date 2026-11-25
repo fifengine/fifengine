@@ -60,6 +60,8 @@
 #include "model/structures/particlemanager.h"
 #include "pathfinder/routepather/routepather.h"
 #include "version.hpp"
+#include "video/glcore/glcore_names.h"
+#include "video/glcore/renderbackendgl.h"
 #include "video/image.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "view/renderers/blockinginforenderer.h"
@@ -92,6 +94,38 @@ namespace FIFE
         {
             static Logger log(LM_CONTROLLER);
             return log;
+        }
+
+        std::string joinNames(std::vector<std::string> const & names)
+        {
+            std::string result;
+            for (auto const & name : names) {
+                if (!result.empty()) {
+                    result += ", ";
+                }
+                result += name;
+            }
+            return result.empty() ? "(none)" : result;
+        }
+
+        char const * onOff(bool value)
+        {
+            return value ? "on" : "off";
+        }
+
+        char const * filterName(TextureFiltering filter)
+        {
+            switch (filter) {
+            case TEXTURE_FILTER_NONE:
+                return "none";
+            case TEXTURE_FILTER_BILINEAR:
+                return "bilinear";
+            case TEXTURE_FILTER_TRILINEAR:
+                return "trilinear";
+            case TEXTURE_FILTER_ANISOTROPIC:
+                return "anisotropic";
+            }
+            return "unknown";
         }
     } // namespace
 
@@ -412,6 +446,22 @@ namespace FIFE
         } else if (rbackend == "SDL") {
             m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
             FL_LOG(_log(), "SDL Render backend created");
+        } else if (rbackend == "OpenGL_CORE") {
+#ifdef HAVE_OPENGL_CORE
+            m_renderbackend = std::make_unique<RenderBackendGLCore>(m_settings.getColorKey());
+            FL_LOG(_log(), "OpenGL core render backend created");
+#else
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
+            FL_WARN(_log(), "OpenGL_CORE is not compiled in; falling back to SDL");
+#endif
+        } else if (rbackend == "GLES2") {
+#ifdef HAVE_OPENGL_ES2
+            m_renderbackend = std::make_unique<RenderBackendGLES2>(m_settings.getColorKey());
+            FL_LOG(_log(), "OpenGL ES 2.0 render backend created");
+#else
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
+            FL_WARN(_log(), "GLES2 is not compiled in; falling back to SDL");
+#endif
         } else {
 #ifdef HAVE_OPENGL
             m_renderbackend = std::make_unique<RenderBackendOpenGL>(m_settings.getColorKey());
@@ -427,6 +477,7 @@ namespace FIFE
 #endif
         }
         FL_LOG(_log(), "Initializing render backend");
+        FL_LOG(_log(), std::format("Requested render backend: {}", m_settings.getRenderBackend()));
         m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
         // we always set this to false
         // m_renderbackend->setAlphaOptimizerEnabled(false);
@@ -443,6 +494,22 @@ namespace FIFE
             m_renderbackend->setFrameLimitEnabled(true);
             m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
         }
+        FL_LOG(
+            _log(),
+            std::format(
+                "Backend settings: filter={} mipmap={} NPOT={} compression={} depth={} lighting={} alphaTest={:.2f} "
+                "colorKey={} vsync={} frameLimit={}",
+                filterName(m_renderbackend->getTextureFiltering()),
+                onOff(m_renderbackend->isMipmappingEnabled()),
+                onOff(m_renderbackend->isNPOTEnabled()),
+                onOff(m_renderbackend->isImageCompressingEnabled()),
+                onOff(m_renderbackend->isDepthBufferEnabled()),
+                m_renderbackend->getLightingModel(),
+                m_renderbackend->getAlphaTestValue(),
+                onOff(m_renderbackend->isColorKeyEnabled()),
+                onOff(m_renderbackend->isVSyncEnabled()),
+                m_renderbackend->isFrameLimitEnabled() ? std::format("{} fps", m_renderbackend->getFrameLimit()) :
+                                                         std::string("off")));
 
         // Populate the driver list before validating the setting:
         // fillDeviceCaps() uses SDL3's static driver tables and is safe to
@@ -475,8 +542,15 @@ namespace FIFE
         // SDL hints must be set before the video subsystem initializes
         EventManager::applyInputHints();
 
+        FL_LOG(_log(), std::format("Requested video driver: '{}'", m_settings.getVideoDriver()));
+        FL_LOG(_log(), std::format("Available video drivers: {}", joinNames(m_devcaps.getAvailableVideoDrivers())));
         // init backend with selected video driver or default
         m_renderbackend->init(driver);
+        char const * const activeVideoDriver = SDL_GetCurrentVideoDriver();
+        FL_LOG(
+            _log(),
+            std::format(
+                "Effective video driver: '{}'", activeVideoDriver != nullptr ? activeVideoDriver : "SDL default"));
 
         // in case of SDL we use this to create the SDL_Renderer
         driver = m_settings.getSDLDriver();
@@ -491,8 +565,24 @@ namespace FIFE
             m_devcaps.setRenderDriverName(driver);
         }
 
+        FL_LOG(_log(), std::format("Requested SDL render driver: '{}'", m_settings.getSDLDriver()));
+        FL_LOG(
+            _log(), std::format("Available SDL render drivers: {}", joinNames(m_devcaps.getAvailableRenderDrivers())));
+
         FL_LOG(_log(), "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
+        if (m_devcaps.getDisplayCount() > 0) {
+            FL_LOG(
+                _log(),
+                std::format(
+                    "Displays: {}; primary '{}' {}x{} @ {:.1f} Hz, format 0x{:x}",
+                    m_devcaps.getDisplayCount(),
+                    m_devcaps.getDisplayName(0),
+                    m_devcaps.getDesktopWidth(0),
+                    m_devcaps.getDesktopHeight(0),
+                    static_cast<double>(m_devcaps.getDesktopRefreshRate(0)),
+                    m_devcaps.getDesktopFormat(0)));
+        }
 
         if (headless) {
             // Dummy backends never touch SDL video or create a Window. Events
@@ -508,6 +598,8 @@ namespace FIFE
             FL_LOG(_log(), "Creating main screen");
             m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
             FL_LOG(_log(), "Main screen created");
+            FL_LOG(_log(), std::format("Active render backend: {}", m_renderbackend->getName()));
+            FL_LOG(_log(), std::format("Renderer: {}", m_renderbackend->getRenderDescription()));
             applyGUIScale();
         } else {
             // Keep the existing display/window code untouched.
@@ -591,7 +683,7 @@ namespace FIFE
         winSettings.icon        = m_settings.getWindowIcon();
         winSettings.resizable   = m_settings.isWindowResizable();
         winSettings.vsync       = m_settings.isVSync();
-        winSettings.opengl      = (dynamic_cast<RenderBackendOpenGL*>(std::to_address(m_renderbackend)) != nullptr);
+        winSettings.opengl      = isGlDepthBackend(rbackend);
         winSettings.windowMode  = m_settings.isFullScreen() ? WindowMode::Fullscreen : WindowMode::Windowed;
         winSettings.scalingMode = static_cast<ScalingMode>(m_settings.getWindowScalingMode());
 
@@ -657,6 +749,8 @@ namespace FIFE
         FL_LOG(_log(), "Creating main screen");
         m_renderbackend->createMainScreen(m_settings.getWindowTitle(), m_settings.getWindowIcon());
         FL_LOG(_log(), "Main screen created");
+        FL_LOG(_log(), std::format("Active render backend: {}", m_renderbackend->getName()));
+        FL_LOG(_log(), std::format("Renderer: {}", m_renderbackend->getRenderDescription()));
         m_window->show();
         // Showing a window can apply a pending fullscreen state; publish the
         // final size/state so startup settings match the window.

@@ -34,6 +34,7 @@ namespace FIFE
             RenderBackendSDL& operator=(RenderBackendSDL const &) = delete;
 
             std::string const & getName() const override;
+            std::string getRenderDescription() const override;
             void endFrame() override;
             void init(std::string const & driver) override;
             void clearBackBuffer() override;

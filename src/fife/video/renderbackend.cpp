@@ -116,6 +116,42 @@ namespace FIFE
         // Headless backends have no image output by default.
     }
 
+    void RenderBackend::addImageToArray(
+        Rect const & rect,
+        uint32_t id1,
+        float const * st1,
+        [[maybe_unused]] uint32_t id2,
+        [[maybe_unused]] float const * st2,
+        uint8_t alpha,
+        uint8_t const * rgba)
+    {
+        addImageToArray(id1, rect, st1, alpha, rgba);
+    }
+
+    void RenderBackend::addImageToArrayZ(
+        uint32_t id,
+        Rect const & rect,
+        [[maybe_unused]] float vertexZ,
+        float const * st,
+        uint8_t alpha,
+        uint8_t const * rgba)
+    {
+        addImageToArray(id, rect, st, alpha, rgba);
+    }
+
+    void RenderBackend::addImageToArrayZ(
+        Rect const & rect,
+        [[maybe_unused]] float vertexZ,
+        uint32_t id1,
+        float const * st1,
+        [[maybe_unused]] uint32_t id2,
+        [[maybe_unused]] float const * st2,
+        uint8_t alpha,
+        uint8_t const * rgba)
+    {
+        addImageToArray(id1, rect, st1, alpha, rgba);
+    }
+
     void RenderBackend::pushClipArea(Rect const & cliparea, bool clear)
     {
         ClipInfo ci;

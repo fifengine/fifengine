@@ -4,6 +4,8 @@
 // Corresponding header include
 #include "camera.h"
 
+#include "video/glcore/glcore_names.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cmath>
@@ -1020,7 +1022,7 @@ found_non_transparent_pixel:;
             // for the case that the viewport size is not the same as the screen size,
             // we have to change the values for OpenGL backend
             Rect rec(0, static_cast<int32_t>(m_renderbackend->getHeight()) - m_viewport.h, m_viewport.w, m_viewport.h);
-            if (m_renderbackend->getName() == "SDL") {
+            if (!usesOpenGLRenderTargetClip(m_renderbackend->getName())) {
                 rec = m_viewport;
             }
             m_renderbackend->attachRenderTarget(cacheImage, true);

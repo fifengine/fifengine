@@ -27,6 +27,11 @@ namespace FIFE
         return name;
     }
 
+    std::string RenderBackendDummy::getRenderDescription() const
+    {
+        return "headless (no window)";
+    }
+
     uint32_t RenderBackendDummy::getWidth() const
     {
         return m_width;

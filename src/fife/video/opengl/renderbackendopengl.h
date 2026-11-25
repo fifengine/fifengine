@@ -35,6 +35,7 @@ namespace FIFE
             RenderBackendOpenGL& operator=(RenderBackendOpenGL const &) = delete;
 
             std::string const & getName() const override;
+            std::string getRenderDescription() const override;
             void endFrame() override;
             void init(std::string const & driver) override;
             void clearBackBuffer() override;
@@ -58,18 +59,19 @@ namespace FIFE
             void renderVertexArrays() override;
             void addImageToArray(
                 uint32_t id, Rect const & rec, float const * st, uint8_t alpha, uint8_t const * rgba) override;
-            virtual void addImageToArray(
+            void addImageToArray(
                 Rect const & rect,
                 uint32_t id1,
                 float const * st1,
                 uint32_t id2,
                 float const * st2,
                 uint8_t alpha,
-                uint8_t const * rgba);
+                uint8_t const * rgba) override;
 
-            virtual void addImageToArrayZ(
-                uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba);
-            virtual void addImageToArrayZ(
+            void addImageToArrayZ(
+                uint32_t id, Rect const & rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
+                override;
+            void addImageToArrayZ(
                 Rect const & rect,
                 float vertexZ,
                 uint32_t id1,
@@ -77,7 +79,7 @@ namespace FIFE
                 uint32_t id2,
                 float const * st2,
                 uint8_t alpha,
-                uint8_t const * rgba);
+                uint8_t const * rgba) override;
 
             void changeRenderInfos(
                 RenderDataType type,

@@ -38,6 +38,7 @@ namespace FIFE
             RenderBackendDummy& operator=(RenderBackendDummy const &) = delete;
 
             std::string const & getName() const override;
+            std::string getRenderDescription() const override;
             uint32_t getWidth() const override;
             uint32_t getHeight() const override;
             Rect const & getArea() const override;
