@@ -78,7 +78,7 @@ namespace FIFE
             try {
                 VFSSource* source = provider->createSource(path);
                 return source;
-            } catch (Exception const & ex) {
+            } catch (Exception const &) {
                 // FL_WARN(
                 // _log(),
                 // std::format(
