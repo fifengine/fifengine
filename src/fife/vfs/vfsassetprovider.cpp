@@ -19,7 +19,7 @@ namespace FIFE
         return m_vfs->exists(req.source);
     }
 
-    AssetHandle VfsAssetProvider::resolve(AssetRequest const &) const
+    AssetHandle VfsAssetProvider::resolve([[maybe_unused]] AssetRequest const & req) const
     {
         assert("Asset request source must not be empty" && !req.source.empty());
         return AssetHandle{m_nextId++};

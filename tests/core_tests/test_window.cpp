@@ -303,7 +303,7 @@ namespace
     std::string getEnvironmentVariable(char const * name)
     {
 #ifdef _MSC_VER
-        char * value = nullptr;
+        char* value   = nullptr;
         size_t length = 0;
         if (_dupenv_s(&value, &length, name) != 0) {
             return {};

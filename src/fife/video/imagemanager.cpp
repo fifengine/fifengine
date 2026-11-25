@@ -154,7 +154,7 @@ namespace FIFE
     {
         assert(res);
         ResourceHandle const handle = res->getHandle();
-        assert(!(exists(handle) || exists(name)));
+        assert(!(exists(handle) || exists(res->getName())));
 
         ImagePtr const resptr(res.release());
 

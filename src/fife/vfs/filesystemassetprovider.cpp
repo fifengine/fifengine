@@ -31,7 +31,7 @@ namespace FIFE
         return direct.is_absolute() && fs::exists(direct);
     }
 
-    AssetHandle FilesystemAssetProvider::resolve(AssetRequest const &) const
+    AssetHandle FilesystemAssetProvider::resolve([[maybe_unused]] AssetRequest const & req) const
     {
         assert("Asset request source must not be empty" && !req.source.empty());
         return AssetHandle{m_nextId++};

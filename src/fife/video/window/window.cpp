@@ -47,8 +47,7 @@ namespace FIFE
         // SDL_DisplayID. Fall back to the first display for invalid indices.
         int const displayCount = Display::getDisplayCount();
         if (displayCount > 0) {
-            m_settings.display =
-                m_settings.display >= 0 && m_settings.display < displayCount ? m_settings.display : 0;
+            m_settings.display = m_settings.display >= 0 && m_settings.display < displayCount ? m_settings.display : 0;
         } else {
             // SDL guarantees at least one display after SDL_Init(SDL_INIT_VIDEO),
             // but stay defensive: keep a valid index and let the placement code
