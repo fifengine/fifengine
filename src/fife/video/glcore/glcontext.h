@@ -31,10 +31,10 @@ namespace FIFE
             int32_t msaaSamples{0};
     };
 
-    GLContextConfig makeCore33Config();
-    GLContextConfig makeES2Config();
+    FIFE_API GLContextConfig makeCore33Config();
+    FIFE_API GLContextConfig makeES2Config();
 
-    class GLContext
+    class FIFE_API GLContext
     {
         public:
             explicit GLContext(GLContextConfig const & config);
@@ -70,7 +70,7 @@ namespace FIFE
             bool m_procsLoaded{false};
     };
 
-    void glcoreGetDrawableSize(SDL_Window* window, uint32_t& w, uint32_t& h);
+    FIFE_API void glcoreGetDrawableSize(SDL_Window* window, uint32_t& w, uint32_t& h);
 } // namespace FIFE
 
 #endif

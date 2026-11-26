@@ -22,9 +22,9 @@ namespace FIFE
         Light
     };
 
-    char const * glcorePreamble(GLProfile profile);
+    FIFE_API char const * glcorePreamble(GLProfile profile);
 
-    class ShaderLoader
+    class FIFE_API ShaderLoader
     {
         public:
             explicit ShaderLoader(GLProfile profile);

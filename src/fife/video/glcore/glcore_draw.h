@@ -27,26 +27,26 @@ namespace FIFE
         /** GL_VENDOR / GL_RENDERER / GL_VERSION / GLSL version as one string.
          * Implemented here so no GL call leaks into the shell TU.
          */
-        std::string renderDescription();
+        FIFE_API std::string renderDescription();
 
         /** Forget cached GL object names after a context is recreated. */
-        void reset();
+        FIFE_API void reset();
 
-        void clear();
-        void setScissor(int32_t x, int32_t y, int32_t w, int32_t h);
-        void setViewport(int32_t x, int32_t y, int32_t w, int32_t h);
-        void enableBlend();
-        void clearStencil();
+        FIFE_API void clear();
+        FIFE_API void setScissor(int32_t x, int32_t y, int32_t w, int32_t h);
+        FIFE_API void setViewport(int32_t x, int32_t y, int32_t w, int32_t h);
+        FIFE_API void enableBlend();
+        FIFE_API void clearStencil();
 
-        uint32_t createFramebuffer(int32_t w, int32_t h, uint32_t& outTexture);
-        void bindFramebuffer(uint32_t fbo, int32_t w, int32_t h);
-        void deleteFramebuffer(uint32_t fbo, uint32_t texture);
-        void readRGBA(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t* out);
+        FIFE_API uint32_t createFramebuffer(int32_t w, int32_t h, uint32_t& outTexture);
+        FIFE_API void bindFramebuffer(uint32_t fbo, int32_t w, int32_t h);
+        FIFE_API void deleteFramebuffer(uint32_t fbo, uint32_t texture);
+        FIFE_API void readRGBA(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t* out);
 
         /** Flushes primitive and textured-quad batches. All GL entry points
          * used here come from the glad loader chosen for the active profile.
          */
-        void drawBatches(
+        FIFE_API void drawBatches(
             float const * primitiveData,
             size_t primitiveFloats,
             std::vector<ImageBatchView> const & images,

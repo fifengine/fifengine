@@ -10,12 +10,12 @@
 
 namespace FIFE
 {
-    bool isGlDepthBackend(std::string const & backendName);
-    bool usesOpenGLRenderTargetClip(std::string const & backendName);
-    bool usesGLRgba32UploadFormat(std::string const & backendName);
-    bool bindsColorLikeSDL(std::string const & backendName);
-    bool isCompiledRenderBackend(std::string const & backendName);
-    std::string resolveCompiledBackendName(std::string const & requested);
+    FIFE_API bool isGlDepthBackend(std::string const & backendName);
+    FIFE_API bool usesOpenGLRenderTargetClip(std::string const & backendName);
+    FIFE_API bool usesGLRgba32UploadFormat(std::string const & backendName);
+    FIFE_API bool bindsColorLikeSDL(std::string const & backendName);
+    FIFE_API bool isCompiledRenderBackend(std::string const & backendName);
+    FIFE_API std::string resolveCompiledBackendName(std::string const & requested);
 } // namespace FIFE
 
 #endif

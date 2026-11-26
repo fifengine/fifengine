@@ -12,7 +12,7 @@
 
 namespace FIFE
 {
-    class GLCoreState
+    class FIFE_API GLCoreState
     {
         public:
             GLCoreState();

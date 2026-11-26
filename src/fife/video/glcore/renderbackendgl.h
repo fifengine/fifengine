@@ -19,7 +19,7 @@ namespace FIFE
     /** Shared shader-based backend shell. Inherits the safe no-op defaults of
      * RenderBackendDummy for primitives that need no special handling yet.
      */
-    class RenderBackendGL : public RenderBackendDummy
+    class FIFE_API RenderBackendGL : public RenderBackendDummy
     {
         public:
             RenderBackendGL(SDL_Color const & colorkey, GLContextConfig config, std::string name);
@@ -243,13 +243,13 @@ namespace FIFE
                 bool filled);
     };
 
-    class RenderBackendGLCore final : public RenderBackendGL
+    class FIFE_API RenderBackendGLCore final : public RenderBackendGL
     {
         public:
             explicit RenderBackendGLCore(SDL_Color const & colorkey);
     };
 
-    class RenderBackendGLES2 final : public RenderBackendGL
+    class FIFE_API RenderBackendGLES2 final : public RenderBackendGL
     {
         public:
             explicit RenderBackendGLES2(SDL_Color const & colorkey);

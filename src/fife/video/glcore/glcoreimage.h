@@ -15,9 +15,10 @@ namespace FIFE
 {
     class IResourceLoader;
 
-    std::array<float, 4> glcoreAtlasTexCoords(Rect const & region, uint32_t width, uint32_t height, bool halfPixel);
+    FIFE_API std::array<float, 4> glcoreAtlasTexCoords(
+        Rect const & region, uint32_t width, uint32_t height, bool halfPixel);
 
-    class GLCoreImage final : public Image
+    class FIFE_API GLCoreImage final : public Image
     {
         public:
             explicit GLCoreImage(IResourceLoader* loader = nullptr);

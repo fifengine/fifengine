@@ -13,7 +13,7 @@ namespace FIFE
     enum class GLProfile : uint8_t;
 
     /** Loads the generated glad entry points for the active profile. */
-    bool glcoreLoadProcs(GLProfile profile);
+    FIFE_API bool glcoreLoadProcs(GLProfile profile);
 } // namespace FIFE
 
 #endif

@@ -13,7 +13,7 @@
 
 namespace FIFE
 {
-    class GLCoreShader
+    class FIFE_API GLCoreShader
     {
         public:
             GLCoreShader(GLProfile profile, char const * vsSource, char const * fsSource);

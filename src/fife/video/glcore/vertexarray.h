@@ -11,7 +11,7 @@
 
 namespace FIFE
 {
-    class GLCoreVertexArray
+    class FIFE_API GLCoreVertexArray
     {
         public:
             GLCoreVertexArray();

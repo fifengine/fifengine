@@ -11,7 +11,7 @@
 
 namespace FIFE
 {
-    class GLCoreBuffer
+    class FIFE_API GLCoreBuffer
     {
         public:
             enum class Kind : uint8_t
@@ -39,7 +39,7 @@ namespace FIFE
             uint32_t m_usage{0};
     };
 
-    uint32_t glcoreQuadIndexBuffer();
+    FIFE_API uint32_t glcoreQuadIndexBuffer();
 } // namespace FIFE
 
 #endif

@@ -1605,6 +1605,11 @@ if(BUILD_LIBRARY)
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
   )
 
+  # The generated glad headers have their own export mechanism: GLAD uses GLAPI.
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+    target_compile_definitions(fife_lib PRIVATE GLAD_GLAPI_EXPORT GLAD_GLAPI_EXPORT_BUILD)
+  endif()
+
   # do not allow undefined symbols in the final link step, to catch missing dependencies early.
   target_link_options(fife_lib PRIVATE
     $<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--no-undefined>
@@ -1618,6 +1623,10 @@ if(BUILD_LIBRARY)
 
   # Provide a namespace alias for the library (fife::fife)
   add_library(fife::fife ALIAS fife)
+
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+    target_compile_definitions(fife PUBLIC GLAD_GLAPI_EXPORT)
+  endif()
 
   # expand conditionally outside target_sources(),
   # because generator expressions doesnt work there. 💩
