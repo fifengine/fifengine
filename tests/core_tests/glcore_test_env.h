@@ -18,8 +18,8 @@ namespace glcore_test
     inline void skipOrFail(char const * reason)
     {
 #ifdef _MSC_VER
-        char* required   = nullptr;
-        size_t length    = 0;
+        char* required = nullptr;
+        size_t length  = 0;
         std::string flag;
         if (_dupenv_s(&required, &length, "FIFE_GL_REQUIRE_CONTEXT") == 0) {
             flag = required != nullptr ? required : "";

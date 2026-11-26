@@ -1238,6 +1238,11 @@ if(BUILD_PYTHON_BINDINGS)
   message(STATUS "Python includes:      ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python module target: Python3::Module")
 
+  # Note: SWIG shows many redefinition warnings 302.
+  # Every .i file is directly added to the generated fife.i,
+  # while some of the interface files also %include dependencies.
+  # For example, instance.i includes ivisual.i and location.i.
+  # So SWIG parses the declarations more than once, which explains the duplicate identifiers.
   foreach(filename ${FIFE_SWIG})
     list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
