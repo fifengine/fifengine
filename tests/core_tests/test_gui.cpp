@@ -142,16 +142,23 @@ TEST_CASE("RenderBackendOpenGL_ReattachesAfterWindowRecreation", "[renderbackend
 {
     environment const env;
     Window window;
+    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+
+    try {
+        renderbackend.init("");
+    } catch (FIFE::SDLException const &) {
+        SKIP("OpenGL video subsystem not available in this environment");
+    }
+
     try {
         window.create(WindowSettings{.width = 800, .height = 600, .opengl = true, .windowMode = WindowMode::Windowed});
     } catch (FIFE::SDLException const &) {
-        SKIP("OpenGL not available in this environment");
+        SKIP("OpenGL window not available in this environment");
     }
 
-    RenderBackendOpenGL renderbackend(SDL_Color{.r = 0, .g = 0, .b = 0, .a = 255});
+    renderbackend.setWindowObject(&window);
+
     try {
-        renderbackend.init("");
-        renderbackend.setWindowObject(&window);
         renderbackend.createMainScreen("FIFE", "");
     } catch (FIFE::SDLException const &) {
         SKIP("OpenGL context not available in this environment");

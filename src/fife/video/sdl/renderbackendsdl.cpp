@@ -111,6 +111,12 @@ namespace FIFE
         return backend_name;
     }
 
+    std::string RenderBackendSDL::getRenderDescription() const
+    {
+        char const * const name = m_renderer != nullptr ? SDL_GetRendererName(m_renderer) : nullptr;
+        return std::format("SDL renderer: {}", name != nullptr ? name : "not created");
+    }
+
     void RenderBackendSDL::init(std::string const & driver)
     {
         // 1. Set hints BEFORE initialization

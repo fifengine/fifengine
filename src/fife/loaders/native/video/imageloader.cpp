@@ -4,6 +4,8 @@
 // Corresponding header include
 #include "imageloader.h"
 
+#include "video/glcore/glcore_names.h"
+
 // Standard C++ library includes
 #include <format>
 #include <memory>
@@ -129,8 +131,9 @@ namespace FIFE
 
         // Determine target pixel format: use RGBA32 (byte order [R,G,B,A] in memory on all platforms)
         // for the OpenGL backend to match GL_RGBA/GL_UNSIGNED_BYTE uploads.
-        auto const target_fmt =
-            (RenderBackend::instance()->getName() == "SDL") ? SDL_PIXELFORMAT_RGBA8888 : SDL_PIXELFORMAT_RGBA32;
+        auto const target_fmt = usesGLRgba32UploadFormat(RenderBackend::instance()->getName()) ?
+                                    SDL_PIXELFORMAT_RGBA32 :
+                                    SDL_PIXELFORMAT_RGBA8888;
 
         // Convert if needed
         if (surface->format != target_fmt) {

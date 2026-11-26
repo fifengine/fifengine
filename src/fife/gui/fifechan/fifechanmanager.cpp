@@ -35,6 +35,7 @@
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/mouse/mouseevent.h"
 #include "gui/fifechan/base/dummy/dummy_gui_graphics.h"
+#include "gui/fifechan/base/glcore/glcore_gui_graphics.h"
 #include "gui/fifechan/base/gui_imageloader.h"
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
 #include "gui/fifechan/console/console.h"
@@ -213,6 +214,8 @@ namespace FIFE
             dynamic_cast<SdlGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else if (m_backend == "OpenGL") {
             dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics.get())->updateTarget();
+        } else if (m_backend == "OpenGL_CORE" || m_backend == "GLES2") {
+            dynamic_cast<GLCoreGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         } else {
             dynamic_cast<DummyGuiGraphics*>(m_gui_graphics.get())->updateTarget();
         }
@@ -263,6 +266,8 @@ namespace FIFE
             m_gui_graphics = std::make_unique<SdlGuiGraphics>();
         } else if (backend == "OpenGL") {
             m_gui_graphics = std::make_unique<OpenGLGuiGraphics>();
+        } else if (backend == "OpenGL_CORE" || backend == "GLES2") {
+            m_gui_graphics = std::make_unique<GLCoreGuiGraphics>();
         } else if (backend == "DUMMY_NULL" || backend == "DUMMY_SURFACE") {
             m_gui_graphics = std::make_unique<DummyGuiGraphics>();
         } else {

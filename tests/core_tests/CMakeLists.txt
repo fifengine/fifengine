@@ -20,6 +20,7 @@ set(
   test_dat2.cpp
   test_renderbackend_dummy.cpp
   test_enginesettings.cpp
+  test_engine_log.cpp
   test_event_touch.cpp
   test_fife_math.cpp
   test_gui.cpp
@@ -54,6 +55,24 @@ set(
   test_window.cpp
   test_speechbubble.cpp
 )
+
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
+  list(APPEND FIFE_CORE_TEST_SOURCES
+    test_glcore_buffers.cpp
+    test_glcore_context.cpp
+    test_glcore_es2.cpp
+    test_glcore_es2_render.cpp
+    test_glcore_features.cpp
+    test_glcore_gui.cpp
+    test_glcore_hooks.cpp
+    test_glcore_image.cpp
+    test_glcore_primitives.cpp
+    test_glcore_selection.cpp
+    test_glcore_shaders.cpp
+    test_glcore_state.cpp
+    test_glcore_validation.cpp
+  )
+endif()
 
 if(ENABLE_MOVIE)
   list(APPEND FIFE_CORE_TEST_SOURCES test_movie.cpp)
@@ -158,6 +177,30 @@ set_tests_properties(all_tests PROPERTIES LABELS core WORKING_DIRECTORY ${PROJEC
 
 add_test(NAME all_tests_dummy COMMAND all_tests "[dummy]")
 set_tests_properties(all_tests_dummy PROPERTIES LABELS dummy WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+# Add runtime DLL directories to PATH for Windows CTest runs. What a shitshow...
+if(WIN32)
+  set(_FIFE_TEST_RUNTIME_DLL_DIRS
+    "${PROJECT_BINARY_DIR}"
+    "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/install/bin"
+    "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/install/lib"
+  )
+  if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+    list(APPEND _FIFE_TEST_RUNTIME_DLL_DIRS
+      "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<IF:$<CONFIG:Debug>,debug/bin,bin>"
+    )
+  endif()
+
+  set(_FIFE_TEST_RUNTIME_ENVIRONMENT_MODIFICATION)
+  foreach(_runtime_dll_dir IN LISTS _FIFE_TEST_RUNTIME_DLL_DIRS)
+    list(APPEND _FIFE_TEST_RUNTIME_ENVIRONMENT_MODIFICATION
+      "PATH=path_list_prepend:${_runtime_dll_dir}"
+    )
+  endforeach()
+  set_tests_properties(all_tests all_tests_dummy PROPERTIES
+    ENVIRONMENT_MODIFICATION "${_FIFE_TEST_RUNTIME_ENVIRONMENT_MODIFICATION}"
+  )
+endif()
 
 set_target_properties(all_tests PROPERTIES
   CXX_STANDARD 20

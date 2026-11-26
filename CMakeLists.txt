@@ -94,12 +94,23 @@ include(FifeDpiManifest)
 option(BUILD_SHARED_LIBS      "Build using shared libraries"                 ON)
 
 option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
+option(ENABLE_OPENGL_CORE     "Enable OpenGL 3.3 core backend"               ON)
+option(ENABLE_OPENGL_ES2      "Enable OpenGL ES 2.0 backend"                OFF)
+
 option(ENABLE_FIFEGUI         "Enable FifeGUI subsystem"                     ON)
 option(ENABLE_LOGGING         "Enable Logging"                               ON)
 
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
 option(BUILD_TESTS            "Build C++ tests"                              ON)
+
+if(ENABLE_OPENGL_CORE AND ENABLE_OPENGL_ES2)
+  message(FATAL_ERROR "ENABLE_OPENGL_CORE and ENABLE_OPENGL_ES2 are mutually exclusive")
+endif()
+
+if((ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2) AND NOT ENABLE_OPENGL)
+  message(FATAL_ERROR "The backends OPENGL_CORE and OPENGL_ES2 require ENABLE_OPENGL=ON")
+endif()
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
 # It is not a build option, because it must be set before project().
@@ -163,6 +174,14 @@ endif()
 
 if(ENABLE_OPENGL)
   target_compile_definitions(fife_options INTERFACE HAVE_OPENGL)
+endif()
+
+if(ENABLE_OPENGL_CORE)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_CORE)
+endif()
+
+if(ENABLE_OPENGL_ES2)
+  target_compile_definitions(fife_options INTERFACE HAVE_OPENGL_ES2)
 endif()
 
 if(ENABLE_FIFEGUI)
@@ -391,6 +410,7 @@ set(
   src/fife/audio/effects/soundfilter.cpp
   src/fife/controller/engine.cpp
   src/fife/controller/enginesettings.cpp
+  src/fife/video/glcore/glcore_names.cpp
   src/fife/eventchannel/eventmanager.cpp
   src/fife/eventchannel/joystick/joystick.cpp
   src/fife/eventchannel/joystick/joystickmanager.cpp
@@ -527,6 +547,7 @@ set(
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.cpp
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.cpp
   src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.cpp
+  src/fife/gui/fifechan/base/glcore/glcore_gui_graphics.cpp
   src/fife/gui/fifechan/console/commandline.cpp
   src/fife/gui/fifechan/console/console.cpp
   src/fife/gui/fifechan/widgets/animationicon.cpp
@@ -543,6 +564,54 @@ set(
 
 source_group("fife"                FILES ${FIFE_SOURCES})
 source_group("fife.gui.fifegui"    FILES ${FIFE_FIFEGUI_SOURCES})
+
+# Generated glad sources are third-party code.
+# Keep warnings, but do not let them fail the build.
+set_source_files_properties(
+  src/fife/video/glcore/glad/core/glad.cpp
+  src/fife/video/glcore/glad/es2/glad.cpp
+  PROPERTIES
+    COMPILE_WARNING_AS_ERROR OFF
+    COMPILE_OPTIONS "$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-old-style-cast>"
+)
+
+# Shader-based GLCore backend (optional, mutually exclusive profiles).
+set(FIFE_GLCORE_SOURCES)
+set(FIFE_GLCORE_HEADERS)
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
+  list(APPEND FIFE_GLCORE_SOURCES
+    src/fife/video/glcore/glcontext.cpp
+    src/fife/video/glcore/glad/glcore_loader.cpp
+    src/fife/video/glcore/shader.cpp
+    src/fife/video/glcore/shaderloader.cpp
+    src/fife/video/glcore/buffer.cpp
+    src/fife/video/glcore/vertexarray.cpp
+    src/fife/video/glcore/glcorestate.cpp
+    src/fife/video/glcore/renderbackendgl.cpp
+    src/fife/video/glcore/glcoreimage.cpp
+    src/fife/video/glcore/glcore_draw.cpp
+  )
+  list(APPEND FIFE_GLCORE_HEADERS
+    src/fife/video/glcore/glcontext.h
+    src/fife/video/glcore/glad/glcore_loader.h
+    src/fife/video/glcore/shader.h
+    src/fife/video/glcore/shaderloader.h
+    src/fife/video/glcore/buffer.h
+    src/fife/video/glcore/vertexarray.h
+    src/fife/video/glcore/glcorestate.h
+    src/fife/video/glcore/renderbackendgl.h
+    src/fife/video/glcore/glcoreimage.h
+    src/fife/video/glcore/glcore_bridge.h
+    src/fife/video/glcore/glcore_draw.h
+  )
+  if(ENABLE_OPENGL_CORE)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/core/glad.cpp)
+  endif()
+  if(ENABLE_OPENGL_ES2)
+    list(APPEND FIFE_GLCORE_SOURCES src/fife/video/glcore/glad/es2/glad.cpp)
+  endif()
+  source_group("fife.video.glcore" FILES ${FIFE_GLCORE_SOURCES} ${FIFE_GLCORE_HEADERS})
+endif()
 
 #------------------------------------------------------------------------------
 # Header Files
@@ -571,6 +640,7 @@ set(
   src/fife/audio/effects/soundfilter.h
   src/fife/controller/engine.h
   src/fife/controller/enginesettings.h
+  src/fife/video/glcore/glcore_names.h
   src/fife/eventchannel/eventmanager.h
   src/fife/eventchannel/base/event.h
   src/fife/eventchannel/base/ilistener.h
@@ -768,6 +838,7 @@ set(
   src/fife/gui/fifechan/base/opengl/opengl_gui_graphics.h
   src/fife/gui/fifechan/base/sdl/sdl_gui_graphics.h
   src/fife/gui/fifechan/base/dummy/dummy_gui_graphics.h
+  src/fife/gui/fifechan/base/glcore/glcore_gui_graphics.h
   src/fife/gui/fifechan/console/commandline.h
   src/fife/gui/fifechan/console/console.h
   src/fife/gui/fifechan/widgets/animationicon.h
@@ -1167,6 +1238,11 @@ if(BUILD_PYTHON_BINDINGS)
   message(STATUS "Python includes:      ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python module target: Python3::Module")
 
+  # Note: SWIG shows many redefinition warnings 302.
+  # Every .i file is directly added to the generated fife.i,
+  # while some of the interface files also %include dependencies.
+  # For example, instance.i includes ivisual.i and location.i.
+  # So SWIG parses the declarations more than once, which explains the duplicate identifiers.
   foreach(filename ${FIFE_SWIG})
     list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
@@ -1487,6 +1563,8 @@ if(BUILD_LIBRARY)
     PRIVATE
       ${FIFE_SOURCES}
       ${FIFE_FIFEGUI_SOURCES}
+      ${FIFE_GLCORE_SOURCES}
+      ${FIFE_GLCORE_HEADERS}
   )
 
   target_include_directories(fife_lib
@@ -1532,6 +1610,11 @@ if(BUILD_LIBRARY)
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
   )
 
+  # The generated glad headers have their own export mechanism: GLAD uses GLAPI.
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+    target_compile_definitions(fife_lib PRIVATE GLAD_GLAPI_EXPORT GLAD_GLAPI_EXPORT_BUILD)
+  endif()
+
   # do not allow undefined symbols in the final link step, to catch missing dependencies early.
   target_link_options(fife_lib PRIVATE
     $<$<CXX_COMPILER_ID:GNU,Clang>:-Wl,--no-undefined>
@@ -1545,6 +1628,10 @@ if(BUILD_LIBRARY)
 
   # Provide a namespace alias for the library (fife::fife)
   add_library(fife::fife ALIAS fife)
+
+  if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2))
+    target_compile_definitions(fife PUBLIC GLAD_GLAPI_EXPORT)
+  endif()
 
   # expand conditionally outside target_sources(),
   # because generator expressions doesnt work there. 💩
