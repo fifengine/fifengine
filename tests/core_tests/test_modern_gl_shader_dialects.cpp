@@ -60,21 +60,26 @@ TEST_CASE("Applicable programs compile in a real context", "[modern-gl][shaders]
         SKIP("OpenGL not available in this environment");
     }
     std::string error;
-    for (auto d : {FIFE::ShaderDialect::GLSL_330, FIFE::ShaderDialect::GLSL_430}) {
-        for (auto p :
-             {FIFE::BuiltinProgram::Sprite,
-              FIFE::BuiltinProgram::Primitive,
-              FIFE::BuiltinProgram::Overlay,
-              FIFE::BuiltinProgram::Light}) {
-            CHECK(FIFE::compileBuiltin(d, p, error));
-        }
-        if (d == FIFE::ShaderDialect::GLSL_430) {
-            CHECK(FIFE::compileBuiltin(d, FIFE::BuiltinProgram::ParticleCompute, error));
-            INFO("compute error: " << error);
-            CHECK(FIFE::compileBuiltin(d, FIFE::BuiltinProgram::ParticleInstanced, error));
-            INFO("instanced error: " << error);
-        }
+    for (auto p :
+         {FIFE::BuiltinProgram::Sprite,
+          FIFE::BuiltinProgram::Primitive,
+          FIFE::BuiltinProgram::Overlay,
+          FIFE::BuiltinProgram::Light}) {
+        CHECK(FIFE::compileBuiltin(FIFE::ShaderDialect::GLSL_330, p, error));
     }
+    #if defined(HAVE_OPENGL_43) || defined(HAVE_OPENGLES_31)
+    for (auto p :
+         {FIFE::BuiltinProgram::Sprite,
+          FIFE::BuiltinProgram::Primitive,
+          FIFE::BuiltinProgram::Overlay,
+          FIFE::BuiltinProgram::Light}) {
+        CHECK(FIFE::compileBuiltin(FIFE::ShaderDialect::GLSL_430, p, error));
+    }
+    CHECK(FIFE::compileBuiltin(FIFE::ShaderDialect::GLSL_430, FIFE::BuiltinProgram::ParticleCompute, error));
+    INFO("compute error: " << error);
+    CHECK(FIFE::compileBuiltin(FIFE::ShaderDialect::GLSL_430, FIFE::BuiltinProgram::ParticleInstanced, error));
+    INFO("instanced error: " << error);
+    #endif
 #else
     SKIP("ES builds have no desktop GL context in this test");
 #endif
