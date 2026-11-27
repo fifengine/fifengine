@@ -20,6 +20,9 @@
 
 // FIFE includes
 #include "controller/engine.h"
+#include "debug/diagnosticsphases.h"
+#include "debug/tracy/tracymemoryprofiler.h"
+#include "debug/tracy/tracyprofilermacros.h"
 #include "util/base/exception.h"
 #include "util/resource/resource.h"
 #include "vfs/raw/rawdata.h"
@@ -90,6 +93,7 @@ namespace FIFE
         auto const datalen = data->getDataLength();
 
         std::vector<uint8_t> buffer(datalen);
+        FIFE::TrackedAllocation const trackedBuffer(buffer.data(), buffer.size(), "VFS image buffer");
         data->readInto(buffer.data(), datalen);
 
         auto* iostream = SDL_IOFromConstMem(buffer.data(), datalen);
@@ -107,6 +111,7 @@ namespace FIFE
 
     void ImageLoader::load(IResource* res)
     {
+        FIFE_PROFILE_ZONE_N(FIFE::kPhaseResourceLoad);
         auto* img = dynamic_cast<Image*>(res);
 
         auto const [xShiftSave, yShiftSave] = std::pair{img->getXShift(), img->getYShift()};

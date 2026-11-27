@@ -36,6 +36,8 @@ Optional features, all off by default:
 | Feature | Flag | Notes |
 | --- | --- | --- |
 | Movie playback | `ENABLE_MOVIE=ON` | FFmpeg-based. Fullscreen via `Engine::playMovie()` and as a FifeGUI `VideoWidget`. Patent-free codecs only (AV1, VP9, VP8, Theora; Opus, Vorbis, FLAC, MP3, PCM). See [docs/movie-support.md](docs/movie-support.md). |
+| RenderDoc debugger | runtime setting `setRenderDocEnabled(true)` | Optional in-app API integration for frame captures, GL debug markers and resource labels; no build dependency. See [src/fife/debug/renderdoc/README.md](src/fife/debug/renderdoc/README.md). |
+| Tracy profiler | `ENABLE_TRACY=ON` + `setTracyEnabled(true)` | Optional CPU, OpenGL GPU and named-pool memory profiling coordinated by `DiagnosticsManager`; vcpkg dependency. See [src/fife/debug/tracy/README.md](src/fife/debug/tracy/README.md). |
 
 ## 2) Releases
 

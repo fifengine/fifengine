@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <format>
 #include <iostream>
 #include <memory>
@@ -20,7 +21,13 @@
 // FIFE includes
 #include "audio/soundclipmanager.h"
 #include "audio/soundmanager.h"
+#include "debug/diagnosticsmanager.h"
+#include "debug/diagnosticsphases.h"
+#include "debug/renderdoc/renderdocdebugger.h"
+#include "debug/tracy/tracygpuprofiler.h"
+#include "debug/tracy/tracyprofilermacros.h"
 #include "eventchannel/eventmanager.h"
+#include "eventchannel/key/key.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "gui/guimanager.h"
 #include "util/base/exception.h"
@@ -94,6 +101,40 @@ namespace FIFE
         {
             static Logger log(LM_CONTROLLER);
             return log;
+        }
+
+        /** Maps a configured hotkey name onto FIFE's SDL-derived key enum. */
+        Keys::KeyType renderDocHotkey(std::string const & name)
+        {
+            static std::array<std::pair<char const *, Keys::KeyType>, 15> const keys{{
+                {"F1", Keys::F1},
+                {"F2", Keys::F2},
+                {"F3", Keys::F3},
+                {"F4", Keys::F4},
+                {"F5", Keys::F5},
+                {"F6", Keys::F6},
+                {"F7", Keys::F7},
+                {"F8", Keys::F8},
+                {"F9", Keys::F9},
+                {"F10", Keys::F10},
+                {"F11", Keys::F11},
+                {"F12", Keys::F12},
+                {"P", Keys::P},
+                {"C", Keys::C},
+                {"V", Keys::V},
+            }};
+            auto const it = std::find_if(keys.begin(), keys.end(), [&name](auto const & entry) {
+                return name == entry.first;
+            });
+            if (it != keys.end()) {
+                return it->second;
+            }
+            static bool warnedOnce = false;
+            if (!warnedOnce) {
+                warnedOnce = true;
+                FL_WARN(_log(), std::format("Unknown RenderDoc capture hotkey '{}'; using F12", name));
+            }
+            return Keys::F12;
         }
 
         std::string joinNames(std::vector<std::string> const & names)
@@ -845,6 +886,28 @@ namespace FIFE
                 }
             });
         }
+        // Diagnostics are optional: the manager is created after the GL
+        // context exists and keeps RenderDoc and Tracy completely independent.
+        m_diagnostics = std::make_unique<DiagnosticsManager>();
+        DiagnosticsConfig diagnosticsConfig;
+        auto& rdocConfig                              = diagnosticsConfig.renderDoc;
+        rdocConfig.enableRenderDoc                    = m_settings.isRenderDocEnabled();
+        rdocConfig.autoCapture                        = m_settings.isRenderDocAutoCapture();
+        rdocConfig.captureOnHotkey                    = m_settings.isRenderDocHotkeyCapture();
+        rdocConfig.captureHotkey                      = m_settings.getRenderDocCaptureHotkey();
+        rdocConfig.captureDirectory                   = m_settings.getRenderDocCaptureDirectory();
+        rdocConfig.enableDebugMarkers                 = m_settings.isRenderDocDebugMarkers();
+        rdocConfig.enableResourceNaming               = m_settings.isRenderDocResourceNaming();
+        rdocConfig.logCaptureEvents                   = m_settings.isRenderDocLogCaptureEvents();
+        diagnosticsConfig.tracy.enableTracy           = m_settings.isTracyEnabled();
+        diagnosticsConfig.tracy.enableGPUProfiling    = m_settings.isTracyGPUProfiling();
+        diagnosticsConfig.tracy.enableMemoryProfiling = m_settings.isTracyMemoryProfiling();
+        bool const hasGLContext                       = isGlDepthBackend(rbackend) && m_renderbackend != nullptr;
+        SDL_Window* const window                      = (m_window != nullptr) ? m_window->getSDLWindow() : nullptr;
+        m_diagnostics->Initialize(diagnosticsConfig, hasGLContext, window);
+        m_diagnostics->OnGLContextCurrent();
+        m_lastRenderDocHotkeyState = false;
+
         FL_LOG(_log(), "Engine initialized");
     }
 
@@ -901,6 +964,9 @@ namespace FIFE
         m_targetrenderer.reset();
         m_renderers.clear();
 
+        // Release the debugger while the GL context and window still exist.
+        m_diagnostics.reset();
+
         // These managers derive from DynamicSingleton. Releasing them here (and
         // not only in ~Engine) is what makes destroy()/init() cycles and two
         // Engine lifetimes in one process safe.
@@ -946,6 +1012,11 @@ namespace FIFE
         FL_LOG(_log(), "================== Engine destructed ==================");
         m_destroyed = true;
     }
+    RenderDocDebugger* Engine::getRenderDocDebugger() const
+    {
+        return (m_diagnostics != nullptr) ? m_diagnostics->GetGraphicsDebugger() : nullptr;
+    }
+
     void Engine::initializePumping()
     {
         m_eventmanager->processEvents();
@@ -953,6 +1024,7 @@ namespace FIFE
 
     void Engine::pump()
     {
+        FIFE_PROFILE_ZONE_N(FIFE::kPhaseFrame);
         if (m_eventmanager) {
             bool const f11down = m_eventmanager->isKeyPressed(Keys::F11);
             if (f11down && !m_lastF11State) {
@@ -968,15 +1040,37 @@ namespace FIFE
             }
             m_lastCtrlVState = vDown;
         }
+
+        bool rdocHotkeyDown               = false;
+        RenderDocDebugger* const debugger = m_diagnostics->GetGraphicsDebugger();
+        if (debugger != nullptr && debugger->isEnabled() && debugger->isHotkeyCaptureEnabled() &&
+            m_eventmanager != nullptr) {
+            rdocHotkeyDown = m_eventmanager->isKeyPressed(renderDocHotkey(debugger->getCaptureHotkey()));
+            if (RenderDocDebugger::isHotkeyEdge(rdocHotkeyDown, m_lastRenderDocHotkeyState)) {
+                debugger->triggerCapture();
+            }
+        }
+        m_lastRenderDocHotkeyState = rdocHotkeyDown;
+
+        m_diagnostics->OnFrameBegin();
         m_renderbackend->startFrame();
-        m_eventmanager->processEvents();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseInput);
+            m_eventmanager->processEvents();
+        }
         if (m_window != nullptr) {
             m_window->updateDPIScaleIfNeeded();
         }
         m_timemanager->update();
         m_soundmanager->update();
 
-        m_targetrenderer->render();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseTarget);
+            FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseTarget);
+            m_diagnostics->BeginPhase(FIFE::kPhaseTarget);
+            m_targetrenderer->render();
+            m_diagnostics->EndPhase();
+        }
 #ifdef HAVE_MOVIE
         if (m_movieplayer != nullptr && m_movieplayer->isLoaded()) {
             if (m_moviestart == 0) {
@@ -996,7 +1090,13 @@ namespace FIFE
                 }
             }
             m_movieplayer->update(movieTime);
-            renderMovie();
+            {
+                FIFE_PROFILE_ZONE_N(FIFE::kPhaseMovie);
+                FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseMovie);
+                m_diagnostics->BeginPhase(FIFE::kPhaseMovie);
+                renderMovie();
+                m_diagnostics->EndPhase();
+            }
             if (m_movieplayer->isFinished()) {
                 stopMovie();
             }
@@ -1004,20 +1104,43 @@ namespace FIFE
 #endif
             if (m_model->getActiveCameraCount() == 0) {
                 m_renderbackend->clearBackBuffer();
-                m_offrenderer->render();
+                {
+                    FIFE_PROFILE_ZONE_N(FIFE::kPhaseOffscreen);
+                    FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseOffscreen);
+                    m_diagnostics->BeginPhase(FIFE::kPhaseOffscreen);
+                    m_offrenderer->render();
+                    m_diagnostics->EndPhase();
+                }
             } else {
-                m_model->update();
+                {
+                    FIFE_PROFILE_ZONE_N(FIFE::kPhaseWorld);
+                    FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseWorld);
+                    m_diagnostics->BeginPhase(FIFE::kPhaseWorld);
+                    m_model->update();
+                    m_diagnostics->EndPhase();
+                }
             }
 #ifdef HAVE_MOVIE
         }
 #endif
 
         if (m_guimanager != nullptr) {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseGui);
+            FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseGui);
+            m_diagnostics->BeginPhase(FIFE::kPhaseGui);
             m_guimanager->turn();
+            m_diagnostics->EndPhase();
         }
 
-        m_cursor->draw();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseCursor);
+            FIFE::TracyGPUPhase const gpuPhase(*m_diagnostics->GetGPUProfiler(), FIFE::kPhaseCursor);
+            m_diagnostics->BeginPhase(FIFE::kPhaseCursor);
+            m_cursor->draw();
+            m_diagnostics->EndPhase();
+        }
         m_renderbackend->endFrame();
+        m_diagnostics->OnFrameEnd();
     }
 
 #ifdef HAVE_MOVIE

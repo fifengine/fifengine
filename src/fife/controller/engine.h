@@ -50,6 +50,8 @@ namespace FIFE
     class OffRenderer;
     class TargetRenderer;
     class FifechanManager;
+    class DiagnosticsManager;
+    class RenderDocDebugger;
 #ifdef HAVE_MOVIE
     class MoviePlayer;
     class SoundEmitter;
@@ -240,6 +242,12 @@ namespace FIFE
                 return m_renderbackend.get();
             }
 
+            /** Provides access to the optional RenderDoc debugger module.
+             *  @return the facade (always non-null after init()); all calls are
+             *          safe no-ops when RenderDoc is disabled or absent.
+             */
+            RenderDocDebugger* getRenderDocDebugger() const;
+
             /** Provides access point to the Window.
              *
              *  The Window is the source of truth for the live size and mode.
@@ -348,14 +356,16 @@ namespace FIFE
 
             std::unique_ptr<VFS> m_vfs;
             std::unique_ptr<Model> m_model;
+            std::unique_ptr<DiagnosticsManager> m_diagnostics;
             LogManager* m_logmanager;
 
             std::unique_ptr<Cursor> m_cursor;
             bool m_destroyed;
-            bool m_headless          = false;
-            bool m_eventsInitialized = false;
-            bool m_lastF11State      = false;
-            bool m_lastCtrlVState    = false;
+            bool m_headless                 = false;
+            bool m_eventsInitialized        = false;
+            bool m_lastF11State             = false;
+            bool m_lastCtrlVState           = false;
+            bool m_lastRenderDocHotkeyState = false;
 
             EngineSettings m_settings;
             std::unique_ptr<FontManager> m_fontManager;

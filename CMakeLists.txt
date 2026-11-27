@@ -124,6 +124,8 @@ if(ENABLE_OPENGLES_31 AND ENABLE_OPENGL_CORE)
   message(FATAL_ERROR "ENABLE_OPENGLES_31 (ES family) cannot be combined with ENABLE_OPENGL_CORE (desktop family)")
 endif()
 option(ENABLE_LOGGING         "Enable Logging"                               ON)
+option(ENABLE_TRACY           "Enable Tracy profiling"                       OFF)
+set(FIFE_TRACY_TARGET "")
 
 option(BUILD_PYTHON_BINDINGS  "Build Python bindings"                        ON)
 option(BUILD_LIBRARY          "Build C++ library"                            ON)
@@ -441,6 +443,14 @@ set(
   src/fife/audio/effects/soundfilter.cpp
   src/fife/controller/engine.cpp
   src/fife/controller/enginesettings.cpp
+  src/fife/debug/diagnosticsmanager.cpp
+  src/fife/debug/renderdoc/renderdocapi.cpp
+  src/fife/debug/renderdoc/renderdoccapture.cpp
+  src/fife/debug/renderdoc/renderdocdebugger.cpp
+  src/fife/debug/renderdoc/renderdocmarkers.cpp
+  src/fife/debug/tracy/tracygpuprofiler.cpp
+  src/fife/debug/tracy/tracymemoryprofiler.cpp
+  src/fife/debug/tracy/tracyprofiler.cpp
   src/fife/video/iparticlerenderbackend.cpp
   src/fife/video/glcore/glcore_names.cpp
   src/fife/eventchannel/eventmanager.cpp
@@ -683,6 +693,17 @@ set(
   src/fife/audio/effects/soundfilter.h
   src/fife/controller/engine.h
   src/fife/controller/enginesettings.h
+  src/fife/debug/diagnosticsconfig.h
+  src/fife/debug/diagnosticsmanager.h
+  src/fife/debug/diagnosticsphases.h
+  src/fife/debug/tracy/tracyprofiler.h
+  src/fife/debug/tracy/tracyprofilermacros.h
+  src/fife/debug/renderdoc/renderdocapi.h
+  src/fife/debug/renderdoc/renderdoccapture.h
+  src/fife/debug/renderdoc/renderdocconfig.h
+  src/fife/debug/renderdoc/renderdocdebugger.h
+  src/fife/debug/renderdoc/renderdocmarkers.h
+  src/fife/debug/renderdoc/renderdoc_app.h
   src/fife/video/glcore/glcore_names.h
   src/fife/eventchannel/eventmanager.h
   src/fife/eventchannel/base/event.h
@@ -1079,6 +1100,17 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
+if(ENABLE_TRACY)
+  find_package(Tracy CONFIG REQUIRED)
+  if(NOT TARGET Tracy::TracyClient AND NOT TARGET TracyClient)
+    message(FATAL_ERROR "ENABLE_TRACY requires the Tracy::TracyClient target from the vcpkg tracy port")
+  endif()
+  if(TARGET Tracy::TracyClient)
+    set(FIFE_TRACY_TARGET Tracy::TracyClient)
+  else()
+    set(FIFE_TRACY_TARGET TracyClient)
+  endif()
+endif()
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 
 if(ENABLE_MOVIE)
@@ -1631,6 +1663,7 @@ if(BUILD_LIBRARY)
       OpenAL::OpenAL
       tinyxml2::tinyxml2
       $<$<BOOL:${ENABLE_LOGGING}>:spdlog::spdlog>
+      $<$<BOOL:${ENABLE_TRACY}>:${FIFE_TRACY_TARGET}>
       utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>
@@ -1651,6 +1684,8 @@ if(BUILD_LIBRARY)
   # get export mode explicitly in shared builds.
   target_compile_definitions(fife_lib PRIVATE
     $<$<BOOL:${BUILD_SHARED_LIBS}>:FIFE_BUILD>
+    $<$<BOOL:${ENABLE_TRACY}>:FIFE_ENABLE_TRACY=1>
+    $<$<BOOL:${ENABLE_TRACY}>:TRACY_ENABLE=1>
   )
 
   # The generated glad headers have their own export mechanism: GLAD uses GLAPI.
@@ -1674,6 +1709,9 @@ if(BUILD_LIBRARY)
 
   if(BUILD_SHARED_LIBS AND (ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2 OR ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31))
     target_compile_definitions(fife PUBLIC GLAD_GLAPI_EXPORT)
+  endif()
+  if(ENABLE_TRACY)
+    target_compile_definitions(fife PUBLIC FIFE_ENABLE_TRACY=1 TRACY_ENABLE=1)
   endif()
 
   # expand conditionally outside target_sources(),
@@ -1723,6 +1761,7 @@ if(BUILD_LIBRARY)
       OpenAL::OpenAL
       tinyxml2::tinyxml2
       $<$<BOOL:${ENABLE_LOGGING}>:spdlog::spdlog>
+      $<$<BOOL:${ENABLE_TRACY}>:${FIFE_TRACY_TARGET}>
       utf8cpp::utf8cpp
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
       $<TARGET_NAME_IF_EXISTS:SDL3::SDL3>

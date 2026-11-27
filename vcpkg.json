@@ -47,6 +47,13 @@
       ]
     },
     "tinyxml2",
+    {
+      "name": "tracy",
+      "default-features": false,
+      "features": [
+        "on-demand"
+      ]
+    },
     "utfcpp",
     "zlib"
   ],

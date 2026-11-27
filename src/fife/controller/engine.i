@@ -131,6 +131,32 @@ namespace FIFE {
 		void setJoystickSupport(bool support);
 		bool isJoystickSupport() const;
 
+		%feature("docstring") setRenderDocEnabled "Enable the optional RenderDoc debugger module (disabled by default). Requires launching through RenderDoc to have any effect.";
+		void setRenderDocEnabled(bool enabled);
+		bool isRenderDocEnabled() const;
+		void setRenderDocAutoCapture(bool enabled);
+		bool isRenderDocAutoCapture() const;
+		void setRenderDocHotkeyCapture(bool enabled);
+		bool isRenderDocHotkeyCapture() const;
+		void setRenderDocCaptureHotkey(const std::string& key);
+		const std::string& getRenderDocCaptureHotkey() const;
+		void setRenderDocCaptureDirectory(const std::string& directory);
+		const std::string& getRenderDocCaptureDirectory() const;
+		void setRenderDocDebugMarkers(bool enabled);
+		bool isRenderDocDebugMarkers() const;
+		void setRenderDocResourceNaming(bool enabled);
+		bool isRenderDocResourceNaming() const;
+		void setRenderDocLogCaptureEvents(bool enabled);
+		bool isRenderDocLogCaptureEvents() const;
+
+		%feature("docstring") setTracyEnabled "Enable the optional Tracy profiler (requires an ENABLE_TRACY build).";
+		void setTracyEnabled(bool enabled);
+		bool isTracyEnabled() const;
+		void setTracyGPUProfiling(bool enabled);
+		bool isTracyGPUProfiling() const;
+		void setTracyMemoryProfiling(bool enabled);
+		bool isTracyMemoryProfiling() const;
+
 	private:
 		EngineSettings();
 	};	

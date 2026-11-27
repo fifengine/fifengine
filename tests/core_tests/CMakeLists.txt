@@ -55,6 +55,8 @@ set(
   test_textrenderpool.cpp
   test_window.cpp
   test_speechbubble.cpp
+  test_renderdoc_debugger.cpp
+  test_diagnostics_manager.cpp
 )
 
 if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
@@ -139,6 +141,11 @@ target_link_libraries(
 
 if(ENABLE_OPENGL)
   target_link_libraries(all_tests PRIVATE ${OPENGL_gl_LIBRARY} GLEW::GLEW)
+endif()
+
+if(ENABLE_TRACY)
+  target_compile_definitions(all_tests PRIVATE FIFE_ENABLE_TRACY=1 TRACY_ENABLE=1)
+  target_link_libraries(all_tests PRIVATE ${FIFE_TRACY_TARGET})
 endif()
 
 if(ENABLE_FIFEGUI)

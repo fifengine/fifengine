@@ -689,6 +689,113 @@ namespace FIFE
              */
             bool isJoystickSupport() const;
 
+            /** Enables the optional RenderDoc debugger module. */
+            void setRenderDocEnabled(bool enabled)
+            {
+                m_renderDocEnabled = enabled;
+            }
+            bool isRenderDocEnabled() const
+            {
+                return m_renderDocEnabled;
+            }
+
+            /** Captures the first frame automatically after Engine::init(). */
+            void setRenderDocAutoCapture(bool enabled)
+            {
+                m_renderDocAutoCapture = enabled;
+            }
+            bool isRenderDocAutoCapture() const
+            {
+                return m_renderDocAutoCapture;
+            }
+
+            /** Enables/disables the in-engine capture hotkey. */
+            void setRenderDocHotkeyCapture(bool enabled)
+            {
+                m_renderDocHotkeyCapture = enabled;
+            }
+            bool isRenderDocHotkeyCapture() const
+            {
+                return m_renderDocHotkeyCapture;
+            }
+
+            /** SDL key name used for the capture hotkey (default "F12"). */
+            void setRenderDocCaptureHotkey(std::string const & key)
+            {
+                m_renderDocCaptureHotkey = key;
+            }
+            std::string const & getRenderDocCaptureHotkey() const
+            {
+                return m_renderDocCaptureHotkey;
+            }
+
+            /** Directory for captures; empty uses RenderDoc's own default. */
+            void setRenderDocCaptureDirectory(std::string const & directory)
+            {
+                m_renderDocCaptureDirectory = directory;
+            }
+            std::string const & getRenderDocCaptureDirectory() const
+            {
+                return m_renderDocCaptureDirectory;
+            }
+
+            void setRenderDocDebugMarkers(bool enabled)
+            {
+                m_renderDocDebugMarkers = enabled;
+            }
+            bool isRenderDocDebugMarkers() const
+            {
+                return m_renderDocDebugMarkers;
+            }
+
+            void setRenderDocResourceNaming(bool enabled)
+            {
+                m_renderDocResourceNaming = enabled;
+            }
+            bool isRenderDocResourceNaming() const
+            {
+                return m_renderDocResourceNaming;
+            }
+
+            void setRenderDocLogCaptureEvents(bool enabled)
+            {
+                m_renderDocLogCaptureEvents = enabled;
+            }
+            bool isRenderDocLogCaptureEvents() const
+            {
+                return m_renderDocLogCaptureEvents;
+            }
+
+            /** Enables the optional Tracy profiler module. */
+            void setTracyEnabled(bool enabled)
+            {
+                m_tracyEnabled = enabled;
+            }
+            bool isTracyEnabled() const
+            {
+                return m_tracyEnabled;
+            }
+
+            /** Enables Tracy OpenGL GPU zones (requires a glcore backend). */
+            void setTracyGPUProfiling(bool enabled)
+            {
+                m_tracyGPUProfiling = enabled;
+            }
+            bool isTracyGPUProfiling() const
+            {
+                return m_tracyGPUProfiling;
+            }
+
+            /** Enables named-pool allocation tracking in resource loading. */
+            void setTracyMemoryProfiling(bool enabled)
+            {
+                m_tracyMemoryProfiling = enabled;
+            }
+            bool isTracyMemoryProfiling() const
+            {
+                return m_tracyMemoryProfiling;
+            }
+
         private:
             friend class Engine;
 
@@ -747,6 +854,17 @@ namespace FIFE
             bool m_mouseacceleration;
             bool m_nativeimagecursor;
             bool m_joystickSupport;
+            bool m_renderDocEnabled{false};
+            bool m_renderDocAutoCapture{false};
+            bool m_renderDocHotkeyCapture{true};
+            std::string m_renderDocCaptureHotkey{"F12"};
+            std::string m_renderDocCaptureDirectory;
+            bool m_renderDocDebugMarkers{true};
+            bool m_renderDocResourceNaming{true};
+            bool m_renderDocLogCaptureEvents{true};
+            bool m_tracyEnabled{false};
+            bool m_tracyGPUProfiling{true};
+            bool m_tracyMemoryProfiling{true};
     };
 
 } // namespace FIFE
