@@ -751,6 +751,9 @@ static void* get_proc(char const * namez)
         result = gladGetProcAddressPtr(namez);
     }
 #endif
+    // cppcheck-suppress knownConditionTrueFalse
+    // Generated loader: gladGetProcAddressPtr is non-null in the configs where
+    // it is compiled, so the fallback below is reachable despite static analysis.
     if (result == NULL) {
 #if defined(_WIN32) || defined(__CYGWIN__)
         result = (void*)GetProcAddress((HMODULE)libGL, namez);
