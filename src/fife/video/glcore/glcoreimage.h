@@ -56,7 +56,7 @@ namespace FIFE
 
             uint32_t m_texture{0};
             std::array<float, 4> m_texCoords{0.0F, 0.0F, 1.0F, 1.0F};
-            ImagePtr m_shared;
+            ImagePtr m_sharedImage;
             Rect m_region{};
             bool m_isShared{false};
     };
