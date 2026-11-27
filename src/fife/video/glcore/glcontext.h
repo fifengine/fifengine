@@ -16,7 +16,9 @@ namespace FIFE
     enum class GLProfile : uint8_t
     {
         Core33,
-        ES2
+        ES2,
+        Core43,
+        ES31
     };
 
     struct GLContextConfig
@@ -31,8 +33,26 @@ namespace FIFE
             int32_t msaaSamples{0};
     };
 
+    struct GLAttributeValues
+    {
+            int major{3};
+            int minor{3};
+            SDL_GLProfile profileMask{SDL_GL_CONTEXT_PROFILE_CORE};
+    };
+
+    FIFE_API GLAttributeValues glAttributesFor(GLContextConfig const & config);
+
+    struct GLCapabilities
+    {
+            bool computeShaders{false};
+            bool shaderStorageBuffers{false};
+    };
+    FIFE_API GLCapabilities capabilitiesFor(GLProfile profile);
+
     FIFE_API GLContextConfig makeCore33Config();
     FIFE_API GLContextConfig makeES2Config();
+    FIFE_API GLContextConfig makeCore43Config();
+    FIFE_API GLContextConfig makeES31Config();
 
     class FIFE_API GLContext
     {
@@ -62,6 +82,16 @@ namespace FIFE
             GLContextConfig const & config() const
             {
                 return m_config;
+            }
+
+            bool hasComputeShaders() const
+            {
+                return capabilitiesFor(m_config.profile).computeShaders;
+            }
+
+            bool hasShaderStorageBuffers() const
+            {
+                return capabilitiesFor(m_config.profile).shaderStorageBuffers;
             }
 
         private:

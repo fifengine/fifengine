@@ -99,6 +99,7 @@ namespace FIFE
                 emitter->update(static_cast<float>(fixed_step));
             }
             m_accumulator -= fixed_step;
+            ++m_simulationStep;
         }
 
         flushRemovals();

@@ -14,6 +14,7 @@ endif()
 
 set(
   FIFE_CORE_TEST_SOURCES
+  test_particle_backend_header.cpp
   test_atlas.cpp
   test_asset_resolver.cpp
   test_dat1.cpp
@@ -71,6 +72,16 @@ if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2)
     test_glcore_shaders.cpp
     test_glcore_state.cpp
     test_glcore_validation.cpp
+  )
+endif()
+
+if(ENABLE_OPENGL_CORE OR ENABLE_OPENGL_ES2 OR ENABLE_OPENGL_43 OR ENABLE_OPENGLES_31)
+  list(APPEND FIFE_CORE_TEST_SOURCES
+    test_modern_gl_backend_names.cpp
+    test_modern_gl_capabilities.cpp
+    test_modern_gl_shader_dialects.cpp
+    test_gpu_particles.cpp
+    test_gpu_particle_equivalence.cpp
   )
 endif()
 

@@ -3,14 +3,9 @@
 
 #include "glcoreimage.h"
 
-#ifdef HAVE_OPENGL_CORE
-    #include "video/glcore/glad/core/glad.h"
-#else
-    #include "video/glcore/glad/es2/glad.h"
-#endif
-
 #include <string>
 
+#include "video/glcore/glad/glcore_glad.h"
 #include "video/glcore/glcore_bridge.h"
 
 namespace FIFE
@@ -58,7 +53,7 @@ namespace FIFE
 
     GLCoreImage::~GLCoreImage()
     {
-        if (m_texture != 0) {
+        if (m_texture != 0 && !m_isShared) {
             glDeleteTextures(1, &m_texture);
         }
     }
@@ -159,28 +154,66 @@ namespace FIFE
 
     void GLCoreImage::useSharedImage(ImagePtr const & shared, Rect const & region)
     {
-        m_shared            = shared;
-        m_region            = region;
-        m_isShared          = true;
-        auto const * source = dynamic_cast<GLCoreImage const *>(shared.get());
+        if (!shared) {
+            return;
+        }
+        if (shared->getState() != IResource::RES_LOADED) {
+            shared->load();
+        }
+        auto* source = dynamic_cast<GLCoreImage*>(shared.get());
         if (source == nullptr) {
             return;
         }
+        source->forceLoadInternal();
+
+        m_sharedImage = shared;
+        m_region      = region;
+        m_isShared    = true;
+        // Image::m_shared is the flag ImageLoader checks; set it before reset()
+        // so the shared atlas surface is not destroyed here.
+        Image::m_shared       = true;
+        Image::m_subimagerect = region;
+        Image::reset(source->getSurface());
+
         m_texture = source->texture();
         // Divide by the full atlas dimensions, not the sub-image size.
         m_texCoords = glcoreAtlasTexCoords(
             region, static_cast<uint32_t>(source->getWidth()), static_cast<uint32_t>(source->getHeight()), true);
+        Image::m_state = IResource::RES_LOADED;
     }
 
     void GLCoreImage::forceLoadInternal()
     {
-        if (!m_isShared && m_texture == 0) {
+        if (m_isShared) {
+            if (!m_sharedImage) {
+                return;
+            }
+            if (m_sharedImage->getState() != IResource::RES_LOADED) {
+                m_sharedImage->load();
+            }
+            auto* source = dynamic_cast<GLCoreImage*>(m_sharedImage.get());
+            if (source == nullptr) {
+                return;
+            }
+            source->forceLoadInternal();
+            m_texture   = source->texture();
+            m_surface   = source->getSurface();
+            m_texCoords = glcoreAtlasTexCoords(
+                m_region, static_cast<uint32_t>(source->getWidth()), static_cast<uint32_t>(source->getHeight()), true);
+            return;
+        }
+        if (m_texture == 0) {
             upload();
         }
     }
 
     void GLCoreImage::load()
     {
+        if (m_isShared) {
+            forceLoadInternal();
+            Image::m_state = IResource::RES_LOADED;
+            return;
+        }
         Image::load();
         forceLoadInternal();
     }

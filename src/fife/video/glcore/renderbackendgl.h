@@ -12,6 +12,7 @@
 #include "video/dummy/renderbackenddummy.h"
 #include "video/glcore/glcontext.h"
 #include "video/glcore/glcorestate.h"
+#include "video/glcore/particle_render_backend.h"
 #include "video/glcore/shaderloader.h"
 
 namespace FIFE
@@ -31,6 +32,7 @@ namespace FIFE
             }
 
             std::string getRenderDescription() const override;
+            IParticleRenderBackend* getParticleRenderBackend() override;
 
             void init(std::string const & driver) override;
             void createMainScreen(std::string const & title, std::string const & icon) override;
@@ -196,6 +198,7 @@ namespace FIFE
             GLContext m_context;
             GLCoreState m_state;
             std::unique_ptr<ShaderLoader> m_shaders;
+            std::unique_ptr<GLCoreParticleRenderBackend> m_particleBackend;
             uint32_t m_lightingModel{0};
             RenderDataType m_renderDataType{RENDER_DATA_WITHOUT_Z};
             OverlayType m_overlayType{OVERLAY_TYPE_NONE};
@@ -253,6 +256,18 @@ namespace FIFE
     {
         public:
             explicit RenderBackendGLES2(SDL_Color const & colorkey);
+    };
+
+    class RenderBackendGL43 final : public RenderBackendGL
+    {
+        public:
+            explicit RenderBackendGL43(SDL_Color const & colorkey);
+    };
+
+    class RenderBackendGLES31 final : public RenderBackendGL
+    {
+        public:
+            explicit RenderBackendGLES31(SDL_Color const & colorkey);
     };
 } // namespace FIFE
 

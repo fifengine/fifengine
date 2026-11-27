@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <string>
 
 #include "platform.h"
 #include "video/glcore/glcontext.h"
@@ -23,6 +24,31 @@ namespace FIFE
     };
 
     FIFE_API char const * glcorePreamble(GLProfile profile);
+
+    enum class ShaderDialect : uint8_t
+    {
+        GLSL_330,
+        GLSL_430,
+        ESSL_100,
+        ESSL_310
+    };
+
+    enum class BuiltinProgram : uint8_t
+    {
+        Sprite,
+        Primitive,
+        Overlay,
+        Light,
+        ParticleCompute,
+        ParticleInstanced
+    };
+
+    FIFE_API ShaderDialect dialectFor(GLProfile profile);
+    FIFE_API std::string const & preambleFor(ShaderDialect dialect);
+    FIFE_API bool supportsProgram(ShaderDialect dialect, BuiltinProgram program);
+    FIFE_API bool compileBuiltin(ShaderDialect dialect, BuiltinProgram program, std::string& error);
+    FIFE_API char const * builtinSource(BuiltinProgram program, bool vertex);
+    FIFE_API std::string const & builtinPreamble(ShaderDialect dialect);
 
     class FIFE_API ShaderLoader
     {

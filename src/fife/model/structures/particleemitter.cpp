@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <memory>
 #include <numbers>
@@ -14,6 +15,7 @@
 // FIFE includes
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
+#include "video/iparticlerenderbackend.h"
 
 namespace FIFE
 {
@@ -35,6 +37,8 @@ namespace FIFE
                 ParticleEmitter* m_owner;
         };
 
+        std::atomic<uint32_t> nextEmitterId{1};
+
         float uniform(std::mt19937& rng, float a, float b)
         {
             std::uniform_real_distribution<float> dist(std::min(a, b), std::max(a, b));
@@ -42,13 +46,20 @@ namespace FIFE
         }
     } // namespace
 
-    ParticleEmitter::ParticleEmitter(ParticleConfig const & config) : m_config(config), m_rng(1U)
+    ParticleEmitter::ParticleEmitter(ParticleConfig const & config) :
+        m_config(config), m_rng(1U), m_id(nextEmitterId.fetch_add(1U))
     {
         rebuildPool();
     }
 
     ParticleEmitter::~ParticleEmitter()
     {
+        if (m_computeEnabled) {
+            IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+            if (bridge != nullptr) {
+                bridge->releaseEmitter(m_id);
+            }
+        }
         detach();
     }
 
@@ -61,6 +72,12 @@ namespace FIFE
                 static_cast<double>(m_config.burstCount);
             derived = std::clamp(derived, 0.0, 2048.0);
             cap     = static_cast<uint32_t>(derived);
+        }
+        if (m_computeEnabled) {
+            IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+            if (bridge != nullptr) {
+                return bridge->clampCapacity(cap);
+            }
         }
         return std::min(cap, 2048U);
     }
@@ -95,6 +112,65 @@ namespace FIFE
     {
         m_config.maxParticles = maxParticles;
         rebuildPool();
+        IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+        if (m_computeEnabled && bridge != nullptr) {
+            bridge->setEmitterCapacity(m_id, m_capacity);
+        }
+    }
+
+    void ParticleEmitter::setComputeEnabled(bool enabled)
+    {
+        if (m_computeEnabled == enabled) {
+            return;
+        }
+        m_computeEnabled = enabled;
+        rebuildPool();
+        IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+        if (bridge == nullptr) {
+            return;
+        }
+        if (enabled) {
+            bridge->setEmitterCapacity(m_id, m_capacity);
+        } else {
+            bridge->releaseEmitter(m_id);
+        }
+    }
+
+    void ParticleEmitter::setRate(float rate)
+    {
+        m_config.emissionRate = rate;
+    }
+
+    void ParticleEmitter::setColor(uint8_t const * rgba)
+    {
+        for (size_t i = 0U; i < 4U; ++i) {
+            m_config.endColor[i] = rgba[i];
+        }
+    }
+
+    void ParticleEmitter::setLifetime(float lifetime)
+    {
+        m_config.lifetimeMin = lifetime;
+        m_config.lifetimeMax = lifetime;
+    }
+
+    DoublePoint ParticleEmitter::getCentroid() const
+    {
+        double x     = 0.0;
+        double y     = 0.0;
+        size_t count = 0;
+        for (ParticleSnapshot const & p : m_particles) {
+            if (!p.alive) {
+                continue;
+            }
+            x += p.x;
+            y += p.y;
+            ++count;
+        }
+        if (count == 0) {
+            return DoublePoint(0.0, 0.0);
+        }
+        return DoublePoint(x / static_cast<double>(count), y / static_cast<double>(count));
     }
 
     bool ParticleEmitter::spawn()
@@ -137,6 +213,28 @@ namespace FIFE
         }
 
         refreshVisuals(p);
+        if (m_deathSchedule.size() < m_capacity) {
+            m_deathSchedule.push_back(static_cast<uint32_t>((p.age + p.lifetime) * 1000.0F));
+        }
+
+        IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+        if (m_computeEnabled && bridge != nullptr) {
+            ParticleGpuRecord record{};
+            record.position[0] = p.x;
+            record.position[1] = p.y;
+            record.velocity[0] = p.vx;
+            record.velocity[1] = p.vy;
+            record.color[0]    = static_cast<float>(p.rgba[0]) / 255.0F;
+            record.color[1]    = static_cast<float>(p.rgba[1]) / 255.0F;
+            record.color[2]    = static_cast<float>(p.rgba[2]) / 255.0F;
+            record.color[3]    = static_cast<float>(p.rgba[3]) / 255.0F;
+            record.size        = p.size;
+            record.age         = p.age;
+            record.life        = p.lifetime;
+            record.atlasFrame  = p.frame;
+            bridge->uploadNewParticles(m_id, &record, 1, static_cast<uint32_t>(slot));
+        }
+
         ++m_alive;
         ++m_emitted;
         return true;
@@ -190,18 +288,23 @@ namespace FIFE
             }
         }
 
-        float const damping = std::max(0.0F, 1.0F - m_config.drag * dt);
+        IParticleRenderBackend* const activeBridge =
+            m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+        bool const gpuIntegrating = m_computeEnabled && activeBridge != nullptr;
+        float const damping       = std::max(0.0F, 1.0F - m_config.drag * dt);
         for (size_t slot = 0U; slot < m_particles.size(); ++slot) {
             ParticleSnapshot& p = m_particles[slot];
             if (!p.alive) {
                 continue;
             }
-            p.vx *= damping;
-            p.vy *= damping;
-            p.vy += m_config.gravity * dt;
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-            p.age += dt;
+            if (!gpuIntegrating) {
+                p.vx *= damping;
+                p.vy *= damping;
+                p.vy += m_config.gravity * dt;
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.age += dt;
+            }
             if (p.age >= p.lifetime) {
                 p.alive = false;
                 --m_alive;

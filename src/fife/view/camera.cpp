@@ -1002,6 +1002,14 @@ found_non_transparent_pixel:;
         }
     }
 
+    Rect Camera::computeRenderTargetRect() const
+    {
+        if (!usesOpenGLRenderTargetClip(m_renderbackend->getName())) {
+            return m_viewport;
+        }
+        return Rect(0, static_cast<int32_t>(m_renderbackend->getHeight()) - m_viewport.h, m_viewport.w, m_viewport.h);
+    }
+
     void Camera::renderStaticLayer(Layer* layer, bool update)
     {
         // ToDo: Remove this function from the camera class to something like engine pre-render.
@@ -1021,10 +1029,7 @@ found_non_transparent_pixel:;
         if (update) {
             // for the case that the viewport size is not the same as the screen size,
             // we have to change the values for OpenGL backend
-            Rect rec(0, static_cast<int32_t>(m_renderbackend->getHeight()) - m_viewport.h, m_viewport.w, m_viewport.h);
-            if (!usesOpenGLRenderTargetClip(m_renderbackend->getName())) {
-                rec = m_viewport;
-            }
+            Rect rec = computeRenderTargetRect();
             m_renderbackend->attachRenderTarget(cacheImage, true);
             // here we use the new viewport size
             m_renderbackend->pushClipArea(rec, false);

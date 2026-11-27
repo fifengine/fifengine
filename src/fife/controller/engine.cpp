@@ -462,6 +462,22 @@ namespace FIFE
             m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
             FL_WARN(_log(), "GLES2 is not compiled in; falling back to SDL");
 #endif
+        } else if (rbackend == "OpenGL_43") {
+#ifdef HAVE_OPENGL_43
+            m_renderbackend = std::make_unique<RenderBackendGL43>(m_settings.getColorKey());
+            FL_LOG(_log(), "OpenGL 4.3 core render backend created");
+#else
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
+            FL_WARN(_log(), "OpenGL_43 is not compiled in; falling back to SDL");
+#endif
+        } else if (rbackend == "GLES_31") {
+#ifdef HAVE_OPENGLES_31
+            m_renderbackend = std::make_unique<RenderBackendGLES31>(m_settings.getColorKey());
+            FL_LOG(_log(), "OpenGL ES 3.1 render backend created");
+#else
+            m_renderbackend = std::make_unique<RenderBackendSDL>(m_settings.getColorKey());
+            FL_WARN(_log(), "GLES_31 is not compiled in; falling back to SDL");
+#endif
         } else {
 #ifdef HAVE_OPENGL
             m_renderbackend = std::make_unique<RenderBackendOpenGL>(m_settings.getColorKey());

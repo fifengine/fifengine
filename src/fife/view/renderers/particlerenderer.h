@@ -26,10 +26,6 @@ namespace FIFE
             {
                 return "ParticleRenderer";
             }
-            void reset() override
-            {
-            }
-
             static ParticleRenderer* getInstance(IRendererContainer* cnt);
     };
 } // namespace FIFE

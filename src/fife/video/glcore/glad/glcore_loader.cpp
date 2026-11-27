@@ -5,28 +5,31 @@
 
 #include <SDL3/SDL.h>
 
+#include "video/glcore/glad/glcore_glad.h"
 #include "video/glcore/glcontext.h"
-
-#ifdef HAVE_OPENGL_CORE
-    #include "video/glcore/glad/core/glad.h"
-#elif defined(HAVE_OPENGL_ES2)
-    #include "video/glcore/glad/es2/glad.h"
-#endif
 
 namespace FIFE
 {
     bool glcoreLoadProcs(GLProfile profile)
     {
-#if defined(HAVE_OPENGL_CORE)
-        if (profile == GLProfile::Core33) {
-            return gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
+        bool const requestedCore = profile == GLProfile::Core33 || profile == GLProfile::Core43;
+#if defined(HAVE_OPENGL_CORE) || defined(HAVE_OPENGL_43)
+        if (!requestedCore) {
+            return false;
+        }
+#else
+        if (requestedCore) {
+            return false;
         }
 #endif
-#if defined(HAVE_OPENGL_ES2)
-        if (profile == GLProfile::ES2) {
-            return gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
-        }
-#endif
+        // glcore_glad.h selects the highest API generated in this build; its
+        // loader covers every lower profile of the same family.
+#if defined(HAVE_OPENGL_CORE) || defined(HAVE_OPENGL_43)
+        return gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
+#elif defined(HAVE_OPENGL_ES2) || defined(HAVE_OPENGLES_31)
+        return gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
+#else
         return false;
+#endif
     }
 } // namespace FIFE

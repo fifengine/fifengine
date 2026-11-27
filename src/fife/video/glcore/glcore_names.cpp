@@ -20,7 +20,8 @@ namespace FIFE
 
         bool isGlBackend(std::string const & name)
         {
-            return name == "OpenGL" || name == "OpenGL_CORE" || name == "GLES2";
+            return name == "OpenGL" || name == "OpenGL_CORE" || name == "GLES2" || name == "OpenGL_43" ||
+                   name == "GLES_31";
         }
     } // namespace
 
@@ -61,6 +62,16 @@ namespace FIFE
 #endif
 #ifdef HAVE_OPENGL_ES2
         if (backendName == "GLES2") {
+            return true;
+        }
+#endif
+#ifdef HAVE_OPENGL_43
+        if (backendName == "OpenGL_43") {
+            return true;
+        }
+#endif
+#ifdef HAVE_OPENGLES_31
+        if (backendName == "GLES_31") {
             return true;
         }
 #endif

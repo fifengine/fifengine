@@ -31,6 +31,21 @@ namespace FIFE
         return glcore_draw::renderDescription();
     }
 
+    IParticleRenderBackend* RenderBackendGL::getParticleRenderBackend()
+    {
+#if !defined(HAVE_OPENGL_43) && !defined(HAVE_OPENGLES_31)
+        return nullptr;
+#else
+        if (!m_context.isLoaded() || !m_context.hasComputeShaders() || !m_context.hasShaderStorageBuffers()) {
+            return nullptr;
+        }
+        if (!m_particleBackend) {
+            m_particleBackend = std::make_unique<GLCoreParticleRenderBackend>(m_context.config().profile);
+        }
+        return m_particleBackend.get();
+#endif
+    }
+
     void RenderBackendGL::init(std::string const &)
     {
         if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
@@ -49,6 +64,7 @@ namespace FIFE
             // to the old context and must be recreated from scratch.
             m_fbo        = 0;
             m_fboTexture = 0;
+            m_particleBackend.reset();
             m_shaders.reset();
             glcore_draw::reset();
             m_context.destroy();
@@ -63,6 +79,9 @@ namespace FIFE
             m_context.makeCurrent(window);
             glcore_draw::reset();
             m_shaders = std::make_unique<ShaderLoader>(m_context.config().profile);
+            if (m_particleBackend) {
+                m_particleBackend->onContextRecreated();
+            }
         } else {
             m_context.makeCurrent(window);
         }
@@ -790,6 +809,16 @@ namespace FIFE
 
     RenderBackendGLES2::RenderBackendGLES2(SDL_Color const & colorkey) :
         RenderBackendGL(colorkey, makeES2Config(), "GLES2")
+    {
+    }
+
+    RenderBackendGL43::RenderBackendGL43(SDL_Color const & colorkey) :
+        RenderBackendGL(colorkey, makeCore43Config(), "OpenGL_43")
+    {
+    }
+
+    RenderBackendGLES31::RenderBackendGLES31(SDL_Color const & colorkey) :
+        RenderBackendGL(colorkey, makeES31Config(), "GLES_31")
     {
     }
 } // namespace FIFE
