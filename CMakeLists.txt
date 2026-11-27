@@ -1487,12 +1487,12 @@ if(BUILD_PYTHON_BINDINGS)
     ${Python3_INCLUDE_DIRS}
   )
 
+  # SWIG-generated wrappers are machine-produced code, not project sources.
+  # Silence all compiler warnings for this target; it contains only the wrapper.
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    target_compile_options(fife_swig PRIVATE
-      -Wno-unused-parameter
-      -Wno-sometimes-uninitialized
-      -Wno-sign-conversion
-    )
+    target_compile_options(fife_swig PRIVATE -w)
+  elseif(MSVC)
+    target_compile_options(fife_swig PRIVATE /w)
   endif()
 
   set_target_properties(fife_swig PROPERTIES
@@ -1531,15 +1531,12 @@ if(BUILD_PYTHON_BINDINGS)
       ${Python3_INCLUDE_DIRS}
     )
 
-    # the generated SWIG code is: ooof.
-    #if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    #  target_compile_options(fifechan_swig PRIVATE
-    #    -Wno-unused-parameter
-    #    -Wno-sometimes-uninitialized
-    #    -Wno-sign-conversion
-    #    -Wno-implicit-int-conversion
-    #  )
-    #endif()
+    # The SWIG generated wrapper code is ooof. Silence all warnings.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+      target_compile_options(fifechan_swig PRIVATE -w)
+    elseif(MSVC)
+      target_compile_options(fifechan_swig PRIVATE /w)
+    endif()
 
     set_target_properties(fifechan_swig PROPERTIES
       SWIG_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR};${CMAKE_SOURCE_DIR}/src/fife;${CMAKE_SOURCE_DIR}"
