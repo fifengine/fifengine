@@ -39,7 +39,7 @@ namespace FIFE
 
     bool TracyGPUProfiler::HasTimerQuerySupport()
     {
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
         bool extension = false;
     #if defined(GL_VERSION_3_0) || defined(GL_VERSION_3_1) || defined(GL_VERSION_4_3)
         extension = GLAD_GL_ARB_timer_query != 0;
@@ -71,7 +71,7 @@ namespace FIFE
             FL_WARN(_log(), "Tracy GPU profiling unavailable: no GL timestamp query support");
             return false;
         }
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
         TracyGpuContext;
         TracyGpuContextName("FIFE OpenGL", sizeof("FIFE OpenGL") - 1);
         m_enabled = true;
@@ -89,29 +89,29 @@ namespace FIFE
         m_enabled = false;
     }
 
-    void TracyGPUProfiler::BeginPhase(char const * name)
+    void TracyGPUProfiler::BeginPhase(char const * name) const
     {
         if (!m_enabled || name == nullptr) {
             return;
         }
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
         // Transient variant accepts a runtime name (constexpr name variables
         // cannot initialise TracyGpuZone's static SourceLocationData).
         TracyGpuZoneTransient(__tracy_phase_gpu_zone, name, true);
 #endif
     }
 
-    void TracyGPUProfiler::Collect()
+    void TracyGPUProfiler::Collect() const
     {
         if (!m_enabled) {
             return;
         }
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
         TracyGpuCollect;
 #endif
     }
 
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
     struct TracyGPUPhase::Impl
     {
             explicit Impl(char const * name) :
@@ -140,7 +140,7 @@ namespace FIFE
         if (!profiler.IsEnabled() || name == nullptr) {
             return;
         }
-#if defined(FIFE_TRACY_GL_AVAILABLE)
+#ifdef FIFE_TRACY_GL_AVAILABLE
         m_impl = std::make_unique<Impl>(name);
 #endif
     }

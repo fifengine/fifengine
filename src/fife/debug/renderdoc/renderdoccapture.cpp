@@ -32,14 +32,14 @@ namespace FIFE
 
     void RenderDocCapture::setTarget(RENDERDOC_DevicePointer device, RENDERDOC_WindowHandle window)
     {
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         m_device = device;
         m_window = window;
     }
 
     bool RenderDocCapture::triggerCapture()
     {
-        RENDERDOC_API_1_7_0* const api = m_api.api();
+        RENDERDOC_API_1_7_0 const * const api = m_api.api();
         if (api == nullptr || api->TriggerCapture == nullptr) {
             return false;
         }
@@ -58,11 +58,11 @@ namespace FIFE
 
     bool RenderDocCapture::startCapture()
     {
-        RENDERDOC_API_1_7_0* const api = m_api.api();
+        RENDERDOC_API_1_7_0 const * const api = m_api.api();
         if (api == nullptr || api->StartFrameCapture == nullptr) {
             return false;
         }
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         if (m_capturing.load()) {
             if (m_logEvents) {
                 FL_WARN(_log(), "RenderDoc StartCapture ignored: a capture is already in progress");
@@ -86,12 +86,12 @@ namespace FIFE
 
     bool RenderDocCapture::endCapture()
     {
-        RENDERDOC_API_1_7_0* const api = m_api.api();
+        RENDERDOC_API_1_7_0 const * const api = m_api.api();
         if (api == nullptr || api->EndFrameCapture == nullptr) {
             return false;
         }
         {
-            std::lock_guard<std::mutex> const lock(m_mutex);
+            std::scoped_lock const lock(m_mutex);
             if (!m_capturing.load()) {
                 if (m_logEvents) {
                     FL_WARN(_log(), "RenderDoc EndCapture ignored: no explicit capture is in progress");
@@ -117,11 +117,11 @@ namespace FIFE
 
     void RenderDocCapture::setCapturePath(std::string const & pathTemplate)
     {
-        RENDERDOC_API_1_7_0* const api = m_api.api();
+        RENDERDOC_API_1_7_0 const * const api = m_api.api();
         if (api == nullptr || api->SetCaptureFilePathTemplate == nullptr) {
             return;
         }
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         api->SetCaptureFilePathTemplate(pathTemplate.c_str());
         m_pathTemplate = pathTemplate;
         if (m_logEvents) {
@@ -131,11 +131,11 @@ namespace FIFE
 
     bool RenderDocCapture::refreshLastCapturePath()
     {
-        RENDERDOC_API_1_7_0* const api = m_api.api();
+        RENDERDOC_API_1_7_0 const * const api = m_api.api();
         if (api == nullptr || api->GetNumCaptures == nullptr || api->GetCapture == nullptr) {
             return false;
         }
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         uint32_t const count = api->GetNumCaptures();
         if (count == 0) {
             return false;
@@ -162,7 +162,7 @@ namespace FIFE
 
     std::string RenderDocCapture::getLastCapturePath() const
     {
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         return m_lastPath;
     }
 } // namespace FIFE

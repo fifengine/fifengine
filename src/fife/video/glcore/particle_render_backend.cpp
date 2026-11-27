@@ -15,7 +15,7 @@
 namespace FIFE
 {
 #if !defined(HAVE_OPENGL_43) && !defined(HAVE_OPENGLES_31)
-    GLCoreParticleRenderBackend::GLCoreParticleRenderBackend(GLProfile)
+    GLCoreParticleRenderBackend::GLCoreParticleRenderBackend(GLProfile /*unused*/)
     {
     }
     GLCoreParticleRenderBackend::~GLCoreParticleRenderBackend() = default;
@@ -31,7 +31,7 @@ namespace FIFE
         [[maybe_unused]] uint32_t emitterId,
         [[maybe_unused]] ParticleGpuRecord const * records,
         [[maybe_unused]] uint32_t count,
-        [[maybe_unused]] uint32_t slot)
+        [[maybe_unused]] uint32_t cursor)
     {
     }
     void GLCoreParticleRenderBackend::releaseEmitter([[maybe_unused]] uint32_t emitterId)

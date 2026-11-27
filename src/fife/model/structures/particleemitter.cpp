@@ -47,7 +47,7 @@ namespace FIFE
     } // namespace
 
     ParticleEmitter::ParticleEmitter(ParticleConfig const & config) :
-        m_config(config), m_rng(1U), m_id(nextEmitterId.fetch_add(1U))
+        m_config(config), m_rng(std::random_device{}()), m_id(nextEmitterId.fetch_add(1U))
     {
         rebuildPool();
     }
@@ -74,7 +74,8 @@ namespace FIFE
             cap     = static_cast<uint32_t>(derived);
         }
         if (m_computeEnabled) {
-            IParticleRenderBackend* bridge = m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
+            IParticleRenderBackend const * bridge =
+                m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
             if (bridge != nullptr) {
                 return bridge->clampCapacity(cap);
             }
@@ -244,11 +245,11 @@ namespace FIFE
     {
         float t       = particle.lifetime > 0.0F ? particle.age / particle.lifetime : 0.0F;
         t             = std::clamp(t, 0.0F, 1.0F);
-        particle.size = m_config.startSize + (m_config.endSize - m_config.startSize) * t;
+        particle.size = m_config.startSize + ((m_config.endSize - m_config.startSize) * t);
         for (size_t i = 0U; i < 4U; ++i) {
             float const channel =
                 static_cast<float>(m_config.startColor[i]) +
-                (static_cast<float>(m_config.endColor[i]) - static_cast<float>(m_config.startColor[i])) * t;
+                ((static_cast<float>(m_config.endColor[i]) - static_cast<float>(m_config.startColor[i])) * t);
             particle.rgba[i] = static_cast<uint8_t>(std::lround(channel));
         }
         particle.frame = (m_config.frameCount != 0U && m_config.frameDuration > 0.0F) ?
@@ -288,10 +289,10 @@ namespace FIFE
             }
         }
 
-        IParticleRenderBackend* const activeBridge =
+        IParticleRenderBackend const * const activeBridge =
             m_gpuBridge != nullptr ? m_gpuBridge : activeParticleRenderBackend();
         bool const gpuIntegrating = m_computeEnabled && activeBridge != nullptr;
-        float const damping       = std::max(0.0F, 1.0F - m_config.drag * dt);
+        float const damping       = std::max(0.0F, 1.0F - (m_config.drag * dt));
         for (size_t slot = 0U; slot < m_particles.size(); ++slot) {
             ParticleSnapshot& p = m_particles[slot];
             if (!p.alive) {

@@ -41,8 +41,8 @@ namespace FIFE
         m_config = config;
 
         // Each tool receives only its own config; neither observes the other.
-        m_graphics           = std::make_unique<RenderDocDebugger>();
-        bool graphicsEnabled = m_graphics->initialize(m_config.renderDoc);
+        m_graphics                 = std::make_unique<RenderDocDebugger>();
+        bool const graphicsEnabled = m_graphics->initialize(m_config.renderDoc);
         if (graphicsEnabled) {
             m_graphics->setContextValid(hasGLContext);
             if (window != nullptr) {

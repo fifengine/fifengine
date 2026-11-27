@@ -162,8 +162,10 @@ namespace FIFE
 
         outbuffer.resize(static_cast<size_t>(size));
 
-        // read directly into string
-        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
+        // read directly into string: std::string is char-based, readInto consumes raw bytes
+        readInto(
+            reinterpret_cast<uint8_t*>(outbuffer.data()),
+            static_cast<size_t>(size)); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     }
 
     bool RawData::getLine(std::string& buffer)

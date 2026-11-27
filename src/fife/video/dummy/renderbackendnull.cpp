@@ -27,12 +27,12 @@ namespace FIFE
     }
 
     // Deliberately does not initialize SDL video.
-    void RenderBackendNull::init(std::string const &)
+    void RenderBackendNull::init(std::string const & /*driver*/)
     {
     }
 
     // No window or screen surface is created in headless mode.
-    void RenderBackendNull::createMainScreen(std::string const &, std::string const &)
+    void RenderBackendNull::createMainScreen(std::string const & /*title*/, std::string const & /*icon*/)
     {
     }
 

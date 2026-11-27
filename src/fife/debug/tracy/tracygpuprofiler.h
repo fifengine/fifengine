@@ -34,8 +34,8 @@ namespace FIFE
                 return m_enabled;
             }
 
-            void BeginPhase(char const * name);
-            void Collect();
+            void BeginPhase(char const * name) const;
+            void Collect() const;
 
             /** Checks the timer-query extension and GL_QUERY_COUNTER_BITS.
              *  Must only be called with a current context. */

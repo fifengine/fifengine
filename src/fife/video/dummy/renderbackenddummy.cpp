@@ -47,7 +47,7 @@ namespace FIFE
         return m_area;
     }
 
-    void RenderBackendDummy::init(std::string const &)
+    void RenderBackendDummy::init(std::string const & /*driver*/)
     {
     }
 
@@ -64,7 +64,7 @@ namespace FIFE
         return 0;
     }
 
-    void RenderBackendDummy::setLighting(float, float, float)
+    void RenderBackendDummy::setLighting(float /*red*/, float /*green*/, float /*blue*/)
     {
     }
 
@@ -72,15 +72,15 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::resetStencilBuffer(uint8_t)
+    void RenderBackendDummy::resetStencilBuffer(uint8_t /*buffer*/)
     {
     }
 
-    void RenderBackendDummy::changeBlending(int32_t, int32_t)
+    void RenderBackendDummy::changeBlending(int32_t /*scr*/, int32_t /*dst*/)
     {
     }
 
-    void RenderBackendDummy::createMainScreen(std::string const &, std::string const &)
+    void RenderBackendDummy::createMainScreen(std::string const & /*title*/, std::string const & /*icon*/)
     {
     }
 
@@ -89,17 +89,19 @@ namespace FIFE
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, IResourceLoader*)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const & /*name*/, IResourceLoader* /*loader*/)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(uint8_t const *, uint32_t, uint32_t)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(
+        uint8_t const * /*data*/, uint32_t /*width*/, uint32_t /*height*/)
     {
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, uint8_t const *, uint32_t, uint32_t)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(
+        std::string const & /*name*/, uint8_t const * /*data*/, uint32_t /*width*/, uint32_t /*height*/)
     {
         return nullptr;
     }
@@ -109,7 +111,7 @@ namespace FIFE
         return nullptr;
     }
 
-    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const &, SDL_Surface*)
+    std::unique_ptr<Image> RenderBackendDummy::createImage(std::string const & /*name*/, SDL_Surface* /*surface*/)
     {
         return nullptr;
     }
@@ -118,16 +120,26 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::addImageToArray(uint32_t, Rect const &, float const *, uint8_t, uint8_t const *)
+    void RenderBackendDummy::addImageToArray(
+        uint32_t /*id*/, Rect const & /*rec*/, float const * /*st*/, uint8_t /*alpha*/, uint8_t const * /*rgba*/)
     {
     }
 
     void RenderBackendDummy::changeRenderInfos(
-        RenderDataType, uint16_t, int32_t, int32_t, bool, bool, uint8_t, GLConstants, GLConstants, OverlayType)
+        RenderDataType /*type*/,
+        uint16_t /*elements*/,
+        int32_t /*src*/,
+        int32_t /*dst*/,
+        bool /*light*/,
+        bool /*stentest*/,
+        uint8_t /*stenref*/,
+        GLConstants /*stenop*/,
+        GLConstants /*stenfunc*/,
+        OverlayType /*otype*/)
     {
     }
 
-    void RenderBackendDummy::captureScreen(std::string const &)
+    void RenderBackendDummy::captureScreen(std::string const & /*filename*/)
     {
         // A headless backend may have no screen surface at all; there is nothing to capture.
         if (m_screen == nullptr) {
@@ -135,82 +147,149 @@ namespace FIFE
         }
     }
 
-    void RenderBackendDummy::captureScreen(std::string const &, uint32_t, uint32_t)
+    void RenderBackendDummy::captureScreen(std::string const & /*filename*/, uint32_t /*width*/, uint32_t /*height*/)
     {
         if (m_screen == nullptr) {
             return;
         }
     }
 
-    bool RenderBackendDummy::putPixel(int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    bool RenderBackendDummy::putPixel(
+        int32_t /*x*/, int32_t /*y*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
         return false;
     }
 
-    void RenderBackendDummy::drawLine(Point const &, Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawLine(
+        Point const & /*p1*/, Point const & /*p2*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawThickLine(Point const &, Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawThickLine(
+        Point const & /*p1*/,
+        Point const & /*p2*/,
+        uint8_t /*width*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawPolyLine(std::vector<Point> const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawPolyLine(
+        std::vector<Point> const & /*points*/,
+        uint8_t /*width*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawBezier(
-        std::vector<Point> const &, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)
+        std::vector<Point> const & /*points*/,
+        int32_t /*steps*/,
+        uint8_t /*width*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawTriangle(
-        Point const &, Point const &, Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
+        Point const & /*p1*/,
+        Point const & /*p2*/,
+        Point const & /*p3*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::fillTriangle(
-        Point const &, Point const &, Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
+        Point const & /*p1*/,
+        Point const & /*p2*/,
+        Point const & /*p3*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawRectangle(Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawRectangle(
+        Point const & /*p*/, uint16_t /*w*/, uint16_t /*h*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::fillRectangle(Point const &, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::fillRectangle(
+        Point const & /*p*/, uint16_t /*w*/, uint16_t /*h*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawQuad(
-        Point const &, Point const &, Point const &, Point const &, uint8_t, uint8_t, uint8_t, uint8_t)
+        Point const & /*p1*/,
+        Point const & /*p2*/,
+        Point const & /*p3*/,
+        Point const & /*p4*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawVertex(Point const &, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawVertex(
+        Point const & /*p*/, uint8_t /*size*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawCircle(Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawCircle(
+        Point const & /*p*/, uint32_t /*radius*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
-    void RenderBackendDummy::drawFillCircle(Point const &, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t)
+    void RenderBackendDummy::drawFillCircle(
+        Point const & /*p*/, uint32_t /*radius*/, uint8_t /*r*/, uint8_t /*g*/, uint8_t /*b*/, uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawCircleSegment(
-        Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t)
+        Point const & /*p*/,
+        uint32_t /*radius*/,
+        int32_t /*sangle*/,
+        int32_t /*eangle*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawFillCircleSegment(
-        Point const &, uint32_t, int32_t, int32_t, uint8_t, uint8_t, uint8_t, uint8_t)
+        Point const & /*p*/,
+        uint32_t /*radius*/,
+        int32_t /*sangle*/,
+        int32_t /*eangle*/,
+        uint8_t /*r*/,
+        uint8_t /*g*/,
+        uint8_t /*b*/,
+        uint8_t /*a*/)
     {
     }
 
     void RenderBackendDummy::drawLightPrimitive(
-        Point const &, uint8_t, float, int32_t, float, float, uint8_t, uint8_t, uint8_t)
+        Point const & /*p*/,
+        uint8_t /*intensity*/,
+        float /*radius*/,
+        int32_t /*subdivisions*/,
+        float /*xstretch*/,
+        float /*ystretch*/,
+        uint8_t /*red*/,
+        uint8_t /*green*/,
+        uint8_t /*blue*/)
     {
     }
 
@@ -222,7 +301,7 @@ namespace FIFE
     {
     }
 
-    void RenderBackendDummy::attachRenderTarget(ImagePtr&, bool)
+    void RenderBackendDummy::attachRenderTarget(ImagePtr& /*img*/, bool /*discard*/)
     {
     }
 
@@ -231,11 +310,14 @@ namespace FIFE
     }
 
     void RenderBackendDummy::renderGuiGeometry(
-        std::vector<GuiVertex> const &, std::vector<int> const &, DoublePoint const &, ImagePtr)
+        std::vector<GuiVertex> const & /*vertices*/,
+        std::vector<int> const & /*indices*/,
+        DoublePoint const & /*translation*/,
+        ImagePtr /*texture*/)
     {
     }
 
-    void RenderBackendDummy::setClipArea(Rect const &, bool)
+    void RenderBackendDummy::setClipArea(Rect const & /*cliparea*/, bool /*clear*/)
     {
     }
 

@@ -5,6 +5,7 @@
 
 #include <SDL3/SDL_video.h>
 
+#include <bit>
 #include <cstdint>
 #include <string>
 
@@ -79,7 +80,7 @@ namespace FIFE
 #elif defined(__linux__) && !defined(__ANDROID__)
         Sint64 const xid = SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
         if (xid != 0) {
-            windowHandle = reinterpret_cast<void*>(static_cast<uintptr_t>(xid));
+            windowHandle = std::bit_cast<void*>(static_cast<uintptr_t>(xid));
         }
         if (windowHandle == nullptr) {
             windowHandle = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, nullptr);

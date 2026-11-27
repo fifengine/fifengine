@@ -6,8 +6,10 @@
 #include "renderbackendgl.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <string>
 #include <utility>
 #include <vector>
@@ -46,14 +48,14 @@ namespace FIFE
 #endif
     }
 
-    void RenderBackendGL::init(std::string const &)
+    void RenderBackendGL::init(std::string const & /*driver*/)
     {
         if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
             throw SDLException(SDL_GetError());
         }
     }
 
-    void RenderBackendGL::createMainScreen(std::string const &, std::string const &)
+    void RenderBackendGL::createMainScreen(std::string const & /*title*/, std::string const & /*icon*/)
     {
         SDL_Window* const window = getAttachedWindow();
         if (window == nullptr) {
@@ -143,7 +145,7 @@ namespace FIFE
         return m_lightingModel;
     }
 
-    void RenderBackendGL::setLighting(float, float, float)
+    void RenderBackendGL::setLighting(float /*red*/, float /*green*/, float /*blue*/)
     {
     }
 
@@ -152,7 +154,7 @@ namespace FIFE
         m_lightingModel = 0;
     }
 
-    void RenderBackendGL::resetStencilBuffer(uint8_t)
+    void RenderBackendGL::resetStencilBuffer(uint8_t /*buffer*/)
     {
         glcore_draw::clearStencil();
     }
@@ -250,11 +252,11 @@ namespace FIFE
         for (ImageBatch const & batch : m_imageBatches) {
             if (!batch.vertices.empty()) {
                 views.push_back(
-                    {batch.texture,
-                     batch.secondTexture,
-                     batch.overlayMode,
-                     batch.vertices.data(),
-                     batch.vertices.size()});
+                    {.texture       = batch.texture,
+                     .secondTexture = batch.secondTexture,
+                     .overlayMode   = batch.overlayMode,
+                     .data          = batch.vertices.data(),
+                     .floats        = batch.vertices.size()});
             }
         }
 
@@ -277,16 +279,16 @@ namespace FIFE
     void RenderBackendGL::addImageToArray(
         Rect const & rect,
         uint32_t id1,
-        float const *,
+        float const * /*st1*/,
         uint32_t id2,
-        float const *,
+        float const * /*st2*/,
         uint8_t alpha,
         uint8_t const * rgba)
     {
         // Reuse the single-texture path to emit the quad geometry; then tag
         // the resulting batch with the overlay texture and mode.
-        float const fullTexCoords[4]{0.0F, 0.0F, 1.0F, 1.0F};
-        addImageToArray(id1, rect, fullTexCoords, alpha, rgba);
+        std::array<float, 4> const fullTexCoords{0.0F, 0.0F, 1.0F, 1.0F};
+        addImageToArray(id1, rect, fullTexCoords.data(), alpha, rgba);
         if (!m_imageBatches.empty()) {
             m_imageBatches.back().secondTexture = id2;
             m_imageBatches.back().overlayMode   = static_cast<uint32_t>(m_overlayType);
@@ -296,10 +298,9 @@ namespace FIFE
     void RenderBackendGL::addImageToArray(
         uint32_t id, Rect const & rec, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
-        auto const found =
-            std::find_if(m_imageBatches.begin(), m_imageBatches.end(), [id](ImageBatch const & candidate) {
-                return candidate.texture == id;
-            });
+        auto const found  = std::ranges::find_if(m_imageBatches, [id](ImageBatch const & candidate) {
+            return candidate.texture == id;
+        });
         ImageBatch* batch = found != m_imageBatches.end() ? &*found : nullptr;
         if (batch == nullptr) {
             ImageBatch newBatch;
@@ -340,12 +341,12 @@ namespace FIFE
     {
         auto const color = [r, g, b, a](float px, float py) {
             return PrimitiveVertex{
-                px,
-                py,
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F};
+                .x = px,
+                .y = py,
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F};
         };
         float const px = static_cast<float>(x);
         float const py = static_cast<float>(y);
@@ -363,7 +364,7 @@ namespace FIFE
     {
         float const dx  = static_cast<float>(p2.x - p1.x);
         float const dy  = static_cast<float>(p2.y - p1.y);
-        float const len = std::sqrt(dx * dx + dy * dy);
+        float const len = std::sqrt((dx * dx) + (dy * dy));
         if (len <= 0.0F) {
             return;
         }
@@ -371,12 +372,12 @@ namespace FIFE
         float const ny   = dx / len * (static_cast<float>(width) / 2.0F);
         auto const color = [r, g, b, a](float x, float y) {
             return PrimitiveVertex{
-                x,
-                y,
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F};
+                .x = x,
+                .y = y,
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F};
         };
         addQuad(
             color(static_cast<float>(p1.x) + nx, static_cast<float>(p1.y) + ny),
@@ -394,7 +395,7 @@ namespace FIFE
     }
 
     void RenderBackendGL::drawBezier(
-        std::vector<Point> const & points, int32_t steps, uint8_t, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        std::vector<Point> const & points, int32_t steps, uint8_t /*width*/, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         if (points.size() < 2 || steps < 2) {
             return;
@@ -413,12 +414,12 @@ namespace FIFE
     {
         auto const color = [r, g, b, a](Point const & p) {
             return PrimitiveVertex{
-                static_cast<float>(p.x),
-                static_cast<float>(p.y),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F};
+                .x = static_cast<float>(p.x),
+                .y = static_cast<float>(p.y),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F};
         };
         if (filled) {
             addTriangle(color(p1), color(p2), color(p3));
@@ -444,7 +445,9 @@ namespace FIFE
     void RenderBackendGL::drawRectangle(
         Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        Point const p2(p.x + w, p.y), p3(p.x + w, p.y + h), p4(p.x, p.y + h);
+        Point const p2(p.x + w, p.y);
+        Point const p3(p.x + w, p.y + h);
+        Point const p4(p.x, p.y + h);
         drawLine(p, p2, r, g, b, a);
         drawLine(p2, p3, r, g, b, a);
         drawLine(p3, p4, r, g, b, a);
@@ -454,36 +457,38 @@ namespace FIFE
     void RenderBackendGL::fillRectangle(
         Point const & p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        Point const p2(p.x + w, p.y), p3(p.x + w, p.y + h), p4(p.x, p.y + h);
+        Point const p2(p.x + w, p.y);
+        Point const p3(p.x + w, p.y + h);
+        Point const p4(p.x, p.y + h);
         addQuad(
             PrimitiveVertex{
-                static_cast<float>(p.x),
-                static_cast<float>(p.y),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F},
+                .x = static_cast<float>(p.x),
+                .y = static_cast<float>(p.y),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F},
             PrimitiveVertex{
-                static_cast<float>(p2.x),
-                static_cast<float>(p2.y),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F},
+                .x = static_cast<float>(p2.x),
+                .y = static_cast<float>(p2.y),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F},
             PrimitiveVertex{
-                static_cast<float>(p3.x),
-                static_cast<float>(p3.y),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F},
+                .x = static_cast<float>(p3.x),
+                .y = static_cast<float>(p3.y),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F},
             PrimitiveVertex{
-                static_cast<float>(p4.x),
-                static_cast<float>(p4.y),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F});
+                .x = static_cast<float>(p4.x),
+                .y = static_cast<float>(p4.y),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F});
     }
 
     void RenderBackendGL::drawQuad(
@@ -512,15 +517,16 @@ namespace FIFE
         constexpr int segments = 24;
         float const rad        = static_cast<float>(radius);
         for (int i = 0; i < segments; ++i) {
-            float const a1 = 2.0F * 3.14159265F * static_cast<float>(i) / static_cast<float>(segments);
-            float const a2 = 2.0F * 3.14159265F * static_cast<float>(i + 1) / static_cast<float>(segments);
+            float const a1 = 2.0F * std::numbers::pi_v<float> * static_cast<float>(i) / static_cast<float>(segments);
+            float const a2 =
+                2.0F * std::numbers::pi_v<float> * static_cast<float>(i + 1) / static_cast<float>(segments);
             drawLine(
                 Point(
-                    static_cast<int32_t>(static_cast<float>(p.x) + std::cos(a1) * rad),
-                    static_cast<int32_t>(static_cast<float>(p.y) + std::sin(a1) * rad)),
+                    static_cast<int32_t>(static_cast<float>(p.x) + (std::cos(a1) * rad)),
+                    static_cast<int32_t>(static_cast<float>(p.y) + (std::sin(a1) * rad))),
                 Point(
-                    static_cast<int32_t>(static_cast<float>(p.x) + std::cos(a2) * rad),
-                    static_cast<int32_t>(static_cast<float>(p.y) + std::sin(a2) * rad)),
+                    static_cast<int32_t>(static_cast<float>(p.x) + (std::cos(a2) * rad)),
+                    static_cast<int32_t>(static_cast<float>(p.y) + (std::sin(a2) * rad))),
                 r,
                 g,
                 b,
@@ -534,29 +540,30 @@ namespace FIFE
         float const rad        = static_cast<float>(radius);
         auto const color       = [r, g, b, a]() {
             return PrimitiveVertex{
-                0.0F,
-                0.0F,
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F};
+                .x = 0.0F,
+                .y = 0.0F,
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F};
         };
         PrimitiveVertex const center{
-            static_cast<float>(p.x),
-            static_cast<float>(p.y),
-            static_cast<float>(r) / 255.0F,
-            static_cast<float>(g) / 255.0F,
-            static_cast<float>(b) / 255.0F,
-            static_cast<float>(a) / 255.0F};
+            .x = static_cast<float>(p.x),
+            .y = static_cast<float>(p.y),
+            .r = static_cast<float>(r) / 255.0F,
+            .g = static_cast<float>(g) / 255.0F,
+            .b = static_cast<float>(b) / 255.0F,
+            .a = static_cast<float>(a) / 255.0F};
         for (int i = 0; i < segments; ++i) {
-            float const a1     = 2.0F * 3.14159265F * static_cast<float>(i) / static_cast<float>(segments);
-            float const a2     = 2.0F * 3.14159265F * static_cast<float>(i + 1) / static_cast<float>(segments);
+            float const a1 = 2.0F * std::numbers::pi_v<float> * static_cast<float>(i) / static_cast<float>(segments);
+            float const a2 =
+                2.0F * std::numbers::pi_v<float> * static_cast<float>(i + 1) / static_cast<float>(segments);
             PrimitiveVertex v1 = color();
-            v1.x               = static_cast<float>(p.x) + std::cos(a1) * rad;
-            v1.y               = static_cast<float>(p.y) + std::sin(a1) * rad;
+            v1.x               = static_cast<float>(p.x) + (std::cos(a1) * rad);
+            v1.y               = static_cast<float>(p.y) + (std::sin(a1) * rad);
             PrimitiveVertex v2 = color();
-            v2.x               = static_cast<float>(p.x) + std::cos(a2) * rad;
-            v2.y               = static_cast<float>(p.y) + std::sin(a2) * rad;
+            v2.x               = static_cast<float>(p.x) + (std::cos(a2) * rad);
+            v2.y               = static_cast<float>(p.y) + (std::sin(a2) * rad);
             addTriangle(center, v1, v2);
         }
     }
@@ -570,11 +577,11 @@ namespace FIFE
         }
         int const segments = 24;
         auto const toPoint = [&](int step) {
-            double const angle =
-                (static_cast<double>(sangle) + static_cast<double>(span) * step / segments) * 3.141592653589793 / 180.0;
+            double const angle = (static_cast<double>(sangle) + (static_cast<double>(span) * step / segments)) *
+                                 std::numbers::pi / 180.0;
             return Point(
-                static_cast<int32_t>(static_cast<double>(p.x) + std::cos(angle) * radius),
-                static_cast<int32_t>(static_cast<double>(p.y) + std::sin(angle) * radius));
+                static_cast<int32_t>(static_cast<double>(p.x) + (std::cos(angle) * radius)),
+                static_cast<int32_t>(static_cast<double>(p.y) + (std::sin(angle) * radius)));
         };
         for (int i = 0; i < segments; ++i) {
             drawLine(toPoint(i), toPoint(i + 1), r, g, b, a);
@@ -590,23 +597,23 @@ namespace FIFE
         }
         int const segments  = 24;
         auto const toVertex = [&](int step) {
-            double const angle =
-                (static_cast<double>(sangle) + static_cast<double>(span) * step / segments) * 3.141592653589793 / 180.0;
+            double const angle = (static_cast<double>(sangle) + (static_cast<double>(span) * step / segments)) *
+                                 std::numbers::pi / 180.0;
             return PrimitiveVertex{
-                static_cast<float>(static_cast<double>(p.x) + std::cos(angle) * radius),
-                static_cast<float>(static_cast<double>(p.y) + std::sin(angle) * radius),
-                static_cast<float>(r) / 255.0F,
-                static_cast<float>(g) / 255.0F,
-                static_cast<float>(b) / 255.0F,
-                static_cast<float>(a) / 255.0F};
+                .x = static_cast<float>(static_cast<double>(p.x) + (std::cos(angle) * radius)),
+                .y = static_cast<float>(static_cast<double>(p.y) + (std::sin(angle) * radius)),
+                .r = static_cast<float>(r) / 255.0F,
+                .g = static_cast<float>(g) / 255.0F,
+                .b = static_cast<float>(b) / 255.0F,
+                .a = static_cast<float>(a) / 255.0F};
         };
         PrimitiveVertex const center{
-            static_cast<float>(p.x),
-            static_cast<float>(p.y),
-            static_cast<float>(r) / 255.0F,
-            static_cast<float>(g) / 255.0F,
-            static_cast<float>(b) / 255.0F,
-            static_cast<float>(a) / 255.0F};
+            .x = static_cast<float>(p.x),
+            .y = static_cast<float>(p.y),
+            .r = static_cast<float>(r) / 255.0F,
+            .g = static_cast<float>(g) / 255.0F,
+            .b = static_cast<float>(b) / 255.0F,
+            .a = static_cast<float>(a) / 255.0F};
         for (int i = 0; i < segments; ++i) {
             addTriangle(center, toVertex(i), toVertex(i + 1));
         }
@@ -616,7 +623,7 @@ namespace FIFE
         Point const & p,
         uint8_t intensity,
         float radius,
-        int32_t,
+        int32_t /*subdivisions*/,
         float xstretch,
         float ystretch,
         uint8_t red,
@@ -644,7 +651,7 @@ namespace FIFE
 
     void RenderBackendGL::changeRenderInfos(
         RenderDataType type,
-        uint16_t,
+        uint16_t /*elements*/,
         int32_t src,
         int32_t dst,
         bool light,
@@ -684,9 +691,9 @@ namespace FIFE
         for (int row = 0; row < h; ++row) {
             std::copy_n(
                 pixels.data() + static_cast<size_t>((h - 1 - row) * w * 4),
-                static_cast<size_t>(w * 4),
+                static_cast<size_t>(w) * 4U,
                 static_cast<uint8_t*>(surface->pixels) +
-                    static_cast<size_t>(row) * static_cast<size_t>(surface->pitch));
+                    (static_cast<size_t>(row) * static_cast<size_t>(surface->pitch)));
         }
         Image::saveAsPng(filename, *surface);
         SDL_DestroySurface(surface);
@@ -707,9 +714,9 @@ namespace FIFE
         for (uint32_t row = 0; row < height; ++row) {
             std::copy_n(
                 pixels.data() + static_cast<size_t>((height - 1 - row) * width * 4),
-                static_cast<size_t>(width * 4),
+                static_cast<size_t>(width) * 4U,
                 static_cast<uint8_t*>(surface->pixels) +
-                    static_cast<size_t>(row) * static_cast<size_t>(surface->pitch));
+                    (static_cast<size_t>(row) * static_cast<size_t>(surface->pitch)));
         }
         Image::saveAsPng(filename, *surface);
         SDL_DestroySurface(surface);
@@ -752,16 +759,16 @@ namespace FIFE
         int32_t const w = static_cast<int32_t>(m_renderTarget ? m_renderTarget->getWidth() : 0);
         int32_t const h = static_cast<int32_t>(m_renderTarget ? m_renderTarget->getHeight() : 0);
         if (m_renderTarget && w > 0 && h > 0) {
-            SDL_Surface* surface = m_renderTarget->getSurface();
+            SDL_Surface const * surface = m_renderTarget->getSurface();
             if (surface != nullptr && surface->pixels != nullptr) {
                 std::vector<uint8_t> pixels(static_cast<size_t>(w * h * 4));
                 glcore_draw::readRGBA(0, 0, w, h, pixels.data());
                 for (int32_t row = 0; row < h; ++row) {
                     std::copy_n(
                         pixels.data() + static_cast<size_t>((h - 1 - row) * w * 4),
-                        static_cast<size_t>(w * 4),
+                        static_cast<size_t>(w) * 4U,
                         static_cast<uint8_t*>(surface->pixels) +
-                            static_cast<size_t>(row) * static_cast<size_t>(surface->pitch));
+                            (static_cast<size_t>(row) * static_cast<size_t>(surface->pitch)));
                 }
             }
         }
@@ -780,24 +787,24 @@ namespace FIFE
         std::vector<GuiVertex> const & vertices,
         std::vector<int> const & indices,
         DoublePoint const & translation,
-        ImagePtr)
+        ImagePtr /*texture*/)
     {
         auto const convert = [&](int index) {
             GuiVertex const & v = vertices[static_cast<size_t>(index)];
             return PrimitiveVertex{
-                static_cast<float>(v.position.x + translation.x),
-                static_cast<float>(v.position.y + translation.y),
-                static_cast<float>(v.color.getR()) / 255.0F,
-                static_cast<float>(v.color.getG()) / 255.0F,
-                static_cast<float>(v.color.getB()) / 255.0F,
-                static_cast<float>(v.color.getAlpha()) / 255.0F};
+                .x = static_cast<float>(v.position.x + translation.x),
+                .y = static_cast<float>(v.position.y + translation.y),
+                .r = static_cast<float>(v.color.getR()) / 255.0F,
+                .g = static_cast<float>(v.color.getG()) / 255.0F,
+                .b = static_cast<float>(v.color.getB()) / 255.0F,
+                .a = static_cast<float>(v.color.getAlpha()) / 255.0F};
         };
         for (size_t i = 0; i + 2 < indices.size(); i += 3) {
             addTriangle(convert(indices[i]), convert(indices[i + 1]), convert(indices[i + 2]));
         }
     }
 
-    void RenderBackendGL::setClipArea(Rect const & cliparea, bool)
+    void RenderBackendGL::setClipArea(Rect const & cliparea, bool /*clear*/)
     {
         m_state.setScissor(cliparea, true);
     }

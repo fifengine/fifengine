@@ -25,9 +25,12 @@ namespace FIFE
         // glcore_glad.h selects the highest API generated in this build; its
         // loader covers every lower profile of the same family.
 #if defined(HAVE_OPENGL_CORE) || defined(HAVE_OPENGL_43)
-        return gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
+        // glad's loader callback has its own function-pointer type; SDL returns a different one.
+        return gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) !=
+               0; // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 #elif defined(HAVE_OPENGL_ES2) || defined(HAVE_OPENGLES_31)
-        return gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) != 0;
+        return gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) !=
+               0; // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 #else
         return false;
 #endif

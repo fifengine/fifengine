@@ -35,10 +35,10 @@ namespace FIFE
             bool IsProfilerConnected() const;
 
             /** Emits Tracy's end-of-frame marker (named MarkFrame to avoid the FrameMark macro). */
-            void MarkFrame();
+            void MarkFrame() const;
 
             /** Emits a one-shot message on the currently open zone. */
-            void SetPhaseText(char const * text);
+            void SetPhaseText(char const * text) const;
 
         private:
             TracyConfig m_config;

@@ -66,7 +66,7 @@ namespace FIFE
         return name;
     }
 
-    void RenderBackendSurface::createMainScreen(std::string const &, std::string const &)
+    void RenderBackendSurface::createMainScreen(std::string const & /*title*/, std::string const & /*icon*/)
     {
         if (m_screen == nullptr) {
             m_screen =
@@ -144,7 +144,8 @@ namespace FIFE
         }
 
         // SDL3's texture creation takes a non-const surface but does not modify it.
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, const_cast<SDL_Surface*>(source));
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(
+            m_renderer, const_cast<SDL_Surface*>(source)); // NOLINT(cppcoreguidelines-pro-type-const-cast)
         if (texture == nullptr) {
             return;
         }
@@ -210,7 +211,7 @@ namespace FIFE
             return;
         }
 
-        if (width == static_cast<uint32_t>(captured->w) && height == static_cast<uint32_t>(captured->h)) {
+        if (std::cmp_equal(width, captured->w) && std::cmp_equal(height, captured->h)) {
             Image::saveAsPng(filename, *captured);
         } else {
             SDL_Surface* scaled =
@@ -382,7 +383,7 @@ namespace FIFE
         if (m_renderer == nullptr) {
             return;
         }
-        SDL_FColor color{
+        SDL_FColor const color{
             .r = static_cast<float>(r) / 255.0F,
             .g = static_cast<float>(g) / 255.0F,
             .b = static_cast<float>(b) / 255.0F,
@@ -408,7 +409,7 @@ namespace FIFE
         if (m_renderer == nullptr) {
             return;
         }
-        SDL_FRect rect{
+        SDL_FRect const rect{
             .x = static_cast<float>(p.x),
             .y = static_cast<float>(p.y),
             .w = static_cast<float>(w),
@@ -423,7 +424,7 @@ namespace FIFE
         if (m_renderer == nullptr) {
             return;
         }
-        SDL_FRect rect{
+        SDL_FRect const rect{
             .x = static_cast<float>(p.x),
             .y = static_cast<float>(p.y),
             .w = static_cast<float>(w),
@@ -628,7 +629,7 @@ namespace FIFE
                     captured->format == m_target->format ? captured : SDL_ConvertSurface(captured, m_target->format);
                 if (converted != nullptr) {
                     if (converted->w == m_target->w && converted->h == m_target->h) {
-                        SDL_Rect const dst{0, 0, m_target->w, m_target->h};
+                        SDL_Rect const dst{.x = 0, .y = 0, .w = m_target->w, .h = m_target->h};
                         SDL_BlitSurface(converted, nullptr, m_target, &dst);
                     }
                     if (converted != captured) {
@@ -652,7 +653,7 @@ namespace FIFE
         if (m_renderer == nullptr) {
             return;
         }
-        SDL_Rect const rect{cliparea.x, cliparea.y, cliparea.w, cliparea.h};
+        SDL_Rect const rect{.x = cliparea.x, .y = cliparea.y, .w = cliparea.w, .h = cliparea.h};
         SDL_SetRenderClipRect(m_renderer, &rect);
         if (clear) {
             SDL_FRect const frect{

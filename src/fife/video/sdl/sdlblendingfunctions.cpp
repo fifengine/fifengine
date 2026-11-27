@@ -11,6 +11,9 @@
 // 3rd party library includes
 
 // FIFE includes
+
+// The blending callbacks receive raw byte buffers from SDL surfaces. The packed
+// pixel structs below are views over those bytes, so the casts are unavoidable.
 namespace FIFE
 {
 
@@ -31,8 +34,11 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGBA8([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
-        auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
-        auto dstSpan = std::span<ColorRGBA8>{static_cast<ColorRGBA8*>(static_cast<void*>(dst)), n};
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)),
+            n}; // NOLINT(bugprone-casting-through-void)
+        auto dstSpan = std::span<ColorRGBA8>{
+            static_cast<ColorRGBA8*>(static_cast<void*>(dst)), n}; // NOLINT(bugprone-casting-through-void)
 
         for (size_t i = 0; i < n; ++i) {
             uint32_t const aMulA = alpha * (srcSpan.data() + i)->a;
@@ -51,8 +57,11 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB8([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
-        auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
-        auto dstSpan = std::span<ColorRGB8>{static_cast<ColorRGB8*>(static_cast<void*>(dst)), n};
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)),
+            n}; // NOLINT(bugprone-casting-through-void)
+        auto dstSpan = std::span<ColorRGB8>{
+            static_cast<ColorRGB8*>(static_cast<void*>(dst)), n}; // NOLINT(bugprone-casting-through-void)
 
         for (size_t i = 0; i < n; ++i) {
             uint32_t const aMulA = alpha * (srcSpan.data() + i)->a;
@@ -70,8 +79,11 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB565([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
-        auto srcSpan = std::span<ColorRGBA8 const>{static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)), n};
-        auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), n};
+        auto srcSpan = std::span<ColorRGBA8 const>{
+            static_cast<ColorRGBA8 const *>(static_cast<void const *>(src)),
+            n}; // NOLINT(bugprone-casting-through-void)
+        auto dstSpan = std::span<uint16_t>{
+            static_cast<uint16_t*>(static_cast<void*>(dst)), n}; // NOLINT(bugprone-casting-through-void)
 
         for (size_t i = 0; i < n; ++i) {
             uint32_t const aMulA = (alpha * (srcSpan.data() + i)->a) >> 8;
@@ -88,8 +100,10 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA4_to_RGB565([[maybe_unused]] uint8_t const * src, uint8_t* dst, uint32_t alpha, size_t n)
     {
-        auto srcSpan = std::span<uint16_t const>{static_cast<uint16_t const *>(static_cast<void const *>(src)), n};
-        auto dstSpan = std::span<uint16_t>{static_cast<uint16_t*>(static_cast<void*>(dst)), n};
+        auto srcSpan = std::span<uint16_t const>{
+            static_cast<uint16_t const *>(static_cast<void const *>(src)), n}; // NOLINT(bugprone-casting-through-void)
+        auto dstSpan = std::span<uint16_t>{
+            static_cast<uint16_t*>(static_cast<void*>(dst)), n}; // NOLINT(bugprone-casting-through-void)
 
         for (size_t i = 0; i < n; ++i) {
             uint32_t const c1 = *(dstSpan.data() + i);

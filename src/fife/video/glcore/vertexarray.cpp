@@ -3,6 +3,9 @@
 
 #include "vertexarray.h"
 
+#include <bit>
+#include <cstdint>
+
 #include "video/glcore/glad/glcore_glad.h"
 
 namespace FIFE
@@ -23,7 +26,7 @@ namespace FIFE
 #endif
     }
 
-    void GLCoreVertexArray::bindAttribute(uint32_t location, int32_t componentCount, size_t stride, size_t offset)
+    void GLCoreVertexArray::bindAttribute(uint32_t location, int32_t componentCount, size_t stride, size_t offset) const
     {
 #ifdef HAVE_OPENGL_CORE
         glBindVertexArray(m_name);
@@ -35,7 +38,7 @@ namespace FIFE
             GL_FLOAT,
             GL_FALSE,
             static_cast<GLsizei>(stride),
-            reinterpret_cast<void const *>(offset));
+            std::bit_cast<void const *>(static_cast<uintptr_t>(offset)));
     }
 
     void GLCoreVertexArray::bind() const

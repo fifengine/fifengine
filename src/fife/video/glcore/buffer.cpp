@@ -3,13 +3,15 @@
 
 #include "buffer.h"
 
+#include <array>
+
 #include "video/glcore/glad/glcore_glad.h"
 
 namespace FIFE
 {
-    GLCoreBuffer::GLCoreBuffer(Kind kind, uint32_t usage) : m_usage(usage)
+    GLCoreBuffer::GLCoreBuffer(Kind kind, uint32_t usage) :
+        m_target(kind == Kind::Array ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER), m_usage(usage)
     {
-        m_target = kind == Kind::Array ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
         glGenBuffers(1, &m_name);
     }
 
@@ -20,7 +22,7 @@ namespace FIFE
         }
     }
 
-    void GLCoreBuffer::upload(void const * data, size_t byteCount)
+    void GLCoreBuffer::upload(void const * data, size_t byteCount) const
     {
         glBindBuffer(m_target, m_name);
         glBufferData(m_target, static_cast<GLsizeiptr>(byteCount), data, static_cast<GLenum>(m_usage));
@@ -33,12 +35,16 @@ namespace FIFE
 
     uint32_t glcoreQuadIndexBuffer()
     {
-        static uint32_t ibo = []() {
+        static uint32_t const ibo = []() {
             uint32_t name = 0;
             glGenBuffers(1, &name);
-            unsigned int const indices[6] = {0, 1, 2, 0, 2, 3};
+            std::array<unsigned int, 6> const indices{0U, 1U, 2U, 0U, 2U, 3U};
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, name);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+            glBufferData(
+                GL_ELEMENT_ARRAY_BUFFER,
+                static_cast<GLsizeiptr>(indices.size() * sizeof(unsigned int)),
+                indices.data(),
+                GL_STATIC_DRAW);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             return name;
         }();

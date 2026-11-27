@@ -3,6 +3,7 @@
 
 #include "shader.h"
 
+#include <array>
 #include <string>
 
 #include "video/glcore/glad/glcore_glad.h"
@@ -19,8 +20,8 @@ namespace FIFE
             int status = 0;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
             if (status == 0) {
-                char log[2048]{};
-                glGetShaderInfoLog(shader, sizeof(log), nullptr, log);
+                std::array<char, 2048> log{};
+                glGetShaderInfoLog(shader, static_cast<GLsizei>(log.size()), nullptr, log.data());
                 glDeleteShader(shader);
                 return 0;
             }
@@ -28,7 +29,7 @@ namespace FIFE
         }
     } // namespace
 
-    GLCoreShader::GLCoreShader(GLProfile, char const * vsSource, char const * fsSource)
+    GLCoreShader::GLCoreShader(GLProfile /*unused*/, char const * vsSource, char const * fsSource)
     {
         uint32_t const vs = compileShader(GL_VERTEX_SHADER, vsSource);
         uint32_t const fs = compileShader(GL_FRAGMENT_SHADER, fsSource);

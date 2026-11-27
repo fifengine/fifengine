@@ -63,7 +63,7 @@ namespace FIFE
         if (m_isShared || m_texture != 0) {
             return;
         }
-        SDL_Surface* surface = m_surface;
+        SDL_Surface const * surface = m_surface;
         if (surface == nullptr || surface->pixels == nullptr) {
             return;
         }
@@ -120,7 +120,7 @@ namespace FIFE
             rect, m_texture, m_texCoords.data(), other->texture(), other->m_texCoords.data(), alpha, rgb);
     }
 
-    void GLCoreImage::renderZ(Rect const & rect, float, uint8_t alpha, uint8_t const * rgb)
+    void GLCoreImage::renderZ(Rect const & rect, float /*vertexZ*/, uint8_t alpha, uint8_t const * rgb)
     {
         // Z is carried by changeRenderInfos' RenderDataType; the batching
         // contract is otherwise identical to the non-Z path.
@@ -177,8 +177,7 @@ namespace FIFE
 
         m_texture = source->texture();
         // Divide by the full atlas dimensions, not the sub-image size.
-        m_texCoords = glcoreAtlasTexCoords(
-            region, static_cast<uint32_t>(source->getWidth()), static_cast<uint32_t>(source->getHeight()), true);
+        m_texCoords    = glcoreAtlasTexCoords(region, source->getWidth(), source->getHeight(), true);
         Image::m_state = IResource::RES_LOADED;
     }
 
@@ -198,8 +197,7 @@ namespace FIFE
             source->forceLoadInternal();
             m_texture   = source->texture();
             m_surface   = source->getSurface();
-            m_texCoords = glcoreAtlasTexCoords(
-                m_region, static_cast<uint32_t>(source->getWidth()), static_cast<uint32_t>(source->getHeight()), true);
+            m_texCoords = glcoreAtlasTexCoords(m_region, source->getWidth(), source->getHeight(), true);
             return;
         }
         if (m_texture == 0) {

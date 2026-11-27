@@ -85,7 +85,7 @@ namespace FIFE
 
     RenderDocAPI::InitResult RenderDocAPI::initialize()
     {
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         if (m_api.load() != nullptr) {
             return InitResult::AlreadyInitialized;
         }
@@ -104,7 +104,9 @@ namespace FIFE
             return InitResult::MissingSymbol;
         }
 
-        auto const getAPIFunc = reinterpret_cast<pRENDERDOC_GetAPI>(getAPI);
+        // Dynamic symbol lookup yields void*; C++ needs a reinterpret_cast to call it through its real signature.
+        auto const getAPIFunc =
+            reinterpret_cast<pRENDERDOC_GetAPI>(getAPI); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         for (RENDERDOC_Version const version : kVersions) {
             void* table = nullptr;
             if (getAPIFunc(version, &table) != 1 || table == nullptr) {
@@ -132,7 +134,7 @@ namespace FIFE
 
     void RenderDocAPI::shutdown()
     {
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         m_api.store(nullptr);
         m_module.store(nullptr);
         m_version = RenderDocVersion{};
@@ -140,7 +142,7 @@ namespace FIFE
 
     RenderDocVersion RenderDocAPI::version() const
     {
-        std::lock_guard<std::mutex> const lock(m_mutex);
+        std::scoped_lock const lock(m_mutex);
         return m_version;
     }
 } // namespace FIFE

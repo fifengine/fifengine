@@ -162,11 +162,7 @@ namespace fcn
     void ClickLabel::draw(Graphics* graphics)
     {
         bool const active = isFocused();
-        Rectangle const offsetRec(
-            static_cast<int>(getBorderSize()),
-            static_cast<int>(getBorderSize()),
-            static_cast<int>(2 * getBorderSize()),
-            static_cast<int>(2 * getBorderSize()));
+        Rectangle const offsetRec(getBorderSize(), getBorderSize(), (2 * getBorderSize()), (2 * getBorderSize()));
 
         if (isOpaque()) {
             Color faceColor          = getBackgroundColor();

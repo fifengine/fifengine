@@ -26,7 +26,7 @@ namespace FIFE
             GLCoreBuffer(GLCoreBuffer const &)            = delete;
             GLCoreBuffer& operator=(GLCoreBuffer const &) = delete;
 
-            void upload(void const * data, size_t byteCount);
+            void upload(void const * data, size_t byteCount) const;
             void bind() const;
             uint32_t name() const
             {

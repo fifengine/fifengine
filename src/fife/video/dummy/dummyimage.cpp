@@ -60,7 +60,7 @@ namespace FIFE
     }
 
     // Sharing is meaningful only for GPU textures, which this image has none.
-    void DummyImage::useSharedImage(ImagePtr const &, Rect const &)
+    void DummyImage::useSharedImage(ImagePtr const & /*shared*/, Rect const & /*region*/)
     {
     }
 

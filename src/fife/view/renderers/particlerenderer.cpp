@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <memory>
 
@@ -40,14 +41,14 @@ namespace FIFE
             return;
         }
 
-        ParticleManager* const manager       = ParticleManager::instance();
-        IParticleRenderBackend* const bridge = activeParticleRenderBackend();
-        FIFE::Rect const viewport            = cam->getViewPort();
-        float const w                        = static_cast<float>(std::max(1, viewport.w));
-        float const h                        = static_cast<float>(std::max(1, viewport.h));
-        float const viewProjection[16]       = {
+        ParticleManager const * const manager = ParticleManager::instance();
+        IParticleRenderBackend* const bridge  = activeParticleRenderBackend();
+        FIFE::Rect const viewport             = cam->getViewPort();
+        float const w                         = static_cast<float>(std::max(1, viewport.w));
+        float const h                         = static_cast<float>(std::max(1, viewport.h));
+        std::array<float, 16> const viewProjection{
             2.0F / w, 0.0F, 0.0F, 0.0F, 0.0F, -2.0F / h, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F};
-        for (ParticleEmitter* emitter : manager->getEmitters()) {
+        for (ParticleEmitter const * emitter : manager->getEmitters()) {
             if (emitter == nullptr || !emitter->isDrawnOn(layer)) {
                 continue;
             }
@@ -56,7 +57,11 @@ namespace FIFE
                     emitter->getId(), emitter->getAliveEstimate(), 1.0F / 120.0F, manager->getSimulationStep());
                 if (emitter->getFrame(0)) {
                     bridge->draw(
-                        emitter->getId(), emitter->getAliveEstimate(), *emitter->getFrame(0), viewProjection, viewport);
+                        emitter->getId(),
+                        emitter->getAliveEstimate(),
+                        *emitter->getFrame(0),
+                        viewProjection.data(),
+                        viewport);
                 }
                 continue;
             }
@@ -72,8 +77,8 @@ namespace FIFE
                 ExactModelCoordinate const world = emitter->getParticleWorldPosition(slot);
                 ScreenPoint const screen         = cam->toScreenCoordinates(world);
                 int32_t const size = std::max<int32_t>(1, static_cast<int32_t>(std::lround(particle.size)));
-                Rect const rect(screen.x - size / 2, screen.y - size / 2, size, size);
-                frame->render(rect, particle.rgba[3], particle.rgba);
+                Rect const rect(screen.x - (size / 2), screen.y - (size / 2), size, size);
+                frame->render(rect, particle.rgba[3], static_cast<uint8_t const *>(particle.rgba));
             }
         }
     }

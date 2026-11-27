@@ -106,15 +106,15 @@ void main() {
         {
             switch (program) {
             case GLCoreProgram::Sprite:
-                return {spriteVS, spriteFS};
+                return {.vs = spriteVS, .fs = spriteFS};
             case GLCoreProgram::Primitive:
-                return {primitiveVS, primitiveFS};
+                return {.vs = primitiveVS, .fs = primitiveFS};
             case GLCoreProgram::Overlay:
-                return {spriteVS, overlayFS};
+                return {.vs = spriteVS, .fs = overlayFS};
             case GLCoreProgram::Light:
-                return {primitiveVS, lightFS};
+                return {.vs = primitiveVS, .fs = lightFS};
             }
-            return {spriteVS, spriteFS};
+            return {.vs = spriteVS, .fs = spriteFS};
         }
     } // namespace
 

@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -26,7 +27,6 @@ namespace FIFE
 {
     GLCoreGuiGraphics::GLCoreGuiGraphics() :
         m_renderbackend(RenderBackend::instance()),
-        m_color(),
         m_width(static_cast<int32_t>(m_renderbackend->getWidth())),
         m_height(static_cast<int32_t>(m_renderbackend->getHeight()))
     {
@@ -86,7 +86,7 @@ namespace FIFE
         // Generic Fifechan images have no backend handle. Rebuild their pixels
         // as a backend image and render through the same generic hook.
         // Fifechan's getPixel() is non-const even though it only reads.
-        auto* source = const_cast<fcn::Image*>(image);
+        auto* source = const_cast<fcn::Image*>(image); // NOLINT(cppcoreguidelines-pro-type-const-cast)
         int const sw = source->getWidth();
         int const sh = source->getHeight();
         if (sw <= 0 || sh <= 0) {
@@ -99,7 +99,7 @@ namespace FIFE
             for (int x = 0; x < sw; ++x) {
                 fcn::Color const color = source->getPixel(x, y);
                 std::size_t const i =
-                    (static_cast<std::size_t>(y) * static_cast<std::size_t>(sw) + static_cast<std::size_t>(x)) * 4U;
+                    ((static_cast<std::size_t>(y) * static_cast<std::size_t>(sw)) + static_cast<std::size_t>(x)) * 4U;
                 rgba.at(i + 0U) = color.r;
                 rgba.at(i + 1U) = color.g;
                 rgba.at(i + 2U) = color.b;
@@ -138,8 +138,8 @@ namespace FIFE
         }
 
         Rect const rect(dstX + xOffset, dstY + yOffset, surface->w, surface->h);
-        uint8_t const rgb[4] = {m_color.r, m_color.g, m_color.b, 255};
-        image->render(rect, effectiveAlpha(), rgb);
+        std::array<uint8_t, 4> const rgb{m_color.r, m_color.g, m_color.b, 255};
+        image->render(rect, effectiveAlpha(), rgb.data());
     }
 
     void GLCoreGuiGraphics::drawPoint(int32_t x, int32_t y)
@@ -190,7 +190,7 @@ namespace FIFE
         fcn::ClipRectangle const & top = mClipStack.top();
         std::vector<Point> transformed;
         transformed.reserve(points.size());
-        std::transform(points.begin(), points.end(), std::back_inserter(transformed), [&top](fcn::Point const & point) {
+        std::ranges::transform(points, std::back_inserter(transformed), [&top](fcn::Point const & point) {
             return Point(point.x + top.xOffset, point.y + top.yOffset);
         });
         m_renderbackend->drawPolyLine(
@@ -205,7 +205,7 @@ namespace FIFE
         fcn::ClipRectangle const & top = mClipStack.top();
         std::vector<Point> transformed;
         transformed.reserve(points.size());
-        std::transform(points.begin(), points.end(), std::back_inserter(transformed), [&top](fcn::Point const & point) {
+        std::ranges::transform(points, std::back_inserter(transformed), [&top](fcn::Point const & point) {
             return Point(point.x + top.xOffset, point.y + top.yOffset);
         });
         m_renderbackend->drawBezier(

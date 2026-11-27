@@ -879,11 +879,13 @@ namespace FIFE
                 // One destination pixel is written per output column.
                 ++dst_pointer; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             }
-            size_t const syIdx        = static_cast<size_t>(y) + 1U;
-            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            size_t const syIdx = static_cast<size_t>(y) + 1U;
+            // The same locked surface buffer is traversed as bytes and as packed 32-bit rows.
+            auto* srcBytes =
+                reinterpret_cast<uint8_t*>(src_help_pointer); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
             size_t const srcRowOffset = static_cast<size_t>(sy_a.at(syIdx) >> 16) * static_cast<size_t>(src->pitch);
             // Row advance is a byte offset into the locked surface pixel buffer.
-            src_help_pointer = reinterpret_cast<uint32_t*>(
+            src_help_pointer = reinterpret_cast<uint32_t*>( // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                 srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         }
 

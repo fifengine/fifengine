@@ -20,7 +20,7 @@ namespace FIFE
             GLCoreVertexArray(GLCoreVertexArray const &)            = delete;
             GLCoreVertexArray& operator=(GLCoreVertexArray const &) = delete;
 
-            void bindAttribute(uint32_t location, int32_t componentCount, size_t stride, size_t offset);
+            void bindAttribute(uint32_t location, int32_t componentCount, size_t stride, size_t offset) const;
             void bind() const;
             static void unbind();
             uint32_t name() const

@@ -1029,7 +1029,7 @@ found_non_transparent_pixel:;
         if (update) {
             // for the case that the viewport size is not the same as the screen size,
             // we have to change the values for OpenGL backend
-            Rect rec = computeRenderTargetRect();
+            Rect const rec = computeRenderTargetRect();
             m_renderbackend->attachRenderTarget(cacheImage, true);
             // here we use the new viewport size
             m_renderbackend->pushClipArea(rec, false);

@@ -798,7 +798,7 @@ namespace FIFE
             return;
         }
 
-        Window* const window = touchWindow();
+        Window const * const window = touchWindow();
         if (window == nullptr) {
             return;
         }
@@ -925,7 +925,7 @@ namespace FIFE
             evt.setNormalizedX(normalizedX);
             evt.setNormalizedY(normalizedY);
 
-            Window* const window = touchWindow();
+            Window const * const window = touchWindow();
             if (window != nullptr) {
                 TouchTranslation::PointI const point = TouchTranslation::normalizedToWindowPoints(
                     normalizedX, normalizedY, window->getWidthInPoints(), window->getHeightInPoints());
@@ -1103,7 +1103,7 @@ namespace FIFE
         // are normalized to the same coordinate space the widgets live in.
         // The windowed path is deliberately left untouched.
         if (RenderBackend::exists()) {
-            RenderBackend* const backend = RenderBackend::instance();
+            RenderBackend const * const backend = RenderBackend::instance();
             if (backend->getWindowObject() == nullptr) {
                 uint32_t const width  = backend->getWidth();
                 uint32_t const height = backend->getHeight();

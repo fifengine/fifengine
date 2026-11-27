@@ -50,22 +50,21 @@ namespace FIFE
 
     void ParticleManager::removeEmitter(ParticleEmitter* emitter)
     {
-        if (std::find(m_pending_removal.begin(), m_pending_removal.end(), emitter) == m_pending_removal.end()) {
+        if (std::ranges::find(m_pending_removal, emitter) == m_pending_removal.end()) {
             m_pending_removal.push_back(emitter);
         }
     }
 
     void ParticleManager::flushRemovals()
     {
-        for (ParticleEmitter* victim : m_pending_removal) {
-            auto const view = std::find(m_emitters_view.begin(), m_emitters_view.end(), victim);
+        for (ParticleEmitter const * victim : m_pending_removal) {
+            auto const view = std::ranges::find(m_emitters_view, victim);
             if (view == m_emitters_view.end()) {
                 continue;
             }
-            auto const owner = std::find_if(
-                m_emitters.begin(), m_emitters.end(), [victim](std::unique_ptr<ParticleEmitter> const & e) {
-                    return e.get() == victim;
-                });
+            auto const owner = std::ranges::find_if(m_emitters, [victim](std::unique_ptr<ParticleEmitter> const & e) {
+                return e.get() == victim;
+            });
             if (owner != m_emitters.end()) {
                 m_emitters.erase(owner);
             }

@@ -227,7 +227,9 @@ namespace FIFE
     {
         auto const str = [](GLenum name) -> std::string {
             GLubyte const * value = glGetString(name);
-            return value != nullptr ? reinterpret_cast<char const *>(value) : "unknown";
+            // glGetString returns GLubyte*, but the result is a null-terminated char string.
+            return value != nullptr ? reinterpret_cast<char const *>(value) :
+                                      "unknown"; // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         };
         return std::format(
             "OpenGL vendor={} renderer={} version={} GLSL={}",
@@ -338,7 +340,9 @@ namespace FIFE
                     _log(),
                     std::format(
                         "RenderBackendOpenGLError initializing GLEW!{}",
-                        reinterpret_cast<char const *>(glewGetErrorString(glewError))));
+                        // GLEW returns GLubyte* error text, which is a char string.
+                        reinterpret_cast<char const *>(
+                            glewGetErrorString(glewError)))); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
             }
             // A new context starts from GL defaults; forget the cached state
             // of the previous context so the next draw calls re-apply it.
@@ -3016,9 +3020,12 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            auto* srcBytes            = reinterpret_cast<uint8_t*>(src_help_pointer);
+            // The same locked surface buffer is traversed as bytes and as packed 32-bit rows.
+            auto* srcBytes =
+                reinterpret_cast<uint8_t*>(src_help_pointer); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
             size_t const srcRowOffset = static_cast<size_t>(*sy_ca >> 16) * static_cast<size_t>(src->pitch);
-            src_help_pointer          = reinterpret_cast<uint32_t*>(srcBytes + srcRowOffset);
+            src_help_pointer          = reinterpret_cast<uint32_t*>(
+                srcBytes + srcRowOffset); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         }
 
         if (SDL_MUSTLOCK(dst)) {

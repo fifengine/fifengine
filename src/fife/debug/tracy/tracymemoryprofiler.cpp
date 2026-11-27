@@ -5,13 +5,13 @@
 
 #include "util/log/logger.h"
 
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
     #include <tracy/Tracy.hpp>
 #endif
 
 namespace FIFE
 {
-#if !defined(FIFE_ENABLE_TRACY)
+#ifndef FIFE_ENABLE_TRACY
     namespace
     {
         Logger& _log()
@@ -29,7 +29,7 @@ namespace FIFE
             if (ptr == nullptr || poolName == nullptr) {
                 return;
             }
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
             TracyAllocN(ptr, size, poolName);
 #else
             (void)ptr;
@@ -43,7 +43,7 @@ namespace FIFE
             if (ptr == nullptr || poolName == nullptr) {
                 return;
             }
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
             TracyFreeN(ptr, poolName);
 #else
             (void)ptr;
@@ -62,7 +62,7 @@ namespace FIFE
         if (!m_config.enableTracy || !m_config.enableMemoryProfiling) {
             return false;
         }
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
         m_enabled = true;
 #else
         FL_WARN(_log(), "Tracy memory tracking requested but this build was compiled with ENABLE_TRACY=OFF");

@@ -34,7 +34,7 @@ namespace FIFE
         if (!m_config.enableTracy) {
             return false;
         }
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
         m_enabled = true;
         FL_LOG(_log(), "Tracy CPU profiler initialized (on-demand; zones inactive until a viewer connects)");
 #else
@@ -51,14 +51,14 @@ namespace FIFE
 
     bool TracyProfiler::IsProfilerConnected() const
     {
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
         return m_enabled && tracy::GetProfiler().IsConnected();
 #else
         return false;
 #endif
     }
 
-    void TracyProfiler::MarkFrame()
+    void TracyProfiler::MarkFrame() const
     {
         if (!m_enabled) {
             return;
@@ -66,12 +66,12 @@ namespace FIFE
         FIFE_PROFILE_FRAME_MARK();
     }
 
-    void TracyProfiler::SetPhaseText(char const * text)
+    void TracyProfiler::SetPhaseText(char const * text) const
     {
         if (!m_enabled || text == nullptr) {
             return;
         }
-#if defined(FIFE_ENABLE_TRACY)
+#ifdef FIFE_ENABLE_TRACY
         TracyMessageL(text);
 #else
         (void)text;

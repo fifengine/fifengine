@@ -13,16 +13,9 @@
     #define FIFE_PROFILE_ZONE_N(name) ZoneScopedN(name)
     #define FIFE_PROFILE_FRAME_MARK() FrameMark
 #else
-    #define FIFE_PROFILE_ZONE() \
-        do {                    \
-        } while (false)
-    #define FIFE_PROFILE_ZONE_N(name) \
-        do {                          \
-            (void)(name);             \
-        } while (false)
-    #define FIFE_PROFILE_FRAME_MARK() \
-        do {                          \
-        } while (false)
+    #define FIFE_PROFILE_ZONE()       ((void)0)
+    #define FIFE_PROFILE_ZONE_N(name) ((void)(name))
+    #define FIFE_PROFILE_FRAME_MARK() ((void)0)
 #endif
 
 #endif
