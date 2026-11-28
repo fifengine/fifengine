@@ -123,7 +123,7 @@ namespace FIFE
                 {"C", Keys::C},
                 {"V", Keys::V},
             }};
-            auto const * const it = std::ranges::find_if(keys, [&name](auto const & entry) {
+            auto const it = std::ranges::find_if(keys, [&name](auto const & entry) {
                 return name == entry.first;
             });
             if (it != keys.end()) {
