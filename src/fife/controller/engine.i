@@ -4,6 +4,9 @@
 %module fife
 %{
 #include "controller/engine.h"
+#include "debug/diagnosticsmanager.h"
+#include "debug/renderdoc/renderdocdebugger.h"
+#include "debug/tracy/tracyprofiler.h"
 %}
 
 %template(FontPaths) std::vector<std::string>;
@@ -160,6 +163,35 @@ namespace FIFE {
 	private:
 		EngineSettings();
 	};	
+
+	// Minimal diagnostics surface: settings are above; tool access is read-mostly.
+	// These objects are owned by Engine/DiagnosticsManager, never by Python.
+	%nodefaultctor TracyProfiler;
+	%nodefaultctor RenderDocDebugger;
+	%nodefaultctor DiagnosticsManager;
+	class TracyProfiler {
+	public:
+		bool IsEnabled() const;
+		bool IsProfilerConnected() const;
+	};
+
+	class RenderDocDebugger {
+	public:
+		bool triggerCapture();
+		bool startCapture();
+		bool endCapture();
+		bool isCaptureInProgress() const;
+		void setCapturePath(const std::string& path);
+		std::string getLastCapturePath() const;
+	};
+
+	class DiagnosticsManager {
+	public:
+		bool IsProfilingEnabled() const;
+		bool IsGraphicsDebuggingEnabled() const;
+		RenderDocDebugger* GetGraphicsDebugger() const;
+		TracyProfiler* GetProfiler() const;
+	};
 	
 	%feature("director") IEngineChangeListener;
 	class IEngineChangeListener {
@@ -207,6 +239,7 @@ namespace FIFE {
 		AnimationManager* getAnimationManager();
 		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
+		DiagnosticsManager* getDiagnosticsManager();
 		Model* getModel();
 		LogManager* getLogManager();
 		VFS* getVFS();

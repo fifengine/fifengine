@@ -1053,16 +1053,19 @@ namespace FIFE
         m_lastRenderDocHotkeyState = rdocHotkeyDown;
 
         m_diagnostics->OnFrameBegin();
-        m_renderbackend->startFrame();
         {
-            FIFE_PROFILE_ZONE_N(FIFE::kPhaseInput);
-            m_eventmanager->processEvents();
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseUpdate);
+            m_renderbackend->startFrame();
+            {
+                FIFE_PROFILE_ZONE_N(FIFE::kPhaseInput);
+                m_eventmanager->processEvents();
+            }
+            if (m_window != nullptr) {
+                m_window->updateDPIScaleIfNeeded();
+            }
+            m_timemanager->update();
+            m_soundmanager->update();
         }
-        if (m_window != nullptr) {
-            m_window->updateDPIScaleIfNeeded();
-        }
-        m_timemanager->update();
-        m_soundmanager->update();
 
         {
             FIFE_PROFILE_ZONE_N(FIFE::kPhaseTarget);
@@ -1139,7 +1142,10 @@ namespace FIFE
             m_cursor->draw();
             m_diagnostics->EndPhase();
         }
-        m_renderbackend->endFrame();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhasePresent);
+            m_renderbackend->endFrame();
+        }
         m_diagnostics->OnFrameEnd();
     }
 

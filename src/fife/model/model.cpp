@@ -4,6 +4,9 @@
 // Corresponding header include
 #include "model.h"
 
+#include "debug/diagnosticsphases.h"
+#include "debug/tracy/tracyprofilermacros.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
@@ -343,13 +346,19 @@ namespace FIFE
 
     void Model::update()
     {
-        auto it = m_maps.begin();
-        for (; it != m_maps.end(); ++it) {
-            (*it)->update();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhaseMapUpdate);
+            auto it = m_maps.begin();
+            for (; it != m_maps.end(); ++it) {
+                (*it)->update();
+            }
         }
-        auto jt = m_pathers.begin();
-        for (; jt != m_pathers.end(); ++jt) {
-            (*jt)->update();
+        {
+            FIFE_PROFILE_ZONE_N(FIFE::kPhasePathfinder);
+            auto jt = m_pathers.begin();
+            for (; jt != m_pathers.end(); ++jt) {
+                (*jt)->update();
+            }
         }
     }
 

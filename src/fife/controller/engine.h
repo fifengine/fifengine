@@ -248,6 +248,12 @@ namespace FIFE
              */
             RenderDocDebugger* getRenderDocDebugger() const;
 
+            /** Provides access to the shared diagnostics manager. */
+            DiagnosticsManager* getDiagnosticsManager() const
+            {
+                return m_diagnostics.get();
+            }
+
             /** Provides access point to the Window.
              *
              *  The Window is the source of truth for the live size and mode.

@@ -51,7 +51,8 @@
       "name": "tracy",
       "default-features": false,
       "features": [
-        "on-demand"
+        "on-demand",
+        "cli-tools"
       ]
     },
     "utfcpp",

@@ -20,6 +20,10 @@ namespace FIFE
     inline constexpr char const * kPhaseMovie        = "Movie Pass";
     inline constexpr char const * kPhaseInput        = "Input";
     inline constexpr char const * kPhaseResourceLoad = "Resource Load";
+    inline constexpr char const * kPhaseUpdate       = "Update";
+    inline constexpr char const * kPhasePresent      = "Present";
+    inline constexpr char const * kPhaseMapUpdate    = "Map Update";
+    inline constexpr char const * kPhasePathfinder   = "Pathfinder Update";
 } // namespace FIFE
 
 #endif
